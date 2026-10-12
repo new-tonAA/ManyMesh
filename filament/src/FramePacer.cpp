@@ -20,6 +20,7 @@
 
 #include "details/Engine.h"
 #include "details/Renderer.h"
+#include "TextureCache.h"
 
 #include <filament/FramePacer.h>
 

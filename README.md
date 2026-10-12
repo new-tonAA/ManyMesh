@@ -1,3 +1,24 @@
+# ManyMesh
+
+> **面向移动端的几何复杂度压缩与神经重建协同实时渲染方案**
+> Perceptual geometry compression and temporal reconstruction for real-time rendering.
+
+像 **MegaLights 通过采样解决光源数量爆炸**一样，ManyMesh 通过**几何压缩 + 神经重建**解决
+模型面数爆炸：用类似 Nanite 的自适应几何压缩减少模型处理开销，再用轻量神经网络超分
+恢复因几何简化造成的视觉损失，从而使普通移动设备能够实时渲染高复杂度 3D 资产。
+
+> 把不可承受的计算复杂度转化为可控制的近似误差，再用重建技术补偿。
+
+- 📄 **完整方案、实验设计与里程碑路线图：[MANYMESH.md](MANYMESH.md)**
+- 🧱 **渲染底座**：[Google Filament](https://github.com/google/filament) —— 本仓库为其完整源码快照
+  （上游提交 `4bcb2e4e5aa2fdba45b0db73dcb92f5dbfc38752`），详见 [MANYMESH.md §9.1](MANYMESH.md#91-仓库形态)
+
+> ⚠️ **构建前请注意**：本仓库的 Windows 构建流程与上游默认方式不同（Filament 不支持 MSYS2
+> 环境），并含一处 MSVC 编译修补。请先阅读
+> [MANYMESH.md §9 开发环境与构建](MANYMESH.md#9-开发环境与构建当前状态)。
+
+---
+
 # Filament
 
 [![Android Build Status](https://github.com/google/filament/actions/workflows/status-android.yml/badge.svg)](https://github.com/google/filament/actions/workflows/status-android.yml)
