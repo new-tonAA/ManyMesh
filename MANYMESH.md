@@ -222,14 +222,16 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
   - 拉取 Filament 源码树（本仓库）
   - Windows 桌面编译链打通（核心库 + 工具链 + 可运行样例）
 - [ ] **M1 — 基础渲染与度量基线**
-  - 可运行样例渲染高模场景（`material_sandbox` / `gltf_viewer`）
-  - 搭好画质度量（PSNR / SSIM / LPIPS）与性能采集（GPU time / memory / 功耗）
-  - 找到并接入一个**超多面数测试场景**
-- [ ] **M2 — 几何侧：Mobile Geometry Optimization Layer**
+  - [x] 可运行样例渲染场景（`material_sandbox`）
+  - [x] 找到并接入**超多面数测试场景**（Stanford Asian Dragon，7,219,045 三角面）
+  - [ ] 搭好画质度量（PSNR / SSIM / LPIPS）与性能采集（GPU time / memory / 功耗）
+  - [ ] 用 Filament 渲染高模场景并采集真实 FPS / GPU time
+- [x] **M2 — 几何侧：Mobile Geometry Optimization Layer**（首个切片，见 §7.1）
   - 离线 mesh cluster 化 + 每 cluster 的 error metric
   - 屏幕空间误差驱动的 cluster 选择
-  - QEM / mesh simplification 生成低复杂度 mesh
-  - 产出 **Geometry Error Map**
+  - QEM / mesh simplification 生成低复杂度 mesh（全局链 + 逐 cluster 两种模式）
+  - 产出 **Geometry Error Map**（离线软件光栅化原型）
+  - [ ] 后续：cluster 组（cluster group）简化以追平全局链的质量
 - [ ] **M3 — 图像侧：移动端轻量神经重建**
   - 低分辨率渲染 + 多 buffer 输入（color / depth / normal / motion / error map）
   - 轻量 CNN 超分与残差细节恢复
@@ -241,6 +243,46 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
 - [ ] **M5 — 移动端落地**
   - Android / Vulkan 后端打通与真机实测
   - 功耗与发热评估
+
+---
+
+### 7.1 M2 首个切片结果
+
+**代码**：`libs/manymesh/`（纯 CPU 算法库）+ `tools/mmgeo/`（命令行工具 + 说明见
+`tools/mmgeo/README.md`）。全部构建在仓库已 vendored 的 **meshoptimizer 0.18** 之上
+（`meshopt_buildMeshlets` / `meshopt_computeMeshletBounds` / `meshopt_simplify` /
+`meshopt_simplifyScale`），**未引入任何新依赖**。
+
+**测试模型**：Stanford Asian Dragon —— 3,609,600 顶点 / 7,219,045 三角面，
+包围盒 201.7 × 112.0 × 134.2。
+
+**实测耗时**（Intel 12 代 20 线程，Release）：
+
+| 阶段 | 耗时 |
+|-|-|
+| 加载 PLY | 4.5 s |
+| cluster 化（56,399 个 cluster） | 9.1 s |
+| 逐 cluster LOD（5 级） | 14.0 s |
+| 选择 + 错误图光栅化 | < 1 s |
+| **合计** | **14.8 s** |
+
+**两种模式对比（同一模型，5 级，比例 0.7）**：
+
+| 模式 | 最粗一级面数 | 最大世界空间误差 |
+|-|-|-|
+| 全局链（≈ Baseline 2 传统 LOD） | 1,733,244（24%） | **0.0169** |
+| 逐 cluster（锁定边界） | 2,366,276（33%） | **0.0779** |
+
+> **关键发现（决定 M2 后续方向）：** 逐 cluster 独立简化**多用了 36% 的三角形**，
+> 误差却是全局链的 **4.6 倍**。根因是独立简化时边界被锁死，每个 cluster 只能在自己
+> 的一小片区域里做 QEM，误差无法跨 cluster 重新分配。Nanite 采用 **cluster group**
+> （成组简化、组内共享边界）正是为了绕开这一点。因此 M2 的下一步是把简化单元从
+> 「单个 cluster」提升到「cluster 组」，同时**保留逐 cluster 的屏幕空间选择粒度**。
+
+> **另一个观察：** 对这个过采样严重的扫描模型，屏幕空间误差几乎不构成约束——即使
+> 最粗一级，最大误差也只有约 0.46 px（预算 1.0 px），把预算收紧 4 倍到 0.25 px 后
+> 选择结果几乎不变。这恰好印证了 ManyMesh 的前提：**扫描模型的面数远超声学需要，
+> 可以大幅压缩而保持亚像素精度**，真正的瓶颈在几何处理开销而非视觉质量。
 
 ---
 

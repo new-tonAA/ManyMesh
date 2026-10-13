@@ -961,6 +961,9 @@ add_subdirectory(${LIBRARIES}/imageio-lite)
 # Note that this has to be placed after mikktspace in order for combine_static_libs to work.
 add_subdirectory(${LIBRARIES}/geometry)
 
+# ManyMesh geometry optimization layer. Placed after meshoptimizer, which it links against.
+add_subdirectory(${LIBRARIES}/manymesh)
+
 if (FILAMENT_BUILD_FILAMAT OR IS_HOST_PLATFORM)
     # spirv-tools must come before filamat, as filamat relies on the presence of the
     # spirv-tools_SOURCE_DIR variable.
@@ -1045,6 +1048,7 @@ if (IS_HOST_PLATFORM)
         add_subdirectory(${TOOLS}/matedit)
     endif()
     add_subdirectory(${TOOLS}/mipgen)
+    add_subdirectory(${TOOLS}/mmgeo)
     add_subdirectory(${TOOLS}/normal-blending)
     add_subdirectory(${TOOLS}/resgen)
     add_subdirectory(${TOOLS}/rgb-to-lmsr)

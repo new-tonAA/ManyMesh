@@ -157,6 +157,8 @@ set(SRCS
     ${SRC_DIR}/code/Obj/ObjFileImporter.cpp
     ${SRC_DIR}/code/Obj/ObjFileMtlImporter.cpp
     ${SRC_DIR}/code/Obj/ObjFileParser.cpp
+    ${SRC_DIR}/code/Ply/PlyLoader.cpp
+    ${SRC_DIR}/code/Ply/PlyParser.cpp
     ${SRC_DIR}/code/PostProcessing/OptimizeGraph.cpp
     ${SRC_DIR}/code/PostProcessing/OptimizeMeshes.cpp
     ${SRC_DIR}/code/Common/PostStepRegistry.cpp
@@ -231,7 +233,8 @@ add_definitions(
     -DASSIMP_BUILD_NO_OFF_IMPORTER
     -DASSIMP_BUILD_NO_OGRE_IMPORTER
     -DASSIMP_BUILD_NO_OPENGEX_IMPORTER
-    -DASSIMP_BUILD_NO_PLY_IMPORTER
+    # PLY is intentionally enabled for ManyMesh: the Stanford scan repository, which the
+    # geometry optimization layer is benchmarked against, ships PLY.
     -DASSIMP_BUILD_NO_Q3BSP_IMPORTER
     -DASSIMP_BUILD_NO_Q3D_IMPORTER
     -DASSIMP_BUILD_NO_RAW_IMPORTER
