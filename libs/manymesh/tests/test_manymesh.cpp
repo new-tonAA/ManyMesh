@@ -16,6 +16,7 @@
 
 #include <manymesh/Clusterizer.h>
 #include <manymesh/GeometryError.h>
+#include <manymesh/Grouper.h>
 #include <manymesh/Mesh.h>
 #include <manymesh/Simplifier.h>
 
@@ -321,6 +322,115 @@ TEST(ManyMesh, LockBorderKeepsClusterBoundaryVertices) {
     }
 
     EXPECT_GT(checked, 0u);
+}
+
+TEST(ManyMesh, GroupingCoversEveryTriangleAndEnclosesItsMembers) {
+    Mesh const mesh = makeGrid(24, 24, {}, 1.0f, 0.4f);
+
+    ClusterizeOptions clusterizeOptions;
+    clusterizeOptions.maxVertices = 64;
+    clusterizeOptions.maxTriangles = 64;
+    ClusterSet const clusters = clusterize(mesh, clusterizeOptions);
+
+    uint32_t const groupSize = 4;
+    GroupOptions groupOptions;
+    groupOptions.clustersPerGroup = groupSize;
+    ClusterSet const groups = groupClusters(clusters, groupOptions);
+
+    // Grouping rebundles triangles, it neither adds nor drops any.
+    EXPECT_EQ(trianglesOf(groups), trianglesOf(mesh));
+    EXPECT_EQ(groups.clusters.size(),
+            (clusters.clusters.size() + groupSize - 1) / groupSize);
+
+    // The merged sphere has to contain every member's, otherwise selection would under
+    // estimate how close a group comes to the camera.
+    for (size_t g = 0; g < groups.clusters.size(); ++g) {
+        Sphere const& group = groups.clusters[g].bounds;
+        size_t const first = g * groupSize;
+        size_t const last = std::min(first + groupSize, clusters.clusters.size());
+        for (size_t c = first; c < last; ++c) {
+            Sphere const& member = clusters.clusters[c].bounds;
+            EXPECT_LE(length(member.center - group.center) + member.radius, group.radius + 1e-3f)
+                    << "group " << g << " does not contain member " << c;
+        }
+    }
+}
+
+TEST(ManyMesh, GroupingTurnsMemberBordersIntoInteriorEdges) {
+    Mesh const mesh = makeGrid(24, 24, {}, 1.0f, 0.4f);
+
+    ClusterizeOptions clusterizeOptions;
+    clusterizeOptions.maxVertices = 64;
+    clusterizeOptions.maxTriangles = 64;
+    ClusterSet const clusters = clusterize(mesh, clusterizeOptions);
+
+    GroupOptions groupOptions;
+    groupOptions.clustersPerGroup = 8;
+    ClusterSet const groups = groupClusters(clusters, groupOptions);
+
+    // The border lock is what makes independent simplification expensive: a locked vertex can
+    // never be removed. Grouping is only worth it if it demonstrably unlocks vertices, by
+    // turning the members' shared edges into edges interior to the group.
+    size_t memberBorderTotal = 0;
+    for (Cluster const& cluster : clusters.clusters) {
+        memberBorderTotal += borderVertices(cluster.indices).size();
+    }
+    size_t groupBorderTotal = 0;
+    for (Cluster const& group : groups.clusters) {
+        groupBorderTotal += borderVertices(group.indices).size();
+    }
+
+    EXPECT_LT(groupBorderTotal, memberBorderTotal);
+}
+
+TEST(ManyMesh, GroupingLowersErrorAtAComparableReduction) {
+    // A mesh large enough that clusters are genuinely small patches: on a tiny grid the
+    // triangle budget, not the border lock, decides the outcome and grouping changes nothing.
+    Mesh mesh;
+    for (int tile = 0; tile < 4; ++tile) {
+        Mesh const patch = makeGrid(40, 40,
+                { float(tile % 2) * 60.0f, float(tile / 2) * 60.0f, float(tile) * 4.0f },
+                1.0f, 0.8f);
+        append(&mesh, patch);
+    }
+
+    ClusterizeOptions clusterizeOptions;
+    clusterizeOptions.maxVertices = 64;
+    clusterizeOptions.maxTriangles = 64;
+    ClusterSet const clusters = clusterize(mesh, clusterizeOptions);
+
+    SimplifyOptions options;
+    options.levels = 4;
+    options.ratio = 0.5f;
+    options.lockBorder = true;
+
+    std::vector<ClusterLods> const alone = simplifyClusters(mesh, clusters, options);
+
+    GroupOptions groupOptions;
+    groupOptions.clustersPerGroup = 16;
+    ClusterSet const groups = groupClusters(clusters, groupOptions);
+    std::vector<ClusterLods> const grouped = simplifyClusters(mesh, groups, options);
+
+    // Triangle-weighted mean, which is far more stable than the worst single unit.
+    auto meanErrorAtLevel = [](std::vector<ClusterLods> const& lods, size_t level) {
+        double weighted = 0.0;
+        uint64_t triangles = 0;
+        for (ClusterLods const& unit : lods) {
+            if (level < unit.levels.size()) {
+                uint64_t const count = unit.levels[level].triangleCount();
+                weighted += double(unit.levels[level].worldError) * double(count);
+                triangles += count;
+            }
+        }
+        return triangles > 0 ? weighted / double(triangles) : 0.0;
+    };
+
+    // Both configurations keep ratio^level of their own triangles, so the same level index is
+    // a comparable amount of reduction; compare at the coarsest level both reach.
+    size_t const level = std::min(alone[0].levels.size(), grouped[0].levels.size()) - 1;
+    ASSERT_GE(level, 1u);
+
+    EXPECT_LT(meanErrorAtLevel(grouped, level), meanErrorAtLevel(alone, level));
 }
 
 int main(int argc, char** argv) {

@@ -16,6 +16,7 @@
 
 #include <manymesh/Clusterizer.h>
 #include <manymesh/GeometryError.h>
+#include <manymesh/Grouper.h>
 #include <manymesh/Mesh.h>
 #include <manymesh/Simplifier.h>
 
@@ -54,6 +55,7 @@ struct Options {
     uint32_t clusterVertices = 128;
     uint32_t clusterTriangles = 128;
     float coneWeight = 0.0f;
+    uint32_t groupSize = 1;
     bool lockBorder = true;
 
     bool dumpObj = true;
@@ -87,6 +89,7 @@ Options:
   --cluster-verts N    max vertices per cluster, <= 255 (default: 128)
   --cluster-tris N     max triangles per cluster, <= 512 (default: 128)
   --cone-weight F      0 = size driven clusters, 1 = favour cone culling (default: 0)
+  --group-size N       clusters merged into one simplification unit (default: 1)
   --lock-border 0|1    per-cluster mode: never move cluster borders (default: 1)
   --dump-obj 0|1       write the simplified meshes as OBJ (default: 1)
   --write-json 0|1     write clusters.json (default: 1)
@@ -290,19 +293,33 @@ void printClusterStats(ClusterSet const& clusters, std::vector<ClusterLods> cons
             clusters.clusters.size(),
             lods.empty() ? 0.0 : totalError / double(lods.size()), maxLevels);
 
-    printf("  %-6s %14s %14s %14s\n", "level", "triangles", "clusters", "max world error");
+    // The mean is weighted by triangles, because a unit's error only matters in proportion to
+    // how much geometry carries it. Reporting the maximum alone is misleading: it is decided
+    // by a single worst unit and swings wildly between configurations.
+    printf("  %-6s %14s %14s %14s %14s\n",
+            "level", "triangles", "units", "mean w.error", "max w.error");
     for (size_t l = 0; l < maxLevels; ++l) {
         uint64_t triangles = 0;
         size_t count = 0;
         float worst = 0.0f;
+        double weightedError = 0.0;
+        uint64_t weightedTriangles = 0;
         for (ClusterLods const& clusterLods : lods) {
             if (l < clusterLods.levels.size()) {
-                triangles += clusterLods.levels[l].triangleCount();
-                worst = std::max(worst, clusterLods.levels[l].worldError);
+                LodLevel const& level = clusterLods.levels[l];
+                uint64_t const tris = level.triangleCount();
+                triangles += tris;
+                worst = std::max(worst, level.worldError);
+                weightedError += double(level.worldError) * double(tris);
+                weightedTriangles += tris;
                 count += 1;
             }
         }
-        printf("  %-6zu %14llu %14zu %14.6f\n", l, (unsigned long long)triangles, count, worst);
+        double const mean = weightedTriangles > 0
+                ? weightedError / double(weightedTriangles)
+                : 0.0;
+        printf("  %-6zu %14llu %14zu %14.6f %14.6f\n", l, (unsigned long long)triangles, count,
+                mean, worst);
     }
 }
 
@@ -425,6 +442,7 @@ int handleArguments(int argc, char* argv[], Options* options) {
         { "cluster-verts", utils::getopt::required_argument, 0, 'v' },
         { "cluster-tris", utils::getopt::required_argument, 0, 't' },
         { "cone-weight", utils::getopt::required_argument, 0, 'w' },
+        { "group-size", utils::getopt::required_argument, 0, 'g' },
         { "lock-border", utils::getopt::required_argument, 0, 'b' },
         { "dump-obj", utils::getopt::required_argument, 0, 'd' },
         { "write-json", utils::getopt::required_argument, 0, 'j' },
@@ -480,6 +498,9 @@ int handleArguments(int argc, char* argv[], Options* options) {
                 break;
             case 'w':
                 options->coneWeight = float(atof(arg));
+                break;
+            case 'g':
+                options->groupSize = std::max(1u, uint32_t(atoi(arg)));
                 break;
             case 'b':
                 options->lockBorder = atoi(arg) != 0;
@@ -604,8 +625,18 @@ int main(int argc, char* argv[]) {
     clusterizeOptions.maxTriangles = options.clusterTriangles;
     clusterizeOptions.coneWeight = options.coneWeight;
 
-    ClusterSet const clusters = clusterize(mesh, clusterizeOptions);
+    ClusterSet clusters = clusterize(mesh, clusterizeOptions);
     printf("  clustered: %zu clusters (%.2fs)\n", clusters.clusters.size(), elapsed());
+
+    if (options.groupSize > 1) {
+        // Merging neighbours before simplifying is what lets the border lock only apply to
+        // the group's outer boundary, so the members' shared edges become collapsible.
+        GroupOptions groupOptions;
+        groupOptions.clustersPerGroup = options.groupSize;
+        clusters = groupClusters(clusters, groupOptions);
+        printf("  grouped:   %zu simplification units of up to %u clusters\n",
+                clusters.clusters.size(), options.groupSize);
+    }
 
     SimplifyOptions simplifyOptions;
     simplifyOptions.levels = options.levels;

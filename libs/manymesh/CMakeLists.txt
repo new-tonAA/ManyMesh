@@ -11,6 +11,7 @@ set(PUBLIC_HDRS
         include/manymesh/Cluster.h
         include/manymesh/Clusterizer.h
         include/manymesh/GeometryError.h
+        include/manymesh/Grouper.h
         include/manymesh/Mesh.h
         include/manymesh/Simplifier.h
 )
@@ -18,6 +19,7 @@ set(PUBLIC_HDRS
 set(SRCS
         src/Clusterizer.cpp
         src/GeometryError.cpp
+        src/Grouper.cpp
         src/Mesh.cpp
         src/Simplifier.cpp
 )

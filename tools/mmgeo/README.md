@@ -16,8 +16,11 @@ high poly mesh
   clusterize (meshoptimizer meshlets)      -> per-cluster bounding sphere + normal cone
       |
       v
-  per-cluster QEM simplification           -> a LOD chain per cluster, border locked so that
-                                              neighbouring clusters do not crack apart
+  group neighbouring clusters (optional)   -> the unit simplification actually works on
+      |
+      v
+  QEM simplification                       -> a LOD chain per unit, border locked so that
+                                              neighbouring units do not crack apart
       |
       v
   screen space error + level selection     -> coarsest level per cluster that fits a pixel
@@ -56,6 +59,7 @@ mmgeo <input mesh> [options]
   --cluster-verts N    max vertices per cluster, <= 255 (default: 128)
   --cluster-tris N     max triangles per cluster, <= 512 (default: 128)
   --cone-weight F      0 = size driven clusters, 1 = favour cone culling (default: 0)
+  --group-size N       clusters merged into one simplification unit (default: 1)
   --lock-border 0|1    per-cluster mode: never move cluster borders (default: 1)
   --eye x,y,z          camera position; omit to auto-frame the mesh
   --look-at x,y,z      camera target (default: mesh centre)
@@ -137,29 +141,48 @@ which is gitignored — the model is not redistributed with this repository.
 ## Measured behaviour
 
 On the Stanford Asian Dragon (3,609,600 vertices, 7,219,045 triangles) on an Intel 12th gen
-laptop CPU, a full per-cluster run takes about 15 seconds: 4.5 s to load, 9.1 s to build
-56,399 clusters, 14.0 s to build five levels for every one of them, under a second to select
+laptop CPU, a full per-cluster run takes about 15 seconds: 4.6 s to load, 9.0 s to build
+56,399 clusters, 14.2 s to build five levels for every one of them, under a second to select
 and rasterize. Memory peaks around 550 MB.
 
-The two modes are not equivalent, and the difference is the interesting part:
+Each level keeps `ratio^level` of its unit's triangles, so comparing configurations at the
+same level index compares them at the same amount of reduction. Level 3 keeps about 34%:
 
-| Mode | Coarsest level | Max world error |
-|-|-|-|
-| `chain` (the classic baseline) | 1,733,244 triangles (24%) | 0.0169 |
-| `cluster` (border locked) | 2,366,276 triangles (33%) | 0.0779 |
+| Configuration | Units | Triangles | Mean world error | Max world error |
+|-|-|-|-|-|
+| `--group-size 1` | 56,399 | 2,374,748 | 0.013533 | 0.255045 |
+| `--group-size 8` | 7,050 | 2,468,995 | 0.009080 | 0.175334 |
+| `--group-size 32` | 1,763 | 2,474,497 | 0.007927 | 0.031153 |
+| `--group-size 64` | 882 | 2,474,495 | 0.007702 | 0.024651 |
+| `--mode chain` | 1 | 2,476,053 | – (a single global bound) | 0.012313 |
 
-Simplifying each cluster in isolation costs **4.6x the error for 36% more triangles**: with
-its border locked, a cluster can only remove triangles inside its own patch, and error cannot
-be redistributed across the mesh the way a global simplification does. This is the same
-problem Nanite solves with *cluster groups* — simplifying groups of adjacent clusters together
-with a border that is shared inside the group — and it is the next thing to try here. The
-per-cluster selection granularity is worth keeping either way.
+Three things fall out of this:
 
-A second observation: for a densely oversampled scan, screen space error barely binds at all.
-Even at the coarsest level the worst cluster sits around 0.46 px against a 1.0 px budget, and
-tightening the budget to 0.25 px changes almost nothing. That is the premise ManyMesh is built
-on — scans carry far more triangles than the image needs — and it means the win has to come
-from reducing *processing cost*, not from chasing visible artefacts.
+1. **Simplifying clusters alone is structurally expensive.** Even the *mean* error, 0.0135,
+   is worse than the global chain's *worst* error, 0.0123. With its border locked a cluster
+   can only remove triangles inside its own patch, and error cannot be redistributed the way
+   a global simplification redistributes it.
+2. **Grouping buys most of that back, monotonically.** Mean error falls 0.01353 → 0.00770
+   (43%) from 1 to 64 clusters per group, and the worst error drops from 0.255 to 0.025. The
+   lock then only covers the *group's* outer boundary; edges the members share become interior
+   and are free to collapse. This is Nanite's cluster group idea, and here it cost one extra
+   function — a group is just a bigger cluster, so everything downstream is reused unchanged.
+3. **The global chain still wins.** On the only directly comparable number, the chain's worst
+   case (0.0123) beats group 64's (0.0247). Grouping narrows the gap but cannot close it,
+   because a group's outer boundary is still locked while the chain may move any border it
+   likes. Hierarchical groups, or a cluster DAG, are the obvious next step.
+
+A note on reading these numbers: `meshopt_simplify`'s `target_error` is relative to the extent
+of the vertex buffer it is handed, so it has to be rescaled to world units per unit — otherwise
+the same "1%" would mean a different absolute deformation for a big group than for a small
+cluster, and the cap rather than the triangle budget would decide the outcome. `Simplifier.cpp`
+does that rescaling.
+
+Finally, for a densely oversampled scan the pixel budget is a weak lever: tightening it from
+2.0 px to 0.1 px only moves the drawn triangle count from 27.4% to 36.5%, because most
+clusters are already at their coarsest level. That is the premise ManyMesh is built on — scans
+carry far more triangles than the image needs — and it means the win has to come from reducing
+*processing cost*, not from chasing visible artefacts.
 
 ## Implementation notes
 

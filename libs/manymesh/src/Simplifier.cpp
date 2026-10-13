@@ -55,22 +55,25 @@ size_t targetIndexCountForLevel(size_t baseIndexCount, uint32_t level, float rat
 }
 
 /**
- * Simplify one cluster.
+ * Simplify one unit (a cluster, or a group of them).
  *
  * meshopt_simplify sizes its working memory from `vertex_count`, not from how many vertices
- * the indices actually reference. Handing it the whole mesh's vertex buffer for a cluster of
- * 128 triangles would make it allocate and initialise a quadric per vertex of the entire
- * model — on a seven million triangle scan that is a few hundred megabytes, per cluster, per
- * level. Clusters therefore get a compacted vertex buffer of their own, and the result is
- * mapped back to the shared one.
+ * the indices actually reference. Handing it the whole mesh's vertex buffer for a unit of 128
+ * triangles would make it allocate and initialise a quadric per vertex of the entire model —
+ * on a seven million triangle scan that is a few hundred megabytes, per unit, per level.
+ * Units therefore get a compacted vertex buffer of their own, and the result is mapped back to
+ * the shared one.
  *
- * `remap` is scratch space reused across clusters: it maps a mesh vertex to its index in the
- * current cluster's local buffer, or -1 when unused. Only the vertices the cluster actually
- * touched are reset, so the cost stays proportional to the cluster, not to the mesh.
+ * `remap` is scratch space reused across units: it maps a mesh vertex to its index in the
+ * current unit's local buffer, or -1 when unused. Only the vertices the unit actually touched
+ * are reset, so the cost stays proportional to the unit, not to the mesh.
+ *
+ * `meshScale` is `relativeToWorldScale` of the whole mesh, used to rescale the error cap — see
+ * below.
  */
 void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
         std::vector<int32_t>* remap, size_t targetIndexCount, float targetError,
-        unsigned int options, LodLevel* out) {
+        float meshScale, unsigned int options, LodLevel* out) {
     std::vector<math::float3> localPositions;
     std::vector<uint32_t> localToGlobal;
     std::vector<uint32_t> localIndices(source.size());
@@ -89,23 +92,29 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
         localIndices[i] = uint32_t(local);
     }
 
+    // meshopt interprets target_error relative to the extent of the buffer it is handed, which
+    // here is the *unit's* extent, not the mesh's. Passed through unchanged, "1% error" would
+    // mean a far larger absolute deviation for a big group than for a small cluster, and the
+    // cap — not the triangle budget — would be what decides the outcome. Rescaling it fixes the
+    // cap in world units so that units of any size are held to the same standard.
+    float const localScale = meshopt_simplifyScale(&localPositions[0].x, localPositions.size(),
+            sizeof(math::float3));
+    float const localTargetError = targetError * meshScale / std::max(localScale, 1e-6f);
+
     std::vector<uint32_t> destination(localIndices.size());
     float resultError = 0.0f;
 
     size_t const resultCount = meshopt_simplify(destination.data(), localIndices.data(),
             localIndices.size(), &localPositions[0].x, localPositions.size(),
-            sizeof(math::float3), targetIndexCount, targetError, options, &resultError);
+            sizeof(math::float3), targetIndexCount, localTargetError, options, &resultError);
 
     out->indices.resize(resultCount);
     for (size_t i = 0; i < resultCount; ++i) {
         out->indices[i] = localToGlobal[destination[i]];
     }
 
-    // meshoptimizer reports error relative to the extent of the buffer it was handed, so the
-    // conversion to world units has to use the *cluster's* scale, not the whole mesh's. Using
-    // the global one would overstate every cluster's error by the ratio of the two extents.
-    float const localScale = meshopt_simplifyScale(&localPositions[0].x, localPositions.size(),
-            sizeof(math::float3));
+    // Likewise, the reported error is relative to the unit's extent, so the conversion back to
+    // world units has to use the unit's scale.
     out->relativeError = resultError;
     out->worldError = resultError * localScale;
 
@@ -193,7 +202,8 @@ std::vector<ClusterLods> simplifyClusters(Mesh const& mesh, ClusterSet const& cl
             }
 
             LodLevel next;
-            simplifyClusterInto(base, mesh, &remap, target, options.targetError, flags, &next);
+            simplifyClusterInto(base, mesh, &remap, target, options.targetError, worldScale,
+                    flags, &next);
 
             if (next.indices.size() >= lods.levels.back().indices.size()) {
                 break;
