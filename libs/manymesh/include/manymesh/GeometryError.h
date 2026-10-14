@@ -93,6 +93,17 @@ Selection selectClusters(std::vector<Cluster> const& clusters,
         std::vector<ClusterLods> const& lods, ViewCamera const& camera, float thresholdPx);
 
 /**
+ * Same, but with every cluster pinned to one level.
+ *
+ * A view dependent selection gives every camera its own geometry, which is right for rendering
+ * and awkward for producing training data: each view would need its own mesh loaded. Pinning
+ * the level decouples the two - one mesh serves every view, and only the projected error map
+ * changes with the camera. Pass `level < 0` for the normal selection.
+ */
+Selection selectClustersAtLevel(std::vector<Cluster> const& clusters,
+        std::vector<ClusterLods> const& lods, ViewCamera const& camera, uint32_t level);
+
+/**
  * Software-rasterizes the per-cluster screen space error of a selection into a binary PPM.
  *
  * This is the offline prototype of the "Geometry Error Map" that ManyMesh wants to feed to

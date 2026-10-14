@@ -121,8 +121,11 @@ float screenSpaceError(float worldError, math::float3 worldPosition, ViewCamera 
     return screenErrorAtDepth(worldError, depth, basis.pixelsPerRadian, camera.near);
 }
 
-Selection selectClusters(std::vector<Cluster> const& clusters,
-        std::vector<ClusterLods> const& lods, ViewCamera const& camera, float thresholdPx) {
+namespace {
+
+//! level < 0 means "pick per view", anything else pins every cluster to that level.
+Selection selectImpl(std::vector<Cluster> const& clusters, std::vector<ClusterLods> const& lods,
+        ViewCamera const& camera, float thresholdPx, int forcedLevel) {
     Selection selection;
 
     size_t const count = std::min(clusters.size(), lods.size());
@@ -147,7 +150,9 @@ Selection selectClusters(std::vector<Cluster> const& clusters,
         }
 
         size_t chosen = 0;
-        if (haveCamera) {
+        if (forcedLevel >= 0) {
+            chosen = std::min(size_t(forcedLevel), clusterLods.levels.size() - 1);
+        } else if (haveCamera) {
             // Walk from the coarsest level down and take the first one that still fits the
             // pixel budget. When even full detail does not fit, full detail is what we keep:
             // there is nothing better available.
@@ -179,6 +184,18 @@ Selection selectClusters(std::vector<Cluster> const& clusters,
     }
 
     return selection;
+}
+
+} // anonymous namespace
+
+Selection selectClusters(std::vector<Cluster> const& clusters,
+        std::vector<ClusterLods> const& lods, ViewCamera const& camera, float thresholdPx) {
+    return selectImpl(clusters, lods, camera, thresholdPx, -1);
+}
+
+Selection selectClustersAtLevel(std::vector<Cluster> const& clusters,
+        std::vector<ClusterLods> const& lods, ViewCamera const& camera, uint32_t level) {
+    return selectImpl(clusters, lods, camera, 0.0f, int(level));
 }
 
 void writeErrorMap(Mesh const& mesh, std::vector<Cluster> const& clusters,

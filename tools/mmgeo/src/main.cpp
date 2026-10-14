@@ -56,6 +56,7 @@ struct Options {
     uint32_t clusterTriangles = 128;
     float coneWeight = 0.0f;
     uint32_t groupSize = 1;
+    int errorLevel = -1;
     bool lockBorder = true;
 
     bool dumpObj = true;
@@ -91,6 +92,8 @@ Options:
   --cluster-tris N     max triangles per cluster, <= 512 (default: 128)
   --cone-weight F      0 = size driven clusters, 1 = favour cone culling (default: 0)
   --group-size N       clusters merged into one simplification unit (default: 1)
+  --error-level K      pin every cluster to level K instead of selecting per view
+                       (-1, the default, selects from the camera)
   --lock-border 0|1    per-cluster mode: never move cluster borders (default: 1)
   --dump-obj 0|1       write the simplified meshes (default: 1)
   --dump-format f      obj or ply; ply is binary and loads far faster (default: ply)
@@ -501,6 +504,7 @@ int handleArguments(int argc, char* argv[], Options* options) {
         { "cluster-tris", utils::getopt::required_argument, 0, 't' },
         { "cone-weight", utils::getopt::required_argument, 0, 'w' },
         { "group-size", utils::getopt::required_argument, 0, 'g' },
+        { "error-level", utils::getopt::required_argument, 0, 'K' },
         { "lock-border", utils::getopt::required_argument, 0, 'b' },
         { "dump-obj", utils::getopt::required_argument, 0, 'd' },
         { "dump-format", utils::getopt::required_argument, 0, 'F' },
@@ -560,6 +564,9 @@ int handleArguments(int argc, char* argv[], Options* options) {
                 break;
             case 'g':
                 options->groupSize = std::max(1u, uint32_t(atoi(arg)));
+                break;
+            case 'K':
+                options->errorLevel = atoi(arg);
                 break;
             case 'b':
                 options->lockBorder = atoi(arg) != 0;
@@ -733,8 +740,9 @@ int main(int argc, char* argv[]) {
     }
 
     ViewCamera const camera = makeCamera(options, mesh);
-    Selection const selection =
-            selectClusters(clusters.clusters, lods, camera, options.thresholdPx);
+    Selection const selection = options.errorLevel >= 0
+            ? selectClustersAtLevel(clusters.clusters, lods, camera, uint32_t(options.errorLevel))
+            : selectClusters(clusters.clusters, lods, camera, options.thresholdPx);
     printSelectionStats(selection, camera, options.thresholdPx);
 
     if (options.dumpObj) {
