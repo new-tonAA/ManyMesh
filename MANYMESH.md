@@ -221,11 +221,12 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
 - [x] **M0 — 基础设施**
   - 拉取 Filament 源码树（本仓库）
   - Windows 桌面编译链打通（核心库 + 工具链 + 可运行样例）
-- [ ] **M1 — 基础渲染与度量基线**
-  - [x] 可运行样例渲染场景（`material_sandbox`）
+- [x] **M1 — 基础渲染与度量基线**（首个切片，见 §7.2）
   - [x] 找到并接入**超多面数测试场景**（Stanford Asian Dragon，7,219,045 三角面）
-  - [ ] 搭好画质度量（PSNR / SSIM / LPIPS）与性能采集（GPU time / memory / 功耗）
-  - [ ] 用 Filament 渲染高模场景并采集真实 FPS / GPU time
+  - [x] 离线渲染 harness `samples/mm_bench`（固定相机/材质/曝光，无 UI，headless）
+  - [x] 画质度量 `tools/mmmetrics/compare.py`（PSNR / SSIM，LPIPS 可选）与 GPU 帧时采集
+  - [x] 跑出 Baseline 2（传统 LOD）的面数-画质-帧时真实数据
+  - [ ] LPIPS 接入；多视角统计；移动端真机（功耗/发热）
 - [x] **M2 — 几何侧：Mobile Geometry Optimization Layer**（首个切片，见 §7.1）
   - 离线 mesh cluster 化 + 每 cluster 的 error metric
   - 屏幕空间误差驱动的 cluster 选择
@@ -305,6 +306,51 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
 > 从 2.0 px 收紧 20 倍到 0.1 px，绘制面数只从 27.4% 升到 36.5%（大部分 cluster
 > 早已处于自己最粗的一级）。这恰好印证 ManyMesh 的前提：**扫描模型的面数远超
 > 视觉需要**，真正的瓶颈在几何处理开销而非视觉质量。
+
+---
+
+### 7.2 M1 首个切片结果：渲染与画质基线
+
+要判断「用几何换画质」划不划算，必须有办法**渲染出图并量化画质**。本仓库此前只有
+`tools/diffimg` 这类容差比较（回答"变没变"），能回答"降了多少"的 PSNR/SSIM/LPIPS
+一个都没有。
+
+**新增**：
+
+- `samples/mm_bench` —— 离屏渲染 harness。固定相机、材质、光照、曝光，**不绘制任何 UI**，
+  输出 PNG 并报告 GPU 帧时（median / p99 / max）。
+- `tools/mmmetrics/compare.py` —— PSNR / SSIM /（可选）LPIPS + 差异图。
+
+> **踩到的坑（值得记下来）：** 不要把 view 留在 Filament 的 camera manipulator 上。
+> manipulator 的投影来自窗口事件，而离屏渲染永远不会有窗口事件，结果是**整个场景什么都
+> 不画**——不报错，只是一帧空白。必须自己 `Engine::createCamera()` 再
+> `View::setCamera()`。`samples/hellotriangle` 是这么做的；`material_sandbox` 不是，
+> 所以它的 headless 截图里只有 ImGui 面板、没有模型。
+
+**实测**（Stanford Asian Dragon → 全局链 LOD；1280×720；Intel Iris Xe；OpenGL 后端）：
+
+| 面数 | 占原始 | GPU 帧时 (median) | PSNR | SSIM |
+|-|-|-|-|-|
+| 7,219,045 | 100% | 36.36 ms | —— | —— |
+| 5,053,330 | 70% | 26.42 ms | 35.69 dB | 0.9792 |
+| 3,537,268 | 49% | 20.64 ms | 31.42 dB | 0.9570 |
+| 2,476,053 | 34% | 15.35 ms | 31.31 dB | 0.9554 |
+| 1,733,244 | 24% | 11.49 ms | 30.92 dB | 0.9526 |
+
+**观察：**
+
+1. **降到 24% 面数，GPU 时间省掉 68%**（36.4 → 11.5 ms），代价是 4.8 dB PSNR、
+   0.027 SSIM。这是 Baseline 2（传统 LOD）的第一组真实数据点。
+2. **画质损失不是均匀的，存在一个"拐点"**：70% → 49% 掉了 4.3 dB，而从 49% 一路降到
+   24% 只再掉 0.5 dB。也就是说**降到一半左右之后，继续压缩在图像上几乎免费**——
+   这与 §7.1 的结论一致（扫描模型过采样严重），也说明「几何预算」应该按
+   误差曲线而非面数比例来分配。
+3. **差异是集中在边缘的**：70% 那档有 **88.2% 的像素逐位相同**，而较大差异
+   （≥8 个 8-bit 级）**97.8% 落在边缘上**。这正是 M3 神经重建该发力的位置，
+   也为「Geometry Error Map 应当加权边缘区域」提供了直接依据。
+
+**尚未做**：LPIPS（需 `pip install lpips`，torch 已就绪）；移动端真机数据（本机是桌面
+核显，功耗/发热无法代表手机）；多视角统计（目前是单一固定视角）。
 
 ---
 

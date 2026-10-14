@@ -59,6 +59,7 @@ struct Options {
     bool lockBorder = true;
 
     bool dumpObj = true;
+    bool dumpPly = true;
     bool writeJson = true;
 
     // ViewCamera. When absent, one is framed automatically around the mesh so that a selection
@@ -91,7 +92,8 @@ Options:
   --cone-weight F      0 = size driven clusters, 1 = favour cone culling (default: 0)
   --group-size N       clusters merged into one simplification unit (default: 1)
   --lock-border 0|1    per-cluster mode: never move cluster borders (default: 1)
-  --dump-obj 0|1       write the simplified meshes as OBJ (default: 1)
+  --dump-obj 0|1       write the simplified meshes (default: 1)
+  --dump-format f      obj or ply; ply is binary and loads far faster (default: ply)
   --write-json 0|1     write clusters.json (default: 1)
   --eye x,y,z          camera position; omit to auto-frame the mesh
   --look-at x,y,z      camera target (default: mesh centre)
@@ -178,6 +180,51 @@ bool loadMesh(char const* path, Mesh* mesh) {
     return true;
 }
 
+// Writes the mesh as binary little-endian PLY, referencing only the vertices the triangles
+// actually use.
+//
+// Binary matters for speed rather than size: assimp reads the seven million triangle scan in
+// about five seconds, where the same geometry as OBJ text takes minutes of parsing, and a
+// comparison run renders several levels of the same asset.
+void writePly(Mesh const& mesh, std::vector<uint32_t> const& indices, char const* path) {
+    std::vector<int32_t> remap(mesh.positions.size(), -1);
+    std::vector<uint32_t> vertices;
+    std::vector<uint32_t> faces(indices.size());
+
+    for (size_t i = 0; i < indices.size(); ++i) {
+        uint32_t const global = indices[i];
+        int32_t& local = remap[global];
+        if (local < 0) {
+            local = int32_t(vertices.size());
+            vertices.push_back(global);
+        }
+        faces[i] = uint32_t(local);
+    }
+
+    std::ofstream file(path, std::ios::binary | std::ios::trunc);
+    if (!file) {
+        std::cerr << "Could not open '" << path << "' for writing" << std::endl;
+        return;
+    }
+
+    size_t const faceCount = faces.size() / 3;
+    file << "ply\nformat binary_little_endian 1.0\n";
+    file << "element vertex " << vertices.size() << "\n";
+    file << "property float x\nproperty float y\nproperty float z\n";
+    file << "element face " << faceCount << "\n";
+    file << "property list uchar int vertex_indices\n";
+    file << "end_header\n";
+
+    for (uint32_t vertex : vertices) {
+        file.write(reinterpret_cast<char const*>(&mesh.positions[vertex].x), sizeof(float) * 3);
+    }
+    for (size_t face = 0; face < faceCount; ++face) {
+        unsigned char const count = 3;
+        file.write(reinterpret_cast<char const*>(&count), 1);
+        file.write(reinterpret_cast<char const*>(&faces[face * 3]), sizeof(uint32_t) * 3);
+    }
+}
+
 void writeObj(Mesh const& mesh, std::vector<uint32_t> const& indices, char const* path) {
     std::ofstream file(path);
     if (!file) {
@@ -190,6 +237,17 @@ void writeObj(Mesh const& mesh, std::vector<uint32_t> const& indices, char const
     for (size_t i = 0; i + 2 < indices.size(); i += 3) {
         file << "f " << (indices[i + 0] + 1) << ' ' << (indices[i + 1] + 1) << ' '
              << (indices[i + 2] + 1) << '\n';
+    }
+}
+
+// Writes one mesh to the output directory, in whichever format was asked for.
+void dumpMesh(Mesh const& mesh, std::vector<uint32_t> const& indices, Options const& options,
+        std::string const& stem) {
+    std::string const path = join(options.outDir, stem + (options.dumpPly ? ".ply" : ".obj"));
+    if (options.dumpPly) {
+        writePly(mesh, indices, path.c_str());
+    } else {
+        writeObj(mesh, indices, path.c_str());
     }
 }
 
@@ -445,6 +503,7 @@ int handleArguments(int argc, char* argv[], Options* options) {
         { "group-size", utils::getopt::required_argument, 0, 'g' },
         { "lock-border", utils::getopt::required_argument, 0, 'b' },
         { "dump-obj", utils::getopt::required_argument, 0, 'd' },
+        { "dump-format", utils::getopt::required_argument, 0, 'F' },
         { "write-json", utils::getopt::required_argument, 0, 'j' },
         { "eye", utils::getopt::required_argument, 0, 'E' },
         { "look-at", utils::getopt::required_argument, 0, 'L' },
@@ -507,6 +566,14 @@ int handleArguments(int argc, char* argv[], Options* options) {
                 break;
             case 'd':
                 options->dumpObj = atoi(arg) != 0;
+                break;
+            case 'F':
+                options->dumpPly = (strcmp(arg, "ply") == 0);
+                if (!options->dumpPly && strcmp(arg, "obj") != 0) {
+                    std::cerr << "Unknown dump format '" << arg << "', expected 'obj' or 'ply'"
+                              << std::endl;
+                    return -1;
+                }
                 break;
             case 'j':
                 options->writeJson = atoi(arg) != 0;
@@ -606,10 +673,9 @@ int main(int argc, char* argv[]) {
 
         if (options.dumpObj) {
             for (size_t l = 0; l < levels.size(); ++l) {
-                std::string const path = join(options.outDir, "lod" + std::to_string(l) + ".obj");
-                writeObj(mesh, levels[l].indices, path.c_str());
+                dumpMesh(mesh, levels[l].indices, options, "lod" + std::to_string(l));
             }
-            printf("  wrote %zu OBJ files to %s\n", levels.size(), options.outDir.c_str());
+            printf("  wrote %zu mesh files to %s\n", levels.size(), options.outDir.c_str());
         }
 
         printf("\n  total time: %.2fs\n", elapsed());
@@ -661,10 +727,9 @@ int main(int argc, char* argv[]) {
             if (indices.empty()) {
                 break;
             }
-            std::string const path = join(options.outDir, "lod" + std::to_string(l) + ".obj");
-            writeObj(mesh, indices, path.c_str());
+            dumpMesh(mesh, indices, options, "lod" + std::to_string(l));
         }
-        printf("  wrote per-level OBJ files to %s\n", options.outDir.c_str());
+        printf("  wrote per-level mesh files to %s\n", options.outDir.c_str());
     }
 
     ViewCamera const camera = makeCamera(options, mesh);
@@ -674,8 +739,13 @@ int main(int argc, char* argv[]) {
 
     if (options.dumpObj) {
         std::vector<uint32_t> const indices = gatherSelection(lods, selection);
-        std::string const selectedPath = join(options.outDir, "selected.obj");
-        writeObj(mesh, indices, selectedPath.c_str());
+        std::string const selectedPath = join(options.outDir,
+                options.dumpPly ? "selected.ply" : "selected.obj");
+        if (options.dumpPly) {
+            writePly(mesh, indices, selectedPath.c_str());
+        } else {
+            writeObj(mesh, indices, selectedPath.c_str());
+        }
         printf("  wrote %s\n", selectedPath.c_str());
     }
 
