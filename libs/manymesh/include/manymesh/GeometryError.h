@@ -77,6 +77,12 @@ struct Selection {
     uint64_t selectedTriangles = 0;
     uint64_t baseTriangles = 0;
 
+    //! Clusters whose bounding sphere is entirely outside the view frustum. A renderer would
+    //! reject these before any level of detail mattered, and a scene is mostly made of them,
+    //! so they are counted apart from everything else.
+    std::vector<uint8_t> visiblePerCluster;
+    uint64_t culledTriangles = 0;
+
     //! How many clusters ended up on each level.
     std::vector<uint32_t> clustersPerLevel;
 

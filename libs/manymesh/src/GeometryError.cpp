@@ -106,6 +106,29 @@ ScreenVertex project(math::float3 const& position, ViewCamera const& camera, Bas
     return out;
 }
 
+//! True when a cluster's bounding sphere lies entirely outside the view frustum.
+bool sphereOutsideFrustum(Sphere const& sphere, ViewCamera const& camera, Basis const& basis) {
+    math::float3 const d = sphere.center - camera.eye;
+    float const depth = dot(d, basis.forward);
+    if (depth + sphere.radius < camera.near) {
+        return true;  // entirely behind the near plane
+    }
+    if (depth - sphere.radius > camera.far) {
+        return true;  // entirely beyond the far plane
+    }
+    // The four side planes: a sphere is outside one when its centre is further off axis than
+    // the plane at its depth, by more than its radius.
+    float const halfHeight = depth * basis.tanHalfFovY;
+    float const halfWidth = halfHeight * basis.aspect;
+    if (std::abs(dot(d, basis.right)) - sphere.radius > halfWidth) {
+        return true;
+    }
+    if (std::abs(dot(d, basis.up)) - sphere.radius > halfHeight) {
+        return true;
+    }
+    return false;
+}
+
 float edgeFunction(float ax, float ay, float bx, float by, float px, float py) {
     return (px - ax) * (by - ay) - (py - ay) * (bx - ax);
 }
@@ -139,6 +162,7 @@ Selection selectImpl(std::vector<Cluster> const& clusters, std::vector<ClusterLo
     }
     selection.clustersPerLevel.assign(maxLevels, 0);
     selection.trianglesPerLevel.assign(maxLevels, 0);
+    selection.visiblePerCluster.assign(count, 1);
 
     Basis basis;
     bool const haveCamera = makeBasis(camera, &basis);
@@ -146,6 +170,17 @@ Selection selectImpl(std::vector<Cluster> const& clusters, std::vector<ClusterLo
     for (size_t c = 0; c < count; ++c) {
         ClusterLods const& clusterLods = lods[c];
         if (clusterLods.levels.empty()) {
+            continue;
+        }
+
+        // Counted before the cull test, so that `baseTriangles` stays the whole input and the
+        // culled share is a share of the scene rather than of what is left after culling.
+        uint64_t const clusterBaseTriangles = clusterLods.levels[0].triangleCount();
+        selection.baseTriangles += clusterBaseTriangles;
+
+        if (haveCamera && sphereOutsideFrustum(clusters[c].bounds, camera, basis)) {
+            selection.visiblePerCluster[c] = 0;
+            selection.culledTriangles += clusterBaseTriangles;
             continue;
         }
 
@@ -176,9 +211,7 @@ Selection selectImpl(std::vector<Cluster> const& clusters, std::vector<ClusterLo
         selection.screenErrorPerCluster[c] = screen;
 
         uint64_t const chosenTriangles = chosenLevel.triangleCount();
-        uint64_t const baseTriangles = clusterLods.levels[0].triangleCount();
         selection.selectedTriangles += chosenTriangles;
-        selection.baseTriangles += baseTriangles;
         selection.clustersPerLevel[chosen] += 1;
         selection.trianglesPerLevel[chosen] += chosenTriangles;
     }

@@ -402,6 +402,15 @@ void printSelectionStats(Selection const& selection, ViewCamera const& camera, f
     printf("  drawn: %llu of %llu triangles (%.1f%%)\n",
             (unsigned long long)selection.selectedTriangles,
             (unsigned long long)selection.baseTriangles, ratio);
+    if (selection.culledTriangles > 0) {
+        uint64_t const visible = selection.baseTriangles - selection.culledTriangles;
+        printf("  culled by the frustum: %llu of %llu triangles (%.1f%%)\n",
+                (unsigned long long) selection.culledTriangles,
+                (unsigned long long) selection.baseTriangles,
+                100.0 * double(selection.culledTriangles) / double(selection.baseTriangles));
+        printf("  drawn of what survives culling: %.1f%%\n",
+                100.0 * double(selection.selectedTriangles) / double(visible));
+    }
 }
 
 ViewCamera makeCamera(Options const& options, Mesh const& mesh) {
@@ -415,6 +424,15 @@ ViewCamera makeCamera(Options const& options, Mesh const& mesh) {
     if (options.hasEye) {
         camera.eye = options.eye;
         camera.target = options.lookAt;
+        // Near and far still have to bracket the scene. Leaving the defaults would put the far
+        // plane at 1000 units, which silently culls anything further away - whole scenes.
+        math::float3 lo{};
+        math::float3 hi{};
+        computeBounds(mesh, &lo, &hi);
+        float const radius = length(hi - lo) * 0.5f;
+        float const distance = length(camera.eye - camera.target);
+        camera.near = std::max(distance * 0.001f, 1e-3f);
+        camera.far = distance + radius * 4.0f + 1.0f;
         return camera;
     }
 
