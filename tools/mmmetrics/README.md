@@ -34,6 +34,23 @@ python tools/mmmetrics/compare.py \
 The reference is the first path; every path after it is a candidate, so the reference is
 not repeated in `--labels`. Labels are a single comma separated argument.
 
+## Sweep mode
+
+Rendering a mesh from one camera gives a number that depends heavily on which camera you
+happened to pick. Feed it a whole view sweep instead:
+
+```shell
+python tools/mmmetrics/compare.py --sweep     --reference-prefix out/dragon-sweep/lod0     --candidate-prefix out/dragon-sweep/lod1     --candidate-prefix out/dragon-sweep/lod2     --views 6 --labels "70pc,49pc" --json out/sweep.json
+```
+
+Files are paired as `<prefix>_v00.png`, `<prefix>_v01.png`, ... and the report gives the
+median, minimum and maximum across views rather than a single figure.
+
+This is not a nicety. On the Stanford dragon, the same mesh at the same level of detail spans
+**7.7 dB of PSNR purely across views** (30.92 to 38.58 dB at 24% of the original triangles).
+A single view can land more than 3 dB away from the median, in either direction, so a one-view
+comparison is not evidence of anything.
+
 ## Notes on the metrics
 
 - **PSNR** is computed on the 8-bit sRGB values, which is the usual convention, and is

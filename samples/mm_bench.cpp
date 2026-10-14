@@ -108,12 +108,40 @@ float3 g_eye = { 0.0f, 0.0f, 5.0f };
 float3 g_target = { 0.0f, 0.0f, 0.0f };
 int g_warmup = 30;
 int g_measure = 60;
+int g_viewCount = 1;
 
 // Frame bookkeeping.
 int g_frameCounter = 0;
-bool g_captured = false;
+int g_currentView = 0;
+int g_viewFrame = 0;
+bool g_capturing = false;
+bool g_repositionCamera = true;
 std::map<uint32_t, Renderer::FrameInfo> g_frameInfo;
 std::vector<double> g_gpuFrameMs;
+
+float3 eyeForView(int view) {
+    if (g_viewCount <= 1) {
+        return g_eye;
+    }
+    // Orbit around the world up axis through the target, keeping the elevation and distance
+    // the caller asked for, so a sweep is a pure azimuthal rotation.
+    float3 const offset = g_eye - g_target;
+    float const angle = 2.0f * 3.14159265358979323846f * float(view) / float(g_viewCount);
+    float const c = std::cos(angle);
+    float const s = std::sin(angle);
+    return g_target + float3{ offset.x * c - offset.z * s, offset.y, offset.x * s + offset.z * c };
+}
+
+std::string pathForView(std::string const& base, int view) {
+    if (g_viewCount <= 1) {
+        return base;
+    }
+    // Insert the view index before the extension: renders_v00.png, renders_v01.png, ...
+    size_t const dot = base.find_last_of('.');
+    char suffix[16];
+    snprintf(suffix, sizeof(suffix), "_v%02d", view);
+    return dot == std::string::npos ? base + suffix : base.substr(0, dot) + suffix + base.substr(dot);
+}
 
 bool parseVec3(const char* text, float3* out) {
     float x = 0.0f;
@@ -143,6 +171,16 @@ double percentileOf(std::vector<double> const& sorted, double fraction) {
 }
 
 void reportTiming() {
+    // Only the GPU duration is reported. The driver thread span is not meaningful here:
+    // rendering to an offscreen swap chain never presents, so there is no frame pacing to
+    // measure against and the begin/end timestamps are not comparable.
+    g_gpuFrameMs.clear();
+    for (auto const& [frameId, info] : g_frameInfo) {
+        if (info.gpuFrameDuration > 0) {
+            g_gpuFrameMs.push_back(double(info.gpuFrameDuration) / 1.0e6);
+        }
+    }
+
     if (g_gpuFrameMs.empty()) {
         std::cout << "frame time: no samples (GPU timing unavailable)" << std::endl;
         return;
@@ -150,7 +188,8 @@ void reportTiming() {
     std::vector<double> sorted = g_gpuFrameMs;
     std::sort(sorted.begin(), sorted.end());
 
-    printf("frame time over %zu measured frames:\n", g_gpuFrameMs.size());
+    printf("frame time over %zu measured frames from %d view(s):\n", g_gpuFrameMs.size(),
+            g_viewCount);
     printf("  GPU   median %.3f ms  p99 %.3f ms  max %.3f ms\n",
             medianOf(g_gpuFrameMs), percentileOf(sorted, 0.99), sorted.back());
 }
@@ -279,14 +318,19 @@ void cleanup(Engine* engine, View*, Scene*) {
 }
 
 void preRender(Engine*, View* view, Scene*, Renderer* renderer) {
-    // Near and far have to bracket the scene or the model gets clipped; deriving them from the
-    // camera distance keeps the harness usable for assets of any scale.
     // Without an IBL the swap chain has to be cleared explicitly, and the exposure has to be
     // pinned: both are what turns a lit scene into pixels, and both have to be identical across
     // runs for two screenshots to be comparable.
     renderer->setClearOptions({ .clearColor = { 0.0f, 0.0f, 0.0f, 1.0f }, .clear = true });
     if (g_camera != nullptr) {
         g_camera->setExposure(16.0f, 1.0f / 125.0f, 100.0f);  // f/16, 1/125s, ISO 100
+        if (g_repositionCamera) {
+            // The flag rather than a frame counter: the capture callback runs on the backend
+            // thread and can land after this callback has already run for the frame, so a
+            // counter reset would be incremented past zero before it was ever observed.
+            g_camera->lookAt(eyeForView(g_currentView), g_target, { 0.0f, 1.0f, 0.0f });
+            g_repositionCamera = false;
+        }
     }
     (void) view;
 }
@@ -321,14 +365,23 @@ void captureScreenshot(Engine*, View* view, Renderer* renderer) {
                 std::cout << "wrote " << state->path << " (" << v.width << "x" << v.height << ")"
                           << std::endl;
 
-                reportTiming();
-
                 delete[] static_cast<uint8_t*>(buffer);
-                if (g_filamentApp != nullptr) {
-                    g_filamentApp->close();
+
+                // Move on to the next view, or finish. The mesh is loaded once for the whole
+                // sweep, which is what makes a multi view dataset practical: loading it again
+                // per view costs orders of magnitude more than rendering it.
+                ++g_currentView;
+                g_viewFrame = 0;
+                g_capturing = false;
+                g_repositionCamera = true;
+                if (g_currentView >= g_viewCount) {
+                    reportTiming();
+                    if (g_filamentApp != nullptr) {
+                        g_filamentApp->close();
+                    }
                 }
             },
-            new CaptureState{ view, g_outPath });
+            new CaptureState{ view, pathForView(g_outPath, g_currentView) });
 
     renderer->readPixels(uint32_t(vp.left), uint32_t(vp.bottom), vp.width, vp.height,
             std::move(buffer));
@@ -343,31 +396,18 @@ void collectFrameInfo(Renderer* renderer) {
 }
 
 void postRender(Engine*, View* view, Scene*, Renderer* renderer) {
-    if (g_frameCounter >= g_warmup) {
-        // The first frames after startup carry shader compilation and resource uploads, so
-        // they are skipped; what is left is steady state.
-        if (g_frameCounter > g_warmup) {
-            collectFrameInfo(renderer);
-        }
+    // The first frames after startup carry shader compilation and resource uploads, so they are
+    // skipped; what is left is steady state. The same applies at the start of every view.
+    if (g_viewFrame > g_warmup) {
+        collectFrameInfo(renderer);
     }
 
-    if (g_frameCounter >= g_warmup + g_measure && !g_captured) {
-        g_captured = true;
-
-        // Turn the collected history into per frame times, ignoring frames the driver did not
-        // report on (INVALID/PENDING are negative).
-        // Only the GPU duration is reported. The driver thread span is not meaningful here:
-        // rendering to an offscreen swap chain never presents, so there is no frame pacing to
-        // measure against and the begin/end timestamps are not comparable.
-        for (auto const& [frameId, info] : g_frameInfo) {
-            if (info.gpuFrameDuration > 0) {
-                g_gpuFrameMs.push_back(double(info.gpuFrameDuration) / 1.0e6);
-            }
-        }
-
+    if (g_viewFrame >= g_warmup + g_measure && !g_capturing) {
+        g_capturing = true;
         captureScreenshot(nullptr, view, renderer);
     }
 
+    g_viewFrame++;
     g_frameCounter++;
 }
 
@@ -380,6 +420,8 @@ samples::SampleParameters createAppParameters() {
         samples::Parameter::makeString("target", 'T', "Camera target x,y,z", "0,0,0"),
         samples::Parameter::makeInt("warmup", 'W', "Frames rendered before measuring", 30, 0),
         samples::Parameter::makeInt("measure", 'M', "Frames measured before capture", 60, 1),
+        samples::Parameter::makeInt("views", 'V',
+                "Evenly spaced views around the model, rendered in one run", 1, 1),
     };
 }
 
@@ -408,6 +450,7 @@ std::unique_ptr<FilamentApp2> createSampleApp(SampleConfig config, DisplayManage
 
     g_warmup = std::max(0, config.getInt("warmup", 30));
     g_measure = std::max(1, config.getInt("measure", 60));
+    g_viewCount = std::max(1, config.getInt("views", 1));
 
     auto filamentApp = samples::getBuilder(config, dm, loader)
                                .setup(setup)

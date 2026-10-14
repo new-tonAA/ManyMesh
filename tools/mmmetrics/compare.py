@@ -33,6 +33,15 @@ Options:
     --diff <path>       Write a difference image for the first candidate
     --gain N            Brightness factor applied to the difference image (default: 4)
     --lpips             Also compute LPIPS (needs `pip install lpips`)
+
+Sweep mode, for a set of views rendered from the same cameras:
+
+    compare.py --sweep --reference-prefix A --candidate-prefix B --views 6
+
+The files are paired as <prefix>_v00.png, <prefix>_v01.png, ... and the output reports the
+distribution across views rather than one number. That matters: measured on the Stanford
+dragon, the same mesh at the same level of detail varies by 7.7 dB PSNR between views, so a
+single view can be off by more than 3 dB from the median.
 """
 
 import argparse
@@ -85,11 +94,70 @@ def difference_image(reference, candidate, gain):
     return np.clip(delta * gain, 0.0, 1.0)
 
 
+def metric_row(reference, candidate):
+    difference = np.abs(reference - candidate)
+    return {
+        "psnr_db": peak_signal_noise_ratio(reference, candidate),
+        "ssim": structural_similarity(reference, candidate),
+        "max_abs_diff": float(difference.max()),
+        "mean_abs_diff": float(difference.mean()),
+        "pixels_over_1_255_percent": float((difference.max(axis=2) > 1.0 / 255.0).mean() * 100.0),
+    }
+
+
+def summarise(rows, label):
+    psnr_values = [row["psnr_db"] for row in rows]
+    ssim_values = [row["ssim"] for row in rows]
+    return {
+        "label": label,
+        "views": len(rows),
+        "psnr_median": float(np.median(psnr_values)),
+        "psnr_min": float(np.min(psnr_values)),
+        "psnr_max": float(np.max(psnr_values)),
+        "ssim_median": float(np.median(ssim_values)),
+        "ssim_min": float(np.min(ssim_values)),
+        "per_view": rows,
+    }
+
+
+def run_sweep(args):
+    header = (f"{'label':<18} {'views':>5} {'PSNR med':>9} {'PSNR min':>9} {'PSNR max':>9} "
+              f"{'SSIM med':>9} {'SSIM min':>9}")
+    print(header)
+    print("-" * len(header))
+
+    report = []
+    for label, prefix in zip(args.labels.split(",") if args.labels else [],
+                             args.candidate_prefix):
+        rows = []
+        for view in range(args.views):
+            reference = load(f"{args.reference_prefix}_v{view:02d}.png")
+            candidate = load(f"{prefix}_v{view:02d}.png")
+            rows.append(metric_row(reference, candidate))
+        summary = summarise(rows, label or prefix)
+        report.append(summary)
+        print(f"{summary['label']:<18} {summary['views']:>5} "
+              f"{summary['psnr_median']:>9.2f} {summary['psnr_min']:>9.2f} "
+              f"{summary['psnr_max']:>9.2f} {summary['ssim_median']:>9.5f} "
+              f"{summary['ssim_min']:>9.5f}")
+
+    if args.json:
+        with open(args.json, "w", encoding="utf-8") as handle:
+            json.dump({"reference_prefix": args.reference_prefix, "results": report},
+                      handle, indent=2)
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__,
             formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("reference")
-    parser.add_argument("candidates", nargs="+")
+    parser.add_argument("reference", nargs="?")
+    parser.add_argument("candidates", nargs="*")
+    parser.add_argument("--sweep", action="store_true",
+            help="pair up per-view renders instead of comparing single images")
+    parser.add_argument("--reference-prefix", default="")
+    parser.add_argument("--candidate-prefix", action="append", default=[])
+    parser.add_argument("--views", type=int, default=1)
     parser.add_argument("--labels", default="")
     parser.add_argument("--json", default="")
     parser.add_argument("--diff", default="")
@@ -98,6 +166,12 @@ def main():
     args = parser.parse_args()
 
     labels = args.labels.split(",") if args.labels else []
+
+    if args.sweep:
+        return run_sweep(args)
+
+    if not args.reference or not args.candidates:
+        parser.error("give a reference and at least one candidate, or use --sweep")
 
     reference = load(args.reference)
 
