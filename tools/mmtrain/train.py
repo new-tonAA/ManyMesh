@@ -32,6 +32,8 @@ samples/mm_bench for how to produce them.
 Architectures:
   bicubic   no network at all; the upsampled coarse render, as a floor to compare against
   tiny      ours: a few 3x3 convolutions predicting a residual over the upsampled render
+  kpn       Bako et al. 2017: predicts a per pixel filter, applied to the colour buffer, so
+            that auxiliary inputs steer the filter instead of just being concatenated
   espcn     Shi et al., "Real-Time Single Image and Video Super-Resolution Using an Efficient
             Sub-Pixel Convolutional Neural Network", CVPR 2016
   fsrcnn    Dong et al., "Accelerating the Super-Resolution Convolutional Neural Network",
@@ -57,7 +59,7 @@ import torch
 import torch.nn as nn
 from PIL import Image
 
-MODELS = ("bicubic", "tiny", "espcn", "fsrcnn", "unet")
+MODELS = ("bicubic", "tiny", "kpn", "espcn", "fsrcnn", "unet")
 POST_UPSAMPLE = ("espcn", "fsrcnn")
 
 
@@ -81,7 +83,7 @@ def resize(array, size):
     return np.asarray(image.resize(size, Image.BICUBIC)).astype(np.float32) / 255.0
 
 
-def load_dataset(data_dir, with_error_map):
+def load_dataset(data_dir, with_error_map, normalize_error):
     views = []
     lr_paths = sorted(glob.glob(os.path.join(data_dir, "lr_v*.png")))
     if not lr_paths:
@@ -112,6 +114,15 @@ def load_dataset(data_dir, with_error_map):
             if error.shape != lr.shape[:2]:
                 raise SystemExit(f"error map for view {index} does not match the render size")
             error = error.astype(np.float32) / 255.0
+            if normalize_error:
+                # The raw map is normalised against the pixel budget, which this geometry is
+                # comfortably inside, so it arrives with almost no dynamic range: a median of
+                # 15/255 over the pixels it covers. Rescaling each view to its own range gives
+                # the network something to actually condition on. This is legitimate at
+                # inference too, since the geometry stage computes the map per frame anyway.
+                peak = float(error.max())
+                if peak > 0.0:
+                    error = error / peak
 
         views.append({"lr": lr, "hr": hr, "error": error})
 
@@ -132,6 +143,46 @@ class Tiny(nn.Module):
 
     def forward(self, x):
         return x[:, :3] + self.body(x)
+
+
+class KernelPredictor(nn.Module):
+    """Bako et al., "Kernel-Predicting Convolutional Networks for Denoising Monte Carlo
+    Renderings", SIGGRAPH 2017.
+
+    The network does not output pixels. It predicts, for every pixel, a small spatial filter,
+    and applies that filter to the colour buffer. Auxiliary inputs therefore have a
+    *mechanical* role - they steer the filter - rather than being extra channels the network
+    has to discover a use for, which is what a plain stack of convolutions has to do.
+
+    This is the shape the literature uses whenever an auxiliary buffer is meant to guide the
+    reconstruction, and it is the most direct thing to try when a plain CNN ignores one.
+    """
+
+    def __init__(self, in_channels, scale, channels=32, kernel=5):
+        super().__init__()
+        self.kernel = kernel
+        self.radius = kernel // 2
+        self.body = nn.Sequential(
+            nn.Conv2d(in_channels, channels, 3, padding=1), nn.ReLU(inplace=True),
+            nn.Conv2d(channels, channels, 3, padding=1), nn.ReLU(inplace=True),
+            nn.Conv2d(channels, 3 * kernel * kernel, 1),
+        )
+
+    def forward(self, x):
+        colour = x[:, :3]
+        batch, _, height, width = colour.shape
+
+        weights = self.body(x).view(batch, 3, self.kernel * self.kernel, height, width)
+        weights = torch.softmax(weights, dim=2)
+
+        padded = nn.functional.pad(colour, (self.radius,) * 4, mode="replicate")
+        taps = []
+        for dy in range(self.kernel):
+            for dx in range(self.kernel):
+                taps.append(padded[:, :, dy:dy + height, dx:dx + width])
+        neighbourhood = torch.stack(taps, dim=2)
+
+        return (weights * neighbourhood).sum(dim=2)
 
 
 class ESPCN(nn.Module):
@@ -202,6 +253,8 @@ class SmallUNet(nn.Module):
 def build_model(name, in_channels, scale, channels):
     if name == "tiny":
         return Tiny(in_channels, channels)
+    if name == "kpn":
+        return KernelPredictor(in_channels, scale, channels)
     if name == "espcn":
         return ESPCN(in_channels, scale, channels * 2)
     if name == "fsrcnn":
@@ -307,8 +360,12 @@ def main():
     parser.add_argument("--batch", type=int, default=8)
     parser.add_argument("--channels", type=int, default=32)
     parser.add_argument("--lr", type=float, default=1e-3)
+    parser.add_argument("--gradient-weight", type=float, default=0.0,
+            help="weight of an edge term; L1 alone optimises for a blurred answer")
     parser.add_argument("--val-views", type=int, default=4)
     parser.add_argument("--no-error-map", action="store_true")
+    parser.add_argument("--no-normalize-error", action="store_true",
+            help="feed the error map raw, at the scale the geometry stage produced it")
     parser.add_argument("--out", default="")
     parser.add_argument("--seed", type=int, default=0)
     args = parser.parse_args()
@@ -317,7 +374,7 @@ def main():
     rng = np.random.default_rng(args.seed)
 
     with_error_map = not args.no_error_map
-    views = load_dataset(args.data, with_error_map)
+    views = load_dataset(args.data, with_error_map, not args.no_normalize_error)
     if len(views) <= args.val_views:
         raise SystemExit("not enough views to hold any out for validation")
     train_views = views[:len(views) - args.val_views]
@@ -346,6 +403,18 @@ def main():
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     loss_fn = nn.L1Loss()
 
+    def gradient_loss(prediction, target):
+        # Plain L1 is minimised by the median, which for a reconstruction task means a blurred
+        # answer: it would rather hedge an edge than move it. Until the model is good enough
+        # for a perceptual or adversarial loss, an explicit edge term is the cheapest way to
+        # stop it smoothing away exactly the high frequency detail this stage exists to restore.
+        dx_prediction = prediction[:, :, :, 1:] - prediction[:, :, :, :-1]
+        dx_target = target[:, :, :, 1:] - target[:, :, :, :-1]
+        dy_prediction = prediction[:, :, 1:, :] - prediction[:, :, :-1, :]
+        dy_target = target[:, :, 1:, :] - target[:, :, :-1, :]
+        return ((dx_prediction - dx_target).abs().mean()
+                + (dy_prediction - dy_target).abs().mean())
+
     best = None
     for iteration in range(1, args.iterations + 1):
         batch_x, batch_y = sample_batch(train_views, args.patch, args.batch, args.scale,
@@ -353,7 +422,10 @@ def main():
         x = torch.from_numpy(batch_x.transpose(0, 3, 1, 2))
         y = torch.from_numpy(batch_y.transpose(0, 3, 1, 2))
 
-        loss = loss_fn(model(x), y)
+        prediction = model(x)
+        loss = loss_fn(prediction, y)
+        if args.gradient_weight > 0.0:
+            loss = loss + args.gradient_weight * gradient_loss(prediction, y)
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()

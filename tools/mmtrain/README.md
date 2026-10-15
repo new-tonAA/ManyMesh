@@ -73,6 +73,41 @@ because it is normalised against a pixel budget the mesh is comfortably inside),
 silhouette is already visible in the colour input. There is also very little error to guide
 with: the mesh is already good. See MANYMESH.md §7.3 for the plan.
 
+## What else was tried
+
+| Change | Result |
+|-|-|
+| `kpn` (Bako et al. 2017 kernel prediction) instead of `tiny` | 31.48 dB vs 33.37 — worse |
+| `unet` (176k parameters) instead of `tiny` (28k) | 33.23 dB vs 33.37 — no better |
+| 6000 iterations instead of 1500 | 33.42 dB vs 33.37 — converged |
+| normalising the error map per view | +0.04 dB — no real effect |
+| adding an edge (gradient) loss term | 33.37 → **33.50 dB**, SSIM 0.9797 → 0.9800 |
+
+Kernel prediction is the architecture the literature uses when an auxiliary buffer is meant to
+guide a reconstruction, and it is the wrong tool here: a normalised filter can only *filter*,
+and what is missing is high frequency geometry detail, which has to be synthesised. That the
+best result comes from the smallest model trained the shortest says the limits are elsewhere.
+
+The edge term is worth keeping on: plain L1 is minimised by the median, which for a
+reconstruction means a blurred answer that would rather hedge an edge than move it.
+
+## Why the error map does not help
+
+It is not a broken signal. Measured against the actual per pixel difference between the coarse
+and full renders, **99.3% of the total error falls inside the pixels the map covers**, and its
+magnitude tracks severity monotonically across quartiles (0.0141 to 0.0235).
+
+It is a redundant one. Those errors are all at edges, and an edge that is in the wrong place is
+already visible in the colour image. So the map adds about +0.03 dB over colour alone.
+
+For a conditioning input to earn its place it has to carry something the colour does not — the
+*signed direction* of the geometry error, say. That is not available at run time: knowing it
+means having the full detail geometry, which is what the pipeline exists to avoid.
+
+Which reframes what this stage is: the gain comes from the network's learned prior over high
+frequency detail, not from the conditioning. Improving the prior - more data, a perceptual or
+adversarial loss - is the productive direction. A better error map is not.
+
 ## Fairness note
 
 `espcn` and `fsrcnn` scoring below bicubic here says nothing about those architectures. Their
