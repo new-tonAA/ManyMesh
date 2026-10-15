@@ -118,6 +118,9 @@ float3 g_target = { 0.0f, 0.0f, 0.0f };
 int g_warmup = 30;
 int g_measure = 60;
 int g_viewCount = 1;
+int g_jitter = 1;
+int g_screenHeightForJitter = 360;
+int g_totalCaptures = 1;
 bool g_shadows = true;
 int g_captureFrame = -1;
 
@@ -134,9 +137,44 @@ bool g_repositionCamera = true;
 std::map<uint32_t, Renderer::FrameInfo> g_frameInfo;
 std::vector<double> g_gpuFrameMs;
 
-float3 eyeForView(int view) {
+//! Radical inverse, the building block of the Halton sequence used for the sub pixel offsets.
+float halton(int index, int base) {
+    float result = 0.0f;
+    float fraction = 1.0f;
+    while (index > 0) {
+        fraction /= float(base);
+        result += fraction * float(index % base);
+        index /= base;
+    }
+    return result;
+}
+
+//! Camera offset that shifts the image by the given fraction of a pixel.
+float3 jitterOffset(int index, float screenHeight) {
+    // Offsetting the camera perpendicular to the view direction by one pixel's worth of world
+    // space at the target distance shifts the image by exactly one pixel, so a sub pixel
+    // offset here is a sub pixel shift there.
+    float const fovY = 45.0f * 3.14159265358979323846f / 180.0f;
+    float const distance = length(g_eye - g_target);
+    float const pixel = 2.0f * distance * std::tan(0.5f * fovY) / std::max(screenHeight, 1.0f);
+
+    float3 const forward = normalize(g_target - g_eye);
+    float3 const right = normalize(cross(forward, float3{ 0.0f, 1.0f, 0.0f }));
+    float3 const up = cross(right, forward);
+
+    float const x = halton(index + 1, 2) - 0.5f;
+    float const y = halton(index + 1, 3) - 0.5f;
+    return right * (x * pixel) + up * (y * pixel);
+}
+
+float3 eyeForView(int capture) {
+    int const view = g_jitter > 1 ? capture / g_jitter : capture;
+    int const jitterIndex = g_jitter > 1 ? capture % g_jitter : 0;
+
     if (g_viewCount <= 1) {
-        return g_eye;
+        return g_eye + (g_jitter > 1
+                ? jitterOffset(jitterIndex, float(g_screenHeightForJitter))
+                : float3{});
     }
     // Orbit around the world up axis through the target, keeping the elevation and distance
     // the caller asked for, so a sweep is a pure azimuthal rotation.
@@ -144,17 +182,33 @@ float3 eyeForView(int view) {
     float const angle = 2.0f * 3.14159265358979323846f * float(view) / float(g_viewCount);
     float const c = std::cos(angle);
     float const s = std::sin(angle);
-    return g_target + float3{ offset.x * c - offset.z * s, offset.y, offset.x * s + offset.z * c };
-}
-
-std::string pathForView(std::string const& base, int view) {
-    if (g_viewCount <= 1) {
+    float3 const base = g_target
+            + float3{ offset.x * c - offset.z * s, offset.y, offset.x * s + offset.z * c };
+    if (g_jitter <= 1) {
         return base;
     }
-    // Insert the view index before the extension: renders_v00.png, renders_v01.png, ...
+    // Same azimuth, nudged by a sub pixel offset: consecutive frames differ only in where
+    // within a pixel they sample, which is what accumulation has to work with.
+    float3 const saved = g_eye;
+    g_eye = base;
+    float3 const jittered = base + jitterOffset(jitterIndex, float(g_screenHeightForJitter));
+    g_eye = saved;
+    return jittered;
+}
+
+std::string pathForView(std::string const& base, int capture) {
+    if (g_viewCount <= 1 && g_jitter <= 1) {
+        return base;
+    }
+    // Insert the indices before the extension: renders_v00.png, or with jitter
+    // renders_v00_j03.png, where the view is the camera and j is the sub pixel offset.
+    char suffix[24];
+    if (g_jitter > 1) {
+        snprintf(suffix, sizeof(suffix), "_v%02d_j%02d", capture / g_jitter, capture % g_jitter);
+    } else {
+        snprintf(suffix, sizeof(suffix), "_v%02d", capture);
+    }
     size_t const dot = base.find_last_of('.');
-    char suffix[16];
-    snprintf(suffix, sizeof(suffix), "_v%02d", view);
     return dot == std::string::npos ? base + suffix : base.substr(0, dot) + suffix + base.substr(dot);
 }
 
@@ -325,6 +379,7 @@ void setup(Engine* engine, View* view, Scene* scene) {
     g_camera = engine->createCamera(g_cameraEntity);
 
     Viewport const& vp = view->getViewport();
+    g_screenHeightForJitter = int(vp.height);
     float const aspect = vp.height > 0 ? float(vp.width) / float(vp.height) : 1.0f;
     float const distance = length(g_eye - g_target);
     g_camera->setProjection(45.0, aspect, std::max(distance * 0.01, 1e-3), distance * 20.0);
@@ -411,7 +466,7 @@ void captureScreenshot(Engine*, View* view, Renderer* renderer) {
                 g_viewFrame = 0;
                 g_capturing = false;
                 g_repositionCamera = true;
-                if (g_currentView >= g_viewCount) {
+                if (g_currentView >= g_totalCaptures) {
                     reportTiming();
                     if (g_filamentApp != nullptr) {
                         g_filamentApp->close();
@@ -469,6 +524,8 @@ samples::SampleParameters createAppParameters() {
         samples::Parameter::makeInt("views", 'V',
                 "Evenly spaced views around the model, rendered in one run", 1, 1),
         samples::Parameter::makeBool("shadows", 'S', "Let the sun cast shadows", true),
+        samples::Parameter::makeInt("jitter", 'J',
+                "Sub pixel frames per view; >1 renders each view that many times", 1, 1),
         samples::Parameter::makeInt("capture-frame", '\0',
                 "Ask RenderDoc to capture this frame, if it is running (default: off)", -1),
     };
@@ -502,6 +559,8 @@ std::unique_ptr<FilamentApp2> createSampleApp(SampleConfig config, DisplayManage
     g_viewCount = std::max(1, config.getInt("views", 1));
     g_shadows = config.getBool("shadows");
     g_captureFrame = config.getInt("capture-frame", -1);
+    g_jitter = std::max(1, config.getInt("jitter", 1));
+    g_totalCaptures = g_viewCount * g_jitter;
 
 #if defined(MM_BENCH_CAN_CAPTURE)
     connectToRenderDoc();

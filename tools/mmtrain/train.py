@@ -83,8 +83,52 @@ def resize(array, size):
     return np.asarray(image.resize(size, Image.BICUBIC)).astype(np.float32) / 255.0
 
 
-def load_dataset(data_dir, with_error_map, normalize_error):
+def load_rgb(path):
+    image = Image.open(path)
+    if image.mode != "RGB":
+        image = image.convert("RGB")
+    return np.asarray(image).astype(np.float32) / 255.0
+
+
+def load_error(data_dir, index, with_error_map, normalize_error):
+    if not with_error_map:
+        return None
+    error = read_pgm(os.path.join(data_dir, "err", f"v{index}", "error_map.pgm"))
+    error = error.astype(np.float32) / 255.0
+    if normalize_error:
+        # The raw map is normalised against the pixel budget, which this geometry is
+        # comfortably inside, so it arrives with almost no dynamic range: a median of 15/255
+        # over the pixels it covers. Rescaling each view to its own range gives the network
+        # something to actually condition on. This is legitimate at inference too, since the
+        # geometry stage computes the map per frame anyway.
+        peak = float(error.max())
+        if peak > 0.0:
+            error = error / peak
+    return error
+
+
+def load_dataset(data_dir, with_error_map, normalize_error, stack=1):
     views = []
+    # The jittered layout is detected from the directory rather than from `stack`, so that
+    # stack == 1 still reads a temporal dataset: it simply uses the first sub pixel frame, and
+    # is then the honest single frame baseline for the temporal comparison.
+    jittered = bool(glob.glob(os.path.join(data_dir, "lr_v*_j*.png")))
+    if jittered:
+        # Temporal data: several sub pixel frames of the same camera, from the same mesh. They
+        # differ only in where inside a pixel they sample, which is the information temporal
+        # accumulation is supposed to turn into detail.
+        hr_paths = sorted(glob.glob(os.path.join(data_dir, "hr_v*.png")))
+        if not hr_paths:
+            raise SystemExit(f"no hr_v*.png under {data_dir}")
+        for hr_path in hr_paths:
+            index = os.path.basename(hr_path)[:-4].split("_v")[1]
+            frames = [load_rgb(os.path.join(data_dir, f"lr_v{index}_j{j:02d}.png"))
+                      for j in range(stack)]
+            views.append({"frames": frames,
+                          "hr": load_rgb(hr_path),
+                          "error": load_error(data_dir, index, with_error_map, normalize_error)})
+        return views
+
     lr_paths = sorted(glob.glob(os.path.join(data_dir, "lr_v*.png")))
     if not lr_paths:
         raise SystemExit(f"no lr_v*.png under {data_dir}")
@@ -95,10 +139,7 @@ def load_dataset(data_dir, with_error_map, normalize_error):
         if not os.path.exists(hr_path):
             raise SystemExit(f"missing {hr_path}")
 
-        lr_image = Image.open(lr_path)
-        if lr_image.mode != "RGB":
-            lr_image = lr_image.convert("RGB")
-        lr = np.asarray(lr_image).astype(np.float32) / 255.0
+        lr = load_rgb(lr_path)
 
         hr_image = Image.open(hr_path)
         if hr_image.mode != "RGB":
@@ -108,21 +149,7 @@ def load_dataset(data_dir, with_error_map, normalize_error):
         if lr.shape != hr.shape:
             raise SystemExit(f"{lr_path} and {hr_path} differ in size")
 
-        error = None
-        if with_error_map:
-            error = read_pgm(os.path.join(data_dir, "err", f"v{index}", "error_map.pgm"))
-            if error.shape != lr.shape[:2]:
-                raise SystemExit(f"error map for view {index} does not match the render size")
-            error = error.astype(np.float32) / 255.0
-            if normalize_error:
-                # The raw map is normalised against the pixel budget, which this geometry is
-                # comfortably inside, so it arrives with almost no dynamic range: a median of
-                # 15/255 over the pixels it covers. Rescaling each view to its own range gives
-                # the network something to actually condition on. This is legitimate at
-                # inference too, since the geometry stage computes the map per frame anyway.
-                peak = float(error.max())
-                if peak > 0.0:
-                    error = error / peak
+        error = load_error(data_dir, index, with_error_map, normalize_error)
 
         views.append({"lr": lr, "hr": hr, "error": error})
 
@@ -284,7 +311,8 @@ def evaluate(model, views, scale, post_upsample):
     for view in views:
         inputs = prepare_input(view, scale, post_upsample)
         if model is None:
-            output = prepare_input({**view, "error": None}, scale, post_upsample)
+            single = {**view, "frames": view["frames"][:1], "error": None}
+            output = prepare_input(single, scale, post_upsample)
         else:
             tensor = torch.from_numpy(inputs.transpose(2, 0, 1))[None]
             output = model(tensor)[0].clamp(0.0, 1.0).numpy().transpose(1, 2, 0)
@@ -305,14 +333,18 @@ def prepare_input(view, scale, post_upsample):
 
     `scale` > 1 means the observation is reduced by that factor first. Networks that upsample
     internally take it at the reduced size; the others get it bicubically restored so they can
-    predict a residual over it.
+    predict a residual over it. Several frames are scaled individually and stacked, which is
+    what lets sub pixel samples over time make up for a resolution deficit.
     """
     hr_height, hr_width = view["hr"].shape[:2]
-    if scale == 1:
-        base = view["lr"]
-    else:
-        small = resize(view["lr"], (hr_width // scale, hr_height // scale))
-        base = small if post_upsample else resize(small, (hr_width, hr_height))
+    parts = []
+    for frame in view["frames"]:
+        if scale == 1:
+            parts.append(frame)
+        else:
+            small = resize(frame, (hr_width // scale, hr_height // scale))
+            parts.append(small if post_upsample else resize(small, (hr_width, hr_height)))
+    base = np.concatenate(parts, axis=2)
 
     if view["error"] is None:
         return base
@@ -363,6 +395,8 @@ def main():
     parser.add_argument("--gradient-weight", type=float, default=0.0,
             help="weight of an edge term; L1 alone optimises for a blurred answer")
     parser.add_argument("--val-views", type=int, default=4)
+    parser.add_argument("--stack", type=int, default=1,
+            help="stack this many sub pixel frames of the same camera as input")
     parser.add_argument("--no-error-map", action="store_true")
     parser.add_argument("--no-normalize-error", action="store_true",
             help="feed the error map raw, at the scale the geometry stage produced it")
@@ -374,14 +408,15 @@ def main():
     rng = np.random.default_rng(args.seed)
 
     with_error_map = not args.no_error_map
-    views = load_dataset(args.data, with_error_map, not args.no_normalize_error)
+    views = load_dataset(args.data, with_error_map, not args.no_normalize_error,
+            args.stack)
     if len(views) <= args.val_views:
         raise SystemExit("not enough views to hold any out for validation")
     train_views = views[:len(views) - args.val_views]
     val_views = views[len(views) - args.val_views:]
 
     post_upsample = args.model in POST_UPSAMPLE
-    in_channels = 3 + (1 if with_error_map else 0)
+    in_channels = 3 * args.stack + (1 if with_error_map else 0)
 
     label = f"{args.model} x{args.scale}" + ("" if with_error_map else " (no error map)")
     print(f"--- {label} ---")

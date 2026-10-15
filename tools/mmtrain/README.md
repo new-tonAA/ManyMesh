@@ -105,6 +105,36 @@ Which reframes what this stage is: the gain comes from the network's learned pri
 frequency detail, not from the conditioning. Improving the prior - more data, a perceptual or
 adversarial loss - is the productive direction. A better error map is not.
 
+## Temporal input
+
+`--stack N` feeds N sub pixel frames of the same camera as stacked input channels, which is
+what `samples/mm_bench --jitter N` produces. Measured on the held out views, at equal
+resolution and with no learning at all:
+
+| frames accumulated | 1 | 2 | 4 | 8 |
+|-|-|-|-|-|
+| plain average, PSNR | 33.15 | 33.60 | 33.81 | **34.07 dB** |
+
+Averaging eight jittered frames is worth +0.92 dB for free. Stacking them into the network on
+top adds only about 0.2 dB over that, because a learned single frame already reaches 34.35 dB,
+1.2 dB above the raw single frame. The reason is that this setup has no sampling deficit: the
+render resolution matches the target, and jitter only moves samples within a pixel. DLSS and
+NSS render at 540p for a 1080p target, a quarter of a sample per output pixel, which is where
+temporal accumulation becomes decisive.
+
+### A trap worth knowing about
+
+Simulating low resolution by downscaling a high resolution render does not work:
+
+| source of the 320x180 image | bicubic to 640x360 |
+|-|-|
+| rendered natively, one sample per pixel | 28.33 dB |
+| downscaled from a 640x360 render | 30.12 dB |
+
+A bicubic downscale has already averaged four samples, so it is supersampled rather than low
+resolution - 1.8 dB better, and it cannot show a temporal effect at all (measured +0.06 dB
+against +0.35 dB for the real thing).
+
 ## Fairness note
 
 `espcn` and `fsrcnn` scoring below bicubic here says nothing about those architectures. Their
