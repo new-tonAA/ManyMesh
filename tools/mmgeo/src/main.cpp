@@ -273,6 +273,13 @@ std::vector<uint32_t> gatherSelection(std::vector<ClusterLods> const& lods,
         Selection const& selection) {
     std::vector<uint32_t> result;
     for (size_t c = 0; c < selection.levelPerCluster.size(); ++c) {
+        // Clusters the frustum rejects keep their default level, which is full detail. Writing
+        // those out would put the whole off screen scene into the mesh at level 0, and the
+        // renderer would then pay to transform geometry that a real one would have thrown away
+        // before it ever reached a level of detail decision.
+        if (c < selection.visiblePerCluster.size() && selection.visiblePerCluster[c] == 0) {
+            continue;
+        }
         uint32_t const level = selection.levelPerCluster[c];
         if (level >= lods[c].levels.size()) {
             continue;

@@ -253,6 +253,9 @@ void writeErrorMap(Mesh const& mesh, std::vector<Cluster> const& clusters,
             { clusters.size(), lods.size(), selection.levelPerCluster.size() });
 
     for (size_t c = 0; c < count; ++c) {
+        if (c < selection.visiblePerCluster.size() && selection.visiblePerCluster[c] == 0) {
+            continue;  // outside the frustum, so its error cannot be seen
+        }
         uint32_t const level = selection.levelPerCluster[c];
         if (level >= lods[c].levels.size()) {
             continue;

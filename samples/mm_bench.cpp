@@ -62,6 +62,15 @@
 #include <utils/EntityManager.h>
 #include <utils/Path.h>
 
+// Capture support is optional: it only compiles in when the RenderDoc in-application header is
+// present, and it only does anything when the process was actually launched through RenderDoc.
+#if defined(_WIN32) && __has_include("renderdoc_app.h")
+#include <windows.h>
+#include <utils/unwindows.h>
+#include "renderdoc_app.h"
+#define MM_BENCH_CAN_CAPTURE 1
+#endif
+
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -110,6 +119,11 @@ int g_warmup = 30;
 int g_measure = 60;
 int g_viewCount = 1;
 bool g_shadows = true;
+int g_captureFrame = -1;
+
+#if defined(MM_BENCH_CAN_CAPTURE)
+RENDERDOC_API_1_6_0* g_renderdoc = nullptr;
+#endif
 
 // Frame bookkeeping.
 int g_frameCounter = 0;
@@ -243,6 +257,28 @@ void createMaterial(Engine* engine, char const* materialPath) {
         g_materialInstance->setParameter("reflectance", 0.5f);
     }
 }
+
+#if defined(MM_BENCH_CAN_CAPTURE)
+// RenderDoc injects itself into the process, so if it is there its DLL is already loaded and
+// hands out its API through an exported entry point.
+void connectToRenderDoc() {
+    HMODULE const module = GetModuleHandleA("renderdoc.dll");
+    if (module == nullptr) {
+        std::cout << "renderdoc: not injected, --capture-frame will do nothing" << std::endl;
+        return;
+    }
+    auto const getApi = reinterpret_cast<pRENDERDOC_GetAPI>(
+            GetProcAddress(module, "RENDERDOC_GetAPI"));
+    if (getApi == nullptr) {
+        return;
+    }
+    void* api = nullptr;
+    if (getApi(eRENDERDOC_API_Version_1_6_0, &api) == 1 && api != nullptr) {
+        g_renderdoc = static_cast<RENDERDOC_API_1_6_0*>(api);
+        std::cout << "renderdoc: connected" << std::endl;
+    }
+}
+#endif
 
 void setup(Engine* engine, View* view, Scene* scene) {
     g_meshSet = std::make_unique<MeshAssimp>(*engine, g_assetLoader);
@@ -397,6 +433,15 @@ void collectFrameInfo(Renderer* renderer) {
 }
 
 void postRender(Engine*, View* view, Scene*, Renderer* renderer) {
+    if (g_captureFrame >= 0 && g_frameCounter == g_captureFrame) {
+#if defined(MM_BENCH_CAN_CAPTURE)
+        if (g_renderdoc != nullptr) {
+            g_renderdoc->TriggerCapture();
+            std::cout << "renderdoc: capture requested at frame " << g_frameCounter << std::endl;
+        }
+#endif
+    }
+
     // The first frames after startup carry shader compilation and resource uploads, so they are
     // skipped; what is left is steady state. The same applies at the start of every view.
     if (g_viewFrame > g_warmup) {
@@ -424,6 +469,8 @@ samples::SampleParameters createAppParameters() {
         samples::Parameter::makeInt("views", 'V',
                 "Evenly spaced views around the model, rendered in one run", 1, 1),
         samples::Parameter::makeBool("shadows", 'S', "Let the sun cast shadows", true),
+        samples::Parameter::makeInt("capture-frame", '\0',
+                "Ask RenderDoc to capture this frame, if it is running (default: off)", -1),
     };
 }
 
@@ -454,6 +501,11 @@ std::unique_ptr<FilamentApp2> createSampleApp(SampleConfig config, DisplayManage
     g_measure = std::max(1, config.getInt("measure", 60));
     g_viewCount = std::max(1, config.getInt("views", 1));
     g_shadows = config.getBool("shadows");
+    g_captureFrame = config.getInt("capture-frame", -1);
+
+#if defined(MM_BENCH_CAN_CAPTURE)
+    connectToRenderDoc();
+#endif
 
     auto filamentApp = samples::getBuilder(config, dm, loader)
                                .setup(setup)
