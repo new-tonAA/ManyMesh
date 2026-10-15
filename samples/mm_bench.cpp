@@ -109,6 +109,7 @@ float3 g_target = { 0.0f, 0.0f, 0.0f };
 int g_warmup = 30;
 int g_measure = 60;
 int g_viewCount = 1;
+bool g_shadows = true;
 
 // Frame bookkeeping.
 int g_frameCounter = 0;
@@ -263,7 +264,7 @@ void setup(Engine* engine, View* view, Scene* scene) {
         if (!instance) {
             continue;
         }
-        rcm.setCastShadows(instance, true);
+        rcm.setCastShadows(instance, g_shadows);
         if (g_materialInstance != nullptr) {
             for (size_t i = 0; i < rcm.getPrimitiveCount(instance); i++) {
                 rcm.setMaterialInstanceAt(instance, i, g_materialInstance);
@@ -277,7 +278,7 @@ void setup(Engine* engine, View* view, Scene* scene) {
             .color(Color::toLinear<ACCURATE>(sRGBColor{ 0.98f, 0.92f, 0.89f }))
             .intensity(110000.0f)
             .direction({ 0.6f, -1.0f, -0.8f })
-            .castShadows(true)
+            .castShadows(g_shadows)
             .build(*engine, g_lightEntity);
     scene->addEntity(g_lightEntity);
 
@@ -422,6 +423,7 @@ samples::SampleParameters createAppParameters() {
         samples::Parameter::makeInt("measure", 'M', "Frames measured before capture", 60, 1),
         samples::Parameter::makeInt("views", 'V',
                 "Evenly spaced views around the model, rendered in one run", 1, 1),
+        samples::Parameter::makeBool("shadows", 'S', "Let the sun cast shadows", true),
     };
 }
 
@@ -451,6 +453,7 @@ std::unique_ptr<FilamentApp2> createSampleApp(SampleConfig config, DisplayManage
     g_warmup = std::max(0, config.getInt("warmup", 30));
     g_measure = std::max(1, config.getInt("measure", 60));
     g_viewCount = std::max(1, config.getInt("views", 1));
+    g_shadows = config.getBool("shadows");
 
     auto filamentApp = samples::getBuilder(config, dm, loader)
                                .setup(setup)
