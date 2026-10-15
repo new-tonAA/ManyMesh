@@ -66,12 +66,9 @@ CPU only:
 **Reconstruction works**: at equal resolution a small network recovers +1.88 dB over the
 coarse render, and at half resolution it beats bicubic by about +1 dB.
 
-**The error map does not, yet**: its contribution ranges from −0.19 dB to +0.13 dB and flips
-sign between models and between the two tasks — far below anything visible. The diagnosis is
-that the map is essentially a silhouette mask (a median of 15/255 over the pixels it covers,
-because it is normalised against a pixel budget the mesh is comfortably inside), and the
-silhouette is already visible in the colour input. There is also very little error to guide
-with: the mesh is already good. See MANYMESH.md §7.3 for the plan.
+**The error map does not, yet**: its contribution runs from −0.19 dB to +0.13 dB and flips
+sign between models and between the two tasks — far below anything visible. It is not a broken
+signal, it is a redundant one; the section below has the measurements and the reasoning.
 
 ## What else was tried
 
