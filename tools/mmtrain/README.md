@@ -122,6 +122,26 @@ render resolution matches the target, and jitter only moves samples within a pix
 NSS render at 540p for a 1080p target, a quarter of a sample per output pixel, which is where
 temporal accumulation becomes decisive.
 
+### With a real sampling deficit
+
+The equal resolution case above has no sampling deficit, so accumulation buys little. Rendering
+natively at 320x180, one sample per pixel, for a 640x360 target does have one. Six views, four
+training and two validation, 2000 iterations, the 20k parameter model:
+
+| configuration | PSNR | SSIM |
+|-|-|-|
+| bicubic, one frame | 30.33 | 0.9629 |
+| bicubic, mean of eight frames | 31.11 | 0.9668 |
+| learned, one frame | 31.21 | 0.9672 |
+| learned, eight frames | **31.68** | **0.9707** |
+
+Learning alone is worth +0.88 dB, accumulation alone +0.78, and together +1.35. The two are
+complementary rather than overlapping, which is why every shipping solution pairs them, and it
+is the first result here where the temporal half pulls its weight.
+
+Caveat: four training views, two validation views, one seed, one small model. Read the
+differences between rows, not the absolute numbers.
+
 ### A trap worth knowing about
 
 Simulating low resolution by downscaling a high resolution render does not work:

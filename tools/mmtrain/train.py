@@ -341,9 +341,16 @@ def prepare_input(view, scale, post_upsample):
     for frame in view["frames"]:
         if scale == 1:
             parts.append(frame)
+            continue
+        low = (hr_width // scale, hr_height // scale)
+        if frame.shape[1] == low[0] and frame.shape[0] == low[1]:
+            # Already rendered at the low resolution, one sample per pixel. This is the real
+            # case; reducing a high resolution render instead would have averaged four samples
+            # per pixel and be far too easy.
+            small = frame
         else:
-            small = resize(frame, (hr_width // scale, hr_height // scale))
-            parts.append(small if post_upsample else resize(small, (hr_width, hr_height)))
+            small = resize(frame, low)
+        parts.append(small if post_upsample else resize(small, (hr_width, hr_height)))
     base = np.concatenate(parts, axis=2)
 
     if view["error"] is None:
