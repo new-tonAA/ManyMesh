@@ -128,7 +128,9 @@ def main():
             formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--data", default="out/m3pan")
     parser.add_argument("--pan", type=float, default=3.0, help="total pan in degrees")
-    parser.add_argument("--frames", type=int, default=12)
+    parser.add_argument("--frames", type=int, default=12,
+            help="sub frames per view when the data is a per-view sequence set")
+    parser.add_argument("--views", type=int, default=1)
     parser.add_argument("--fov-y", type=float, default=45.0)
     parser.add_argument("--eye", default="2.220,-6.737,220.771")
     parser.add_argument("--target", default="2.220,-6.737,9.837")
@@ -147,7 +149,10 @@ def main():
 
     lr_paths = sorted(glob.glob(os.path.join(args.data, "lr_v*.png")))
     if not lr_paths:
+        lr_paths = sorted(glob.glob(os.path.join(args.data, "lr_v*_j*.png")))
+    if not lr_paths:
         raise SystemExit(f"no lr_v*.png under {args.data}")
+    per_view = "_j" in os.path.basename(lr_paths[0])
 
     history = None
     basis_prev = None
@@ -157,21 +162,40 @@ def main():
         os.makedirs(args.export, exist_ok=True)
 
     for index, path in enumerate(lr_paths):
-        name = os.path.basename(path)[:-4].split("_v")[1]
-        hr_path = os.path.join(args.data, f"hr_v{name}.png")
+        name = os.path.basename(path).split("_")[1]  # v00
+        # A per-view layout renders the target per sub frame as well, since each frame of the
+        # pan is taken from its own camera.
+        sub_for_name = index % args.frames
+        hr_path = os.path.join(args.data, f"hr_{name}_j{sub_for_name:02d}.png"
+                if per_view else f"hr_{name}.png")
         if not os.path.exists(hr_path):
             raise SystemExit(f"missing {hr_path}")
 
-        # The pan is spread evenly across the sequence, the same way mm_bench does it.
-        t = index / max(len(lr_paths) - 1, 1)
-        angle = (t - 0.5) * math.radians(args.pan)
-        target = eye + rot_y(target0 - np.array(eye), angle)
-        basis_now = camera_basis(eye, target)
+        # The camera model has to match mm_bench: the eye orbits the base target by the
+        # view's azimuth, and within a view the pan turns the view direction about that eye.
+        if per_view:
+            view_index, sub_index = divmod(index, args.frames)
+            azimuth = 2.0 * math.pi * view_index / max(args.views, 1)
+            view_eye = target0 + rot_y(np.array(eye) - target0, azimuth)
+            t = sub_index / max(args.frames - 1, 1)
+            angle = (t - 0.5) * math.radians(args.pan)
+            target = view_eye + rot_y(target0 - view_eye, angle)
+        else:
+            view_eye = np.array(eye)
+            t = index / max(len(lr_paths) - 1, 1)
+            angle = (t - 0.5) * math.radians(args.pan)
+            target = view_eye + rot_y(target0 - view_eye, angle)
+        basis_now = camera_basis(view_eye, target)
 
         lr = load(path)
         height, width = lr.shape[:2]
         hr = load(hr_path)
         target_size = (hr.shape[1], hr.shape[0])
+
+        # A per-view layout holds several independent sequences, so history must not cross
+        # from the end of one into the start of the next.
+        if per_view and index % args.frames == 0:
+            history = None
 
         accumulated = lr
         warped = None
