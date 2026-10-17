@@ -119,6 +119,7 @@ int g_warmup = 30;
 int g_measure = 60;
 int g_viewCount = 1;
 int g_jitter = 1;
+float g_panDegrees = 0.0f;
 int g_screenHeightForJitter = 360;
 int g_totalCaptures = 1;
 bool g_shadows = true;
@@ -171,6 +172,14 @@ float3 eyeForView(int capture) {
     int const view = g_jitter > 1 ? capture / g_jitter : capture;
     int const jitterIndex = g_jitter > 1 ? capture % g_jitter : 0;
 
+    // A pan keeps the eye fixed and turns the view, which is the useful temporal case: with no
+    // translation there is no parallax, so the image displacement between two frames is an
+    // exact homography that does not depend on depth. History can then be reprojected without
+    // a depth buffer at all.
+    if (g_panDegrees != 0.0f) {
+        return g_eye;
+    }
+
     if (g_viewCount <= 1) {
         return g_eye + (g_jitter > 1
                 ? jitterOffset(jitterIndex, float(g_screenHeightForJitter))
@@ -194,6 +203,19 @@ float3 eyeForView(int capture) {
     float3 const jittered = base + jitterOffset(jitterIndex, float(g_screenHeightForJitter));
     g_eye = saved;
     return jittered;
+}
+
+float3 targetForView(int capture) {
+    if (g_panDegrees == 0.0f || g_totalCaptures <= 1) {
+        return g_target;
+    }
+    // Spread the pan across the sequence so consecutive frames differ by a fraction of a degree.
+    float const t = float(capture) / float(g_totalCaptures - 1);
+    float const angle = (t - 0.5f) * g_panDegrees * 3.14159265358979323846f / 180.0f;
+    float3 const offset = g_target - g_eye;
+    float const c = std::cos(angle);
+    float const s = std::sin(angle);
+    return g_eye + float3{ offset.x * c - offset.z * s, offset.y, offset.x * s + offset.z * c };
 }
 
 std::string pathForView(std::string const& base, int capture) {
@@ -420,7 +442,8 @@ void preRender(Engine*, View* view, Scene*, Renderer* renderer) {
             // The flag rather than a frame counter: the capture callback runs on the backend
             // thread and can land after this callback has already run for the frame, so a
             // counter reset would be incremented past zero before it was ever observed.
-            g_camera->lookAt(eyeForView(g_currentView), g_target, { 0.0f, 1.0f, 0.0f });
+            g_camera->lookAt(eyeForView(g_currentView), targetForView(g_currentView),
+                    { 0.0f, 1.0f, 0.0f });
             g_repositionCamera = false;
         }
     }
@@ -524,6 +547,8 @@ samples::SampleParameters createAppParameters() {
         samples::Parameter::makeInt("views", 'V',
                 "Evenly spaced views around the model, rendered in one run", 1, 1),
         samples::Parameter::makeBool("shadows", 'S', "Let the sun cast shadows", true),
+        samples::Parameter::makeFloat("pan", 'P',
+                "Total degrees of camera pan across the sequence; 0 keeps the camera still", 0.0f),
         samples::Parameter::makeInt("jitter", 'J',
                 "Sub pixel frames per view; >1 renders each view that many times", 1, 1),
         samples::Parameter::makeInt("capture-frame", '\0',
@@ -560,6 +585,7 @@ std::unique_ptr<FilamentApp2> createSampleApp(SampleConfig config, DisplayManage
     g_shadows = config.getBool("shadows");
     g_captureFrame = config.getInt("capture-frame", -1);
     g_jitter = std::max(1, config.getInt("jitter", 1));
+    g_panDegrees = config.getFloat("pan", 0.0f);
     g_totalCaptures = g_viewCount * g_jitter;
 
 #if defined(MM_BENCH_CAN_CAPTURE)
