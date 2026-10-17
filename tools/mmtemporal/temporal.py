@@ -134,6 +134,11 @@ def main():
     parser.add_argument("--target", default="2.220,-6.737,9.837")
     parser.add_argument("--blend", type=float, default=0.5,
             help="weight of the history in the blend")
+    parser.add_argument("--reject", type=float, default=0.0,
+            help="drop history whose colour differs from the current frame by more than this; "
+                 "0 disables rejection")
+    parser.add_argument("--export", default="",
+            help="also write (current, reprojected history, target) as a training set")
     args = parser.parse_args()
 
     eye = [float(v) for v in args.eye.split(",")]
@@ -147,6 +152,9 @@ def main():
     history = None
     basis_prev = None
     single_all, blend_all = [], []
+    exported = 0
+    if args.export:
+        os.makedirs(args.export, exist_ok=True)
 
     for index, path in enumerate(lr_paths):
         name = os.path.basename(path)[:-4].split("_v")[1]
@@ -166,20 +174,45 @@ def main():
         target_size = (hr.shape[1], hr.shape[0])
 
         accumulated = lr
+        warped = None
+        inside = None
         if history is not None:
             warped, inside = reproject(history, width, height, fov_y, basis_prev, basis_now)
-            accumulated = np.where(inside[..., None],
+            accept = inside
+            if args.reject > 0.0:
+                # Reject history where it disagrees strongly with what was just rendered. In a
+                # full pipeline that is the proxy for a disocclusion or a shading change, which
+                # the motion vectors alone cannot express.
+                accept = inside & (np.abs(warped - lr).max(axis=2) <= args.reject)
+            accumulated = np.where(accept[..., None],
                    (1.0 - args.blend) * lr + args.blend * warped, lr)
+            rejected_fraction = 1.0 - float(accept.mean())
 
         single_all.append(psnr(hr, upscale(lr, target_size)))
         blend_all.append(psnr(hr, upscale(accumulated, target_size)))
         print(f"  frame {index:2d}  coarse {single_all[-1]:6.2f} dB   "
               f"accumulated {blend_all[-1]:6.2f} dB")
 
+        if warped is not None and args.reject > 0.0:
+            print(f"  frame {index:2d}  rejected {100.0 * rejected_fraction:.1f}% of the history")
+        if args.export and warped is not None:
+            # The training set is laid out the way tools/mmtrain expects: two "sub frames" per
+            # view, the current observation and the reprojected history, so --stack 2 feeds
+            # both to the network.
+            def save(array, path):
+                Image.fromarray(np.clip(array * 255.0, 0, 255).round().astype(np.uint8)).save(path)
+
+            save(upscale(lr, target_size), os.path.join(args.export, f"lr_v{exported:02d}_j00.png"))
+            save(upscale(warped, target_size), os.path.join(args.export, f"lr_v{exported:02d}_j01.png"))
+            save(hr, os.path.join(args.export, f"hr_v{exported:02d}.png"))
+            exported += 1
+
         history = accumulated
         basis_prev = basis_now
 
     print()
+    if args.export:
+        print(f"exported {exported} training triplets to {args.export}")
     print(f"median over {len(single_all)} frames: coarse {np.median(single_all):.2f} dB   "
           f"accumulated {np.median(blend_all):.2f} dB   "
           f"gain {np.median(blend_all) - np.median(single_all):+.2f} dB")

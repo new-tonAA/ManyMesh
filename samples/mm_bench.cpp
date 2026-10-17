@@ -177,7 +177,16 @@ float3 eyeForView(int capture) {
     // exact homography that does not depend on depth. History can then be reprojected without
     // a depth buffer at all.
     if (g_panDegrees != 0.0f) {
-        return g_eye;
+        // The pan supplies the sub frame variation, so the eye is just this view's orbit
+        // position.
+        if (g_viewCount <= 1) {
+            return g_eye;
+        }
+        float3 const offset = g_eye - g_target;
+        float const angle = 2.0f * 3.14159265358979323846f * float(view) / float(g_viewCount);
+        float const c = std::cos(angle);
+        float const s = std::sin(angle);
+        return g_target + float3{ offset.x * c - offset.z * s, offset.y, offset.x * s + offset.z * c };
     }
 
     if (g_viewCount <= 1) {
@@ -206,16 +215,21 @@ float3 eyeForView(int capture) {
 }
 
 float3 targetForView(int capture) {
-    if (g_panDegrees == 0.0f || g_totalCaptures <= 1) {
+    if (g_panDegrees == 0.0f) {
         return g_target;
     }
-    // Spread the pan across the sequence so consecutive frames differ by a fraction of a degree.
-    float const t = float(capture) / float(g_totalCaptures - 1);
+    // The pan runs across the sub frames *within* a view, so one run yields one sequence per
+    // azimuth: --views V --jitter N --pan D gives V sequences of N frames, all from a single
+    // mesh load.
+    int const sub = g_jitter > 1 ? capture % g_jitter : 0;
+    float const t = g_jitter > 1 ? float(sub) / float(g_jitter - 1) : 0.5f;
     float const angle = (t - 0.5f) * g_panDegrees * 3.14159265358979323846f / 180.0f;
-    float3 const offset = g_target - g_eye;
+
+    float3 const eye = eyeForView(capture);
+    float3 const offset = g_target - eye;
     float const c = std::cos(angle);
     float const s = std::sin(angle);
-    return g_eye + float3{ offset.x * c - offset.z * s, offset.y, offset.x * s + offset.z * c };
+    return eye + float3{ offset.x * c - offset.z * s, offset.y, offset.x * s + offset.z * c };
 }
 
 std::string pathForView(std::string const& base, int capture) {
