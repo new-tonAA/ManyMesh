@@ -162,7 +162,7 @@ def main():
         os.makedirs(args.export, exist_ok=True)
 
     for index, path in enumerate(lr_paths):
-        name = os.path.basename(path).split("_")[1]  # v00
+        name = os.path.splitext(os.path.basename(path))[0].split("_")[1]  # v00
         # A per-view layout renders the target per sub frame as well, since each frame of the
         # pan is taken from its own camera.
         sub_for_name = index % args.frames

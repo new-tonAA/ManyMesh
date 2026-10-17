@@ -10,18 +10,30 @@ set(PUBLIC_HDR_DIR include)
 set(PUBLIC_HDRS
         include/manymesh/Cluster.h
         include/manymesh/Clusterizer.h
+        include/manymesh/AttributeSimplifier.h
         include/manymesh/GeometryError.h
+        include/manymesh/GpuLod.h
         include/manymesh/Grouper.h
+        include/manymesh/LodGraph.h
         include/manymesh/Mesh.h
+        include/manymesh/Quality.h
         include/manymesh/Simplifier.h
+        include/manymesh/Streaming.h
+        include/manymesh/VisibilityBuffer.h
 )
 
 set(SRCS
         src/Clusterizer.cpp
+        src/AttributeSimplifier.cpp
         src/GeometryError.cpp
+        src/GpuLod.cpp
         src/Grouper.cpp
+        src/LodGraph.cpp
         src/Mesh.cpp
+        src/Quality.cpp
         src/Simplifier.cpp
+        src/Streaming.cpp
+        src/VisibilityBuffer.cpp
 )
 
 # ==================================================================================================

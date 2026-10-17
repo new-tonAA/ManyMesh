@@ -17,6 +17,8 @@
 #include <manymesh/Grouper.h>
 
 #include <algorithm>
+#include <queue>
+#include <utility>
 #include <vector>
 
 namespace filament {
@@ -66,33 +68,113 @@ ClusterSet groupClusters(ClusterSet const& clusters, GroupOptions const& options
     }
 
     size_t const groupSize = options.clustersPerGroup;
-    size_t const groupCount = (clusters.clusters.size() + groupSize - 1) / groupSize;
+    size_t const clusterCount = clusters.clusters.size();
 
+    // Build the cluster adjacency graph from shared vertices. Two clusters that share a vertex
+    // are spatially connected; chaining the owners of each vertex links all clusters that meet
+    // there, without an edge hash table proportional to the whole triangle count.
+    uint32_t maxVertex = 0;
+    for (Cluster const& cluster : clusters.clusters) {
+        for (uint32_t index : cluster.indices) {
+            maxVertex = std::max(maxVertex, index);
+        }
+    }
+
+    std::vector<int32_t> lastOwner(size_t(maxVertex) + 1, -1);
+    std::vector<std::vector<uint32_t>> neighbors(clusterCount);
+    std::vector<uint32_t> vertices;
+    for (size_t c = 0; c < clusterCount; ++c) {
+        vertices = clusters.clusters[c].indices;
+        std::sort(vertices.begin(), vertices.end());
+        vertices.erase(std::unique(vertices.begin(), vertices.end()), vertices.end());
+
+        for (uint32_t vertex : vertices) {
+            int32_t const previous = lastOwner[vertex];
+            if (previous >= 0 && size_t(previous) != c) {
+                neighbors[c].push_back(uint32_t(previous));
+                neighbors[size_t(previous)].push_back(uint32_t(c));
+            }
+            lastOwner[vertex] = int32_t(c);
+        }
+    }
+
+    for (std::vector<uint32_t>& list : neighbors) {
+        std::sort(list.begin(), list.end());
+        list.erase(std::unique(list.begin(), list.end()), list.end());
+    }
+
+    // Grow each group from a seed, always taking the closest unassigned neighbour. This keeps
+    // groups connected and spatially compact, instead of merging arbitrary runs of clusters.
+    std::vector<uint8_t> assigned(clusterCount, 0);
     result.clusters.clear();
-    result.clusters.reserve(groupCount);
+    result.clusters.reserve(clusterCount);
 
-    for (size_t g = 0; g < groupCount; ++g) {
-        size_t const first = g * groupSize;
-        size_t const last = std::min(first + groupSize, clusters.clusters.size());
+    using Candidate = std::pair<float, uint32_t>;
+    std::priority_queue<Candidate, std::vector<Candidate>, std::greater<Candidate>> candidates;
+
+    for (size_t seed = 0; seed < clusterCount; ++seed) {
+        if (assigned[seed] != 0) {
+            continue;
+        }
+
+        std::vector<uint32_t> members;
+        members.push_back(uint32_t(seed));
+        assigned[seed] = 1;
+
+        auto enqueueNeighbors = [&](uint32_t c) {
+            for (uint32_t neighbor : neighbors[c]) {
+                if (assigned[neighbor] != 0) {
+                    continue;
+                }
+                if (clusters.clusters[neighbor].materialId != clusters.clusters[c].materialId
+                        || clusters.clusters[neighbor].submeshId
+                                != clusters.clusters[c].submeshId) {
+                    continue;
+                }
+                math::float3 const delta = clusters.clusters[neighbor].bounds.center
+                        - clusters.clusters[c].bounds.center;
+                candidates.emplace(dot(delta, delta), neighbor);
+            }
+        };
+
+        enqueueNeighbors(uint32_t(seed));
+
+        while (members.size() < groupSize && !candidates.empty()) {
+            uint32_t const next = candidates.top().second;
+            candidates.pop();
+            if (assigned[next] != 0) {
+                continue;
+            }
+            assigned[next] = 1;
+            members.push_back(next);
+            enqueueNeighbors(next);
+        }
+
+        // Drop candidates left over from this group. The next seed rebuilds its own frontier,
+        // and stale entries would otherwise leak across groups.
+        while (!candidates.empty()) {
+            candidates.pop();
+        }
 
         Cluster group;
         size_t triangleCount = 0;
-        for (size_t c = first; c < last; ++c) {
-            triangleCount += clusters.clusters[c].indices.size();
+        for (uint32_t member : members) {
+            triangleCount += clusters.clusters[member].indices.size();
         }
         group.indices.reserve(triangleCount);
 
-        for (size_t c = first; c < last; ++c) {
-            Cluster const& member = clusters.clusters[c];
+        group.bounds = clusters.clusters[members[0]].bounds;
+        group.cone = clusters.clusters[members[0]].cone;
+        group.materialId = clusters.clusters[members[0]].materialId;
+        group.submeshId = clusters.clusters[members[0]].submeshId;
+        group.indices.insert(group.indices.end(),
+                clusters.clusters[members[0]].indices.begin(),
+                clusters.clusters[members[0]].indices.end());
 
-            if (c == first) {
-                group.bounds = member.bounds;
-                group.cone = member.cone;
-            } else {
-                group.bounds = mergeSpheres(group.bounds, member.bounds);
-                group.cone = mergeCones(group.cone, member.cone);
-            }
-
+        for (size_t i = 1; i < members.size(); ++i) {
+            Cluster const& member = clusters.clusters[members[i]];
+            group.bounds = mergeSpheres(group.bounds, member.bounds);
+            group.cone = mergeCones(group.cone, member.cone);
             group.indices.insert(group.indices.end(),
                     member.indices.begin(), member.indices.end());
         }

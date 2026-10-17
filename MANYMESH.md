@@ -233,7 +233,15 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
   - QEM / mesh simplification 生成低复杂度 mesh（全局链 + 逐 cluster 两种模式）
   - 产出 **Geometry Error Map**（离线软件光栅化原型）
   - cluster 组（cluster group）简化：平均误差降低 43%，但最差误差仍未追平全局链
-  - [ ] 后续：层次化 cluster 组 / 多级 DAG，在保留细粒度选择的同时进一步逼近链的质量
+  - [x] 属性接缝保护：按共享索引拆分 UV/法线 chart，分组只沿共享顶点邻接生长，避免跨接缝简化
+  - [x] 六模型同机位视觉回归：dragon / sphere / monkey / torus / cloth / shapes 未发现新增穿孔
+  - [x] 层次化 cluster DAG：每个 cluster 保留自己的 LOD 链，组父节点再逐级合并（见 §7.6）
+  - [x] 运行时 CPU 选层：非重叠 DAG cut，O(节点数) 遍历；`selectLodGraphCut` 不组装索引
+  - [x] 编辑器 UI：节省比例滑杆、Maximum/Balanced/Aggressive 档位、近细远粗开关
+  - [x] 质量门：边界边集合、非流形边、重复/退化/翻转三角形、最小三角形质量、世界空间位置误差
+  - [x] normal/UV 参与 attribute QEM；material/submesh ID 保留到 DAG 节点和 draw primitive
+  - [x] 同步本地文件分页流式 + LRU 缓存；GPU 侧目前只有 std430 布局和间接绘制数据结构
+  - [ ] GPU compute cluster selection、Vulkan visibility buffer、异步网络流式的生产接线
 - [ ] **M3 — 图像侧：移动端轻量神经重建**（首个切片，见 §7.3）
   - [x] 配对数据生成（多视角、同一相机列表、逐视角误差图）
   - [x] 轻量 CNN 重建：等分辨率下比粗几何高 **+1.88 dB**；半分辨率下比双三次高 **+0.98 dB**
@@ -314,6 +322,33 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
 > 从 2.0 px 收紧 20 倍到 0.1 px，绘制面数只从 27.4% 升到 36.5%（大部分 cluster
 > 早已处于自己最粗的一级）。这恰好印证 ManyMesh 的前提：**扫描模型的面数远超
 > 视觉需要**，真正的瓶颈在几何处理开销而非视觉质量。
+
+#### 7.1.1 属性接缝修复与视觉验收
+
+初版只按位置做 QEM，导入器在 UV/法线 seam 处复制的顶点会被当成普通内部顶点，
+于是 cluster 可以跨接缝塌缩。球体降到约 25% 时出现黑色三角洞（PSNR 30.75 dB）；
+修复后同样约 25% 无洞，PSNR 37.57 dB。
+
+现在的做法是：`clusterize()` 先按共享索引求连通分量，把接缝拆成独立 chart，再逐 chart
+建 meshlet；`groupClusters()` 不再按输出顺序取连续 cluster，而是只沿共享顶点做邻接生长，
+因此组不会跨属性接缝或跨不连通分量。
+
+用同一机位、同一 lit 材质（`aiDefaultMat.filamat`）、960×720 重拍并比对：
+
+| 模型 | 保留面数 | PSNR | SSIM | 视觉结论 |
+|-|-|-|-|-|
+| Stanford dragon | 34.2% | 35.19 dB | 0.96124 | 无破洞；鳞片和角略变软 |
+| Sphere | 22.4% | 37.32 dB | 0.99163 | 轮廓多边形化；最粗一级有细接缝明暗线，但拓扑闭合 |
+| Monkey | 24.1% | 28.06 dB | 0.93454 | 眼、耳、下巴明显变粗；边界边数量与原模一致 |
+| Torus | 33.9% | 37.06 dB | 0.99149 | 明显多边形化，无裂缝 |
+| Cloth | 57.5% | 44.27 dB | 0.99709 | 该视角下几乎无差别 |
+| Shapes | 20.4% | 63.10 dB | 0.99995 | 地面与小球完整 |
+
+拓扑核对：sphere/torus 的简化结果没有新增边界边；monkey 仍有 168 条边界边，与原始 OBJ
+完全相同，属于原模型自带的开口，不是减面造成的裂缝。
+
+仍未解决：每面材质/子网格 ID 没有随简化结果保留，且 QEM 仍只使用位置误差；这两点会
+影响生产资产与贴图正确性，但不属于“把几何撕开”。
 
 ---
 
@@ -480,7 +515,7 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
 > **结论：只画 1/8 的三角形，换来约 6× 的提速**（各次测量 4.7~7.1×），逼近 8.2× 的
 > 面数削减比——**帧时基本正比于三角形数**。这与 §7.5 的结论一致。
 >
-> 画质代价是 30.19 dB / SSIM 0.930，93.6% 的像素逐位相同，且模型占画面 38%——
+> 画质代价是 30.29 dB / SSIM 0.9297，94.0% 的像素逐位相同，且模型占画面 38%——
 > 比单物件测试（35.7 dB）低，因为误差铺在一大片近处表面上，而不是集中在几条轮廓线上。
 
 **注**：这里最初的数字（1.59×）是错的，根因见 §7.5——写出的低模把视野外几何按全细节
@@ -539,6 +574,89 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
 
 > **测量环境警告**：本机核显与远程桌面会话共享。LR 三次重复只差 0.1%，HR 波动达 ±20%，
 > 所以重负载下的绝对毫秒数不可信，可比的是同期测得的**比值**。
+
+---
+
+### 7.6 几何层第二轮：DAG、质量门、运行时选层与近细远粗
+
+这一轮把 §7.1 留下的「层次化 DAG / 属性 / 质量门 / 编辑器调节」补成了可运行版本。
+
+**结构**
+
+- 每个 cluster 有自己的 LOD 链，组父节点把最多 8 个子节点合并后再简化，因此一个 view
+  可以在不同子树里选不同层级，而不是整模型只切一个 LOD。
+- 节点保留 `materialId` / `submeshId`；渲染时按 `(material, submesh)` 拆 primitive，
+  不再把整个选择塌成一次 draw。
+- normal 和 UV 已进入 attribute QEM 的 collapse cost，而不只是事后统计。
+
+**质量门（默认开启）**
+
+每个候选层必须同时满足：边界边集合与基元完全一致、非流形边不增加、无重复/退化/翻转
+三角形、最小三角形质量不低于阈值、位置误差不超过 `targetError × mesh scale`。
+最后一条是这轮新增的：此前的门只能看见拓扑坏了，看不见「拓扑完好但表面被拉出一个坑」。
+
+**视觉回归**（1280×720，同一相机，`--no-shadows`）
+
+| 模型 | 原始面数 | 50% 目标 | 75% 目标 | PSNR / SSIM |
+|-|-|-|-|-|
+| sphere | 8,064 | 4,032（50.00%） | 1,736（21.53%） | s50: 42.01 dB / 0.99770；s75: 41.18 dB / 0.99632 |
+| monkey | 15,744 | 7,872（50.00%） | 5,426（34.46%） | s75: 38.80 dB / 0.99157 |
+| torus | 1,152 | 764（66.32%，质量下限） | 同 50% 档 | s50: 43.64 dB / 0.99824 |
+
+> sphere 的 75% 档只到 21.53%、monkey 只到 34.46%，不是选择器算错，而是更激进的候选被
+> 质量门拒绝了。UI 必须显示**实际**面数比例，不能只显示目标值。torus 的 UV 接缝使 66.32%
+> 成为当前安全下限；继续压需要跨 UV 接缝的专用简化，而不是放松质量门。
+
+> **一个重要的视觉陷阱**：早期 sphere 截图上看到的「右侧缺口」不是几何洞。把同一份
+> 选择导出后检查，所有顶点半径都是 0.500000，边使用次数全为 2（闭合），法线全部径向。
+> 缺口来自低模阴影贴图的自阴影；用 `--no-shadows` 后消失。因此几何回归必须同时看
+> 「关阴影的同机位截图」和拓扑/位置指标，不能把渲染伪影记到算法头上。
+
+**近细远粗**
+
+`selectLodGraph` 用 `accumulatedError / depth` 计算每个节点的屏幕像素误差；同一个像素阈值
+下，近处节点会更晚被父节点替换。mm_bench 已提供：
+
+```text
+--distance-lod --screen-error 2.0
+```
+
+以及 UI 里的 `Distance-aware (near fine, far coarse)` 开关和 `Screen error` 滑杆；
+开关也可以直接按 `D` 键切换，便于在同一机位下做开/关 A/B 对比。
+实测 monkey 在 2 px 下：近相机 8,738 面（55.50%），远相机 6,224 面（39.53%）。
+同一 2 px 阈值下，monkey 为 42.36 dB / 0.99526，torus 为 49.40 dB / 0.99944；
+它比固定 savings 更接近原始画面，因为误差只花在真正需要的屏幕区域。
+
+**运行时可行性**
+
+- DAG 构建、attribute QEM、质量门都是离线/编辑器侧，不需要每帧重跑。
+- 运行时只做一次 DAG cut：`selectLodGraphCut` 只输出选中的节点，不拼接索引/材质数组。
+  在 588 节点的 monkey DAG 上，CPU 单线程实测 **0.0031 ms/次**。
+- 需要完整索引数组的编辑器路径 `selectLodGraph` 为 0.115~0.253 ms/次（monkey，距离模式），
+  0.657~0.892 ms/次（savings 模式，含 32 次阈值二分和预算内细化）。两者都远低于 16.7 ms。
+- 生产渲染器应把每个节点的索引放在共享 buffer 里，用间接绘制更新 cut，而不是像
+  `mm_bench` 的 UI 调参路径那样每次重建 index buffer。
+
+**仍未完成**：GPU compute cluster selection、真实 indirect draw 提交、Vulkan visibility
+buffer、异步/网络流式。当前 `GpuLod` 是 std430 布局与 CPU 参考实现，不能宣称 GPU 选层已完成。
+
+**本轮性能优化**
+
+- `AttributeSimplifier` 的候选塌缩原先在每次评估里创建 `std::set` / `std::map`。现在改成
+  预留容量的小向量、排序后的边表与哈希集合；初始边只评估一次（同一条内部边不再被两个
+  相邻三角形各推一遍）。
+- `selectLodGraphAtRatio` 的 32 次阈值二分共用一份 `NodeMetrics`（屏幕误差与视锥剔除
+  结果），不再每轮重复投影。
+- `mm_bench` 的滑杆拖动期间只更新 cut 与统计，松开滑杆后才重建 index buffer，避免每帧
+  重建 GPU 资源。
+- monkey DAG 构建从 **3.21s** 降到 **2.33s**（本机，约 27%）；`test_manymesh` 25 个测试
+  总耗时从 **9.2s** 降到 **4.6s**。同一机位 34.72% 保留率仍为 **38.89 dB / 0.99176**，
+  非流形/重复/翻转三角形均为 0。
+
+**下一批可优化点**：`simplifyClusterInto` 的 `localPositions` / `localIndices` /
+`destination` 仍是每单元分配，可提升为跨单元 scratch；`selectionFromCut` 为去重仍会排序
+整个选择；生产渲染路径应把 index buffer 重建换成 indirect draw 更新；极端 UV seam 的
+torus 仍需要跨 chart 的专用简化。
 
 ---
 

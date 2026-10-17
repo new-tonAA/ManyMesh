@@ -13,21 +13,25 @@ See [`MANYMESH.md`](../../MANYMESH.md) for how this fits into the wider project.
 high poly mesh
       |
       v
+  split connected attribute charts          -> UV/normal seams become cluster borders
+      |
+      v
   clusterize (meshoptimizer meshlets)      -> per-cluster bounding sphere + normal cone
       |
       v
-  group neighbouring clusters (optional)   -> the unit simplification actually works on
+  group adjacent clusters (optional)       -> the unit simplification actually works on
       |
       v
-  QEM simplification                       -> a LOD chain per unit, border locked so that
-                                              neighbouring units do not crack apart
+  attribute QEM + quality gate             -> a LOD chain per unit, border locked so that
+                                              neighbouring units do not crack apart;
+                                              normal/UV cost and world-space error are gated
       |
       v
   screen space error + level selection     -> coarsest level per cluster that fits a pixel
                                               budget, computed from the camera
       |
       v
-  clusters.json + error_map.pgm + OBJs
+  clusters.json + error_map.pgm + OBJs/PLYs
 ```
 
 Everything runs on the CPU and needs no GPU, no Filament engine and no Android. That is
@@ -51,26 +55,43 @@ Everything is registered in the root `CMakeLists.txt` (`add_subdirectory(${TOOLS
 ```text
 mmgeo <input mesh> [options]
 
-  --out <dir>          output directory (default: out/mmgeo)
-  --mode chain|cluster global LOD chain, or per-cluster LOD (default: cluster)
-  --levels N           number of LOD levels including the original (default: 5)
-  --ratio F            fraction of triangles kept per level (default: 0.7)
-  --target-error F     relative error ceiling for simplification (default: 0.01)
-  --cluster-verts N    max vertices per cluster, <= 255 (default: 128)
-  --cluster-tris N     max triangles per cluster, <= 512 (default: 128)
-  --cone-weight F      0 = size driven clusters, 1 = favour cone culling (default: 0)
-  --group-size N       clusters merged into one simplification unit (default: 1)
-  --lock-border 0|1    per-cluster mode: never move cluster borders (default: 1)
-  --eye x,y,z          camera position; omit to auto-frame the mesh
-  --look-at x,y,z      camera target (default: mesh centre)
-  --fov-y <deg>        vertical field of view in degrees (default: 45)
-  --screen-height N    screen height in pixels for the error map (default: 1080)
-  --threshold-px F     screen space error budget in pixels (default: 1.0)
+  --out <dir>           output directory (default: out/mmgeo)
+  --mode chain|cluster|dag
+                        global chain, per-cluster chain, or hierarchical DAG
+  --levels N            number of LOD levels including the original (default: 5)
+  --ratio F             fraction of triangles kept per level (default: 0.7)
+  --target-error F      relative world-space error ceiling (default: 0.01)
+  --cluster-verts N     max vertices per cluster, <= 255 (default: 128)
+  --cluster-tris N      max triangles per cluster, <= 512 (default: 128)
+  --split-charts 0|1    keep clusters inside connected attribute charts (default: 1)
+  --group-size N        clusters merged into one per-cluster unit (default: 1)
+  --dag-group N         children merged into one DAG parent (default: 8)
+  --tier maximum|balanced|aggressive
+                        DAG selection tier (default: balanced)
+  --target-ratio F      DAG selection: smallest cut reaching this triangle ratio
+  --lock-border 0|1     never move cluster borders (default: 1)
+  --attribute-qem 0|1   position + normal + UV QEM for small units (default: 1)
+  --quality-gate 0|1    reject cracked/non-manifold/flipped/sliver/over-error candidates
+  --quality-debug 0|1   print rejected candidates and their metrics
+  --quality-attempts N  retries per unit after a rejection (default: 4)
+  --min-quality F       minimum normalized triangle quality (default: 0.02)
+  --max-normal-error F  maximum normal deviation in degrees (default: 35)
+  --max-uv-error F      maximum mean UV deviation (default: 0.10)
+  --write-dag 0|1       write lod_graph.mmb / lod_graph.json (default: 1)
+  --visibility 0|1      write the CPU visibility-buffer reference (default: 0)
+  --page-bytes N        streaming page size (default: 65536)
+  --eye x,y,z           camera position; omit to auto-frame the mesh
+  --look-at x,y,z       camera target (default: mesh centre)
+  --fov-y <deg>         vertical field of view in degrees (default: 45)
+  --screen-height N     screen height in pixels for the error map (default: 1080)
+  --threshold-px F      screen-space error budget in pixels (default: 1.0)
 ```
 
 Input can be anything assimp reads: OBJ, PLY, FBX, Collada, ... Triangle soup is triangulated,
-duplicate vertices are welded and node transforms are baked, so everything downstream lives in
-one world space.
+fully identical vertices are joined, and node transforms are baked, so everything downstream
+lives in one world space. UV and normal seams keep their duplicated vertices; those seams are
+used to split connected attribute charts before clustering, so a cluster never simplifies
+across a seam.
 
 Example, on a scan with seven million triangles:
 
@@ -83,14 +104,14 @@ mmgeo out/models/xyzrgb_dragon.ply --out out/mmgeo-dragon --levels 5 --cluster-t
 | File | Contents |
 |-|-|
 | `clusters.json` | per cluster: bounding sphere, normal cone, and per level the triangle count and world space error |
-| `lod<N>.obj` | every cluster at level N, clamped to the coarsest level a cluster actually has |
-| `selected.obj` | exactly the triangles the given camera and pixel budget would draw |
+| `lod<N>.ply/.obj` | every cluster at level N, clamped to the coarsest level a cluster actually has |
+| `selected.ply/.obj` | exactly the triangles the given camera and pixel budget would draw |
 | `error_map.pgm` | screen space geometry error, software rasterized. Black is untransformed geometry, white is at the pixel budget |
 
 `error_map.pgm` is a plain binary PGM (P5), which every image viewer and most Python stacks
 read directly.
 
-## The two LOD modes
+## The three LOD modes
 
 - **`--mode chain`** is the classic baseline: one LOD chain for the whole mesh, every level
   simplified from the original. This is what a distance based LOD system would ship.
@@ -98,6 +119,24 @@ read directly.
   chain, so the error a level introduces is *local*. A view can then pick a different level per
   cluster instead of one level for everything, which is what turns a fixed LOD into a budget
   that can be spent where it is visible.
+- **`--mode dag`** builds a hierarchical cluster DAG: every cluster keeps its own chain, and
+  groups of up to `--dag-group` children are simplified again as parent nodes. A selection is a
+  non-overlapping cut through this hierarchy, so near clusters can stay at a fine level while
+  far clusters use a coarse ancestor. `--target-ratio` asks for the most detailed cut that fits
+  a triangle budget; `--tier` selects the quality/saving profile. The actual ratio is printed,
+  because the quality gate may stop above the requested budget.
+
+## Quality gate
+
+With `--quality-gate 1` (the default), a candidate level must keep the exact boundary-edge set
+of its source unit, must not add non-manifold edges, must contain no duplicate, degenerate or
+flipped triangles, must meet `--min-quality`, and must stay within the world-space error cap
+derived from `--target-error`. `--quality-debug 1` prints the reason a candidate was rejected.
+
+This is deliberately conservative. On a UV-seamed closed model such as the torus, the safety
+floor can be well above the requested saving (currently about 66% kept for a 50% request).
+That is a quality result, not a selection bug: further reduction needs seam-aware
+simplification that preserves UV charts instead of relaxing the gate.
 
 Clusters are simplified with `meshopt_SimplifyLockBorder`, i.e. their outer boundary vertices
 are never removed. Without it, independently simplified neighbours would crack apart along
@@ -184,12 +223,39 @@ clusters are already at their coarsest level. That is the premise ManyMesh is bu
 carry far more triangles than the image needs — and it means the win has to come from reducing
 *processing cost*, not from chasing visible artefacts.
 
+## Visual regression audit
+
+The reduction was checked by rendering each original mesh and its selected LOD from the same
+camera, resolution and lit material (`aiDefaultMat.filamat`, 960x720), then measuring PSNR/SSIM
+with `tools/mmmetrics/compare.py` and inspecting the frames directly. The 7.2M-triangle dragon
+was rerun with the current chart split; the smaller assets cover explicit UV/normal seams.
+
+| Model | Selected / original | Reduction | PSNR | SSIM | Visual verdict |
+|-|-|-|-|-|-|
+| Stanford dragon | 2,466,045 / 7,219,045 | 34.2% | 35.19 dB | 0.96124 | No holes; scales and horns slightly softened |
+| Sphere | 1,808 / 8,064 | 22.4% | 37.32 dB | 0.99163 | Silhouette facets; a thin lit seam line appears in the most extreme level, but topology stays closed |
+| Monkey | 3,794 / 15,744 | 24.1% | 28.06 dB | 0.93454 | Eyes, ears and chin clearly coarser; no new boundary edges |
+| Torus | 390 / 1,152 | 33.9% | 37.06 dB | 0.99149 | Noticeably polygonal, no cracks |
+| Cloth | 43,098 / 74,976 | 57.5% | 44.27 dB | 0.99709 | Visually unchanged at this framing |
+| Shapes | 15,064 / 73,728 | 20.4% | 63.10 dB | 0.99995 | Floor and small spheres intact |
+
+The important failure that motivated the chart split was a black triangular hole on a sphere
+reduced to 25%: before the fix the render scored 30.75 dB, after it 37.57 dB and the hole was
+gone. The boundary-edge check now also agrees with the source meshes: the sphere and torus stay
+closed, and the monkey's 168 open edges are exactly the ones the original OBJ already has.
+
+Known limits: per-face material IDs are not carried through this pipeline, and simplification
+still uses position-only QEM. Those are separate from geometric tearing, but both matter before
+using the output as a production asset.
+
 ## Implementation notes
 
 The algorithms are `meshoptimizer`'s, not ours: `meshopt_buildMeshlets` for clustering,
 `meshopt_computeMeshletBounds` for the per-cluster bounds, `meshopt_simplify` for the
 quadric-based collapse, and `meshopt_simplifyScale` to put the error in world units.
 meshoptimizer is already vendored and built as part of Filament, so this tool adds no new
-dependency. Note that the vendored version is 0.18, which predates
-`meshopt_simplifyWithAttributes`; simplification is therefore driven by positions alone, and
-attribute seams would have to be handled with `meshopt_generateShadowIndexBuffer` first.
+dependency. The vendored version is 0.18, which predates
+`meshopt_simplifyWithAttributes`; simplification is therefore driven by positions alone.
+`Clusterizer.cpp` protects attribute seams by splitting the mesh into connected charts from the
+shared-index graph, then clustering and grouping each chart independently. Normals and UVs are
+carried through to the output, but they do not participate in the error metric.

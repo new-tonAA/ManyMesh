@@ -31,7 +31,7 @@ struct GroupOptions {
 };
 
 /**
- * Merges runs of clusters into larger units.
+ * Merges spatially adjacent clusters into larger units.
  *
  * Simplifying clusters on their own is expensive in quality terms: with the border locked, a
  * cluster can only remove triangles inside its own patch, and the error it accumulates cannot
@@ -43,9 +43,10 @@ struct GroupOptions {
  * the group and are free to collapse, so the error budget can be spent where the group can
  * actually spare it. This is the idea Nanite calls a cluster group.
  *
- * meshopt_buildMeshlets emits clusters in a spatially coherent order, so consecutive runs are
- * neighbours and their triangles already reference the same mesh vertices — concatenating the
- * index lists welds them without any extra work.
+ * Clusters are connected through shared vertex indices, so groups cannot jump across an
+ * attribute seam or between disconnected components. Starting from a seed, each group grows
+ * toward its nearest unassigned neighbour, which keeps the members connected and spatially
+ * compact instead of relying on meshlet output order.
  *
  * The result is a ClusterSet like any other, so everything downstream — simplification, screen
  * space error, selection, the error map — works on groups unchanged. The trade-off is that

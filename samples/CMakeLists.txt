@@ -371,6 +371,7 @@ elseif (NOT ANDROID)
     add_demo(material_sandbox)
     add_demo(materialinstancestress)
     add_demo(mm_bench)
+    target_link_libraries(mm_bench PRIVATE manymesh)
     add_demo(multiple_windows)
     # Tint does not support setting gl_PointSize, disable the relevant sample if using WebGPU
     # https://github.com/gpuweb/gpuweb/issues/1190
