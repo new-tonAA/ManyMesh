@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <manymesh/Clusterizer.h>
 #include <manymesh/AttributeSimplifier.h>
+#include <manymesh/Clusterizer.h>
 #include <manymesh/GeometryError.h>
 #include <manymesh/GpuLod.h>
 #include <manymesh/Grouper.h>
@@ -32,11 +32,14 @@
 
 #include <algorithm>
 #include <array>
+#include <atomic>
+#include <chrono>
 #include <cmath>
 #include <cstdint>
 #include <filesystem>
 #include <map>
 #include <set>
+#include <thread>
 #include <vector>
 
 namespace math = filament::math;
@@ -53,8 +56,8 @@ Mesh makeGrid(uint32_t nx, uint32_t ny, math::float3 origin, float spacing, floa
     for (uint32_t j = 0; j <= ny; ++j) {
         for (uint32_t i = 0; i <= nx; ++i) {
             float const z = amplitude * std::sin(float(i) * 0.7f) * std::cos(float(j) * 0.9f);
-            mesh.positions.push_back(origin + math::float3{
-                    float(i) * spacing, float(j) * spacing, z });
+            mesh.positions.push_back(
+                    origin + math::float3{ float(i) * spacing, float(j) * spacing, z });
         }
     }
 
@@ -78,9 +81,9 @@ Mesh makeGrid(uint32_t nx, uint32_t ny, math::float3 origin, float spacing, floa
 // Appends `source` to `destination`, offsetting its indices.
 void append(Mesh* destination, Mesh const& source) {
     uint32_t const offset = uint32_t(destination->positions.size());
-    destination->positions.insert(destination->positions.end(),
-            source.positions.begin(), source.positions.end());
-    for (uint32_t index : source.indices) {
+    destination->positions.insert(destination->positions.end(), source.positions.begin(),
+            source.positions.end());
+    for (uint32_t index: source.indices) {
         destination->indices.push_back(offset + index);
     }
 }
@@ -101,9 +104,10 @@ std::vector<Triangle> trianglesOf(Mesh const& mesh) {
 
 std::vector<Triangle> trianglesOf(ClusterSet const& clusters) {
     std::vector<Triangle> result;
-    for (Cluster const& cluster : clusters.clusters) {
+    for (Cluster const& cluster: clusters.clusters) {
         for (size_t i = 0; i + 2 < cluster.indices.size(); i += 3) {
-            Triangle triangle = { cluster.indices[i], cluster.indices[i + 1], cluster.indices[i + 2] };
+            Triangle triangle = { cluster.indices[i], cluster.indices[i + 1],
+                cluster.indices[i + 2] };
             std::sort(triangle.begin(), triangle.end());
             result.push_back(triangle);
         }
@@ -126,7 +130,7 @@ std::set<uint32_t> borderVertices(std::vector<uint32_t> const& indices) {
     }
 
     std::set<uint32_t> result;
-    for (auto const& [edge, count] : edgeUse) {
+    for (auto const& [edge, count]: edgeUse) {
         if (count == 1) {
             result.insert(edge.first);
             result.insert(edge.second);
@@ -135,18 +139,16 @@ std::set<uint32_t> borderVertices(std::vector<uint32_t> const& indices) {
     return result;
 }
 
-std::set<std::pair<uint32_t, uint32_t>> boundaryEdgeSet(
-        std::vector<uint32_t> const& indices) {
+std::set<std::pair<uint32_t, uint32_t>> boundaryEdgeSet(std::vector<uint32_t> const& indices) {
     std::map<std::pair<uint32_t, uint32_t>, int> edgeUse;
     for (size_t i = 0; i + 2 < indices.size(); i += 3) {
         uint32_t const v[3] = { indices[i], indices[i + 1], indices[i + 2] };
         for (int e = 0; e < 3; ++e) {
-            edgeUse[{ std::min(v[e], v[(e + 1) % 3]),
-                    std::max(v[e], v[(e + 1) % 3]) }] += 1;
+            edgeUse[{ std::min(v[e], v[(e + 1) % 3]), std::max(v[e], v[(e + 1) % 3]) }] += 1;
         }
     }
     std::set<std::pair<uint32_t, uint32_t>> result;
-    for (auto const& [edge, count] : edgeUse) {
+    for (auto const& [edge, count]: edgeUse) {
         if (count == 1) {
             result.insert(edge);
         }
@@ -159,7 +161,7 @@ double meanLevel(std::vector<uint32_t> const& levels, std::vector<size_t> const&
         return 0.0;
     }
     double total = 0.0;
-    for (size_t index : clusterIndices) {
+    for (size_t index: clusterIndices) {
         total += double(levels[index]);
     }
     return total / double(clusterIndices.size());
@@ -212,10 +214,10 @@ TEST(ManyMesh, ClusterizeSeparatesAttributeCharts) {
     ClusterSet const clusters = clusterize(mesh, options);
     ASSERT_GE(clusters.clusters.size(), 2u);
 
-    for (Cluster const& cluster : clusters.clusters) {
+    for (Cluster const& cluster: clusters.clusters) {
         bool inFirstChart = false;
         bool inSecondChart = false;
-        for (uint32_t index : cluster.indices) {
+        for (uint32_t index: cluster.indices) {
             if (index < chartVertexCount) {
                 inFirstChart = true;
             } else {
@@ -286,7 +288,7 @@ TEST(ManyMesh, ScreenSpaceErrorScalesWithDistanceAndError) {
     ViewCamera camera;
     camera.eye = { 0.0f, 0.0f, 0.0f };
     camera.target = { 0.0f, 0.0f, -1.0f };
-    camera.fovY = 1.5707963f;  // 90 degrees, so tan(fov/2) == 1
+    camera.fovY = 1.5707963f; // 90 degrees, so tan(fov/2) == 1
     camera.screenHeight = 1000;
 
     // pixelsPerRadian == 1000 / (2 * 1) == 500, so a unit error at depth 10 covers 50 pixels.
@@ -370,7 +372,7 @@ TEST(ManyMesh, LockBorderKeepsClusterBoundaryVertices) {
         std::vector<uint32_t> const& simplified = lods[c].levels.back().indices;
         std::set<uint32_t> present(simplified.begin(), simplified.end());
 
-        for (uint32_t vertex : border) {
+        for (uint32_t vertex: border) {
             EXPECT_TRUE(present.count(vertex) > 0)
                     << "cluster " << c << " lost border vertex " << vertex;
         }
@@ -397,15 +399,14 @@ TEST(ManyMesh, GroupingCoversEveryTriangleAndEnclosesItsMembers) {
     EXPECT_EQ(trianglesOf(groups), trianglesOf(mesh));
     // Adjacency can force an extra partial group at the end of a connected patch, so the
     // contiguous-run lower bound is not an exact count anymore; it is still the minimum.
-    EXPECT_GE(groups.clusters.size(),
-            (clusters.clusters.size() + groupSize - 1) / groupSize);
+    EXPECT_GE(groups.clusters.size(), (clusters.clusters.size() + groupSize - 1) / groupSize);
     EXPECT_LE(groups.clusters.size(), clusters.clusters.size());
 
     // The merged sphere has to contain every vertex of the group, otherwise selection would
     // under estimate how close the unit comes to the camera.
     for (size_t g = 0; g < groups.clusters.size(); ++g) {
         Sphere const& group = groups.clusters[g].bounds;
-        for (uint32_t index : groups.clusters[g].indices) {
+        for (uint32_t index: groups.clusters[g].indices) {
             EXPECT_LE(length(mesh.positions[index] - group.center), group.radius + 1e-3f)
                     << "group " << g << " does not contain vertex " << index;
         }
@@ -428,10 +429,10 @@ TEST(ManyMesh, GroupingDoesNotMergeDisconnectedCharts) {
     ASSERT_GE(groups.clusters.size(), 2u)
             << "disconnected charts must not be merged into one simplification unit";
 
-    for (Cluster const& group : groups.clusters) {
+    for (Cluster const& group: groups.clusters) {
         bool first = false;
         bool second = false;
-        for (uint32_t index : group.indices) {
+        for (uint32_t index: group.indices) {
             if (mesh.positions[index].x < 500.0f) {
                 first = true;
             } else {
@@ -458,11 +459,11 @@ TEST(ManyMesh, GroupingTurnsMemberBordersIntoInteriorEdges) {
     // never be removed. Grouping is only worth it if it demonstrably unlocks vertices, by
     // turning the members' shared edges into edges interior to the group.
     size_t memberBorderTotal = 0;
-    for (Cluster const& cluster : clusters.clusters) {
+    for (Cluster const& cluster: clusters.clusters) {
         memberBorderTotal += borderVertices(cluster.indices).size();
     }
     size_t groupBorderTotal = 0;
-    for (Cluster const& group : groups.clusters) {
+    for (Cluster const& group: groups.clusters) {
         groupBorderTotal += borderVertices(group.indices).size();
     }
 
@@ -475,8 +476,8 @@ TEST(ManyMesh, GroupingLowersErrorAtAComparableReduction) {
     Mesh mesh;
     for (int tile = 0; tile < 4; ++tile) {
         Mesh const patch = makeGrid(40, 40,
-                { float(tile % 2) * 60.0f, float(tile / 2) * 60.0f, float(tile) * 4.0f },
-                1.0f, 0.8f);
+                { float(tile % 2) * 60.0f, float(tile / 2) * 60.0f, float(tile) * 4.0f }, 1.0f,
+                0.8f);
         append(&mesh, patch);
     }
 
@@ -501,7 +502,7 @@ TEST(ManyMesh, GroupingLowersErrorAtAComparableReduction) {
     auto meanErrorAtLevel = [](std::vector<ClusterLods> const& lods, size_t level) {
         double weighted = 0.0;
         uint64_t triangles = 0;
-        for (ClusterLods const& unit : lods) {
+        for (ClusterLods const& unit: lods) {
             if (level < unit.levels.size()) {
                 uint64_t const count = unit.levels[level].triangleCount();
                 weighted += double(unit.levels[level].worldError) * double(count);
@@ -517,7 +518,7 @@ TEST(ManyMesh, GroupingLowersErrorAtAComparableReduction) {
     // optimistic for whichever configuration stopped more units.
     auto commonLevel = [](std::vector<ClusterLods> const& lods) {
         size_t level = 0;
-        for (ClusterLods const& unit : lods) {
+        for (ClusterLods const& unit: lods) {
             level = level == 0 ? unit.levels.size() : std::min(level, unit.levels.size());
         }
         return level;
@@ -527,7 +528,7 @@ TEST(ManyMesh, GroupingLowersErrorAtAComparableReduction) {
 
     auto totalTrianglesAtLevel = [level](std::vector<ClusterLods> const& lods) {
         uint64_t triangles = 0;
-        for (ClusterLods const& unit : lods) {
+        for (ClusterLods const& unit: lods) {
             triangles += unit.levels[level].triangleCount();
         }
         return triangles;
@@ -552,11 +553,9 @@ TEST(ManyMesh, TopologyMetricsFindDuplicatesDegeneratesAndNonManifoldEdges) {
         { 1.0f, 1.0f, 0.0f },
     };
     mesh.indices = {
-        0, 1, 2,
-        0, 1, 2,  // duplicate
-        0, 0, 3,  // degenerate
-        1, 2, 3,
-        1, 2, 3,  // duplicate that also makes edge 1-2 non-manifold
+        0, 1, 2, 0, 1, 2, // duplicate
+        0, 0, 3,          // degenerate
+        1, 2, 3, 1, 2, 3, // duplicate that also makes edge 1-2 non-manifold
     };
     TopologyStats const stats = measureTopology(mesh, mesh.indices);
     EXPECT_EQ(stats.triangles, 5u);
@@ -655,8 +654,7 @@ TEST(ManyMesh, QualityGatePreservesTheExactBoundaryEdgeSet) {
     options.attributeQem = true;
     options.lockBorder = true;
     LodLevel level;
-    simplifyIndices(mesh, mesh.indices,
-            (mesh.indices.size() / 2 / 3) * 3, options, &level);
+    simplifyIndices(mesh, mesh.indices, (mesh.indices.size() / 2 / 3) * 3, options, &level);
     ASSERT_TRUE(level.simplified);
     EXPECT_LT(level.indices.size(), mesh.indices.size());
     EXPECT_EQ(boundaryEdgeSet(level.indices), boundaryEdgeSet(mesh.indices));
@@ -679,7 +677,7 @@ TEST(ManyMesh, MaterialAndSubmeshIdsSurviveClusteringAndLods) {
     clusterizeOptions.maxVertices = 64;
     clusterizeOptions.maxTriangles = 64;
     ClusterSet const clusters = clusterize(mesh, clusterizeOptions);
-    for (Cluster const& cluster : clusters.clusters) {
+    for (Cluster const& cluster: clusters.clusters) {
         for (size_t t = 0; t < cluster.triangleCount(); ++t) {
             EXPECT_TRUE(cluster.materialId == 0 || cluster.materialId == 3);
             EXPECT_TRUE(cluster.submeshId == 0 || cluster.submeshId == 7);
@@ -691,7 +689,7 @@ TEST(ManyMesh, MaterialAndSubmeshIdsSurviveClusteringAndLods) {
     options.ratio = 0.6f;
     std::vector<ClusterLods> const lods = simplifyClusters(mesh, clusters, options);
     for (size_t c = 0; c < clusters.clusters.size(); ++c) {
-        for (LodLevel const& level : lods[c].levels) {
+        for (LodLevel const& level: lods[c].levels) {
             EXPECT_EQ(level.materialId, clusters.clusters[c].materialId);
             EXPECT_EQ(level.submeshId, clusters.clusters[c].submeshId);
         }
@@ -699,7 +697,7 @@ TEST(ManyMesh, MaterialAndSubmeshIdsSurviveClusteringAndLods) {
 
     std::vector<LodLevel> const chain = simplifyChain(mesh, options);
     ASSERT_FALSE(chain.empty());
-    for (LodLevel const& level : chain) {
+    for (LodLevel const& level: chain) {
         EXPECT_EQ(level.materialIds.size(), level.triangleCount());
         EXPECT_EQ(level.submeshIds.size(), level.triangleCount());
     }
@@ -729,7 +727,7 @@ TEST(ManyMesh, LodGraphCoversLeavesAndSelectsANonOverlappingCut) {
         stack.pop_back();
         ASSERT_LT(node, graph.nodes.size());
         EXPECT_TRUE(reachable.insert(node).second) << "node " << node << " is reachable twice";
-        for (uint32_t child : graph.nodes[node].children) {
+        for (uint32_t child: graph.nodes[node].children) {
             stack.push_back(child);
         }
     }
@@ -746,7 +744,7 @@ TEST(ManyMesh, LodGraphCoversLeavesAndSelectsANonOverlappingCut) {
     }
 
     std::vector<Triangle> leafTriangles;
-    for (uint32_t leaf : graph.leaves) {
+    for (uint32_t leaf: graph.leaves) {
         for (size_t i = 0; i + 2 < graph.nodes[leaf].indices.size(); i += 3) {
             Triangle triangle = { graph.nodes[leaf].indices[i], graph.nodes[leaf].indices[i + 1],
                 graph.nodes[leaf].indices[i + 2] };
@@ -774,7 +772,7 @@ TEST(ManyMesh, LodGraphCoversLeavesAndSelectsANonOverlappingCut) {
 
     // A selected parent must never coexist with one of its children or grandchildren.
     std::set<uint32_t> selected(selection.nodes.begin(), selection.nodes.end());
-    for (uint32_t node : selection.nodes) {
+    for (uint32_t node: selection.nodes) {
         uint32_t parent = graph.nodes[node].parent;
         while (parent != UINT32_MAX) {
             EXPECT_EQ(selected.count(parent), 0u);
@@ -803,9 +801,9 @@ TEST(ManyMesh, LodGraphRatioSelectionHitsTheRequestedBudget) {
 
     LodGraphSelection const selection = selectLodGraphAtRatio(graph, camera, 0.5f, 1000.0f);
     double const ratio = graph.baseTriangles > selection.culledTriangles
-            ? double(selection.selectedTriangles)
-                    / double(graph.baseTriangles - selection.culledTriangles)
-            : 1.0;
+                                 ? double(selection.selectedTriangles) /
+                                           double(graph.baseTriangles - selection.culledTriangles)
+                                 : 1.0;
     // The cut is discrete, so it can miss the exact ratio, but it must be a genuine saving and
     // must not overshoot the request by more than one hierarchy step.
     EXPECT_LT(ratio, 0.9);
@@ -882,6 +880,62 @@ TEST(ManyMesh, AggressiveDagCutKeepsTopologyClean) {
     EXPECT_LE(cut.boundaryEdges, base.boundaryEdges);
 }
 
+TEST(ManyMesh, LodGraphCutRemovesOnlyCrossNodeDuplicateFaces) {
+    // Two independently simplified nodes share vertices 0, 1 and 2, and both generated the
+    // same face from them. The dedup pass must drop one copy while keeping both unique faces.
+    LodGraph graph;
+    graph.vertexCount = 5;
+    graph.levelCount = 1;
+    graph.baseTriangles = 4;
+
+    LodGraphNode first;
+    first.level = 0;
+    first.indices = { 0, 1, 2, 0, 2, 3 };
+    first.bounds.center = { 0.0f, 0.0f, 0.0f };
+    first.bounds.radius = 10.0f;
+    first.materialId = 7;
+    first.submeshId = 1;
+    first.baseTriangles = 2;
+
+    LodGraphNode second;
+    second.level = 0;
+    second.indices = { 0, 1, 2, 1, 2, 4 };
+    second.bounds = first.bounds;
+    second.materialId = 7;
+    second.submeshId = 1;
+    second.baseTriangles = 2;
+
+    graph.nodes = { first, second };
+    graph.roots = { 0, 1 };
+    graph.leaves = { 0, 1 };
+
+    ViewCamera camera;
+    camera.eye = { 0.0f, 0.0f, 5.0f };
+    camera.target = { 0.0f, 0.0f, 0.0f };
+    LodGraphSelection const selection = selectLodGraphAtRatio(graph, camera, 1.0f, 1000.0f);
+
+    EXPECT_EQ(selection.nodes.size(), 2u);
+    ASSERT_EQ(selection.indices.size(), 9u);
+    EXPECT_EQ(selection.selectedTriangles, 3u);
+    EXPECT_EQ(selection.materialIds.size(), 3u);
+    EXPECT_EQ(selection.submeshIds.size(), 3u);
+
+    std::vector<Triangle> triangles;
+    for (size_t i = 0; i + 2 < selection.indices.size(); i += 3) {
+        Triangle triangle = { selection.indices[i], selection.indices[i + 1],
+            selection.indices[i + 2] };
+        std::sort(triangle.begin(), triangle.end());
+        triangles.push_back(triangle);
+    }
+    std::sort(triangles.begin(), triangles.end());
+    std::vector<Triangle> const expected = {
+        { 0, 1, 2 },
+        { 0, 2, 3 },
+        { 1, 2, 4 },
+    };
+    EXPECT_EQ(triangles, expected);
+}
+
 TEST(ManyMesh, LodGraphSerializesAndStreamsByPage) {
     Mesh const mesh = makeGrid(20, 20, {}, 1.0f, 0.4f);
     LodGraphOptions options;
@@ -902,8 +956,7 @@ TEST(ManyMesh, LodGraphSerializesAndStreamsByPage) {
         EXPECT_EQ(restored.nodes[i].children, graph.nodes[i].children);
         EXPECT_EQ(restored.nodes[i].indices, graph.nodes[i].indices);
         EXPECT_FLOAT_EQ(restored.nodes[i].accumulatedError, graph.nodes[i].accumulatedError);
-        EXPECT_EQ(restored.nodes[i].topology.boundaryEdges,
-                graph.nodes[i].topology.boundaryEdges);
+        EXPECT_EQ(restored.nodes[i].topology.boundaryEdges, graph.nodes[i].topology.boundaryEdges);
         EXPECT_EQ(restored.nodes[i].topology.nonManifoldEdges,
                 graph.nodes[i].topology.nonManifoldEdges);
         EXPECT_EQ(restored.nodes[i].topology.flippedTriangles,
@@ -922,7 +975,7 @@ TEST(ManyMesh, LodGraphSerializesAndStreamsByPage) {
     EXPECT_EQ(streaming.nodeCount(), graph.nodes.size());
     std::vector<LodStreamingPage> const pages = streaming.planPages(512);
     ASSERT_FALSE(pages.empty());
-    for (LodStreamingPage const& page : pages) {
+    for (LodStreamingPage const& page: pages) {
         // A page never splits one node, so an oversized single node is its own page.
         EXPECT_TRUE(page.byteCount <= 512u || page.nodeCount == 1);
     }
@@ -936,7 +989,7 @@ TEST(ManyMesh, LodGraphSerializesAndStreamsByPage) {
 
     LodStreamingCache cache(&streaming, 2048, 512);
     ASSERT_TRUE(cache.prepare(selection));
-    for (uint32_t node : selection.nodes) {
+    for (uint32_t node: selection.nodes) {
         LodGraphNode const* loaded = cache.find(node);
         ASSERT_NE(loaded, nullptr) << "node " << node << " was not resident";
         EXPECT_EQ(loaded->indices, graph.nodes[node].indices);
@@ -987,6 +1040,53 @@ TEST(ManyMesh, LodGraphStreamsFromAFileWithoutLoadingTheBlob) {
     std::filesystem::remove(path, ignored);
 }
 
+TEST(ManyMesh, AsyncStreamingCachePrefetchesPagesOffTheCallingThread) {
+    Mesh const mesh = makeGrid(24, 24, {}, 1.0f, 0.3f);
+    LodGraphOptions options;
+    options.clusterize.maxVertices = 64;
+    options.clusterize.maxTriangles = 64;
+    options.clustersPerNode = 8;
+    options.levels = 4;
+    LodGraph const graph = buildLodGraph(mesh, options);
+
+    ViewCamera camera;
+    camera.eye = { 12.0f, 12.0f, 60.0f };
+    camera.target = { 12.0f, 12.0f, 0.0f };
+    camera.screenHeight = 180;
+    camera.screenWidth = 320;
+    LodGraphSelection const selection = selectLodGraphAtRatio(graph, camera, 0.5f, 1000.0f);
+    ASSERT_FALSE(selection.nodes.empty());
+
+    std::vector<uint8_t> const blob = serializeLodGraph(graph);
+    StreamingLodGraph stream(blob);
+    ASSERT_TRUE(stream.valid());
+
+    std::atomic<uint32_t> fetches{ 0 };
+    AsyncLodStreamingCache cache(
+            &stream,
+            [&](LodStreamingPage const& page, std::vector<LodGraphNode>* nodes) {
+                fetches.fetch_add(1);
+                std::this_thread::sleep_for(std::chrono::milliseconds(2));
+                return stream.readPage(page, nodes);
+            },
+            4u * 1024u * 1024u, 4096, 3);
+
+    EXPECT_TRUE(cache.request(selection));
+    auto const deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
+    while (!cache.ready() && std::chrono::steady_clock::now() < deadline) {
+        cache.poll();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+    cache.poll();
+
+    EXPECT_TRUE(cache.ready());
+    EXPECT_GT(fetches.load(), 0u);
+    EXPECT_EQ(cache.stats().pageMisses, uint64_t(fetches.load()));
+    for (uint32_t nodeId: selection.nodes) {
+        EXPECT_NE(cache.find(nodeId), nullptr) << "node " << nodeId << " was not prefetched";
+    }
+}
+
 TEST(ManyMesh, GpuLayoutAndVisibilityBufferFollowTheSelection) {
     Mesh const mesh = makeGrid(16, 16, {}, 1.0f, 0.4f);
     LodGraphOptions options;
@@ -1022,8 +1122,7 @@ TEST(ManyMesh, GpuLayoutAndVisibilityBufferFollowTheSelection) {
         if (cluster != UINT32_MAX) {
             sawCluster = true;
             EXPECT_LT(cluster, graph.nodes.size());
-            EXPECT_LT(visibility.triangleIds[pixel],
-                    gpu.indices.size() / 3);
+            EXPECT_LT(visibility.triangleIds[pixel], gpu.indices.size() / 3);
             EXPECT_EQ(visibility.materialIds[pixel], graph.nodes[cluster].materialId);
             EXPECT_EQ(visibility.submeshIds[pixel], graph.nodes[cluster].submeshId);
         }

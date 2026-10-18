@@ -414,73 +414,127 @@ LodGraphSelection selectionFromCut(LodGraph const& graph, NodeMetrics const& met
     selection.nodesPerLevel.assign(graph.levelCount, 0);
     selection.trianglesPerLevel.assign(graph.levelCount, 0);
     selection.nodes = cut.nodes;
-    std::vector<uint32_t> triangleLevels;
-    triangleLevels.reserve(cut.triangles);
-
     for (uint32_t nodeId: cut.nodes) {
         LodGraphNode const& node = graph.nodes[nodeId];
         selection.screenErrorPerNode.push_back(metrics.screenError[nodeId]);
-        selection.indices.insert(selection.indices.end(), node.indices.begin(), node.indices.end());
-        size_t const triangles = node.triangleCount();
-        for (size_t t = 0; t < triangles; ++t) {
-            selection.materialIds.push_back(node.materialId);
-            selection.submeshIds.push_back(node.submeshId);
-            triangleLevels.push_back(node.level);
-        }
         selection.nodesPerLevel[node.level] += 1;
-        selection.trianglesPerLevel[node.level] += triangles;
-        selection.selectedTriangles += triangles;
     }
 
     // Two independently simplified clusters can both produce the same triangle at a shared
     // border. Each node is clean on its own, so the per-node quality gate cannot see it. Drop
     // degenerates and duplicate faces here: the remaining copy covers the same surface, and
     // removing the extra face also removes the false non-manifold edges it created.
-    struct Face {
-        uint32_t a;
-        uint32_t b;
-        uint32_t c;
-        uint32_t material;
-        uint32_t submesh;
-        uint32_t level;
-        std::array<uint32_t, 3> key;
-    };
-    std::vector<Face> faces;
-    faces.reserve(selection.indices.size() / 3);
-    for (size_t t = 0; t < selection.indices.size() / 3; ++t) {
-        uint32_t const a = selection.indices[t * 3 + 0];
-        uint32_t const b = selection.indices[t * 3 + 1];
-        uint32_t const c = selection.indices[t * 3 + 2];
-        if (a == b || b == c || c == a) {
-            continue;
+    // Only a face whose three vertices occur in more than one selected node can be produced by
+    // two nodes. The interior of a node is already unique, so ownership flags and a hash set
+    // over those boundary faces replace the full-selection sort.
+    std::vector<uint32_t> nodeOwner(graph.vertexCount, UINT32_MAX);
+    std::vector<uint8_t> sharedVertex(graph.vertexCount, 0);
+    for (uint32_t nodeId: cut.nodes) {
+        for (uint32_t vertex: graph.nodes[nodeId].indices) {
+            if (vertex >= nodeOwner.size()) {
+                continue;
+            }
+            if (nodeOwner[vertex] == UINT32_MAX) {
+                nodeOwner[vertex] = nodeId;
+            } else if (nodeOwner[vertex] != nodeId) {
+                sharedVertex[vertex] = 1;
+            }
         }
-        Face face{ a, b, c, selection.materialIds[t], selection.submeshIds[t], triangleLevels[t],
-            { a, b, c } };
-        std::sort(face.key.begin(), face.key.end());
-        faces.push_back(face);
     }
-    std::sort(faces.begin(), faces.end(),
-            [](Face const& x, Face const& y) { return x.key < y.key; });
 
-    selection.indices.clear();
-    selection.materialIds.clear();
-    selection.submeshIds.clear();
-    selection.selectedTriangles = 0;
-    selection.trianglesPerLevel.assign(graph.levelCount, 0);
-    std::array<uint32_t, 3> previous = { UINT32_MAX, UINT32_MAX, UINT32_MAX };
-    for (Face const& face: faces) {
-        if (face.key == previous) {
-            continue;
+    auto const isBoundaryFace = [&sharedVertex](uint32_t a, uint32_t b, uint32_t c) {
+        return a < sharedVertex.size() && b < sharedVertex.size() && c < sharedVertex.size() &&
+               sharedVertex[a] && sharedVertex[b] && sharedVertex[c];
+    };
+
+    // Open addressing keeps the boundary test allocation-free per face. Keys are sorted so the
+    // result ignores winding, matching the previous duplicate definition.
+    struct TriangleSet {
+        struct Slot {
+            uint32_t a = UINT32_MAX;
+            uint32_t b = 0;
+            uint32_t c = 0;
+        };
+        std::vector<Slot> slots = std::vector<Slot>(1024);
+        size_t count = 0;
+
+        static uint64_t hash(uint32_t a, uint32_t b, uint32_t c) noexcept {
+            uint64_t h = uint64_t(a) * 0x9e3779b185ebca87ull;
+            h ^= uint64_t(b) * 0xc2b2ae3d27d4eb4full;
+            h ^= uint64_t(c) * 0x165667b19e3779f9ull;
+            h ^= h >> 33;
+            h *= 0xff51afd7ed558ccdull;
+            h ^= h >> 33;
+            return h;
         }
-        previous = face.key;
-        selection.indices.push_back(face.a);
-        selection.indices.push_back(face.b);
-        selection.indices.push_back(face.c);
-        selection.materialIds.push_back(face.material);
-        selection.submeshIds.push_back(face.submesh);
-        selection.trianglesPerLevel[face.level] += 1;
-        selection.selectedTriangles += 1;
+
+        bool insert(uint32_t a, uint32_t b, uint32_t c) {
+            uint32_t const lo = std::min({ a, b, c });
+            uint32_t const hi = std::max({ a, b, c });
+            uint32_t const mid = a + b + c - lo - hi;
+            if ((count + 1) * 2 > slots.size()) {
+                grow();
+            }
+            size_t const mask = slots.size() - 1;
+            size_t index = size_t(hash(lo, mid, hi)) & mask;
+            while (true) {
+                Slot& slot = slots[index];
+                if (slot.a == UINT32_MAX) {
+                    slot = { lo, mid, hi };
+                    ++count;
+                    return true;
+                }
+                if (slot.a == lo && slot.b == mid && slot.c == hi) {
+                    return false;
+                }
+                index = (index + 1) & mask;
+            }
+        }
+
+    private:
+        void grow() {
+            std::vector<Slot> old = std::move(slots);
+            slots.assign(old.size() * 2, Slot{});
+            count = 0;
+            for (Slot const& slot: old) {
+                if (slot.a != UINT32_MAX) {
+                    insert(slot.a, slot.b, slot.c);
+                }
+            }
+        }
+    };
+
+    TriangleSet boundaryFaces;
+    std::vector<uint32_t> indices;
+    std::vector<uint32_t> materialIds;
+    std::vector<uint32_t> submeshIds;
+    indices.reserve(cut.triangles * 3);
+    materialIds.reserve(cut.triangles);
+    submeshIds.reserve(cut.triangles);
+    for (uint32_t nodeId: cut.nodes) {
+        LodGraphNode const& node = graph.nodes[nodeId];
+        for (size_t t = 0; t < node.triangleCount(); ++t) {
+            uint32_t const a = node.indices[t * 3 + 0];
+            uint32_t const b = node.indices[t * 3 + 1];
+            uint32_t const c = node.indices[t * 3 + 2];
+            if (a == b || b == c || c == a) {
+                continue;
+            }
+            if (isBoundaryFace(a, b, c) && !boundaryFaces.insert(a, b, c)) {
+                continue;
+            }
+            indices.push_back(a);
+            indices.push_back(b);
+            indices.push_back(c);
+            materialIds.push_back(node.materialId);
+            submeshIds.push_back(node.submeshId);
+            selection.trianglesPerLevel[node.level] += 1;
+            selection.selectedTriangles += 1;
+        }
     }
+    selection.indices = std::move(indices);
+    selection.materialIds = std::move(materialIds);
+    selection.submeshIds = std::move(submeshIds);
     return selection;
 }
 
@@ -504,6 +558,7 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options) {
     }
 
     ClusterSet const clusters = clusterize(mesh, options.clusterize);
+    graph.vertexCount = uint32_t(mesh.positions.size());
     graph.levelCount = 1;
     graph.nodes.reserve(clusters.clusters.size() * 2);
     graph.leaves.reserve(clusters.clusters.size());

@@ -34,8 +34,7 @@ namespace manymesh {
 
 namespace {
 
-void removeDegenerateAndDuplicateTriangles(Mesh const& mesh,
-        std::vector<uint32_t>* indices) {
+void removeDegenerateAndDuplicateTriangles(Mesh const& mesh, std::vector<uint32_t>* indices) {
     std::vector<uint32_t> cleaned;
     cleaned.reserve(indices->size());
 
@@ -70,9 +69,8 @@ void removeDegenerateAndDuplicateTriangles(Mesh const& mesh,
     for (size_t i = 0; i < order.size(); ++i) {
         order[i] = i;
     }
-    std::sort(order.begin(), order.end(), [&keys](size_t a, size_t b) {
-        return keys[a] < keys[b];
-    });
+    std::sort(order.begin(), order.end(),
+            [&keys](size_t a, size_t b) { return keys[a] < keys[b]; });
 
     std::vector<uint8_t> keep(keys.size(), 1);
     for (size_t i = 1; i < order.size(); ++i) {
@@ -100,8 +98,8 @@ float normalizedTriangleQuality(Mesh const& mesh, uint32_t a, uint32_t b, uint32
     math::float3 const ab = mesh.positions[b] - mesh.positions[a];
     math::float3 const ac = mesh.positions[c] - mesh.positions[a];
     float const area2 = length(cross(ab, ac));
-    float const bc2 = dot(mesh.positions[c] - mesh.positions[b],
-            mesh.positions[c] - mesh.positions[b]);
+    float const bc2 =
+            dot(mesh.positions[c] - mesh.positions[b], mesh.positions[c] - mesh.positions[b]);
     float const denominator = dot(ab, ab) + dot(ac, ac) + bc2;
     if (!(denominator > 0.0f) || !(area2 > 0.0f)) {
         return 0.0f;
@@ -109,15 +107,15 @@ float normalizedTriangleQuality(Mesh const& mesh, uint32_t a, uint32_t b, uint32
     return std::clamp(2.0f * std::sqrt(3.0f) * area2 / denominator, 0.0f, 1.0f);
 }
 
-bool collapseSliverEdge(Mesh const& mesh, std::vector<uint32_t>* indices,
-        uint32_t remove, uint32_t keep, std::set<uint32_t> const& borderVertices,
+bool collapseSliverEdge(Mesh const& mesh, std::vector<uint32_t>* indices, uint32_t remove,
+        uint32_t keep, std::set<uint32_t> const& borderVertices,
         std::set<std::pair<uint32_t, uint32_t>> const& borderEdges,
         std::vector<uint8_t> const* lockedVertices) {
     if (remove == keep || borderVertices.count(remove) != 0) {
         return false;
     }
-    if (lockedVertices != nullptr && remove < lockedVertices->size()
-            && (*lockedVertices)[remove] != 0) {
+    if (lockedVertices != nullptr && remove < lockedVertices->size() &&
+            (*lockedVertices)[remove] != 0) {
         return false;
     }
 
@@ -128,16 +126,16 @@ bool collapseSliverEdge(Mesh const& mesh, std::vector<uint32_t>* indices,
         uint32_t const triangle[3] = { (*indices)[i], (*indices)[i + 1], (*indices)[i + 2] };
         bool hasRemove = false;
         bool hasKeep = false;
-        for (uint32_t vertex : triangle) {
+        for (uint32_t vertex: triangle) {
             hasRemove = hasRemove || vertex == remove;
             hasKeep = hasKeep || vertex == keep;
         }
         if (hasRemove && !hasKeep) {
-            if (lockedVertices != nullptr && keep < lockedVertices->size()
-                    && (*lockedVertices)[keep] != 0) {
-                for (uint32_t vertex : triangle) {
-                    if (vertex != remove && vertex != keep && vertex < lockedVertices->size()
-                            && (*lockedVertices)[vertex] != 0) {
+            if (lockedVertices != nullptr && keep < lockedVertices->size() &&
+                    (*lockedVertices)[keep] != 0) {
+                for (uint32_t vertex: triangle) {
+                    if (vertex != remove && vertex != keep && vertex < lockedVertices->size() &&
+                            (*lockedVertices)[vertex] != 0) {
                         return false;
                     }
                 }
@@ -156,7 +154,7 @@ bool collapseSliverEdge(Mesh const& mesh, std::vector<uint32_t>* indices,
             affected.emplace_back(i, normalize(cross(ab, ac)));
         }
         if (hasRemove || hasKeep) {
-            for (uint32_t vertex : triangle) {
+            for (uint32_t vertex: triangle) {
                 if (vertex == remove) {
                     continue;
                 }
@@ -164,7 +162,7 @@ bool collapseSliverEdge(Mesh const& mesh, std::vector<uint32_t>* indices,
                     removeNeighbors.insert(vertex);
                 }
             }
-            for (uint32_t vertex : triangle) {
+            for (uint32_t vertex: triangle) {
                 if (vertex == keep) {
                     continue;
                 }
@@ -176,16 +174,16 @@ bool collapseSliverEdge(Mesh const& mesh, std::vector<uint32_t>* indices,
     }
 
     std::vector<uint32_t> common;
-    std::set_intersection(removeNeighbors.begin(), removeNeighbors.end(),
-            keepNeighbors.begin(), keepNeighbors.end(), std::back_inserter(common));
+    std::set_intersection(removeNeighbors.begin(), removeNeighbors.end(), keepNeighbors.begin(),
+            keepNeighbors.end(), std::back_inserter(common));
     if (common.size() != 2) {
         return false;
     }
 
-    for (auto const& [offset, oldNormal] : affected) {
-        uint32_t replaced[3] = {
-            (*indices)[offset + 0], (*indices)[offset + 1], (*indices)[offset + 2] };
-        for (uint32_t& vertex : replaced) {
+    for (auto const& [offset, oldNormal]: affected) {
+        uint32_t replaced[3] = { (*indices)[offset + 0], (*indices)[offset + 1],
+            (*indices)[offset + 2] };
+        for (uint32_t& vertex: replaced) {
             if (vertex == remove) {
                 vertex = keep;
             }
@@ -218,8 +216,7 @@ bool collapseSliverEdge(Mesh const& mesh, std::vector<uint32_t>* indices,
     return true;
 }
 
-bool triangleNormal(Mesh const& mesh, uint32_t a, uint32_t b, uint32_t c,
-        math::float3* normal) {
+bool triangleNormal(Mesh const& mesh, uint32_t a, uint32_t b, uint32_t c, math::float3* normal) {
     math::float3 const ab = mesh.positions[b] - mesh.positions[a];
     math::float3 const ac = mesh.positions[c] - mesh.positions[a];
     *normal = cross(ab, ac);
@@ -232,9 +229,8 @@ bool triangleNormal(Mesh const& mesh, uint32_t a, uint32_t b, uint32_t c,
 }
 
 bool flipEdgeIfBetter(Mesh const& mesh, std::vector<uint32_t>* indices,
-        std::map<std::pair<uint32_t, uint32_t>, std::vector<size_t>> const& edgeUse,
-        uint32_t edgeA, uint32_t edgeB, float minQuality,
-        std::vector<uint8_t> const* lockedVertices) {
+        std::map<std::pair<uint32_t, uint32_t>, std::vector<size_t>> const& edgeUse, uint32_t edgeA,
+        uint32_t edgeB, float minQuality, std::vector<uint8_t> const* lockedVertices) {
     uint32_t const u = std::min(edgeA, edgeB);
     uint32_t const v = std::max(edgeA, edgeB);
     auto const it = edgeUse.find({ u, v });
@@ -245,7 +241,7 @@ bool flipEdgeIfBetter(Mesh const& mesh, std::vector<uint32_t>* indices,
     size_t const t0 = it->second[0];
     size_t const t1 = it->second[1];
     if (lockedVertices != nullptr) {
-        for (size_t t : { t0, t1 }) {
+        for (size_t t: { t0, t1 }) {
             for (int i = 0; i < 3; ++i) {
                 uint32_t const vertex = (*indices)[t * 3 + i];
                 if (vertex < lockedVertices->size() && (*lockedVertices)[vertex] != 0) {
@@ -265,46 +261,48 @@ bool flipEdgeIfBetter(Mesh const& mesh, std::vector<uint32_t>* indices,
     };
     uint32_t const p = opposite(t0);
     uint32_t const q = opposite(t1);
-    if (p == UINT32_MAX || q == UINT32_MAX || p == q
-            || edgeUse.count({ std::min(p, q), std::max(p, q) }) != 0) {
+    if (p == UINT32_MAX || q == UINT32_MAX || p == q ||
+            edgeUse.count({ std::min(p, q), std::max(p, q) }) != 0) {
         return false;
     }
 
     math::float3 oldNormal0{};
     math::float3 oldNormal1{};
-    bool const oldValid0 = triangleNormal(mesh, (*indices)[t0 * 3 + 0],
-            (*indices)[t0 * 3 + 1], (*indices)[t0 * 3 + 2], &oldNormal0);
-    bool const oldValid1 = triangleNormal(mesh, (*indices)[t1 * 3 + 0],
-            (*indices)[t1 * 3 + 1], (*indices)[t1 * 3 + 2], &oldNormal1);
+    bool const oldValid0 = triangleNormal(mesh, (*indices)[t0 * 3 + 0], (*indices)[t0 * 3 + 1],
+            (*indices)[t0 * 3 + 2], &oldNormal0);
+    bool const oldValid1 = triangleNormal(mesh, (*indices)[t1 * 3 + 0], (*indices)[t1 * 3 + 1],
+            (*indices)[t1 * 3 + 2], &oldNormal1);
     if (!oldValid0 || !oldValid1) {
         return false;
     }
 
-    float const oldMin = std::min(
-            normalizedTriangleQuality(mesh, (*indices)[t0 * 3 + 0],
-                    (*indices)[t0 * 3 + 1], (*indices)[t0 * 3 + 2]),
-            normalizedTriangleQuality(mesh, (*indices)[t1 * 3 + 0],
-                    (*indices)[t1 * 3 + 1], (*indices)[t1 * 3 + 2]));
+    float const oldMin = std::min(normalizedTriangleQuality(mesh, (*indices)[t0 * 3 + 0],
+                                          (*indices)[t0 * 3 + 1], (*indices)[t0 * 3 + 2]),
+            normalizedTriangleQuality(mesh, (*indices)[t1 * 3 + 0], (*indices)[t1 * 3 + 1],
+                    (*indices)[t1 * 3 + 2]));
 
-    struct Flip { uint32_t a[3]; uint32_t b[3]; };
+    struct Flip {
+        uint32_t a[3];
+        uint32_t b[3];
+    };
     Flip const flips[2] = {
         { { p, u, q }, { q, v, p } },
         { { p, v, q }, { q, u, p } },
     };
 
-    for (Flip const& flip : flips) {
-        float const newQuality = std::min(
-                normalizedTriangleQuality(mesh, flip.a[0], flip.a[1], flip.a[2]),
-                normalizedTriangleQuality(mesh, flip.b[0], flip.b[1], flip.b[2]));
+    for (Flip const& flip: flips) {
+        float const newQuality =
+                std::min(normalizedTriangleQuality(mesh, flip.a[0], flip.a[1], flip.a[2]),
+                        normalizedTriangleQuality(mesh, flip.b[0], flip.b[1], flip.b[2]));
         if (newQuality < minQuality || newQuality <= oldMin + 1e-4f) {
             continue;
         }
 
         math::float3 normalA{};
         math::float3 normalB{};
-        if (!triangleNormal(mesh, flip.a[0], flip.a[1], flip.a[2], &normalA)
-                || !triangleNormal(mesh, flip.b[0], flip.b[1], flip.b[2], &normalB)
-                || dot(normalA, oldNormal0) < 0.1f || dot(normalB, oldNormal1) < 0.1f) {
+        if (!triangleNormal(mesh, flip.a[0], flip.a[1], flip.a[2], &normalA) ||
+                !triangleNormal(mesh, flip.b[0], flip.b[1], flip.b[2], &normalB) ||
+                dot(normalA, oldNormal0) < 0.1f || dot(normalB, oldNormal1) < 0.1f) {
             continue;
         }
 
@@ -323,8 +321,7 @@ bool flipEdgeIfBetter(Mesh const& mesh, std::vector<uint32_t>* indices,
         };
         auto const edge0 = directedEdge(t0);
         auto const edge1 = directedEdge(t1);
-        bool const oppositeWinding = edge0.first == edge1.second
-                && edge0.second == edge1.first;
+        bool const oppositeWinding = edge0.first == edge1.second && edge0.second == edge1.first;
         if (!oppositeWinding) {
             continue;
         }
@@ -344,8 +341,7 @@ void repairSlivers(Mesh const& mesh, std::vector<uint32_t>* indices, float minQu
     for (size_t iteration = 0; iteration < maxIterations; ++iteration) {
         std::map<std::pair<uint32_t, uint32_t>, std::vector<size_t>> edgeUse;
         for (size_t i = 0; i + 2 < indices->size(); i += 3) {
-            uint32_t const vertices[3] = {
-                (*indices)[i], (*indices)[i + 1], (*indices)[i + 2] };
+            uint32_t const vertices[3] = { (*indices)[i], (*indices)[i + 1], (*indices)[i + 2] };
             for (int e = 0; e < 3; ++e) {
                 uint32_t const a = std::min(vertices[e], vertices[(e + 1) % 3]);
                 uint32_t const b = std::max(vertices[e], vertices[(e + 1) % 3]);
@@ -354,7 +350,7 @@ void repairSlivers(Mesh const& mesh, std::vector<uint32_t>* indices, float minQu
         }
         std::set<uint32_t> borderVertices;
         std::set<std::pair<uint32_t, uint32_t>> borderEdges;
-        for (auto const& [edge, triangles] : edgeUse) {
+        for (auto const& [edge, triangles]: edgeUse) {
             if (triangles.size() == 1) {
                 borderVertices.insert(edge.first);
                 borderVertices.insert(edge.second);
@@ -371,18 +367,25 @@ void repairSlivers(Mesh const& mesh, std::vector<uint32_t>* indices, float minQu
                 continue;
             }
 
-            struct Candidate { uint32_t remove; uint32_t keep; float length2; };
+            struct Candidate {
+                uint32_t remove;
+                uint32_t keep;
+                float length2;
+            };
             Candidate candidates[3] = {
-                { a, b, dot(mesh.positions[a] - mesh.positions[b],
-                        mesh.positions[a] - mesh.positions[b]) },
-                { b, c, dot(mesh.positions[b] - mesh.positions[c],
-                        mesh.positions[b] - mesh.positions[c]) },
-                { c, a, dot(mesh.positions[c] - mesh.positions[a],
-                        mesh.positions[c] - mesh.positions[a]) },
+                { a, b,
+                    dot(mesh.positions[a] - mesh.positions[b],
+                            mesh.positions[a] - mesh.positions[b]) },
+                { b, c,
+                    dot(mesh.positions[b] - mesh.positions[c],
+                            mesh.positions[b] - mesh.positions[c]) },
+                { c, a,
+                    dot(mesh.positions[c] - mesh.positions[a],
+                            mesh.positions[c] - mesh.positions[a]) },
             };
             std::sort(candidates, candidates + 3,
                     [](Candidate const& x, Candidate const& y) { return x.length2 < y.length2; });
-            for (Candidate const& candidate : candidates) {
+            for (Candidate const& candidate: candidates) {
                 if (collapseSliverEdge(mesh, indices, candidate.remove, candidate.keep,
                             borderVertices, borderEdges, lockedVertices)) {
                     repaired = true;
@@ -399,13 +402,12 @@ void repairSlivers(Mesh const& mesh, std::vector<uint32_t>* indices, float minQu
                 // better-shaped triangles, which is common where a locked border fan meets
                 // an interior collapse.
                 Candidate flips[3] = { candidates[0], candidates[1], candidates[2] };
-                std::sort(flips, flips + 3,
-                        [](Candidate const& x, Candidate const& y) {
-                            return x.length2 > y.length2;
-                        });
-                for (Candidate const& candidate : flips) {
-                    if (flipEdgeIfBetter(mesh, indices, edgeUse, candidate.keep,
-                                candidate.remove, minQuality, lockedVertices)) {
+                std::sort(flips, flips + 3, [](Candidate const& x, Candidate const& y) {
+                    return x.length2 > y.length2;
+                });
+                for (Candidate const& candidate: flips) {
+                    if (flipEdgeIfBetter(mesh, indices, edgeUse, candidate.keep, candidate.remove,
+                                minQuality, lockedVertices)) {
                         repaired = true;
                         break;
                     }
@@ -434,17 +436,17 @@ float attributeComplexity(Mesh const& mesh, std::vector<uint32_t> const& indices
     float normalSpread = 0.0f;
     if (mesh.hasNormals()) {
         math::float3 meanNormal{};
-        for (uint32_t vertex : vertices) {
+        for (uint32_t vertex: vertices) {
             meanNormal += mesh.normals[vertex];
         }
         float const meanLength = length(meanNormal);
         if (meanLength > 0.0f) {
             meanNormal /= meanLength;
-            for (uint32_t vertex : vertices) {
+            for (uint32_t vertex: vertices) {
                 float const n = length(mesh.normals[vertex]);
                 if (n > 0.0f) {
-                    float const cosine = std::clamp(
-                            dot(mesh.normals[vertex] / n, meanNormal), -1.0f, 1.0f);
+                    float const cosine =
+                            std::clamp(dot(mesh.normals[vertex] / n, meanNormal), -1.0f, 1.0f);
                     normalSpread = std::max(normalSpread, std::acos(cosine));
                 }
             }
@@ -455,7 +457,7 @@ float attributeComplexity(Mesh const& mesh, std::vector<uint32_t> const& indices
     if (mesh.hasUVs()) {
         math::float2 lo = mesh.uvs[vertices[0]];
         math::float2 hi = lo;
-        for (uint32_t vertex : vertices) {
+        for (uint32_t vertex: vertices) {
             lo = min(lo, mesh.uvs[vertex]);
             hi = max(hi, mesh.uvs[vertex]);
         }
@@ -470,8 +472,8 @@ float attributeComplexity(Mesh const& mesh, std::vector<uint32_t> const& indices
 
 bool topologyAcceptable(TopologyStats const& candidate, TopologyStats const& base,
         SimplifyOptions const& options) {
-    if (candidate.duplicateTriangles != 0 || candidate.degenerateTriangles != 0
-            || candidate.flippedTriangles != 0) {
+    if (candidate.duplicateTriangles != 0 || candidate.degenerateTriangles != 0 ||
+            candidate.flippedTriangles != 0) {
         return false;
     }
     if (candidate.nonManifoldEdges > base.nonManifoldEdges) {
@@ -489,10 +491,10 @@ bool attributesAcceptable(AttributeStats const& attributes, SimplifyOptions cons
     // UV singularities (poles, chart corners) can produce one large outlier while the surface
     // as a whole keeps its texture coordinates. Use the mean as the hard limit and allow a
     // bounded maximum, otherwise a single pole vertex disables simplification for the unit.
-    return attributes.maxNormalErrorRadians <= maxNormal
-            && attributes.meanNormalErrorRadians <= maxNormal * 0.5f
-            && attributes.meanUvError <= options.maxUvError
-            && attributes.maxUvError <= options.maxUvError * 8.0f;
+    return attributes.maxNormalErrorRadians <= maxNormal &&
+           attributes.meanNormalErrorRadians <= maxNormal * 0.5f &&
+           attributes.meanUvError <= options.maxUvError &&
+           attributes.maxUvError <= options.maxUvError * 8.0f;
 }
 
 /**
@@ -502,13 +504,11 @@ bool attributesAcceptable(AttributeStats const& attributes, SimplifyOptions cons
  * error cap used by the meshoptimizer path, so the same cap applies to the attribute-QEM
  * candidate instead of letting it trade an arbitrary amount of shape for triangle count.
  */
-bool geometryAcceptable(LodLevel const& level, SimplifyOptions const& options,
-        float meshScale) {
+bool geometryAcceptable(LodLevel const& level, SimplifyOptions const& options, float meshScale) {
     if (!options.qualityGate) {
         return true;
     }
-    float const cap = std::max(options.targetError, 1e-5f)
-            * std::max(meshScale, 1e-6f);
+    float const cap = std::max(options.targetError, 1e-5f) * std::max(meshScale, 1e-6f);
     return std::isfinite(level.worldError) && level.worldError <= cap;
 }
 
@@ -525,7 +525,7 @@ std::set<UndirectedEdge> boundaryEdgeSet(std::vector<uint32_t> const& indices) {
         }
     }
     std::set<UndirectedEdge> result;
-    for (auto const& [edge, count] : use) {
+    for (auto const& [edge, count]: use) {
         if (count == 1) {
             result.insert(edge);
         }
@@ -550,15 +550,13 @@ bool preservesBoundaryEdges(std::vector<uint32_t> const& source,
 // it only becomes non-manifold when the neighbouring unit creates the mirror chord. This check
 // is independent of which simplifier produced the candidate, so it also covers the
 // meshoptimizer fallback, which knows nothing about the shared-vertex mask.
-bool respectsLockedMask(std::vector<uint32_t> const& source,
-        std::vector<uint32_t> const& candidate, SimplifyOptions const& options) {
+bool respectsLockedMask(std::vector<uint32_t> const& source, std::vector<uint32_t> const& candidate,
+        SimplifyOptions const& options) {
     if (options.lockedVertices == nullptr) {
         return true;
     }
     std::vector<uint8_t> const& mask = *options.lockedVertices;
-    auto isLocked = [&mask](uint32_t vertex) {
-        return vertex < mask.size() && mask[vertex] != 0;
-    };
+    auto isLocked = [&mask](uint32_t vertex) { return vertex < mask.size() && mask[vertex] != 0; };
     auto edgeOf = [](uint32_t a, uint32_t b) {
         return std::make_pair(std::min(a, b), std::max(a, b));
     };
@@ -583,13 +581,13 @@ bool respectsLockedMask(std::vector<uint32_t> const& source,
             if (isLocked(v[e])) {
                 candidateLocked.insert(v[e]);
             }
-            if (isLocked(v[e]) && isLocked(v[(e + 1) % 3])
-                    && sourceEdges.count(edgeOf(v[e], v[(e + 1) % 3])) == 0) {
+            if (isLocked(v[e]) && isLocked(v[(e + 1) % 3]) &&
+                    sourceEdges.count(edgeOf(v[e], v[(e + 1) % 3])) == 0) {
                 return false;
             }
         }
     }
-    for (uint32_t vertex : sourceLocked) {
+    for (uint32_t vertex: sourceLocked) {
         if (candidateLocked.count(vertex) == 0) {
             return false;
         }
@@ -621,16 +619,30 @@ size_t targetIndexCountForLevel(size_t baseIndexCount, uint32_t level, float rat
  * `meshScale` is `relativeToWorldScale` of the whole mesh, used to rescale the error cap — see
  * below.
  */
-void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
-        std::vector<int32_t>* remap, size_t targetIndexCount, float targetError,
-        float meshScale, SimplifyOptions const& options, unsigned int meshoptOptions,
-        LodLevel* out) {
+struct SimplifyScratch {
     std::vector<math::float3> localPositions;
     std::vector<uint32_t> localToGlobal;
-    std::vector<uint32_t> localIndices(source.size());
+    std::vector<uint32_t> localIndices;
+    std::vector<uint32_t> destination;
+};
 
-    localPositions.reserve(source.size());
-    localToGlobal.reserve(source.size());
+void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
+        std::vector<int32_t>* remap, SimplifyScratch* scratch, size_t targetIndexCount,
+        float targetError, float meshScale, SimplifyOptions const& options,
+        unsigned int meshoptOptions, LodLevel* out) {
+    std::vector<math::float3>& localPositions = scratch->localPositions;
+    std::vector<uint32_t>& localToGlobal = scratch->localToGlobal;
+    std::vector<uint32_t>& localIndices = scratch->localIndices;
+    std::vector<uint32_t>& destination = scratch->destination;
+
+    localPositions.clear();
+    localToGlobal.clear();
+    localIndices.resize(source.size());
+    destination.resize(source.size());
+    if (localPositions.capacity() < source.size()) {
+        localPositions.reserve(source.size());
+        localToGlobal.reserve(source.size());
+    }
 
     for (size_t i = 0; i < source.size(); ++i) {
         uint32_t const global = source[i];
@@ -652,11 +664,9 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
             sizeof(math::float3));
     float const localTargetError = targetError * meshScale / std::max(localScale, 1e-6f);
     float const complexity = options.qualityGate ? attributeComplexity(mesh, source) : 1.0f;
-    TopologyStats const baseTopology = options.qualityGate
-            ? measureTopology(mesh, source)
-            : TopologyStats{};
+    TopologyStats const baseTopology =
+            options.qualityGate ? measureTopology(mesh, source) : TopologyStats{};
 
-    std::vector<uint32_t> destination(localIndices.size());
     size_t attemptTarget = targetIndexCount;
     bool accepted = false;
 
@@ -664,30 +674,29 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
         std::vector<LodLevel> candidates;
 
         auto prepareCandidate = [&](std::vector<uint32_t> candidate, float relativeError,
-                float worldError) {
+                                        float worldError) {
             LodLevel level;
             removeDegenerateAndDuplicateTriangles(mesh, &candidate);
             if (options.qualityGate) {
-                repairSlivers(mesh, &candidate, options.minTriangleQuality,
-                        options.lockedVertices);
+                repairSlivers(mesh, &candidate, options.minTriangleQuality, options.lockedVertices);
             }
             level.indices = std::move(candidate);
-            PositionStats const geometry = options.qualityGate
-                    ? measurePositionError(mesh, source, level.indices,
-                            options.attributeSampleLimit,
-                            options.attributeApproximationTriangles)
-                    : PositionStats{};
+            PositionStats const geometry =
+                    options.qualityGate ? measurePositionError(mesh, source, level.indices,
+                                                  options.attributeSampleLimit,
+                                                  options.attributeApproximationTriangles)
+                                        : PositionStats{};
             level.worldError = geometry.samples > 0 ? geometry.maxError : worldError;
             level.relativeError = geometry.samples > 0
-                    ? geometry.maxError / std::max(meshScale, 1e-6f)
-                    : relativeError;
-            level.topology = options.qualityGate
-                    ? measureTopology(mesh, level.indices)
-                    : TopologyStats{};
+                                          ? geometry.maxError / std::max(meshScale, 1e-6f)
+                                          : relativeError;
+            level.topology =
+                    options.qualityGate ? measureTopology(mesh, level.indices) : TopologyStats{};
             level.attributes = options.qualityGate
-                    ? measureAttributeError(mesh, source, level.indices,
-                            options.attributeSampleLimit, options.attributeApproximationTriangles)
-                    : AttributeStats{};
+                                       ? measureAttributeError(mesh, source, level.indices,
+                                                 options.attributeSampleLimit,
+                                                 options.attributeApproximationTriangles)
+                                       : AttributeStats{};
             level.attempts = attempt + 1;
             level.simplified = level.indices.size() < source.size();
             return level;
@@ -727,19 +736,18 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
         for (size_t i = 0; i < resultCount; ++i) {
             candidate[i] = localToGlobal[destination[i]];
         }
-        candidates.push_back(prepareCandidate(std::move(candidate), resultError,
-                resultError * localScale));
+        candidates.push_back(
+                prepareCandidate(std::move(candidate), resultError, resultError * localScale));
 
         auto acceptable = [&](LodLevel const& level) {
-            bool const boundaryOk = !options.qualityGate
-                    || source.size() / 3 > options.attributeQemMaxTriangles
-                    || preservesBoundaryEdges(source, level.indices);
-            return !options.qualityGate
-                    || (topologyAcceptable(level.topology, baseTopology, options)
-                            && geometryAcceptable(level, options, meshScale)
-                            && attributesAcceptable(level.attributes, options)
-                            && boundaryOk
-                            && respectsLockedMask(source, level.indices, options));
+            bool const boundaryOk = !options.qualityGate ||
+                                    source.size() / 3 > options.attributeQemMaxTriangles ||
+                                    preservesBoundaryEdges(source, level.indices);
+            return !options.qualityGate ||
+                   (topologyAcceptable(level.topology, baseTopology, options) &&
+                           geometryAcceptable(level, options, meshScale) &&
+                           attributesAcceptable(level.attributes, options) && boundaryOk &&
+                           respectsLockedMask(source, level.indices, options));
         };
         auto attributeScore = [](LodLevel const& level) {
             return level.attributes.maxNormalErrorRadians + level.attributes.maxUvError;
@@ -760,7 +768,7 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
             return attributeScore(a) < attributeScore(b);
         });
 
-        for (LodLevel const& level : candidates) {
+        for (LodLevel const& level: candidates) {
             if (options.verbose && level.simplified && !acceptable(level)) {
                 std::fprintf(stderr,
                         "quality reject: source=%zu target=%zu got=%zu attempt=%u "
@@ -774,9 +782,8 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
                         level.topology.minTriangleQuality, baseTopology.minTriangleQuality,
                         level.attributes.maxNormalErrorRadians * 57.2957795f,
                         level.attributes.meanNormalErrorRadians * 57.2957795f,
-                        level.attributes.maxUvError, level.attributes.meanUvError,
-                        level.worldError, std::max(options.targetError, 1e-5f) * meshScale,
-                        level.relativeError);
+                        level.attributes.maxUvError, level.attributes.meanUvError, level.worldError,
+                        std::max(options.targetError, 1e-5f) * meshScale, level.relativeError);
             }
             if (level.simplified && acceptable(level)) {
                 *out = level;
@@ -790,8 +797,7 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
 
         // Back off toward the base triangle count, and tighten the error cap as we do so.
         size_t const gap = source.size() > attemptTarget ? source.size() - attemptTarget : 0;
-        attemptTarget = std::min(source.size(),
-                attemptTarget + std::max<size_t>(3, gap / 3));
+        attemptTarget = std::min(source.size(), attemptTarget + std::max<size_t>(3, gap / 3));
         if (attemptTarget >= source.size()) {
             break;
         }
@@ -810,13 +816,12 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
         out->simplified = false;
     }
 
-    for (uint32_t global : localToGlobal) {
+    for (uint32_t global: localToGlobal) {
         (*remap)[global] = -1;
     }
 }
 
-std::vector<LodLevel> simplifyChainByMaterial(Mesh const& mesh,
-        SimplifyOptions const& options) {
+std::vector<LodLevel> simplifyChainByMaterial(Mesh const& mesh, SimplifyOptions const& options) {
     std::map<std::pair<uint32_t, uint32_t>, std::vector<uint32_t>> partitions;
     for (size_t i = 0; i + 2 < mesh.indices.size(); i += 3) {
         uint32_t const material = mesh.hasMaterialIds() ? mesh.materialIds[i / 3] : UINT32_MAX;
@@ -833,10 +838,11 @@ std::vector<LodLevel> simplifyChainByMaterial(Mesh const& mesh,
     float const worldScale = relativeToWorldScale(mesh);
     unsigned int const flags = options.lockBorder ? meshopt_SimplifyLockBorder : 0;
     std::vector<int32_t> remap(mesh.positions.size(), -1);
+    SimplifyScratch scratch;
     std::vector<std::vector<LodLevel>> chains;
     chains.reserve(partitions.size());
 
-    for (auto const& [primitive, indices] : partitions) {
+    for (auto const& [primitive, indices]: partitions) {
         std::vector<LodLevel> levels(1);
         levels[0].indices = indices;
         levels[0].materialId = primitive.first;
@@ -849,8 +855,8 @@ std::vector<LodLevel> simplifyChainByMaterial(Mesh const& mesh,
                 break;
             }
             LodLevel next;
-            simplifyClusterInto(indices, mesh, &remap, target, options.targetError, worldScale,
-                    options, flags, &next);
+            simplifyClusterInto(indices, mesh, &remap, &scratch, target, options.targetError,
+                    worldScale, options, flags, &next);
             next.materialId = primitive.first;
             next.submeshId = primitive.second;
             if (!next.simplified || next.indices.size() >= levels.back().indices.size()) {
@@ -862,7 +868,7 @@ std::vector<LodLevel> simplifyChainByMaterial(Mesh const& mesh,
     }
 
     size_t levelCount = 1;
-    for (auto const& chain : chains) {
+    for (auto const& chain: chains) {
         levelCount = std::max(levelCount, chain.size());
     }
 
@@ -872,7 +878,7 @@ std::vector<LodLevel> simplifyChainByMaterial(Mesh const& mesh,
         merged.materialId = UINT32_MAX;
         merged.submeshId = UINT32_MAX;
         merged.simplified = level > 0;
-        for (auto const& chain : chains) {
+        for (auto const& chain: chains) {
             size_t const clamped = std::min(level, chain.size() - 1);
             LodLevel const& part = chain[clamped];
             size_t const triangleCount = part.triangleCount();
@@ -899,8 +905,7 @@ float relativeToWorldScale(Mesh const& mesh) noexcept {
     if (mesh.positions.empty()) {
         return 1.0f;
     }
-    return meshopt_simplifyScale(&mesh.positions[0].x, mesh.positions.size(),
-            sizeof(math::float3));
+    return meshopt_simplifyScale(&mesh.positions[0].x, mesh.positions.size(), sizeof(math::float3));
 }
 
 std::vector<LodLevel> simplifyChain(Mesh const& mesh, SimplifyOptions const& options) {
@@ -920,6 +925,7 @@ std::vector<LodLevel> simplifyChain(Mesh const& mesh, SimplifyOptions const& opt
     float const worldScale = relativeToWorldScale(mesh);
     unsigned int const flags = options.lockBorder ? meshopt_SimplifyLockBorder : 0;
     std::vector<int32_t> remap(mesh.positions.size(), -1);
+    SimplifyScratch scratch;
 
     levels.resize(1);
     levels[0].indices = mesh.indices;
@@ -944,8 +950,8 @@ std::vector<LodLevel> simplifyChain(Mesh const& mesh, SimplifyOptions const& opt
         // Every level is simplified from the original geometry rather than from the previous
         // level. It costs one extra pass but yields better quality, and it makes the reported
         // error absolute with respect to the input instead of relative to an intermediate.
-        simplifyClusterInto(mesh.indices, mesh, &remap, target, options.targetError, worldScale,
-                options, flags, &next);
+        simplifyClusterInto(mesh.indices, mesh, &remap, &scratch, target, options.targetError,
+                worldScale, options, flags, &next);
         next.materialId = levels[0].materialId;
         next.submeshId = levels[0].submeshId;
 
@@ -953,7 +959,7 @@ std::vector<LodLevel> simplifyChain(Mesh const& mesh, SimplifyOptions const& opt
             break;
         }
         if (next.indices.size() >= levels.back().indices.size()) {
-            break;  // no further progress is possible, stop instead of emitting duplicates
+            break; // no further progress is possible, stop instead of emitting duplicates
         }
         levels.push_back(std::move(next));
     }
@@ -975,6 +981,7 @@ std::vector<ClusterLods> simplifyClusters(Mesh const& mesh, ClusterSet const& cl
     // One remap scratch buffer for the whole run: allocating it per cluster would cost more
     // than the simplification itself for small clusters.
     std::vector<int32_t> remap(mesh.positions.size(), -1);
+    SimplifyScratch scratch;
 
     for (size_t c = 0; c < clusters.clusters.size(); ++c) {
         std::vector<uint32_t> const& base = clusters.clusters[c].indices;
@@ -997,13 +1004,12 @@ std::vector<ClusterLods> simplifyClusters(Mesh const& mesh, ClusterSet const& cl
             }
 
             LodLevel next;
-            simplifyClusterInto(base, mesh, &remap, target, options.targetError, worldScale,
-                    options, flags, &next);
+            simplifyClusterInto(base, mesh, &remap, &scratch, target, options.targetError,
+                    worldScale, options, flags, &next);
             next.materialId = clusters.clusters[c].materialId;
             next.submeshId = clusters.clusters[c].submeshId;
 
-            if (!next.simplified
-                    || next.indices.size() >= lods.levels.back().indices.size()) {
+            if (!next.simplified || next.indices.size() >= lods.levels.back().indices.size()) {
                 break;
             }
             // Every level is simplified from the original cluster, so its error is already
@@ -1038,8 +1044,9 @@ void simplifyIndices(Mesh const& mesh, std::vector<uint32_t> const& indices,
     float const worldScale = relativeToWorldScale(mesh);
     unsigned int const flags = options.lockBorder ? meshopt_SimplifyLockBorder : 0;
     std::vector<int32_t> remap(mesh.positions.size(), -1);
-    simplifyClusterInto(indices, mesh, &remap, (targetIndexCount / 3) * 3, options.targetError,
-            worldScale, options, flags, out);
+    SimplifyScratch scratch;
+    simplifyClusterInto(indices, mesh, &remap, &scratch, (targetIndexCount / 3) * 3,
+            options.targetError, worldScale, options, flags, out);
 }
 
 } // namespace manymesh

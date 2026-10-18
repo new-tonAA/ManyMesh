@@ -17,7 +17,9 @@
 #include <manymesh/Streaming.h>
 
 #include <algorithm>
+#include <chrono>
 #include <cstring>
+#include <iterator>
 #include <set>
 #include <utility>
 
@@ -26,7 +28,7 @@ namespace manymesh {
 
 namespace {
 
-constexpr uint32_t MAGIC = 0x474C4D4Du;  // "MMLG" in little-endian byte order
+constexpr uint32_t MAGIC = 0x474C4D4Du; // "MMLG" in little-endian byte order
 // Version 2 appends the topology and attribute statistics gathered by the quality gate.
 // The layout still has one fixed-size prefix followed by variable child/index arrays, so a
 // runtime can keep reading individual nodes without deserializing the whole graph.
@@ -106,10 +108,10 @@ void writeNode(std::vector<uint8_t>* blob, LodGraphNode const& node) {
     append(blob, uint8_t(0));
     append(blob, uint8_t(0));
     append(blob, uint8_t(0));
-    for (uint32_t child : node.children) {
+    for (uint32_t child: node.children) {
         append(blob, child);
     }
-    for (uint32_t index : node.indices) {
+    for (uint32_t index: node.indices) {
         append(blob, index);
     }
 }
@@ -174,7 +176,7 @@ bool readNodeAt(std::vector<uint8_t> const& blob, uint64_t offset, LodGraphNode*
         return false;
     }
     node->children.resize(childCount);
-    for (uint32_t& child : node->children) {
+    for (uint32_t& child: node->children) {
         if (!read(blob, &cursor, &child)) {
             return false;
         }
@@ -183,7 +185,7 @@ bool readNodeAt(std::vector<uint8_t> const& blob, uint64_t offset, LodGraphNode*
         return false;
     }
     node->indices.resize(indexCount);
-    for (uint32_t& index : node->indices) {
+    for (uint32_t& index: node->indices) {
         if (!read(blob, &cursor, &index)) {
             return false;
         }
@@ -203,10 +205,10 @@ std::vector<uint8_t> serializeLodGraph(LodGraph const& graph) {
     append(&blob, uint32_t(graph.leaves.size()));
     append(&blob, graph.levelCount);
     append(&blob, graph.baseTriangles);
-    for (uint32_t root : graph.roots) {
+    for (uint32_t root: graph.roots) {
         append(&blob, root);
     }
-    for (uint32_t leaf : graph.leaves) {
+    for (uint32_t leaf: graph.leaves) {
         append(&blob, leaf);
     }
 
@@ -258,40 +260,37 @@ bool deserializeLodGraph(std::vector<uint8_t> const& blob, LodGraph* graph) {
 std::vector<LodStreamingPage> planLodStreamingPages(std::vector<uint8_t> const& blob,
         size_t maxPageBytes) {
     StreamingLodGraph const streaming(blob);
-    return streaming.valid() ? streaming.planPages(maxPageBytes)
-                             : std::vector<LodStreamingPage>{};
+    return streaming.valid() ? streaming.planPages(maxPageBytes) : std::vector<LodStreamingPage>{};
 }
 
-StreamingLodGraph::StreamingLodGraph(std::vector<uint8_t> blob) : mBlob(std::move(blob)) {
+StreamingLodGraph::StreamingLodGraph(std::vector<uint8_t> blob)
+        : mBlob(std::move(blob)) {
     mBlobSize = mBlob.size();
     size_t cursor = 0;
     uint32_t magic = 0;
     uint32_t version = 0;
     uint32_t rootCount = 0;
     uint32_t leafCount = 0;
-    if (!read(mBlob, &cursor, &magic) || !read(mBlob, &cursor, &version)
-            || magic != MAGIC || version != VERSION
-            || !read(mBlob, &cursor, &mNodeCount)
-            || !read(mBlob, &cursor, &rootCount)
-            || !read(mBlob, &cursor, &leafCount)
-            || !read(mBlob, &cursor, &mLevelCount)
-            || !read(mBlob, &cursor, &mBaseTriangles)) {
+    if (!read(mBlob, &cursor, &magic) || !read(mBlob, &cursor, &version) || magic != MAGIC ||
+            version != VERSION || !read(mBlob, &cursor, &mNodeCount) ||
+            !read(mBlob, &cursor, &rootCount) || !read(mBlob, &cursor, &leafCount) ||
+            !read(mBlob, &cursor, &mLevelCount) || !read(mBlob, &cursor, &mBaseTriangles)) {
         return;
     }
     mRoots.resize(rootCount);
-    for (uint32_t& root : mRoots) {
+    for (uint32_t& root: mRoots) {
         if (!read(mBlob, &cursor, &root)) {
             return;
         }
     }
     mLeaves.resize(leafCount);
-    for (uint32_t& leaf : mLeaves) {
+    for (uint32_t& leaf: mLeaves) {
         if (!read(mBlob, &cursor, &leaf)) {
             return;
         }
     }
     mOffsets.resize(size_t(mNodeCount) + 1);
-    for (uint64_t& offset : mOffsets) {
+    for (uint64_t& offset: mOffsets) {
         if (!read(mBlob, &cursor, &offset)) {
             return;
         }
@@ -324,35 +323,32 @@ StreamingLodGraph::StreamingLodGraph(std::string const& path) {
     uint32_t version = 0;
     uint32_t rootCount = 0;
     uint32_t leafCount = 0;
-    if (!readStream(mFile, &magic) || !readStream(mFile, &version)
-            || magic != MAGIC || version != VERSION
-            || !readStream(mFile, &mNodeCount)
-            || !readStream(mFile, &rootCount)
-            || !readStream(mFile, &leafCount)
-            || !readStream(mFile, &mLevelCount)
-            || !readStream(mFile, &mBaseTriangles)) {
+    if (!readStream(mFile, &magic) || !readStream(mFile, &version) || magic != MAGIC ||
+            version != VERSION || !readStream(mFile, &mNodeCount) ||
+            !readStream(mFile, &rootCount) || !readStream(mFile, &leafCount) ||
+            !readStream(mFile, &mLevelCount) || !readStream(mFile, &mBaseTriangles)) {
         return;
     }
     // Reject counts that cannot possibly fit in the file before allocating for them.
-    if (uint64_t(rootCount) * sizeof(uint32_t) > mBlobSize
-            || uint64_t(leafCount) * sizeof(uint32_t) > mBlobSize
-            || uint64_t(mNodeCount + 1) * sizeof(uint64_t) > mBlobSize) {
+    if (uint64_t(rootCount) * sizeof(uint32_t) > mBlobSize ||
+            uint64_t(leafCount) * sizeof(uint32_t) > mBlobSize ||
+            uint64_t(mNodeCount + 1) * sizeof(uint64_t) > mBlobSize) {
         return;
     }
     mRoots.resize(rootCount);
-    for (uint32_t& root : mRoots) {
+    for (uint32_t& root: mRoots) {
         if (!readStream(mFile, &root)) {
             return;
         }
     }
     mLeaves.resize(leafCount);
-    for (uint32_t& leaf : mLeaves) {
+    for (uint32_t& leaf: mLeaves) {
         if (!readStream(mFile, &leaf)) {
             return;
         }
     }
     mOffsets.resize(size_t(mNodeCount) + 1);
-    for (uint64_t& offset : mOffsets) {
+    for (uint64_t& offset: mOffsets) {
         if (!readStream(mFile, &offset)) {
             return;
         }
@@ -372,8 +368,7 @@ uint64_t StreamingLodGraph::nodeOffset(uint32_t nodeId) const {
     return nodeId < mOffsets.size() ? mOffsets[nodeId] : 0;
 }
 
-bool StreamingLodGraph::readRange(uint64_t offset, size_t size,
-        std::vector<uint8_t>* out) const {
+bool StreamingLodGraph::readRange(uint64_t offset, size_t size, std::vector<uint8_t>* out) const {
     if (out == nullptr || offset > mBlobSize || size > mBlobSize - offset) {
         return false;
     }
@@ -382,6 +377,7 @@ bool StreamingLodGraph::readRange(uint64_t offset, size_t size,
         return true;
     }
     if (mFile.is_open()) {
+        std::lock_guard<std::mutex> lock(mFileMutex);
         mFile.clear();
         mFile.seekg(std::streamoff(offset), std::ios::beg);
         mFile.read(reinterpret_cast<char*>(out->data()), std::streamsize(size));
@@ -399,16 +395,15 @@ bool StreamingLodGraph::readNode(uint32_t nodeId, LodGraphNode* node) const {
         uint64_t const offset = nodeOffset(nodeId);
         uint64_t const end = nodeOffset(nodeId + 1);
         std::vector<uint8_t> record;
-        return readRange(offset, size_t(end - offset), &record)
-                && readNodeAt(record, 0, node);
+        return readRange(offset, size_t(end - offset), &record) && readNodeAt(record, 0, node);
     }
     return readNodeAt(mBlob, nodeOffset(nodeId), node);
 }
 
 bool StreamingLodGraph::readPage(LodStreamingPage const& page,
         std::vector<LodGraphNode>* nodes) const {
-    if (!mValid || nodes == nullptr || page.firstNode > mNodeCount
-            || page.nodeCount > mNodeCount - page.firstNode) {
+    if (!mValid || nodes == nullptr || page.firstNode > mNodeCount ||
+            page.nodeCount > mNodeCount - page.firstNode) {
         return false;
     }
     nodes->resize(page.nodeCount);
@@ -420,8 +415,7 @@ bool StreamingLodGraph::readPage(LodStreamingPage const& page,
         for (uint32_t i = 0; i < page.nodeCount; ++i) {
             uint32_t const nodeId = page.firstNode + i;
             uint64_t const relative = nodeOffset(nodeId) - page.byteOffset;
-            if (relative > pageData.size()
-                    || !readNodeAt(pageData, relative, &(*nodes)[i])) {
+            if (relative > pageData.size() || !readNodeAt(pageData, relative, &(*nodes)[i])) {
                 return false;
             }
         }
@@ -460,8 +454,10 @@ std::vector<LodStreamingPage> StreamingLodGraph::planPages(size_t maxPageBytes) 
 }
 
 LodStreamingCache::LodStreamingCache(StreamingLodGraph const* graph, size_t byteBudget,
-        size_t maxPageBytes) : mGraph(graph), mByteBudget(byteBudget),
-        mMaxPageBytes(std::max<size_t>(maxPageBytes, 1)) {
+        size_t maxPageBytes)
+        : mGraph(graph),
+          mByteBudget(byteBudget),
+          mMaxPageBytes(std::max<size_t>(maxPageBytes, 1)) {
     if (mGraph != nullptr && mGraph->valid()) {
         mPages = mGraph->planPages(mMaxPageBytes);
     }
@@ -473,7 +469,7 @@ bool LodStreamingCache::prepare(LodGraphSelection const& selection) {
     }
 
     std::set<uint32_t> required;
-    for (uint32_t nodeId : selection.nodes) {
+    for (uint32_t nodeId: selection.nodes) {
         auto const page = std::upper_bound(mPages.begin(), mPages.end(), nodeId,
                 [](uint32_t id, LodStreamingPage const& candidate) {
                     return id < candidate.firstNode;
@@ -488,7 +484,7 @@ bool LodStreamingCache::prepare(LodGraphSelection const& selection) {
         required.insert(uint32_t(selected - mPages.begin()));
     }
 
-    for (uint32_t pageId : required) {
+    for (uint32_t pageId: required) {
         auto found = mResident.find(pageId);
         if (found == mResident.end()) {
             PageEntry entry;
@@ -516,7 +512,7 @@ bool LodStreamingCache::prepare(LodGraphSelection const& selection) {
             }
         }
         if (victim == UINT32_MAX) {
-            break;  // every resident page is needed by this selection
+            break; // every resident page is needed by this selection
         }
         auto found = mResident.find(victim);
         if (found != mResident.end()) {
@@ -532,11 +528,141 @@ bool LodStreamingCache::prepare(LodGraphSelection const& selection) {
 }
 
 LodGraphNode const* LodStreamingCache::find(uint32_t nodeId) const {
-    for (auto const& [pageId, entry] : mResident) {
+    for (auto const& [pageId, entry]: mResident) {
         (void) pageId;
-        if (nodeId >= entry.page.firstNode
-                && nodeId < entry.page.firstNode + entry.page.nodeCount) {
+        if (nodeId >= entry.page.firstNode &&
+                nodeId < entry.page.firstNode + entry.page.nodeCount) {
             return &entry.nodes[nodeId - entry.page.firstNode];
+        }
+    }
+    return nullptr;
+}
+
+AsyncLodStreamingCache::AsyncLodStreamingCache(StreamingLodGraph const* graph, PageFetcher fetcher,
+        size_t byteBudget, size_t maxPageBytes, size_t maxConcurrent)
+        : mGraph(graph),
+          mFetcher(std::move(fetcher)),
+          mByteBudget(byteBudget),
+          mMaxPageBytes(std::max<size_t>(maxPageBytes, 1)),
+          mMaxConcurrent(std::max<size_t>(maxConcurrent, 1)) {
+    if (mGraph != nullptr && mGraph->valid()) {
+        mPages = mGraph->planPages(mMaxPageBytes);
+    }
+}
+
+bool AsyncLodStreamingCache::request(LodGraphSelection const& selection) {
+    if (mGraph == nullptr || !mGraph->valid() || !mFetcher) {
+        return false;
+    }
+
+    mRequired.clear();
+    for (uint32_t nodeId: selection.nodes) {
+        auto const page = std::upper_bound(mPages.begin(), mPages.end(), nodeId,
+                [](uint32_t id, LodStreamingPage const& candidate) {
+                    return id < candidate.firstNode;
+                });
+        if (page == mPages.begin()) {
+            return false;
+        }
+        auto const selected = std::prev(page);
+        if (selected->firstNode + selected->nodeCount <= nodeId) {
+            return false;
+        }
+        uint32_t const pageId = uint32_t(selected - mPages.begin());
+        mRequired.insert(pageId);
+        if (mResident.count(pageId) != 0) {
+            mStats.pageHits += 1;
+            mLru.remove(pageId);
+            mLru.push_front(pageId);
+        } else if (mRequested.insert(pageId).second) {
+            mQueue.push_back(pageId);
+        }
+    }
+    pump();
+    return true;
+}
+
+void AsyncLodStreamingCache::pump() {
+    while (mPending.size() < mMaxConcurrent && !mQueue.empty()) {
+        uint32_t const pageId = mQueue.front();
+        mQueue.pop_front();
+        LodStreamingPage const page = mPages[pageId];
+        mPending.push_back(std::async(std::launch::async, [this, pageId, page]() -> PageResult {
+            PageResult result;
+            result.pageId = pageId;
+            result.page = page;
+            try {
+                result.ok = mFetcher(page, &result.nodes);
+            } catch (...) {
+                result.ok = false;
+            }
+            return result;
+        }));
+    }
+}
+
+bool AsyncLodStreamingCache::poll() {
+    bool arrived = false;
+    while (true) {
+        bool consumed = false;
+        for (auto it = mPending.begin(); it != mPending.end(); ++it) {
+            if (it->wait_for(std::chrono::milliseconds(0)) != std::future_status::ready) {
+                continue;
+            }
+            PageResult result = it->get();
+            mPending.erase(it);
+            mRequested.erase(result.pageId);
+            if (result.ok) {
+                mStats.pageMisses += 1;
+                mStats.residentBytes += size_t(result.page.byteCount);
+                mResident[result.pageId] = std::move(result.nodes);
+                mLru.remove(result.pageId);
+                mLru.push_front(result.pageId);
+            } else {
+                // A failed page is not marked resident, so a later request retries it.
+            }
+            arrived = true;
+            consumed = true;
+            break;
+        }
+        if (!consumed) {
+            break;
+        }
+    }
+
+    pump();
+    evict();
+    mStats.residentPages = mResident.size();
+    return arrived;
+}
+
+void AsyncLodStreamingCache::evict() {
+    while (mStats.residentBytes > mByteBudget && !mLru.empty()) {
+        uint32_t victim = UINT32_MAX;
+        for (auto it = mLru.rbegin(); it != mLru.rend(); ++it) {
+            if (mRequired.count(*it) == 0) {
+                victim = *it;
+                break;
+            }
+        }
+        if (victim == UINT32_MAX) {
+            break; // every resident page is needed by this selection
+        }
+        auto const found = mResident.find(victim);
+        if (found != mResident.end()) {
+            mStats.residentBytes -= size_t(mPages[victim].byteCount);
+            mResident.erase(found);
+            mStats.evictions += 1;
+        }
+        mLru.remove(victim);
+    }
+}
+
+LodGraphNode const* AsyncLodStreamingCache::find(uint32_t nodeId) const {
+    for (auto const& [pageId, nodes]: mResident) {
+        LodStreamingPage const& page = mPages[pageId];
+        if (nodeId >= page.firstNode && nodeId < page.firstNode + page.nodeCount) {
+            return &nodes[nodeId - page.firstNode];
         }
     }
     return nullptr;

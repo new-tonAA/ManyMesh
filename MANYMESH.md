@@ -240,8 +240,8 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
   - [x] 编辑器 UI：节省比例滑杆、Maximum/Balanced/Aggressive 档位、近细远粗开关
   - [x] 质量门：边界边集合、非流形边、重复/退化/翻转三角形、最小三角形质量、世界空间位置误差
   - [x] normal/UV 参与 attribute QEM；material/submesh ID 保留到 DAG 节点和 draw primitive
-  - [x] 同步本地文件分页流式 + LRU 缓存；GPU 侧目前只有 std430 布局和间接绘制数据结构
-  - [ ] GPU compute cluster selection、Vulkan visibility buffer、异步网络流式的生产接线
+  - [x] 本地文件分页 + 可插拔异步 page fetcher + LRU 缓存；GPU 侧有 std430 布局和间接绘制数据结构
+  - [ ] GPU compute cluster selection、Vulkan visibility buffer、真实网络 transport 的生产接线
 - [ ] **M3 — 图像侧：移动端轻量神经重建**（首个切片，见 §7.3）
   - [x] 配对数据生成（多视角、同一相机列表、逐视角误差图）
   - [x] 轻量 CNN 重建：等分辨率下比粗几何高 **+1.88 dB**；半分辨率下比双三次高 **+0.98 dB**
@@ -634,11 +634,14 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
   在 588 节点的 monkey DAG 上，CPU 单线程实测 **0.0031 ms/次**。
 - 需要完整索引数组的编辑器路径 `selectLodGraph` 为 0.115~0.253 ms/次（monkey，距离模式），
   0.657~0.892 ms/次（savings 模式，含 32 次阈值二分和预算内细化）。两者都远低于 16.7 ms。
-- 生产渲染器应把每个节点的索引放在共享 buffer 里，用间接绘制更新 cut，而不是像
-  `mm_bench` 的 UI 调参路径那样每次重建 index buffer。
+- `mm_bench` 的 UI 调参路径也已改成生产形状：renderable 和 index buffer 只创建一次，
+  每次 cut 变化只上传一段索引并调用 `RenderableManager::setGeometryAt` 更新每个
+  material/submesh primitive 的区间。下一步才是把这些区间转成真正的 indirect draw。
 
 **仍未完成**：GPU compute cluster selection、真实 indirect draw 提交、Vulkan visibility
-buffer、异步/网络流式。当前 `GpuLod` 是 std430 布局与 CPU 参考实现，不能宣称 GPU 选层已完成。
+buffer、跨 UV chart 的接缝简化，以及网络 transport 的生产接线。`AsyncLodStreamingCache`
+已经提供不阻塞调用线程的预取与可插拔 fetcher；仓库本身不附带 HTTP 客户端。当前 `GpuLod`
+仍是 std430 布局与 CPU 参考实现，不能宣称 GPU 选层已完成。
 
 **本轮性能优化**
 
@@ -647,16 +650,19 @@ buffer、异步/网络流式。当前 `GpuLod` 是 std430 布局与 CPU 参考�
   相邻三角形各推一遍）。
 - `selectLodGraphAtRatio` 的 32 次阈值二分共用一份 `NodeMetrics`（屏幕误差与视锥剔除
   结果），不再每轮重复投影。
-- `mm_bench` 的滑杆拖动期间只更新 cut 与统计，松开滑杆后才重建 index buffer，避免每帧
-  重建 GPU 资源。
-- monkey DAG 构建从 **3.21s** 降到 **2.33s**（本机，约 27%）；`test_manymesh` 25 个测试
-  总耗时从 **9.2s** 降到 **4.6s**。同一机位 34.72% 保留率仍为 **38.89 dB / 0.99176**，
-  非流形/重复/翻转三角形均为 0。
+- `mm_bench` 的滑杆拖动期间只更新 cut 与统计，松开滑杆后才上传索引；上传目标是一个
+  持久 index buffer，不再销毁/重建 renderable。
+- `simplifyClusterInto` 的 `localPositions` / `localToGlobal` / `localIndices` /
+  `destination` 改为跨单元复用的 scratch，按 unit 只做 `clear/resize`。
+- `selectionFromCut` 不再排序整个选择：先标记跨节点的共享顶点，只对边界面做哈希去重，
+  同时删掉了原先“拼一遍索引再丢弃重建”的重复遍历。
+- monkey DAG 构建从 **3.21s** 降到 **2.33s**（本机，约 27%）；`test_manymesh` 从 25 个
+  测试增加到 **27 个**，全部通过。同一机位 34.72% 保留率仍为 **38.89 dB / 0.99176**，
+  非流形/重复/翻转三角形均为 0；新的动态 buffer 路径复跑了同一机位，指标不变。
 
-**下一批可优化点**：`simplifyClusterInto` 的 `localPositions` / `localIndices` /
-`destination` 仍是每单元分配，可提升为跨单元 scratch；`selectionFromCut` 为去重仍会排序
-整个选择；生产渲染路径应把 index buffer 重建换成 indirect draw 更新；极端 UV seam 的
-torus 仍需要跨 chart 的专用简化。
+**下一批可优化点**：真实 indirect draw / GPU cluster selection、Vulkan visibility buffer、
+跨 UV chart 的配对 seam collapse，以及网络 transport 的生产实现。极端 UV seam 的 torus
+仍需要跨 chart 的专用简化，不能靠放松质量门解决。
 
 ---
 

@@ -69,6 +69,8 @@ struct LodGraph {
     std::vector<LodGraphNode> nodes;
     std::vector<uint32_t> roots;
     std::vector<uint32_t> leaves;
+    //! Number of vertices the node index lists may reference.
+    uint32_t vertexCount = 0;
     uint32_t levelCount = 0;
     uint64_t baseTriangles = 0;
 };
@@ -135,8 +137,7 @@ struct LodGraphCut {
     uint64_t culledTriangles = 0;
 };
 
-LodGraphCut selectLodGraphCut(LodGraph const& graph, ViewCamera const& camera,
-        float thresholdPx);
+LodGraphCut selectLodGraphCut(LodGraph const& graph, ViewCamera const& camera, float thresholdPx);
 
 /**
  * Picks a non-overlapping cut through the DAG: a node is drawn either whole or replaced by its
@@ -168,8 +169,7 @@ struct LodTierProfile {
 
 LodTierProfile lodTierProfile(LodTier tier) noexcept;
 
-LodGraphSelection selectLodGraphTier(LodGraph const& graph, ViewCamera const& camera,
-        LodTier tier);
+LodGraphSelection selectLodGraphTier(LodGraph const& graph, ViewCamera const& camera, LodTier tier);
 
 } // namespace manymesh
 } // namespace filament

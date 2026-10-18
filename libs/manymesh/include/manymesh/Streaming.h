@@ -19,9 +19,14 @@
 
 #include <manymesh/LodGraph.h>
 
+#include <deque>
 #include <fstream>
+#include <functional>
+#include <future>
 #include <list>
 #include <map>
+#include <mutex>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -87,6 +92,7 @@ private:
 
     std::vector<uint8_t> mBlob;
     mutable std::ifstream mFile;
+    mutable std::mutex mFileMutex;
     uint64_t mBlobSize = 0;
     std::vector<uint64_t> mOffsets;
     std::vector<uint32_t> mRoots;
@@ -134,6 +140,68 @@ private:
     std::map<uint32_t, PageEntry> mResident;
     std::list<uint32_t> mLru;
     Stats mStats;
+};
+
+/**
+ * Asynchronous page prefetch on top of the same page table.
+ *
+ * Unlike LodStreamingCache, this class never blocks on I/O. `request` schedules the pages a
+ * selection needs, `poll` integrates any completed fetches and starts queued work up to
+ * `maxConcurrent`, and `find` exposes the pages that are already resident. The fetcher is a
+ * callback so the transport is not tied to the local file reader: an HTTP/CDN client can fetch
+ * `page.byteOffset` for `page.byteCount` bytes, decode the node records, and hand them back.
+ *
+ * A caller that needs a frame immediately can keep rendering with the previous resident set
+ * while `pending()` is non-zero, then use the new pages once `ready()` becomes true.
+ *
+ * The fetcher may be called concurrently by up to `maxConcurrent` workers, so a transport that
+ * shares a file handle or connection must serialize that access itself.
+ */
+class AsyncLodStreamingCache {
+public:
+    using PageFetcher = std::function<bool(LodStreamingPage const&, std::vector<LodGraphNode>*)>;
+
+    AsyncLodStreamingCache(StreamingLodGraph const* graph, PageFetcher fetcher, size_t byteBudget,
+            size_t maxPageBytes = 64 * 1024, size_t maxConcurrent = 4);
+
+    AsyncLodStreamingCache(AsyncLodStreamingCache const&) = delete;
+    AsyncLodStreamingCache& operator=(AsyncLodStreamingCache const&) = delete;
+
+    //! Schedules every page referenced by `selection`. Pages already resident are not refetched.
+    bool request(LodGraphSelection const& selection);
+
+    //! Integrates completed fetches and starts queued ones. Returns true when anything arrived.
+    bool poll();
+
+    bool ready() const noexcept { return mQueue.empty() && mPending.empty(); }
+    size_t pending() const noexcept { return mQueue.size() + mPending.size(); }
+    LodGraphNode const* find(uint32_t nodeId) const;
+    LodStreamingCache::Stats const& stats() const noexcept { return mStats; }
+
+private:
+    struct PageResult {
+        uint32_t pageId = 0;
+        LodStreamingPage page;
+        std::vector<LodGraphNode> nodes;
+        bool ok = false;
+    };
+
+    void pump();
+    void evict();
+
+    StreamingLodGraph const* mGraph = nullptr;
+    PageFetcher mFetcher;
+    size_t mByteBudget = 0;
+    size_t mMaxPageBytes = 0;
+    size_t mMaxConcurrent = 1;
+    std::vector<LodStreamingPage> mPages;
+    std::map<uint32_t, std::vector<LodGraphNode>> mResident;
+    std::list<uint32_t> mLru;
+    std::set<uint32_t> mRequired;
+    std::set<uint32_t> mRequested;
+    std::deque<uint32_t> mQueue;
+    std::vector<std::future<PageResult>> mPending;
+    LodStreamingCache::Stats mStats;
 };
 
 } // namespace manymesh

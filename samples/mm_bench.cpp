@@ -151,7 +151,8 @@ bool g_shadows = true;
 int g_captureFrame = -1;
 
 // Interactive DAG viewer. The hierarchy is built once from the first positional argument;
-// moving the slider only selects a different non-overlapping cut and replaces the index buffer.
+// moving the slider selects a different non-overlapping cut and updates the index ranges in a
+// persistent buffer instead of recreating the renderable.
 bool g_ui = false;
 bool g_dag = false;
 std::string g_tierName = "balanced";
@@ -181,11 +182,17 @@ uint64_t g_lodStreamingBytes = 0;
 uint32_t g_lodStreamingPages = 0;
 
 struct LodPrimitive {
-    IndexBuffer* indexBuffer = nullptr;
     uint32_t materialId = UINT32_MAX;
     uint32_t submeshId = UINT32_MAX;
+    uint32_t firstIndex = 0;
+    uint32_t indexCount = 0;
 };
 std::vector<LodPrimitive> g_lodPrimitives;
+std::map<std::pair<uint32_t, uint32_t>, uint32_t> g_lodPrimitiveLookup;
+std::vector<uint32_t> g_lodGroupCounts;
+std::vector<uint32_t> g_lodGroupFirstIndex;
+std::vector<uint32_t> g_lodGroupCursor;
+IndexBuffer* g_lodIndexBuffer = nullptr;
 std::vector<MaterialInstance*> g_lodMaterialInstances;
 std::vector<uint32_t> g_lodMaterialIdList;
 
@@ -470,14 +477,17 @@ void destroyLodRenderable(Engine* engine) {
         if (g_lodRenderable) {
             engine->destroy(g_lodRenderable);
         }
-        for (LodPrimitive const& primitive: g_lodPrimitives) {
-            if (primitive.indexBuffer != nullptr) {
-                engine->destroy(primitive.indexBuffer);
-            }
+        if (g_lodIndexBuffer != nullptr) {
+            engine->destroy(g_lodIndexBuffer);
         }
     }
     g_lodRenderable = {};
+    g_lodIndexBuffer = nullptr;
     g_lodPrimitives.clear();
+    g_lodPrimitiveLookup.clear();
+    g_lodGroupCounts.clear();
+    g_lodGroupFirstIndex.clear();
+    g_lodGroupCursor.clear();
 }
 
 // One material instance per source material id. The ids themselves are preserved by the
@@ -530,82 +540,159 @@ MaterialInstance* lodMaterialFor(uint32_t materialId) {
     return g_materialInstance;
 }
 
-void rebuildLodGeometry(Engine* engine) {
-    if (engine == nullptr || g_materialInstance == nullptr || g_scene == nullptr) {
+// The group table only depends on the source material/submesh ids, which every LOD level
+// preserves, so it is built once. Keeping the primitive count fixed is what lets a cut change
+// an index range instead of recreating the renderable.
+void createLodPrimitiveTable() {
+    if (!g_lodPrimitives.empty()) {
         return;
     }
-    std::vector<uint32_t> const& indices =
-            g_showOriginal ? g_lodMesh.indices : g_lodSelection.indices;
-    if (indices.empty()) {
-        return;
+    std::map<std::pair<uint32_t, uint32_t>, uint32_t> counts;
+    for (size_t t = 0; t < g_lodMesh.triangleCount(); ++t) {
+        uint32_t const material =
+                t < g_lodMesh.materialIds.size() ? g_lodMesh.materialIds[t] : UINT32_MAX;
+        uint32_t const submesh =
+                t < g_lodMesh.submeshIds.size() ? g_lodMesh.submeshIds[t] : UINT32_MAX;
+        ++counts[{ material, submesh }];
     }
-    destroyLodRenderable(engine);
-
-    // Split the selected triangles by (material, submesh). This is what makes the preserved
-    // per-face ids useful at draw time: each primitive can be bound to the material the source
-    // asset assigned to that range instead of collapsing the whole selection into one draw.
-    std::map<std::pair<uint32_t, uint32_t>, std::vector<uint32_t>> groups;
-    std::vector<uint32_t> const& materialIds =
-            g_showOriginal ? g_lodMesh.materialIds : g_lodSelection.materialIds;
-    std::vector<uint32_t> const& submeshIds =
-            g_showOriginal ? g_lodMesh.submeshIds : g_lodSelection.submeshIds;
-    for (size_t t = 0; t < indices.size() / 3; ++t) {
-        uint32_t const material = t < materialIds.size() ? materialIds[t] : UINT32_MAX;
-        uint32_t const submesh = t < submeshIds.size() ? submeshIds[t] : UINT32_MAX;
-        std::vector<uint32_t>& triangles = groups[{ material, submesh }];
-        triangles.push_back(indices[t * 3 + 0]);
-        triangles.push_back(indices[t * 3 + 1]);
-        triangles.push_back(indices[t * 3 + 2]);
-    }
-
-    for (auto const& [key, groupIndices]: groups) {
+    for (auto const& [key, count]: counts) {
+        g_lodPrimitiveLookup[key] = uint32_t(g_lodPrimitives.size());
         LodPrimitive primitive;
         primitive.materialId = key.first;
         primitive.submeshId = key.second;
-        bool const wide = g_lodMesh.positions.size() > 65535;
-        primitive.indexBuffer = IndexBuffer::Builder()
-                                        .indexCount(uint32_t(groupIndices.size()))
-                                        .bufferType(wide ? IndexBuffer::IndexType::UINT
-                                                         : IndexBuffer::IndexType::USHORT)
-                                        .build(*engine);
-        if (wide) {
-            auto* const indexData = new uint32_t[groupIndices.size()];
-            std::copy(groupIndices.begin(), groupIndices.end(), indexData);
-            primitive.indexBuffer->setBuffer(*engine,
-                    IndexBuffer::BufferDescriptor(indexData, groupIndices.size() * sizeof(uint32_t),
-                            [](void* buffer, size_t, void*) {
-                                delete[] static_cast<uint32_t*>(buffer);
-                            }));
-        } else {
-            auto* const indexData = new uint16_t[groupIndices.size()];
-            std::copy(groupIndices.begin(), groupIndices.end(), indexData);
-            primitive.indexBuffer->setBuffer(*engine,
-                    IndexBuffer::BufferDescriptor(indexData, groupIndices.size() * sizeof(uint16_t),
-                            [](void* buffer, size_t, void*) {
-                                delete[] static_cast<uint16_t*>(buffer);
-                            }));
-        }
         g_lodPrimitives.push_back(primitive);
     }
+    g_lodGroupCounts.resize(g_lodPrimitives.size());
+    g_lodGroupFirstIndex.resize(g_lodPrimitives.size());
+    g_lodGroupCursor.resize(g_lodPrimitives.size());
+}
+
+uint32_t lodPrimitiveFor(uint32_t material, uint32_t submesh) {
+    auto const it = g_lodPrimitiveLookup.find({ material, submesh });
+    if (it != g_lodPrimitiveLookup.end()) {
+        return it->second;
+    }
+    // A selection keeps the source ids, but stay robust if a custom graph supplies an id that
+    // is not present in the source asset: draw it with the catch-all group instead of dropping
+    // triangles silently.
+    auto const fallback = g_lodPrimitiveLookup.find({ UINT32_MAX, UINT32_MAX });
+    return fallback != g_lodPrimitiveLookup.end() ? fallback->second : 0;
+}
+
+void createLodRenderable(Engine* engine) {
+    if (engine == nullptr || g_materialInstance == nullptr || g_scene == nullptr ||
+            g_lodRenderable) {
+        return;
+    }
+    createLodPrimitiveTable();
     if (g_lodPrimitives.empty()) {
         return;
     }
+
+    bool const wide = g_lodMesh.positions.size() > 65535;
+    size_t const capacity = std::max<size_t>(g_lodMesh.indices.size(), 3);
+    g_lodIndexBuffer = IndexBuffer::Builder()
+                               .indexCount(uint32_t(capacity))
+                               .bufferType(wide ? IndexBuffer::IndexType::UINT
+                                                : IndexBuffer::IndexType::USHORT)
+                               .build(*engine);
 
     g_lodRenderable = utils::EntityManager::get().create();
     RenderableManager::Builder builder(g_lodPrimitives.size());
     builder.boundingBox(g_lodBounds).culling(false).receiveShadows(true).castShadows(g_shadows);
     for (size_t i = 0; i < g_lodPrimitives.size(); ++i) {
-        LodPrimitive const& primitive = g_lodPrimitives[i];
-        builder.material(uint32_t(i), lodMaterialFor(primitive.materialId));
+        builder.material(uint32_t(i), lodMaterialFor(g_lodPrimitives[i].materialId));
         builder.geometry(uint32_t(i), RenderableManager::PrimitiveType::TRIANGLES,
-                g_lodVertexBuffer, primitive.indexBuffer, 0,
-                primitive.indexBuffer->getIndexCount());
+                g_lodVertexBuffer, g_lodIndexBuffer, 0, 0);
     }
     builder.build(*engine, g_lodRenderable);
     // A lit material needs a world transform to build its normal matrix. Renderables without a
     // Transform component are fine for unlit draws but leave the normal path undefined here.
     engine->getTransformManager().create(g_lodRenderable);
     g_scene->addEntity(g_lodRenderable);
+}
+
+void rebuildLodGeometry(Engine* engine) {
+    if (engine == nullptr || g_materialInstance == nullptr || g_scene == nullptr) {
+        return;
+    }
+    createLodRenderable(engine);
+    if (!g_lodRenderable || g_lodIndexBuffer == nullptr) {
+        return;
+    }
+
+    std::vector<uint32_t> const& indices =
+            g_showOriginal ? g_lodMesh.indices : g_lodSelection.indices;
+    std::vector<uint32_t> const& materialIds =
+            g_showOriginal ? g_lodMesh.materialIds : g_lodSelection.materialIds;
+    std::vector<uint32_t> const& submeshIds =
+            g_showOriginal ? g_lodMesh.submeshIds : g_lodSelection.submeshIds;
+    size_t const triangleCount = indices.size() / 3;
+    if (triangleCount == 0) {
+        return;
+    }
+
+    std::fill(g_lodGroupCounts.begin(), g_lodGroupCounts.end(), 0u);
+    auto const groupOf = [&](size_t t) {
+        uint32_t const material = t < materialIds.size() ? materialIds[t] : UINT32_MAX;
+        uint32_t const submesh = t < submeshIds.size() ? submeshIds[t] : UINT32_MAX;
+        return lodPrimitiveFor(material, submesh);
+    };
+    for (size_t t = 0; t < triangleCount; ++t) {
+        ++g_lodGroupCounts[groupOf(t)];
+    }
+
+    size_t totalIndices = 0;
+    for (size_t i = 0; i < g_lodPrimitives.size(); ++i) {
+        g_lodPrimitives[i].firstIndex = uint32_t(totalIndices);
+        // g_lodGroupCounts holds triangles; an offset in an index buffer is in indices.
+        g_lodPrimitives[i].indexCount = g_lodGroupCounts[i] * 3;
+        totalIndices += g_lodPrimitives[i].indexCount;
+        g_lodGroupCursor[i] = g_lodPrimitives[i].firstIndex;
+    }
+    if (totalIndices == 0) {
+        return;
+    }
+
+    bool const wide = g_lodMesh.positions.size() > 65535;
+    if (wide) {
+        auto* const indexData = new uint32_t[totalIndices];
+        for (size_t t = 0; t < triangleCount; ++t) {
+            uint32_t& cursor = g_lodGroupCursor[groupOf(t)];
+            indexData[cursor++] = indices[t * 3 + 0];
+            indexData[cursor++] = indices[t * 3 + 1];
+            indexData[cursor++] = indices[t * 3 + 2];
+        }
+        g_lodIndexBuffer->setBuffer(*engine,
+                IndexBuffer::BufferDescriptor(indexData, totalIndices * sizeof(uint32_t),
+                        [](void* buffer, size_t, void*) {
+                            delete[] static_cast<uint32_t*>(buffer);
+                        }));
+    } else {
+        auto* const indexData = new uint16_t[totalIndices];
+        for (size_t t = 0; t < triangleCount; ++t) {
+            uint32_t& cursor = g_lodGroupCursor[groupOf(t)];
+            indexData[cursor++] = uint16_t(indices[t * 3 + 0]);
+            indexData[cursor++] = uint16_t(indices[t * 3 + 1]);
+            indexData[cursor++] = uint16_t(indices[t * 3 + 2]);
+        }
+        g_lodIndexBuffer->setBuffer(*engine,
+                IndexBuffer::BufferDescriptor(indexData, totalIndices * sizeof(uint16_t),
+                        [](void* buffer, size_t, void*) {
+                            delete[] static_cast<uint16_t*>(buffer);
+                        }));
+    }
+
+    // One upload plus one range update per material group. No renderable or index buffer is
+    // destroyed, so a cut change no longer invalidates GPU resources or the scene entity.
+    RenderableManager& rcm = engine->getRenderableManager();
+    RenderableManager::Instance const instance = rcm.getInstance(g_lodRenderable);
+    for (size_t i = 0; i < g_lodPrimitives.size(); ++i) {
+        LodPrimitive const& primitive = g_lodPrimitives[i];
+        rcm.setMaterialInstanceAt(instance, i, lodMaterialFor(primitive.materialId));
+        rcm.setGeometryAt(instance, i, RenderableManager::PrimitiveType::TRIANGLES,
+                g_lodVertexBuffer, g_lodIndexBuffer, primitive.firstIndex, primitive.indexCount);
+    }
 }
 
 void updateLodSelection() {
@@ -662,6 +749,7 @@ void reportLodStats() {
         }
         std::printf("\n");
     }
+    std::fflush(stdout);
 
     // Runtime path: select only the cut nodes, without concatenating index/material arrays.
     // This is the cost a renderer pays when it updates indirect draws instead of rebuilding
@@ -680,6 +768,7 @@ void reportLodStats() {
     std::printf("dag: runtimeCut nodes=%zu triangles=%llu avg=%.4fms iterations=%d\n",
             runtimeCut.nodes.size(), (unsigned long long) runtimeCut.selectedTriangles, averageMs,
             iterations);
+    std::fflush(stdout);
 
     // Exercise the runtime streaming contract on the graph we just built: serialize it, read
     // it back through the paged cache, and report how much of the blob the current selection
@@ -697,6 +786,7 @@ void reportLodStats() {
             (unsigned long long) stream.byteSize(), g_lodStreamingPages, prepared ? 1 : 0,
             stats.residentPages, stats.residentBytes, (unsigned long long) stats.pageHits,
             (unsigned long long) stats.pageMisses, (unsigned long long) stats.evictions);
+    std::fflush(stdout);
 }
 
 void setupLodViewer(Engine* engine, View* view, Scene* scene) {
@@ -880,8 +970,8 @@ void drawLodUi(Engine* engine, View*) {
     ImGui::Text("min triangle quality: %.4f", g_lodTopology.minTriangleQuality);
     ImGui::TextWrapped(
             "Both modes only select a non-overlapping cut through the prebuilt DAG; "
-            "neither re-runs simplification at runtime. Changing a cut costs a new index "
-            "buffer in this viewer, while a renderer would update indirect draws instead.");
+            "neither re-runs simplification at runtime. Changing a cut uploads one index "
+            "buffer and updates primitive ranges; the renderable is not recreated.");
     ImGui::End();
 }
 
