@@ -32,9 +32,9 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
-#include <chrono>
 #include <algorithm>
 #include <array>
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -174,7 +174,7 @@ std::string join(std::string const& dir, std::string const& name) {
 std::string jsonEscape(std::string const& text) {
     std::string result;
     result.reserve(text.size());
-    for (char c : text) {
+    for (char c: text) {
         if (c == '\\' || c == '"') {
             result.push_back('\\');
         }
@@ -216,9 +216,8 @@ bool loadMesh(char const* path, Mesh* mesh) {
     // Triangulate because every stage below assumes triangles; merge duplicate vertices so
     // that simplification is not blocked by artificial seams; bake node transforms so that
     // clusters, bounds and screen space error all live in one world space.
-    unsigned int const flags = aiProcess_Triangulate
-            | aiProcess_JoinIdenticalVertices
-            | aiProcess_PreTransformVertices;
+    unsigned int const flags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices |
+                               aiProcess_PreTransformVertices;
 
     aiScene const* scene = importer.ReadFile(path, flags);
     if (scene == nullptr || scene->mNumMeshes == 0) {
@@ -333,7 +332,7 @@ void writePly(Mesh const& mesh, std::vector<uint32_t> const& indices, char const
     }
     file << "end_header\n";
 
-    for (uint32_t vertex : vertices) {
+    for (uint32_t vertex: vertices) {
         file.write(reinterpret_cast<char const*>(&mesh.positions[vertex].x), sizeof(float) * 3);
         if (hasNormals) {
             file.write(reinterpret_cast<char const*>(&mesh.normals[vertex].x), sizeof(float) * 3);
@@ -363,18 +362,18 @@ void writeObj(Mesh const& mesh, std::vector<uint32_t> const& indices, char const
         std::cerr << "Could not open '" << path << "' for writing" << std::endl;
         return;
     }
-    for (math::float3 const& p : mesh.positions) {
+    for (math::float3 const& p: mesh.positions) {
         file << "v " << p.x << ' ' << p.y << ' ' << p.z << '\n';
     }
     bool const hasNormals = mesh.normals.size() == mesh.positions.size();
     bool const hasUVs = mesh.uvs.size() == mesh.positions.size();
     if (hasUVs) {
-        for (math::float2 const& uv : mesh.uvs) {
+        for (math::float2 const& uv: mesh.uvs) {
             file << "vt " << uv.x << ' ' << uv.y << '\n';
         }
     }
     if (hasNormals) {
-        for (math::float3 const& n : mesh.normals) {
+        for (math::float3 const& n: mesh.normals) {
             file << "vn " << n.x << ' ' << n.y << ' ' << n.z << '\n';
         }
     }
@@ -405,7 +404,8 @@ void writeObj(Mesh const& mesh, std::vector<uint32_t> const& indices, char const
         } else if (hasUVs) {
             file << "f " << a << '/' << a << ' ' << b << '/' << b << ' ' << c << '/' << c << '\n';
         } else if (hasNormals) {
-            file << "f " << a << "//" << a << ' ' << b << "//" << b << ' ' << c << "//" << c << '\n';
+            file << "f " << a << "//" << a << ' ' << b << "//" << b << ' ' << c << "//" << c
+                 << '\n';
         } else {
             file << "f " << a << ' ' << b << ' ' << c << '\n';
         }
@@ -415,7 +415,7 @@ void writeObj(Mesh const& mesh, std::vector<uint32_t> const& indices, char const
         std::ofstream mtl(std::string(path) + ".mtl");
         if (mtl) {
             std::set<uint32_t> unique(materialIds->begin(), materialIds->end());
-            for (uint32_t material : unique) {
+            for (uint32_t material: unique) {
                 mtl << "newmtl mm_material_" << material << "\n"
                     << "Kd 0.8 0.8 0.8\n"
                     << "Ks 0.0 0.0 0.0\n"
@@ -450,12 +450,12 @@ GeometryOutput outputFromLevel(LodLevel const& level) {
 }
 
 void appendOutput(GeometryOutput* destination, GeometryOutput const& source) {
-    destination->indices.insert(destination->indices.end(),
-            source.indices.begin(), source.indices.end());
-    destination->materialIds.insert(destination->materialIds.end(),
-            source.materialIds.begin(), source.materialIds.end());
-    destination->submeshIds.insert(destination->submeshIds.end(),
-            source.submeshIds.begin(), source.submeshIds.end());
+    destination->indices.insert(destination->indices.end(), source.indices.begin(),
+            source.indices.end());
+    destination->materialIds.insert(destination->materialIds.end(), source.materialIds.begin(),
+            source.materialIds.end());
+    destination->submeshIds.insert(destination->submeshIds.end(), source.submeshIds.begin(),
+            source.submeshIds.end());
 }
 
 // Writes one mesh to the output directory, in whichever format was asked for.
@@ -463,11 +463,9 @@ void dumpMesh(Mesh const& mesh, GeometryOutput const& geometry, Options const& o
         std::string const& stem) {
     std::string const path = join(options.outDir, stem + (options.dumpPly ? ".ply" : ".obj"));
     if (options.dumpPly) {
-        writePly(mesh, geometry.indices, path.c_str(), &geometry.materialIds,
-                &geometry.submeshIds);
+        writePly(mesh, geometry.indices, path.c_str(), &geometry.materialIds, &geometry.submeshIds);
     } else {
-        writeObj(mesh, geometry.indices, path.c_str(), &geometry.materialIds,
-                &geometry.submeshIds);
+        writeObj(mesh, geometry.indices, path.c_str(), &geometry.materialIds, &geometry.submeshIds);
     }
 }
 
@@ -475,7 +473,7 @@ void dumpMesh(Mesh const& mesh, GeometryOutput const& geometry, Options const& o
 // actually has. Used to dump a "whole mesh at level N" OBJ in per-cluster mode.
 GeometryOutput gatherLevel(std::vector<ClusterLods> const& lods, uint32_t level) {
     GeometryOutput result;
-    for (ClusterLods const& clusterLods : lods) {
+    for (ClusterLods const& clusterLods: lods) {
         if (clusterLods.levels.empty()) {
             continue;
         }
@@ -485,8 +483,7 @@ GeometryOutput gatherLevel(std::vector<ClusterLods> const& lods, uint32_t level)
     return result;
 }
 
-GeometryOutput gatherSelection(std::vector<ClusterLods> const& lods,
-        Selection const& selection) {
+GeometryOutput gatherSelection(std::vector<ClusterLods> const& lods, Selection const& selection) {
     GeometryOutput result;
     for (size_t c = 0; c < selection.levelPerCluster.size(); ++c) {
         // Clusters the frustum rejects keep their default level, which is full detail. Writing
@@ -510,11 +507,11 @@ GeometryOutput outputFromDagSelection(LodGraphSelection const& selection) {
     result.indices = selection.indices;
     size_t const triangles = result.indices.size() / 3;
     result.materialIds = selection.materialIds.size() == triangles
-            ? selection.materialIds
-            : std::vector<uint32_t>(triangles, UINT32_MAX);
+                                 ? selection.materialIds
+                                 : std::vector<uint32_t>(triangles, UINT32_MAX);
     result.submeshIds = selection.submeshIds.size() == triangles
-            ? selection.submeshIds
-            : std::vector<uint32_t>(triangles, UINT32_MAX);
+                                ? selection.submeshIds
+                                : std::vector<uint32_t>(triangles, UINT32_MAX);
     return result;
 }
 
@@ -526,9 +523,9 @@ void writeDagJson(Mesh const& mesh, LodGraph const& graph, LodGraphSelection con
         return;
     }
     double const ratio = graph.baseTriangles > selection.culledTriangles
-            ? double(selection.selectedTriangles)
-                    / double(graph.baseTriangles - selection.culledTriangles)
-            : 1.0;
+                                 ? double(selection.selectedTriangles) /
+                                           double(graph.baseTriangles - selection.culledTriangles)
+                                 : 1.0;
     file << "{\n";
     file << "  \"source\": \"" << jsonEscape(options.input) << "\",\n";
     file << "  \"vertices\": " << mesh.vertexCount() << ",\n";
@@ -560,29 +557,24 @@ void writeDagJson(Mesh const& mesh, LodGraph const& graph, LodGraphSelection con
     file << "],\n  \"dag\": [\n";
     for (size_t n = 0; n < graph.nodes.size(); ++n) {
         LodGraphNode const& node = graph.nodes[n];
-        file << "    {\"id\":" << n << ",\"level\":" << node.level
-             << ",\"parent\":" << node.parent
+        file << "    {\"id\":" << n << ",\"level\":" << node.level << ",\"parent\":" << node.parent
              << ",\"children\":[";
         for (size_t i = 0; i < node.children.size(); ++i) {
             file << (i ? "," : "") << node.children[i];
         }
-        file << "],\"tri\":" << node.triangleCount()
-             << ",\"baseTri\":" << node.baseTriangles
+        file << "],\"tri\":" << node.triangleCount() << ",\"baseTri\":" << node.baseTriangles
              << ",\"selfError\":" << node.selfError
              << ",\"accumulatedError\":" << node.accumulatedError
-             << ",\"material\":" << node.materialId
-             << ",\"submesh\":" << node.submeshId
+             << ",\"material\":" << node.materialId << ",\"submesh\":" << node.submeshId
              << ",\"simplified\":" << (node.simplified ? "true" : "false")
-             << ",\"bounds\":{\"center\":[" << node.bounds.center.x << ','
-             << node.bounds.center.y << ',' << node.bounds.center.z
-             << "],\"radius\":" << node.bounds.radius << "}"
+             << ",\"bounds\":{\"center\":[" << node.bounds.center.x << ',' << node.bounds.center.y
+             << ',' << node.bounds.center.z << "],\"radius\":" << node.bounds.radius << "}"
              << ",\"boundaryEdges\":" << node.topology.boundaryEdges
              << ",\"nonManifoldEdges\":" << node.topology.nonManifoldEdges
              << ",\"duplicateTriangles\":" << node.topology.duplicateTriangles
              << ",\"degenerateTriangles\":" << node.topology.degenerateTriangles
              << ",\"minQuality\":" << node.topology.minTriangleQuality
-             << ",\"normalErrorDeg\":"
-             << node.attributes.maxNormalErrorRadians * 57.2957795f
+             << ",\"normalErrorDeg\":" << node.attributes.maxNormalErrorRadians * 57.2957795f
              << ",\"uvError\":" << node.attributes.maxUvError << "}";
         file << (n + 1 == graph.nodes.size() ? "\n" : ",\n");
     }
@@ -661,8 +653,7 @@ void writeJson(Mesh const& mesh, ClusterSet const& clusters, std::vector<Cluster
         for (size_t l = 0; l < clusterLods.levels.size(); ++l) {
             file << (l ? "," : "") << (clusterLods.levels[l].simplified ? 1 : 0);
         }
-        file << "],\"material\":" << cluster.materialId
-             << ",\"submesh\":" << cluster.submeshId;
+        file << "],\"material\":" << cluster.materialId << ",\"submesh\":" << cluster.submeshId;
         file << "]}";
         file << (c + 1 == clusters.clusters.size() ? "\n" : ",\n");
     }
@@ -686,28 +677,28 @@ void printChainStats(Mesh const& mesh, std::vector<LodLevel> const& levels) {
 void printClusterStats(ClusterSet const& clusters, std::vector<ClusterLods> const& lods) {
     size_t maxLevels = 0;
     double totalError = 0.0;
-    for (ClusterLods const& clusterLods : lods) {
+    for (ClusterLods const& clusterLods: lods) {
         maxLevels = std::max(maxLevels, clusterLods.levels.size());
         totalError += clusterLods.levels.size();
     }
 
     printf("\n");
     printf("  clusters: %zu   average levels per cluster: %.2f   coarsest level seen: %zu\n",
-            clusters.clusters.size(),
-            lods.empty() ? 0.0 : totalError / double(lods.size()), maxLevels);
+            clusters.clusters.size(), lods.empty() ? 0.0 : totalError / double(lods.size()),
+            maxLevels);
 
     // The mean is weighted by triangles, because a unit's error only matters in proportion to
     // how much geometry carries it. Reporting the maximum alone is misleading: it is decided
     // by a single worst unit and swings wildly between configurations.
-    printf("  %-6s %14s %14s %14s %14s\n",
-            "level", "triangles", "units", "mean w.error", "max w.error");
+    printf("  %-6s %14s %14s %14s %14s\n", "level", "triangles", "units", "mean w.error",
+            "max w.error");
     for (size_t l = 0; l < maxLevels; ++l) {
         uint64_t triangles = 0;
         size_t count = 0;
         float worst = 0.0f;
         double weightedError = 0.0;
         uint64_t weightedTriangles = 0;
-        for (ClusterLods const& clusterLods : lods) {
+        for (ClusterLods const& clusterLods: lods) {
             if (l < clusterLods.levels.size()) {
                 LodLevel const& level = clusterLods.levels[l];
                 uint64_t const tris = level.triangleCount();
@@ -718,10 +709,8 @@ void printClusterStats(ClusterSet const& clusters, std::vector<ClusterLods> cons
                 count += 1;
             }
         }
-        double const mean = weightedTriangles > 0
-                ? weightedError / double(weightedTriangles)
-                : 0.0;
-        printf("  %-6zu %14llu %14zu %14.6f %14.6f\n", l, (unsigned long long)triangles, count,
+        double const mean = weightedTriangles > 0 ? weightedError / double(weightedTriangles) : 0.0;
+        printf("  %-6zu %14llu %14zu %14.6f %14.6f\n", l, (unsigned long long) triangles, count,
                 mean, worst);
     }
 }
@@ -729,21 +718,21 @@ void printClusterStats(ClusterSet const& clusters, std::vector<ClusterLods> cons
 void printSelectionStats(Selection const& selection, ViewCamera const& camera, float thresholdPx) {
     printf("\n  camera: eye(%.3f, %.3f, %.3f) fovY(%.1f deg) screen(%u x %u) budget %.2f px\n",
             camera.eye.x, camera.eye.y, camera.eye.z,
-            camera.fovY * 180.0f / 3.14159265358979323846f,
-            camera.screenWidth, camera.screenHeight, thresholdPx);
+            camera.fovY * 180.0f / 3.14159265358979323846f, camera.screenWidth, camera.screenHeight,
+            thresholdPx);
 
     printf("  %-6s %14s %14s\n", "level", "clusters", "triangles");
     for (size_t l = 0; l < selection.clustersPerLevel.size(); ++l) {
         printf("  %-6zu %14u %14llu\n", l, selection.clustersPerLevel[l],
-                (unsigned long long)selection.trianglesPerLevel[l]);
+                (unsigned long long) selection.trianglesPerLevel[l]);
     }
 
-    double const ratio = selection.baseTriangles > 0
-            ? 100.0 * double(selection.selectedTriangles) / double(selection.baseTriangles)
-            : 0.0;
+    double const ratio = selection.baseTriangles > 0 ? 100.0 * double(selection.selectedTriangles) /
+                                                               double(selection.baseTriangles)
+                                                     : 0.0;
     printf("  drawn: %llu of %llu triangles (%.1f%%)\n",
-            (unsigned long long)selection.selectedTriangles,
-            (unsigned long long)selection.baseTriangles, ratio);
+            (unsigned long long) selection.selectedTriangles,
+            (unsigned long long) selection.baseTriangles, ratio);
     if (selection.culledTriangles > 0) {
         uint64_t const visible = selection.baseTriangles - selection.culledTriangles;
         printf("  culled by the frustum: %llu of %llu triangles (%.1f%%)\n",
@@ -757,7 +746,7 @@ void printSelectionStats(Selection const& selection, ViewCamera const& camera, f
 
 float maxScreenError(LodGraphSelection const& selection) {
     float result = 0.0f;
-    for (float error : selection.screenErrorPerNode) {
+    for (float error: selection.screenErrorPerNode) {
         result = std::max(result, error);
     }
     return result;
@@ -771,22 +760,22 @@ void printDagStats(Mesh const& mesh, LodGraph const& graph, LodGraphSelection co
             (unsigned long long) graph.baseTriangles);
     printf("  camera: eye(%.3f, %.3f, %.3f) fovY(%.1f deg) screen(%u x %u) budget %.2f px\n",
             camera.eye.x, camera.eye.y, camera.eye.z,
-            camera.fovY * 180.0f / 3.14159265358979323846f,
-            camera.screenWidth, camera.screenHeight, requestedError);
+            camera.fovY * 180.0f / 3.14159265358979323846f, camera.screenWidth, camera.screenHeight,
+            requestedError);
     printf("  %-6s %14s %14s\n", "level", "nodes", "triangles");
     for (size_t l = 0; l < selection.nodesPerLevel.size(); ++l) {
         printf("  %-6zu %14u %14llu\n", l, selection.nodesPerLevel[l],
                 (unsigned long long) selection.trianglesPerLevel[l]);
     }
     uint64_t const visibleBase = graph.baseTriangles > selection.culledTriangles
-            ? graph.baseTriangles - selection.culledTriangles
-            : graph.baseTriangles;
+                                         ? graph.baseTriangles - selection.culledTriangles
+                                         : graph.baseTriangles;
     double const ratio = visibleBase > 0
-            ? 100.0 * double(selection.selectedTriangles) / double(visibleBase)
-            : 100.0;
+                                 ? 100.0 * double(selection.selectedTriangles) / double(visibleBase)
+                                 : 100.0;
     printf("  drawn: %llu of %llu visible triangles (%.2f%%) in %zu nodes\n",
-            (unsigned long long) selection.selectedTriangles,
-            (unsigned long long) visibleBase, ratio, selection.nodes.size());
+            (unsigned long long) selection.selectedTriangles, (unsigned long long) visibleBase,
+            ratio, selection.nodes.size());
     printf("  frustum culled: %llu of %llu triangles (%.2f%%)\n",
             (unsigned long long) selection.culledTriangles,
             (unsigned long long) graph.baseTriangles,
@@ -801,8 +790,7 @@ void printDagStats(Mesh const& mesh, LodGraph const& graph, LodGraphSelection co
             (unsigned long long) baseTopology.nonManifoldEdges,
             (unsigned long long) baseTopology.duplicateTriangles,
             (unsigned long long) baseTopology.degenerateTriangles,
-            (unsigned long long) baseTopology.flippedTriangles,
-            baseTopology.minTriangleQuality);
+            (unsigned long long) baseTopology.flippedTriangles, baseTopology.minTriangleQuality);
     TopologyStats const topology = measureTopology(mesh, selection.indices);
     printf("  selected topology: boundary %llu, non-manifold %llu, duplicates %llu, "
            "degenerate %llu, flipped %llu, min quality %.4f\n",
@@ -810,11 +798,10 @@ void printDagStats(Mesh const& mesh, LodGraph const& graph, LodGraphSelection co
             (unsigned long long) topology.nonManifoldEdges,
             (unsigned long long) topology.duplicateTriangles,
             (unsigned long long) topology.degenerateTriangles,
-            (unsigned long long) topology.flippedTriangles,
-            topology.minTriangleQuality);
+            (unsigned long long) topology.flippedTriangles, topology.minTriangleQuality);
 
-    if (topology.boundaryEdges > baseTopology.boundaryEdges
-            || topology.nonManifoldEdges > baseTopology.nonManifoldEdges) {
+    if (topology.boundaryEdges > baseTopology.boundaryEdges ||
+            topology.nonManifoldEdges > baseTopology.nonManifoldEdges) {
         // Diagnostics for cross-node seams: print the first few offending edges together with
         // the DAG nodes that own them.
         std::map<std::pair<uint32_t, uint32_t>, std::vector<uint32_t>> edgeNodes;
@@ -822,38 +809,36 @@ void printDagStats(Mesh const& mesh, LodGraph const& graph, LodGraphSelection co
         std::map<std::pair<uint32_t, uint32_t>, uint32_t> baseEdgeUse;
         std::set<std::array<uint32_t, 3>> keptTriangles;
         for (size_t i = 0; i + 2 < mesh.indices.size(); i += 3) {
-            uint32_t const v[3] = {
-                mesh.indices[i], mesh.indices[i + 1], mesh.indices[i + 2] };
+            uint32_t const v[3] = { mesh.indices[i], mesh.indices[i + 1], mesh.indices[i + 2] };
             for (int e = 0; e < 3; ++e) {
-                baseEdgeUse[{ std::min(v[e], v[(e + 1) % 3]),
-                        std::max(v[e], v[(e + 1) % 3]) }] += 1;
+                baseEdgeUse[{ std::min(v[e], v[(e + 1) % 3]), std::max(v[e], v[(e + 1) % 3]) }] +=
+                        1;
             }
         }
         for (size_t i = 0; i + 2 < selection.indices.size(); i += 3) {
-            uint32_t const v[3] = {
-                selection.indices[i], selection.indices[i + 1], selection.indices[i + 2] };
+            uint32_t const v[3] = { selection.indices[i], selection.indices[i + 1],
+                selection.indices[i + 2] };
             std::array<uint32_t, 3> key = { v[0], v[1], v[2] };
             std::sort(key.begin(), key.end());
             keptTriangles.insert(key);
             for (int e = 0; e < 3; ++e) {
-                std::pair<uint32_t, uint32_t> const edge = {
-                    std::min(v[e], v[(e + 1) % 3]), std::max(v[e], v[(e + 1) % 3]) };
+                std::pair<uint32_t, uint32_t> const edge = { std::min(v[e], v[(e + 1) % 3]),
+                    std::max(v[e], v[(e + 1) % 3]) };
                 edgeUse[edge] += 1;
             }
         }
-        for (uint32_t nodeId : selection.nodes) {
+        for (uint32_t nodeId: selection.nodes) {
             LodGraphNode const& node = graph.nodes[nodeId];
             for (size_t i = 0; i + 2 < node.indices.size(); i += 3) {
-                uint32_t const v[3] = {
-                    node.indices[i], node.indices[i + 1], node.indices[i + 2] };
+                uint32_t const v[3] = { node.indices[i], node.indices[i + 1], node.indices[i + 2] };
                 std::array<uint32_t, 3> key = { v[0], v[1], v[2] };
                 std::sort(key.begin(), key.end());
                 if (keptTriangles.count(key) == 0) {
                     continue;
                 }
                 for (int e = 0; e < 3; ++e) {
-                    std::pair<uint32_t, uint32_t> const edge = {
-                        std::min(v[e], v[(e + 1) % 3]), std::max(v[e], v[(e + 1) % 3]) };
+                    std::pair<uint32_t, uint32_t> const edge = { std::min(v[e], v[(e + 1) % 3]),
+                        std::max(v[e], v[(e + 1) % 3]) };
                     auto& owners = edgeNodes[edge];
                     if (std::find(owners.begin(), owners.end(), nodeId) == owners.end()) {
                         owners.push_back(nodeId);
@@ -862,44 +847,44 @@ void printDagStats(Mesh const& mesh, LodGraph const& graph, LodGraphSelection co
             }
         }
         int printed = 0;
-        for (auto const& [edge, count] : edgeUse) {
-            bool const newBoundary = count == 1
-                    && (baseEdgeUse.count(edge) == 0 || baseEdgeUse[edge] != 1);
+        for (auto const& [edge, count]: edgeUse) {
+            bool const newBoundary =
+                    count == 1 && (baseEdgeUse.count(edge) == 0 || baseEdgeUse[edge] != 1);
             if ((newBoundary || count > 2) && printed < 12) {
                 printf("  bad edge (%u,%u) use=%u nodes=", edge.first, edge.second, count);
-                for (uint32_t owner : edgeNodes[edge]) {
+                for (uint32_t owner: edgeNodes[edge]) {
                     printf("%u ", owner);
                 }
                 printf("\n");
-                for (uint32_t owner : edgeNodes[edge]) {
+                for (uint32_t owner: edgeNodes[edge]) {
                     LodGraphNode const& node = graph.nodes[owner];
                     for (size_t i = 0; i + 2 < node.indices.size(); i += 3) {
-                        uint32_t const v[3] = {
-                            node.indices[i], node.indices[i + 1], node.indices[i + 2] };
+                        uint32_t const v[3] = { node.indices[i], node.indices[i + 1],
+                            node.indices[i + 2] };
                         std::array<uint32_t, 3> key = { v[0], v[1], v[2] };
                         std::sort(key.begin(), key.end());
                         if (keptTriangles.count(key) == 0) {
                             continue;
                         }
                         bool hasA = v[0] == edge.first || v[1] == edge.first || v[2] == edge.first;
-                        bool hasB = v[0] == edge.second || v[1] == edge.second
-                                || v[2] == edge.second;
+                        bool hasB =
+                                v[0] == edge.second || v[1] == edge.second || v[2] == edge.second;
                         if (hasA && hasB) {
                             printf("    node %u tri %u %u %u\n", owner, v[0], v[1], v[2]);
                         }
                     }
                 }
                 printf("    base use=%u leaves=", baseEdgeUse.count(edge) ? baseEdgeUse[edge] : 0u);
-                for (uint32_t leaf : graph.leaves) {
+                for (uint32_t leaf: graph.leaves) {
                     LodGraphNode const& node = graph.nodes[leaf];
                     uint32_t use = 0;
                     for (size_t i = 0; i + 2 < node.indices.size(); i += 3) {
-                        uint32_t const v[3] = {
-                            node.indices[i], node.indices[i + 1], node.indices[i + 2] };
+                        uint32_t const v[3] = { node.indices[i], node.indices[i + 1],
+                            node.indices[i + 2] };
                         for (int e = 0; e < 3; ++e) {
                             std::pair<uint32_t, uint32_t> const pe = {
-                                std::min(v[e], v[(e + 1) % 3]),
-                                std::max(v[e], v[(e + 1) % 3]) };
+                                std::min(v[e], v[(e + 1) % 3]), std::max(v[e], v[(e + 1) % 3])
+                            };
                             use += pe == edge ? 1u : 0u;
                         }
                     }
@@ -966,10 +951,10 @@ bool optionRequiresValue(char const* arg, utils::getopt::option const* table) {
         return false;
     }
     if (arg[1] != '-') {
-        return false;  // the only short options here, -h and -l, are flags
+        return false; // the only short options here, -h and -l, are flags
     }
     if (strchr(arg + 2, '=') != nullptr) {
-        return false;  // --name=value carries its own
+        return false; // --name=value carries its own
     }
     std::string const name(arg + 2);
     for (utils::getopt::option const* option = table; option->name != nullptr; ++option) {
@@ -1047,7 +1032,7 @@ int handleArguments(int argc, char* argv[], Options* options) {
         { "fov-y", utils::getopt::required_argument, 0, 'f' },
         { "screen-height", utils::getopt::required_argument, 0, 's' },
         { "threshold-px", utils::getopt::required_argument, 0, 'p' },
-        { 0, 0, 0, 0 }  // termination of the utils::getopt::option list
+        { 0, 0, 0, 0 } // termination of the utils::getopt::option list
     };
 
     rotatePositionalToEnd(argc, argv, OPTIONS);
@@ -1232,15 +1217,14 @@ int main(int argc, char* argv[]) {
         math::float3 hi{};
         computeBounds(mesh, &lo, &hi);
         printf("  bounds: (%.2f, %.2f, %.2f) .. (%.2f, %.2f, %.2f)   extent (%.2f, %.2f, %.2f)\n",
-                lo.x, lo.y, lo.z, hi.x, hi.y, hi.z,
-                hi.x - lo.x, hi.y - lo.y, hi.z - lo.z);
+                lo.x, lo.y, lo.z, hi.x, hi.y, hi.z, hi.x - lo.x, hi.y - lo.y, hi.z - lo.z);
     }
 
     std::error_code errorCode;
     std::filesystem::create_directories(options.outDir, errorCode);
     if (errorCode) {
-        std::cerr << "Could not create output directory '" << options.outDir << "': "
-                  << errorCode.message() << std::endl;
+        std::cerr << "Could not create output directory '" << options.outDir
+                  << "': " << errorCode.message() << std::endl;
         return 1;
     }
 
@@ -1301,9 +1285,38 @@ int main(int argc, char* argv[]) {
         graphOptions.ratio = options.ratio;
         graphOptions.simplify = simplifyOptions;
 
-        LodGraph const graph = buildLodGraph(mesh, graphOptions);
-        printf("  DAG built: %zu nodes, %u levels (%.2fs)\n", graph.nodes.size(),
-                graph.levelCount, elapsed());
+        LodGraphBuildStats buildStats;
+        LodGraph const graph = buildLodGraph(mesh, graphOptions, &buildStats);
+        printf("  DAG built: %zu nodes, %u levels (%.2fs)\n", graph.nodes.size(), graph.levelCount,
+                elapsed());
+        printf("  build phases: clusterize %.3fs, leaf setup %.3fs, cluster chains %.3fs, "
+               "groups %.3fs (simplify %.3fs)\n",
+                buildStats.clusterizeSeconds, buildStats.leafSetupSeconds,
+                buildStats.clusterChainSeconds, buildStats.groupBuildSeconds,
+                buildStats.groupSimplifySeconds);
+        printf("  simplify calls: cluster %llu accepted %llu attempts %llu; "
+               "group %llu accepted %llu attempts %llu; seam-locked vertex uses %llu\n",
+                (unsigned long long) buildStats.clusterSimplifyCalls,
+                (unsigned long long) buildStats.clusterSimplifyAccepted,
+                (unsigned long long) buildStats.clusterSimplifyAttempts,
+                (unsigned long long) buildStats.groupSimplifyCalls,
+                (unsigned long long) buildStats.groupSimplifyAccepted,
+                (unsigned long long) buildStats.groupSimplifyAttempts,
+                (unsigned long long) buildStats.seamLockedVertices);
+        auto const printSimplifyProfile = [](char const* name, SimplifyProfile const& profile) {
+            printf("  %s simplify profile: attribute-qem %.3fs, meshopt %.3fs, gate %.3fs, "
+                   "boundary %.3fs, lock-mask %.3fs | calls %llu attempts %llu, "
+                   "attribute candidates %llu, meshopt candidates %llu, accepted %llu\n",
+                    name, profile.attributeQemSeconds, profile.meshoptSeconds,
+                    profile.candidateGateSeconds, profile.boundaryCheckSeconds,
+                    profile.lockedMaskSeconds, (unsigned long long) profile.calls,
+                    (unsigned long long) profile.attempts,
+                    (unsigned long long) profile.attributeCandidates,
+                    (unsigned long long) profile.meshoptCandidates,
+                    (unsigned long long) profile.accepted);
+        };
+        printSimplifyProfile("cluster", buildStats.clusterSimplify);
+        printSimplifyProfile("group", buildStats.groupSimplify);
         if (graph.nodes.empty()) {
             std::cerr << "The DAG is empty; nothing to select." << std::endl;
             return 1;
@@ -1317,18 +1330,19 @@ int main(int argc, char* argv[]) {
         }
         LodTierProfile const profile = lodTierProfile(tier);
         ViewCamera const camera = makeCamera(options, mesh);
-        LodGraphSelection const selection = options.useTargetRatio
-                ? selectLodGraphAtRatio(graph, camera, options.targetTriangleRatio,
-                        std::numeric_limits<float>::infinity())
-                : selectLodGraphTier(graph, camera, tier);
+        LodGraphSelection const selection =
+                options.useTargetRatio
+                        ? selectLodGraphAtRatio(graph, camera, options.targetTriangleRatio,
+                                  std::numeric_limits<float>::infinity())
+                        : selectLodGraphTier(graph, camera, tier);
         printDagStats(mesh, graph, selection, camera,
                 options.useTargetRatio ? std::numeric_limits<float>::infinity()
                                        : profile.maxScreenErrorPx);
 
         if (options.dumpObj) {
             GeometryOutput const geometry = outputFromDagSelection(selection);
-            std::string const selectedPath = join(options.outDir,
-                    options.dumpPly ? "selected.ply" : "selected.obj");
+            std::string const selectedPath =
+                    join(options.outDir, options.dumpPly ? "selected.ply" : "selected.obj");
             if (options.dumpPly) {
                 writePly(mesh, geometry.indices, selectedPath.c_str(), &geometry.materialIds,
                         &geometry.submeshIds);
@@ -1363,17 +1377,16 @@ int main(int argc, char* argv[]) {
             }
             std::vector<LodStreamingPage> const pages =
                     streaming.planPages(options.streamingPageBytes);
-            size_t const budget = std::max<size_t>(
-                    size_t(options.streamingPageBytes) * 16, 1024u * 1024u);
+            size_t const budget =
+                    std::max<size_t>(size_t(options.streamingPageBytes) * 16, 1024u * 1024u);
             LodStreamingCache cache(&streaming, budget, options.streamingPageBytes);
             bool const prepared = cache.prepare(selection);
             LodStreamingCache::Stats const stats = cache.stats();
             printf("  streaming: %s, %zu pages, queue %s, resident %zu pages / %zu bytes, "
                    "hits %llu misses %llu evictions %llu\n",
                     streaming.fileBacked() ? "file-backed" : "memory-backed", pages.size(),
-                    prepared ? "prepared" : "incomplete", stats.residentPages,
-                    stats.residentBytes, (unsigned long long) stats.pageHits,
-                    (unsigned long long) stats.pageMisses,
+                    prepared ? "prepared" : "incomplete", stats.residentPages, stats.residentBytes,
+                    (unsigned long long) stats.pageHits, (unsigned long long) stats.pageMisses,
                     (unsigned long long) stats.evictions);
         };
         if (options.writeDag) {
@@ -1391,8 +1404,8 @@ int main(int argc, char* argv[]) {
             VisibilityBuffer const visibility = rasterizeVisibility(mesh, gpu, selection, camera);
             std::string const visibilityPath = join(options.outDir, "visibility.pgm");
             writeVisibilityBufferPgm(visibility, visibilityPath.c_str());
-            printf("  wrote %s (%u covered pixels, %zu indirect draws)\n",
-                    visibilityPath.c_str(), visibility.coveredPixels, draws.size());
+            printf("  wrote %s (%u covered pixels, %zu indirect draws)\n", visibilityPath.c_str(),
+                    visibility.coveredPixels, draws.size());
         }
 
         printf("\n  total time: %.2fs\n", elapsed());
@@ -1458,15 +1471,17 @@ int main(int argc, char* argv[]) {
     }
 
     ViewCamera const camera = makeCamera(options, mesh);
-    Selection const selection = options.errorLevel >= 0
-            ? selectClustersAtLevel(clusters.clusters, lods, camera, uint32_t(options.errorLevel))
-            : selectClusters(clusters.clusters, lods, camera, options.thresholdPx);
+    Selection const selection =
+            options.errorLevel >= 0
+                    ? selectClustersAtLevel(clusters.clusters, lods, camera,
+                              uint32_t(options.errorLevel))
+                    : selectClusters(clusters.clusters, lods, camera, options.thresholdPx);
     printSelectionStats(selection, camera, options.thresholdPx);
 
     if (options.dumpObj) {
         GeometryOutput const geometry = gatherSelection(lods, selection);
-        std::string const selectedPath = join(options.outDir,
-                options.dumpPly ? "selected.ply" : "selected.obj");
+        std::string const selectedPath =
+                join(options.outDir, options.dumpPly ? "selected.ply" : "selected.obj");
         if (options.dumpPly) {
             writePly(mesh, geometry.indices, selectedPath.c_str(), &geometry.materialIds,
                     &geometry.submeshIds);

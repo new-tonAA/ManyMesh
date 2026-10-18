@@ -13,6 +13,19 @@
 - 🧱 **渲染底座**：[Google Filament](https://github.com/google/filament) —— 本仓库为其完整源码快照
   （上游提交 `4bcb2e4e5aa2fdba45b0db73dcb92f5dbfc38752`），详见 [MANYMESH.md §9.1](MANYMESH.md#91-仓库形态)
 
+## 当前实现状态
+
+- **已跑通**：属性感知 QEM、UV/法线成对 seam collapse、带质量门的层次化 cluster DAG、
+  CPU 运行时 cut、编辑器节省比例滑杆/质量档位、近细远粗开关、分页流式缓存、
+  WinHTTP Range 下载，以及独立 Vulkan compute cut + indirect draw + visibility buffer 原型。
+- **已做视觉回归**：dragon / sphere / monkey / torus / cloth / shapes 六模型同机位对比；
+  monkey 50% 为 40.99 dB / 0.99349，torus 48.78% 为 40.56 dB / 0.99655，未发现新增穿孔。
+- **性能**：cloth DAG（74,976 三角形）构建从 37.02s 降到 1.93s，节点与三角形输出逐位不变；
+  588 节点 monkey DAG 的运行时 CPU cut 约 0.003 ms/次。
+- **尚未完成**：Filament 公共 API/后端内的常驻 compute + indirect 渲染路径、Android/iOS
+  平台 HTTP transport、三份以上同位置 seam 副本、跨 UV chart 的生成顶点/属性插值，以及
+  移动端真机功耗与帧时验证。这里不会用放松质量门来换取更低面数。
+
 > ⚠️ **构建前请注意**：本仓库的 Windows 构建流程与上游默认方式不同（Filament 不支持 MSYS2
 > 环境），并含一处 MSVC 编译修补。请先阅读
 > [MANYMESH.md §9 开发环境与构建](MANYMESH.md#9-开发环境与构建当前状态)。

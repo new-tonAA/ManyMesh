@@ -20,8 +20,11 @@
 
 #include <meshoptimizer.h>
 
+#include "Parallel.h"
+
 #include <algorithm>
 #include <array>
+#include <chrono>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -703,7 +706,14 @@ struct SimplifyScratch {
 void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
         std::vector<int32_t>* remap, SimplifyScratch* scratch, size_t targetIndexCount,
         float targetError, float meshScale, SimplifyOptions const& options,
-        unsigned int meshoptOptions, LodLevel* out) {
+        unsigned int meshoptOptions, LodLevel* out, SimplifyProfile* profile = nullptr) {
+    using ProfileClock = std::chrono::steady_clock;
+    auto profileSeconds = [](ProfileClock::time_point start) {
+        return std::chrono::duration<double>(ProfileClock::now() - start).count();
+    };
+    if (profile != nullptr) {
+        profile->calls += 1;
+    }
     std::vector<math::float3>& localPositions = scratch->localPositions;
     std::vector<uint32_t>& localToGlobal = scratch->localToGlobal;
     std::vector<uint32_t>& localIndices = scratch->localIndices;
@@ -745,7 +755,14 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
     bool accepted = false;
 
     for (uint32_t attempt = 0; attempt < std::max(1u, options.qualityAttempts); ++attempt) {
-        std::vector<LodLevel> candidates;
+        if (profile != nullptr) {
+            profile->attempts += 1;
+        }
+        struct Candidate {
+            LodLevel level;
+            bool acceptable = false;
+        };
+        std::vector<Candidate> candidates;
 
         auto prepareCandidate = [&](std::vector<uint32_t> candidate, float relativeError,
                                         float worldError) {
@@ -755,25 +772,48 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
                 repairSlivers(mesh, &candidate, options.minTriangleQuality, options.lockedVertices);
             }
             level.indices = std::move(candidate);
-            PositionStats const geometry =
-                    options.qualityGate ? measurePositionError(mesh, source, level.indices,
+            CandidateErrorStats const errors =
+                    options.qualityGate ? measureCandidateErrors(mesh, source, level.indices,
                                                   options.attributeSampleLimit,
                                                   options.attributeApproximationTriangles)
-                                        : PositionStats{};
+                                        : CandidateErrorStats{};
+            PositionStats const& geometry = errors.position;
             level.worldError = geometry.samples > 0 ? geometry.maxError : worldError;
             level.relativeError = geometry.samples > 0
                                           ? geometry.maxError / std::max(meshScale, 1e-6f)
                                           : relativeError;
             level.topology =
                     options.qualityGate ? measureTopology(mesh, level.indices) : TopologyStats{};
-            level.attributes = options.qualityGate
-                                       ? measureAttributeError(mesh, source, level.indices,
-                                                 options.attributeSampleLimit,
-                                                 options.attributeApproximationTriangles)
-                                       : AttributeStats{};
+            level.attributes = errors.attributes;
             level.attempts = attempt + 1;
             level.simplified = level.indices.size() < source.size();
             return level;
+        };
+
+        auto acceptable = [&](LodLevel const& level) {
+            auto const boundaryStart = ProfileClock::now();
+            bool boundaryOk =
+                    !options.qualityGate || source.size() / 3 > options.attributeQemMaxTriangles;
+            if (!boundaryOk) {
+                boundaryOk = options.seamCollapse
+                                     ? preservesWeldedBoundaries(mesh, source, level.indices)
+                                     : preservesBoundaryEdges(source, level.indices);
+            }
+            if (profile != nullptr) {
+                profile->boundaryCheckSeconds += profileSeconds(boundaryStart);
+            }
+            bool result = !options.qualityGate ||
+                          (topologyAcceptable(level.topology, baseTopology, options) &&
+                                  geometryAcceptable(level, options, meshScale) &&
+                                  attributesAcceptable(level.attributes, options) && boundaryOk);
+            if (result && options.qualityGate) {
+                auto const lockStart = ProfileClock::now();
+                result = respectsLockedMask(source, level.indices, options);
+                if (profile != nullptr) {
+                    profile->lockedMaskSeconds += profileSeconds(lockStart);
+                }
+            }
+            return result;
         };
 
         // Attribute-aware QEM first. It is the path that actually lets normals and UVs reject a
@@ -794,61 +834,80 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
 
             std::vector<uint32_t> attributeIndices;
             float attributeWorldError = 0.0f;
-            if (simplifyWithAttributes(mesh, source, attributeOptions, &attributeIndices,
-                        &attributeWorldError)) {
-                candidates.push_back(prepareCandidate(std::move(attributeIndices),
-                        attributeWorldError / std::max(meshScale, 1e-6f), attributeWorldError));
+            auto const attributeStart = ProfileClock::now();
+            bool const attributeSimplified = simplifyWithAttributes(mesh, source, attributeOptions,
+                    &attributeIndices, &attributeWorldError);
+            if (profile != nullptr) {
+                profile->attributeQemSeconds += profileSeconds(attributeStart);
+            }
+            if (attributeSimplified) {
+                Candidate candidate;
+                auto const gateStart = ProfileClock::now();
+                candidate.level = prepareCandidate(std::move(attributeIndices),
+                        attributeWorldError / std::max(meshScale, 1e-6f), attributeWorldError);
+                if (profile != nullptr) {
+                    profile->candidateGateSeconds += profileSeconds(gateStart);
+                }
+                candidate.acceptable = candidate.level.simplified && acceptable(candidate.level);
+                if (profile != nullptr) {
+                    profile->attributeCandidates += 1;
+                }
+                candidates.push_back(std::move(candidate));
             }
         }
 
-        float resultError = 0.0f;
-        float const attemptError = localTargetError / (1.0f + 0.5f * float(attempt) * complexity);
-        size_t const resultCount = meshopt_simplify(destination.data(), localIndices.data(),
-                localIndices.size(), &localPositions[0].x, localPositions.size(),
-                sizeof(math::float3), attemptTarget, attemptError, meshoptOptions, &resultError);
-
-        std::vector<uint32_t> candidate(resultCount);
-        for (size_t i = 0; i < resultCount; ++i) {
-            candidate[i] = localToGlobal[destination[i]];
-        }
-        candidates.push_back(
-                prepareCandidate(std::move(candidate), resultError, resultError * localScale));
-
-        auto acceptable = [&](LodLevel const& level) {
-            bool boundaryOk =
-                    !options.qualityGate || source.size() / 3 > options.attributeQemMaxTriangles;
-            if (!boundaryOk) {
-                boundaryOk = options.seamCollapse
-                                     ? preservesWeldedBoundaries(mesh, source, level.indices)
-                                     : preservesBoundaryEdges(source, level.indices);
+        {
+            float resultError = 0.0f;
+            float const attemptError =
+                    localTargetError / (1.0f + 0.5f * float(attempt) * complexity);
+            auto const meshoptStart = ProfileClock::now();
+            size_t const resultCount =
+                    meshopt_simplify(destination.data(), localIndices.data(), localIndices.size(),
+                            &localPositions[0].x, localPositions.size(), sizeof(math::float3),
+                            attemptTarget, attemptError, meshoptOptions, &resultError);
+            if (profile != nullptr) {
+                profile->meshoptSeconds += profileSeconds(meshoptStart);
             }
-            return !options.qualityGate ||
-                   (topologyAcceptable(level.topology, baseTopology, options) &&
-                           geometryAcceptable(level, options, meshScale) &&
-                           attributesAcceptable(level.attributes, options) && boundaryOk &&
-                           respectsLockedMask(source, level.indices, options));
-        };
+
+            std::vector<uint32_t> candidate(resultCount);
+            for (size_t i = 0; i < resultCount; ++i) {
+                candidate[i] = localToGlobal[destination[i]];
+            }
+            Candidate fallback;
+            auto const gateStart = ProfileClock::now();
+            fallback.level =
+                    prepareCandidate(std::move(candidate), resultError, resultError * localScale);
+            if (profile != nullptr) {
+                profile->candidateGateSeconds += profileSeconds(gateStart);
+            }
+            fallback.acceptable = fallback.level.simplified && acceptable(fallback.level);
+            if (profile != nullptr) {
+                profile->meshoptCandidates += 1;
+            }
+            candidates.push_back(std::move(fallback));
+        }
+
         auto attributeScore = [](LodLevel const& level) {
             return level.attributes.maxNormalErrorRadians + level.attributes.maxUvError;
         };
-        std::sort(candidates.begin(), candidates.end(), [&](LodLevel const& a, LodLevel const& b) {
-            bool const acceptableA = a.simplified && acceptable(a);
-            bool const acceptableB = b.simplified && acceptable(b);
-            if (acceptableA != acceptableB) {
-                return acceptableA;
-            }
-            size_t const slack = std::max<size_t>(3, attemptTarget / 20);
-            if (a.indices.size() + slack < b.indices.size()) {
-                return true;
-            }
-            if (b.indices.size() + slack < a.indices.size()) {
-                return false;
-            }
-            return attributeScore(a) < attributeScore(b);
-        });
+        std::sort(candidates.begin(), candidates.end(),
+                [&](Candidate const& a, Candidate const& b) {
+                    if (a.acceptable != b.acceptable) {
+                        return a.acceptable;
+                    }
+                    size_t const slack = std::max<size_t>(3, attemptTarget / 20);
+                    if (a.level.indices.size() + slack < b.level.indices.size()) {
+                        return true;
+                    }
+                    if (b.level.indices.size() + slack < a.level.indices.size()) {
+                        return false;
+                    }
+                    return attributeScore(a.level) < attributeScore(b.level);
+                });
 
-        for (LodLevel const& level: candidates) {
-            if (options.verbose && level.simplified && !acceptable(level)) {
+        for (Candidate const& candidate: candidates) {
+            LodLevel const& level = candidate.level;
+            if (options.verbose && level.simplified && !candidate.acceptable) {
                 std::fprintf(stderr,
                         "quality reject: source=%zu target=%zu got=%zu attempt=%u "
                         "boundary=%llu/%llu nonManifold=%llu/%llu minQuality=%.4f/%.4f "
@@ -864,9 +923,12 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
                         level.attributes.maxUvError, level.attributes.meanUvError, level.worldError,
                         std::max(options.targetError, 1e-5f) * meshScale, level.relativeError);
             }
-            if (level.simplified && acceptable(level)) {
+            if (candidate.acceptable) {
                 *out = level;
                 accepted = true;
+                if (profile != nullptr) {
+                    profile->accepted += 1;
+                }
                 break;
             }
         }
@@ -935,7 +997,7 @@ std::vector<LodLevel> simplifyChainByMaterial(Mesh const& mesh, SimplifyOptions 
             }
             LodLevel next;
             simplifyClusterInto(indices, mesh, &remap, &scratch, target, options.targetError,
-                    worldScale, options, flags, &next);
+                    worldScale, options, flags, &next, nullptr);
             next.materialId = primitive.first;
             next.submeshId = primitive.second;
             if (!next.simplified || next.indices.size() >= levels.back().indices.size()) {
@@ -1030,7 +1092,7 @@ std::vector<LodLevel> simplifyChain(Mesh const& mesh, SimplifyOptions const& opt
         // level. It costs one extra pass but yields better quality, and it makes the reported
         // error absolute with respect to the input instead of relative to an intermediate.
         simplifyClusterInto(mesh.indices, mesh, &remap, &scratch, target, options.targetError,
-                worldScale, options, flags, &next);
+                worldScale, options, flags, &next, nullptr);
         next.materialId = levels[0].materialId;
         next.submeshId = levels[0].submeshId;
 
@@ -1047,7 +1109,7 @@ std::vector<LodLevel> simplifyChain(Mesh const& mesh, SimplifyOptions const& opt
 }
 
 std::vector<ClusterLods> simplifyClusters(Mesh const& mesh, ClusterSet const& clusters,
-        SimplifyOptions const& options) {
+        SimplifyOptions const& options, SimplifyProfile* profile) {
     std::vector<ClusterLods> result(clusters.clusters.size());
 
     if (mesh.empty() || options.levels == 0) {
@@ -1057,12 +1119,13 @@ std::vector<ClusterLods> simplifyClusters(Mesh const& mesh, ClusterSet const& cl
     float const worldScale = relativeToWorldScale(mesh);
     unsigned int const flags = options.lockBorder ? meshopt_SimplifyLockBorder : 0;
 
-    // One remap scratch buffer for the whole run: allocating it per cluster would cost more
-    // than the simplification itself for small clusters.
-    std::vector<int32_t> remap(mesh.positions.size(), -1);
-    SimplifyScratch scratch;
-
-    for (size_t c = 0; c < clusters.clusters.size(); ++c) {
+    std::vector<SimplifyProfile> profiles(clusters.clusters.size());
+    detail::parallelFor(clusters.clusters.size(), [&](size_t c) {
+        thread_local std::vector<int32_t> remap;
+        thread_local SimplifyScratch scratch;
+        if (remap.size() != mesh.positions.size()) {
+            remap.assign(mesh.positions.size(), -1);
+        }
         std::vector<uint32_t> const& base = clusters.clusters[c].indices;
         ClusterLods& lods = result[c];
 
@@ -1073,7 +1136,7 @@ std::vector<ClusterLods> simplifyClusters(Mesh const& mesh, ClusterSet const& cl
         lods.levels[0].submeshId = clusters.clusters[c].submeshId;
 
         if (base.empty()) {
-            continue;
+            return;
         }
 
         for (uint32_t level = 1; level < options.levels; ++level) {
@@ -1084,7 +1147,7 @@ std::vector<ClusterLods> simplifyClusters(Mesh const& mesh, ClusterSet const& cl
 
             LodLevel next;
             simplifyClusterInto(base, mesh, &remap, &scratch, target, options.targetError,
-                    worldScale, options, flags, &next);
+                    worldScale, options, flags, &next, &profiles[c]);
             next.materialId = clusters.clusters[c].materialId;
             next.submeshId = clusters.clusters[c].submeshId;
 
@@ -1101,13 +1164,29 @@ std::vector<ClusterLods> simplifyClusters(Mesh const& mesh, ClusterSet const& cl
             next.relativeError = std::max(next.relativeError, lods.levels.back().relativeError);
             lods.levels.push_back(std::move(next));
         }
+    });
+
+    if (profile != nullptr) {
+        for (SimplifyProfile const& local: profiles) {
+            profile->attributeQemSeconds += local.attributeQemSeconds;
+            profile->meshoptSeconds += local.meshoptSeconds;
+            profile->candidateGateSeconds += local.candidateGateSeconds;
+            profile->boundaryCheckSeconds += local.boundaryCheckSeconds;
+            profile->lockedMaskSeconds += local.lockedMaskSeconds;
+            profile->calls += local.calls;
+            profile->attempts += local.attempts;
+            profile->attributeCandidates += local.attributeCandidates;
+            profile->meshoptCandidates += local.meshoptCandidates;
+            profile->accepted += local.accepted;
+        }
     }
 
     return result;
 }
 
 void simplifyIndices(Mesh const& mesh, std::vector<uint32_t> const& indices,
-        size_t targetIndexCount, SimplifyOptions const& options, LodLevel* out) {
+        size_t targetIndexCount, SimplifyOptions const& options, LodLevel* out,
+        SimplifyProfile* profile) {
     if (out == nullptr) {
         return;
     }
@@ -1122,10 +1201,16 @@ void simplifyIndices(Mesh const& mesh, std::vector<uint32_t> const& indices,
 
     float const worldScale = relativeToWorldScale(mesh);
     unsigned int const flags = options.lockBorder ? meshopt_SimplifyLockBorder : 0;
-    std::vector<int32_t> remap(mesh.positions.size(), -1);
-    SimplifyScratch scratch;
+    // Group simplification runs on worker threads and is called many times per level. Keep the
+    // mesh-sized remap and the compacted unit buffers alive per thread; simplifyClusterInto
+    // resets every touched remap entry before returning.
+    thread_local std::vector<int32_t> remap;
+    thread_local SimplifyScratch scratch;
+    if (remap.size() != mesh.positions.size()) {
+        remap.assign(mesh.positions.size(), -1);
+    }
     simplifyClusterInto(indices, mesh, &remap, &scratch, (targetIndexCount / 3) * 3,
-            options.targetError, worldScale, options, flags, out);
+            options.targetError, worldScale, options, flags, out, profile);
 }
 
 } // namespace manymesh

@@ -72,6 +72,25 @@ struct LodLevel {
     size_t triangleCount() const noexcept { return indices.size() / 3; }
 };
 
+/**
+ * Optional diagnostics for one or more simplification runs. All fields accumulate, so a caller
+ * can reuse one profile for a whole DAG build. This is deliberately separate from the LOD data:
+ * it lets a tool answer "is the attribute QEM, meshopt, or the quality gate the bottleneck?"
+ * without changing the simplification results.
+ */
+struct SimplifyProfile {
+    double attributeQemSeconds = 0.0;
+    double meshoptSeconds = 0.0;
+    double candidateGateSeconds = 0.0;
+    double boundaryCheckSeconds = 0.0;
+    double lockedMaskSeconds = 0.0;
+    uint64_t calls = 0;
+    uint64_t attempts = 0;
+    uint64_t attributeCandidates = 0;
+    uint64_t meshoptCandidates = 0;
+    uint64_t accepted = 0;
+};
+
 struct SimplifyOptions {
     //! Total number of levels *including* level 0, which is always the input geometry.
     uint32_t levels = 5;
@@ -173,7 +192,7 @@ struct ClusterLods {
 };
 
 std::vector<ClusterLods> simplifyClusters(Mesh const& mesh, ClusterSet const& clusters,
-        SimplifyOptions const& options = {});
+        SimplifyOptions const& options = {}, SimplifyProfile* profile = nullptr);
 
 /**
  * Simplifies one arbitrary index list to `targetIndexCount` and records the resulting level.
@@ -181,7 +200,8 @@ std::vector<ClusterLods> simplifyClusters(Mesh const& mesh, ClusterSet const& cl
  * child indices simplified as one unit.
  */
 void simplifyIndices(Mesh const& mesh, std::vector<uint32_t> const& indices,
-        size_t targetIndexCount, SimplifyOptions const& options, LodLevel* out);
+        size_t targetIndexCount, SimplifyOptions const& options, LodLevel* out,
+        SimplifyProfile* profile = nullptr);
 
 /**
  * The factor that converts meshoptimizer's relative error into world units

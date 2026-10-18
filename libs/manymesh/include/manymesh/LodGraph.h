@@ -93,6 +93,31 @@ struct LodGraphOptions {
 };
 
 /**
+ * Optional build-time measurements. They are not serialized with the graph; they exist so a
+ * tool or test can tell whether clustering, per-cluster chains, or group merging dominates.
+ */
+struct LodGraphBuildStats {
+    double clusterizeSeconds = 0.0;
+    double leafSetupSeconds = 0.0;
+    double clusterChainSeconds = 0.0;
+    double groupBuildSeconds = 0.0;
+    double groupSimplifySeconds = 0.0;
+    double totalSeconds = 0.0;
+
+    uint64_t clusterSimplifyCalls = 0;
+    uint64_t clusterSimplifyAccepted = 0;
+    uint64_t clusterSimplifyAttempts = 0;
+    uint64_t groupCandidates = 0;
+    uint64_t groupSimplifyCalls = 0;
+    uint64_t groupSimplifyAccepted = 0;
+    uint64_t groupSimplifyAttempts = 0;
+    uint64_t seamLockedVertices = 0;
+
+    SimplifyProfile clusterSimplify;
+    SimplifyProfile groupSimplify;
+};
+
+/**
  * Builds a hierarchical cluster DAG from the input mesh.
  *
  * Every level groups spatially adjacent nodes that share material/submesh, simplifies the
@@ -100,7 +125,8 @@ struct LodGraphOptions {
  * not promoted, which keeps the DAG free of broken geometry while leaving the children
  * selectable.
  */
-LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options = {});
+LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options = {},
+        LodGraphBuildStats* stats = nullptr);
 
 struct LodGraphSelection {
     //! Selected DAG nodes. Their index lists are disjoint and together cover exactly the part

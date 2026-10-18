@@ -82,6 +82,17 @@ struct PositionStats {
     bool approximated = false;
 };
 
+/**
+ * Position and attribute loss from one shared closest-triangle query.
+ *
+ * The quality gate needs both metrics for the same candidate. Measuring them separately built
+ * the same acceleration structure twice and repeated every nearest-point query.
+ */
+struct CandidateErrorStats {
+    PositionStats position;
+    AttributeStats attributes;
+};
+
 TopologyStats measureTopology(Mesh const& mesh, std::vector<uint32_t> const& indices);
 
 AttributeStats measureAttributeError(Mesh const& mesh,
@@ -102,6 +113,12 @@ AttributeStats measureAttributeError(Mesh const& mesh,
         size_t approximateTriangles);
 
 PositionStats measurePositionError(Mesh const& mesh,
+        std::vector<uint32_t> const& referenceIndices,
+        std::vector<uint32_t> const& simplifiedIndices,
+        uint32_t maxSamples = 0,
+        size_t approximateTriangles = 0);
+
+CandidateErrorStats measureCandidateErrors(Mesh const& mesh,
         std::vector<uint32_t> const& referenceIndices,
         std::vector<uint32_t> const& simplifiedIndices,
         uint32_t maxSamples = 0,

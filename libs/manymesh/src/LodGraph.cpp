@@ -16,8 +16,11 @@
 
 #include <manymesh/LodGraph.h>
 
+#include "Parallel.h"
+
 #include <algorithm>
 #include <array>
+#include <chrono>
 #include <cmath>
 #include <functional>
 #include <limits>
@@ -473,6 +476,11 @@ LodGraphSelection selectionFromCut(LodGraph const& graph, NodeMetrics const& met
             }
         }
 
+        void clear() {
+            std::fill(slots.begin(), slots.end(), Slot{});
+            count = 0;
+        }
+
     private:
         void grow() {
             std::vector<Slot> old = std::move(slots);
@@ -486,7 +494,10 @@ LodGraphSelection selectionFromCut(LodGraph const& graph, NodeMetrics const& met
         }
     };
 
-    TriangleSet boundaryFaces;
+    // Ratio selection evaluates many cuts back to back. Reuse the table so a slider drag does
+    // not allocate a fresh hash set for every threshold.
+    thread_local TriangleSet boundaryFaces;
+    boundaryFaces.clear();
     std::vector<uint32_t> indices;
     std::vector<uint32_t> materialIds;
     std::vector<uint32_t> submeshIds;
@@ -528,13 +539,32 @@ LodGraphSelection selectImpl(LodGraph const& graph, ViewCamera const& camera, fl
 
 } // anonymous namespace
 
-LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options) {
+LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
+        LodGraphBuildStats* stats) {
+    using Clock = std::chrono::steady_clock;
+    auto const buildStart = Clock::now();
+    auto secondsSince = [](Clock::time_point start) {
+        return std::chrono::duration<double>(Clock::now() - start).count();
+    };
+    if (stats != nullptr) {
+        *stats = {};
+    }
+
     LodGraph graph;
     if (mesh.empty() || options.levels == 0) {
+        if (stats != nullptr) {
+            stats->totalSeconds = secondsSince(buildStart);
+        }
         return graph;
     }
 
+    auto const clusterizeStart = Clock::now();
     ClusterSet const clusters = clusterize(mesh, options.clusterize);
+    if (stats != nullptr) {
+        stats->clusterizeSeconds = secondsSince(clusterizeStart);
+    }
+
+    auto const leafSetupStart = Clock::now();
     graph.vertexCount = uint32_t(mesh.positions.size());
     graph.levelCount = 1;
     graph.nodes.reserve(clusters.clusters.size() * 2);
@@ -574,15 +604,20 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options) {
     for (size_t v = 0; v < vertexLeafUse.size(); ++v) {
         sharedVertexMask[v] = vertexLeafUse[v] > 1 ? 1 : 0;
     }
+    if (stats != nullptr) {
+        stats->leafSetupSeconds = secondsSince(leafSetupStart);
+    }
 
     // Per-cluster chains. A hierarchy that only merges neighbouring clusters cannot reduce a
     // chart that has no neighbours at all, and imports with many UV/normal seams produce a lot
     // of those (a monkey OBJ is a good example: most of its charts are isolated). Giving each
     // cluster its own coarse variants keeps those charts reducible and, just as importantly,
     // adds fine-grained cuts between the group levels so a triangle budget can be met closely.
+    auto const clusterChainStart = Clock::now();
     SimplifyOptions clusterOptions = options.simplify;
     clusterOptions.lockedVertices = &sharedVertexMask;
-    std::vector<ClusterLods> const clusterLods = simplifyClusters(mesh, clusters, clusterOptions);
+    std::vector<ClusterLods> const clusterLods = simplifyClusters(mesh, clusters, clusterOptions,
+            stats != nullptr ? &stats->clusterSimplify : nullptr);
     std::vector<uint32_t> chainTops;
     chainTops.reserve(graph.leaves.size());
     uint32_t maxChainLevel = 0;
@@ -620,8 +655,20 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options) {
             maxChainLevel = std::max(maxChainLevel, uint32_t(l));
         }
         chainTops.push_back(previous);
+        if (stats != nullptr) {
+            stats->clusterSimplifyCalls += 1;
+            for (LodLevel const& level: lods.levels) {
+                if (level.simplified) {
+                    stats->clusterSimplifyAccepted += 1;
+                    stats->clusterSimplifyAttempts += level.attempts;
+                }
+            }
+        }
     }
     graph.levelCount = std::max(graph.levelCount, maxChainLevel + 1);
+    if (stats != nullptr) {
+        stats->clusterChainSeconds = secondsSince(clusterChainStart);
+    }
 
     std::vector<uint32_t> current = std::move(chainTops);
     SimplifyOptions simplifyOptions = options.simplify;
@@ -631,31 +678,50 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options) {
     // collapses so the group can reduce past the old 1/3-barrier without opening a crack.
     simplifyOptions.seamCollapse = true;
 
-    // Reused scratch for the per-group seam mask. A group may keep a vertex if every leaf that
-    // references it is inside that group; only vertices shared with the outside are locked.
-    std::vector<uint32_t> memberUse(mesh.positions.size(), 0);
-    std::vector<uint32_t> memberTouched;
-    std::vector<uint8_t> groupLockMask(mesh.positions.size(), 0);
-    std::vector<uint32_t> groupLocked;
     std::vector<int32_t> groupLastOwner(mesh.positions.size(), -1);
     std::vector<uint32_t> groupTouchedOwners;
 
     for (uint32_t depth = 0; depth < options.levels && !current.empty(); ++depth) {
         uint32_t const level = maxChainLevel + 1 + depth;
+        auto const groupBuildStart = Clock::now();
         std::vector<std::vector<uint32_t>> groups =
                 groupNodes(graph, current, std::max(2u, options.clustersPerNode),
                         mesh.positions.size(), &groupLastOwner, &groupTouchedOwners);
-        std::vector<uint32_t> next;
-        bool createdParent = false;
-        for (std::vector<uint32_t> const& members: groups) {
+        struct GroupBuildResult {
+            bool candidate = false;
+            bool promoted = false;
+            uint32_t attempts = 0;
+            uint64_t seamLockedVertices = 0;
+            LodGraphNode parent;
+            SimplifyProfile profile;
+        };
+        std::vector<GroupBuildResult> results(groups.size());
+
+        auto const groupSimplifyStart = Clock::now();
+        detail::parallelFor(groups.size(), [&](size_t groupIndex) {
+            std::vector<uint32_t> const& members = groups[groupIndex];
+            GroupBuildResult& result = results[groupIndex];
+            if (members.size() < 2) {
+                return;
+            }
+            result.candidate = true;
+
+            thread_local std::vector<uint32_t> memberUse;
+            thread_local std::vector<uint32_t> memberTouched;
+            thread_local std::vector<uint8_t> groupLockMask;
+            thread_local std::vector<uint32_t> groupLocked;
+            if (memberUse.size() != mesh.positions.size()) {
+                memberUse.assign(mesh.positions.size(), 0);
+            }
+            if (groupLockMask.size() != mesh.positions.size()) {
+                groupLockMask.assign(mesh.positions.size(), 0);
+            }
             for (uint32_t vertex: groupLocked) {
                 groupLockMask[vertex] = 0;
             }
             groupLocked.clear();
-            if (members.size() < 2) {
-                next.insert(next.end(), members.begin(), members.end());
-                continue;
-            }
+            memberTouched.clear();
+
             std::vector<uint32_t> combined;
             size_t combinedSize = 0;
             for (uint32_t member: members) {
@@ -686,16 +752,19 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options) {
                 memberUse[vertex] = 0;
             }
             memberTouched.clear();
-            simplifyOptions.lockedVertices = &groupLockMask;
+            result.seamLockedVertices = groupLocked.size();
 
             size_t const target = std::max<size_t>(3,
                     (size_t(double(combined.size()) * double(options.ratio)) / 3) * 3);
+            SimplifyOptions localOptions = simplifyOptions;
+            localOptions.lockedVertices = &groupLockMask;
             LodLevel simplified;
-            simplifyIndices(mesh, combined, target, simplifyOptions, &simplified);
+            simplifyIndices(mesh, combined, target, localOptions, &simplified, &result.profile);
+            result.attempts = simplified.attempts;
             if (!simplified.simplified || simplified.indices.size() >= combined.size()) {
-                next.insert(next.end(), members.begin(), members.end());
-                continue;
+                return;
             }
+            result.promoted = true;
 
             LodGraphNode parent;
             parent.level = level;
@@ -719,14 +788,54 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options) {
                 parent.accumulatedError = std::max(parent.accumulatedError,
                         parent.selfError + graph.nodes[member].accumulatedError);
             }
+            result.parent = std::move(parent);
+        });
+        if (stats != nullptr) {
+            stats->groupSimplifySeconds += secondsSince(groupSimplifyStart);
+        }
 
+        std::vector<uint32_t> next;
+        bool createdParent = false;
+        for (size_t groupIndex = 0; groupIndex < groups.size(); ++groupIndex) {
+            std::vector<uint32_t> const& members = groups[groupIndex];
+            GroupBuildResult& result = results[groupIndex];
+            if (!result.candidate) {
+                next.insert(next.end(), members.begin(), members.end());
+                continue;
+            }
+            if (stats != nullptr) {
+                stats->groupCandidates += 1;
+                stats->seamLockedVertices += result.seamLockedVertices;
+                stats->groupSimplifyCalls += 1;
+                stats->groupSimplifyAttempts += result.attempts;
+                stats->groupSimplify.attributeQemSeconds += result.profile.attributeQemSeconds;
+                stats->groupSimplify.meshoptSeconds += result.profile.meshoptSeconds;
+                stats->groupSimplify.candidateGateSeconds += result.profile.candidateGateSeconds;
+                stats->groupSimplify.boundaryCheckSeconds += result.profile.boundaryCheckSeconds;
+                stats->groupSimplify.lockedMaskSeconds += result.profile.lockedMaskSeconds;
+                stats->groupSimplify.calls += result.profile.calls;
+                stats->groupSimplify.attempts += result.profile.attempts;
+                stats->groupSimplify.attributeCandidates += result.profile.attributeCandidates;
+                stats->groupSimplify.meshoptCandidates += result.profile.meshoptCandidates;
+                stats->groupSimplify.accepted += result.profile.accepted;
+            }
+            if (!result.promoted) {
+                next.insert(next.end(), members.begin(), members.end());
+                continue;
+            }
+            if (stats != nullptr) {
+                stats->groupSimplifyAccepted += 1;
+            }
             uint32_t const id = uint32_t(graph.nodes.size());
             for (uint32_t member: members) {
                 graph.nodes[member].parent = id;
             }
-            graph.nodes.push_back(std::move(parent));
+            graph.nodes.push_back(std::move(result.parent));
             next.push_back(id);
             createdParent = true;
+        }
+        if (stats != nullptr) {
+            stats->groupBuildSeconds += secondsSince(groupBuildStart);
         }
         if (!createdParent) {
             break;
@@ -736,6 +845,9 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options) {
     }
 
     graph.roots = current.empty() ? graph.leaves : current;
+    if (stats != nullptr) {
+        stats->totalSeconds = secondsSince(buildStart);
+    }
     return graph;
 }
 

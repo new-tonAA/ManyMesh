@@ -133,10 +133,12 @@ of its source unit, must not add non-manifold edges, must contain no duplicate, 
 flipped triangles, must meet `--min-quality`, and must stay within the world-space error cap
 derived from `--target-error`. `--quality-debug 1` prints the reason a candidate was rejected.
 
-This is deliberately conservative. On a UV-seamed closed model such as the torus, the safety
-floor can be well above the requested saving (currently about 66% kept for a 50% request).
-That is a quality result, not a selection bug: further reduction needs seam-aware
-simplification that preserves UV charts instead of relaxing the gate.
+This is deliberately conservative, but the gate now understands paired seam copies: the two
+sides of a duplicated UV/normal seam can be collapsed together and validated against a welded
+position boundary. On the UV-seamed torus this lowers the 50% request from the old 66.32%
+floor to **562 / 1,152 = 48.78%**, with no welded boundary and no new non-manifold edges.
+More extreme reduction across three or more coincident copies needs generated vertices and
+attribute interpolation; do not relax the quality gate to approximate that.
 
 Clusters are simplified with `meshopt_SimplifyLockBorder`, i.e. their outer boundary vertices
 are never removed. Without it, independently simplified neighbours would crack apart along
@@ -176,6 +178,21 @@ which is gitignored — the model is not redistributed with this repository.
 > tool does — are ordinary academic use, but obtain permission before any commercial
 > application. If that becomes necessary, license-clean alternatives exist (Thingi10k, CC0
 > models on Sketchfab).
+
+## Build performance
+
+DAG construction now uses a BVH for the quality gate, shares one closest-point query between
+position and attribute error, and simplifies independent cluster chains and groups in
+parallel. Results are merged in deterministic input order, so the graph is bit-for-bit
+identical to the serial build.
+
+On the bundled cloth asset (74,976 triangles, group 8, five levels, ratio 0.7), the build went
+from **37.02s** to **1.93s** while keeping the same
+`1915 nodes / 7 levels / 252 roots / 589 leaves` and
+`38098 / 74976 = 50.81%` cut. The BVH/shared-query serial path takes **18.18s**, so parallel
+scheduling is a further 9.4x. The 588-node monkey DAG builds in about **0.23s**. Use
+`mmgeo --mode dag ...` to print the cluster, chain, group, and quality-gate phase timings, and
+set `MANYMESH_BUILD_THREADS=1` to reproduce or A/B the serial build.
 
 ## Measured behaviour
 

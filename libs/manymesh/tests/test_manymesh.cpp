@@ -863,6 +863,82 @@ TEST(ManyMesh, LodGraphCoversLeavesAndSelectsANonOverlappingCut) {
     }
 }
 
+TEST(ManyMesh, LodGraphBuildIsDeterministicAcrossSerialAndParallelWork) {
+    Mesh mesh = makeGrid(32, 32, {}, 1.0f, 0.5f);
+    mesh.normals.assign(mesh.positions.size(), { 0.0f, 0.0f, 1.0f });
+    mesh.uvs.resize(mesh.positions.size());
+    for (size_t i = 0; i < mesh.positions.size(); ++i) {
+        mesh.uvs[i] = { mesh.positions[i].x * 0.05f, mesh.positions[i].y * 0.05f };
+    }
+
+    LodGraphOptions options;
+    options.clusterize.maxVertices = 64;
+    options.clusterize.maxTriangles = 64;
+    options.clustersPerNode = 8;
+    options.levels = 4;
+    options.ratio = 0.5f;
+    options.simplify.qualityGate = true;
+    options.simplify.attributeQem = true;
+
+    auto setBuildThreads = [](char const* value) {
+#if defined(_WIN32)
+        _putenv_s("MANYMESH_BUILD_THREADS", value);
+#else
+        if (value[0] == '\0') {
+            unsetenv("MANYMESH_BUILD_THREADS");
+        } else {
+            setenv("MANYMESH_BUILD_THREADS", value, 1);
+        }
+#endif
+    };
+    auto expectSameGraph = [](LodGraph const& a, LodGraph const& b) {
+        EXPECT_EQ(a.nodes.size(), b.nodes.size());
+        if (a.nodes.size() != b.nodes.size()) {
+            return;
+        }
+        EXPECT_EQ(a.roots, b.roots);
+        EXPECT_EQ(a.leaves, b.leaves);
+        EXPECT_EQ(a.vertexCount, b.vertexCount);
+        EXPECT_EQ(a.levelCount, b.levelCount);
+        EXPECT_EQ(a.baseTriangles, b.baseTriangles);
+        for (size_t i = 0; i < a.nodes.size(); ++i) {
+            LodGraphNode const& left = a.nodes[i];
+            LodGraphNode const& right = b.nodes[i];
+            EXPECT_EQ(left.level, right.level) << "node " << i;
+            EXPECT_EQ(left.parent, right.parent) << "node " << i;
+            EXPECT_EQ(left.children, right.children) << "node " << i;
+            EXPECT_EQ(left.indices, right.indices) << "node " << i;
+            EXPECT_EQ(left.materialId, right.materialId) << "node " << i;
+            EXPECT_EQ(left.submeshId, right.submeshId) << "node " << i;
+            EXPECT_EQ(left.selfError, right.selfError) << "node " << i;
+            EXPECT_EQ(left.accumulatedError, right.accumulatedError) << "node " << i;
+            EXPECT_EQ(left.topology.boundaryEdges, right.topology.boundaryEdges) << "node " << i;
+            EXPECT_EQ(left.topology.nonManifoldEdges, right.topology.nonManifoldEdges)
+                    << "node " << i;
+            EXPECT_EQ(left.topology.duplicateTriangles, right.topology.duplicateTriangles)
+                    << "node " << i;
+            EXPECT_EQ(left.topology.flippedTriangles, right.topology.flippedTriangles)
+                    << "node " << i;
+            EXPECT_EQ(left.attributes.maxNormalErrorRadians, right.attributes.maxNormalErrorRadians)
+                    << "node " << i;
+            EXPECT_EQ(left.attributes.maxUvError, right.attributes.maxUvError) << "node " << i;
+            EXPECT_EQ(left.simplified, right.simplified) << "node " << i;
+            EXPECT_EQ(left.baseTriangles, right.baseTriangles) << "node " << i;
+        }
+    };
+
+    // Cluster chains and independent groups are simplified on worker threads. Pin one run to a
+    // single worker, then compare two parallel runs against it field by field. This catches both
+    // lost updates between jobs and any worker-count-dependent tie breaking.
+    setBuildThreads("1");
+    LodGraph const serial = buildLodGraph(mesh, options);
+    setBuildThreads("0");
+    LodGraph const parallel = buildLodGraph(mesh, options);
+    LodGraph const parallelAgain = buildLodGraph(mesh, options);
+    expectSameGraph(serial, parallel);
+    expectSameGraph(parallel, parallelAgain);
+}
+
 TEST(ManyMesh, LodGraphRatioSelectionHitsTheRequestedBudget) {
     Mesh const mesh = makeGrid(32, 32, {}, 1.0f, 0.5f);
     LodGraphOptions options;

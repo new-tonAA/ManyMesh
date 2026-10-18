@@ -686,11 +686,27 @@ Filament 公共 `RenderableManager`，因此证明的是算法与 GPU 数据布�
 - 新增 `HttpByteRangeFetcher`：WinHTTP 实现的真实 HTTP/HTTPS 字节区间 transport，
   支持重定向、超时、IPv6 和 `Range: bytes=a-b` 校验；`mm_bench --stream-url` 可直接
   从服务器流式加载 `lod_graph.mmb`，`--stream-save` 用来导出同一份文件。
-- monkey DAG 构建从 **3.21s** 降到 **1.58s**（本机）；`test_manymesh` 从 25 个测试增加到
-  **34 个**（33 个常规测试 + 1 个需 `MANYMESH_HTTP_RANGE_TEST_URL` 的网络测试），常规
-  测试全部通过。monkey 50% 为 **7,872 面（50.00%）/ 40.99 dB / 0.99349**；加入成对 seam
-  collapse 后 torus 为 **562 / 1,152（48.78%）/ 30.08 dB / 0.99195**，两者非流形/重复/
-  退化/翻转三角形均为 0。
+- 质量门里的最近三角形查询从逐顶点扫描全部候选三角形改为 BVH；位置误差与属性误差共用
+  同一次最近点查询，不再重复构建和遍历两棵树。对小 unit，候选网格本来就不大，但组父节点
+  的简单化会反复调用质量门，收益随 group 大小增长。
+- 逐 cluster LOD 链与同一层的独立 group 都改为并行构建。每个 worker 持有自己的 remap
+  与 scratch；结果按原始 group 顺序合并，因此节点 ID、children、索引和误差字段保持逐位
+  一致，不引入由线程完成顺序决定的 DAG。
+- `selectLodGraphAtRatio` 的跨节点重复面哈希表改为线程局部复用；编辑器拖动滑杆时反复
+  评估阈值不再为每个 cut 分配新表。
+- cloth DAG（74,976 三角形，group 8，5 级，ratio 0.7）从 **37.02s** 降到 **1.93s**；
+  其中 BVH/shared-query 后的串行路径仍有 **18.18s**，并行后降到 **1.93s**（约 9.4×）。
+  输出仍是 `1915 nodes / 7 levels / 252 roots / 589 leaves`、
+  `38098 / 74976 = 50.81%`。并行后的阶段耗时示例：clusterize `0.060s`、leaf setup
+  `0.021s`、cluster chains `0.534s`、groups `1.163s`。monkey DAG 从 **3.21s** 降到
+  **0.23s**。设置 `MANYMESH_BUILD_THREADS=1` 可强制走串行路径，用于复现与 A/B 对比。
+- `test_manymesh` 增至 **35 个**（34 个常规测试 + 1 个需
+  `MANYMESH_HTTP_RANGE_TEST_URL` 的网络测试），新增“并行构建逐位确定性”回归；常规测试
+  全部通过。
+- 同机位 960×720 视觉回归（`--no-shadows`，自动取景）：monkey 50% 为
+  **7,872 面（50.00%）/ 40.99 dB / 0.99349**，aggressive 为 **6,042 面（38.38%）/
+  38.12 dB / 0.99009**；torus 为 **562 / 1,152（48.78%）/ 40.56 dB / 0.99655**。
+  diff 图只剩轮廓和法线插值差异，没有穿孔、翻面或新增非流形边。
 
 **下一批可优化点**：把 `mmgpu` 的 compute/indirect/visibility 路径接进 Filament Vulkan
 backend 并做持久 GPU buffer 与 GPU 侧 compaction；以及 Android/iOS 的 HTTP 客户端绑定。

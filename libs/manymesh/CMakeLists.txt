@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.19)
 project(manymesh)
 
+find_package(Threads REQUIRED)
+
 set(TARGET manymesh)
 set(PUBLIC_HDR_DIR include)
 
@@ -45,6 +47,7 @@ add_library(${TARGET} STATIC ${PUBLIC_HDRS} ${SRCS})
 
 target_link_libraries(${TARGET} PUBLIC math)
 target_link_libraries(${TARGET} PRIVATE meshoptimizer)
+target_link_libraries(${TARGET} PRIVATE Threads::Threads)
 if (WIN32)
     target_link_libraries(${TARGET} PUBLIC winhttp)
 endif()
