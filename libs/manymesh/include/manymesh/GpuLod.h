@@ -48,7 +48,11 @@ struct GpuLodNode {
     uint32_t materialId = UINT32_MAX;
     uint32_t submeshId = UINT32_MAX;
     uint32_t flags = 0;
+    uint32_t parent = UINT32_MAX;
+    uint32_t baseTriangles = 0;
 };
+
+static_assert(sizeof(GpuLodNode) == 88, "GPU node layout must match the shader declaration");
 
 enum : uint32_t {
     GPU_LOD_NODE_ROOT = 1u << 0,
@@ -77,6 +81,9 @@ struct GpuDrawIndexedIndirectCommand {
     int32_t baseVertex = 0;
     uint32_t baseInstance = 0;
 };
+
+static_assert(sizeof(GpuDrawIndexedIndirectCommand) == 20,
+        "indirect command must match VkDrawIndexedIndirectCommand");
 
 std::vector<GpuDrawIndexedIndirectCommand> buildIndirectDraws(GpuLodBuffer const& buffer,
         LodGraphSelection const& selection);

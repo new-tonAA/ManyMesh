@@ -160,6 +160,36 @@ std::set<std::pair<uint32_t, uint32_t>> boundaryEdgeSet(std::vector<uint32_t> co
     return result;
 }
 
+using WeldedEdge = std::pair<std::array<int64_t, 3>, std::array<int64_t, 3>>;
+
+std::set<WeldedEdge> weldedBoundarySet(Mesh const& mesh, std::vector<uint32_t> const& indices) {
+    auto position = [&mesh](uint32_t vertex) {
+        math::float3 const p = mesh.positions[vertex];
+        return std::array<int64_t, 3>{ int64_t(std::llround(p.x * 100000.0f)),
+            int64_t(std::llround(p.y * 100000.0f)), int64_t(std::llround(p.z * 100000.0f)) };
+    };
+    std::map<std::pair<std::array<int64_t, 3>, std::array<int64_t, 3>>, int> use;
+    for (size_t i = 0; i + 2 < indices.size(); i += 3) {
+        std::array<std::array<int64_t, 3>, 3> const v = { position(indices[i + 0]),
+            position(indices[i + 1]), position(indices[i + 2]) };
+        for (int e = 0; e < 3; ++e) {
+            std::array<int64_t, 3> a = v[e];
+            std::array<int64_t, 3> b = v[(e + 1) % 3];
+            if (b < a) {
+                std::swap(a, b);
+            }
+            use[{ a, b }] += 1;
+        }
+    }
+    std::set<WeldedEdge> result;
+    for (auto const& [edge, count]: use) {
+        if (count == 1) {
+            result.insert(edge);
+        }
+    }
+    return result;
+}
+
 double meanLevel(std::vector<uint32_t> const& levels, std::vector<size_t> const& clusterIndices) {
     if (clusterIndices.empty()) {
         return 0.0;
@@ -663,6 +693,54 @@ TEST(ManyMesh, QualityGatePreservesTheExactBoundaryEdgeSet) {
     EXPECT_LT(level.indices.size(), mesh.indices.size());
     EXPECT_EQ(boundaryEdgeSet(level.indices), boundaryEdgeSet(mesh.indices));
     EXPECT_EQ(level.topology.flippedTriangles, 0u);
+}
+
+TEST(ManyMesh, SeamPairCollapseKeepsTheWeldedSurfaceClosed) {
+    // Two 16x8 grids meet at x=16. The importer duplicates the seam column because the UVs
+    // jump from u=1 to u=0 there. Per-index topology therefore has a 17-edge boundary down the
+    // middle even though the welded surface is one open rectangle.
+    Mesh mesh;
+    auto appendGrid = [&mesh](uint32_t offsetX, float uOffset) {
+        uint32_t const nx = 16;
+        uint32_t const ny = 8;
+        uint32_t const base = uint32_t(mesh.positions.size());
+        for (uint32_t j = 0; j <= ny; ++j) {
+            for (uint32_t i = 0; i <= nx; ++i) {
+                float const x = float(offsetX + i);
+                float const y = float(j);
+                mesh.positions.push_back({ x, y, 0.18f * std::sin(x * 0.7f) * std::cos(y * 0.9f) });
+                mesh.uvs.push_back({ float(i) / float(nx) + uOffset, float(j) / float(ny) });
+            }
+        }
+        auto index = [base, nx](uint32_t i, uint32_t j) { return base + j * (nx + 1) + i; };
+        for (uint32_t j = 0; j < ny; ++j) {
+            for (uint32_t i = 0; i < nx; ++i) {
+                mesh.indices.insert(mesh.indices.end(),
+                        { index(i, j), index(i + 1, j), index(i + 1, j + 1) });
+                mesh.indices.insert(mesh.indices.end(),
+                        { index(i, j), index(i + 1, j + 1), index(i, j + 1) });
+            }
+        }
+    };
+    appendGrid(0, 0.0f);
+    appendGrid(16, 0.0f);
+
+    std::set<WeldedEdge> const baseBoundary = weldedBoundarySet(mesh, mesh.indices);
+    ASSERT_FALSE(baseBoundary.empty());
+
+    AttributeSimplifyOptions options;
+    options.targetIndexCount = (mesh.indices.size() / 2 / 3) * 3;
+    options.lockBorder = true;
+    options.seamCollapse = true;
+    std::vector<uint32_t> simplified;
+    float worldError = 0.0f;
+    ASSERT_TRUE(simplifyWithAttributes(mesh, mesh.indices, options, &simplified, &worldError));
+    EXPECT_LT(simplified.size(), mesh.indices.size());
+    EXPECT_EQ(weldedBoundarySet(mesh, simplified), baseBoundary);
+    TopologyStats const stats = measureTopology(mesh, simplified);
+    EXPECT_EQ(stats.duplicateTriangles, 0u);
+    EXPECT_EQ(stats.degenerateTriangles, 0u);
+    EXPECT_EQ(stats.nonManifoldEdges, 0u);
 }
 
 TEST(ManyMesh, MaterialAndSubmeshIdsSurviveClusteringAndLods) {
@@ -1298,6 +1376,35 @@ TEST(ManyMesh, HttpByteRangeFetcherValidatesUrls) {
 #endif
 }
 
+TEST(ManyMesh, HttpByteRangeFetcherAcceptsAPlatformTransport) {
+    std::vector<uint8_t> source(512);
+    for (size_t i = 0; i < source.size(); ++i) {
+        source[i] = uint8_t(i & 0xFFu);
+    }
+    size_t calls = 0;
+    HttpByteRangeFetcher transport("https://cdn.example.com/lod_graph.mmb",
+            [&](uint64_t offset, size_t size, std::vector<uint8_t>* bytes, std::string* error) {
+                calls += 1;
+                if (offset > source.size() || size > source.size() - offset) {
+                    *error = "range outside the test blob";
+                    return false;
+                }
+                bytes->assign(source.begin() + offset, source.begin() + offset + size);
+                return true;
+            });
+    ASSERT_TRUE(transport.valid()) << transport.lastError();
+
+    std::vector<uint8_t> bytes;
+    ASSERT_TRUE(transport.fetch(100, 64, &bytes)) << transport.lastError();
+    EXPECT_EQ(calls, 1u);
+    ASSERT_EQ(bytes.size(), 64u);
+    EXPECT_TRUE(std::equal(bytes.begin(), bytes.end(), source.begin() + 100));
+
+    EXPECT_FALSE(transport.fetch(500, 64, &bytes));
+    EXPECT_FALSE(transport.lastError().empty());
+    EXPECT_TRUE(bytes.empty());
+}
+
 // Opt-in end-to-end check. Point MANYMESH_HTTP_RANGE_TEST_URL at a server that honors Range
 // requests for a serialized graph, then the cache fetches its pages over the same transport a
 // game would use.
@@ -1379,8 +1486,25 @@ TEST(ManyMesh, GpuLayoutAndVisibilityBufferFollowTheSelection) {
 
     GpuLodBuffer const gpu = flattenLodGraph(graph);
     ASSERT_EQ(gpu.nodes.size(), graph.nodes.size());
+    for (size_t nodeId = 0; nodeId < graph.nodes.size(); ++nodeId) {
+        GpuLodNode const& node = gpu.nodes[nodeId];
+        LodGraphNode const& source = graph.nodes[nodeId];
+        EXPECT_EQ(node.parent, source.parent);
+        EXPECT_EQ(node.baseTriangles,
+                uint32_t(std::min<uint64_t>(source.baseTriangles, UINT32_MAX)));
+        EXPECT_EQ(node.indexCount, source.indices.size());
+        EXPECT_EQ(node.indexOffset + node.indexCount <= gpu.indices.size(), true);
+        EXPECT_TRUE(std::equal(source.indices.begin(), source.indices.end(),
+                gpu.indices.begin() + node.indexOffset));
+    }
     std::vector<GpuDrawIndexedIndirectCommand> const draws = buildIndirectDraws(gpu, selection);
     EXPECT_EQ(draws.size(), selection.nodes.size());
+    for (size_t draw = 0; draw < draws.size(); ++draw) {
+        uint32_t const nodeId = selection.nodes[draw];
+        EXPECT_EQ(draws[draw].indexCount, gpu.nodes[nodeId].indexCount);
+        EXPECT_EQ(draws[draw].firstIndex, gpu.nodes[nodeId].indexOffset);
+        EXPECT_EQ(draws[draw].baseInstance, nodeId);
+    }
 
     VisibilityBuffer const visibility = rasterizeVisibility(mesh, gpu, selection, camera);
     EXPECT_EQ(visibility.clusterIds.size(), size_t(camera.screenWidth) * camera.screenHeight);

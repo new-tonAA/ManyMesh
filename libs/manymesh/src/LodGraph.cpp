@@ -627,6 +627,9 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options) {
     SimplifyOptions simplifyOptions = options.simplify;
     simplifyOptions.levels = 1;
     simplifyOptions.qualityAttempts = std::max(1u, options.simplify.qualityAttempts);
+    // A group contains both sides of its internal UV/normal seams. Pair their boundary
+    // collapses so the group can reduce past the old 1/3-barrier without opening a crack.
+    simplifyOptions.seamCollapse = true;
 
     // Reused scratch for the per-group seam mask. A group may keep a vertex if every leaf that
     // references it is inside that group; only vertices shared with the outside are locked.

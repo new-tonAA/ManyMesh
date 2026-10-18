@@ -812,7 +812,11 @@ void setupLodViewer(Engine* engine, View* view, Scene* scene) {
     graphOptions.clusterize.splitCharts = true;
     graphOptions.clustersPerNode = 8;
     graphOptions.levels = 5;
-    graphOptions.ratio = 0.5f;
+    // Build each parent from a moderately reduced child set. Driving every level straight to
+    // 50% exhausts the world-space error budget before the root is reached; 70% leaves the
+    // seam-pair pass enough quality headroom to hit a deeper final cut. The UI slider still
+    // chooses the actual runtime cut, so this does not force a 70% render.
+    graphOptions.ratio = 0.7f;
     graphOptions.simplify.attributeQem = true;
     graphOptions.simplify.qualityGate = true;
     g_lodGraph = mm::buildLodGraph(g_lodMesh, graphOptions);

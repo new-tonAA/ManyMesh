@@ -96,6 +96,14 @@ struct SimplifyOptions {
     //! across the seam they share. The caller must keep the mask alive for the call.
     std::vector<uint8_t> const* lockedVertices = nullptr;
 
+    //! Allow a UV/normal seam to collapse when both copies of the seam vertex move to the
+    //! corresponding pair of neighbours in one step. Duplicated positions are paired by exact
+    //! position and matching boundary edges, so the two attribute charts shrink together
+    //! instead of one side opening a crack. This is used by cluster-group simplification,
+    //! where both sides of an internal seam are present in the same unit. It never relaxes
+    //! the boundary lock for an open edge that has no paired neighbour.
+    bool seamCollapse = false;
+
     //! Compare every candidate against the base unit and retry with a larger triangle budget
     //! when the collapse produced a crack, a non-manifold edge, a duplicate/degenerate face or
     //! an attribute jump beyond the limits below. This is what keeps an extreme LOD from
@@ -161,7 +169,7 @@ std::vector<LodLevel> simplifyChain(Mesh const& mesh, SimplifyOptions const& opt
  * choose a different level per cluster instead of one level for the whole mesh.
  */
 struct ClusterLods {
-    std::vector<LodLevel> levels;  //!< levels[0] is the cluster's original triangles
+    std::vector<LodLevel> levels; //!< levels[0] is the cluster's original triangles
 };
 
 std::vector<ClusterLods> simplifyClusters(Mesh const& mesh, ClusterSet const& clusters,

@@ -58,6 +58,10 @@ GpuLodBuffer flattenLodGraph(LodGraph const& graph) {
         node.flags = (source.parent == UINT32_MAX ? GPU_LOD_NODE_ROOT : 0u)
                 | (source.children.empty() ? GPU_LOD_NODE_LEAF : 0u)
                 | (source.simplified ? GPU_LOD_NODE_SIMPLIFIED : 0u);
+        node.parent = source.parent;
+        node.baseTriangles = source.baseTriangles > UINT32_MAX
+                ? UINT32_MAX
+                : uint32_t(source.baseTriangles);
         buffer.indices.insert(buffer.indices.end(), source.indices.begin(), source.indices.end());
         buffer.children.insert(buffer.children.end(),
                 source.children.begin(), source.children.end());

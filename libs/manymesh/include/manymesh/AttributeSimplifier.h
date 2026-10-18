@@ -43,6 +43,11 @@ struct AttributeSimplifyOptions {
     //! is stronger than border-edge locking: two clusters can meet at a single vertex without
     //! sharing an edge, and a collapse through that vertex can create a chord across the seam.
     std::vector<uint8_t> const* lockedVertices = nullptr;
+    //! Collapse matched UV/normal seam pairs together. Both copies of a duplicated position
+    //! must be boundary vertices with a matching boundary edge; a one-sided collapse is still
+    //! rejected. This keeps the welded surface closed while allowing attribute charts to lose
+    //! triangles along their shared seam.
+    bool seamCollapse = false;
     float minTriangleQuality = 0.02f;
     float maxNormalErrorDegrees = 35.0f;
     float maxUvError = 0.10f;

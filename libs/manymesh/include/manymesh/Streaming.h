@@ -236,13 +236,23 @@ private:
  * `Range: bytes=<offset>-<end>` header and requires a 206 response (a 200 response is accepted
  * only for the first byte of the file, i.e. when the server ignored Range).
  *
- * The implementation currently uses WinHTTP on Windows. Other platforms get the same portable
- * interface but `valid()` is false and `fetch()` returns false; a mobile build can bind its own
- * HTTP client to the same callback without touching the cache.
+ * The implementation uses WinHTTP on Windows. A mobile or custom runtime can inject its own
+ * platform HTTP stack through `RangeFetcher`; the cache and page decoder stay unchanged.
  */
 class HttpByteRangeFetcher {
 public:
+    /**
+     * Signature of an injected platform transport.
+     *
+     * The callback must perform one HTTP Range request and return exactly `size` bytes, or return
+     * false and set `error`. It may be called concurrently by AsyncLodStreamingCache workers, so
+     * implementations sharing a session/connection must serialize that access.
+     */
+    using RangeFetcher = std::function<bool(uint64_t offset, size_t size,
+            std::vector<uint8_t>* bytes, std::string* error)>;
+
     explicit HttpByteRangeFetcher(std::string url, unsigned timeoutMs = 5000);
+    HttpByteRangeFetcher(std::string url, RangeFetcher fetcher, unsigned timeoutMs = 5000);
     ~HttpByteRangeFetcher();
 
     HttpByteRangeFetcher(HttpByteRangeFetcher const&) = delete;

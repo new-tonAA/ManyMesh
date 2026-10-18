@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstring>
 #include <limits>
 #include <map>
 #include <queue>
@@ -144,6 +145,38 @@ struct EdgeHash {
 
 Edge edgeOf(uint32_t a, uint32_t b) { return { std::min(a, b), std::max(a, b) }; }
 
+struct PositionKey {
+    uint32_t x = 0;
+    uint32_t y = 0;
+    uint32_t z = 0;
+
+    bool operator==(PositionKey const& other) const noexcept {
+        return x == other.x && y == other.y && z == other.z;
+    }
+};
+
+struct PositionKeyHash {
+    size_t operator()(PositionKey const& key) const noexcept {
+        uint64_t hash = uint64_t(key.x) * 0x9E3779B185EBCA87ull;
+        hash ^= uint64_t(key.y) + 0x9E3779B97F4A7C15ull + (hash << 6) + (hash >> 2);
+        hash ^= uint64_t(key.z) + 0x9E3779B97F4A7C15ull + (hash << 6) + (hash >> 2);
+        return size_t(hash);
+    }
+};
+
+PositionKey positionKey(math::float3 position) noexcept {
+    // Importers duplicate seam vertices with bit-identical positions. Normalising negative
+    // zero keeps the key stable without introducing an epsilon that could weld nearby detail.
+    float const x = position.x == 0.0f ? 0.0f : position.x;
+    float const y = position.y == 0.0f ? 0.0f : position.y;
+    float const z = position.z == 0.0f ? 0.0f : position.z;
+    PositionKey key;
+    std::memcpy(&key.x, &x, sizeof(float));
+    std::memcpy(&key.y, &y, sizeof(float));
+    std::memcpy(&key.z, &z, sizeof(float));
+    return key;
+}
+
 TriangleKey triangleKey(std::array<uint32_t, 3> triangle) {
     std::sort(triangle.begin(), triangle.end());
     return triangle;
@@ -173,6 +206,13 @@ struct Candidate {
     uint32_t keep = 0;
     uint32_t removeVersion = 0;
     uint32_t keepVersion = 0;
+    //! Set when the collapse removes two seam copies at once. The two collapse halves are
+    //! applied atomically so neither chart can advance ahead of the other.
+    bool paired = false;
+    uint32_t partnerRemove = 0;
+    uint32_t partnerKeep = 0;
+    uint32_t partnerRemoveVersion = 0;
+    uint32_t partnerKeepVersion = 0;
 
     bool operator>(Candidate const& other) const noexcept { return error > other.error; }
 };
@@ -184,9 +224,15 @@ struct Unit {
     std::vector<Triangle> triangles;
     std::vector<std::vector<uint32_t>> incident;
     std::unordered_set<TriangleKey, TriangleKeyHash> triangleKeys;
+    //! Current edge use count. Unlike borderEdges, this is updated by every collapse so a
+    //! paired seam collapse can ask whether an edge is a boundary right now.
+    std::unordered_map<Edge, uint32_t, EdgeHash> edgeUse;
     //! Sorted and unique. Membership is a binary search, while iteration order stays
     //! deterministic for the quadric accumulation below.
     std::vector<Edge> borderEdges;
+    //! Index of the vertex at the same position on the opposite side of a duplicated seam,
+    //! or UINT32_MAX when this vertex is not part of a two-copy seam.
+    std::vector<uint32_t> seamPartner;
     size_t aliveTriangles = 0;
     math::float3 extent{};
 
@@ -259,6 +305,14 @@ void rebuildGeometry(Unit* unit, std::vector<uint32_t> const& source) {
     }
     unit->extent = hi - lo;
 
+    unit->edgeUse.clear();
+    unit->edgeUse.reserve(unit->triangles.size() * 2);
+    for (Triangle const& triangle: unit->triangles) {
+        for (int e = 0; e < 3; ++e) {
+            unit->edgeUse[edgeOf(triangle.vertices[e], triangle.vertices[(e + 1) % 3])] += 1;
+        }
+    }
+
     std::vector<Edge> edgeUses;
     edgeUses.reserve(unit->triangles.size() * 3);
     for (Triangle const& triangle: unit->triangles) {
@@ -280,6 +334,26 @@ void rebuildGeometry(Unit* unit, std::vector<uint32_t> const& source) {
             unit->vertices[edge.second].border = true;
         }
         i = j;
+    }
+
+    unit->seamPartner.assign(unit->vertices.size(), UINT32_MAX);
+    std::unordered_map<PositionKey, std::vector<uint32_t>, PositionKeyHash> positions;
+    positions.reserve(unit->vertices.size());
+    for (size_t i = 0; i < unit->vertices.size(); ++i) {
+        positions[positionKey(unit->vertices[i].position)].push_back(uint32_t(i));
+    }
+    for (auto const& [key, vertices]: positions) {
+        if (vertices.size() != 2) {
+            // Three or more copies are ambiguous without a chart id from the importer. Leave
+            // them locked rather than guessing which two sides should move together.
+            continue;
+        }
+        uint32_t const a = vertices[0];
+        uint32_t const b = vertices[1];
+        if (unit->vertices[a].border && unit->vertices[b].border) {
+            unit->seamPartner[a] = b;
+            unit->seamPartner[b] = a;
+        }
     }
 
     std::vector<Quadric> quadrics(unit->vertices.size());
@@ -359,7 +433,8 @@ void addNeighbors(Unit const& unit, uint32_t vertex, std::vector<uint32_t>* neig
 }
 
 bool isBorderEdge(Unit const& unit, uint32_t a, uint32_t b) {
-    return std::binary_search(unit.borderEdges.begin(), unit.borderEdges.end(), edgeOf(a, b));
+    auto const it = unit.edgeUse.find(edgeOf(a, b));
+    return it != unit.edgeUse.end() && it->second == 1;
 }
 
 struct CollapseEvaluation {
@@ -373,7 +448,7 @@ struct CollapseEvaluation {
 };
 
 CollapseEvaluation evaluateCollapse(Unit const& unit, uint32_t remove, uint32_t keep,
-        AttributeSimplifyOptions const& options) {
+        AttributeSimplifyOptions const& options, bool allowSeamBorder = false) {
     CollapseEvaluation result;
     if (remove == keep || unit.vertices[remove].removed || unit.vertices[keep].removed) {
         return result;
@@ -381,7 +456,7 @@ CollapseEvaluation evaluateCollapse(Unit const& unit, uint32_t remove, uint32_t 
     if (unit.vertices[remove].locked) {
         return result;
     }
-    if (options.lockBorder && unit.vertices[remove].border) {
+    if (options.lockBorder && unit.vertices[remove].border && !allowSeamBorder) {
         return result;
     }
     if (unit.vertices[keep].locked) {
@@ -413,7 +488,7 @@ CollapseEvaluation evaluateCollapse(Unit const& unit, uint32_t remove, uint32_t 
     // outline and leaves a crack against the neighbouring cluster. Reject any collapse that
     // would remove a triangle containing a border edge. Border vertices are never moved by a
     // collapse, so this preserves the outline exactly.
-    if (options.lockBorder) {
+    if (options.lockBorder && !allowSeamBorder) {
         for (uint32_t t: unit.incident[remove]) {
             Triangle const& triangle = unit.triangles[t];
             if (!triangle.alive) {
@@ -488,7 +563,8 @@ CollapseEvaluation evaluateCollapse(Unit const& unit, uint32_t remove, uint32_t 
         return result;
     }
     uint32_t const requiredCommon = sharedEdgeTriangles == 2 ? 2u : 1u;
-    if (commonNeighbors != requiredCommon && !(sharedEdgeTriangles == 1 && !options.lockBorder)) {
+    if (commonNeighbors != requiredCommon &&
+            !(sharedEdgeTriangles == 1 && (!options.lockBorder || allowSeamBorder))) {
         return result;
     }
 
@@ -532,7 +608,7 @@ CollapseEvaluation evaluateCollapse(Unit const& unit, uint32_t remove, uint32_t 
                 replaced[2] == replaced[0]) {
             return result;
         }
-        if (options.lockBorder && keepIsBorder) {
+        if (options.lockBorder && keepIsBorder && !allowSeamBorder) {
             // Replacing a vertex of a border-adjacent triangle with another border vertex can
             // create a shortcut chord across the unit's outline. The neighbouring cluster can
             // make the same shortcut from its side, which leaves two overlapping triangles and
@@ -636,7 +712,7 @@ CollapseEvaluation evaluateCollapse(Unit const& unit, uint32_t remove, uint32_t 
         if (use > 2) {
             return result;
         }
-        if (options.lockBorder && use != 1 &&
+        if (options.lockBorder && !allowSeamBorder && use != 1 &&
                 std::binary_search(unit.borderEdges.begin(), unit.borderEdges.end(),
                         localEdges[i])) {
             // A border edge belongs to exactly one triangle of this unit; the other side is the
@@ -656,6 +732,69 @@ CollapseEvaluation evaluateCollapse(Unit const& unit, uint32_t remove, uint32_t 
     return result;
 }
 
+struct PairedCollapseEvaluation {
+    bool valid = false;
+    float cost = 0.0f;
+    uint32_t remove = 0;
+    uint32_t keep = 0;
+    uint32_t partnerRemove = 0;
+    uint32_t partnerKeep = 0;
+    CollapseEvaluation first;
+    CollapseEvaluation second;
+};
+
+PairedCollapseEvaluation evaluatePairedCollapse(Unit const& unit, uint32_t remove, uint32_t keep,
+        AttributeSimplifyOptions const& options) {
+    PairedCollapseEvaluation result;
+    if (!options.seamCollapse || remove >= unit.seamPartner.size() ||
+            keep >= unit.seamPartner.size()) {
+        return result;
+    }
+    uint32_t const partnerRemove = unit.seamPartner[remove];
+    uint32_t const partnerKeep = unit.seamPartner[keep];
+    if (partnerRemove == UINT32_MAX || partnerKeep == UINT32_MAX || partnerRemove == partnerKeep ||
+            partnerRemove == keep || partnerKeep == remove) {
+        return result;
+    }
+    if (unit.vertices[remove].removed || unit.vertices[keep].removed ||
+            unit.vertices[partnerRemove].removed || unit.vertices[partnerKeep].removed) {
+        return result;
+    }
+    // The seam is only paired when both copies of the edge are on the current outline. A
+    // stale partner relation (for example after a neighbouring collapse) must not unlock a
+    // one-sided boundary move.
+    if (!isBorderEdge(unit, remove, keep) || !isBorderEdge(unit, partnerRemove, partnerKeep)) {
+        return result;
+    }
+
+    result.remove = remove;
+    result.keep = keep;
+    result.partnerRemove = partnerRemove;
+    result.partnerKeep = partnerKeep;
+    result.first = evaluateCollapse(unit, remove, keep, options, true);
+    result.second = evaluateCollapse(unit, partnerRemove, partnerKeep, options, true);
+    if (!result.first.valid || !result.second.valid) {
+        result.first = {};
+        result.second = {};
+        return result;
+    }
+
+    // A triangle cannot legally belong to both charts, but checking the replacement lists
+    // explicitly keeps a malformed unit from applying the same triangle twice.
+    for (auto const& [triangle, replacement]: result.first.replacements) {
+        for (auto const& [otherTriangle, otherReplacement]: result.second.replacements) {
+            if (triangle == otherTriangle) {
+                result.first = {};
+                result.second = {};
+                return result;
+            }
+        }
+    }
+    result.cost = std::max(result.first.cost, result.second.cost);
+    result.valid = true;
+    return result;
+}
+
 bool applyCollapse(Unit* unit, uint32_t remove, uint32_t keep,
         CollapseEvaluation const& evaluation) {
     Vertex& source = unit->vertices[remove];
@@ -671,9 +810,19 @@ bool applyCollapse(Unit* unit, uint32_t remove, uint32_t keep,
     for (auto const& [triangleIndex, replacement]: evaluation.replacements) {
         Triangle& triangle = unit->triangles[triangleIndex];
         unit->triangleKeys.erase(triangle.key);
+        for (int e = 0; e < 3; ++e) {
+            Edge const edge = edgeOf(triangle.vertices[e], triangle.vertices[(e + 1) % 3]);
+            auto const it = unit->edgeUse.find(edge);
+            if (it != unit->edgeUse.end() && --it->second == 0) {
+                unit->edgeUse.erase(it);
+            }
+        }
         triangle.vertices = replacement;
         triangle.key = triangleKey(replacement);
         unit->triangleKeys.insert(triangle.key);
+        for (int e = 0; e < 3; ++e) {
+            unit->edgeUse[edgeOf(triangle.vertices[e], triangle.vertices[(e + 1) % 3])] += 1;
+        }
         if (std::find(unit->incident[keep].begin(), unit->incident[keep].end(), triangleIndex) ==
                 unit->incident[keep].end()) {
             unit->incident[keep].push_back(triangleIndex);
@@ -690,6 +839,13 @@ bool applyCollapse(Unit* unit, uint32_t remove, uint32_t keep,
         }
         triangle.alive = false;
         unit->triangleKeys.erase(triangle.key);
+        for (int e = 0; e < 3; ++e) {
+            Edge const edge = edgeOf(triangle.vertices[e], triangle.vertices[(e + 1) % 3]);
+            auto const it = unit->edgeUse.find(edge);
+            if (it != unit->edgeUse.end() && --it->second == 0) {
+                unit->edgeUse.erase(it);
+            }
+        }
         unit->aliveTriangles -= 1;
         for (uint32_t vertex: triangle.vertices) {
             auto& list = unit->incident[vertex];
@@ -702,6 +858,14 @@ bool applyCollapse(Unit* unit, uint32_t remove, uint32_t keep,
     target.version += 1;
     target.quadric.add(source.quadric);
     return true;
+}
+
+void applyPairedCollapse(Unit* unit, PairedCollapseEvaluation const& evaluation) {
+    // The two halves live on opposite sides of a duplicated seam vertex, so their triangle
+    // one-rings are disjoint. Applying them back to back is equivalent to applying an atomic
+    // pair and avoids a transient state where only one chart has moved.
+    applyCollapse(unit, evaluation.remove, evaluation.keep, evaluation.first);
+    applyCollapse(unit, evaluation.partnerRemove, evaluation.partnerKeep, evaluation.second);
 }
 
 } // anonymous namespace
@@ -747,16 +911,32 @@ bool simplifyWithAttributes(Mesh const& mesh, std::vector<uint32_t> const& sourc
             uint32_t const remove = direction == 0 ? a : b;
             uint32_t const keep = direction == 0 ? b : a;
             CollapseEvaluation const evaluation = evaluateCollapse(unit, remove, keep, options);
-            if (!evaluation.valid) {
-                continue;
+            if (evaluation.valid) {
+                Candidate candidate;
+                candidate.remove = remove;
+                candidate.keep = keep;
+                candidate.removeVersion = unit.vertices[remove].version;
+                candidate.keepVersion = unit.vertices[keep].version;
+                candidate.error = evaluation.cost;
+                queue.push(candidate);
             }
-            Candidate candidate;
-            candidate.remove = remove;
-            candidate.keep = keep;
-            candidate.removeVersion = unit.vertices[remove].version;
-            candidate.keepVersion = unit.vertices[keep].version;
-            candidate.error = evaluation.cost;
-            queue.push(candidate);
+
+            PairedCollapseEvaluation const paired =
+                    evaluatePairedCollapse(unit, remove, keep, options);
+            if (paired.valid) {
+                Candidate candidate;
+                candidate.paired = true;
+                candidate.remove = remove;
+                candidate.keep = keep;
+                candidate.removeVersion = unit.vertices[remove].version;
+                candidate.keepVersion = unit.vertices[keep].version;
+                candidate.partnerRemove = paired.partnerRemove;
+                candidate.partnerKeep = paired.partnerKeep;
+                candidate.partnerRemoveVersion = unit.vertices[paired.partnerRemove].version;
+                candidate.partnerKeepVersion = unit.vertices[paired.partnerKeep].version;
+                candidate.error = paired.cost;
+                queue.push(candidate);
+            }
         }
     };
 
@@ -797,6 +977,36 @@ bool simplifyWithAttributes(Mesh const& mesh, std::vector<uint32_t> const& sourc
                     unit.vertices[candidate.keep].version != candidate.keepVersion) {
                 continue;
             }
+            if (candidate.paired) {
+                if (candidate.partnerRemove >= unit.vertices.size() ||
+                        candidate.partnerKeep >= unit.vertices.size() ||
+                        unit.vertices[candidate.partnerRemove].removed ||
+                        unit.vertices[candidate.partnerKeep].removed ||
+                        unit.vertices[candidate.partnerRemove].version !=
+                                candidate.partnerRemoveVersion ||
+                        unit.vertices[candidate.partnerKeep].version !=
+                                candidate.partnerKeepVersion) {
+                    continue;
+                }
+                PairedCollapseEvaluation const evaluation =
+                        evaluatePairedCollapse(unit, candidate.remove, candidate.keep, options);
+                if (!evaluation.valid) {
+                    continue;
+                }
+                applyPairedCollapse(&unit, evaluation);
+                largestWorldError = std::max(largestWorldError,
+                        std::max(evaluation.first.worldError, evaluation.second.worldError));
+                for (CollapseEvaluation const* part: { &evaluation.first, &evaluation.second }) {
+                    for (auto const& [triangleIndex, replacement]: part->replacements) {
+                        for (int e = 0; e < 3; ++e) {
+                            pushEdge(replacement[e], replacement[(e + 1) % 3]);
+                        }
+                    }
+                }
+                applied = true;
+                break;
+            }
+
             CollapseEvaluation const evaluation =
                     evaluateCollapse(unit, candidate.remove, candidate.keep, options);
             if (!evaluation.valid) {

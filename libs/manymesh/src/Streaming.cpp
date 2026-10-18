@@ -809,6 +809,7 @@ struct HttpByteRangeFetcher::Impl {
     std::string error;
     unsigned timeoutMs = 5000;
     bool valid = false;
+    HttpByteRangeFetcher::RangeFetcher platformFetcher;
 
 #if defined(_WIN32)
     bool https = false;
@@ -976,6 +977,18 @@ HttpByteRangeFetcher::HttpByteRangeFetcher(std::string url, unsigned timeoutMs)
 #endif
 }
 
+HttpByteRangeFetcher::HttpByteRangeFetcher(std::string url, RangeFetcher fetcher,
+        unsigned timeoutMs)
+        : mImpl(new Impl()) {
+    mImpl->url = std::move(url);
+    mImpl->timeoutMs = std::max(timeoutMs, 1u);
+    mImpl->platformFetcher = std::move(fetcher);
+    mImpl->valid = bool(mImpl->platformFetcher);
+    if (!mImpl->valid) {
+        mImpl->error = "injected HTTP transport is empty";
+    }
+}
+
 HttpByteRangeFetcher::~HttpByteRangeFetcher() = default;
 
 bool HttpByteRangeFetcher::valid() const noexcept { return mImpl && mImpl->valid; }
@@ -1008,6 +1021,24 @@ bool HttpByteRangeFetcher::fetch(uint64_t offset, size_t size, std::vector<uint8
         return false;
     }
     if (size == 0) {
+        return true;
+    }
+
+    if (mImpl->platformFetcher) {
+        mImpl->error.clear();
+        if (!mImpl->platformFetcher(offset, size, bytes, &mImpl->error)) {
+            if (mImpl->error.empty()) {
+                mImpl->error = "injected HTTP transport failed";
+            }
+            bytes->clear();
+            return false;
+        }
+        if (bytes->size() != size) {
+            mImpl->error = "injected HTTP transport returned " + std::to_string(bytes->size()) +
+                           " bytes, expected " + std::to_string(size);
+            bytes->clear();
+            return false;
+        }
         return true;
     }
 

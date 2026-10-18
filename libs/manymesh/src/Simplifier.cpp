@@ -24,6 +24,7 @@
 #include <array>
 #include <cmath>
 #include <cstdio>
+#include <cstring>
 #include <iterator>
 #include <map>
 #include <set>
@@ -544,6 +545,79 @@ bool preservesBoundaryEdges(std::vector<uint32_t> const& source,
     return boundaryEdgeSet(source) == boundaryEdgeSet(candidate);
 }
 
+using WeldedPosition = std::array<uint32_t, 3>;
+
+WeldedPosition weldedPosition(math::float3 position) noexcept {
+    float const x = position.x == 0.0f ? 0.0f : position.x;
+    float const y = position.y == 0.0f ? 0.0f : position.y;
+    float const z = position.z == 0.0f ? 0.0f : position.z;
+    WeldedPosition key{};
+    std::memcpy(&key[0], &x, sizeof(float));
+    std::memcpy(&key[1], &y, sizeof(float));
+    std::memcpy(&key[2], &z, sizeof(float));
+    return key;
+}
+
+/**
+ * Boundary check for a candidate that is allowed to collapse a paired UV/normal seam.
+ *
+ * Per-index boundary edges are expected to change: that is exactly what seam pairing does.
+ * What must not change is the boundary of the *welded* surface. If both chart copies shrink
+ * together, their duplicated edges disappear in pairs and the welded edge set is unchanged.
+ * If one side moves first, the position edge becomes a one-use edge and this check rejects it.
+ */
+bool preservesWeldedBoundaries(Mesh const& mesh, std::vector<uint32_t> const& source,
+        std::vector<uint32_t> const& candidate) {
+    std::map<WeldedPosition, uint32_t> canonical;
+    std::vector<uint32_t> welded(mesh.positions.size(), UINT32_MAX);
+    auto weld = [&](uint32_t vertex) {
+        if (vertex >= welded.size()) {
+            return UINT32_MAX;
+        }
+        if (welded[vertex] == UINT32_MAX) {
+            uint32_t const id = uint32_t(canonical.size());
+            auto const [it, inserted] =
+                    canonical.emplace(weldedPosition(mesh.positions[vertex]), id);
+            (void) inserted;
+            welded[vertex] = it->second;
+        }
+        return welded[vertex];
+    };
+
+    struct Topology {
+        std::set<UndirectedEdge> boundary;
+        uint64_t nonManifold = 0;
+    };
+    auto topologyOf = [&](std::vector<uint32_t> const& indices) {
+        std::map<UndirectedEdge, uint32_t> use;
+        for (size_t i = 0; i + 2 < indices.size(); i += 3) {
+            uint32_t const v[3] = { weld(indices[i + 0]), weld(indices[i + 1]),
+                weld(indices[i + 2]) };
+            if (v[0] == UINT32_MAX || v[1] == UINT32_MAX || v[2] == UINT32_MAX) {
+                continue;
+            }
+            for (int e = 0; e < 3; ++e) {
+                uint32_t const a = v[e];
+                uint32_t const b = v[(e + 1) % 3];
+                use[{ std::min(a, b), std::max(a, b) }] += 1;
+            }
+        }
+        Topology result;
+        for (auto const& [edge, count]: use) {
+            if (count == 1) {
+                result.boundary.insert(edge);
+            } else if (count > 2) {
+                result.nonManifold += 1;
+            }
+        }
+        return result;
+    };
+
+    Topology const base = topologyOf(source);
+    Topology const simplified = topologyOf(candidate);
+    return base.boundary == simplified.boundary && simplified.nonManifold <= base.nonManifold;
+}
+
 // Rejects any candidate that creates an edge between two locked (seam) vertices that did not
 // exist in the source unit. Per-cluster simplification runs on small units and has a local
 // topology check, but a chord between two seam vertices is still locally manifold on one side;
@@ -710,6 +784,7 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
             attributeOptions.targetIndexCount = attemptTarget;
             attributeOptions.lockBorder = options.lockBorder;
             attributeOptions.lockedVertices = options.lockedVertices;
+            attributeOptions.seamCollapse = options.seamCollapse;
             attributeOptions.minTriangleQuality = options.minTriangleQuality;
             attributeOptions.maxNormalErrorDegrees = options.maxNormalErrorDegrees;
             attributeOptions.maxUvError = options.maxUvError;
@@ -740,9 +815,13 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
                 prepareCandidate(std::move(candidate), resultError, resultError * localScale));
 
         auto acceptable = [&](LodLevel const& level) {
-            bool const boundaryOk = !options.qualityGate ||
-                                    source.size() / 3 > options.attributeQemMaxTriangles ||
-                                    preservesBoundaryEdges(source, level.indices);
+            bool boundaryOk =
+                    !options.qualityGate || source.size() / 3 > options.attributeQemMaxTriangles;
+            if (!boundaryOk) {
+                boundaryOk = options.seamCollapse
+                                     ? preservesWeldedBoundaries(mesh, source, level.indices)
+                                     : preservesBoundaryEdges(source, level.indices);
+            }
             return !options.qualityGate ||
                    (topologyAcceptable(level.topology, baseTopology, options) &&
                            geometryAcceptable(level, options, meshScale) &&

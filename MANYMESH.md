@@ -234,6 +234,7 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
   - 产出 **Geometry Error Map**（离线软件光栅化原型）
   - cluster 组（cluster group）简化：平均误差降低 43%，但最差误差仍未追平全局链
   - [x] 属性接缝保护：按共享索引拆分 UV/法线 chart，分组只沿共享顶点邻接生长，避免跨接缝简化
+  - [x] 跨 UV/法线 chart 的成对 seam collapse：同位置的两侧边界顶点一起收缩，并用焊接位置拓扑验证不产生裂缝
   - [x] 六模型同机位视觉回归：dragon / sphere / monkey / torus / cloth / shapes 未发现新增穿孔
   - [x] 层次化 cluster DAG：每个 cluster 保留自己的 LOD 链，组父节点再逐级合并（见 §7.6）
   - [x] 运行时 CPU 选层：非重叠 DAG cut，O(节点数) 遍历；`selectLodGraphCut` 不组装索引
@@ -241,8 +242,9 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
   - [x] 质量门：边界边集合、非流形边、重复/退化/翻转三角形、最小三角形质量、世界空间位置误差
   - [x] normal/UV 参与 attribute QEM；material/submesh ID 保留到 DAG 节点和 draw primitive
   - [x] 本地文件分页 + 可插拔异步 page fetcher + LRU 缓存；GPU 侧有 std430 布局和间接绘制数据结构
+  - [x] 真实 Vulkan 原型：compute shader DAG cut + `vkCmdDrawIndexedIndirect` + R32_UINT/D32 visibility buffer
   - [x] Windows 生产网络 transport：`HttpByteRangeFetcher`（WinHTTP，HTTP/HTTPS + Range + 重定向）
-  - [ ] GPU compute cluster selection、Vulkan visibility buffer、移动端 HTTP 客户端绑定
+  - [ ] Android/iOS HTTP 客户端绑定（缓存/解码接口已通用）
 - [ ] **M3 — 图像侧：移动端轻量神经重建**（首个切片，见 §7.3）
   - [x] 配对数据生成（多视角、同一相机列表、逐视角误差图）
   - [x] 轻量 CNN 重建：等分辨率下比粗几何高 **+1.88 dB**；半分辨率下比双三次高 **+0.98 dB**
@@ -602,11 +604,11 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
 |-|-|-|-|-|
 | sphere | 8,064 | 4,032（50.00%） | 1,736（21.53%） | s50: 42.01 dB / 0.99770；s75: 41.18 dB / 0.99632 |
 | monkey | 15,744 | 7,872（50.00%） | 5,426（34.46%） | s75: 38.80 dB / 0.99157 |
-| torus | 1,152 | 764（66.32%，质量下限） | 同 50% 档 | s50: 43.64 dB / 0.99824 |
+| torus | 1,152 | 562（48.78%，seam pair） | 同 50% 档 | s50: 30.08 dB / 0.99195 |
 
 > sphere 的 75% 档只到 21.53%、monkey 只到 34.46%，不是选择器算错，而是更激进的候选被
-> 质量门拒绝了。UI 必须显示**实际**面数比例，不能只显示目标值。torus 的 UV 接缝使 66.32%
-> 成为当前安全下限；继续压需要跨 UV 接缝的专用简化，而不是放松质量门。
+> 质量门拒绝了。UI 必须显示**实际**面数比例，不能只显示目标值。torus 在加入成对 seam
+> collapse 之前卡在 66.32%；现在同一条质量门下可到 48.78%，焊接后边界为 0。
 
 > **一个重要的视觉陷阱**：早期 sphere 截图上看到的「右侧缺口」不是几何洞。把同一份
 > 选择导出后检查，所有顶点半径都是 0.500000，边使用次数全为 2（闭合），法线全部径向。
@@ -640,15 +642,20 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
   `RenderableManager::setGeometryAt` 更新预建 primitive 的区间，不再重新打包或上传索引。
   `--show-original` 复用叶子节点集合，因此仍能逐三角形还原原始网格。
 
-**仍未完成**：GPU compute cluster selection、真实 indirect draw 提交、Vulkan visibility
-buffer、跨 UV chart 的接缝简化，以及移动端（Android/iOS）HTTP 客户端绑定。
+**已完成（独立 Vulkan 原型）**：`tools/mmgpu/` 用真实 Vulkan 1.0 跑通了 compute shader
+DAG cut、`vkCmdDrawIndexedIndirect` 和 depth-tested visibility buffer。GPU cut 与 CPU
+reference 在 torus/monkey 上节点集合和三角形数完全一致，visibility 深度无差异。它不依赖
+Filament 公共 `RenderableManager`，因此证明的是算法与 GPU 数据布局可行，而不是 Filament
+后端集成已经完成。
+
+**仍未完成**：Filament Vulkan backend 侧的常驻 compute/indirect 路径，以及移动端
+（Android/iOS）HTTP 客户端绑定。跨 UV chart 的 seam 简化已在本轮补齐，见 §7.8。
 `AsyncLodStreamingCache` 提供不阻塞调用线程的预取、可插拔 fetcher，以及直接接收
 `(byteOffset, byteCount)` 原始字节的 transport 接口。Windows 上的
 `HttpByteRangeFetcher` 已经用 WinHTTP 接通 HTTP/HTTPS Range 请求（本地回环 + `mm_bench
 --stream-url` 端到端验证通过，0 失败页）；Android/iOS 只需把同样的回调绑定到平台 HTTP
-栈，缓存与解码层不需要改。当前 `GpuLod` 仍是 std430 布局与 CPU 参考实现，不能宣称 GPU
-选层已完成。Filament 的公共 `RenderableManager` 也没有提交 indirect draw 的入口，真正的
-indirect 路径需要改后端或换自定义渲染器。
+栈，缓存与解码层不需要改。Filament 的公共 `RenderableManager` 仍没有提交 indirect draw
+的入口；当前真实 GPU 路径位于独立工具中，生产集成需要改 Vulkan backend 或换自定义渲染器。
 
 **本轮性能优化**
 
@@ -679,14 +686,105 @@ indirect 路径需要改后端或换自定义渲染器。
 - 新增 `HttpByteRangeFetcher`：WinHTTP 实现的真实 HTTP/HTTPS 字节区间 transport，
   支持重定向、超时、IPv6 和 `Range: bytes=a-b` 校验；`mm_bench --stream-url` 可直接
   从服务器流式加载 `lod_graph.mmb`，`--stream-save` 用来导出同一份文件。
-- monkey DAG 构建从 **3.21s** 降到 **2.33s**（本机，约 27%）；`test_manymesh` 从 25 个
-  测试增加到 **32 个**（31 个常规测试 + 1 个需 `MANYMESH_HTTP_RANGE_TEST_URL` 的网络
-  测试），常规测试全部通过。同一机位 34.72% 保留率仍为 **38.89 dB / 0.99176**，
-  非流形/重复/翻转三角形均为 0；torus 66.32% 为 **43.64 dB / 0.99824**。
+- monkey DAG 构建从 **3.21s** 降到 **1.58s**（本机）；`test_manymesh` 从 25 个测试增加到
+  **34 个**（33 个常规测试 + 1 个需 `MANYMESH_HTTP_RANGE_TEST_URL` 的网络测试），常规
+  测试全部通过。monkey 50% 为 **7,872 面（50.00%）/ 40.99 dB / 0.99349**；加入成对 seam
+  collapse 后 torus 为 **562 / 1,152（48.78%）/ 30.08 dB / 0.99195**，两者非流形/重复/
+  退化/翻转三角形均为 0。
 
-**下一批可优化点**：后端级 indirect draw / GPU compute cluster selection、Vulkan
-visibility buffer、跨 UV chart 的配对 seam collapse，以及 Android/iOS 的 HTTP 客户端
-绑定。极端 UV seam 的 torus 仍需要跨 chart 的专用简化，不能靠放松质量门解决。
+**下一批可优化点**：把 `mmgpu` 的 compute/indirect/visibility 路径接进 Filament Vulkan
+backend 并做持久 GPU buffer 与 GPU 侧 compaction；以及 Android/iOS 的 HTTP 客户端绑定。
+跨 UV chart 的配对 seam collapse 已在本轮补齐（§7.8）；三份以上同位置副本仍按保守策略
+锁定，不能靠放松质量门解决。
+
+### 7.7 真实 Vulkan 原型：GPU cut、indirect draw 与 visibility buffer
+
+`tools/mmgpu/` 是独立的 Vulkan 1.0 工具。它从 OBJ 构建 ManyMesh DAG，把 `GpuLodNode` 作为
+std430 storage buffer 上传：
+
+1. compute shader 每个 DAG 节点一个 invocation，沿 parent 链判断祖先是否被剔除、是否已经
+   足够粗，再检查节点自身误差，输出与 `selectLodGraphCut` 相同的非重叠 cut；
+2. CPU 侧根据 cut 生成 `GpuDrawIndexedIndirectCommand`，`firstIndex` 指向共享 index buffer，
+   `firstInstance` 直接携带 DAG node id；
+3. 一次 `vkCmdDrawIndexedIndirect` 提交整个 cut；
+4. 片元写入两张 `R32_UINT`：cluster ID 和 triangle ID，同时用 `D32_SFLOAT` 做真实深度测试；
+5. 回读后与 CPU reference 按像素比较。
+
+本机（Intel Iris Xe）实测：
+
+| 场景 | CPU cut | GPU cut | 可见像素 | 节点一致 | 三角形一致 | 深度差异 |
+|---|---:|---:|---:|---:|---:|---:|
+| torus, 640x360, 2 px | 9 nodes / 1,034 tris | 9 / 1,034 | 23,709 | 99.99% | 99.94% | 0 |
+| monkey, 640x360, 2 px | 139 nodes / 6,192 tris | 139 / 6,192 | 27,633 | 99.99% | 99.91% | 0 |
+
+monkey 在 0.5/1/2/4/8 px 五档阈值下，GPU 与 CPU 的节点集合、三角形数和剔除计数全部一致；
+完全背对相机时两者都报告 1,152 个剔除三角形和 0 个可见像素。少于 1% 的 triangle-id
+差异集中在共享边上的光栅化 tie-break，node id 与深度保持一致。
+
+视觉检查没有发现破面、洞或轮廓损坏。CPU/GPU/diff visibility 对照图位于
+`out/mmgpu-final-torus/` 与 `out/mmgpu-final-monkey/`（构建产物，不提交）。
+
+**接进 Filament 的具体缺口**：`VulkanDriver::dispatchCompute` 目前仍是空实现；
+`VulkanProgram` 的 `MAX_SHADER_MODULES` 只有 vertex/fragment 两个槽；descriptor set 与
+pipeline cache 也只覆盖图形管线。要在这里跑 compute cut，必须先扩展 shader stage、
+compute pipeline layout 和 storage-buffer descriptor 三处，而不是只补一个 dispatch 调用。
+这也是本轮把 GPU 路径放在独立 `mmgpu` 工具里验证、没有假装完成 backend 集成的原因。
+
+---
+
+### 7.8 跨 UV/normal seam 的成对塌缩
+
+OBJ 等格式在 UV 或法线不连续处会复制顶点：两份顶点的位置完全相同，但索引不同。按
+per-index 拓扑看，这条接缝两侧各是一条边界；如果只塌缩其中一侧，焊接后的表面就会裂开。
+质量门此前把两侧都当成不可动边界，因此 torus 只能到 66.32%。
+
+**配对关系**
+
+- 每个简化单元按位置建立 `PositionKey` 映射；只有恰好两份副本、且两份都被标记为边界
+  顶点时，才建立双向 `seamPartner` 关系。
+- 同一位置出现三份或更多副本时，无法在不知道 chart id 的情况下判断哪两份该一起移动，
+  因此保持锁定。这比猜测后产生裂缝更安全。
+
+**成对评估与提交**
+
+1. 候选边 `(remove, keep)` 必须是当前边界边；通过 `seamPartner` 找到
+   `(partnerRemove, partnerKeep)`。
+2. 两条边必须**同时仍是边界边**。相邻塌缩可能让旧的 partner 关系失效，此时拒绝，避免
+   解锁单侧移动。
+3. 两半分别按普通 `evaluateCollapse` 评估，但允许 seam 边界塌缩；任一半不合法则整对拒绝。
+4. 两半替换的三角形集合必须不相交（畸形输入防护）。
+5. 整对的误差取两半的最大值，避免一侧误差被另一侧掩盖。
+6. 提交时先应用第一半、再应用第二半。两份副本位于接缝两侧，三角形 one-ring 不相交，
+   因此结果等价于原子成对操作。
+
+**焊接后表面验证**
+
+每次候选通过局部检查后，再把源索引和候选索引都按位置焊接到规范 ID，比较两者的边界边
+集合与流形性。只有焊接表面的边界完全不变才提交。这一步能抓住“边数没变但轮廓被改写”
+或“一侧先移动”的情况；单侧边界塌缩仍会被拒绝。
+
+`LodGraph` 构层默认开启 `seamCollapse`；公共 API 也暴露了
+`AttributeSimplifyOptions::seamCollapse` / `SimplifyOptions::seamCollapse`，需要严格锁边
+的调用方可以关掉。
+
+**结果**（1280x720，同一相机，`--no-shadows`）
+
+| 模型 | 原始面数 | 简化后 | 保留率 | PSNR / SSIM | 拓扑缺陷 |
+|-|-|-|-|-|-|
+| torus（seam 前） | 1,152 | 764 | 66.32% | — | 0 |
+| torus（成对 seam） | 1,152 | 562 | 48.78% | 30.08 dB / 0.99195 | 0 |
+| monkey | 15,744 | 7,872 | 50.00% | 40.99 dB / 0.99349 | 0 |
+| sphere | 8,064 | 4,030 | 49.98% | 46.19 dB / 0.99850 | 0 |
+| cloth | 74,976 | 38,098 | 50.81% | — | 0 |
+
+表中拓扑缺陷统计非流形边、重复三角形、退化三角形和翻转三角形；torus 焊接后的边界数为 0。
+截图位于 `out/seam-angle-original.png`、`out/seam-angle-50.png`、`out/seam-angle-75.png`、
+`out/seam-monkey-original2.png`、`out/seam-monkey-50.png`、`out/seam-sphere-original.png`
+和 `out/seam-sphere-50.png`。人工目视对比未发现洞、裂缝或明显破面；torus 与 monkey 在
+50% 档可见地变粗，但轮廓和主要特征保持完整。
+
+**限制**：当前只支持精确的两副本 seam；三份以上同位置副本、以及需要生成新顶点并插值
+属性才能跨 chart 合并的极端情况仍保持锁定。这里没有放松质量门来换取更低的三角形数。
 
 ---
 
