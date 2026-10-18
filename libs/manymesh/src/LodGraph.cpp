@@ -227,46 +227,6 @@ NodeMetrics makeNodeMetrics(LodGraph const& graph, ViewCamera const& camera,
     return metrics;
 }
 
-void selectCut(LodGraph const& graph, ViewCamera const& camera, CameraBasis const& basis,
-        float thresholdPx, bool forceLeaves, LodGraphSelection* selection) {
-    std::function<void(uint32_t)> visit = [&](uint32_t nodeId) {
-        LodGraphNode const& node = graph.nodes[nodeId];
-        if (basis.valid && sphereOutsideFrustum(node.bounds, camera, basis)) {
-            selection->culledTriangles += node.baseTriangles;
-            return;
-        }
-
-        bool const canDescend = !node.children.empty() && !forceLeaves;
-        if (canDescend) {
-            float const screenError = screenErrorForNode(node, camera, basis);
-            if (screenError > thresholdPx) {
-                for (uint32_t child: node.children) {
-                    visit(child);
-                }
-                return;
-            }
-        }
-
-        selection->nodes.push_back(nodeId);
-        selection->screenErrorPerNode.push_back(
-                basis.valid ? screenErrorForNode(node, camera, basis) : 0.0f);
-        selection->indices.insert(selection->indices.end(), node.indices.begin(),
-                node.indices.end());
-        size_t const triangles = node.triangleCount();
-        for (size_t t = 0; t < triangles; ++t) {
-            selection->materialIds.push_back(node.materialId);
-            selection->submeshIds.push_back(node.submeshId);
-        }
-        selection->nodesPerLevel[node.level] += 1;
-        selection->trianglesPerLevel[node.level] += triangles;
-        selection->selectedTriangles += triangles;
-    };
-
-    for (uint32_t root: graph.roots) {
-        visit(root);
-    }
-}
-
 struct CutAtError {
     std::vector<uint32_t> nodes;
     uint64_t triangles = 0;
@@ -426,25 +386,47 @@ LodGraphSelection selectionFromCut(LodGraph const& graph, NodeMetrics const& met
     // removing the extra face also removes the false non-manifold edges it created.
     // Only a face whose three vertices occur in more than one selected node can be produced by
     // two nodes. The interior of a node is already unique, so ownership flags and a hash set
-    // over those boundary faces replace the full-selection sort.
-    std::vector<uint32_t> nodeOwner(graph.vertexCount, UINT32_MAX);
-    std::vector<uint8_t> sharedVertex(graph.vertexCount, 0);
+    // over those boundary faces replace the full-selection sort. Generation stamps let one
+    // thread reuse the vertex-sized arrays across selections without clearing millions of
+    // entries for meshes where the current cut touches only a small fraction of the vertices.
+    struct OwnershipScratch {
+        std::vector<uint32_t> owner;
+        std::vector<uint32_t> seen;
+        std::vector<uint32_t> shared;
+        uint32_t generation = 0;
+    };
+    thread_local OwnershipScratch ownership;
+    uint32_t generation = ++ownership.generation;
+    if (generation == 0) {
+        std::fill(ownership.seen.begin(), ownership.seen.end(), 0);
+        std::fill(ownership.shared.begin(), ownership.shared.end(), 0);
+        generation = 1;
+        ownership.generation = 1;
+    }
+    if (ownership.owner.size() < graph.vertexCount) {
+        ownership.owner.resize(graph.vertexCount, UINT32_MAX);
+        ownership.seen.resize(graph.vertexCount, 0);
+        ownership.shared.resize(graph.vertexCount, 0);
+    }
     for (uint32_t nodeId: cut.nodes) {
         for (uint32_t vertex: graph.nodes[nodeId].indices) {
-            if (vertex >= nodeOwner.size()) {
+            if (vertex >= graph.vertexCount) {
                 continue;
             }
-            if (nodeOwner[vertex] == UINT32_MAX) {
-                nodeOwner[vertex] = nodeId;
-            } else if (nodeOwner[vertex] != nodeId) {
-                sharedVertex[vertex] = 1;
+            if (ownership.seen[vertex] != generation) {
+                ownership.seen[vertex] = generation;
+                ownership.owner[vertex] = nodeId;
+            } else if (ownership.owner[vertex] != nodeId) {
+                ownership.shared[vertex] = generation;
             }
         }
     }
 
-    auto const isBoundaryFace = [&sharedVertex](uint32_t a, uint32_t b, uint32_t c) {
-        return a < sharedVertex.size() && b < sharedVertex.size() && c < sharedVertex.size() &&
-               sharedVertex[a] && sharedVertex[b] && sharedVertex[c];
+    auto const isBoundaryFace = [generation, vertexCount = graph.vertexCount](uint32_t a,
+                                        uint32_t b, uint32_t c) {
+        return a < vertexCount && b < vertexCount && c < vertexCount &&
+               ownership.shared[a] == generation && ownership.shared[b] == generation &&
+               ownership.shared[c] == generation;
     };
 
     // Open addressing keeps the boundary test allocation-free per face. Keys are sorted so the
@@ -538,15 +520,10 @@ LodGraphSelection selectionFromCut(LodGraph const& graph, NodeMetrics const& met
     return selection;
 }
 
-LodGraphSelection selectImpl(LodGraph const& graph, ViewCamera const& camera, float thresholdPx,
-        bool forceLeaves) {
-    LodGraphSelection selection;
-    selection.baseTriangles = graph.baseTriangles;
-    selection.nodesPerLevel.assign(graph.levelCount, 0);
-    selection.trianglesPerLevel.assign(graph.levelCount, 0);
+LodGraphSelection selectImpl(LodGraph const& graph, ViewCamera const& camera, float thresholdPx) {
     CameraBasis const basis = makeBasis(camera);
-    selectCut(graph, camera, basis, thresholdPx, forceLeaves, &selection);
-    return selection;
+    NodeMetrics const metrics = makeNodeMetrics(graph, camera, basis);
+    return selectionFromCut(graph, metrics, cutAtError(graph, metrics, thresholdPx));
 }
 
 } // anonymous namespace
@@ -761,7 +738,7 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options) {
 
 LodGraphSelection selectLodGraph(LodGraph const& graph, ViewCamera const& camera,
         float thresholdPx) {
-    return selectImpl(graph, camera, thresholdPx, false);
+    return selectImpl(graph, camera, thresholdPx);
 }
 
 LodGraphCut selectLodGraphCut(LodGraph const& graph, ViewCamera const& camera, float thresholdPx) {
@@ -777,15 +754,15 @@ LodGraphCut selectLodGraphCut(LodGraph const& graph, ViewCamera const& camera, f
             cut.culledTriangles += node.baseTriangles;
             return;
         }
-        if (!node.children.empty() && screenErrorForNode(node, camera, basis) > thresholdPx) {
+        float const screenError = basis.valid ? screenErrorForNode(node, camera, basis) : 0.0f;
+        if (!node.children.empty() && screenError > thresholdPx) {
             for (uint32_t child: node.children) {
                 visit(child);
             }
             return;
         }
         cut.nodes.push_back(nodeId);
-        cut.screenErrorPerNode.push_back(
-                basis.valid ? screenErrorForNode(node, camera, basis) : 0.0f);
+        cut.screenErrorPerNode.push_back(screenError);
         uint64_t const triangles = node.triangleCount();
         cut.nodesPerLevel[node.level] += 1;
         cut.trianglesPerLevel[node.level] += triangles;

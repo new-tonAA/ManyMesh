@@ -66,7 +66,9 @@ GpuLodBuffer flattenLodGraph(LodGraph const& graph);
 
 /**
  * One entry of a draw-indirect buffer. Kept separate from backend-specific types so it can be
- * uploaded directly or converted to Filament/Vulkan's equivalent.
+ * uploaded directly or converted to a backend's equivalent. Filament's public
+ * RenderableManager does not expose an indirect-draw submission API, so this is a portable
+ * data contract rather than evidence that a Filament sample can submit it without backend work.
  */
 struct GpuDrawIndexedIndirectCommand {
     uint32_t indexCount = 0;

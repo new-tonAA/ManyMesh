@@ -23,16 +23,29 @@
 #include <set>
 #include <utility>
 
+#if defined(_WIN32)
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#include <winhttp.h>
+#endif
+
 namespace filament {
 namespace manymesh {
 
 namespace {
 
 constexpr uint32_t MAGIC = 0x474C4D4Du; // "MMLG" in little-endian byte order
-// Version 2 appends the topology and attribute statistics gathered by the quality gate.
+// Version 3 appends the source vertex count. Version 2 remains readable so previously written
+// graph files still stream; the loader derives the vertex count from the records in that case.
 // The layout still has one fixed-size prefix followed by variable child/index arrays, so a
 // runtime can keep reading individual nodes without deserializing the whole graph.
-constexpr uint32_t VERSION = 2u;
+constexpr uint32_t VERSION = 3u;
+constexpr uint32_t MIN_VERSION = 2u;
 constexpr size_t NODE_RECORD_SIZE = 184;
 
 template<typename T>
@@ -116,7 +129,8 @@ void writeNode(std::vector<uint8_t>* blob, LodGraphNode const& node) {
     }
 }
 
-bool readNodeAt(std::vector<uint8_t> const& blob, uint64_t offset, LodGraphNode* node) {
+bool readNodeAt(std::vector<uint8_t> const& blob, uint64_t offset, LodGraphNode* node,
+        size_t* endOffset = nullptr) {
     if (offset > blob.size() || blob.size() - offset < NODE_RECORD_SIZE) {
         return false;
     }
@@ -172,7 +186,7 @@ bool readNodeAt(std::vector<uint8_t> const& blob, uint64_t offset, LodGraphNode*
     read(blob, &cursor, &padding);
     node->attributes.approximated = approximated != 0;
 
-    if (childCount > (blob.size() - cursor) / sizeof(uint32_t)) {
+    if (uint64_t(childCount) + uint64_t(indexCount) > (blob.size() - cursor) / sizeof(uint32_t)) {
         return false;
     }
     node->children.resize(childCount);
@@ -181,14 +195,14 @@ bool readNodeAt(std::vector<uint8_t> const& blob, uint64_t offset, LodGraphNode*
             return false;
         }
     }
-    if (indexCount > (blob.size() - cursor) / sizeof(uint32_t)) {
-        return false;
-    }
     node->indices.resize(indexCount);
     for (uint32_t& index: node->indices) {
         if (!read(blob, &cursor, &index)) {
             return false;
         }
+    }
+    if (endOffset != nullptr) {
+        *endOffset = cursor;
     }
     return true;
 }
@@ -205,6 +219,7 @@ std::vector<uint8_t> serializeLodGraph(LodGraph const& graph) {
     append(&blob, uint32_t(graph.leaves.size()));
     append(&blob, graph.levelCount);
     append(&blob, graph.baseTriangles);
+    append(&blob, graph.vertexCount);
     for (uint32_t root: graph.roots) {
         append(&blob, root);
     }
@@ -254,6 +269,30 @@ bool deserializeLodGraph(std::vector<uint8_t> const& blob, LodGraph* graph) {
     graph->leaves = streaming.leaves();
     graph->levelCount = streaming.levelCount();
     graph->baseTriangles = streaming.baseTriangles();
+    graph->vertexCount = streaming.vertexCount();
+    if (graph->vertexCount == 0) {
+        // Version 2 did not store the count. Recover it from the node index lists.
+        for (LodGraphNode const& node: graph->nodes) {
+            for (uint32_t index: node.indices) {
+                graph->vertexCount = std::max(graph->vertexCount, index + 1);
+            }
+        }
+    }
+    return true;
+}
+
+bool decodeLodStreamingPage(std::vector<uint8_t> const& pageBytes, LodStreamingPage const& page,
+        std::vector<LodGraphNode>* nodes) {
+    if (nodes == nullptr) {
+        return false;
+    }
+    nodes->resize(page.nodeCount);
+    size_t cursor = 0;
+    for (uint32_t i = 0; i < page.nodeCount; ++i) {
+        if (!readNodeAt(pageBytes, cursor, &(*nodes)[i], &cursor)) {
+            return false;
+        }
+    }
     return true;
 }
 
@@ -262,6 +301,44 @@ std::vector<LodStreamingPage> planLodStreamingPages(std::vector<uint8_t> const& 
     StreamingLodGraph const streaming(blob);
     return streaming.valid() ? streaming.planPages(maxPageBytes) : std::vector<LodStreamingPage>{};
 }
+
+namespace {
+
+bool validateNodePages(std::vector<LodStreamingPage> const& pages,
+        std::vector<uint32_t> const& nodes) {
+    for (uint32_t nodeId: nodes) {
+        auto const page = std::upper_bound(pages.begin(), pages.end(), nodeId,
+                [](uint32_t id, LodStreamingPage const& candidate) {
+                    return id < candidate.firstNode;
+                });
+        if (page == pages.begin()) {
+            return false;
+        }
+        auto const selected = std::prev(page);
+        if (selected->firstNode + selected->nodeCount <= nodeId) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void collectRequiredPages(std::vector<LodStreamingPage> const& pages,
+        std::vector<uint32_t> const& nodes, std::vector<uint32_t>* required) {
+    required->clear();
+    required->reserve(nodes.size());
+    for (uint32_t nodeId: nodes) {
+        auto const page = std::upper_bound(pages.begin(), pages.end(), nodeId,
+                [](uint32_t id, LodStreamingPage const& candidate) {
+                    return id < candidate.firstNode;
+                });
+        auto const selected = std::prev(page);
+        required->push_back(uint32_t(selected - pages.begin()));
+    }
+    std::sort(required->begin(), required->end());
+    required->erase(std::unique(required->begin(), required->end()), required->end());
+}
+
+} // namespace
 
 StreamingLodGraph::StreamingLodGraph(std::vector<uint8_t> blob)
         : mBlob(std::move(blob)) {
@@ -272,9 +349,10 @@ StreamingLodGraph::StreamingLodGraph(std::vector<uint8_t> blob)
     uint32_t rootCount = 0;
     uint32_t leafCount = 0;
     if (!read(mBlob, &cursor, &magic) || !read(mBlob, &cursor, &version) || magic != MAGIC ||
-            version != VERSION || !read(mBlob, &cursor, &mNodeCount) ||
+            version < MIN_VERSION || version > VERSION || !read(mBlob, &cursor, &mNodeCount) ||
             !read(mBlob, &cursor, &rootCount) || !read(mBlob, &cursor, &leafCount) ||
-            !read(mBlob, &cursor, &mLevelCount) || !read(mBlob, &cursor, &mBaseTriangles)) {
+            !read(mBlob, &cursor, &mLevelCount) || !read(mBlob, &cursor, &mBaseTriangles) ||
+            (version >= 3u && !read(mBlob, &cursor, &mVertexCount))) {
         return;
     }
     mRoots.resize(rootCount);
@@ -324,9 +402,10 @@ StreamingLodGraph::StreamingLodGraph(std::string const& path) {
     uint32_t rootCount = 0;
     uint32_t leafCount = 0;
     if (!readStream(mFile, &magic) || !readStream(mFile, &version) || magic != MAGIC ||
-            version != VERSION || !readStream(mFile, &mNodeCount) ||
+            version < MIN_VERSION || version > VERSION || !readStream(mFile, &mNodeCount) ||
             !readStream(mFile, &rootCount) || !readStream(mFile, &leafCount) ||
-            !readStream(mFile, &mLevelCount) || !readStream(mFile, &mBaseTriangles)) {
+            !readStream(mFile, &mLevelCount) || !readStream(mFile, &mBaseTriangles) ||
+            (version >= 3u && !readStream(mFile, &mVertexCount))) {
         return;
     }
     // Reject counts that cannot possibly fit in the file before allocating for them.
@@ -400,6 +479,10 @@ bool StreamingLodGraph::readNode(uint32_t nodeId, LodGraphNode* node) const {
     return readNodeAt(mBlob, nodeOffset(nodeId), node);
 }
 
+bool StreamingLodGraph::readBytes(uint64_t offset, size_t size, std::vector<uint8_t>* out) const {
+    return mValid && readRange(offset, size, out);
+}
+
 bool StreamingLodGraph::readPage(LodStreamingPage const& page,
         std::vector<LodGraphNode>* nodes) const {
     if (!mValid || nodes == nullptr || page.firstNode > mNodeCount ||
@@ -468,21 +551,11 @@ bool LodStreamingCache::prepare(LodGraphSelection const& selection) {
         return false;
     }
 
-    std::set<uint32_t> required;
-    for (uint32_t nodeId: selection.nodes) {
-        auto const page = std::upper_bound(mPages.begin(), mPages.end(), nodeId,
-                [](uint32_t id, LodStreamingPage const& candidate) {
-                    return id < candidate.firstNode;
-                });
-        if (page == mPages.begin()) {
-            return false;
-        }
-        auto const selected = std::prev(page);
-        if (selected->firstNode + selected->nodeCount <= nodeId) {
-            return false;
-        }
-        required.insert(uint32_t(selected - mPages.begin()));
+    std::vector<uint32_t> required;
+    if (!validateNodePages(mPages, selection.nodes)) {
+        return false;
     }
+    collectRequiredPages(mPages, selection.nodes, &required);
 
     for (uint32_t pageId: required) {
         auto found = mResident.find(pageId);
@@ -493,6 +566,7 @@ bool LodStreamingCache::prepare(LodGraphSelection const& selection) {
                 return false;
             }
             mStats.residentBytes += size_t(entry.page.byteCount);
+            mStats.bytesFetched += entry.page.byteCount;
             mStats.pageMisses += 1;
             found = mResident.emplace(pageId, std::move(entry)).first;
         } else {
@@ -506,7 +580,7 @@ bool LodStreamingCache::prepare(LodGraphSelection const& selection) {
     while (mStats.residentBytes > mByteBudget && !mLru.empty()) {
         uint32_t victim = UINT32_MAX;
         for (auto it = mLru.rbegin(); it != mLru.rend(); ++it) {
-            if (required.count(*it) == 0) {
+            if (!std::binary_search(required.begin(), required.end(), *it)) {
                 victim = *it;
                 break;
             }
@@ -527,15 +601,29 @@ bool LodStreamingCache::prepare(LodGraphSelection const& selection) {
     return true;
 }
 
+bool LodStreamingCache::prepare(LodGraphCut const& cut) {
+    LodGraphSelection selection;
+    selection.nodes = cut.nodes;
+    return prepare(selection);
+}
+
 LodGraphNode const* LodStreamingCache::find(uint32_t nodeId) const {
-    for (auto const& [pageId, entry]: mResident) {
-        (void) pageId;
-        if (nodeId >= entry.page.firstNode &&
-                nodeId < entry.page.firstNode + entry.page.nodeCount) {
-            return &entry.nodes[nodeId - entry.page.firstNode];
-        }
+    auto const page = std::upper_bound(mPages.begin(), mPages.end(), nodeId,
+            [](uint32_t id, LodStreamingPage const& candidate) {
+                return id < candidate.firstNode;
+            });
+    if (page == mPages.begin()) {
+        return nullptr;
     }
-    return nullptr;
+    auto const selected = std::prev(page);
+    if (nodeId >= selected->firstNode + selected->nodeCount) {
+        return nullptr;
+    }
+    auto const resident = mResident.find(uint32_t(selected - mPages.begin()));
+    if (resident == mResident.end()) {
+        return nullptr;
+    }
+    return &resident->second.nodes[nodeId - selected->firstNode];
 }
 
 AsyncLodStreamingCache::AsyncLodStreamingCache(StreamingLodGraph const* graph, PageFetcher fetcher,
@@ -550,26 +638,53 @@ AsyncLodStreamingCache::AsyncLodStreamingCache(StreamingLodGraph const* graph, P
     }
 }
 
+AsyncLodStreamingCache::AsyncLodStreamingCache(StreamingLodGraph const* graph,
+        ByteRangeFetcher fetcher, size_t byteBudget, size_t maxPageBytes, size_t maxConcurrent)
+        : AsyncLodStreamingCache(graph,
+                  PageFetcher([fetcher = std::move(fetcher)](LodStreamingPage const& page,
+                                      std::vector<LodGraphNode>* nodes) {
+                      if (!fetcher) {
+                          return false;
+                      }
+                      std::vector<uint8_t> bytes;
+                      if (!fetcher(page.byteOffset, size_t(page.byteCount), &bytes)) {
+                          return false;
+                      }
+                      return decodeLodStreamingPage(bytes, page, nodes);
+                  }),
+                  byteBudget, maxPageBytes, maxConcurrent) {}
+
 bool AsyncLodStreamingCache::request(LodGraphSelection const& selection) {
+    return requestNodes(selection.nodes);
+}
+
+bool AsyncLodStreamingCache::request(LodGraphCut const& cut) { return requestNodes(cut.nodes); }
+
+bool AsyncLodStreamingCache::requestNodes(std::vector<uint32_t> const& nodes) {
     if (mGraph == nullptr || !mGraph->valid() || !mFetcher) {
         return false;
     }
 
-    mRequired.clear();
-    for (uint32_t nodeId: selection.nodes) {
-        auto const page = std::upper_bound(mPages.begin(), mPages.end(), nodeId,
-                [](uint32_t id, LodStreamingPage const& candidate) {
-                    return id < candidate.firstNode;
-                });
-        if (page == mPages.begin()) {
-            return false;
-        }
-        auto const selected = std::prev(page);
-        if (selected->firstNode + selected->nodeCount <= nodeId) {
-            return false;
-        }
-        uint32_t const pageId = uint32_t(selected - mPages.begin());
-        mRequired.insert(pageId);
+    // Validate the whole request first so a bad node cannot leave a half-updated queue.
+    if (!validateNodePages(mPages, nodes)) {
+        return false;
+    }
+    collectRequiredPages(mPages, nodes, &mRequired);
+
+    // A rapidly changing camera can leave pages from an older cut queued. Drop the ones that
+    // have not started yet; already-running fetches are left alone and their results are still
+    // cached for a later request.
+    mQueue.erase(std::remove_if(mQueue.begin(), mQueue.end(),
+                         [this](uint32_t pageId) {
+                             if (std::binary_search(mRequired.begin(), mRequired.end(), pageId)) {
+                                 return false;
+                             }
+                             mRequested.erase(pageId);
+                             return true;
+                         }),
+            mQueue.end());
+
+    for (uint32_t pageId: mRequired) {
         if (mResident.count(pageId) != 0) {
             mStats.pageHits += 1;
             mLru.remove(pageId);
@@ -587,17 +702,23 @@ void AsyncLodStreamingCache::pump() {
         uint32_t const pageId = mQueue.front();
         mQueue.pop_front();
         LodStreamingPage const page = mPages[pageId];
-        mPending.push_back(std::async(std::launch::async, [this, pageId, page]() -> PageResult {
-            PageResult result;
-            result.pageId = pageId;
-            result.page = page;
-            try {
-                result.ok = mFetcher(page, &result.nodes);
-            } catch (...) {
-                result.ok = false;
-            }
-            return result;
-        }));
+        try {
+            mPending.push_back(std::async(std::launch::async, [this, pageId, page]() -> PageResult {
+                PageResult result;
+                result.pageId = pageId;
+                result.page = page;
+                try {
+                    result.ok = mFetcher(page, &result.nodes);
+                } catch (...) {
+                    result.ok = false;
+                }
+                return result;
+            }));
+        } catch (...) {
+            // Thread creation failed. Leave the page retryable instead of losing it forever.
+            mRequested.erase(pageId);
+            break;
+        }
     }
 }
 
@@ -614,12 +735,18 @@ bool AsyncLodStreamingCache::poll() {
             mRequested.erase(result.pageId);
             if (result.ok) {
                 mStats.pageMisses += 1;
+                mStats.bytesFetched += result.page.byteCount;
+                auto const inserted = mResident.emplace(result.pageId, std::move(result.nodes));
+                if (!inserted.second) {
+                    mStats.residentBytes -= size_t(result.page.byteCount);
+                    inserted.first->second = std::move(result.nodes);
+                }
                 mStats.residentBytes += size_t(result.page.byteCount);
-                mResident[result.pageId] = std::move(result.nodes);
                 mLru.remove(result.pageId);
                 mLru.push_front(result.pageId);
             } else {
                 // A failed page is not marked resident, so a later request retries it.
+                mStats.failedFetches += 1;
             }
             arrived = true;
             consumed = true;
@@ -640,7 +767,7 @@ void AsyncLodStreamingCache::evict() {
     while (mStats.residentBytes > mByteBudget && !mLru.empty()) {
         uint32_t victim = UINT32_MAX;
         for (auto it = mLru.rbegin(); it != mLru.rend(); ++it) {
-            if (mRequired.count(*it) == 0) {
+            if (!std::binary_search(mRequired.begin(), mRequired.end(), *it)) {
                 victim = *it;
                 break;
             }
@@ -659,13 +786,317 @@ void AsyncLodStreamingCache::evict() {
 }
 
 LodGraphNode const* AsyncLodStreamingCache::find(uint32_t nodeId) const {
-    for (auto const& [pageId, nodes]: mResident) {
-        LodStreamingPage const& page = mPages[pageId];
-        if (nodeId >= page.firstNode && nodeId < page.firstNode + page.nodeCount) {
-            return &nodes[nodeId - page.firstNode];
+    auto const page = std::upper_bound(mPages.begin(), mPages.end(), nodeId,
+            [](uint32_t id, LodStreamingPage const& candidate) {
+                return id < candidate.firstNode;
+            });
+    if (page == mPages.begin()) {
+        return nullptr;
+    }
+    auto const selected = std::prev(page);
+    if (nodeId >= selected->firstNode + selected->nodeCount) {
+        return nullptr;
+    }
+    auto const resident = mResident.find(uint32_t(selected - mPages.begin()));
+    if (resident == mResident.end()) {
+        return nullptr;
+    }
+    return &resident->second[nodeId - selected->firstNode];
+}
+
+struct HttpByteRangeFetcher::Impl {
+    std::string url;
+    std::string error;
+    unsigned timeoutMs = 5000;
+    bool valid = false;
+
+#if defined(_WIN32)
+    bool https = false;
+    INTERNET_PORT port = 80;
+    std::wstring host;
+    std::wstring path;
+#endif
+};
+
+namespace {
+
+#if defined(_WIN32)
+
+std::wstring widen(std::string const& value) {
+    if (value.empty()) {
+        return {};
+    }
+    int const length = MultiByteToWideChar(CP_UTF8, 0, value.data(), int(value.size()), nullptr, 0);
+    if (length <= 0) {
+        return {};
+    }
+    std::wstring result(size_t(length), L'\0');
+    MultiByteToWideChar(CP_UTF8, 0, value.data(), int(value.size()), result.data(), length);
+    return result;
+}
+
+bool parsePort(std::string const& text, INTERNET_PORT* port) {
+    if (text.empty()) {
+        return false;
+    }
+    uint32_t value = 0;
+    for (char c: text) {
+        if (c < '0' || c > '9') {
+            return false;
+        }
+        value = value * 10u + uint32_t(c - '0');
+        if (value > 65535u) {
+            return false;
         }
     }
-    return nullptr;
+    if (value == 0) {
+        return false;
+    }
+    *port = INTERNET_PORT(value);
+    return true;
+}
+
+bool isLoopbackHost(std::wstring const& host) {
+    return host == L"localhost" || host == L"127.0.0.1" || host == L"::1";
+}
+
+class InternetHandle {
+public:
+    explicit InternetHandle(HINTERNET handle = nullptr)
+            : mHandle(handle) {}
+    ~InternetHandle() {
+        if (mHandle != nullptr) {
+            WinHttpCloseHandle(mHandle);
+        }
+    }
+    InternetHandle(InternetHandle const&) = delete;
+    InternetHandle& operator=(InternetHandle const&) = delete;
+    operator HINTERNET() const { return mHandle; }
+    explicit operator bool() const { return mHandle != nullptr; }
+    HINTERNET get() const { return mHandle; }
+
+private:
+    HINTERNET mHandle = nullptr;
+};
+
+struct ParsedHttpUrl {
+    bool https = false;
+    INTERNET_PORT port = 80;
+    std::wstring host;
+    std::wstring path;
+};
+
+bool parseHttpUrl(std::string const& url, ParsedHttpUrl* parsed, std::string* error) {
+    std::string rest;
+    if (url.rfind("https://", 0) == 0) {
+        parsed->https = true;
+        parsed->port = 443;
+        rest = url.substr(8);
+    } else if (url.rfind("http://", 0) == 0) {
+        parsed->https = false;
+        parsed->port = 80;
+        rest = url.substr(7);
+    } else {
+        *error = "URL must start with http:// or https://";
+        return false;
+    }
+
+    size_t const tailIndex = rest.find_first_of("/?#");
+    std::string authority = rest.substr(0, tailIndex);
+    std::string tail = tailIndex == std::string::npos ? std::string() : rest.substr(tailIndex);
+    if (tail.empty() || tail[0] == '?' || tail[0] == '#') {
+        tail = "/" + tail;
+    }
+    parsed->path = widen(tail);
+    if (parsed->path.empty()) {
+        parsed->path = L"/";
+    }
+
+    if (authority.empty()) {
+        *error = "URL has no host";
+        return false;
+    }
+
+    std::string host = authority;
+    if (authority.front() == '[') {
+        size_t const close = authority.find(']');
+        if (close == std::string::npos) {
+            *error = "URL has an unterminated IPv6 host";
+            return false;
+        }
+        host = authority.substr(1, close - 1);
+        if (close + 1 < authority.size()) {
+            if (authority[close + 1] != ':' ||
+                    !parsePort(authority.substr(close + 2), &parsed->port)) {
+                *error = "URL has an invalid port";
+                return false;
+            }
+        }
+    } else {
+        size_t const colon = authority.rfind(':');
+        if (colon != std::string::npos) {
+            if (authority.find(':') != colon) {
+                *error = "IPv6 hosts must be wrapped in brackets";
+                return false;
+            }
+            host = authority.substr(0, colon);
+            if (!parsePort(authority.substr(colon + 1), &parsed->port)) {
+                *error = "URL has an invalid port";
+                return false;
+            }
+        }
+    }
+    parsed->host = widen(host);
+    if (parsed->host.empty()) {
+        *error = "URL has no host";
+        return false;
+    }
+    return true;
+}
+
+#endif
+
+} // namespace
+
+HttpByteRangeFetcher::HttpByteRangeFetcher(std::string url, unsigned timeoutMs)
+        : mImpl(new Impl()) {
+    mImpl->url = std::move(url);
+    mImpl->timeoutMs = std::max(timeoutMs, 1u);
+#if defined(_WIN32)
+    ParsedHttpUrl parsed;
+    mImpl->valid = parseHttpUrl(mImpl->url, &parsed, &mImpl->error);
+    if (mImpl->valid) {
+        mImpl->https = parsed.https;
+        mImpl->port = parsed.port;
+        mImpl->host = std::move(parsed.host);
+        mImpl->path = std::move(parsed.path);
+    }
+#else
+    mImpl->error = "HTTP transport is not implemented for this platform";
+#endif
+}
+
+HttpByteRangeFetcher::~HttpByteRangeFetcher() = default;
+
+bool HttpByteRangeFetcher::valid() const noexcept { return mImpl && mImpl->valid; }
+
+std::string const& HttpByteRangeFetcher::url() const noexcept {
+    static std::string const empty;
+    return mImpl ? mImpl->url : empty;
+}
+
+std::string const& HttpByteRangeFetcher::lastError() const noexcept {
+    static std::string const empty;
+    return mImpl ? mImpl->error : empty;
+}
+
+AsyncLodStreamingCache::ByteRangeFetcher HttpByteRangeFetcher::asFetcher() {
+    return [this](uint64_t offset, size_t size, std::vector<uint8_t>* bytes) {
+        return fetch(offset, size, bytes);
+    };
+}
+
+bool HttpByteRangeFetcher::fetch(uint64_t offset, size_t size, std::vector<uint8_t>* bytes) {
+    if (bytes == nullptr) {
+        return false;
+    }
+    bytes->clear();
+    if (!mImpl) {
+        return false;
+    }
+    if (!mImpl->valid) {
+        return false;
+    }
+    if (size == 0) {
+        return true;
+    }
+
+#if defined(_WIN32)
+    mImpl->error.clear();
+    DWORD const accessType = isLoopbackHost(mImpl->host) ? WINHTTP_ACCESS_TYPE_NO_PROXY
+                                                         : WINHTTP_ACCESS_TYPE_DEFAULT_PROXY;
+    InternetHandle session(WinHttpOpen(L"ManyMesh/1.0", accessType, WINHTTP_NO_PROXY_NAME,
+            WINHTTP_NO_PROXY_BYPASS, 0));
+    if (!session) {
+        mImpl->error = "WinHttpOpen failed";
+        return false;
+    }
+    int const timeout = int(std::min(mImpl->timeoutMs, unsigned(INT_MAX)));
+    WinHttpSetTimeouts(session.get(), timeout, timeout, timeout, timeout);
+
+    InternetHandle connection(WinHttpConnect(session.get(), mImpl->host.c_str(), mImpl->port, 0));
+    if (!connection) {
+        mImpl->error = "WinHttpConnect failed";
+        return false;
+    }
+
+    DWORD const flags = mImpl->https ? WINHTTP_FLAG_SECURE : 0;
+    InternetHandle request(WinHttpOpenRequest(connection.get(), L"GET", mImpl->path.c_str(),
+            nullptr, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, flags));
+    if (!request) {
+        mImpl->error = "WinHttpOpenRequest failed";
+        return false;
+    }
+
+    DWORD const redirectPolicy = WINHTTP_OPTION_REDIRECT_POLICY_ALWAYS;
+    WinHttpSetOption(request.get(), WINHTTP_OPTION_REDIRECT_POLICY,
+            const_cast<DWORD*>(&redirectPolicy), sizeof(redirectPolicy));
+
+    unsigned long long const end = offset + (size - 1);
+    wchar_t header[128];
+    swprintf_s(header, 128, L"Range: bytes=%llu-%llu\r\nAccept-Encoding: identity\r\n", offset,
+            end);
+    if (!WinHttpSendRequest(request.get(), header, -1L, WINHTTP_NO_REQUEST_DATA, 0, 0, 0)) {
+        mImpl->error = "WinHttpSendRequest failed";
+        return false;
+    }
+    if (!WinHttpReceiveResponse(request.get(), nullptr)) {
+        mImpl->error = "WinHttpReceiveResponse failed";
+        return false;
+    }
+
+    DWORD status = 0;
+    DWORD statusSize = sizeof(status);
+    if (!WinHttpQueryHeaders(request.get(), WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
+                WINHTTP_HEADER_NAME_BY_INDEX, &status, &statusSize, WINHTTP_NO_HEADER_INDEX)) {
+        mImpl->error = "WinHttpQueryHeaders failed";
+        return false;
+    }
+    if (status != 206 && !(status == 200 && offset == 0)) {
+        mImpl->error =
+                "server did not honor the byte range (status " + std::to_string(status) + ")";
+        return false;
+    }
+
+    bytes->reserve(size);
+    std::vector<uint8_t> chunk(std::min<size_t>(size, 64u * 1024u));
+    size_t total = 0;
+    while (total < size) {
+        DWORD read = 0;
+        DWORD const want = DWORD(std::min<size_t>(size - total, chunk.size()));
+        if (!WinHttpReadData(request.get(), chunk.data(), want, &read)) {
+            mImpl->error = "WinHttpReadData failed";
+            bytes->clear();
+            return false;
+        }
+        if (read == 0) {
+            break;
+        }
+        bytes->insert(bytes->end(), chunk.begin(), chunk.begin() + read);
+        total += read;
+    }
+    if (total != size) {
+        mImpl->error =
+                "short read: expected " + std::to_string(size) + ", got " + std::to_string(total);
+        bytes->clear();
+        return false;
+    }
+    return true;
+#else
+    (void) offset;
+    (void) size;
+    return false;
+#endif
 }
 
 } // namespace manymesh

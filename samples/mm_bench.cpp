@@ -45,6 +45,7 @@
 #include <image/ColorTransform.h>
 #include <image/LinearImage.h>
 
+#include <manymesh/GpuLod.h>
 #include <manymesh/LodGraph.h>
 #include <manymesh/Mesh.h>
 #include <manymesh/Quality.h>
@@ -85,13 +86,16 @@
 // Capture support is optional: it only compiles in when the RenderDoc in-application header is
 // present, and it only does anything when the process was actually launched through RenderDoc.
 #if defined(_WIN32) && __has_include("renderdoc_app.h")
+// clang-format off
 #include <windows.h>
 #include <utils/unwindows.h>
 #include "renderdoc_app.h"
+// clang-format on
 #define MM_BENCH_CAN_CAPTURE 1
 #endif
 
 #include <algorithm>
+#include <atomic>
 #include <chrono>
 #include <cmath>
 #include <cstddef>
@@ -103,6 +107,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <thread>
 #include <vector>
 
 using namespace filament;
@@ -180,18 +185,14 @@ uint32_t g_lodBaseTriangles = 0;
 float g_lodMaxScreenError = 0.0f;
 uint64_t g_lodStreamingBytes = 0;
 uint32_t g_lodStreamingPages = 0;
+float g_streamLatencyMs = 0.0f;
+std::string g_streamUrl;
+std::string g_streamSavePath;
 
-struct LodPrimitive {
-    uint32_t materialId = UINT32_MAX;
-    uint32_t submeshId = UINT32_MAX;
-    uint32_t firstIndex = 0;
-    uint32_t indexCount = 0;
-};
-std::vector<LodPrimitive> g_lodPrimitives;
-std::map<std::pair<uint32_t, uint32_t>, uint32_t> g_lodPrimitiveLookup;
-std::vector<uint32_t> g_lodGroupCounts;
-std::vector<uint32_t> g_lodGroupFirstIndex;
-std::vector<uint32_t> g_lodGroupCursor;
+mm::GpuLodBuffer g_lodGpuBuffer;
+std::vector<uint32_t> g_lodNodeFirstIndex;
+std::vector<uint32_t> g_lodNodeIndexCount;
+uint32_t g_lodPrimitiveCapacity = 0;
 IndexBuffer* g_lodIndexBuffer = nullptr;
 std::vector<MaterialInstance*> g_lodMaterialInstances;
 std::vector<uint32_t> g_lodMaterialIdList;
@@ -483,11 +484,10 @@ void destroyLodRenderable(Engine* engine) {
     }
     g_lodRenderable = {};
     g_lodIndexBuffer = nullptr;
-    g_lodPrimitives.clear();
-    g_lodPrimitiveLookup.clear();
-    g_lodGroupCounts.clear();
-    g_lodGroupFirstIndex.clear();
-    g_lodGroupCursor.clear();
+    g_lodGpuBuffer = {};
+    g_lodNodeFirstIndex.clear();
+    g_lodNodeIndexCount.clear();
+    g_lodPrimitiveCapacity = 0;
 }
 
 // One material instance per source material id. The ids themselves are preserved by the
@@ -540,43 +540,21 @@ MaterialInstance* lodMaterialFor(uint32_t materialId) {
     return g_materialInstance;
 }
 
-// The group table only depends on the source material/submesh ids, which every LOD level
-// preserves, so it is built once. Keeping the primitive count fixed is what lets a cut change
-// an index range instead of recreating the renderable.
-void createLodPrimitiveTable() {
-    if (!g_lodPrimitives.empty()) {
+// Flatten every DAG node's index list into one static GPU buffer. A cut then only changes draw
+// ranges; unlike the previous path it never rebuilds or re-uploads the index buffer.
+void createLodNodeTable() {
+    if (!g_lodNodeFirstIndex.empty() || g_lodGraph.nodes.empty()) {
         return;
     }
-    std::map<std::pair<uint32_t, uint32_t>, uint32_t> counts;
-    for (size_t t = 0; t < g_lodMesh.triangleCount(); ++t) {
-        uint32_t const material =
-                t < g_lodMesh.materialIds.size() ? g_lodMesh.materialIds[t] : UINT32_MAX;
-        uint32_t const submesh =
-                t < g_lodMesh.submeshIds.size() ? g_lodMesh.submeshIds[t] : UINT32_MAX;
-        ++counts[{ material, submesh }];
+    g_lodGpuBuffer = mm::flattenLodGraph(g_lodGraph);
+    g_lodNodeFirstIndex.resize(g_lodGpuBuffer.nodes.size());
+    g_lodNodeIndexCount.resize(g_lodGpuBuffer.nodes.size());
+    for (size_t i = 0; i < g_lodGpuBuffer.nodes.size(); ++i) {
+        g_lodNodeFirstIndex[i] = g_lodGpuBuffer.nodes[i].indexOffset;
+        g_lodNodeIndexCount[i] = g_lodGpuBuffer.nodes[i].indexCount;
     }
-    for (auto const& [key, count]: counts) {
-        g_lodPrimitiveLookup[key] = uint32_t(g_lodPrimitives.size());
-        LodPrimitive primitive;
-        primitive.materialId = key.first;
-        primitive.submeshId = key.second;
-        g_lodPrimitives.push_back(primitive);
-    }
-    g_lodGroupCounts.resize(g_lodPrimitives.size());
-    g_lodGroupFirstIndex.resize(g_lodPrimitives.size());
-    g_lodGroupCursor.resize(g_lodPrimitives.size());
-}
-
-uint32_t lodPrimitiveFor(uint32_t material, uint32_t submesh) {
-    auto const it = g_lodPrimitiveLookup.find({ material, submesh });
-    if (it != g_lodPrimitiveLookup.end()) {
-        return it->second;
-    }
-    // A selection keeps the source ids, but stay robust if a custom graph supplies an id that
-    // is not present in the source asset: draw it with the catch-all group instead of dropping
-    // triangles silently.
-    auto const fallback = g_lodPrimitiveLookup.find({ UINT32_MAX, UINT32_MAX });
-    return fallback != g_lodPrimitiveLookup.end() ? fallback->second : 0;
+    g_lodPrimitiveCapacity = uint32_t(
+            std::max<size_t>({ g_lodGraph.leaves.size(), g_lodSelection.nodes.size(), 1 }));
 }
 
 void createLodRenderable(Engine* engine) {
@@ -584,26 +562,53 @@ void createLodRenderable(Engine* engine) {
             g_lodRenderable) {
         return;
     }
-    createLodPrimitiveTable();
-    if (g_lodPrimitives.empty()) {
+    createLodNodeTable();
+    if (g_lodGpuBuffer.indices.empty() || g_lodPrimitiveCapacity == 0) {
         return;
     }
 
     bool const wide = g_lodMesh.positions.size() > 65535;
-    size_t const capacity = std::max<size_t>(g_lodMesh.indices.size(), 3);
+    size_t const capacity = std::max<size_t>(g_lodGpuBuffer.indices.size(), 3);
     g_lodIndexBuffer = IndexBuffer::Builder()
                                .indexCount(uint32_t(capacity))
                                .bufferType(wide ? IndexBuffer::IndexType::UINT
                                                 : IndexBuffer::IndexType::USHORT)
                                .build(*engine);
 
+    if (wide) {
+        auto* const indexData = new uint32_t[capacity]();
+        std::copy(g_lodGpuBuffer.indices.begin(), g_lodGpuBuffer.indices.end(), indexData);
+        g_lodIndexBuffer->setBuffer(*engine,
+                IndexBuffer::BufferDescriptor(indexData, capacity * sizeof(uint32_t),
+                        [](void* buffer, size_t, void*) {
+                            delete[] static_cast<uint32_t*>(buffer);
+                        }));
+    } else {
+        auto* const indexData = new uint16_t[capacity]();
+        for (size_t i = 0; i < g_lodGpuBuffer.indices.size(); ++i) {
+            indexData[i] = uint16_t(g_lodGpuBuffer.indices[i]);
+        }
+        g_lodIndexBuffer->setBuffer(*engine,
+                IndexBuffer::BufferDescriptor(indexData, capacity * sizeof(uint16_t),
+                        [](void* buffer, size_t, void*) {
+                            delete[] static_cast<uint16_t*>(buffer);
+                        }));
+    }
+
     g_lodRenderable = utils::EntityManager::get().create();
-    RenderableManager::Builder builder(g_lodPrimitives.size());
+    RenderableManager::Builder builder(g_lodPrimitiveCapacity);
     builder.boundingBox(g_lodBounds).culling(false).receiveShadows(true).castShadows(g_shadows);
-    for (size_t i = 0; i < g_lodPrimitives.size(); ++i) {
-        builder.material(uint32_t(i), lodMaterialFor(g_lodPrimitives[i].materialId));
+    uint32_t const fallbackMaterial =
+            g_lodGraph.nodes.empty() ? UINT32_MAX
+                                     : g_lodGraph.nodes[g_lodGraph.leaves.front()].materialId;
+    for (uint32_t i = 0; i < g_lodPrimitiveCapacity; ++i) {
+        uint32_t const nodeId = i < g_lodGraph.leaves.size() ? g_lodGraph.leaves[i] : 0;
+        builder.material(i,
+                lodMaterialFor(g_lodGraph.nodes.empty() ? fallbackMaterial
+                                                        : g_lodGraph.nodes[nodeId].materialId));
         builder.geometry(uint32_t(i), RenderableManager::PrimitiveType::TRIANGLES,
-                g_lodVertexBuffer, g_lodIndexBuffer, 0, 0);
+                g_lodVertexBuffer, g_lodIndexBuffer, g_lodNodeFirstIndex[nodeId],
+                g_lodNodeIndexCount[nodeId]);
     }
     builder.build(*engine, g_lodRenderable);
     // A lit material needs a world transform to build its normal matrix. Renderables without a
@@ -621,77 +626,23 @@ void rebuildLodGeometry(Engine* engine) {
         return;
     }
 
-    std::vector<uint32_t> const& indices =
-            g_showOriginal ? g_lodMesh.indices : g_lodSelection.indices;
-    std::vector<uint32_t> const& materialIds =
-            g_showOriginal ? g_lodMesh.materialIds : g_lodSelection.materialIds;
-    std::vector<uint32_t> const& submeshIds =
-            g_showOriginal ? g_lodMesh.submeshIds : g_lodSelection.submeshIds;
-    size_t const triangleCount = indices.size() / 3;
-    if (triangleCount == 0) {
-        return;
-    }
-
-    std::fill(g_lodGroupCounts.begin(), g_lodGroupCounts.end(), 0u);
-    auto const groupOf = [&](size_t t) {
-        uint32_t const material = t < materialIds.size() ? materialIds[t] : UINT32_MAX;
-        uint32_t const submesh = t < submeshIds.size() ? submeshIds[t] : UINT32_MAX;
-        return lodPrimitiveFor(material, submesh);
-    };
-    for (size_t t = 0; t < triangleCount; ++t) {
-        ++g_lodGroupCounts[groupOf(t)];
-    }
-
-    size_t totalIndices = 0;
-    for (size_t i = 0; i < g_lodPrimitives.size(); ++i) {
-        g_lodPrimitives[i].firstIndex = uint32_t(totalIndices);
-        // g_lodGroupCounts holds triangles; an offset in an index buffer is in indices.
-        g_lodPrimitives[i].indexCount = g_lodGroupCounts[i] * 3;
-        totalIndices += g_lodPrimitives[i].indexCount;
-        g_lodGroupCursor[i] = g_lodPrimitives[i].firstIndex;
-    }
-    if (totalIndices == 0) {
-        return;
-    }
-
-    bool const wide = g_lodMesh.positions.size() > 65535;
-    if (wide) {
-        auto* const indexData = new uint32_t[totalIndices];
-        for (size_t t = 0; t < triangleCount; ++t) {
-            uint32_t& cursor = g_lodGroupCursor[groupOf(t)];
-            indexData[cursor++] = indices[t * 3 + 0];
-            indexData[cursor++] = indices[t * 3 + 1];
-            indexData[cursor++] = indices[t * 3 + 2];
-        }
-        g_lodIndexBuffer->setBuffer(*engine,
-                IndexBuffer::BufferDescriptor(indexData, totalIndices * sizeof(uint32_t),
-                        [](void* buffer, size_t, void*) {
-                            delete[] static_cast<uint32_t*>(buffer);
-                        }));
-    } else {
-        auto* const indexData = new uint16_t[totalIndices];
-        for (size_t t = 0; t < triangleCount; ++t) {
-            uint32_t& cursor = g_lodGroupCursor[groupOf(t)];
-            indexData[cursor++] = uint16_t(indices[t * 3 + 0]);
-            indexData[cursor++] = uint16_t(indices[t * 3 + 1]);
-            indexData[cursor++] = uint16_t(indices[t * 3 + 2]);
-        }
-        g_lodIndexBuffer->setBuffer(*engine,
-                IndexBuffer::BufferDescriptor(indexData, totalIndices * sizeof(uint16_t),
-                        [](void* buffer, size_t, void*) {
-                            delete[] static_cast<uint16_t*>(buffer);
-                        }));
-    }
-
-    // One upload plus one range update per material group. No renderable or index buffer is
-    // destroyed, so a cut change no longer invalidates GPU resources or the scene entity.
+    std::vector<uint32_t> const& nodes = g_showOriginal ? g_lodGraph.leaves : g_lodSelection.nodes;
+    // Each selected DAG node owns a prebuilt index range. Unused primitive slots are hidden with
+    // a zero index count, so changing a cut performs no CPU index packing and no GPU upload.
     RenderableManager& rcm = engine->getRenderableManager();
     RenderableManager::Instance const instance = rcm.getInstance(g_lodRenderable);
-    for (size_t i = 0; i < g_lodPrimitives.size(); ++i) {
-        LodPrimitive const& primitive = g_lodPrimitives[i];
-        rcm.setMaterialInstanceAt(instance, i, lodMaterialFor(primitive.materialId));
-        rcm.setGeometryAt(instance, i, RenderableManager::PrimitiveType::TRIANGLES,
-                g_lodVertexBuffer, g_lodIndexBuffer, primitive.firstIndex, primitive.indexCount);
+    for (uint32_t i = 0; i < g_lodPrimitiveCapacity; ++i) {
+        if (i < nodes.size()) {
+            uint32_t const nodeId = nodes[i];
+            mm::LodGraphNode const& node = g_lodGraph.nodes[nodeId];
+            rcm.setMaterialInstanceAt(instance, i, lodMaterialFor(node.materialId));
+            rcm.setGeometryAt(instance, i, RenderableManager::PrimitiveType::TRIANGLES,
+                    g_lodVertexBuffer, g_lodIndexBuffer, g_lodNodeFirstIndex[nodeId],
+                    g_lodNodeIndexCount[nodeId]);
+        } else {
+            rcm.setGeometryAt(instance, i, RenderableManager::PrimitiveType::TRIANGLES,
+                    g_lodVertexBuffer, g_lodIndexBuffer, 0, 0);
+        }
     }
 }
 
@@ -771,9 +722,14 @@ void reportLodStats() {
     std::fflush(stdout);
 
     // Exercise the runtime streaming contract on the graph we just built: serialize it, read
-    // it back through the paged cache, and report how much of the blob the current selection
-    // actually needs. This is still synchronous local-file I/O, not async network streaming.
+    // it back through both the synchronous page cache and the asynchronous byte-range cache.
     std::vector<uint8_t> const blob = mm::serializeLodGraph(g_lodGraph);
+    if (!g_streamSavePath.empty()) {
+        bool const wrote = mm::writeLodGraphFile(g_lodGraph, g_streamSavePath.c_str());
+        std::printf("dag: streamSave path=%s ok=%d bytes=%zu\n", g_streamSavePath.c_str(),
+                wrote ? 1 : 0, blob.size());
+        std::fflush(stdout);
+    }
     mm::StreamingLodGraph stream(blob);
     std::vector<mm::LodStreamingPage> const pages = stream.planPages(64 * 1024);
     mm::LodStreamingCache cache(&stream, 256 * 1024, 64 * 1024);
@@ -786,6 +742,60 @@ void reportLodStats() {
             (unsigned long long) stream.byteSize(), g_lodStreamingPages, prepared ? 1 : 0,
             stats.residentPages, stats.residentBytes, (unsigned long long) stats.pageHits,
             (unsigned long long) stats.pageMisses, (unsigned long long) stats.evictions);
+    std::fflush(stdout);
+
+    // The byte-range constructor is the transport-facing path. --stream-url swaps the local
+    // reader for the real WinHTTP transport; the cache still schedules and decodes the pages.
+    // Simulated latency makes the non-blocking behavior observable during a run.
+    std::atomic<uint32_t> asyncFetches{ 0 };
+    std::unique_ptr<mm::HttpByteRangeFetcher> httpTransport;
+    mm::AsyncLodStreamingCache::ByteRangeFetcher byteRangeFetcher;
+    if (!g_streamUrl.empty()) {
+        httpTransport = std::make_unique<mm::HttpByteRangeFetcher>(g_streamUrl);
+        if (httpTransport->valid()) {
+            byteRangeFetcher = httpTransport->asFetcher();
+        } else {
+            std::fprintf(stderr, "dag: cannot stream '%s': %s; using the local graph\n",
+                    g_streamUrl.c_str(), httpTransport->lastError().c_str());
+            httpTransport.reset();
+        }
+    }
+    if (!byteRangeFetcher) {
+        byteRangeFetcher = [&](uint64_t offset, size_t size, std::vector<uint8_t>* bytes) {
+            if (g_streamLatencyMs > 0.0f) {
+                std::this_thread::sleep_for(
+                        std::chrono::microseconds(int64_t(double(g_streamLatencyMs) * 1000.0)));
+            }
+            return stream.readBytes(offset, size, bytes);
+        };
+    }
+    auto const asyncStart = std::chrono::steady_clock::now();
+    mm::AsyncLodStreamingCache asyncCache(
+            &stream,
+            [&](uint64_t offset, size_t size, std::vector<uint8_t>* bytes) {
+                asyncFetches.fetch_add(1, std::memory_order_relaxed);
+                return byteRangeFetcher(offset, size, bytes);
+            },
+            256 * 1024, 64 * 1024, 4);
+    bool const asyncRequested = asyncCache.request(runtimeCut);
+    auto const asyncDeadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
+    while (!asyncCache.ready() && std::chrono::steady_clock::now() < asyncDeadline) {
+        asyncCache.poll();
+        std::this_thread::sleep_for(std::chrono::microseconds(100));
+    }
+    asyncCache.poll();
+    auto const asyncEnd = std::chrono::steady_clock::now();
+    mm::LodStreamingCache::Stats const& asyncStats = asyncCache.stats();
+    std::printf("dag: asyncStreaming transport=%s requested=%d ready=%d fetches=%u pending=%zu "
+                "residentPages=%zu residentBytes=%zu hits=%llu misses=%llu failed=%llu "
+                "bytesFetched=%llu latencyMs=%.3f wallMs=%.3f\n",
+            httpTransport ? "http" : "local", asyncRequested ? 1 : 0, asyncCache.ready() ? 1 : 0,
+            asyncFetches.load(), asyncCache.pending(), asyncStats.residentPages,
+            asyncStats.residentBytes, (unsigned long long) asyncStats.pageHits,
+            (unsigned long long) asyncStats.pageMisses,
+            (unsigned long long) asyncStats.failedFetches,
+            (unsigned long long) asyncStats.bytesFetched, double(g_streamLatencyMs),
+            std::chrono::duration<double, std::milli>(asyncEnd - asyncStart).count());
     std::fflush(stdout);
 }
 
@@ -970,8 +980,8 @@ void drawLodUi(Engine* engine, View*) {
     ImGui::Text("min triangle quality: %.4f", g_lodTopology.minTriangleQuality);
     ImGui::TextWrapped(
             "Both modes only select a non-overlapping cut through the prebuilt DAG; "
-            "neither re-runs simplification at runtime. Changing a cut uploads one index "
-            "buffer and updates primitive ranges; the renderable is not recreated.");
+            "neither re-runs simplification at runtime. Every node index range lives in one "
+            "static buffer, so changing a cut only updates draw ranges.");
     ImGui::End();
 }
 
@@ -1257,6 +1267,12 @@ samples::SampleParameters createAppParameters() {
                 "Select clusters by screen-space error (near fine, far coarse)", false),
         samples::Parameter::makeFloat("screen-error", '\0',
                 "Screen-space error threshold in pixels; implies --distance-lod", -1.0f),
+        samples::Parameter::makeFloat("stream-latency-ms", '\0',
+                "Simulated per-page latency for the async streaming demo", 0.0f),
+        samples::Parameter::makeString("stream-url", '\0',
+                "Fetch the serialized graph with HTTP byte ranges instead of local reads", ""),
+        samples::Parameter::makeString("stream-save", '\0',
+                "Write the serialized graph to this path so it can be served over HTTP", ""),
         samples::Parameter::makeBool("original", '\0',
                 "Draw the source mesh instead of the selected DAG cut", false),
         samples::Parameter::makeBool("show-materials", '\0',
@@ -1308,6 +1324,9 @@ std::unique_ptr<FilamentApp2> createSampleApp(SampleConfig config, DisplayManage
     }
     g_lodScreenErrorPx =
             std::clamp(requestedScreenError >= 0.0f ? requestedScreenError : 1.5f, 0.05f, 64.0f);
+    g_streamLatencyMs = std::max(0.0f, config.getFloat("stream-latency-ms", 0.0f));
+    g_streamUrl = config.getString("stream-url").c_str_safe();
+    g_streamSavePath = config.getString("stream-save").c_str_safe();
 
     utils::CString const eye = config.getString("eye");
     if (!eye.empty() && !parseVec3(eye.c_str_safe(), &g_eye)) {

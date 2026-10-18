@@ -241,7 +241,8 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
   - [x] 质量门：边界边集合、非流形边、重复/退化/翻转三角形、最小三角形质量、世界空间位置误差
   - [x] normal/UV 参与 attribute QEM；material/submesh ID 保留到 DAG 节点和 draw primitive
   - [x] 本地文件分页 + 可插拔异步 page fetcher + LRU 缓存；GPU 侧有 std430 布局和间接绘制数据结构
-  - [ ] GPU compute cluster selection、Vulkan visibility buffer、真实网络 transport 的生产接线
+  - [x] Windows 生产网络 transport：`HttpByteRangeFetcher`（WinHTTP，HTTP/HTTPS + Range + 重定向）
+  - [ ] GPU compute cluster selection、Vulkan visibility buffer、移动端 HTTP 客户端绑定
 - [ ] **M3 — 图像侧：移动端轻量神经重建**（首个切片，见 §7.3）
   - [x] 配对数据生成（多视角、同一相机列表、逐视角误差图）
   - [x] 轻量 CNN 重建：等分辨率下比粗几何高 **+1.88 dB**；半分辨率下比双三次高 **+0.98 dB**
@@ -634,14 +635,20 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
   在 588 节点的 monkey DAG 上，CPU 单线程实测 **0.0031 ms/次**。
 - 需要完整索引数组的编辑器路径 `selectLodGraph` 为 0.115~0.253 ms/次（monkey，距离模式），
   0.657~0.892 ms/次（savings 模式，含 32 次阈值二分和预算内细化）。两者都远低于 16.7 ms。
-- `mm_bench` 的 UI 调参路径也已改成生产形状：renderable 和 index buffer 只创建一次，
-  每次 cut 变化只上传一段索引并调用 `RenderableManager::setGeometryAt` 更新每个
-  material/submesh primitive 的区间。下一步才是把这些区间转成真正的 indirect draw。
+- `mm_bench` 的 UI 调参路径也已改成生产形状：所有 DAG 节点的索引一次性打包进一个静态
+  index buffer（`flattenLodGraph` 的布局），renderable 只创建一次；每次 cut 变化只调用
+  `RenderableManager::setGeometryAt` 更新预建 primitive 的区间，不再重新打包或上传索引。
+  `--show-original` 复用叶子节点集合，因此仍能逐三角形还原原始网格。
 
 **仍未完成**：GPU compute cluster selection、真实 indirect draw 提交、Vulkan visibility
-buffer、跨 UV chart 的接缝简化，以及网络 transport 的生产接线。`AsyncLodStreamingCache`
-已经提供不阻塞调用线程的预取与可插拔 fetcher；仓库本身不附带 HTTP 客户端。当前 `GpuLod`
-仍是 std430 布局与 CPU 参考实现，不能宣称 GPU 选层已完成。
+buffer、跨 UV chart 的接缝简化，以及移动端（Android/iOS）HTTP 客户端绑定。
+`AsyncLodStreamingCache` 提供不阻塞调用线程的预取、可插拔 fetcher，以及直接接收
+`(byteOffset, byteCount)` 原始字节的 transport 接口。Windows 上的
+`HttpByteRangeFetcher` 已经用 WinHTTP 接通 HTTP/HTTPS Range 请求（本地回环 + `mm_bench
+--stream-url` 端到端验证通过，0 失败页）；Android/iOS 只需把同样的回调绑定到平台 HTTP
+栈，缓存与解码层不需要改。当前 `GpuLod` 仍是 std430 布局与 CPU 参考实现，不能宣称 GPU
+选层已完成。Filament 的公共 `RenderableManager` 也没有提交 indirect draw 的入口，真正的
+indirect 路径需要改后端或换自定义渲染器。
 
 **本轮性能优化**
 
@@ -656,13 +663,30 @@ buffer、跨 UV chart 的接缝简化，以及网络 transport 的生产接线�
   `destination` 改为跨单元复用的 scratch，按 unit 只做 `clear/resize`。
 - `selectionFromCut` 不再排序整个选择：先标记跨节点的共享顶点，只对边界面做哈希去重，
   同时删掉了原先“拼一遍索引再丢弃重建”的重复遍历。
+- 屏幕误差路径 `selectLodGraph` 与比例路径统一到同一个 cut 清理函数，距离感知选层也不会
+  再输出跨节点重复面。
+- `selectionFromCut` 的顶点归属表改成线程局部的代际标记，重复 selection 不再按网格总顶点
+  数分配和清零；只触碰当前 cut 实际引用的顶点。
+- 流式格式升级到 v3 并写入 `vertexCount`，仍可读取 v2；`AsyncLodStreamingCache` 新增
+  `LodGraphCut` 预取重载和原始字节区间 fetcher，缓存查找从扫描 resident map 改为按页表
+  二分定位。
+- `mm_bench` 的节点索引只上传一次，cut 切换不再重建 index buffer；torus 新路径与旧路径
+  同机位截图逐像素一致（PSNR `inf`，SSIM `1.0`）。
+- `AsyncLodStreamingCache::request` 会丢弃旧 cut 尚未启动的排队页，已经运行中的 fetch
+  允许完成并留在缓存里；快速转动相机不再积累过期页。新增回归测试覆盖该行为。
+- 同步/异步 cache 的必需页集合从 `std::set` 改为排序去重的 `std::vector`，每帧规划
+  不再为每页分配红黑树节点；LRU 淘汰用二分查找判断“当前 cut 仍需要”。
+- 新增 `HttpByteRangeFetcher`：WinHTTP 实现的真实 HTTP/HTTPS 字节区间 transport，
+  支持重定向、超时、IPv6 和 `Range: bytes=a-b` 校验；`mm_bench --stream-url` 可直接
+  从服务器流式加载 `lod_graph.mmb`，`--stream-save` 用来导出同一份文件。
 - monkey DAG 构建从 **3.21s** 降到 **2.33s**（本机，约 27%）；`test_manymesh` 从 25 个
-  测试增加到 **27 个**，全部通过。同一机位 34.72% 保留率仍为 **38.89 dB / 0.99176**，
-  非流形/重复/翻转三角形均为 0；新的动态 buffer 路径复跑了同一机位，指标不变。
+  测试增加到 **32 个**（31 个常规测试 + 1 个需 `MANYMESH_HTTP_RANGE_TEST_URL` 的网络
+  测试），常规测试全部通过。同一机位 34.72% 保留率仍为 **38.89 dB / 0.99176**，
+  非流形/重复/翻转三角形均为 0；torus 66.32% 为 **43.64 dB / 0.99824**。
 
-**下一批可优化点**：真实 indirect draw / GPU cluster selection、Vulkan visibility buffer、
-跨 UV chart 的配对 seam collapse，以及网络 transport 的生产实现。极端 UV seam 的 torus
-仍需要跨 chart 的专用简化，不能靠放松质量门解决。
+**下一批可优化点**：后端级 indirect draw / GPU compute cluster selection、Vulkan
+visibility buffer、跨 UV chart 的配对 seam collapse，以及 Android/iOS 的 HTTP 客户端
+绑定。极端 UV seam 的 torus 仍需要跨 chart 的专用简化，不能靠放松质量门解决。
 
 ---
 

@@ -36,7 +36,11 @@
 #include <chrono>
 #include <cmath>
 #include <cstdint>
+#include <cstdlib>
+#include <cstring>
 #include <filesystem>
+#include <fstream>
+#include <iostream>
 #include <map>
 #include <set>
 #include <thread>
@@ -934,6 +938,13 @@ TEST(ManyMesh, LodGraphCutRemovesOnlyCrossNodeDuplicateFaces) {
         { 1, 2, 4 },
     };
     EXPECT_EQ(triangles, expected);
+
+    // The distance-aware entry point must share the same cut cleanup. Before this regression
+    // test it traversed the DAG in a separate function and emitted both copies of (0, 1, 2).
+    LodGraphSelection const distanceSelection = selectLodGraph(graph, camera, 1000.0f);
+    EXPECT_EQ(distanceSelection.nodes, selection.nodes);
+    EXPECT_EQ(distanceSelection.selectedTriangles, selection.selectedTriangles);
+    EXPECT_EQ(distanceSelection.indices.size(), 9u);
 }
 
 TEST(ManyMesh, LodGraphSerializesAndStreamsByPage) {
@@ -952,6 +963,7 @@ TEST(ManyMesh, LodGraphSerializesAndStreamsByPage) {
     EXPECT_EQ(restored.roots, graph.roots);
     EXPECT_EQ(restored.leaves, graph.leaves);
     EXPECT_EQ(restored.baseTriangles, graph.baseTriangles);
+    EXPECT_EQ(restored.vertexCount, graph.vertexCount);
     for (size_t i = 0; i < graph.nodes.size(); ++i) {
         EXPECT_EQ(restored.nodes[i].children, graph.nodes[i].children);
         EXPECT_EQ(restored.nodes[i].indices, graph.nodes[i].indices);
@@ -973,6 +985,7 @@ TEST(ManyMesh, LodGraphSerializesAndStreamsByPage) {
     StreamingLodGraph streaming(blob);
     ASSERT_TRUE(streaming.valid());
     EXPECT_EQ(streaming.nodeCount(), graph.nodes.size());
+    EXPECT_EQ(streaming.vertexCount(), graph.vertexCount);
     std::vector<LodStreamingPage> const pages = streaming.planPages(512);
     ASSERT_FALSE(pages.empty());
     for (LodStreamingPage const& page: pages) {
@@ -1040,6 +1053,49 @@ TEST(ManyMesh, LodGraphStreamsFromAFileWithoutLoadingTheBlob) {
     std::filesystem::remove(path, ignored);
 }
 
+TEST(ManyMesh, LodGraphReadsVersionTwoWithoutAStoredVertexCount) {
+    Mesh const mesh = makeGrid(12, 12, {}, 1.0f, 0.3f);
+    LodGraphOptions options;
+    options.clusterize.maxVertices = 64;
+    options.clusterize.maxTriangles = 64;
+    options.clustersPerNode = 8;
+    options.levels = 3;
+    LodGraph const graph = buildLodGraph(mesh, options);
+    std::vector<uint8_t> const blob = serializeLodGraph(graph);
+
+    uint32_t nodeCount = 0;
+    uint32_t rootCount = 0;
+    uint32_t leafCount = 0;
+    std::memcpy(&nodeCount, blob.data() + 8, sizeof(nodeCount));
+    std::memcpy(&rootCount, blob.data() + 12, sizeof(rootCount));
+    std::memcpy(&leafCount, blob.data() + 16, sizeof(leafCount));
+
+    // v3 is [fixed header including vertexCount][roots][leaves][offsets][records]. Build the v2
+    // layout by dropping the four-byte vertex count and shifting every record offset back by 4.
+    constexpr size_t V2_HEADER_SIZE = 32;
+    constexpr size_t V3_HEADER_SIZE = 36;
+    std::vector<uint8_t> v2;
+    v2.insert(v2.end(), blob.begin(), blob.begin() + V2_HEADER_SIZE);
+    v2.insert(v2.end(), blob.begin() + V3_HEADER_SIZE, blob.end());
+    uint32_t const version = 2;
+    std::memcpy(v2.data() + 4, &version, sizeof(version));
+
+    size_t const offsets = V2_HEADER_SIZE + (size_t(rootCount) + leafCount) * sizeof(uint32_t);
+    for (uint32_t i = 0; i <= nodeCount; ++i) {
+        uint64_t value = 0;
+        std::memcpy(&value, v2.data() + offsets + size_t(i) * sizeof(value), sizeof(value));
+        value -= V3_HEADER_SIZE - V2_HEADER_SIZE;
+        std::memcpy(v2.data() + offsets + size_t(i) * sizeof(value), &value, sizeof(value));
+    }
+
+    StreamingLodGraph const streaming(v2);
+    ASSERT_TRUE(streaming.valid());
+    EXPECT_EQ(streaming.vertexCount(), 0u);
+    LodGraph restored;
+    ASSERT_TRUE(deserializeLodGraph(v2, &restored));
+    EXPECT_EQ(restored.vertexCount, graph.vertexCount);
+}
+
 TEST(ManyMesh, AsyncStreamingCachePrefetchesPagesOffTheCallingThread) {
     Mesh const mesh = makeGrid(24, 24, {}, 1.0f, 0.3f);
     LodGraphOptions options;
@@ -1084,6 +1140,222 @@ TEST(ManyMesh, AsyncStreamingCachePrefetchesPagesOffTheCallingThread) {
     EXPECT_EQ(cache.stats().pageMisses, uint64_t(fetches.load()));
     for (uint32_t nodeId: selection.nodes) {
         EXPECT_NE(cache.find(nodeId), nullptr) << "node " << nodeId << " was not prefetched";
+    }
+}
+
+TEST(ManyMesh, AsyncStreamingCacheAcceptsRawByteRangesAndCuts) {
+    Mesh const mesh = makeGrid(24, 24, {}, 1.0f, 0.3f);
+    LodGraphOptions options;
+    options.clusterize.maxVertices = 64;
+    options.clusterize.maxTriangles = 64;
+    options.clustersPerNode = 8;
+    options.levels = 4;
+    LodGraph const graph = buildLodGraph(mesh, options);
+
+    ViewCamera camera;
+    camera.eye = { 12.0f, 12.0f, 60.0f };
+    camera.target = { 12.0f, 12.0f, 0.0f };
+    camera.screenHeight = 180;
+    camera.screenWidth = 320;
+    LodGraphCut const cut = selectLodGraphCut(graph, camera, 1000.0f);
+    ASSERT_FALSE(cut.nodes.empty());
+
+    StreamingLodGraph stream(serializeLodGraph(graph));
+    ASSERT_TRUE(stream.valid());
+    std::atomic<uint32_t> fetches{ 0 };
+    AsyncLodStreamingCache cache(
+            &stream,
+            [&](uint64_t offset, size_t size, std::vector<uint8_t>* bytes) {
+                fetches.fetch_add(1);
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                return stream.readBytes(offset, size, bytes);
+            },
+            4u * 1024u * 1024u, 4096, 2);
+
+    EXPECT_TRUE(cache.request(cut));
+    auto const deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
+    while (!cache.ready() && std::chrono::steady_clock::now() < deadline) {
+        cache.poll();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+    cache.poll();
+
+    EXPECT_TRUE(cache.ready());
+    EXPECT_GT(fetches.load(), 0u);
+    EXPECT_EQ(cache.stats().failedFetches, 0u);
+    EXPECT_GT(cache.stats().bytesFetched, 0u);
+    for (uint32_t nodeId: cut.nodes) {
+        EXPECT_NE(cache.find(nodeId), nullptr) << "node " << nodeId << " was not prefetched";
+    }
+}
+
+TEST(ManyMesh, AsyncStreamingCacheDropsPagesQueuedForAnOlderCut) {
+    Mesh const mesh = makeGrid(24, 24, {}, 1.0f, 0.3f);
+    LodGraphOptions options;
+    options.clusterize.maxVertices = 64;
+    options.clusterize.maxTriangles = 64;
+    options.clustersPerNode = 8;
+    options.levels = 4;
+    LodGraph const graph = buildLodGraph(mesh, options);
+
+    ViewCamera camera;
+    camera.eye = { 12.0f, 12.0f, 60.0f };
+    camera.target = { 12.0f, 12.0f, 0.0f };
+    camera.screenHeight = 180;
+    camera.screenWidth = 320;
+
+    // A zero pixel ceiling keeps the finest legal nodes, so `wide` touches many pages. The
+    // half-budget cut is much coarser and its page set is mostly disjoint from the leaves.
+    LodGraphSelection const wide = selectLodGraphAtRatio(graph, camera, 1.0f, 0.0f);
+    LodGraphSelection const narrow = selectLodGraphAtRatio(graph, camera, 0.5f, 0.0f);
+    ASSERT_FALSE(wide.nodes.empty());
+    ASSERT_FALSE(narrow.nodes.empty());
+    ASSERT_LT(narrow.nodes.size(), wide.nodes.size());
+
+    StreamingLodGraph stream(serializeLodGraph(graph));
+    ASSERT_TRUE(stream.valid());
+    std::vector<LodStreamingPage> const pages = stream.planPages(4096);
+    ASSERT_GE(pages.size(), 3u);
+
+    // Resolve each node to its page up front so the expected fetch count is deterministic.
+    std::vector<uint32_t> pageOf(stream.nodeCount(), UINT32_MAX);
+    for (uint32_t pageId = 0; pageId < pages.size(); ++pageId) {
+        for (uint32_t nodeId = pages[pageId].firstNode;
+                nodeId < pages[pageId].firstNode + pages[pageId].nodeCount; ++nodeId) {
+            pageOf[nodeId] = pageId;
+        }
+    }
+    auto requiredPages = [&](std::vector<uint32_t> const& nodes) {
+        std::set<uint32_t> required;
+        for (uint32_t nodeId: nodes) {
+            required.insert(pageOf[nodeId]);
+        }
+        return required;
+    };
+    std::set<uint32_t> const narrowPages = requiredPages(narrow.nodes);
+
+    std::atomic<uint32_t> fetches{ 0 };
+    AsyncLodStreamingCache cache(
+            &stream,
+            [&](LodStreamingPage const& page, std::vector<LodGraphNode>* nodes) {
+                fetches.fetch_add(1);
+                std::this_thread::sleep_for(std::chrono::milliseconds(40));
+                return stream.readPage(page, nodes);
+            },
+            4u * 1024u * 1024u, 4096, 1);
+
+    EXPECT_TRUE(cache.request(wide));
+    auto const deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
+    while ((cache.pending() < 2 || fetches.load() == 0) &&
+            std::chrono::steady_clock::now() < deadline) {
+        cache.poll();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+    ASSERT_GE(cache.pending(), 2u) << "the test needs a non-empty queue to cancel";
+    ASSERT_GT(fetches.load(), 0u);
+
+    // The first page is already running. Every other page still in the queue belongs to the old
+    // cut and must be dropped when the new one arrives; running work is allowed to finish.
+    EXPECT_TRUE(cache.request(narrow));
+    EXPECT_LE(cache.pending(), 1u + narrowPages.size());
+
+    while (!cache.ready() && std::chrono::steady_clock::now() < deadline) {
+        cache.poll();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+    cache.poll();
+    ASSERT_TRUE(cache.ready());
+
+    uint32_t const expected = uint32_t(narrowPages.size()) + (narrowPages.count(0) == 0 ? 1u : 0u);
+    EXPECT_EQ(fetches.load(), expected);
+    EXPECT_LT(fetches.load(), pages.size()) << "queued pages from the old cut were not dropped";
+    EXPECT_EQ(cache.stats().failedFetches, 0u);
+    for (uint32_t nodeId: narrow.nodes) {
+        EXPECT_NE(cache.find(nodeId), nullptr) << "node " << nodeId << " was not prefetched";
+    }
+}
+
+TEST(ManyMesh, HttpByteRangeFetcherValidatesUrls) {
+#if defined(_WIN32)
+    HttpByteRangeFetcher const https("https://cdn.example.com/assets/lod_graph.mmb");
+    EXPECT_TRUE(https.valid()) << https.lastError();
+    EXPECT_EQ(https.url(), "https://cdn.example.com/assets/lod_graph.mmb");
+
+    HttpByteRangeFetcher const hostPort("http://127.0.0.1:8080/lod_graph.mmb?token=1");
+    EXPECT_TRUE(hostPort.valid()) << hostPort.lastError();
+
+    HttpByteRangeFetcher const ipv6("http://[::1]:9000/lod_graph.mmb");
+    EXPECT_TRUE(ipv6.valid()) << ipv6.lastError();
+
+    EXPECT_FALSE(HttpByteRangeFetcher("ftp://example.com/lod_graph.mmb").valid());
+    EXPECT_FALSE(HttpByteRangeFetcher("https://example.com:0/lod_graph.mmb").valid());
+    EXPECT_FALSE(HttpByteRangeFetcher("https://example.com:notaport/lod_graph.mmb").valid());
+    EXPECT_FALSE(HttpByteRangeFetcher("https:///lod_graph.mmb").valid());
+#else
+    HttpByteRangeFetcher const fetcher("https://cdn.example.com/assets/lod_graph.mmb");
+    EXPECT_FALSE(fetcher.valid());
+    EXPECT_FALSE(fetcher.lastError().empty());
+#endif
+}
+
+// Opt-in end-to-end check. Point MANYMESH_HTTP_RANGE_TEST_URL at a server that honors Range
+// requests for a serialized graph, then the cache fetches its pages over the same transport a
+// game would use.
+TEST(ManyMesh, HttpByteRangeFetcherFeedsTheAsyncCache) {
+    char const* url = std::getenv("MANYMESH_HTTP_RANGE_TEST_URL");
+    if (url == nullptr || *url == '\0') {
+        GTEST_SKIP() << "set MANYMESH_HTTP_RANGE_TEST_URL to run the HTTP transport test";
+    }
+
+    Mesh const mesh = makeGrid(24, 24, {}, 1.0f, 0.3f);
+    LodGraphOptions options;
+    options.clusterize.maxVertices = 64;
+    options.clusterize.maxTriangles = 64;
+    options.clustersPerNode = 8;
+    options.levels = 4;
+    LodGraph const graph = buildLodGraph(mesh, options);
+    std::vector<uint8_t> const blob = serializeLodGraph(graph);
+
+    // The server is expected to serve this exact file, so the test can compare transport bytes
+    // against the locally serialized graph.
+    std::filesystem::path const path =
+            std::filesystem::temp_directory_path() / "manymesh_http_test_graph.mmb";
+    {
+        std::ofstream file(path, std::ios::binary | std::ios::trunc);
+        ASSERT_TRUE(file.good()) << path;
+        file.write(reinterpret_cast<char const*>(blob.data()), std::streamsize(blob.size()));
+    }
+    std::cout << "serving " << path << " as " << url << std::endl;
+
+    HttpByteRangeFetcher transport(url);
+    ASSERT_TRUE(transport.valid()) << transport.lastError();
+
+    std::vector<uint8_t> magic;
+    ASSERT_TRUE(transport.fetch(0, 4, &magic)) << transport.lastError();
+    ASSERT_EQ(magic.size(), 4u);
+    EXPECT_EQ(std::memcmp(magic.data(), "MMLG", 4), 0);
+
+    StreamingLodGraph stream(blob);
+    ViewCamera camera;
+    camera.eye = { 12.0f, 12.0f, 60.0f };
+    camera.target = { 12.0f, 12.0f, 0.0f };
+    camera.screenHeight = 180;
+    camera.screenWidth = 320;
+    LodGraphCut const cut = selectLodGraphCut(graph, camera, 1000.0f);
+    ASSERT_FALSE(cut.nodes.empty());
+
+    AsyncLodStreamingCache cache(&stream, transport.asFetcher(), 4u * 1024u * 1024u, 4096, 2);
+    ASSERT_TRUE(cache.request(cut));
+    auto const deadline = std::chrono::steady_clock::now() + std::chrono::seconds(15);
+    while (!cache.ready() && std::chrono::steady_clock::now() < deadline) {
+        cache.poll();
+        std::this_thread::sleep_for(std::chrono::milliseconds(2));
+    }
+    cache.poll();
+    ASSERT_TRUE(cache.ready());
+    EXPECT_EQ(cache.stats().failedFetches, 0u) << transport.lastError();
+    for (uint32_t nodeId: cut.nodes) {
+        EXPECT_NE(cache.find(nodeId), nullptr) << "node " << nodeId << " was not fetched";
     }
 }
 

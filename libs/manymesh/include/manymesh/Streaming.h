@@ -25,6 +25,7 @@
 #include <future>
 #include <list>
 #include <map>
+#include <memory>
 #include <mutex>
 #include <set>
 #include <string>
@@ -56,6 +57,14 @@ struct LodStreamingPage {
     uint64_t byteCount = 0;
 };
 
+/**
+ * Decodes the node records of one serialized page from the bytes a transport fetched for it.
+ * This is the hook an HTTP/CDN client uses: fetch `page.byteOffset` for `page.byteCount` bytes,
+ * then pass the result here without materializing the rest of the graph.
+ */
+bool decodeLodStreamingPage(std::vector<uint8_t> const& pageBytes, LodStreamingPage const& page,
+        std::vector<LodGraphNode>* nodes);
+
 std::vector<LodStreamingPage> planLodStreamingPages(std::vector<uint8_t> const& blob,
         size_t maxPageBytes);
 
@@ -77,6 +86,7 @@ public:
     bool fileBacked() const noexcept { return mFile.is_open(); }
     uint32_t nodeCount() const noexcept { return mNodeCount; }
     uint32_t levelCount() const noexcept { return mLevelCount; }
+    uint32_t vertexCount() const noexcept { return mVertexCount; }
     uint64_t baseTriangles() const noexcept { return mBaseTriangles; }
     uint64_t byteSize() const noexcept { return mBlobSize; }
     std::vector<uint32_t> const& roots() const noexcept { return mRoots; }
@@ -84,6 +94,7 @@ public:
 
     bool readNode(uint32_t nodeId, LodGraphNode* node) const;
     bool readPage(LodStreamingPage const& page, std::vector<LodGraphNode>* nodes) const;
+    bool readBytes(uint64_t offset, size_t size, std::vector<uint8_t>* out) const;
     std::vector<LodStreamingPage> planPages(size_t maxPageBytes) const;
 
 private:
@@ -99,6 +110,7 @@ private:
     std::vector<uint32_t> mLeaves;
     uint32_t mNodeCount = 0;
     uint32_t mLevelCount = 0;
+    uint32_t mVertexCount = 0;
     uint64_t mBaseTriangles = 0;
     bool mValid = false;
 };
@@ -121,9 +133,12 @@ public:
         uint64_t pageHits = 0;
         uint64_t pageMisses = 0;
         uint64_t evictions = 0;
+        uint64_t bytesFetched = 0;
+        uint64_t failedFetches = 0;
     };
 
     bool prepare(LodGraphSelection const& selection);
+    bool prepare(LodGraphCut const& cut);
     LodGraphNode const* find(uint32_t nodeId) const;
     Stats const& stats() const noexcept { return mStats; }
 
@@ -160,15 +175,21 @@ private:
 class AsyncLodStreamingCache {
 public:
     using PageFetcher = std::function<bool(LodStreamingPage const&, std::vector<LodGraphNode>*)>;
+    using ByteRangeFetcher =
+            std::function<bool(uint64_t offset, size_t size, std::vector<uint8_t>* bytes)>;
 
     AsyncLodStreamingCache(StreamingLodGraph const* graph, PageFetcher fetcher, size_t byteBudget,
             size_t maxPageBytes = 64 * 1024, size_t maxConcurrent = 4);
+    AsyncLodStreamingCache(StreamingLodGraph const* graph, ByteRangeFetcher fetcher,
+            size_t byteBudget, size_t maxPageBytes = 64 * 1024, size_t maxConcurrent = 4);
 
     AsyncLodStreamingCache(AsyncLodStreamingCache const&) = delete;
     AsyncLodStreamingCache& operator=(AsyncLodStreamingCache const&) = delete;
 
     //! Schedules every page referenced by `selection`. Pages already resident are not refetched.
     bool request(LodGraphSelection const& selection);
+    //! Runtime variant: schedules only the nodes in a cut, without assembling its index arrays.
+    bool request(LodGraphCut const& cut);
 
     //! Integrates completed fetches and starts queued ones. Returns true when anything arrived.
     bool poll();
@@ -188,6 +209,7 @@ private:
 
     void pump();
     void evict();
+    bool requestNodes(std::vector<uint32_t> const& nodes);
 
     StreamingLodGraph const* mGraph = nullptr;
     PageFetcher mFetcher;
@@ -197,11 +219,48 @@ private:
     std::vector<LodStreamingPage> mPages;
     std::map<uint32_t, std::vector<LodGraphNode>> mResident;
     std::list<uint32_t> mLru;
-    std::set<uint32_t> mRequired;
+    //! Sorted, deduplicated page ids for the current request; a vector avoids one tree node
+    //! allocation per page on every camera change.
+    std::vector<uint32_t> mRequired;
     std::set<uint32_t> mRequested;
     std::deque<uint32_t> mQueue;
     std::vector<std::future<PageResult>> mPending;
     LodStreamingCache::Stats mStats;
+};
+
+/**
+ * Byte-range transport backed by the platform HTTP stack.
+ *
+ * This is the production transport for `AsyncLodStreamingCache::ByteRangeFetcher`: point it at
+ * the serialized `lod_graph.mmb` URL, then pass `asFetcher()` to the cache. Each request sends a
+ * `Range: bytes=<offset>-<end>` header and requires a 206 response (a 200 response is accepted
+ * only for the first byte of the file, i.e. when the server ignored Range).
+ *
+ * The implementation currently uses WinHTTP on Windows. Other platforms get the same portable
+ * interface but `valid()` is false and `fetch()` returns false; a mobile build can bind its own
+ * HTTP client to the same callback without touching the cache.
+ */
+class HttpByteRangeFetcher {
+public:
+    explicit HttpByteRangeFetcher(std::string url, unsigned timeoutMs = 5000);
+    ~HttpByteRangeFetcher();
+
+    HttpByteRangeFetcher(HttpByteRangeFetcher const&) = delete;
+    HttpByteRangeFetcher& operator=(HttpByteRangeFetcher const&) = delete;
+
+    bool fetch(uint64_t offset, size_t size, std::vector<uint8_t>* bytes);
+
+    bool valid() const noexcept;
+    std::string const& url() const noexcept;
+    //! Best-effort diagnostic for the last failed fetch. Concurrent fetches may race here.
+    std::string const& lastError() const noexcept;
+
+    //! Binds this transport to a cache. The fetcher must not outlive the HttpByteRangeFetcher.
+    AsyncLodStreamingCache::ByteRangeFetcher asFetcher();
+
+private:
+    struct Impl;
+    std::unique_ptr<Impl> mImpl;
 };
 
 } // namespace manymesh
