@@ -73,7 +73,7 @@ private:
     VmaAllocator mAllocator;
 
     // Buffers can be recycled, after they are released. Each type of buffer have its own pool
-    static constexpr int MAX_POOL_COUNT = 4;
+    static constexpr int MAX_POOL_COUNT = 5;
     BufferPool mGpuBufferPools[MAX_POOL_COUNT];
 
     // Store the current "time" (really just a frame count) and LRU eviction parameters.

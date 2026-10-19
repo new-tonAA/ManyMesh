@@ -1,0 +1,59 @@
+material {
+    name : AiCavity,
+    shadingModel : lit,
+    specularAntiAliasing : true,
+    parameters : [
+        {
+            type : float3,
+            name : baseColor
+        },
+        {
+            type : float,
+            name : metallic
+        },
+        {
+            type : float,
+            name : roughness
+        },
+        {
+            type : float,
+            name : reflectance
+        },
+        {
+            type : float,
+            name : cavityStrength
+        },
+        {
+            type : float,
+            name : curvatureScale
+        }
+    ],
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        material.baseColor.rgb = materialParams.baseColor;
+        material.metallic = materialParams.metallic;
+        material.roughness = materialParams.roughness;
+        material.reflectance = materialParams.reflectance;
+
+        // Screen-space mean curvature, used as a cheap cavity term. The LOD already carries
+        // the source normals, so what it cannot represent is the second derivative of the
+        // surface: the small dents and creases that make a high-poly asset read as detailed.
+        // The sign distinguishes concave from convex, so only concave regions are darkened.
+        // This needs IBL or shadowing to affect the final image; a direct-only lighting setup
+        // does not consume MaterialInputs.ambientOcclusion.
+        vec3 n = getWorldGeometricNormalVector();
+        vec3 dpdx = dFdx(getWorldPosition());
+        vec3 dpdy = dFdy(getWorldPosition());
+        vec3 dndx = dFdx(n);
+        vec3 dndy = dFdy(n);
+        float footprint = dot(dpdx, dpdx) + dot(dpdy, dpdy);
+        float meanCurvature = footprint > 1e-12
+                ? -(dot(dndx, dpdx) + dot(dndy, dpdy)) / footprint
+                : 0.0;
+        float cavity = saturate(meanCurvature * materialParams.curvatureScale);
+        material.ambientOcclusion = 1.0 - cavity * materialParams.cavityStrength;
+    }
+}

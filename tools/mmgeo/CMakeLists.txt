@@ -15,7 +15,7 @@ set(SRCS
 # ==================================================================================================
 add_executable(${TARGET} ${SRCS})
 
-target_link_libraries(${TARGET} PRIVATE assimp manymesh utils meshoptimizer)
+target_link_libraries(${TARGET} PRIVATE assimp image imageio manymesh utils meshoptimizer)
 set_target_properties(${TARGET} PROPERTIES FOLDER Tools)
 
 if(NOT MSVC)

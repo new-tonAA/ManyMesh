@@ -34,20 +34,35 @@ namespace manymesh {
  * This is deliberately independent of filament::Engine: the whole geometry optimization
  * layer runs offline, on host memory, before anything is uploaded to the GPU.
  *
- * Positions are the only mandatory attribute; every error metric in this library is derived
- * from them. Normals and UVs are carried along so that LOD results can be written back out
- * for inspection (and, later, re-shaded), but they take no part in simplification.
+ * Positions are the only mandatory vertex attribute. Normals and UVs are optional; when they
+ * are present they take part in the attribute-aware simplification quality gate. Material and
+ * submesh ids are optional per-triangle metadata and are preserved by clustering and LOD
+ * generation so that a simplified draw can still be split into the original primitives.
  */
 struct Mesh {
     std::vector<math::float3> positions;
     std::vector<math::float3> normals;  //!< optional, either empty or positions.size() long
     std::vector<math::float2> uvs;      //!< optional, either empty or positions.size() long
+    //! Optional per-vertex ambient occlusion in [0,1], 1 = fully visible. Either empty or
+    //! positions.size() long. Bake it once on the source mesh; simplification interpolates it so
+    //! every LOD cut keeps the source's contact shading without re-baking per cut.
+    std::vector<float> ao;
     std::vector<uint32_t> indices;      //!< 3 entries per triangle
+
+    //! Optional per-triangle material and submesh ids, either empty or triangleCount() long.
+    std::vector<uint32_t> materialIds;
+    std::vector<uint32_t> submeshIds;
 
     size_t vertexCount() const noexcept { return positions.size(); }
     size_t triangleCount() const noexcept { return indices.size() / 3; }
 
     bool empty() const noexcept { return positions.empty() || indices.empty(); }
+
+    bool hasNormals() const noexcept { return normals.size() == positions.size(); }
+    bool hasUVs() const noexcept { return uvs.size() == positions.size(); }
+    bool hasAO() const noexcept { return !ao.empty() && ao.size() == positions.size(); }
+    bool hasMaterialIds() const noexcept { return materialIds.size() == triangleCount(); }
+    bool hasSubmeshIds() const noexcept { return submeshIds.size() == triangleCount(); }
 };
 
 /**

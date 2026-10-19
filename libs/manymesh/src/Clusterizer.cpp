@@ -19,6 +19,9 @@
 #include <meshoptimizer.h>
 
 #include <algorithm>
+#include <functional>
+#include <unordered_map>
+#include <utility>
 #include <vector>
 
 namespace filament {
@@ -31,9 +34,8 @@ namespace {
 constexpr size_t MAX_MESHLET_VERTICES = 255;
 constexpr size_t MAX_MESHLET_TRIANGLES = 512;
 
-} // anonymous namespace
-
-ClusterSet clusterize(Mesh const& mesh, ClusterizeOptions const& options) {
+ClusterSet clusterizeSingle(Mesh const& mesh, ClusterizeOptions const& options,
+        uint32_t materialId = UINT32_MAX, uint32_t submeshId = UINT32_MAX) {
     ClusterSet result;
     result.maxVertices = options.maxVertices;
     result.maxTriangles = options.maxTriangles;
@@ -85,8 +87,173 @@ ClusterSet clusterize(Mesh const& mesh, ClusterizeOptions const& options) {
         cluster.cone.apex = { bounds.cone_apex[0], bounds.cone_apex[1], bounds.cone_apex[2] };
         cluster.cone.axis = { bounds.cone_axis[0], bounds.cone_axis[1], bounds.cone_axis[2] };
         cluster.cone.cutoff = bounds.cone_cutoff;
+        cluster.materialId = materialId;
+        cluster.submeshId = submeshId;
 
         result.clusters.push_back(std::move(cluster));
+    }
+
+    return result;
+}
+
+struct Chart {
+    std::vector<uint32_t> indices;
+    uint32_t materialId = UINT32_MAX;
+    uint32_t submeshId = UINT32_MAX;
+};
+
+struct EdgeAttributeKey {
+    uint32_t a = 0;
+    uint32_t b = 0;
+    uint32_t materialId = 0;
+    uint32_t submeshId = 0;
+
+    bool operator==(EdgeAttributeKey const& other) const noexcept {
+        return a == other.a && b == other.b
+                && materialId == other.materialId && submeshId == other.submeshId;
+    }
+};
+
+struct EdgeAttributeKeyHash {
+    size_t operator()(EdgeAttributeKey const& key) const noexcept {
+        uint64_t const vertices = (uint64_t(key.a) << 32) | uint64_t(key.b);
+        return std::hash<uint64_t>()(vertices)
+                ^ (std::hash<uint32_t>()(key.materialId) << 1)
+                ^ (std::hash<uint32_t>()(key.submeshId) << 2);
+    }
+};
+
+// Splits triangles into connected components using edge adjacency within the same material
+// and submesh. Importers duplicate vertices at UV and normal seams, so those seams become
+// component boundaries here. Material and submesh boundaries are boundaries even when the
+// importer shares vertices across them. Clustering each component independently keeps all
+// attribute boundaries on cluster borders, where the border lock protects them.
+std::vector<Chart> splitCharts(Mesh const& mesh) {
+    std::vector<Chart> charts;
+    if (mesh.indices.empty()) {
+        return charts;
+    }
+
+    size_t const triangleCount = mesh.triangleCount();
+    std::vector<uint32_t> parent(triangleCount);
+    for (uint32_t t = 0; t < triangleCount; ++t) {
+        parent[t] = t;
+    }
+
+    auto find = [&parent](uint32_t t) {
+        while (parent[t] != t) {
+            parent[t] = parent[parent[t]];
+            t = parent[t];
+        }
+        return t;
+    };
+
+    auto unite = [&parent, &find](uint32_t a, uint32_t b) {
+        a = find(a);
+        b = find(b);
+        if (a != b) {
+            parent[b] = a;
+        }
+    };
+
+    auto materialAt = [&mesh](size_t triangle) {
+        return mesh.hasMaterialIds() ? mesh.materialIds[triangle] : 0u;
+    };
+    auto submeshAt = [&mesh](size_t triangle) {
+        return mesh.hasSubmeshIds() ? mesh.submeshIds[triangle] : 0u;
+    };
+
+    std::unordered_map<EdgeAttributeKey, uint32_t, EdgeAttributeKeyHash> firstTriangle;
+    firstTriangle.reserve(triangleCount * 3);
+    for (size_t t = 0; t < triangleCount; ++t) {
+        uint32_t const vertices[3] = {
+            mesh.indices[t * 3 + 0], mesh.indices[t * 3 + 1], mesh.indices[t * 3 + 2] };
+        for (int e = 0; e < 3; ++e) {
+            uint32_t const a = std::min(vertices[e], vertices[(e + 1) % 3]);
+            uint32_t const b = std::max(vertices[e], vertices[(e + 1) % 3]);
+            EdgeAttributeKey const key = {
+                a, b, materialAt(t), submeshAt(t)
+            };
+            auto const [it, inserted] = firstTriangle.emplace(key, uint32_t(t));
+            if (!inserted) {
+                unite(uint32_t(t), it->second);
+            }
+        }
+    }
+
+    std::vector<int32_t> chartOfRoot(triangleCount, -1);
+    for (size_t t = 0; t < triangleCount; ++t) {
+        uint32_t const root = find(uint32_t(t));
+        int32_t chart = chartOfRoot[root];
+        if (chart < 0) {
+            chart = int32_t(charts.size());
+            chartOfRoot[root] = chart;
+            charts.emplace_back();
+            charts.back().materialId = materialAt(t);
+            charts.back().submeshId = submeshAt(t);
+        }
+        std::vector<uint32_t>& indices = charts[size_t(chart)].indices;
+        size_t const i = t * 3;
+        indices.push_back(mesh.indices[i + 0]);
+        indices.push_back(mesh.indices[i + 1]);
+        indices.push_back(mesh.indices[i + 2]);
+    }
+
+    return charts;
+}
+
+} // anonymous namespace
+
+ClusterSet clusterize(Mesh const& mesh, ClusterizeOptions const& options) {
+    ClusterSet result;
+    result.maxVertices = options.maxVertices;
+    result.maxTriangles = options.maxTriangles;
+
+    if (mesh.empty()) {
+        return result;
+    }
+
+    if (!options.splitCharts) {
+        return clusterizeSingle(mesh, options);
+    }
+
+    std::vector<Chart> const charts = splitCharts(mesh);
+    if (charts.empty()) {
+        return result;
+    }
+
+    std::vector<int32_t> localOfGlobal(mesh.positions.size(), -1);
+    std::vector<uint32_t> localToGlobal;
+
+    for (Chart const& chart : charts) {
+        Mesh local;
+        local.indices = chart.indices;
+        local.positions.reserve(chart.indices.size());
+        localToGlobal.clear();
+
+        for (uint32_t& index : local.indices) {
+            uint32_t const global = index;
+            int32_t& localIndex = localOfGlobal[global];
+            if (localIndex < 0) {
+                localIndex = int32_t(localToGlobal.size());
+                localToGlobal.push_back(global);
+                local.positions.push_back(mesh.positions[global]);
+            }
+            index = uint32_t(localIndex);
+        }
+
+        ClusterSet const localClusters = clusterizeSingle(local, options,
+                chart.materialId, chart.submeshId);
+        for (Cluster cluster : localClusters.clusters) {
+            for (uint32_t& index : cluster.indices) {
+                index = localToGlobal[index];
+            }
+            result.clusters.push_back(std::move(cluster));
+        }
+
+        for (uint32_t global : localToGlobal) {
+            localOfGlobal[global] = -1;
+        }
     }
 
     return result;

@@ -32,6 +32,12 @@ struct ClusterizeOptions {
 
     //! 0 makes clusters purely size driven, 1 makes meshoptimizer favour cone-cullable ones.
     float coneWeight = 0.0f;
+
+    //! Split the mesh into connected charts before clustering. A chart boundary is created by
+    //! duplicated vertices, which is how importers represent UV and normal seams. Keeping
+    //! clusters inside one chart makes those seams cluster borders, so the border lock below
+    //! cannot collapse them and tear the surface. Meshes without attribute seams are one chart.
+    bool splitCharts = true;
 };
 
 /**

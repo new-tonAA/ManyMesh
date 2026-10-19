@@ -27,13 +27,17 @@
 
 #include <backend/Program.h>
 
+#include <array>
 #include <string>
+#include <vector>
 
 namespace test {
 
 class ShaderGenerator {
 
 public:
+
+    using Blob = std::vector<char>;
 
     static void init();
     static void shutdown();
@@ -58,10 +62,12 @@ public:
     filament::backend::Program getProgramWithSpecializationConstants(filament::backend::DriverApi&,
             filament::backend::Program::SpecializationConstantsInfo constants);
 
+    // Transpiles a GLSL 450 compute shader for the given backend.
+    static Blob transpileCompute(std::string compute, Backend backend, bool isMobile) noexcept;
+
 private:
     using ShaderStage = filament::backend::ShaderStage;
 
-    using Blob = std::vector<char>;
     static Blob transpileShader(ShaderStage stage, std::string shader, Backend backend,
             bool isMobile, const filamat::DescriptorSets& descriptorSets) noexcept;
 

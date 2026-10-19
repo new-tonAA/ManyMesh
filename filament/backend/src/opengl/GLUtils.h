@@ -133,6 +133,13 @@ constexpr GLenum getBufferBindingType(BufferObjectBinding const bindingType) noe
             utils::panic(__func__, __FILE__, __LINE__, "SHADER_STORAGE not supported");
             return 0x90D2; // just to return something
 #endif
+        case BufferObjectBinding::INDIRECT:
+#ifdef BACKEND_OPENGL_LEVEL_GLES31
+            return GL_DRAW_INDIRECT_BUFFER;
+#else
+            utils::panic(__func__, __FILE__, __LINE__, "INDIRECT not supported");
+            return 0x8F3F; // GL_DRAW_INDIRECT_BUFFER
+#endif
     }
     // should never happen
     return GL_ARRAY_BUFFER;

@@ -262,7 +262,7 @@ public:
                     GLsizeiptr size = 0;
                 } buffers[MAX_BUFFER_BINDINGS];
             } targets[3];   // there are only 3 indexed buffer targets
-            GLuint genericBinding[7] = {};
+            GLuint genericBinding[8] = {};
         } buffers;
 
         struct {
@@ -356,6 +356,9 @@ constexpr size_t OpenGLState::getIndexForBufferTarget(GLenum target) noexcept {
 #ifndef FILAMENT_SILENCE_NOT_SUPPORTED_BY_ES2
         case GL_PIXEL_PACK_BUFFER:          index = 5; break;
         case GL_PIXEL_UNPACK_BUFFER:        index = 6; break;
+#if defined(BACKEND_OPENGL_LEVEL_GLES31)
+        case GL_DRAW_INDIRECT_BUFFER:       index = 7; break;
+#endif
 #endif
         default: break;
     }

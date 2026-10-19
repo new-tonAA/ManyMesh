@@ -28,7 +28,7 @@ using namespace filament;
 using namespace filament::backend;
 
 int main(int argc, char* argv[]) {
-    auto backend = (Backend)test::parseArgumentsForBackend(argc, argv);
+    auto backend = static_cast<Backend>(test::parseArguments(argc, argv).backend);
     ComputeTest::init(backend);
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

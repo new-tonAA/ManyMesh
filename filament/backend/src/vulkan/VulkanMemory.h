@@ -53,6 +53,7 @@ enum class VulkanBufferBinding : uint8_t {
     INDEX,
     UNIFORM,
     SHADER_STORAGE,
+    INDIRECT,
 };
 
 struct VulkanGpuBuffer {

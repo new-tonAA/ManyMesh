@@ -105,6 +105,10 @@ struct VulkanProgram : public HwProgram, fvkmemory::ThreadSafeResource {
 
     inline VkShaderModule getFragmentShader() const { return mInfo->shaders[1]; }
 
+    inline VkShaderModule getComputeShader() const { return mInfo->shaders[2]; }
+
+    inline bool hasComputeShader() const { return getComputeShader() != VK_NULL_HANDLE; }
+
     inline uint32_t getPushConstantRangeCount() const {
         return mInfo->pushConstantDescription.getVkRangeCount();
     }
@@ -137,9 +141,8 @@ struct VulkanProgram : public HwProgram, fvkmemory::ThreadSafeResource {
         }
     }
 
-    // TODO: handle compute shaders.
     // The expected order of shaders - from frontend to backend - is vertex, fragment, compute.
-    static constexpr uint8_t const MAX_SHADER_MODULES = 2;
+    static constexpr uint8_t const MAX_SHADER_MODULES = Program::SHADER_TYPE_COUNT;
 
 private:
     struct PipelineInfo {

@@ -2625,6 +2625,58 @@ void MetalDriver::drawArrays(uint32_t vertexOffset, uint32_t vertexCount,
                                          instanceCount:instanceCount];
 }
 
+void MetalDriver::drawIndexedIndirect(Handle<HwBufferObject> indirectBuffer,
+        uint32_t indirectOffset, uint32_t drawCount, uint32_t stride) {
+    if (UTILS_UNLIKELY(mContext->currentRenderPassAbandoned)) {
+        return;
+    }
+
+    FILAMENT_CHECK_PRECONDITION(mContext->currentRenderPassEncoder != nullptr)
+            << "drawIndexedIndirect() without a valid command encoder.";
+    DEBUG_LOG("drawIndexedIndirect(...)\n");
+
+    if (FILAMENT_ENABLE_MATDBG && UTILS_UNLIKELY(!mContext->validPipelineBound)) {
+        return;
+    }
+
+    if (UTILS_UNLIKELY(mContext->dynamicOffsets.isDirty())) {
+        const auto [size, data] = mContext->dynamicOffsets.getOffsets();
+        if (size > 0) {
+            [mContext->currentRenderPassEncoder setFragmentBytes:data
+                                                          length:size * sizeof(uint32_t)
+                                                         atIndex:DYNAMIC_OFFSET_BINDING];
+            [mContext->currentRenderPassEncoder setVertexBytes:data
+                                                        length:size * sizeof(uint32_t)
+                                                       atIndex:DYNAMIC_OFFSET_BINDING];
+        }
+        mContext->dynamicOffsets.setDirty(false);
+    }
+
+    for (size_t i = 0; i < Program::SHADER_TYPE_COUNT; i++) {
+        auto& pushConstants = mContext->currentPushConstants[i];
+        if (UTILS_UNLIKELY(pushConstants.isDirty())) {
+            pushConstants.setBytes(mContext->currentRenderPassEncoder, static_cast<ShaderStage>(i));
+        }
+    }
+
+    auto primitive = handle_cast<MetalRenderPrimitive>(mContext->currentRenderPrimitive);
+    MetalIndexBuffer* indexBuffer = primitive->indexBuffer;
+    id<MTLBuffer> metalIndexBuffer = indexBuffer->buffer.getGpuBufferForDraw();
+
+    auto* bo = handle_cast<MetalBufferObject>(indirectBuffer);
+    id<MTLBuffer> metalIndirectBuffer = bo->getBuffer()->getGpuBufferForDraw();
+
+    for (uint32_t i = 0; i < drawCount; ++i) {
+        [mContext->currentRenderPassEncoder
+                drawIndexedPrimitives:getMetalPrimitiveType(primitive->type)
+                            indexType:getIndexType(indexBuffer->elementSize)
+                          indexBuffer:metalIndexBuffer
+                    indexBufferOffset:0
+                       indirectBuffer:metalIndirectBuffer
+                 indirectBufferOffset:indirectOffset + i * stride];
+    }
+}
+
 void MetalDriver::draw(PipelineState ps, Handle<HwRenderPrimitive> rph,
         uint32_t const indexOffset, uint32_t const indexCount, uint32_t const instanceCount) {
     if (UTILS_UNLIKELY(mContext->currentRenderPassAbandoned)) {

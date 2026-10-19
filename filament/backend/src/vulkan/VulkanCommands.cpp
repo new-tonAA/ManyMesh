@@ -438,14 +438,18 @@ bool VulkanCommands::flush() {
             pool->waitFor(injectedDependency, mInjectedDependencyWaitStage);
         }
         if (mLastSubmit) {
-            // Note that the stage we're waiting on is the fragment shader stage.  This assumes
-            // that the subsequent command buffer will only depend on
-            //    1) fragment output of the previous command buffer
-            //    2) reading/writing of buffers (i.e. UBO) of the previous command buffer
-            // Restricting the wait stages will allow for vertex work to proceed (more overlapping
-            // vertex/fragment work).
+            // The previous command buffer may have produced buffers consumed by vertex input,
+            // indirect draws, a compute dispatch, or the vertex/fragment stages. Waiting only on
+            // fragment/transfer allowed those consumers to start before the producer finished.
+            // Keep the list explicit rather than ALL_COMMANDS so graphics work can still overlap
+            // where there is no dependency.
             pool->waitFor(mLastSubmit->getVkSemaphore(),
-                    VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_TRANSFER_BIT);
+                    VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT |
+                    VK_PIPELINE_STAGE_VERTEX_INPUT_BIT |
+                    VK_PIPELINE_STAGE_VERTEX_SHADER_BIT |
+                    VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT |
+                    VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT |
+                    VK_PIPELINE_STAGE_TRANSFER_BIT);
             mLastSubmit = {};
         }
         flushedFenceStatus = pool->getRecording().getFenceStatus();

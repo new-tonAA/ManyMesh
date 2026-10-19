@@ -881,7 +881,8 @@ constexpr std::string_view to_string(ElementType type) noexcept {
 enum class BufferObjectBinding : uint8_t {
     VERTEX,
     UNIFORM,
-    SHADER_STORAGE
+    SHADER_STORAGE,
+    INDIRECT
 };
 
 constexpr std::string_view to_string(BufferObjectBinding type) noexcept {
@@ -889,6 +890,7 @@ constexpr std::string_view to_string(BufferObjectBinding type) noexcept {
         case BufferObjectBinding::VERTEX:           return "VERTEX";
         case BufferObjectBinding::UNIFORM:          return "UNIFORM";
         case BufferObjectBinding::SHADER_STORAGE:   return "SHADER_STORAGE";
+        case BufferObjectBinding::INDIRECT:         return "INDIRECT";
     }
     return "UNKNOWN";
 }

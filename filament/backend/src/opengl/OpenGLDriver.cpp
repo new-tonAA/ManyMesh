@@ -393,6 +393,11 @@ void OpenGLDriver::terminate() {
     // wait for the GPU to finish executing all commands
     glFinish();
 
+    if (mIndirectDrawBuffer) {
+        glDeleteBuffers(1, &mIndirectDrawBuffer);
+        mIndirectDrawBuffer = 0;
+    }
+
     mShaderCompilerService.terminate();
 
 #ifndef FILAMENT_SILENCE_NOT_SUPPORTED_BY_ES2
@@ -5153,6 +5158,66 @@ void OpenGLDriver::drawArrays(uint32_t const vertexOffset, uint32_t const vertex
 #endif
 }
 
+void OpenGLDriver::drawIndexedIndirect(Handle<HwBufferObject> indirectBuffer,
+        uint32_t const indirectOffset, uint32_t const drawCount, uint32_t const stride) {
+    DEBUG_MARKER()
+#ifdef BACKEND_OPENGL_LEVEL_GLES31
+    assert_invariant(mBoundRenderPrimitive);
+    assert_invariant(mBoundProgram);
+    assert_invariant(mValidProgram);
+
+    auto const invalidDescriptorSets =
+            mInvalidDescriptorSetBindings | mInvalidDescriptorSetBindingOffsets;
+    if (UTILS_UNLIKELY(invalidDescriptorSets.any())) {
+        updateDescriptors(invalidDescriptorSets);
+    }
+
+    if (UTILS_UNLIKELY(drawCount == 0)) {
+        return;
+    }
+
+    auto& gl = getBackendState();
+    GLBufferObject* const bo = handle_cast<GLBufferObject*>(indirectBuffer);
+    GLRenderPrimitive const* const rp = mBoundRenderPrimitive;
+
+    // The GL command is always 20 bytes. When stride is zero the commands are tightly packed.
+    constexpr uint32_t GL_COMMAND_SIZE = 20;
+    uint32_t const commandStride = stride ? stride : GL_COMMAND_SIZE;
+    uint32_t const copySize = drawCount * commandStride;
+
+    // Some GL drivers reject indirect draws whose command buffer was allocated through the
+    // async/shared-context path. Stage the commands into a driver-owned buffer with a GPU-side
+    // copy; this keeps the draw GPU-driven and avoids a CPU round-trip.
+    if (UTILS_UNLIKELY(mIndirectDrawBufferCapacity < copySize)) {
+        if (!mIndirectDrawBuffer) {
+            glGenBuffers(1, &mIndirectDrawBuffer);
+        }
+        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, mIndirectDrawBuffer);
+        glBufferData(GL_DRAW_INDIRECT_BUFFER, copySize, nullptr, GL_STATIC_DRAW);
+        mIndirectDrawBufferCapacity = copySize;
+    }
+
+    glBindBuffer(GL_COPY_READ_BUFFER, bo->gl.id);
+    glBindBuffer(GL_COPY_WRITE_BUFFER, mIndirectDrawBuffer);
+    glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER,
+            GLintptr(indirectOffset), 0, GLsizeiptr(copySize));
+    glBindBuffer(GL_COPY_READ_BUFFER, 0);
+    glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
+
+    gl.bindBuffer(GL_DRAW_INDIRECT_BUFFER, mIndirectDrawBuffer);
+    // glDrawElementsIndirect is core in GL 4.0 and GLES 3.1, while the multi-draw variant is
+    // desktop-only. One call per command keeps the same semantics on both.
+    for (uint32_t i = 0; i < drawCount; ++i) {
+        glDrawElementsIndirect(GLenum(rp->type), rp->gl.getIndicesType(),
+                reinterpret_cast<void const*>(uintptr_t(i * commandStride)));
+    }
+
+    CHECK_GL_ERROR()
+#else
+    utils::panic(__func__, __FILE__, __LINE__, "drawIndexedIndirect requires GLES 3.1");
+#endif
+}
+
 // This is the ES2 version of draw2().
 void OpenGLDriver::draw2GLES2(uint32_t const indexOffset, uint32_t const indexCount, uint32_t const instanceCount) {
     DEBUG_MARKER()
@@ -5221,6 +5286,13 @@ void OpenGLDriver::dispatchCompute(Handle<HwProgram> program, uint3 const workGr
 
 #if defined(BACKEND_OPENGL_LEVEL_GLES31)
 
+    // Descriptor sets are bound lazily before a draw; compute dispatches need the same treatment.
+    auto const invalidDescriptorSets =
+            mInvalidDescriptorSetBindings | mInvalidDescriptorSetBindingOffsets;
+    if (UTILS_UNLIKELY(invalidDescriptorSets.any())) {
+        updateDescriptors(invalidDescriptorSets);
+    }
+
 #if defined(__ANDROID__)
     // on Android, GLES3.1 and above entry-points are defined in glext
     // (this is temporary, until we phase-out API < 21)
@@ -5228,6 +5300,19 @@ void OpenGLDriver::dispatchCompute(Handle<HwProgram> program, uint3 const workGr
 #endif
 
     glDispatchCompute(workGroupCount.x, workGroupCount.y, workGroupCount.z);
+
+    // Compute shader writes are not automatically visible to subsequent commands. Make the
+    // results available to the paths that consume them: shader storage blocks (cluster data,
+    // visibility buffers), buffer updates/readbacks, vertex and index fetches, and indirect
+    // draw arguments emitted by GPU-driven culling.
+    GLbitfield barriers = GL_SHADER_STORAGE_BARRIER_BIT |
+            GL_BUFFER_UPDATE_BARRIER_BIT |
+            GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT |
+            GL_ELEMENT_ARRAY_BARRIER_BIT;
+#if defined(GL_COMMAND_BARRIER_BIT)
+    barriers |= GL_COMMAND_BARRIER_BIT;
+#endif
+    glMemoryBarrier(barriers);
 #endif // BACKEND_OPENGL_LEVEL_GLES31
 
 #if FILAMENT_ENABLE_MATDBG

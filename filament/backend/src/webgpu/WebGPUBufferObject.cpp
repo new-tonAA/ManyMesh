@@ -49,6 +49,7 @@ namespace {
         case BufferObjectBinding::VERTEX:         return wgpu::BufferUsage::Vertex;
         case BufferObjectBinding::UNIFORM:        return wgpu::BufferUsage::Uniform;
         case BufferObjectBinding::SHADER_STORAGE: return wgpu::BufferUsage::Storage;
+        case BufferObjectBinding::INDIRECT:       return wgpu::BufferUsage::Indirect;
     }
 }
 

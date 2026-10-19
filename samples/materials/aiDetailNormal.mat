@@ -1,0 +1,50 @@
+material {
+    name : AiDetailNormal,
+    requires : [
+        uv0
+    ],
+    shadingModel : lit,
+    specularAntiAliasing : true,
+    parameters : [
+        {
+            type : float3,
+            name : baseColor
+        },
+        {
+            type : float,
+            name : metallic
+        },
+        {
+            type : float,
+            name : roughness
+        },
+        {
+            type : float,
+            name : reflectance
+        },
+        {
+            type : float,
+            name : normalStrength
+        },
+        {
+            type : sampler2d,
+            name : normal
+        }
+    ],
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        // The baked map stores the normal detail the LOD dropped, encoded in the same
+        // object-space vertex frame the baker used. Scaling xy lets the renderer dial the
+        // compensation from 0 (pure LOD normals) to 1 (full high-poly detail).
+        vec3 detail = texture(materialParams_normal, getUV0()).xyz * 2.0 - 1.0;
+        detail.xy *= materialParams.normalStrength;
+        material.normal = normalize(detail);
+        prepareMaterial(material);
+        material.baseColor.rgb = materialParams.baseColor;
+        material.metallic = materialParams.metallic;
+        material.roughness = materialParams.roughness;
+        material.reflectance = materialParams.reflectance;
+    }
+}

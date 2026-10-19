@@ -66,6 +66,25 @@ CPU only:
 **Reconstruction works**: at equal resolution a small network recovers +1.88 dB over the
 coarse render, and at half resolution it beats bicubic by about +1 dB.
 
+### Cross-asset check
+
+To see whether that prior transfers, `tiny_s1_no.pt` from the dragon run (3-channel, scale 1,
+about 20k parameters) was applied unchanged to monkey LOD cuts rendered at 960x720 with
+`--no-shadows`:
+
+| Monkey cut | Coarse | + tiny CNN | Delta | Common-coverage PSNR |
+|-|-|-|-|-|
+| 45.25% (7,124 tris) | 42.50 dB | 42.65 dB | +0.15 dB | 37.24 -> 36.85 dB |
+| 38.00% (5,982 tris) | 37.38 dB | 37.52 dB | +0.14 dB | 34.79 -> 34.87 dB |
+| 38.00% + 4x MSAA | 38.81 dB | 38.89 dB | +0.09 dB | - |
+
+The full-image gain comes from edge pixels: the silhouette XOR share of squared error falls
+from 68.3% to 64.1% at 45.25%, while the common-coverage PSNR drops to 36.85 dB (full-image
+SSIM rises from 0.99555 to 0.99583). So this is edge/high-frequency synthesis, not a
+replacement for AO or detail-normal shading. The same-asset result is +1.88 dB and the
+cross-asset result is +0.15 dB: deployment needs a
+diverse training set or per-asset fine-tuning, not a single universal model.
+
 **The error map does not, yet**: its contribution runs from −0.19 dB to +0.13 dB and flips
 sign between models and between the two tasks — far below anything visible. It is not a broken
 signal, it is a redundant one; the section below has the measurements and the reasoning.

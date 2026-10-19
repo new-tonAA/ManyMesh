@@ -68,7 +68,8 @@ public:
     void unbind(uint8_t setIndex);
 
     void commit(VulkanCommandBuffer* commands, VkPipelineLayout pipelineLayout,
-            fvkutils::DescriptorSetMask const& setMask);
+            fvkutils::DescriptorSetMask const& setMask,
+            VkPipelineBindPoint bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS);
 
     fvkmemory::resource_ptr<VulkanDescriptorSet> createSet(Handle<HwDescriptorSet> handle,
             fvkmemory::resource_ptr<VulkanDescriptorSetLayout> layout);
@@ -103,8 +104,14 @@ private:
     std::pair<VulkanAttachment, VkDescriptorImageInfo> mInputAttachment;
     DescriptorSetArray mStashedSets = {};
 
+    // Descriptor sets that are logically bound at the driver level. Unlike mStashedSets, this
+    // survives a commit so that a set can be re-bound to a different pipeline bind point (for
+    // example when a compute dispatch is followed by a draw that reads its output).
+    DescriptorSetArray mCurrentSets = {};
+
     struct {
         VkPipelineLayout pipelineLayout = VK_NULL_HANDLE;
+        VkPipelineBindPoint bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
         fvkutils::DescriptorSetMask setMask;
         DescriptorSetArray boundSets = {};
     } mLastBoundInfo;

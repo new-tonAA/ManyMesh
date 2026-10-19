@@ -29,32 +29,31 @@ using BitmaskGroup = VulkanDescriptorSetLayout::Bitmask;
 template<typename Bitmask>
 uint32_t appendBindings(VkDescriptorSetLayoutBinding* toBind, VkDescriptorType type,
         Bitmask const& mask) {
+    uint8_t bindingToIndex[VulkanDescriptorSetLayout::MAX_BINDINGS];
+    for (auto& index: bindingToIndex) {
+        index = UINT8_MAX;
+    }
     uint32_t count = 0;
-    Bitmask alreadySeen;
     mask.forEachSetBit([&](size_t index) {
-        VkShaderStageFlags stages = 0;
-        uint32_t binding = 0;
-        if (index < fvkutils::getFragmentStageShift<Bitmask>()) {
-            binding = (uint32_t) index;
-            stages |= VK_SHADER_STAGE_VERTEX_BIT;
-            auto fragIndex = index + fvkutils::getFragmentStageShift<Bitmask>();
-            if (mask.test(fragIndex)) {
-                stages |= VK_SHADER_STAGE_FRAGMENT_BIT;
-                alreadySeen.set(fragIndex);
-            }
-        } else if (!alreadySeen.test(index)) {
-            // We are in fragment stage bits
-            binding = (uint32_t) (index - fvkutils::getFragmentStageShift<Bitmask>());
-            stages |= VK_SHADER_STAGE_FRAGMENT_BIT;
+        uint32_t const stage = (uint32_t) (index / Bitmask::BITS_PER_WORD);
+        uint32_t const binding = (uint32_t) (index % Bitmask::BITS_PER_WORD);
+        VkShaderStageFlags stageFlags = 0;
+        switch (stage) {
+            case 0: stageFlags = VK_SHADER_STAGE_VERTEX_BIT; break;
+            case 1: stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT; break;
+            case 2: stageFlags = VK_SHADER_STAGE_COMPUTE_BIT; break;
+            default: return;
         }
-
-        if (stages) {
+        if (bindingToIndex[binding] == UINT8_MAX) {
+            bindingToIndex[binding] = (uint8_t) count;
             toBind[count++] = {
                 .binding = binding,
                 .descriptorType = type,
                 .descriptorCount = 1,
-                .stageFlags = stages,
+                .stageFlags = stageFlags,
             };
+        } else {
+            toBind[bindingToIndex[binding]].stageFlags |= stageFlags;
         }
     });
     return count;
@@ -64,26 +63,22 @@ uint32_t appendSamplerBindings(VkDescriptorSetLayoutBinding* toBind,
         fvkutils::SamplerBitmask const& mask,
         utils::FixedCapacityVector<std::pair<uint64_t, VkSampler>> const& immutableSamplers) {
     using Bitmask = fvkutils::SamplerBitmask;
+    uint8_t bindingToIndex[VulkanDescriptorSetLayout::MAX_BINDINGS];
+    for (auto& index: bindingToIndex) {
+        index = UINT8_MAX;
+    }
     uint32_t count = 0;
-    Bitmask alreadySeen;
     mask.forEachSetBit([&](size_t index) {
-        VkShaderStageFlags stages = 0;
-        uint32_t binding = 0;
-        if (index < fvkutils::getFragmentStageShift<Bitmask>()) {
-            binding = (uint32_t) index;
-            stages |= VK_SHADER_STAGE_VERTEX_BIT;
-            auto fragIndex = index + fvkutils::getFragmentStageShift<Bitmask>();
-            if (mask.test(fragIndex)) {
-                stages |= VK_SHADER_STAGE_FRAGMENT_BIT;
-                alreadySeen.set(fragIndex);
-            }
-        } else if (!alreadySeen.test(index)) {
-            // We are in fragment stage bits
-            binding = (uint32_t) (index - fvkutils::getFragmentStageShift<Bitmask>());
-            stages |= VK_SHADER_STAGE_FRAGMENT_BIT;
+        uint32_t const stage = (uint32_t) (index / Bitmask::BITS_PER_WORD);
+        uint32_t const binding = (uint32_t) (index % Bitmask::BITS_PER_WORD);
+        VkShaderStageFlags stageFlags = 0;
+        switch (stage) {
+            case 0: stageFlags = VK_SHADER_STAGE_VERTEX_BIT; break;
+            case 1: stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT; break;
+            case 2: stageFlags = VK_SHADER_STAGE_COMPUTE_BIT; break;
+            default: return;
         }
-
-        if (stages) {
+        if (bindingToIndex[binding] == UINT8_MAX) {
             auto const immutableSampler = std::find_if(immutableSamplers.begin(),
                     immutableSamplers.end(), [binding](auto const& entry) {
                 return entry.first == binding;
@@ -94,13 +89,16 @@ uint32_t appendSamplerBindings(VkDescriptorSetLayoutBinding* toBind,
                 sampler = &immutableSampler->second;
             }
 
+            bindingToIndex[binding] = (uint8_t) count;
             toBind[count++] = {
                 .binding = binding,
                 .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
                 .descriptorCount = 1,
-                .stageFlags = stages,
+                .stageFlags = stageFlags,
                 .pImmutableSamplers = sampler,
             };
+        } else {
+            toBind[bindingToIndex[binding]].stageFlags |= stageFlags;
         }
     });
     return count;
@@ -147,6 +145,8 @@ VkDescriptorSetLayout VulkanDescriptorSetLayoutCache::getVkLayout(
     count += appendBindings(&toBind[count], VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
             bitmasks.dynamicUbo);
     count += appendBindings(&toBind[count], VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, bitmasks.ubo);
+    count += appendBindings(&toBind[count], VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+            bitmasks.shaderStorage);
     count += appendSamplerBindings(&toBind[count], bitmasks.sampler, immutableSamplers);
     count += appendBindings(&toBind[count], VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
             bitmasks.inputAttachment);

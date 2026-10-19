@@ -56,6 +56,12 @@ struct Cluster {
     Sphere bounds;
     Cone cone;
 
+    //! Material/submesh of every triangle in this unit, or UINT32_MAX when the set is mixed.
+    //! The default clusterizer splits connected attribute charts at material boundaries, so a
+    //! cluster normally carries one of each.
+    uint32_t materialId = UINT32_MAX;
+    uint32_t submeshId = UINT32_MAX;
+
     size_t triangleCount() const noexcept { return indices.size() / 3; }
 };
 

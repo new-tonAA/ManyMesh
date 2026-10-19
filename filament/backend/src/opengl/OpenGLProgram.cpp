@@ -59,6 +59,38 @@ struct OpenGLProgram::LazyInitializationData {
 
 namespace {
 
+#if defined(GL_ES_VERSION_3_1) || !defined(GL_ES_VERSION_2_0)
+// GLSL exposes shader storage blocks by their block name, while the backend API (and SPIR-V)
+// names them after the block instance, e.g. `buffer Output { ... } output_data;`. Try the API
+// name first, then fall back to matching the binding declared in the shader. The fallback is
+// unambiguous only when exactly one active block declares that binding.
+GLuint getShaderStorageBlockIndex(GLuint program, char const* name, GLuint binding) noexcept {
+    GLuint index = glGetProgramResourceIndex(program, GL_SHADER_STORAGE_BLOCK, name);
+    if (index != GL_INVALID_INDEX) {
+        return index;
+    }
+
+    GLint blockCount = 0;
+    glGetProgramInterfaceiv(program, GL_SHADER_STORAGE_BLOCK,
+            GL_ACTIVE_RESOURCES, &blockCount);
+
+    GLuint found = GL_INVALID_INDEX;
+    for (GLint i = 0; i < blockCount; ++i) {
+        GLenum property = GL_BUFFER_BINDING;
+        GLint blockBinding = -1;
+        glGetProgramResourceiv(program, GL_SHADER_STORAGE_BLOCK, GLuint(i),
+                1, &property, 1, nullptr, &blockBinding);
+        if (blockBinding == GLint(binding)) {
+            if (found != GL_INVALID_INDEX) {
+                return GL_INVALID_INDEX;
+            }
+            found = GLuint(i);
+        }
+    }
+    return found;
+}
+#endif
+
 // Number of 'uint32_t' read out of the uniform buffer for a *single* element of a uniform of
 // the given type. This must match exactly what the glUniform*v() calls in updateUniforms()
 // consume, in particular MAT3 is read as a std140 mat3, i.e. 3 columns of 4 floats.
@@ -190,23 +222,40 @@ void OpenGLProgram::initializeProgramState(OpenGLState& gls, GLuint program,
                     if (!entry.name.empty()) {
 #ifndef FILAMENT_SILENCE_NOT_SUPPORTED_BY_ES2
                         if (UTILS_LIKELY(!gls.isES2())) {
-                            GLuint const index = glGetUniformBlockIndex(program,
-                                    entry.name.c_str());
-                            // `binding` is the buffer binding point we assign to this
-                            // descriptor; GLDescriptorSet::bind() reads it back and uses it to
-                            // index OpenGLState's per-target buffer binding cache, which has
-                            // MAX_BUFFER_BINDINGS entries. The descriptor list comes from the
-                            // material file (see ChunkDescriptorBindingsInfo) and can name the
-                            // same uniform block repeatedly, in which case glGetUniformBlockIndex
-                            // succeeds every time and this counter keeps growing, so it has to be
-                            // capped here. Descriptors past the cap are simply not bound.
-                            if (index != GL_INVALID_INDEX &&
-                                    UTILS_LIKELY(binding < OpenGLState::MAX_BUFFER_BINDINGS)) {
-                                // this can fail if the program doesn't use this descriptor
-                                glUniformBlockBinding(program, index, binding);
-                                mBindingMap.insert(set, entry.binding,
-                                        { binding, entry.type });
-                                ++binding;
+                            if (entry.type == DescriptorType::SHADER_STORAGE_BUFFER) {
+#if defined(GL_ES_VERSION_3_1) || !defined(GL_ES_VERSION_2_0)
+                                // SSBOs use a separate block namespace; querying them with
+                                // glGetUniformBlockIndex always fails.
+                                GLuint const index = getShaderStorageBlockIndex(program,
+                                        entry.name.c_str(), entry.binding);
+                                if (index != GL_INVALID_INDEX &&
+                                        UTILS_LIKELY(binding < OpenGLState::MAX_BUFFER_BINDINGS)) {
+                                    glShaderStorageBlockBinding(program, index, binding);
+                                    mBindingMap.insert(set, entry.binding,
+                                            { binding, entry.type });
+                                    ++binding;
+                                }
+#endif
+                            } else {
+                                GLuint const index = glGetUniformBlockIndex(program,
+                                        entry.name.c_str());
+                                // `binding` is the buffer binding point we assign to this
+                                // descriptor; GLDescriptorSet::bind() reads it back and uses it to
+                                // index OpenGLState's per-target buffer binding cache, which has
+                                // MAX_BUFFER_BINDINGS entries. The descriptor list comes from the
+                                // material file (see ChunkDescriptorBindingsInfo) and can name the
+                                // same uniform block repeatedly, in which case
+                                // glGetUniformBlockIndex succeeds every time and this counter keeps
+                                // growing, so it has to be capped here. Descriptors past the cap
+                                // are simply not bound.
+                                if (index != GL_INVALID_INDEX &&
+                                        UTILS_LIKELY(binding < OpenGLState::MAX_BUFFER_BINDINGS)) {
+                                    // this can fail if the program doesn't use this descriptor
+                                    glUniformBlockBinding(program, index, binding);
+                                    mBindingMap.insert(set, entry.binding,
+                                            { binding, entry.type });
+                                    ++binding;
+                                }
                             }
                         } else
 #endif

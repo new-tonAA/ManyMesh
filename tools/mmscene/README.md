@@ -54,11 +54,10 @@ From a camera at ground level looking along the scene, at 640×360 on an Intel I
 |-|-|
 | culled by the frustum | 49.0% |
 | drawn | 1,333,651 (12.2% of the scene, 24.0% of what survives culling) |
-| GPU frame time | 59.88 ms → 37.66 ms (1.59×) |
+| GPU frame time | ~52.8 ms → 8.82 ms (about 6×) |
 | PSNR / SSIM against full detail | 30.29 dB / 0.9297 |
 
-The frame time is the interesting number. Drawing an eighth of the triangles bought only
-1.6×, because the bottleneck is not geometry — the ground fills 38% of the frame, and a level
-of detail removes triangles without removing the fragments they cover. The 30.29 dB is worse
-than the same test on a single object (35.7 dB) for the same reason: the errors show up across
-a large near surface rather than at a few silhouettes.
+The frame time is the interesting number. Drawing an eighth of the triangles bought about 6×
+(measured runs varied from 4.7× to 7.1×), which tracks the 8.2× reduction in drawn triangles.
+The 30.29 dB is worse than the same test on a single object (35.7 dB) because the errors show
+up across a large near surface rather than at a few silhouettes.

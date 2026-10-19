@@ -73,6 +73,8 @@ void VulkanExternalImageManager::updateSetAndLayout(
                 binding + fvkutils::getVertexStageShift<fvkutils::SamplerBitmask>();
         uint8_t const fragmentIndex =
                 binding + fvkutils::getFragmentStageShift<fvkutils::SamplerBitmask>();
+        uint8_t const computeIndex =
+                binding + fvkutils::getComputeStageShift<fvkutils::SamplerBitmask>();
 
         if (layout->bitmask.externalSampler.test(vertexIndex)) {
             actualExternalSamplers.set(vertexIndex);
@@ -80,6 +82,10 @@ void VulkanExternalImageManager::updateSetAndLayout(
 
         if (layout->bitmask.externalSampler.test(fragmentIndex)) {
             actualExternalSamplers.set(fragmentIndex);
+        }
+
+        if (layout->bitmask.externalSampler.test(computeIndex)) {
+            actualExternalSamplers.set(computeIndex);
         }
 
         samplerAndBindings.push_back(

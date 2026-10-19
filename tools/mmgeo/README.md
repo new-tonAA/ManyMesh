@@ -13,21 +13,25 @@ See [`MANYMESH.md`](../../MANYMESH.md) for how this fits into the wider project.
 high poly mesh
       |
       v
+  split connected attribute charts          -> UV/normal seams become cluster borders
+      |
+      v
   clusterize (meshoptimizer meshlets)      -> per-cluster bounding sphere + normal cone
       |
       v
-  group neighbouring clusters (optional)   -> the unit simplification actually works on
+  group adjacent clusters (optional)       -> the unit simplification actually works on
       |
       v
-  QEM simplification                       -> a LOD chain per unit, border locked so that
-                                              neighbouring units do not crack apart
+  attribute QEM + quality gate             -> a LOD chain per unit, border locked so that
+                                              neighbouring units do not crack apart;
+                                              normal/UV cost and world-space error are gated
       |
       v
   screen space error + level selection     -> coarsest level per cluster that fits a pixel
                                               budget, computed from the camera
       |
       v
-  clusters.json + error_map.pgm + OBJs
+  clusters.json + error_map.pgm + OBJs/PLYs
 ```
 
 Everything runs on the CPU and needs no GPU, no Filament engine and no Android. That is
@@ -51,26 +55,52 @@ Everything is registered in the root `CMakeLists.txt` (`add_subdirectory(${TOOLS
 ```text
 mmgeo <input mesh> [options]
 
-  --out <dir>          output directory (default: out/mmgeo)
-  --mode chain|cluster global LOD chain, or per-cluster LOD (default: cluster)
-  --levels N           number of LOD levels including the original (default: 5)
-  --ratio F            fraction of triangles kept per level (default: 0.7)
-  --target-error F     relative error ceiling for simplification (default: 0.01)
-  --cluster-verts N    max vertices per cluster, <= 255 (default: 128)
-  --cluster-tris N     max triangles per cluster, <= 512 (default: 128)
-  --cone-weight F      0 = size driven clusters, 1 = favour cone culling (default: 0)
-  --group-size N       clusters merged into one simplification unit (default: 1)
-  --lock-border 0|1    per-cluster mode: never move cluster borders (default: 1)
-  --eye x,y,z          camera position; omit to auto-frame the mesh
-  --look-at x,y,z      camera target (default: mesh centre)
-  --fov-y <deg>        vertical field of view in degrees (default: 45)
-  --screen-height N    screen height in pixels for the error map (default: 1080)
-  --threshold-px F     screen space error budget in pixels (default: 1.0)
+  --out <dir>           output directory (default: out/mmgeo)
+  --mode chain|cluster|dag
+                        global chain, per-cluster chain, or hierarchical DAG
+  --levels N            number of LOD levels including the original (default: 5)
+  --ratio F             fraction of triangles kept per level (default: 0.7)
+  --target-error F      relative world-space error ceiling (default: 0.01)
+  --cluster-verts N     max vertices per cluster, <= 255 (default: 128)
+  --cluster-tris N      max triangles per cluster, <= 512 (default: 128)
+  --split-charts 0|1    keep clusters inside connected attribute charts (default: 1)
+  --group-size N        clusters merged into one per-cluster unit (default: 1)
+  --dag-group N         children merged into one DAG parent (default: 8)
+  --tier maximum|balanced|aggressive
+                        DAG selection tier (default: balanced)
+  --target-ratio F      DAG selection: smallest cut reaching this triangle ratio
+  --lock-border 0|1     never move cluster borders (default: 1)
+  --attribute-qem 0|1   position + normal + UV QEM for small units (default: 1)
+  --corner-split-uv 0|1 keep divergent per-chart UVs in separate generated vertices
+                        (default: 1; 0 averages them for A/B only)
+  --quality-gate 0|1    reject cracked/non-manifold/flipped/sliver/over-error candidates
+  --quality-debug 0|1   print rejected candidates and their metrics
+  --quality-attempts N  retries per unit after a rejection (default: 4)
+  --min-quality F       minimum normalized triangle quality (default: 0.02)
+  --max-normal-error F  maximum normal deviation in degrees (default: 35)
+  --max-uv-error F      maximum mean UV deviation (default: 0.10)
+  --shade-crease DEG    average duplicate-position shading normals closer than DEG;
+                        does not change the triangle count (default: 0, disabled)
+  --bake-ao N           bake source-mesh AO and bent normal with N hemisphere rays per LOD
+                        vertex; PLY colour R=AO, G/B=tangent-space bent-normal xy
+                        (default: 0, off)
+  --bake-ao-map N       bake source AO into an NxN UV map (ao-map.png); needs UVs in [0,1]
+  --ao-radius R         AO ray length in world units; 0 derives 10% of the bounds diagonal
+  --write-dag 0|1       write lod_graph.mmb / lod_graph.json (default: 1)
+  --visibility 0|1      write the CPU visibility-buffer reference (default: 0)
+  --page-bytes N        streaming page size (default: 65536)
+  --eye x,y,z           camera position; omit to auto-frame the mesh
+  --look-at x,y,z       camera target (default: mesh centre)
+  --fov-y <deg>         vertical field of view in degrees (default: 45)
+  --screen-height N     screen height in pixels for the error map (default: 1080)
+  --threshold-px F      screen-space error budget in pixels (default: 1.0)
 ```
 
 Input can be anything assimp reads: OBJ, PLY, FBX, Collada, ... Triangle soup is triangulated,
-duplicate vertices are welded and node transforms are baked, so everything downstream lives in
-one world space.
+fully identical vertices are joined, and node transforms are baked, so everything downstream
+lives in one world space. UV and normal seams keep their duplicated vertices; those seams are
+used to split connected attribute charts before clustering, so a cluster never simplifies
+across a seam.
 
 Example, on a scan with seven million triangles:
 
@@ -78,19 +108,212 @@ Example, on a scan with seven million triangles:
 mmgeo out/models/xyzrgb_dragon.ply --out out/mmgeo-dragon --levels 5 --cluster-tris 128
 ```
 
+In `--mode dag`, the selected cut is compacted to the source and generated vertices it actually
+references. The `cut vertices:` line reports both ranges, which is what a renderer has to upload
+for the cut; unreferenced source and generated vertices are not part of it.
+
 ## Outputs
 
 | File | Contents |
 |-|-|
 | `clusters.json` | per cluster: bounding sphere, normal cone, and per level the triangle count and world space error |
-| `lod<N>.obj` | every cluster at level N, clamped to the coarsest level a cluster actually has |
-| `selected.obj` | exactly the triangles the given camera and pixel budget would draw |
+| `lod<N>.ply/.obj` | every cluster at level N, clamped to the coarsest level a cluster actually has |
+| `selected.ply/.obj` | exactly the triangles the given camera and pixel budget would draw |
 | `error_map.pgm` | screen space geometry error, software rasterized. Black is untransformed geometry, white is at the pixel budget |
+| `detail-normal.png` | with `--bake-normal N`: tangent-space difference between the source normal field and the selected LOD, neutral is `(128,128,255,0)`; alpha stores the normalized lost-normal angle (`angle / 90°`) for per-texel roughness compensation |
+| `detail-height.png` | with `--bake-height N`: source-to-LOD displacement in the LOD UV atlas (R8, 128 neutral); `.txt` sidecar stores `heightRange` and `recommendedUvScale` |
+| `ao-map.png` | with `--bake-ao-map N`: source-mesh AO in the source UV atlas (R8, dilated 4 texels) |
 
 `error_map.pgm` is a plain binary PGM (P5), which every image viewer and most Python stacks
 read directly.
 
-## The two LOD modes
+## Detail normal bake
+
+`--bake-normal N` rasterizes the source and the selected LOD in their shared UV layout and
+stores, per texel, the source normal expressed in the LOD's interpolated tangent frame. The map
+therefore contains only the detail the LOD dropped; applying it does not replace the LOD's own
+normals.
+
+```bat
+mmgeo monkey.obj --mode dag --target-ratio 0.45 --bake-normal 1024 --out out\monkey
+mm_bench --headless -m aiDetailNormal.filamat ^
+         --detail-normal out\monkey\detail-normal.png --normal-strength 1.0 ^
+         --out out\monkey-detail.png out\monkey\selected.ply
+```
+
+`--normal-strength` scales the correction from 0 (LOD normals only) to 1 (full baked detail).
+The material also enables `specularAntiAliasing`. `mm_bench` builds UV-derived tangents with
+per-chart handedness, which is what makes mirrored UV islands sample the map correctly.
+
+Important measured caveat: ManyMesh's corner simplifier carries the high-poly normals through
+the hierarchy, so the LOD's normal field is already within about 0.7–1.6 degrees of the source
+on the test assets. On monkey at 44.99% the bake is therefore neutral-to-negative
+(37.17 dB / 0.98708 without it, 36.70 dB / 0.98311 with it): the remaining error is geometric
+displacement, which shading cannot recover. The bake is useful for sources with micro-surface
+detail that their vertex density cannot represent, not for meshes whose normals are carried by
+the simplifier.
+
+At the same LOD, pixels within 2 px of the silhouette are 1.5% of the frame but carry 73.4% of
+the squared error; the interior is still 42.85 dB. That is the part no shading trick can fix.
+
+On the 38.00% monkey cut (5,982 triangles, 960x720, direct-only, matched references), 4x MSAA
+raises PSNR from 37.38 to **38.81 dB** (+1.43). AO raises its AO-reference pair from 36.61 to
+**37.33 dB** (+0.72), but adding detail-normal 0.25 lowers it to 37.28 dB, and AO + 4x MSAA
+reaches 38.69 dB, below MSAA alone. AO also produces visible patchy darkening on the chin and
+neck at this coarse cut. Use MSAA first at extreme savings; enable AO only on the 45%+ tiers or
+in a full IBL pipeline, and keep the detail-normal bake opt-in.
+
+A fixed-camera re-check of the same 38.00% cut (`--dag --savings 0.62`, 960x720,
+`--no-shadows`) gives 41.81 dB / 0.99323 without AA, 42.07 dB / 0.99355 with 4x MSAA,
+41.94 dB / 0.99383 with 10-degree/auto seam-normal repair, and **42.17 dB / 0.99401** with
+both. Seam repair is shading-only: it merges duplicate-position normals on the coarse
+triangles and does not change the silhouette. The UI's measured preset applies this pair at
+<45% retention and switches to vertex AO 0.5 at 45%+.
+
+The bake requires a UV atlas in `[0,1]`. The check runs on the UVs the LOD actually references
+with a **2% tolerance**: a generated vertex is a barycentric blend of chart corners and can
+land a few thousandths outside the atlas (monkey at 29.38% reaches `-0.0094`), which the
+rasterizer simply clips. The torus still trips the check because five QEM-extrapolated corners
+reach `1.047` (4.7% outside), so it remains a `--bake-normal` rejection case. A genuinely tiled
+layout, such as cloth's `[-2.39, 5.01] x [0, 3.70]`, is also rejected; unwrap it or bake one map
+per tile first.
+
+## Height / parallax bake
+
+`--bake-height N` rasterizes the source and the selected LOD in the same `[0,1]` UV atlas and
+stores, per shared texel, `dot(sourcePosition - lodPosition, lodNormal)`. Positive values mean
+the source surface is in front of the LOD along its normal; 128 is neutral. This is a signed
+displacement map, not a normal map: a shader uses it to change where it samples, which can
+recover some interior depth and self-occlusion but never silhouette coverage.
+
+```bat
+mmgeo monkey.obj --mode dag --target-ratio 0.45 --bake-height 512 --out out\monkey
+mm_bench --headless -m aiParallax.filamat ^
+         --detail-height out\monkey\detail-height.png ^
+         --parallax-strength 1.0 --parallax-layers 8 ^
+         --out out\monkey-parallax.png out\monkey\selected.ply
+```
+
+The sidecar's `recommendedUvScale` is `heightRange / worldUnitsPerUv`; leave
+`--parallax-scale` negative to read it automatically. On monkey the shared-UV bake covers
+142,104 of 147,585 LOD texels at 45% (5,481 misses), with mean absolute displacement 0.00154
+and recommended scale 0.0414. The 38.19% cut is similar (140,615 covered, 6,408 misses, mean
+0.00169). The previous ray-cast implementation reported 12,070 misses and a mean of 0.0106
+because it could snap to an unrelated surface layer.
+
+Measured at 960x720 with `--no-shadows`, against the full-resolution monkey, POM moves the
+44.99% cut from 40.39 to 40.45 dB at strength 2.0, and the 38.19% cut from 40.05 to 40.10 dB.
+Across four views the median is 42.40 dB without POM and 42.38 dB with it, while SSIM drops
+from 0.99534 to 0.99529. The gain is not robust: the LOD already carries source normals, so the
+remaining error is mostly silhouette and geometric displacement. Keep POM optional and off by
+default for this pipeline; it is useful for assets whose source has real height detail that the
+LOD is a low-frequency proxy for. A height-gradient "micro normal" experiment amplified texel
+quantization into dark edge crusts (32.65 dB at 1x, 40.04 dB at 0.1x) and was not shipped.
+
+## AO map bake
+
+`--bake-ao-map N` bakes source-mesh AO in the source UV atlas. It shares `--ao-samples` and
+`--ao-radius` with the vertex bake, rasterizes every source UV triangle at `N x N`, traces the
+same cosine hemisphere as `bakeVertexAmbientOcclusion()`, and dilates four texels across chart
+borders. The output is a single-channel `ao-map.png` (R8 plus mips at load time).
+
+```bat
+mmgeo monkey.obj --mode dag --target-ratio 0.55 --bake-ao-map 512 --out out\monkey
+mm_bench --headless -m aiBakedAoMap.filamat ^
+         --ao-map out\monkey\ao-map.png --ao-strength 0.5 ^
+         --out out\monkey-ao.png out\monkey\selected.obj
+```
+
+The map is a source-level material asset, not a per-LOD product: every cut that keeps the UV
+parameterization samples the same texture, so it is baked once by `mmgeo`. `mm_bench
+--ao-map-size 512` can also bake it at runtime for quick experiments.
+
+Measured on monkey at 512x512 / 32 samples: 151,190 covered texels (57.7% of the map), mean
+0.914, minimum 0.000, 0.57-0.63 s of CPU time, 256 KiB for the R8 base level. At the same
+44.99% cut the map is only about 0.04-0.08 dB above the vertex AO compared with a reference
+that uses the same AO domain. Its real value is matching a source asset that already ships a UV
+AO map; mixing domains is worse than either one (about 2.5-2.9 dB below the matching
+representation). Tiled or out-of-range UVs are rejected, so torus/cloth should keep using
+`--bake-ao`.
+
+The hemisphere estimate is stochastic, so the baker applies one 3x3 Gaussian pass to covered
+texels by default (`smoothingPasses=1`) before the four-texel dilation. Smoothing never reads
+across an uncovered texel, so chart borders do not bleed into each other. On the 44.99% monkey
+cut the smoothed map scores 41.82 dB against the matching high-poly map reference, versus
+41.77 dB raw. The 512 and 1024 source maps score 57.8 dB PSNR (mean absolute difference
+0.0285/255), while the bake grows from 0.61 s to 2.34 s and memory by 4x; 512 is the default
+for this asset class.
+
+## Shading normal repair
+
+`--shade-crease DEG` is the shading-only alternative. It groups vertices by position, clusters
+their normals by angle, and replaces each cluster with an angle-weighted average. Triangles,
+UVs and topology are untouched. The gate is important: normals farther apart than `DEG` are
+real creases and stay split. `--shade-strength F` (0..1, default 1) blends each source normal
+toward that cluster average instead of applying the full repair; `0` leaves the source normals
+untouched. `mm_bench --shade-auto` derives the blend from the cut's worst screen-space error:
+it stays off below 0.25 px, ramps to the measured optimum of 0.50 at 1 px, and never exceeds
+0.50. Full strength is not better: on monkey at 44.99% it falls back from 41.93 dB / 0.99535
+(0.50) to 41.83 dB / 0.99504 (1.00).
+
+On the 45% monkey cut, same-position normal pairs had a 2.47 degree median and an 11.11 degree
+P90 before the pass. At `--shade-crease 10` the median became 0.01 degrees and pairs above
+5 degrees dropped from 2,318 to 1,330, while the 42 degree hard edge stayed split. Rendered at
+960x720, SSIM moved from 0.99500 to 0.99509; torus at 46.70% moved from 45.81 to 45.91 dB and
+from 0.99825 to 0.99844 SSIM. In the zoomed monkey view 10 degrees removes the thin dark
+normal bands around the nose and right cheek. 20-30 degrees also averages across the eye socket
+and produces dark blotches, so 10 degrees is the recommended maximum for organic assets and
+5 degrees (or off) for hard surfaces. This pass cannot recover silhouette coverage or geometric
+displacement; those still dominate the error.
+
+`samples/materials/aiCavity.mat` is the complementary screen-space experiment. It estimates
+world-space mean curvature from `dFdx/dFdy` and darkens concave regions through
+`MaterialInputs.ambientOcclusion` (so it needs IBL or shadowing to be visible). On the monkey
+44.99% cut it is neutral-to-negative against the high-poly render: 36.29 dB / 0.99293 without
+it, 34.85 dB / 0.98869 at strength 0.25. The LOD already carries the source normals, so the
+screen-space second derivative mostly sees the low-poly facets. Use it as an optional art knob,
+not as a default LOD compensation.
+
+## Source-mesh AO bake
+
+`--bake-ao N` samples cosine-weighted hemisphere visibility on the source mesh and writes it to
+the exported PLY vertex-colour R channel. The same rays accumulate the unoccluded directions
+into a bent normal, packed as tangent-space xy in G/B (z is reconstructed by the shader); an
+unmodified `(128,128)` therefore means "geometric normal". The export uses the same UV tangent
+frame as `mm_bench`, so an offline asset needs no runtime re-bake. It needs no UV atlas, so tiled and out-of-range UV
+layouts work. `--ao-radius R` sets the ray length; leaving it at 0 uses 10% of the source bounds
+diagonal, which keeps the result in local cavities instead of darkening the whole object. The
+bake snaps off-surface QEM vertices to the nearest source triangle before sampling: without
+that step a generated vertex slightly inside the surface sees the whole solid as an occluder.
+Duplicate-position vertices are welded after sampling so LOD seams do not show a thin AO line.
+
+On monkey at 55.01% with 32 rays, the bake covers 21,774 vertices in about 150-190 ms. Rendered
+at 960x720 against the high-poly mesh with the same source AO, strength 0.50 improves PSNR from
+41.64 to 44.92 dB and SSIM from 0.99560 to 0.99660. Strength 1.0 is too dark (40.91 dB).
+The three-view median is 45.35 to 48.21 dB, and the 62%/55%/45% cuts gain 3.78/3.28/2.69 dB,
+so 0.50 is the measured default. A cavity-free torus is approximately neutral (45.81 to
+45.80 dB) and visually unchanged after the snap fix.
+
+The gains above are measured against a high-poly reference that uses the **same vertex AO**.
+Against a plain, unshadowed high-poly reference, the same AO moves PSNR in the other direction
+(42.51 down to 40.45 dB on the 44.99% monkey cut). AO restores a material response that the
+source already has; it does not fabricate the appearance of an unoccluded reference.
+
+PLY vertex colours are consumed by the DAG viewer but not by `MeshAssimp`, so rendering the
+exported PLY through the generic asset path will log a missing colour attribute. Use the DAG
+viewer for now. AO is local visibility only; silhouettes, thin features, contact geometry and
+displacement remain geometric losses that shading cannot recover.
+
+The G/B bent normal is orthogonal diffuse-visibility information, not extra AO. On monkey at
+44.99%, 32 rays tilt 17,027 vertices by 8.4 degrees on average (maximum 89.6). Switching
+`--bent-normal-strength` from 0 to 1 changes the frame by 0.15/255 on average (maximum 16) and
+the difference sits in eye sockets, nostrils and ears. Against a high-poly reference that also
+uses bent normals, PSNR moves from 39.59 to 38.98 dB, so it is a directional-plausibility knob,
+not a PSNR win; `mm_bench` keeps it off by default. The material must assign
+`material.bentNormal` **before** `prepareMaterial()`, because that call caches the world-space
+direction in `shading_bentNormal`.
+
+## The three LOD modes
 
 - **`--mode chain`** is the classic baseline: one LOD chain for the whole mesh, every level
   simplified from the original. This is what a distance based LOD system would ship.
@@ -98,6 +321,25 @@ read directly.
   chain, so the error a level introduces is *local*. A view can then pick a different level per
   cluster instead of one level for everything, which is what turns a fixed LOD into a budget
   that can be spent where it is visible.
+- **`--mode dag`** builds a hierarchical cluster DAG: every cluster keeps its own chain, and
+  groups of up to `--dag-group` children are simplified again as parent nodes. A selection is a
+  non-overlapping cut through this hierarchy, so near clusters can stay at a fine level while
+  far clusters use a coarse ancestor. `--target-ratio` asks for the most detailed cut that fits
+  a triangle budget; `--tier` selects the quality/saving profile. The actual ratio is printed,
+  because the quality gate may stop above the requested budget.
+
+## Quality gate
+
+With `--quality-gate 1` (the default), a candidate level must keep the exact boundary-edge set
+of its source unit, must not add non-manifold edges, must contain no duplicate, degenerate or
+flipped triangles, must meet `--min-quality`, and must stay within the world-space error cap
+derived from `--target-error`. `--quality-debug 1` prints the reason a candidate was rejected.
+
+This is deliberately conservative, but the gate understands welded seams: the two sides of a
+duplicated UV/normal seam can be collapsed together, and the corner simplifier treats three or
+more coincident copies as one welded position (then emits chart-specific generated vertices).
+A dedicated regression test covers four chart copies at one position. Do not relax the quality
+gate to approximate seam handling.
 
 Clusters are simplified with `meshopt_SimplifyLockBorder`, i.e. their outer boundary vertices
 are never removed. Without it, independently simplified neighbours would crack apart along
@@ -137,6 +379,76 @@ which is gitignored — the model is not redistributed with this repository.
 > tool does — are ordinary academic use, but obtain permission before any commercial
 > application. If that becomes necessary, license-clean alternatives exist (Thingi10k, CC0
 > models on Sketchfab).
+
+## Build performance
+
+DAG construction now uses a BVH for the quality gate, shares one closest-point query between
+position and attribute error, and simplifies independent cluster chains and groups in
+parallel. Results are merged in deterministic input order, so the graph is bit-for-bit
+identical to the serial build.
+
+On the bundled cloth asset (74,976 triangles, group 8, five levels, ratio 0.7), the build went
+from **37.02s** to **1.93s** while keeping the same
+`1915 nodes / 7 levels / 252 roots / 589 leaves` and
+`38098 / 74976 = 50.81%` cut. The BVH/shared-query serial path takes **18.18s**, so parallel
+scheduling is a further 9.4x. The 588-node monkey DAG builds in about **0.23s**. Use
+`mmgeo --mode dag ...` to print the cluster, chain, group, and quality-gate phase timings, and
+set `MANYMESH_BUILD_THREADS=1` to reproduce or A/B the serial build.
+
+The corner path also reuses one vertex-only snapshot of the shared mesh across all units in a
+build. The profile line `extended-mesh: ... copies ...` reports the remaining snapshots; on the
+cloth DAG above this dropped from **3.25s / 2197 copies** to **0.28s / 120 copies** and the
+whole build from **21.07s** to **18.63s**, with identical nodes, indices, error fields and
+topology. A snapshot is only refreshed when the internal `meshCacheEpoch` changes, so
+independent builds never share mutable state.
+
+## Corner simplification cost
+
+`--mode dag` also prints a `corner detail` line and a `corner topology` breakdown. The
+counters are accumulated by `CornerSimplifyProfile` and split into setup, evaluation,
+topology (neighbor lists, rewritten triangles, local triangles, local edges), placement
+tests, target evaluation, and apply. This answers whether the QEM, the topology checks, or
+the quality gate dominates without changing the produced graph.
+
+Profiling on monkey, torus and cloth showed topology taking roughly 80% of evaluation time,
+with sort-based local-triangle and local-edge deduplication as the largest parts. Those
+passes now use generation-stamped thread-local scratch buffers. Local edge validation only
+counts edges whose incidence the collapse actually rewrites, and falls back to the full
+two-ring check for non-manifold units. Set
+`MANYMESH_CORNER_FULL_EDGE_CHECK=1` to force the full check; on the bundled assets both paths
+produce identical nodes, indices, cut and topology statistics.
+
+A separate fix stopped dead triangles left in incidence lists from inflating local edge use.
+That removed false topology rejections. The old corner UV consistency gate rejected collapses
+where adjacent triangles of one chart interpolated the same source vertex to different UVs.
+The default now partitions those corners into same-position generated vertices, one per UV
+cluster, so each chart keeps its affine parameterization; `--corner-split-uv 0` reproduces the
+old averaged behavior for A/B only. On the bundled torus the 0.2-ratio cut is **550 triangles
+(47.74%)** with 625 cut vertices (594 generated) when splitting, versus 587 (556 generated) when
+averaging. Monkey at ratio 0.3 is **7,124 triangles (45.25%)** with splitting versus 7,256
+(46.09%) when averaging, and 7,867 versus 7,922 cut vertices. Both paths keep non-manifold,
+duplicate, degenerate and flipped counts at zero.
+After the 2026-10-19 corner-priority change and the attribute-chart tie-break, the default
+split path reaches **400 triangles (34.72%)** on torus and **4,712 (29.93%)** on monkey at
+ratio 0.3, with **4,162 (26.44%)** at ratio 0.2. The same clean topology is preserved.
+The tie-break keeps position error on the true closest triangle but chooses the closest normal
+and UV match among coincident seam triangles; it removed 68 false attribute rejections on
+monkey (80 -> 12) without relaxing a quality threshold. The split/averaged A/B above is kept
+as the historical UV experiment; its absolute counts used the old QEM-cost queue.
+Because more collapses now succeed, the builder can emit an extra level, so wall-clock time
+is not directly comparable to the older 1.93s cloth figure. In the current build the corner
+stage costs about 1.5-3.8 us per evaluation (down from 5-10 us); the older timing for monkey
+was about 3.1s and for cloth about 3.6s. The latest reproducible timings are below.
+
+The 2026-10-18 optimization removes two more per-candidate costs. A corner attempt no longer
+copies the whole shared mesh just to append generated vertices: each worker keeps a base-mesh
+scratch and only rewrites the generated tail. Welded topology and boundary checks now hash the
+vertices the unit actually references instead of allocating model-sized `vector`/`map`
+containers, and compare sorted 64-bit boundary arrays. The same command (cloth, 74,976
+triangles, `--mode dag --levels 7 --cluster-tris 128`) builds in **6.63s instead of 8.42s**
+(-21.3%); cluster chains go from 2.82s to 2.11s and groups from 5.07s to 4.19s. The result is
+unchanged: 1989 nodes, 8 levels, 272 roots, 589 leaves, a 50.00% cut, boundary 500 and zero
+non-manifold/duplicate/flipped triangles. A monkey render is pixel-identical (`PSNR inf`).
 
 ## Measured behaviour
 
@@ -184,12 +496,39 @@ clusters are already at their coarsest level. That is the premise ManyMesh is bu
 carry far more triangles than the image needs — and it means the win has to come from reducing
 *processing cost*, not from chasing visible artefacts.
 
+## Visual regression audit
+
+The reduction was checked by rendering each original mesh and its selected LOD from the same
+camera, resolution and lit material (`aiDefaultMat.filamat`, 960x720), then measuring PSNR/SSIM
+with `tools/mmmetrics/compare.py` and inspecting the frames directly. The 7.2M-triangle dragon
+was rerun with the current chart split; the smaller assets cover explicit UV/normal seams.
+
+| Model | Selected / original | Reduction | PSNR | SSIM | Visual verdict |
+|-|-|-|-|-|-|
+| Stanford dragon | 2,466,045 / 7,219,045 | 34.2% | 35.19 dB | 0.96124 | No holes; scales and horns slightly softened |
+| Sphere | 1,808 / 8,064 | 22.4% | 37.32 dB | 0.99163 | Silhouette facets; a thin lit seam line appears in the most extreme level, but topology stays closed |
+| Monkey | 3,794 / 15,744 | 24.1% | 28.06 dB | 0.93454 | Eyes, ears and chin clearly coarser; no new boundary edges |
+| Torus | 390 / 1,152 | 33.9% | 37.06 dB | 0.99149 | Noticeably polygonal, no cracks |
+| Cloth | 43,098 / 74,976 | 57.5% | 44.27 dB | 0.99709 | Visually unchanged at this framing |
+| Shapes | 15,064 / 73,728 | 20.4% | 63.10 dB | 0.99995 | Floor and small spheres intact |
+
+The important failure that motivated the chart split was a black triangular hole on a sphere
+reduced to 25%: before the fix the render scored 30.75 dB, after it 37.57 dB and the hole was
+gone. The boundary-edge check now also agrees with the source meshes: the sphere and torus stay
+closed, and the monkey's 168 open edges are exactly the ones the original OBJ already has.
+
+Known limits: per-face material IDs are not carried through this pipeline, and simplification
+still uses position-only QEM. Those are separate from geometric tearing, but both matter before
+using the output as a production asset.
+
 ## Implementation notes
 
 The algorithms are `meshoptimizer`'s, not ours: `meshopt_buildMeshlets` for clustering,
 `meshopt_computeMeshletBounds` for the per-cluster bounds, `meshopt_simplify` for the
 quadric-based collapse, and `meshopt_simplifyScale` to put the error in world units.
 meshoptimizer is already vendored and built as part of Filament, so this tool adds no new
-dependency. Note that the vendored version is 0.18, which predates
-`meshopt_simplifyWithAttributes`; simplification is therefore driven by positions alone, and
-attribute seams would have to be handled with `meshopt_generateShadowIndexBuffer` first.
+dependency. The vendored version is 0.18, which predates
+`meshopt_simplifyWithAttributes`; ManyMesh therefore implements its own attribute-aware QEM
+and corner simplifier on top of it. `Clusterizer.cpp` protects attribute seams by splitting the
+mesh into connected charts from the shared-index graph, then clustering and grouping each chart
+independently. Normals and UVs participate in the collapse cost and the quality gate.

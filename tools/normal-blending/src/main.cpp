@@ -220,19 +220,34 @@ int main(int argc, char* argv[]) {
 void blend(const LinearImage& normal, const LinearImage& detail, LinearImage output) {
     const size_t width = output.getWidth();
     const size_t height = output.getHeight();
+    // Detail bakes now carry a fourth channel (the normalized lost-normal angle). Walk the
+    // source rows by their real channel count instead of assuming tightly packed float3 pixels.
+    const size_t normalChannels = normal.getChannels();
+    const size_t detailChannels = detail.getChannels();
+    auto readRgb = [](float const* pixel, size_t channels) {
+        float const r = pixel[0];
+        float const g = channels > 1 ? pixel[1] : r;
+        float const b = channels > 2 ? pixel[2] : r;
+        return float3{ r, g, b };
+    };
 
     for (size_t y = 0; y < height; y++) {
-        auto normalRow = normal.get<float3>(0, y);
-        auto detailRow = detail.get<float3>(0, y);
-        auto outputRow = output.get<float3>(0, y);
+        float const* normalRow = normal.getPixelRef(0, y);
+        float const* detailRow = detail.getPixelRef(0, y);
+        float* outputRow = output.getPixelRef(0, y);
 
-        for (size_t x = 0; x < width; x++, normalRow++, detailRow++, outputRow++) {
+        for (size_t x = 0; x < width; x++) {
             // Reoriented Normal Mapping
-            float3 t = *normalRow * float3( 2,  2, 2) + float3(-1, -1,  0);
-            float3 u = *detailRow * float3(-2, -2, 2) + float3( 1,  1, -1);
+            float3 t = readRgb(normalRow + x * normalChannels, normalChannels) *
+                    float3(2, 2, 2) + float3(-1, -1, 0);
+            float3 u = readRgb(detailRow + x * detailChannels, detailChannels) *
+                    float3(-2, -2, 2) + float3(1, 1, -1);
             float3 r = normalize(t * dot(t, u) - u * t.z);
 
-            *outputRow = r * 0.5 + 0.5;
+            float* const outputPixel = outputRow + x * 3;
+            outputPixel[0] = r.x * 0.5f + 0.5f;
+            outputPixel[1] = r.y * 0.5f + 0.5f;
+            outputPixel[2] = r.z * 0.5f + 0.5f;
         }
     }
 }
