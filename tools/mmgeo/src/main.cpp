@@ -74,6 +74,12 @@ struct Options {
     std::string tierName = "balanced";
     bool useTargetRatio = false;
     float targetTriangleRatio = 0.5f;
+    //! Additional cuts selected by a screen-space error threshold. The DAG is built once, so
+    //! exporting several cuts here is nearly free compared with rebuilding it per render.
+    std::vector<float> screenErrorCuts;
+    //! Extra uniform-ratio cuts exported from the same DAG build, to match the triangle count
+    //! of a screen-error cut without rebuilding.
+    std::vector<float> targetRatioCuts;
     bool writeDag = true;
     bool writeVisibility = false;
     bool attributeQem = true;
@@ -154,6 +160,10 @@ Options:
                        quality/saving tier for DAG selection (default: balanced)
   --target-ratio F     DAG selection: smallest cut that reaches this triangle ratio
                        (overrides --tier)
+  --screen-error-cut P Comma separated screen-space error thresholds in pixels; each one is
+                       exported as selected_px_<P>.ply from the same DAG build
+  --target-ratio-cut R Comma separated uniform ratios; each one is exported as
+                       selected_ratio_<R>.ply from the same DAG build
   --write-dag 0|1      write lod_graph.mmb and lod_graph.json (default: 1)
   --visibility 0|1     write a software visibility buffer for the DAG selection (default: 0)
   --attribute-qem 0|1  use position+normal+UV QEM for small units (default: 1)
@@ -1299,6 +1309,8 @@ int handleArguments(int argc, char* argv[], Options* options) {
         { "dag-group", utils::getopt::required_argument, 0, 'D' },
         { "tier", utils::getopt::required_argument, 0, 'T' },
         { "target-ratio", utils::getopt::required_argument, 0, 'R' },
+        { "screen-error-cut", utils::getopt::required_argument, 0, 'i' },
+        { "target-ratio-cut", utils::getopt::required_argument, 0, 'k' },
         { "write-dag", utils::getopt::required_argument, 0, 'J' },
         { "visibility", utils::getopt::required_argument, 0, 'V' },
         { "attribute-qem", utils::getopt::required_argument, 0, 'a' },
@@ -1397,6 +1409,34 @@ int handleArguments(int argc, char* argv[], Options* options) {
                 options->useTargetRatio = true;
                 options->useTier = false;
                 break;
+            case 'i': {
+                // Comma separated screen-space error thresholds, in pixels.
+                char const* cursor = arg;
+                while (cursor != nullptr && *cursor != '\0') {
+                    char* end = nullptr;
+                    float const value = std::strtof(cursor, &end);
+                    if (end == cursor) {
+                        break;
+                    }
+                    options->screenErrorCuts.push_back(std::max(value, 0.0f));
+                    cursor = (*end == ',') ? end + 1 : end;
+                }
+                break;
+            }
+            case 'k': {
+                // Comma separated uniform triangle ratios, exported from the same DAG build.
+                char const* cursor = arg;
+                while (cursor != nullptr && *cursor != '\0') {
+                    char* end = nullptr;
+                    float const value = std::strtof(cursor, &end);
+                    if (end == cursor) {
+                        break;
+                    }
+                    options->targetRatioCuts.push_back(std::clamp(value, 0.0f, 1.0f));
+                    cursor = (*end == ',') ? end + 1 : end;
+                }
+                break;
+            }
             case 'J':
                 options->writeDag = atoi(arg) != 0;
                 break;
@@ -1796,6 +1836,43 @@ int main(int argc, char* argv[]) {
 
         bakeDetailNormal(mesh, dagMesh, outputFromDagSelection(selection).indices, options);
         bakeDetailHeight(mesh, dagMesh, outputFromDagSelection(selection).indices, options);
+
+        // The DAG build dominates the runtime, so export any extra screen-error cuts while it
+        // is in memory. The M4 allocation experiment renders these meshes directly instead of
+        // rebuilding a DAG for every camera.
+        for (float const px : options.screenErrorCuts) {
+            LodGraphSelection const cut = selectLodGraph(graph, camera, px);
+            GeometryOutput const cutGeometry = outputFromDagSelection(cut);
+            char name[64];
+            std::snprintf(name, sizeof(name),
+                    options.dumpPly ? "selected_px_%g.ply" : "selected_px_%g.obj", double(px));
+            std::string const cutPath = join(options.outDir, name);
+            writeGeometry(dagMesh, cutGeometry, cutPath.c_str(), options, nullptr, nullptr);
+            printf("  screen-error cut %.4g px: %llu triangles (%.4f%%), wrote %s\n",
+                    double(px), (unsigned long long) cut.selectedTriangles,
+                    graph.baseTriangles > 0
+                            ? 100.0 * double(cut.selectedTriangles) / double(graph.baseTriangles)
+                            : 0.0,
+                    cutPath.c_str());
+        }
+
+        for (float const ratio : options.targetRatioCuts) {
+            LodGraphSelection const cut = selectLodGraphAtRatio(graph, camera, ratio,
+                    std::numeric_limits<float>::infinity());
+            GeometryOutput const cutGeometry = outputFromDagSelection(cut);
+            char name[64];
+            std::snprintf(name, sizeof(name),
+                    options.dumpPly ? "selected_ratio_%g.ply" : "selected_ratio_%g.obj",
+                    double(ratio));
+            std::string const cutPath = join(options.outDir, name);
+            writeGeometry(dagMesh, cutGeometry, cutPath.c_str(), options, nullptr, nullptr);
+            printf("  uniform cut %.4g: %llu triangles (%.4f%%), wrote %s\n",
+                    double(ratio), (unsigned long long) cut.selectedTriangles,
+                    graph.baseTriangles > 0
+                            ? 100.0 * double(cut.selectedTriangles) / double(graph.baseTriangles)
+                            : 0.0,
+                    cutPath.c_str());
+        }
 
         std::vector<uint8_t> const blob = serializeLodGraph(graph);
         std::string const dagPath = join(options.outDir, "lod_graph.mmb");

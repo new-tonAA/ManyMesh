@@ -69,3 +69,28 @@ that quality, so the ranking is unchanged after reconstruction. At the quality f
 The honest reading is that "allocate by geometric error" is not a free win, and at 38 dB the
 reconstructor has no headroom to reverse it. A joint-optimization result needs a lower-quality
 geometry regime or a temporal reconstruction budget; see section 7.10 of `MANYMESH.md`.
+
+## Offline cuts for large assets
+
+Building a DAG inside every `mm_bench` run is practical up to a few hundred thousand triangles;
+on the 2M-triangle dragon coarse mesh one build takes minutes. `mmgeo` can now build the DAG
+once and export several cuts from it:
+
+```text
+--target-ratio-cut 0.262,0.287    uniform cuts -> selected_ratio_<R>.ply
+--screen-error-cut 1,2,4         screen-error cuts -> selected_px_<P>.ply
+```
+
+The primary `--target-ratio` output is still `selected.ply`. Render the exported meshes with:
+
+```shell
+python tools/m4alloc/run_preselected.py \
+    --uniform-mesh selected_ratio_0.262.ply --distance-mesh selected_px_2.ply \
+    --target-mesh full_detail.ply --out out/run --views 8 --iterations 2000
+```
+
+`run_budget_sweep.py` takes a comma-separated list of such meshes and reports PSNR versus
+triangle count for bicubic and tiny. It can reuse an existing target set
+(`--target-dir out/m3 --camera-list out/m3/views.txt`) so a multi-million-triangle target is
+rendered once, not once per sweep. The horizontal gap between the bicubic and tiny curves is
+the geometry budget the reconstructor buys; that is the useful M4 quantity.

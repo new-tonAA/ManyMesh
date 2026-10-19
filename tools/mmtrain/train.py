@@ -393,6 +393,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__,
             formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--data", default="out/m3")
+    parser.add_argument("--val-data", default="",
+            help="optional separate validation directory; when set, --data is used in full "
+                 "for training and every view in this directory is held out")
     parser.add_argument("--model", default="tiny", choices=MODELS)
     parser.add_argument("--scale", type=int, default=2,
             help="observation is reduced by this factor; 1 means compared at equal resolution")
@@ -411,6 +414,8 @@ def main():
             help="feed the error map raw, at the scale the geometry stage produced it")
     parser.add_argument("--out", default="")
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--eval-only", default="",
+            help="load this checkpoint and evaluate on --val-data without training")
     args = parser.parse_args()
 
     torch.manual_seed(args.seed)
@@ -419,10 +424,20 @@ def main():
     with_error_map = not args.no_error_map
     views = load_dataset(args.data, with_error_map, not args.no_normalize_error,
             args.stack)
-    if len(views) <= args.val_views:
-        raise SystemExit("not enough views to hold any out for validation")
-    train_views = views[:len(views) - args.val_views]
-    val_views = views[len(views) - args.val_views:]
+    if args.val_data:
+        # A separate validation set lets the training set grow with more assets without moving
+        # the held-out views, which is the only way to compare "more data" against the old
+        # single-asset number.
+        val_views = load_dataset(args.val_data, with_error_map,
+                not args.no_normalize_error, args.stack)
+        train_views = views
+        if not val_views:
+            raise SystemExit(f"no views under {args.val_data}")
+    else:
+        if len(views) <= args.val_views:
+            raise SystemExit("not enough views to hold any out for validation")
+        train_views = views[:len(views) - args.val_views]
+        val_views = views[len(views) - args.val_views:]
 
     post_upsample = args.model in POST_UPSAMPLE
     in_channels = 3 * args.stack + (1 if with_error_map else 0)
@@ -443,6 +458,19 @@ def main():
 
     model = build_model(args.model, in_channels, args.scale, args.channels)
     print(f"  {sum(p.numel() for p in model.parameters())} parameters")
+
+    if args.eval_only:
+        # Cross-asset evaluation: load a checkpoint and score it on a *different* asset's
+        # held-out views without touching the weights.
+        model.load_state_dict(torch.load(args.eval_only, map_location="cpu"))
+        metrics = evaluate(model, val_views, args.scale, post_upsample)
+        print(f"  eval-only: PSNR {metrics['psnr']:.2f} dB   SSIM {metrics['ssim']:.4f}"
+              f"   (per view {[round(v, 1) for v in metrics['per_view_psnr']]})")
+        if args.out:
+            with open(args.out, "w", encoding="utf-8") as handle:
+                json.dump({"model": args.model, "scale": args.scale, "eval_only": args.eval_only,
+                           "metrics": metrics}, handle, indent=2)
+        return 0
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     loss_fn = nn.L1Loss()
