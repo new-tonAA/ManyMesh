@@ -151,7 +151,9 @@ def load_dataset(data_dir, with_error_map, normalize_error, stack=1):
 
         error = load_error(data_dir, index, with_error_map, normalize_error)
 
-        views.append({"lr": lr, "hr": hr, "error": error})
+        # `prepare_input` is written in terms of temporal frames; a plain view is a sequence
+        # of one, which also gives the bicubic floor the same code path.
+        views.append({"frames": [lr], "lr": lr, "hr": hr, "error": error})
 
     return views
 

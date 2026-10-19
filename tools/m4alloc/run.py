@@ -61,9 +61,14 @@ def fmt(values):
     return ",".join(f"{value:.6f}" for value in values)
 
 
-def orbit_eye(base_eye, target, view, views):
-    """The same azimuthal orbit mm_bench uses for --views."""
-    angle = 2.0 * math.pi * float(view) / float(max(views, 1))
+def orbit_eye(base_eye, target, view, views, span_degrees):
+    """Azimuthal orbit. A span below 360 keeps the same depth structure across views, which a
+    full orbit does not: the side views of a depth row are all at the same distance."""
+    if span_degrees >= 360.0:
+        angle = 2.0 * math.pi * float(view) / float(max(views, 1))
+    else:
+        fraction = float(view) / float(max(views - 1, 1))
+        angle = math.radians(-0.5 * span_degrees + span_degrees * fraction)
     offset = [base_eye[i] - target[i] for i in range(3)]
     c, s = math.cos(angle), math.sin(angle)
     return [target[0] + offset[0] * c - offset[2] * s,
@@ -75,7 +80,7 @@ def run_bench(mesh, out_png, eye, target, extra, size):
     os.makedirs(os.path.dirname(out_png), exist_ok=True)
     command = [BENCH, "--headless", "--window-size", size, "--fixed-timestep=0.0166667",
                "--out", out_png, "--eye", fmt(eye), "--target", fmt(target),
-               "--warmup", "2", "--measure", "4", "--no-shadows"] + extra + [mesh]
+               "--warmup", "1", "--measure", "1", "--no-shadows"] + extra + [mesh]
     result = subprocess.run(command, capture_output=True, text=True)
     if result.returncode != 0:
         sys.stderr.write(result.stdout[-4000:])
@@ -141,6 +146,7 @@ def train(data_dir, model, iterations, seed, out_prefix):
 
 
 def main():
+    global BENCH
     parser = argparse.ArgumentParser(description=__doc__,
             formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--mesh", default=os.path.join("assets", "models", "monkey",
@@ -149,6 +155,8 @@ def main():
     parser.add_argument("--eye", default="0,-0.02,3.25")
     parser.add_argument("--target", default="0,-0.016,0")
     parser.add_argument("--views", type=int, default=8)
+    parser.add_argument("--view-span", type=float, default=360.0,
+            help="azimuth span in degrees; below 360 keeps every view looking into the scene")
     parser.add_argument("--size", default="640x360")
     parser.add_argument("--ratios", default="0.35",
             help="comma separated retained triangle ratios to compare")
@@ -159,7 +167,6 @@ def main():
     parser.add_argument("--bench", default=BENCH, help="mm_bench executable")
     args = parser.parse_args()
 
-    global BENCH
     # Windows CreateProcess does not resolve a relative executable path containing forward
     # slashes, so normalise it once.
     BENCH = os.path.abspath(args.bench)
@@ -167,7 +174,8 @@ def main():
     ratios = [float(value) for value in args.ratios.split(",")]
     base_eye = vec(args.eye)
     target = vec(args.target)
-    eyes = [orbit_eye(base_eye, target, view, args.views) for view in range(args.views)]
+    eyes = [orbit_eye(base_eye, target, view, args.views, args.view_span)
+            for view in range(args.views)]
     os.makedirs(args.out, exist_ok=True)
 
     summary_path = os.path.join(args.out, "summary.json")

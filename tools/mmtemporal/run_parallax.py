@@ -79,7 +79,7 @@ def main():
 
     common = ["--views", str(args.views), "--frames", str(args.frames),
               "--translate", str(args.translate), "--eye", args.eye, "--target", args.target,
-              "--warmup", "2", "--measure", "4", "--no-shadows"]
+              "--warmup", "1", "--measure", "1", "--no-shadows"]
     run([args.bench, "--headless", "--window-size", args.lr_size,
          "--fixed-timestep=0.0166667", "--out", os.path.join(args.out, "lr.png"),
          "--camera-out", cameras] + common + [args.lr_mesh], "coarse sequence")

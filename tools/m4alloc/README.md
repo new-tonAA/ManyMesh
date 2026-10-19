@@ -44,3 +44,28 @@ The distance allocation has a screen-error threshold rather than a triangle rati
 bisects the threshold until its measured ratio matches the uniform cut's measured ratio within
 the tolerance of the sweep. Both strategies are then compared at the same number of drawn
 triangles, which is the constraint that matters on a mobile GPU.
+
+The distance selector is discrete: on monkey at 640x360 its cuts are 4,162 / 5,130 / 5,966 /
+6,914 / 7,642 triangles, and a threshold in the middle of a plateau does not move the cut. The
+uniform selector can hit values in between, so an arbitrary `--ratios` target can leave the two
+strategies a few percent apart. Pick uniform targets equal to one of the distance cuts (0.264,
+0.326, 0.379, 0.439, 0.485) when an exactly matched comparison matters. The first run at 0.35
+landed at 5,504 uniform versus 5,130 distance; that is why the matched runs use 0.326 and 0.379.
+
+## What it showed
+
+On a single centered object the two strategies are not merely similar: at matched triangle
+counts they render **bit-identical images**. There is no allocation freedom to measure, because
+every cluster is at the same depth and the ratio bisection lands on the same DAG levels as the
+error threshold. This is a property of the benchmark, not of the implementation; M4 has to use a
+scene with depth variation.
+
+A three-instance row (3 monkeys along z, 47,232 triangles, camera at the near end) does have a
+real difference: at 35% (16,532 versus 16,300 triangles) 0.03–0.46% of pixels differ, and
+**uniform wins by 0.56 dB** (38.52 versus 37.96). The tiny network adds only +0.04–0.05 dB at
+that quality, so the ranking is unchanged after reconstruction. At the quality floor (31.86%,
+15,050 triangles) both strategies again collapse to the same cut and produce identical images.
+
+The honest reading is that "allocate by geometric error" is not a free win, and at 38 dB the
+reconstructor has no headroom to reverse it. A joint-optimization result needs a lower-quality
+geometry regime or a temporal reconstruction budget; see section 7.10 of `MANYMESH.md`.
