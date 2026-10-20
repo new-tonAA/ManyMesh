@@ -59,8 +59,8 @@ import torch
 import torch.nn as nn
 from PIL import Image
 
-MODELS = ("bicubic", "tiny", "kpn", "espcn", "fsrcnn", "unet")
-POST_UPSAMPLE = ("espcn", "fsrcnn")
+MODELS = ("bicubic", "tiny", "tiny_up", "kpn", "espcn", "fsrcnn", "unet")
+POST_UPSAMPLE = ("tiny_up", "espcn", "fsrcnn")
 
 
 def read_pgm(path):
@@ -147,7 +147,11 @@ def load_dataset(data_dir, with_error_map, normalize_error, stack=1):
         hr = np.asarray(hr_image).astype(np.float32) / 255.0
 
         if lr.shape != hr.shape:
-            raise SystemExit(f"{lr_path} and {hr_path} differ in size")
+            # A scale-2+ dataset stores the observation at a reduced resolution; it only has
+            # to be an integer fraction of the target.
+            if (hr.shape[0] % lr.shape[0] != 0 or hr.shape[1] % lr.shape[1] != 0
+                    or hr.shape[0] < lr.shape[0] or hr.shape[1] < lr.shape[1]):
+                raise SystemExit(f"{lr_path} and {hr_path} differ in size")
 
         error = load_error(data_dir, index, with_error_map, normalize_error)
 
@@ -172,6 +176,32 @@ class Tiny(nn.Module):
 
     def forward(self, x):
         return x[:, :3] + self.body(x)
+
+
+class TinyUpsample(nn.Module):
+    """Ours, post-upsample variant: the convolutions run at the low resolution.
+
+    The same-resolution Tiny still runs its 32-channel stack at the *output* resolution, which
+    costs 135-167 ms per 640x360 frame on one CPU core. Here the stack sees 320x180, the
+    residual is pixel-shuffled to 640x360 and added to a bicubic base. The texture at the low
+    resolution is exactly the expensive part, so this is the deployment-relevant shape.
+    """
+
+    def __init__(self, in_channels, scale, channels=32):
+        super().__init__()
+        self.scale = scale
+        self.shuffle = nn.PixelShuffle(scale)
+        self.body = nn.Sequential(
+            nn.Conv2d(in_channels, channels, 3, padding=1), nn.ReLU(inplace=True),
+            nn.Conv2d(channels, channels, 3, padding=1), nn.ReLU(inplace=True),
+            nn.Conv2d(channels, channels, 3, padding=1), nn.ReLU(inplace=True),
+            nn.Conv2d(channels, 3 * scale * scale, 3, padding=1),
+        )
+
+    def forward(self, x):
+        base = nn.functional.interpolate(x[:, :3], scale_factor=self.scale,
+                mode="bicubic", align_corners=False)
+        return base + self.shuffle(self.body(x))
 
 
 class KernelPredictor(nn.Module):
@@ -282,6 +312,8 @@ class SmallUNet(nn.Module):
 def build_model(name, in_channels, scale, channels):
     if name == "tiny":
         return Tiny(in_channels, channels)
+    if name == "tiny_up":
+        return TinyUpsample(in_channels, scale, channels)
     if name == "kpn":
         return KernelPredictor(in_channels, scale, channels)
     if name == "espcn":

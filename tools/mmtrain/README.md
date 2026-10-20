@@ -42,6 +42,7 @@ has to beat.
 | `--model` | Source |
 |-|-|
 | `tiny` | ours: a few 3×3 convolutions predicting a residual over the observation |
+| `tiny_up` | ours, post-upsample: the same conv stack at the low resolution, a PixelShuffle residual over a bicubic base |
 | `espcn` | Shi et al., CVPR 2016, sub-pixel convolution |
 | `fsrcnn` | Dong et al., ECCV 2016, shrinking / mapping / expanding |
 | `unet` | a small encoder-decoder, as a capacity check rather than a proposal |
@@ -173,6 +174,16 @@ Simulating low resolution by downscaling a high resolution render does not work:
 A bicubic downscale has already averaged four samples, so it is supersampled rather than low
 resolution - 1.8 dB better, and it cannot show a temporal effect at all (measured +0.06 dB
 against +0.35 dB for the real thing).
+
+## Post-upsample cost and quality
+
+`tiny_up` exists because the same-resolution `tiny` spends most of its time on the output grid:
+at 640x360 the 32-channel stack costs 40 ms on 16 CPU threads and 167 ms on one. `tiny_up` runs
+the stack at 320x180 and adds a PixelShuffle residual to a bicubic base, which costs 13.6 ms on
+4 threads. That is fast enough to matter, but on the dragon cross-budget data (6.92% of the
+triangles) it scores **28.07 dB** against **28.69 dB** for bicubic: the cheap path loses the
+quality gain. The same-resolution `tiny` is the one that gains +1.25 to +1.94 dB, and it needs
+the full-resolution grid to do so. See section 7.12 of `MANYMESH.md` for the end-to-end numbers.
 
 ## Fairness note
 
