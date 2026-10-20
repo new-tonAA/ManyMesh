@@ -92,6 +92,8 @@ def main():
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--shadows", action="store_true",
             help="render with sun shadows, as the out/m3 targets were")
+    parser.add_argument("--render-only", action="store_true",
+            help="render the pairs and stop; useful before assembling a cross-budget set")
     parser.add_argument("--bench", default=os.path.join("out", "cmake-release", "samples",
                                                         "mm_bench.exe"))
     args = parser.parse_args()
@@ -135,21 +137,28 @@ def main():
                     eye, target_view, args.size, args.shadows)
         for path in glob.glob(os.path.join(target_dir, "hr_v*.png")):
             shutil.copy2(path, os.path.join(budget_dir, os.path.basename(path)))
-        tiny = train(budget_dir, "tiny", args.iterations, args.seed,
-                os.path.join(budget_dir, "tiny"))
-        bicubic = train(budget_dir, "bicubic", args.iterations, args.seed,
-                os.path.join(budget_dir, "bicubic"))
-        summary.append({
+        entry = {
             "mesh": mesh,
             "triangles": triangles,
             "ratio": triangles / base_triangles,
-            "tiny": tiny["metrics"],
-            "bicubic": bicubic["metrics"],
-        })
+        }
+        if not args.render_only:
+            tiny = train(budget_dir, "tiny", args.iterations, args.seed,
+                    os.path.join(budget_dir, "tiny"))
+            bicubic = train(budget_dir, "bicubic", args.iterations, args.seed,
+                    os.path.join(budget_dir, "bicubic"))
+            entry["tiny"] = tiny["metrics"]
+            entry["bicubic"] = bicubic["metrics"]
+        summary.append(entry)
         with open(summary_path, "w", encoding="utf-8") as handle:
             json.dump({"baseTriangles": base_triangles, "entries": summary}, handle, indent=2)
 
     print("\n=== budget sweep ===")
+    if args.render_only:
+        print(f"{'tris':>9} {'ratio':>8}")
+        for entry in sorted(summary, key=lambda item: item["triangles"]):
+            print(f"{entry['triangles']:>9} {100.0 * entry['ratio']:>7.2f}%")
+        return 0
     print(f"{'tris':>9} {'ratio':>8} {'bicubic':>9} {'tiny':>9} {'delta':>8}")
     for entry in sorted(summary, key=lambda item: item["triangles"]):
         bicubic = entry["bicubic"]["psnr"]
