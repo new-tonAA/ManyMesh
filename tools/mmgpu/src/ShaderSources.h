@@ -117,15 +117,10 @@ bool outsideFrustum(GpuNode node) {
     if (depth + node.radius < pc.nearPlane || depth - node.radius > pc.farPlane) {
         return true;
     }
-    float halfHeight = depth * pc.tanHalfFov;
-    float halfWidth = halfHeight * pc.aspect;
-    if (abs(dot(d, right)) - node.radius > halfWidth) {
-        return true;
-    }
-    if (abs(dot(d, up)) - node.radius > halfHeight) {
-        return true;
-    }
-    return false;
+    float tanX = pc.tanHalfFov * pc.aspect;
+    float tanY = pc.tanHalfFov;
+    return abs(dot(d, right)) - depth * tanX > node.radius * sqrt(1.0 + tanX * tanX) ||
+           abs(dot(d, up)) - depth * tanY > node.radius * sqrt(1.0 + tanY * tanY);
 }
 
 float screenError(GpuNode node) {

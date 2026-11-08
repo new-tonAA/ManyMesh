@@ -461,6 +461,38 @@ TEST(ManyMesh, LodGraphCutUsesNearestSphereDepth) {
     EXPECT_EQ(coarse.nodes[0], 0u);
 }
 
+TEST(ManyMesh, FrustumCutKeepsSpheresIntersectingSidePlanes) {
+    using filament::math::float3;
+    LodGraph graph;
+    graph.levelCount = 1;
+    graph.baseTriangles = 1;
+    graph.roots = { 0 };
+    graph.leaves = { 0 };
+    graph.nodes.resize(1);
+    LodGraphNode& node = graph.nodes.front();
+    node.indices = { 0, 1, 2 };
+    node.baseTriangles = 1;
+
+    ViewCamera camera;
+    camera.eye = { 0.0f, 0.0f, 0.0f };
+    camera.target = { 0.0f, 0.0f, -1.0f };
+    camera.fovY = 1.5707963f;
+    camera.screenWidth = camera.screenHeight = 720;
+
+    // At z = -10 the side planes are at x and y = +/-10. An axis offset of 1.2 is
+    // only 1.2 / sqrt(2) from the plane, so a unit sphere still intersects the frustum.
+    float3 const axes[] = { { 1, 0, 0 }, { -1, 0, 0 }, { 0, 1, 0 }, { 0, -1, 0 } };
+    for (float3 const axis: axes) {
+        node.bounds = { float3{ 0, 0, -10 } + axis * 11.2f, 1.0f };
+        EXPECT_EQ(selectLodGraphCut(graph, camera, 2.0f).selectedTriangles, 1u);
+        EXPECT_EQ(selectLodGraph(graph, camera, 2.0f).selectedTriangles, 1u);
+
+        node.bounds.center += axis * 0.3f;
+        EXPECT_EQ(selectLodGraphCut(graph, camera, 2.0f).culledTriangles, 1u);
+        EXPECT_EQ(selectLodGraph(graph, camera, 2.0f).culledTriangles, 1u);
+    }
+}
+
 TEST(ManyMesh, AssembleLodSelectionMatchesTheGreedyCut) {
     Mesh const mesh = makeGrid(20, 20, { 0.0f, 0.0f, 0.0f }, 1.0f, 0.3f);
     LodGraphOptions options;

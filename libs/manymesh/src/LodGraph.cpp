@@ -355,15 +355,13 @@ bool sphereOutsideFrustum(Sphere const& sphere, ViewCamera const& camera,
     if (depth + sphere.radius < camera.near || depth - sphere.radius > camera.far) {
         return true;
     }
-    float const halfHeight = depth * basis.tanHalfFovY;
-    float const halfWidth = halfHeight * basis.aspect;
-    if (std::abs(dot(d, basis.right)) - sphere.radius > halfWidth) {
-        return true;
-    }
-    if (std::abs(dot(d, basis.up)) - sphere.radius > halfHeight) {
-        return true;
-    }
-    return false;
+    // The side plane normals have length sqrt(1 + tanHalfFov^2).
+    float const tanX = basis.tanHalfFovY * basis.aspect;
+    float const tanY = basis.tanHalfFovY;
+    return std::abs(dot(d, basis.right)) - depth * tanX >
+                   sphere.radius * std::sqrt(1.0f + tanX * tanX) ||
+           std::abs(dot(d, basis.up)) - depth * tanY >
+                   sphere.radius * std::sqrt(1.0f + tanY * tanY);
 }
 
 float screenErrorForNode(LodGraphNode const& node, ScreenErrorProjection const& projection) {

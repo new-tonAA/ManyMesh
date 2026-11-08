@@ -90,15 +90,10 @@ bool outsideFrustum(GpuNode node) {
     if (depth + node.radius < params.nearPlane || depth - node.radius > params.farPlane) {
         return true;
     }
-    float halfHeight = depth * params.tanHalfFov;
-    float halfWidth = halfHeight * params.aspect;
-    if (abs(dot(d, right)) - node.radius > halfWidth) {
-        return true;
-    }
-    if (abs(dot(d, up)) - node.radius > halfHeight) {
-        return true;
-    }
-    return false;
+    float tanX = params.tanHalfFov * params.aspect;
+    float tanY = params.tanHalfFov;
+    return abs(dot(d, right)) - depth * tanX > node.radius * sqrt(1.0 + tanX * tanX) ||
+           abs(dot(d, up)) - depth * tanY > node.radius * sqrt(1.0 + tanY * tanY);
 }
 
 float screenError(GpuNode node) {
@@ -228,15 +223,10 @@ bool outsideFrustum(GpuNode node) {
     if (depth + node.radius < params.nearPlane || depth - node.radius > params.farPlane) {
         return true;
     }
-    float halfHeight = depth * params.tanHalfFov;
-    float halfWidth = halfHeight * params.aspect;
-    if (abs(dot(d, right)) - node.radius > halfWidth) {
-        return true;
-    }
-    if (abs(dot(d, up)) - node.radius > halfHeight) {
-        return true;
-    }
-    return false;
+    float tanX = params.tanHalfFov * params.aspect;
+    float tanY = params.tanHalfFov;
+    return abs(dot(d, right)) - depth * tanX > node.radius * sqrt(1.0 + tanX * tanX) ||
+           abs(dot(d, up)) - depth * tanY > node.radius * sqrt(1.0 + tanY * tanY);
 }
 
 float screenError(GpuNode node) {

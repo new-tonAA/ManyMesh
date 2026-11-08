@@ -331,6 +331,7 @@ bool g_shadowProxyInScene = false;
 Box g_lodBounds;
 float g_sceneDiagonal = 0.0f;
 uint32_t g_lodSelectedTriangles = 0;
+uint64_t g_lodDrawnTriangles = 0;
 uint32_t g_lodBaseTriangles = 0;
 uint32_t g_lodCutVertexCount = 0;
 uint32_t g_lodCutGeneratedVertices = 0;
@@ -1073,18 +1074,11 @@ void destroyLodRenderable(Engine* engine) {
     if (engine != nullptr) {
         if (g_lodRenderable) {
             engine->destroy(g_lodRenderable);
-        }
-        if (g_lodIndexBuffer != nullptr) {
-            engine->destroy(g_lodIndexBuffer);
+            utils::EntityManager::get().destroy(g_lodRenderable);
         }
         destroyCompactLodBuffers(engine);
     }
     g_lodRenderable = {};
-    g_lodIndexBuffer = nullptr;
-    g_lodGpuBuffer = {};
-    g_lodNodeFirstIndex.clear();
-    g_lodNodeIndexCount.clear();
-    g_lodPrimitiveCapacity = 0;
 }
 
 // One material instance per source material id. The ids themselves are preserved by the
@@ -1564,7 +1558,7 @@ VertexBuffer* createCompactLodVertexBuffer(Engine* engine,
     return buffer;
 }
 
-IndexBuffer* createCompactLodIndexBuffer(Engine* engine, std::vector<uint32_t> const& indices,
+IndexBuffer* createLodIndexBuffer(Engine* engine, std::vector<uint32_t> const& indices,
         uint32_t vertexCount) {
     size_t const capacity = std::max<size_t>(indices.size(), 3);
     bool const wide = vertexCount > 65535;
@@ -1660,32 +1654,12 @@ void createLodRenderable(Engine* engine) {
         return;
     }
 
-    bool const wide = g_lodMesh.positions.size() > 65535;
-    size_t const capacity = std::max<size_t>(g_lodGpuBuffer.indices.size(), 3);
-    g_lodIndexBuffer = IndexBuffer::Builder()
-                               .indexCount(uint32_t(capacity))
-                               .bufferType(wide ? IndexBuffer::IndexType::UINT
-                                                : IndexBuffer::IndexType::USHORT)
-                               .build(*engine);
-
-    if (wide) {
-        auto* const indexData = new uint32_t[capacity]();
-        std::copy(g_lodGpuBuffer.indices.begin(), g_lodGpuBuffer.indices.end(), indexData);
-        g_lodIndexBuffer->setBuffer(*engine,
-                IndexBuffer::BufferDescriptor(indexData, capacity * sizeof(uint32_t),
-                        [](void* buffer, size_t, void*) {
-                            delete[] static_cast<uint32_t*>(buffer);
-                        }));
-    } else {
-        auto* const indexData = new uint16_t[capacity]();
-        for (size_t i = 0; i < g_lodGpuBuffer.indices.size(); ++i) {
-            indexData[i] = uint16_t(g_lodGpuBuffer.indices[i]);
+    if (g_lodIndexBuffer == nullptr) {
+        g_lodIndexBuffer =
+                createLodIndexBuffer(engine, g_lodGpuBuffer.indices, g_lodGraph.vertexCount);
+        if (g_lodIndexBuffer == nullptr) {
+            return;
         }
-        g_lodIndexBuffer->setBuffer(*engine,
-                IndexBuffer::BufferDescriptor(indexData, capacity * sizeof(uint16_t),
-                        [](void* buffer, size_t, void*) {
-                            delete[] static_cast<uint16_t*>(buffer);
-                        }));
     }
 
     g_lodRenderable = utils::EntityManager::get().create();
@@ -1790,7 +1764,7 @@ void refreshShadowProxyGeometry(Engine* engine) {
     }
 
     IndexBuffer* const newIndexBuffer =
-            createCompactLodIndexBuffer(engine, indices, uint32_t(g_lodMesh.positions.size()));
+            createLodIndexBuffer(engine, indices, uint32_t(g_lodMesh.positions.size()));
     if (newIndexBuffer == nullptr) {
         return;
     }
@@ -1906,7 +1880,7 @@ void rebuildCompactLodGeometry(Engine* engine) {
 
     VertexBuffer* const vertexBuffer = createCompactLodVertexBuffer(engine, globalIds);
     IndexBuffer* const indexBuffer =
-            createCompactLodIndexBuffer(engine, reordered, compacted.vertexCount);
+            createLodIndexBuffer(engine, reordered, compacted.vertexCount);
     if (vertexBuffer == nullptr || indexBuffer == nullptr) {
         if (vertexBuffer != nullptr) {
             engine->destroy(vertexBuffer);
@@ -1917,6 +1891,17 @@ void rebuildCompactLodGeometry(Engine* engine) {
         return;
     }
 
+    if (groups.size() > g_lodPrimitiveCapacity) {
+        destroyLodRenderable(engine);
+        g_lodPrimitiveCapacity = uint32_t(groups.size());
+        createLodRenderable(engine);
+        if (!g_lodRenderable) {
+            engine->destroy(indexBuffer);
+            engine->destroy(vertexBuffer);
+            return;
+        }
+    }
+    g_lodDrawnTriangles = reordered.size() / 3;
     RenderableManager& rcm = engine->getRenderableManager();
     RenderableManager::Instance const instance = rcm.getInstance(g_lodRenderable);
     size_t const groupCount = std::min<size_t>(groups.size(), g_lodPrimitiveCapacity);
@@ -1954,13 +1939,14 @@ void rebuildCutIndexGeometry(Engine* engine) {
     std::vector<LodCompactDrawGroup> const groups =
             buildCutIndexGroups(g_lodSelection.nodes, &reordered);
     IndexBuffer* const indexBuffer =
-            createCompactLodIndexBuffer(engine, reordered, g_lodGraph.vertexCount);
+            createLodIndexBuffer(engine, reordered, g_lodGraph.vertexCount);
     if (indexBuffer == nullptr) {
         return;
     }
 
     if (groups.size() != g_lodPrimitiveCapacity) {
         destroyLodRenderable(engine);
+        g_lodPrimitiveCapacity = uint32_t(std::max<size_t>(groups.size(), 1));
         createLodRenderable(engine);
         if (!g_lodRenderable || g_lodIndexBuffer == nullptr) {
             engine->destroy(indexBuffer);
@@ -1983,6 +1969,7 @@ void rebuildCutIndexGeometry(Engine* engine) {
 
     destroyCompactLodBuffers(engine);
     g_lodCompactIndexBuffer = indexBuffer;
+    g_lodDrawnTriangles = reordered.size() / 3;
     g_lodCompactFirstIndex.resize(groups.size());
     g_lodCompactIndexCount.resize(groups.size());
     g_lodCompactMaterialIds.resize(groups.size());
@@ -2020,18 +2007,20 @@ void rebuildLodGeometry(Engine* engine) {
     size_t mergedRanges = 0;
     if (g_mergeDraws) {
         coalesced = buildCoalescedDrawGroups(nodes, &mergedRanges);
-        if (coalesced.size() != g_lodPrimitiveCapacity) {
-            // The renderable's primitive count is fixed at build time. Rebuild it when a new cut
-            // needs a different number of coalesced ranges instead of leaving thousands of empty
-            // primitives for the renderer to walk every frame.
-            destroyLodRenderable(engine);
-            createLodRenderable(engine);
-            if (!g_lodRenderable || g_lodIndexBuffer == nullptr) {
-                return;
-            }
-        }
     }
     size_t const drawGroupCount = g_mergeDraws ? coalesced.size() : nodes.size();
+    size_t const capacity = std::max<size_t>(drawGroupCount, 1);
+    if (capacity > g_lodPrimitiveCapacity ||
+            (g_mergeDraws && !g_distanceLod && capacity != g_lodPrimitiveCapacity)) {
+        // Retain the peak capacity as the camera moves. The static index buffer stays
+        // resident even when a larger cut needs a new renderable.
+        destroyLodRenderable(engine);
+        g_lodPrimitiveCapacity = uint32_t(capacity);
+        createLodRenderable(engine);
+        if (!g_lodRenderable) {
+            return;
+        }
+    }
     if (g_dag) {
         std::printf("dag: drawCalls cutNodes=%zu drawGroups=%zu mergedRanges=%zu\n", nodes.size(),
                 drawGroupCount, mergedRanges);
@@ -2040,12 +2029,14 @@ void rebuildLodGeometry(Engine* engine) {
     // a zero index count, so changing a cut performs no CPU index packing and no GPU upload.
     RenderableManager& rcm = engine->getRenderableManager();
     RenderableManager::Instance const instance = rcm.getInstance(g_lodRenderable);
+    g_lodDrawnTriangles = 0;
     for (uint32_t i = 0; i < g_lodPrimitiveCapacity; ++i) {
         if (g_mergeDraws && i < coalesced.size()) {
             LodCompactDrawGroup const& group = coalesced[i];
             rcm.setMaterialInstanceAt(instance, i, lodMaterialFor(group.materialId));
             rcm.setGeometryAt(instance, i, RenderableManager::PrimitiveType::TRIANGLES,
                     g_lodVertexBuffer, g_lodIndexBuffer, group.firstIndex, group.indexCount);
+            g_lodDrawnTriangles += group.indexCount / 3;
         } else if (!g_mergeDraws && i < nodes.size()) {
             uint32_t const nodeId = nodes[i];
             mm::LodGraphNode const& node = g_lodGraph.nodes[nodeId];
@@ -2053,6 +2044,7 @@ void rebuildLodGeometry(Engine* engine) {
             rcm.setGeometryAt(instance, i, RenderableManager::PrimitiveType::TRIANGLES,
                     g_lodVertexBuffer, g_lodIndexBuffer, g_lodNodeFirstIndex[nodeId],
                     g_lodNodeIndexCount[nodeId]);
+            g_lodDrawnTriangles += g_lodNodeIndexCount[nodeId] / 3;
         } else {
             rcm.setGeometryAt(instance, i, RenderableManager::PrimitiveType::TRIANGLES,
                     g_lodVertexBuffer, g_lodIndexBuffer, 0, 0);
@@ -2113,11 +2105,13 @@ void updateLodCompensationWeights() {
     }
 }
 
-void updateLodSelection(Engine* engine) {
+bool updateLodSelection(Engine* engine, bool cameraUpdate = false) {
     if (g_lodGraph.nodes.empty()) {
-        return;
+        return false;
     }
     auto const start = std::chrono::steady_clock::now();
+    mm::LodGraphSelection selection;
+    bool changed = true;
     float const targetKeep = std::clamp(1.0f - g_lodSavings, 0.01f, 1.0f);
     mm::LodTierProfile const profile = mm::lodTierProfile(g_lodTier);
     float const ceiling = g_ignoreQualityCeiling ? std::numeric_limits<float>::infinity()
@@ -2132,9 +2126,9 @@ void updateLodSelection(Engine* engine) {
             if (g_gpuCutSelector.select(*engine, g_lodCamera, g_lodScreenErrorPx, &gpuResult,
                         &error)) {
                 std::sort(gpuResult.nodes.begin(), gpuResult.nodes.end());
-                g_lodSelection = mm::assembleLodSelection(g_lodGraph, g_lodCamera,
+                selection = mm::assembleLodSelection(g_lodGraph, g_lodCamera,
                         std::move(gpuResult.nodes), gpuResult.culledTriangles);
-                g_gpuCutNodeCount = uint32_t(g_lodSelection.nodes.size());
+                g_gpuCutNodeCount = uint32_t(selection.nodes.size());
                 g_gpuCutSelectedTriangles = gpuResult.selectedTriangles;
                 g_gpuCutCulledTriangles = gpuResult.culledTriangles;
                 g_gpuCutMs = gpuResult.wallMs;
@@ -2143,9 +2137,8 @@ void updateLodSelection(Engine* engine) {
                 if (!g_gpuCutVerified) {
                     mm::LodGraphSelection const cpu =
                             mm::selectLodGraph(g_lodGraph, g_lodCamera, g_lodScreenErrorPx);
-                    std::vector<uint32_t> gpuNodes = g_lodSelection.nodes;
+                    std::vector<uint32_t> const& gpuNodes = selection.nodes;
                     std::vector<uint32_t> cpuNodes = cpu.nodes;
-                    std::sort(gpuNodes.begin(), gpuNodes.end());
                     std::sort(cpuNodes.begin(), cpuNodes.end());
                     uint64_t mismatch = 0;
                     size_t gpuIndex = 0;
@@ -2173,7 +2166,7 @@ void updateLodSelection(Engine* engine) {
                     std::printf("gpu: cut nodes=%zu triangles=%llu gpuWall=%.3fms "
                                 "cpuNodes=%zu cpuTriangles=%llu nodeMismatch=%llu "
                                 "triangleMismatch=%llu\n",
-                            g_lodSelection.nodes.size(),
+                            selection.nodes.size(),
                             (unsigned long long) gpuResult.selectedTriangles, gpuResult.wallMs,
                             cpu.nodes.size(), (unsigned long long) cpu.selectedTriangles,
                             (unsigned long long) g_gpuCutNodeMismatch,
@@ -2189,32 +2182,59 @@ void updateLodSelection(Engine* engine) {
                 g_gpuCutActive = false;
             }
         }
-        if (!selectedOnGpu) {
-            g_lodSelection = mm::selectLodGraph(g_lodGraph, g_lodCamera, g_lodScreenErrorPx);
+        if (selectedOnGpu) {
+            changed = !cameraUpdate || selection.nodes != g_lodSelection.nodes;
+        } else if (cameraUpdate) {
+            mm::LodGraphCut cut = mm::selectLodGraphCut(g_lodGraph, g_lodCamera, g_lodScreenErrorPx);
+            changed = cut.nodes != g_lodSelection.nodes;
+            if (changed && (g_ui || g_compactVertices || g_shadeErrorDriven)) {
+                selection = mm::assembleLodSelection(g_lodGraph, g_lodCamera,
+                        std::move(cut.nodes), cut.culledTriangles);
+            } else {
+                // Static draw ranges and compact-cut indices both consume node IDs directly.
+                selection.nodes = std::move(cut.nodes);
+                selection.selectedTriangles = cut.selectedTriangles;
+                selection.screenErrorPerNode = std::move(cut.screenErrorPerNode);
+                selection.culledTriangles = cut.culledTriangles;
+            }
+        } else {
+            selection = mm::selectLodGraph(g_lodGraph, g_lodCamera, g_lodScreenErrorPx);
         }
     } else {
         // Editor path: solve for the most detailed cut that fits a triangle budget. This is a
         // binary search over thresholds and is intentionally not the per-frame runtime path.
-        g_lodSelection = mm::selectLodGraphAtRatio(g_lodGraph, g_lodCamera, targetKeep, ceiling);
+        selection = mm::selectLodGraphAtRatio(g_lodGraph, g_lodCamera, targetKeep, ceiling);
     }
     auto const end = std::chrono::steady_clock::now();
     g_lodSelectionMs = std::chrono::duration<double, std::milli>(end - start).count();
-    g_lodSelectedTriangles = uint32_t(g_lodSelection.selectedTriangles);
-    mm::LodGraphCompactOptions compactOptions;
-    compactOptions.compactSourceVertices = true;
-    auto const compactStart = std::chrono::steady_clock::now();
-    mm::LodGraphCutGeometry const compacted =
-            mm::compactLodSelection(g_lodGraph, g_lodSelection, compactOptions);
-    auto const compactEnd = std::chrono::steady_clock::now();
-    g_lodCompactMs = std::chrono::duration<double, std::milli>(compactEnd - compactStart).count();
-    g_lodCutVertexCount = compacted.vertexCount;
-    g_lodCutGeneratedVertices = uint32_t(compacted.generatedVertices.size());
+    if (changed) {
+        g_lodSelection = std::move(selection);
+        g_lodSelectedTriangles = uint32_t(g_lodSelection.selectedTriangles);
+        if (!cameraUpdate || g_ui) {
+            mm::LodGraphCompactOptions compactOptions;
+            compactOptions.compactSourceVertices = true;
+            auto const compactStart = std::chrono::steady_clock::now();
+            mm::LodGraphCutGeometry const compacted =
+                    mm::compactLodSelection(g_lodGraph, g_lodSelection, compactOptions);
+            auto const compactEnd = std::chrono::steady_clock::now();
+            g_lodCompactMs =
+                    std::chrono::duration<double, std::milli>(compactEnd - compactStart).count();
+            g_lodCutVertexCount = compacted.vertexCount;
+            g_lodCutGeneratedVertices = uint32_t(compacted.generatedVertices.size());
+            g_lodTopology = mm::measureTopology(g_lodMesh, g_lodSelection.indices);
+        }
+    } else {
+        g_lodSelection.screenErrorPerNode = std::move(selection.screenErrorPerNode);
+        g_lodSelection.culledTriangles = selection.culledTriangles;
+    }
     g_lodMaxScreenError = 0.0f;
     for (float error: g_lodSelection.screenErrorPerNode) {
         g_lodMaxScreenError = std::max(g_lodMaxScreenError, error);
     }
-    updateLodCompensationWeights();
-    g_lodTopology = mm::measureTopology(g_lodMesh, g_lodSelection.indices);
+    if (!cameraUpdate || g_shadeErrorDriven) {
+        updateLodCompensationWeights();
+    }
+    return changed;
 }
 
 void printBuildProfile(char const* name, mm::SimplifyProfile const& profile) {
@@ -2296,8 +2316,7 @@ void reportLodStats() {
             g_compactVertices ? "on" : "off");
     std::printf("dag: drawing=%s drawnTriangles=%llu\n",
             g_showOriginal ? "original" : "selectedCut",
-            (unsigned long long) (g_showOriginal ? g_lodMesh.triangleCount()
-                                                 : g_lodSelectedTriangles));
+            (unsigned long long) g_lodDrawnTriangles);
     std::printf("dag: cutVertices=%u of %u (generated %u of %zu, %.1f%% of global buffer)\n",
             g_lodCutVertexCount, g_lodGraph.vertexCount, g_lodCutGeneratedVertices,
             g_lodGraph.generatedVertices.size(),
@@ -2549,6 +2568,20 @@ bool bakeLodVertexAo();
 
 void applyMeasuredShadingPreset(Engine* engine, View* view);
 
+mm::ViewCamera readLodCamera(Camera const& camera, Viewport const& viewport) {
+    mm::ViewCamera result;
+    result.eye = float3(camera.getPosition());
+    result.target = result.eye + camera.getForwardVector();
+    result.up = camera.getUpVector();
+    result.fovY = camera.getFieldOfViewInDegrees(Camera::Fov::VERTICAL) *
+            (3.14159265358979323846f / 180.0f);
+    result.screenWidth = viewport.width;
+    result.screenHeight = viewport.height;
+    result.near = float(camera.getNear());
+    result.far = float(camera.getCullingFar());
+    return result;
+}
+
 // Runtime A/B switch for the interactive viewer. The combined material is already resident, so
 // this only changes a uniform plus the lazily baked inputs; no material or renderable rebuild is
 // needed. Enabling attempts a texture-space AO bake first and falls back to vertex AO for assets
@@ -2762,11 +2795,21 @@ void setupLodViewer(Engine* engine, View* view, Scene* scene) {
     uploadLodVertexData(engine);
 
     Viewport const& vp = view->getViewport();
-    g_lodCamera.fovY = 45.0f * 3.14159265358979323846f / 180.0f;
-    g_lodCamera.screenWidth = vp.width;
-    g_lodCamera.screenHeight = vp.height;
-    g_lodCamera.eye = g_eye;
-    g_lodCamera.target = g_target;
+    g_screenHeightForJitter = int(vp.height);
+    g_cameraEntity = utils::EntityManager::get().create();
+    g_camera = engine->createCamera(g_cameraEntity);
+    float const aspect = vp.height > 0 ? float(vp.width) / float(vp.height) : 1.0f;
+    float const distance = length(g_eye - g_target);
+    g_camera->setProjection(45.0, aspect, std::max(distance * 0.01, 1e-3), distance * 20.0);
+    g_camera->lookAt(g_eye, g_target, { 0.0f, 1.0f, 0.0f });
+    view->setCamera(g_camera);
+    g_lodCamera = readLodCamera(*g_camera, vp);
+    if (!g_distanceLod) {
+        // Keep the fixed-budget reference camera used by the geometry comparisons.
+        g_lodCamera.near = mm::ViewCamera{}.near;
+        g_lodCamera.far = mm::ViewCamera{}.far;
+    }
+    writeCameraList(int(vp.width), int(vp.height));
     updateLodSelection(engine);
     bool presetApplied = false;
     if (g_autoShadingPreset) {
@@ -2808,13 +2851,6 @@ void setupLodViewer(Engine* engine, View* view, Scene* scene) {
             .build(*engine, g_lightEntity);
     scene->addEntity(g_lightEntity);
 
-    g_cameraEntity = utils::EntityManager::get().create();
-    g_camera = engine->createCamera(g_cameraEntity);
-    float const aspect = vp.height > 0 ? float(vp.width) / float(vp.height) : 1.0f;
-    float const distance = length(g_eye - g_target);
-    g_camera->setProjection(45.0, aspect, std::max(distance * 0.01, 1e-3), distance * 20.0);
-    g_camera->lookAt(g_eye, g_target, { 0.0f, 1.0f, 0.0f });
-    view->setCamera(g_camera);
     view->setPostProcessingEnabled(false);
     if (g_taa) {
         view->setPostProcessingEnabled(true);
@@ -3515,6 +3551,10 @@ void cleanup(Engine* engine, View*, Scene* scene) {
     destroyShadowProxy(engine);
 
     if (engine != nullptr) {
+        if (g_lodIndexBuffer != nullptr) {
+            engine->destroy(g_lodIndexBuffer);
+            g_lodIndexBuffer = nullptr;
+        }
         for (auto const& material: g_meshMaterialInstances) {
             engine->destroy(material.second);
         }
@@ -3574,17 +3614,22 @@ void cleanup(Engine* engine, View*, Scene* scene) {
     }
 
     g_meshSet.reset();
+    g_lodGpuBuffer = {};
+    g_lodNodeFirstIndex.clear();
+    g_lodNodeIndexCount.clear();
+    g_lodPrimitiveCapacity = 0;
     g_scene = nullptr;
 }
 
-void preRender(Engine*, View* view, Scene*, Renderer* renderer) {
+void preRender(Engine* engine, View* view, Scene*, Renderer* renderer) {
     // Without an IBL the swap chain has to be cleared explicitly, and the exposure has to be
     // pinned: both are what turns a lit scene into pixels, and both have to be identical across
     // runs for two screenshots to be comparable.
     renderer->setClearOptions({ .clearColor = { 0.0f, 0.0f, 0.0f, 1.0f }, .clear = true });
+    bool const reposition = g_repositionCamera;
     if (g_camera != nullptr) {
         g_camera->setExposure(16.0f, 1.0f / 125.0f, 100.0f); // f/16, 1/125s, ISO 100
-        if (g_repositionCamera) {
+        if (reposition) {
             // The flag rather than a frame counter: the capture callback runs on the backend
             // thread and can land after this callback has already run for the frame, so a
             // counter reset would be incremented past zero before it was ever observed.
@@ -3593,7 +3638,47 @@ void preRender(Engine*, View* view, Scene*, Renderer* renderer) {
             g_repositionCamera = false;
         }
     }
-    (void) view;
+    if (!g_distanceLod || g_lodGraph.nodes.empty() || !view->hasCamera()) {
+        return;
+    }
+    Viewport const& viewport = view->getViewport();
+    if (viewport.width == 0 || viewport.height == 0) {
+        return;
+    }
+    Camera& camera = view->getCamera();
+    bool const viewportChanged = viewport.width != g_lodCamera.screenWidth ||
+            viewport.height != g_lodCamera.screenHeight;
+    if (&camera == g_camera && viewportChanged) {
+        camera.setProjection(camera.getFieldOfViewInDegrees(Camera::Fov::VERTICAL),
+                double(viewport.width) / viewport.height, camera.getNear(), camera.getCullingFar());
+    }
+    mm::ViewCamera const current = readLodCamera(camera, viewport);
+    bool const cameraChanged = current.eye != g_lodCamera.eye ||
+            current.target != g_lodCamera.target || current.up != g_lodCamera.up ||
+            current.fovY != g_lodCamera.fovY || current.near != g_lodCamera.near ||
+            current.far != g_lodCamera.far || viewportChanged;
+    auto const start = std::chrono::steady_clock::now();
+    bool cutChanged = false;
+    if (cameraChanged) {
+        g_lodCamera = current;
+        cutChanged = updateLodSelection(engine, true);
+        if (g_shadeErrorDriven && !g_showOriginal) {
+            uploadLodVertexData(engine);
+        }
+        if (!g_showOriginal && (cutChanged || (g_shadeErrorDriven && g_compactVertices))) {
+            rebuildLodGeometry(engine);
+        }
+    }
+    if (g_dag && (reposition || cameraChanged)) {
+        double const updateMs = std::chrono::duration<double, std::milli>(
+                std::chrono::steady_clock::now() - start).count();
+        std::printf("dag: cameraCut view=%d changed=%d nodes=%zu culledTriangles=%llu "
+                    "drawnTriangles=%llu selectionMs=%.3f updateMs=%.3f\n",
+                g_currentView, cutChanged, g_lodSelection.nodes.size(),
+                (unsigned long long) g_lodSelection.culledTriangles,
+                (unsigned long long) g_lodDrawnTriangles,
+                cameraChanged ? g_lodSelectionMs : 0.0, updateMs);
+    }
 }
 
 void captureScreenshot(Engine*, View* view, Renderer* renderer) {
