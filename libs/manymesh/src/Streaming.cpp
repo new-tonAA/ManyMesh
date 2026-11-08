@@ -998,7 +998,7 @@ bool parseCivetUrl(std::string const& url, ParsedCivetUrl* parsed, std::string* 
     }
 
     std::string host = authority;
-    std::string portText;
+    size_t portStart = std::string::npos;
     if (authority.front() == '[') {
         size_t const close = authority.find(']');
         if (close == std::string::npos) {
@@ -1011,7 +1011,7 @@ bool parseCivetUrl(std::string const& url, ParsedCivetUrl* parsed, std::string* 
                 *error = "URL has an invalid port";
                 return false;
             }
-            portText = authority.substr(close + 2);
+            portStart = close + 2;
         }
     } else {
         size_t const colon = authority.rfind(':');
@@ -1021,12 +1021,12 @@ bool parseCivetUrl(std::string const& url, ParsedCivetUrl* parsed, std::string* 
                 return false;
             }
             host = authority.substr(0, colon);
-            portText = authority.substr(colon + 1);
+            portStart = colon + 1;
         }
     }
-    if (!portText.empty()) {
+    if (portStart != std::string::npos) {
         int port = 0;
-        for (char c: portText) {
+        for (char c: authority.substr(portStart)) {
             if (c < '0' || c > '9') {
                 *error = "URL has an invalid port";
                 return false;
@@ -1313,7 +1313,8 @@ bool HttpByteRangeFetcher::fetch(uint64_t offset, size_t size, std::vector<uint8
     int const written = mg_printf(connection,
             "GET %s HTTP/1.1\r\nHost: %s\r\nRange: bytes=%llu-%llu\r\n"
             "Accept-Encoding: identity\r\nConnection: close\r\n\r\n",
-            mImpl->civetwebPath.c_str(), hostHeader.c_str(), offset, end);
+            mImpl->civetwebPath.c_str(), hostHeader.c_str(),
+            static_cast<unsigned long long>(offset), end);
     if (written <= 0) {
         mImpl->error = "mg_printf failed";
         mg_close_connection(connection);

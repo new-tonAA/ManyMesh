@@ -1704,7 +1704,7 @@ TEST(ManyMesh, AsyncStreamingCacheDropsPagesQueuedForAnOlderCut) {
 }
 
 TEST(ManyMesh, HttpByteRangeFetcherValidatesUrls) {
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(MANYMESH_HTTP_CIVETWEB)
     HttpByteRangeFetcher const https("https://cdn.example.com/assets/lod_graph.mmb");
     EXPECT_TRUE(https.valid()) << https.lastError();
     EXPECT_EQ(https.url(), "https://cdn.example.com/assets/lod_graph.mmb");
@@ -1717,6 +1717,8 @@ TEST(ManyMesh, HttpByteRangeFetcherValidatesUrls) {
 
     EXPECT_FALSE(HttpByteRangeFetcher("ftp://example.com/lod_graph.mmb").valid());
     EXPECT_FALSE(HttpByteRangeFetcher("https://example.com:0/lod_graph.mmb").valid());
+    EXPECT_FALSE(HttpByteRangeFetcher("https://example.com:/lod_graph.mmb").valid());
+    EXPECT_FALSE(HttpByteRangeFetcher("http://[::1]:/lod_graph.mmb").valid());
     EXPECT_FALSE(HttpByteRangeFetcher("https://example.com:notaport/lod_graph.mmb").valid());
     EXPECT_FALSE(HttpByteRangeFetcher("https:///lod_graph.mmb").valid());
 #else
