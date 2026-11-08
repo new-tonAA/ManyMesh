@@ -588,6 +588,40 @@ void VulkanPipelineCache::bindProgram(fvkmemory::resource_ptr<VulkanProgram> pro
 #endif
 }
 
+VkPipeline VulkanPipelineCache::getOrCreateComputePipeline(VkShaderModule shader,
+        VkPipelineLayout layout) noexcept {
+    ComputePipelineKey const key = {
+        .shader = shader,
+        .layout = layout,
+    };
+    if (auto iter = mComputePipelines.find(key); iter != mComputePipelines.end()) {
+        iter.value().lastUsed = mCurrentTime;
+        return iter.value().handle;
+    }
+
+    VkComputePipelineCreateInfo const createInfo = {
+        .sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
+        .stage = {
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            .stage = VK_SHADER_STAGE_COMPUTE_BIT,
+            .module = shader,
+            .pName = "main",
+        },
+        .layout = layout,
+    };
+    VkPipeline pipeline = VK_NULL_HANDLE;
+    VkResult const error = vkCreateComputePipelines(
+            mDevice, mPipelineCache, 1, &createInfo, VKALLOC, &pipeline);
+    FILAMENT_CHECK_POSTCONDITION(error == VK_SUCCESS)
+            << "vkCreateComputePipelines error " << error;
+
+    mComputePipelines.emplace(key, PipelineCacheEntry {
+        .handle = pipeline,
+        .lastUsed = mCurrentTime,
+    });
+    return pipeline;
+}
+
 void VulkanPipelineCache::bindRasterState(RasterState const& rasterState) noexcept {
     RasterState& dsTarget = mHasDynamicState ?
             mDynamicPipelineKey.rasterState : mStaticPipelineKey.rasterState;
@@ -696,6 +730,10 @@ void VulkanPipelineCache::terminate() noexcept {
         vkDestroyPipeline(mDevice, iter.second.handle, VKALLOC);
     }
     mPipelines.clear();
+    for (auto& iter : mComputePipelines) {
+        vkDestroyPipeline(mDevice, iter.second.handle, VKALLOC);
+    }
+    mComputePipelines.clear();
     resetBoundPipeline();
 
     mCallbackManager.terminate();
@@ -725,6 +763,18 @@ void VulkanPipelineCache::gc() noexcept {
        if (cacheEntry.lastUsed + FVK_MAX_PIPELINE_AGE < mCurrentTime) {
            vkDestroyPipeline(mDevice, iter->second.handle, VKALLOC);
            iter = mPipelines.erase(iter);
+       } else {
+           ++iter;
+       }
+   }
+
+   using ConstComputePipeIterator = decltype(mComputePipelines)::const_iterator;
+   for (ConstComputePipeIterator iter = mComputePipelines.begin();
+           iter != mComputePipelines.end();) {
+       auto const& cacheEntry = iter.value();
+       if (cacheEntry.lastUsed + FVK_MAX_PIPELINE_AGE < mCurrentTime) {
+           vkDestroyPipeline(mDevice, iter->second.handle, VKALLOC);
+           iter = mComputePipelines.erase(iter);
        } else {
            ++iter;
        }

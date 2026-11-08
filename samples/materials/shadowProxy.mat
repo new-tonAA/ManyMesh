@@ -1,0 +1,16 @@
+material {
+    name : ShadowProxy,
+    shadingModel : unlit,
+    // The proxy exists only to feed the shadow map. Writing neither colour nor depth keeps it
+    // invisible to the main camera pass while still allowing the shadow pass to use its geometry.
+    colorWrite : false,
+    depthWrite : false,
+    culling : none,
+    variantFilter : [ skinning, shadowReceiver, vsm, fog ],
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+    }
+}

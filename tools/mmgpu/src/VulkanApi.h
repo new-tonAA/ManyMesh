@@ -83,6 +83,11 @@ struct VulkanApi {
     PFN_vkCmdBeginRenderPass CmdBeginRenderPass = nullptr;
     PFN_vkCmdEndRenderPass CmdEndRenderPass = nullptr;
     PFN_vkCmdCopyImageToBuffer CmdCopyImageToBuffer = nullptr;
+    PFN_vkCreateQueryPool CreateQueryPool = nullptr;
+    PFN_vkDestroyQueryPool DestroyQueryPool = nullptr;
+    PFN_vkGetQueryPoolResults GetQueryPoolResults = nullptr;
+    PFN_vkCmdResetQueryPool CmdResetQueryPool = nullptr;
+    PFN_vkCmdWriteTimestamp CmdWriteTimestamp = nullptr;
 
     PFN_vkQueueSubmit QueueSubmit = nullptr;
     PFN_vkQueueWaitIdle QueueWaitIdle = nullptr;

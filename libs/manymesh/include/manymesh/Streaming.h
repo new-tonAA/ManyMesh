@@ -43,6 +43,10 @@ namespace manymesh {
  * The layout is deliberately page friendly: a fixed header, the root/leaf arrays, a table of
  * per-node byte offsets, and then one contiguous record per node. A runtime can therefore read
  * only the nodes a view selected instead of materializing the whole hierarchy.
+ *
+ * Version 7 stores the interpolated source ambient occlusion for every generated vertex, so a
+ * runtime that uploads the source AO channel keeps the same contact shading on every cut
+ * without re-baking. Older graphs decode with AO = 1 (unoccluded).
  */
 std::vector<uint8_t> serializeLodGraph(LodGraph const& graph);
 
@@ -87,6 +91,10 @@ public:
     uint32_t nodeCount() const noexcept { return mNodeCount; }
     uint32_t levelCount() const noexcept { return mLevelCount; }
     uint32_t vertexCount() const noexcept { return mVertexCount; }
+    std::vector<GeneratedVertex> const& generatedVertices() const noexcept {
+        return mGeneratedVertices;
+    }
+    std::vector<uint32_t> const& positionIds() const noexcept { return mPositionIds; }
     uint64_t baseTriangles() const noexcept { return mBaseTriangles; }
     uint64_t byteSize() const noexcept { return mBlobSize; }
     std::vector<uint32_t> const& roots() const noexcept { return mRoots; }
@@ -108,6 +116,8 @@ private:
     std::vector<uint64_t> mOffsets;
     std::vector<uint32_t> mRoots;
     std::vector<uint32_t> mLeaves;
+    std::vector<GeneratedVertex> mGeneratedVertices;
+    std::vector<uint32_t> mPositionIds;
     uint32_t mNodeCount = 0;
     uint32_t mLevelCount = 0;
     uint32_t mVertexCount = 0;
@@ -236,8 +246,9 @@ private:
  * `Range: bytes=<offset>-<end>` header and requires a 206 response (a 200 response is accepted
  * only for the first byte of the file, i.e. when the server ignored Range).
  *
- * The implementation uses WinHTTP on Windows. A mobile or custom runtime can inject its own
- * platform HTTP stack through `RangeFetcher`; the cache and page decoder stay unchanged.
+ * The implementation uses WinHTTP on Windows and vendored CivetWeb elsewhere (enable with
+ * `MANYMESH_HTTP_CIVETWEB`). A mobile or custom runtime can still inject its own platform HTTP
+ * stack through `RangeFetcher`; the cache and page decoder stay unchanged.
  */
 class HttpByteRangeFetcher {
 public:

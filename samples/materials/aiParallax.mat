@@ -1,0 +1,91 @@
+material {
+    name : AiParallax,
+    shadingModel : lit,
+    specularAntiAliasing : true,
+    requires : [
+        uv0
+    ],
+    parameters : [
+        {
+            type : float3,
+            name : baseColor
+        },
+        {
+            type : float,
+            name : metallic
+        },
+        {
+            type : float,
+            name : roughness
+        },
+        {
+            type : float,
+            name : reflectance
+        },
+        {
+            type : float,
+            name : normalStrength
+        },
+        {
+            type : float,
+            name : pomScale
+        },
+        {
+            type : float,
+            name : pomStrength
+        },
+        {
+            type : float,
+            name : pomLayers
+        },
+        {
+            type : sampler2d,
+            name : normal
+        },
+        {
+            type : sampler2d,
+            name : heightMap
+        }
+    ],
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        highp vec2 uv = getUV0();
+        highp vec2 uvDx = dFdx(uv);
+        highp vec2 uvDy = dFdy(uv);
+
+        // The height map stores signed displacement along the interpolated LOD normal, with
+        // 0.5 as neutral. Unlike a normal map this changes where the surface is sampled, so it
+        // can recover part of the geometric displacement a coarse chord lost. Iterating the
+        // one-step parallax solution is a cheap fixed-point solve; it converges in a handful of
+        // samples and degrades to plain UVs when the strength is zero.
+        highp mat3 tangentFromWorld = transpose(getWorldTangentFrame());
+        highp vec3 viewTangent = tangentFromWorld * getWorldViewVector();
+        float scale = materialParams.pomScale * materialParams.pomStrength;
+        highp vec2 baseUv = uv;
+        if (abs(scale) > 1e-8 && viewTangent.z > 0.05) {
+            float layers = clamp(materialParams.pomLayers, 1.0, 32.0);
+            for (int i = 0; i < 32; i++) {
+                if (float(i) >= layers) {
+                    break;
+                }
+                float raw = textureGrad(materialParams_heightMap, uv, uvDx, uvDy).r;
+                float height = (raw - 0.5) * 2.0 * scale;
+                highp vec2 next = baseUv + height * (viewTangent.xy / viewTangent.z);
+                uv = mix(uv, next, 0.5);
+            }
+            uv = clamp(uv, vec2(0.0), vec2(1.0));
+        }
+
+        vec3 detail = textureGrad(materialParams_normal, uv, uvDx, uvDy).xyz * 2.0 - 1.0;
+        detail.xy *= materialParams.normalStrength;
+        material.normal = normalize(detail);
+
+        prepareMaterial(material);
+        material.baseColor.rgb = materialParams.baseColor;
+        material.metallic = materialParams.metallic;
+        material.roughness = materialParams.roughness;
+        material.reflectance = materialParams.reflectance;
+    }
+}

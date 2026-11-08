@@ -685,6 +685,15 @@ DECL_DRIVER_API_N(draw2,
         uint32_t, indexCount,
         uint32_t, instanceCount)
 
+// Draws drawCount indexed primitives whose arguments come from a GPU-side buffer. Each command
+// is 20 bytes: indexCount, instanceCount, firstIndex, baseVertex, baseInstance. The currently
+// bound render primitive supplies the vertex/index buffers and primitive type.
+DECL_DRIVER_API_N(drawIndexedIndirect,
+        backend::BufferObjectHandle, indirectBuffer,
+        uint32_t, indirectOffset,
+        uint32_t, drawCount,
+        uint32_t, stride)
+
 // Non-indexed draw. Used for attribute-less / procedural rendering where the GPU generates
 // vertex data from gl_VertexID / gl_VertexIndex / [[vertex_id]]. The currently bound render
 // primitive must have been created without an IndexBuffer.

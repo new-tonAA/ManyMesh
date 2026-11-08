@@ -41,12 +41,12 @@
 namespace filament::backend {
 
 namespace {
-// Counts the total number of descriptors for both vertex and fragment stages.
+// Counts the total number of descriptors across all shader stages.
 template<typename Bitmask>
 inline uint8_t collapsedCount(Bitmask const& mask) {
     Bitmask collapsed;
-    size_t const shift = fvkutils::getFragmentStageShift<Bitmask>();
-    mask.forEachSetBit([&](size_t index) { collapsed.set(index % shift); });
+    size_t const stageBits = fvkutils::getFragmentStageShift<Bitmask>();
+    mask.forEachSetBit([&](size_t index) { collapsed.set(index % stageBits); });
     return (uint8_t) collapsed.count();
 }
 
@@ -69,19 +69,21 @@ struct VulkanDescriptorSetLayout : public HwDescriptorSetLayout, fvkmemory::Reso
         fvkutils::UniformBufferBitmask dynamicUbo;        // 16 bytes
         fvkutils::SamplerBitmask sampler;                 // 16 bytes
         fvkutils::InputAttachmentBitmask inputAttachment; // 16 bytes
+        fvkutils::UniformBufferBitmask shaderStorage;     // 16 bytes
 
         // This is a subset of the sampler field.
-        fvkutils::SamplerBitmask externalSampler; // 16 bytes
+        fvkutils::SamplerBitmask externalSampler;         // 16 bytes
 
         bool operator==(Bitmask const& right) const {
             return ubo == right.ubo && dynamicUbo == right.dynamicUbo && sampler == right.sampler &&
                    inputAttachment == right.inputAttachment &&
+                   shaderStorage == right.shaderStorage &&
                    externalSampler == right.externalSampler;
         }
 
         static Bitmask fromLayoutDescription(DescriptorSetLayout const& layout);
     };
-    static_assert(sizeof(Bitmask) == 80);
+    static_assert(sizeof(Bitmask) == 144);
 
     // This is a convenience struct to quickly check layout compatibility in terms of descriptor set
     // pools.
@@ -90,14 +92,15 @@ struct VulkanDescriptorSetLayout : public HwDescriptorSetLayout, fvkmemory::Reso
         uint32_t dynamicUbo = 0;
         uint32_t sampler = 0;
         uint32_t inputAttachment = 0;
+        uint32_t shaderStorage = 0;
 
         inline uint32_t total() const {
-            return ubo + dynamicUbo + sampler + inputAttachment;
+            return ubo + dynamicUbo + sampler + inputAttachment + shaderStorage;
         }
 
         bool operator==(Count const& right) const noexcept {
             return ubo == right.ubo && dynamicUbo == right.dynamicUbo && sampler == right.sampler &&
-                   inputAttachment == right.inputAttachment;
+                   inputAttachment == right.inputAttachment && shaderStorage == right.shaderStorage;
         }
 
         static inline Count fromLayoutBitmask(Bitmask const& mask) {
@@ -106,6 +109,7 @@ struct VulkanDescriptorSetLayout : public HwDescriptorSetLayout, fvkmemory::Reso
                 .dynamicUbo = collapsedCount(mask.dynamicUbo),
                 .sampler = collapsedCount(mask.sampler),
                 .inputAttachment = collapsedCount(mask.inputAttachment),
+                .shaderStorage = collapsedCount(mask.shaderStorage),
             };
         }
 
@@ -117,6 +121,7 @@ struct VulkanDescriptorSetLayout : public HwDescriptorSetLayout, fvkmemory::Reso
             ret.dynamicUbo = dynamicUbo * mult;
             ret.sampler = sampler * mult;
             ret.inputAttachment = inputAttachment * mult;
+            ret.shaderStorage = shaderStorage * mult;
             return ret;
         }
     };

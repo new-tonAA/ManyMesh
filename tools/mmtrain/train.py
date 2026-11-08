@@ -59,8 +59,8 @@ import torch
 import torch.nn as nn
 from PIL import Image
 
-MODELS = ("bicubic", "tiny", "kpn", "espcn", "fsrcnn", "unet")
-POST_UPSAMPLE = ("espcn", "fsrcnn")
+MODELS = ("bicubic", "tiny", "tiny_up", "kpn", "espcn", "fsrcnn", "unet")
+POST_UPSAMPLE = ("tiny_up", "espcn", "fsrcnn")
 
 
 def read_pgm(path):
@@ -147,11 +147,17 @@ def load_dataset(data_dir, with_error_map, normalize_error, stack=1):
         hr = np.asarray(hr_image).astype(np.float32) / 255.0
 
         if lr.shape != hr.shape:
-            raise SystemExit(f"{lr_path} and {hr_path} differ in size")
+            # A scale-2+ dataset stores the observation at a reduced resolution; it only has
+            # to be an integer fraction of the target.
+            if (hr.shape[0] % lr.shape[0] != 0 or hr.shape[1] % lr.shape[1] != 0
+                    or hr.shape[0] < lr.shape[0] or hr.shape[1] < lr.shape[1]):
+                raise SystemExit(f"{lr_path} and {hr_path} differ in size")
 
         error = load_error(data_dir, index, with_error_map, normalize_error)
 
-        views.append({"lr": lr, "hr": hr, "error": error})
+        # `prepare_input` is written in terms of temporal frames; a plain view is a sequence
+        # of one, which also gives the bicubic floor the same code path.
+        views.append({"frames": [lr], "lr": lr, "hr": hr, "error": error})
 
     return views
 
@@ -170,6 +176,32 @@ class Tiny(nn.Module):
 
     def forward(self, x):
         return x[:, :3] + self.body(x)
+
+
+class TinyUpsample(nn.Module):
+    """Ours, post-upsample variant: the convolutions run at the low resolution.
+
+    The same-resolution Tiny still runs its 32-channel stack at the *output* resolution, which
+    costs 135-167 ms per 640x360 frame on one CPU core. Here the stack sees 320x180, the
+    residual is pixel-shuffled to 640x360 and added to a bicubic base. The texture at the low
+    resolution is exactly the expensive part, so this is the deployment-relevant shape.
+    """
+
+    def __init__(self, in_channels, scale, channels=32):
+        super().__init__()
+        self.scale = scale
+        self.shuffle = nn.PixelShuffle(scale)
+        self.body = nn.Sequential(
+            nn.Conv2d(in_channels, channels, 3, padding=1), nn.ReLU(inplace=True),
+            nn.Conv2d(channels, channels, 3, padding=1), nn.ReLU(inplace=True),
+            nn.Conv2d(channels, channels, 3, padding=1), nn.ReLU(inplace=True),
+            nn.Conv2d(channels, 3 * scale * scale, 3, padding=1),
+        )
+
+    def forward(self, x):
+        base = nn.functional.interpolate(x[:, :3], scale_factor=self.scale,
+                mode="bicubic", align_corners=False)
+        return base + self.shuffle(self.body(x))
 
 
 class KernelPredictor(nn.Module):
@@ -280,6 +312,8 @@ class SmallUNet(nn.Module):
 def build_model(name, in_channels, scale, channels):
     if name == "tiny":
         return Tiny(in_channels, channels)
+    if name == "tiny_up":
+        return TinyUpsample(in_channels, scale, channels)
     if name == "kpn":
         return KernelPredictor(in_channels, scale, channels)
     if name == "espcn":
@@ -391,6 +425,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__,
             formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--data", default="out/m3")
+    parser.add_argument("--val-data", default="",
+            help="optional separate validation directory; when set, --data is used in full "
+                 "for training and every view in this directory is held out")
     parser.add_argument("--model", default="tiny", choices=MODELS)
     parser.add_argument("--scale", type=int, default=2,
             help="observation is reduced by this factor; 1 means compared at equal resolution")
@@ -409,6 +446,8 @@ def main():
             help="feed the error map raw, at the scale the geometry stage produced it")
     parser.add_argument("--out", default="")
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--eval-only", default="",
+            help="load this checkpoint and evaluate on --val-data without training")
     args = parser.parse_args()
 
     torch.manual_seed(args.seed)
@@ -417,10 +456,20 @@ def main():
     with_error_map = not args.no_error_map
     views = load_dataset(args.data, with_error_map, not args.no_normalize_error,
             args.stack)
-    if len(views) <= args.val_views:
-        raise SystemExit("not enough views to hold any out for validation")
-    train_views = views[:len(views) - args.val_views]
-    val_views = views[len(views) - args.val_views:]
+    if args.val_data:
+        # A separate validation set lets the training set grow with more assets without moving
+        # the held-out views, which is the only way to compare "more data" against the old
+        # single-asset number.
+        val_views = load_dataset(args.val_data, with_error_map,
+                not args.no_normalize_error, args.stack)
+        train_views = views
+        if not val_views:
+            raise SystemExit(f"no views under {args.val_data}")
+    else:
+        if len(views) <= args.val_views:
+            raise SystemExit("not enough views to hold any out for validation")
+        train_views = views[:len(views) - args.val_views]
+        val_views = views[len(views) - args.val_views:]
 
     post_upsample = args.model in POST_UPSAMPLE
     in_channels = 3 * args.stack + (1 if with_error_map else 0)
@@ -441,6 +490,19 @@ def main():
 
     model = build_model(args.model, in_channels, args.scale, args.channels)
     print(f"  {sum(p.numel() for p in model.parameters())} parameters")
+
+    if args.eval_only:
+        # Cross-asset evaluation: load a checkpoint and score it on a *different* asset's
+        # held-out views without touching the weights.
+        model.load_state_dict(torch.load(args.eval_only, map_location="cpu"))
+        metrics = evaluate(model, val_views, args.scale, post_upsample)
+        print(f"  eval-only: PSNR {metrics['psnr']:.2f} dB   SSIM {metrics['ssim']:.4f}"
+              f"   (per view {[round(v, 1) for v in metrics['per_view_psnr']]})")
+        if args.out:
+            with open(args.out, "w", encoding="utf-8") as handle:
+                json.dump({"model": args.model, "scale": args.scale, "eval_only": args.eval_only,
+                           "metrics": metrics}, handle, indent=2)
+        return 0
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     loss_fn = nn.L1Loss()

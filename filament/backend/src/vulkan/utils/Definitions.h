@@ -355,12 +355,14 @@ constexpr VkFormat EXT_VK_FORMATS[] = {
    VK_FORMAT_R16G16_S10_5_NV,
 };
 
-using UniformBufferBitmask = utils::bitset128;
-using SamplerBitmask = utils::bitset128;
+// Descriptor bindings are tracked per shader stage. MAX_DESCRIPTOR_COUNT is 64, so each stage
+// occupies one 64-bit word; the extra word leaves room for the compute stage.
+using UniformBufferBitmask = utils::bitset<uint64_t, 3>;
+using SamplerBitmask = utils::bitset<uint64_t, 3>;
 
 // We only have at most one input attachment, so this bitmask exists only to make the code more
 // general.
-using InputAttachmentBitmask = utils::bitset128;
+using InputAttachmentBitmask = utils::bitset<uint64_t, 3>;
 
 constexpr uint8_t MAX_DESCRIPTOR_SET_BITMASK_BITS =
         std::max(std::max(sizeof(UniformBufferBitmask), sizeof(SamplerBitmask)),
@@ -368,14 +370,20 @@ constexpr uint8_t MAX_DESCRIPTOR_SET_BITMASK_BITS =
 
 template<typename Bitmask>
 static constexpr uint8_t getVertexStageShift() noexcept {
-    // We assume the bottom half of bits are for vertex stages.
+    // The first third of the bits are for vertex stages.
     return 0;
 }
 
 template<typename Bitmask>
 static constexpr uint8_t getFragmentStageShift() noexcept {
-    // We assume the top half of bits are for fragment stages.
-    return sizeof(Bitmask) * 4;
+    // The second third of the bits are for fragment stages.
+    return Bitmask::BITS_PER_WORD;
+}
+
+template<typename Bitmask>
+static constexpr uint8_t getComputeStageShift() noexcept {
+    // The final third of the bits are for compute stages.
+    return Bitmask::BITS_PER_WORD * 2;
 }
 
 // We have at most 4 descriptor sets. This is to indicate which ones are active.

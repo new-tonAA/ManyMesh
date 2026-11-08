@@ -18,10 +18,16 @@
 
 #include <algorithm>
 #include <chrono>
+#include <climits>
 #include <cstring>
 #include <iterator>
+#include <mutex>
 #include <set>
 #include <utility>
+
+#if defined(MANYMESH_HTTP_CIVETWEB)
+#include <civetweb.h>
+#endif
 
 #if defined(_WIN32)
 #ifndef NOMINMAX
@@ -40,13 +46,18 @@ namespace manymesh {
 namespace {
 
 constexpr uint32_t MAGIC = 0x474C4D4Du; // "MMLG" in little-endian byte order
-// Version 3 appends the source vertex count. Version 2 remains readable so previously written
-// graph files still stream; the loader derives the vertex count from the records in that case.
-// The layout still has one fixed-size prefix followed by variable child/index arrays, so a
-// runtime can keep reading individual nodes without deserializing the whole graph.
-constexpr uint32_t VERSION = 3u;
+// Version 3 appends the source vertex count. Version 4 appends generated attribute vertices;
+// version 5 adds their explicit position, version 6 adds the canonical position id table used
+// to deduplicate faces produced by different nodes at the same location, and version 7 adds the
+// interpolated source ambient occlusion. Node indices already reference the combined buffer, so
+// a cut can be rendered from the original vertices plus these small arrays. Older versions
+// remain readable; their vertices default to unoccluded.
+constexpr uint32_t VERSION = 7u;
 constexpr uint32_t MIN_VERSION = 2u;
 constexpr size_t NODE_RECORD_SIZE = 184;
+constexpr size_t GENERATED_VERTEX_BYTES_V4 = 6u * sizeof(uint32_t);
+constexpr size_t GENERATED_VERTEX_BYTES_V6 = 9u * sizeof(uint32_t);
+constexpr size_t GENERATED_VERTEX_BYTES = 10u * sizeof(uint32_t);
 
 template<typename T>
 void append(std::vector<uint8_t>* blob, T const& value) {
@@ -127,6 +138,60 @@ void writeNode(std::vector<uint8_t>* blob, LodGraphNode const& node) {
     for (uint32_t index: node.indices) {
         append(blob, index);
     }
+}
+
+void writeGeneratedVertex(std::vector<uint8_t>* blob, GeneratedVertex const& vertex) {
+    append(blob, vertex.positionSource);
+    append(blob, vertex.position.x);
+    append(blob, vertex.position.y);
+    append(blob, vertex.position.z);
+    append(blob, vertex.normal.x);
+    append(blob, vertex.normal.y);
+    append(blob, vertex.normal.z);
+    append(blob, vertex.uv.x);
+    append(blob, vertex.uv.y);
+    append(blob, vertex.ao);
+}
+
+bool readGeneratedVertex(std::vector<uint8_t> const& blob, size_t* cursor,
+        GeneratedVertex* vertex, bool hasPosition, bool hasAO) {
+    if (!read(blob, cursor, &vertex->positionSource)) {
+        return false;
+    }
+    if (hasPosition) {
+        if (!read(blob, cursor, &vertex->position.x) ||
+                !read(blob, cursor, &vertex->position.y) ||
+                !read(blob, cursor, &vertex->position.z)) {
+            return false;
+        }
+        vertex->hasPosition = true;
+    }
+    if (!read(blob, cursor, &vertex->normal.x) || !read(blob, cursor, &vertex->normal.y) ||
+            !read(blob, cursor, &vertex->normal.z) || !read(blob, cursor, &vertex->uv.x) ||
+            !read(blob, cursor, &vertex->uv.y)) {
+        return false;
+    }
+    return !hasAO || read(blob, cursor, &vertex->ao);
+}
+
+bool readGeneratedVertex(
+        std::istream& stream, GeneratedVertex* vertex, bool hasPosition, bool hasAO) {
+    if (!readStream(stream, &vertex->positionSource)) {
+        return false;
+    }
+    if (hasPosition) {
+        if (!readStream(stream, &vertex->position.x) || !readStream(stream, &vertex->position.y) ||
+                !readStream(stream, &vertex->position.z)) {
+            return false;
+        }
+        vertex->hasPosition = true;
+    }
+    if (!readStream(stream, &vertex->normal.x) || !readStream(stream, &vertex->normal.y) ||
+            !readStream(stream, &vertex->normal.z) || !readStream(stream, &vertex->uv.x) ||
+            !readStream(stream, &vertex->uv.y)) {
+        return false;
+    }
+    return !hasAO || readStream(stream, &vertex->ao);
 }
 
 bool readNodeAt(std::vector<uint8_t> const& blob, uint64_t offset, LodGraphNode* node,
@@ -226,6 +291,14 @@ std::vector<uint8_t> serializeLodGraph(LodGraph const& graph) {
     for (uint32_t leaf: graph.leaves) {
         append(&blob, leaf);
     }
+    append(&blob, uint32_t(graph.generatedVertices.size()));
+    for (GeneratedVertex const& vertex: graph.generatedVertices) {
+        writeGeneratedVertex(&blob, vertex);
+    }
+    append(&blob, uint32_t(graph.positionIds.size()));
+    for (uint32_t positionId: graph.positionIds) {
+        append(&blob, positionId);
+    }
 
     size_t const offsetsPosition = blob.size();
     blob.resize(blob.size() + (graph.nodes.size() + 1) * sizeof(uint64_t));
@@ -270,6 +343,8 @@ bool deserializeLodGraph(std::vector<uint8_t> const& blob, LodGraph* graph) {
     graph->levelCount = streaming.levelCount();
     graph->baseTriangles = streaming.baseTriangles();
     graph->vertexCount = streaming.vertexCount();
+    graph->generatedVertices = streaming.generatedVertices();
+    graph->positionIds = streaming.positionIds();
     if (graph->vertexCount == 0) {
         // Version 2 did not store the count. Recover it from the node index lists.
         for (LodGraphNode const& node: graph->nodes) {
@@ -367,6 +442,36 @@ StreamingLodGraph::StreamingLodGraph(std::vector<uint8_t> blob)
             return;
         }
     }
+    if (version >= 4u) {
+        uint32_t generatedCount = 0;
+        size_t const stride = version >= 7u ? GENERATED_VERTEX_BYTES
+                : version >= 5u                  ? GENERATED_VERTEX_BYTES_V6
+                                                 : GENERATED_VERTEX_BYTES_V4;
+        if (!read(mBlob, &cursor, &generatedCount) ||
+                uint64_t(generatedCount) * stride > mBlob.size() - cursor) {
+            return;
+        }
+        mGeneratedVertices.resize(generatedCount);
+        for (GeneratedVertex& vertex: mGeneratedVertices) {
+            if (!readGeneratedVertex(mBlob, &cursor, &vertex, version >= 5u, version >= 7u)) {
+                return;
+            }
+        }
+    }
+    if (version >= 6u) {
+        uint32_t positionIdCount = 0;
+        if (!read(mBlob, &cursor, &positionIdCount) ||
+                uint64_t(positionIdCount) > mVertexCount ||
+                uint64_t(positionIdCount) * sizeof(uint32_t) > mBlob.size() - cursor) {
+            return;
+        }
+        mPositionIds.resize(positionIdCount);
+        for (uint32_t& positionId: mPositionIds) {
+            if (!read(mBlob, &cursor, &positionId)) {
+                return;
+            }
+        }
+    }
     mOffsets.resize(size_t(mNodeCount) + 1);
     for (uint64_t& offset: mOffsets) {
         if (!read(mBlob, &cursor, &offset)) {
@@ -424,6 +529,34 @@ StreamingLodGraph::StreamingLodGraph(std::string const& path) {
     for (uint32_t& leaf: mLeaves) {
         if (!readStream(mFile, &leaf)) {
             return;
+        }
+    }
+    if (version >= 4u) {
+        uint32_t generatedCount = 0;
+        size_t const stride = version >= 7u ? GENERATED_VERTEX_BYTES
+                : version >= 5u                  ? GENERATED_VERTEX_BYTES_V6
+                                                 : GENERATED_VERTEX_BYTES_V4;
+        if (!readStream(mFile, &generatedCount) ||
+                uint64_t(generatedCount) * stride > mBlobSize) {
+            return;
+        }
+        mGeneratedVertices.resize(generatedCount);
+        for (GeneratedVertex& vertex: mGeneratedVertices) {
+            if (!readGeneratedVertex(mFile, &vertex, version >= 5u, version >= 7u)) {
+                return;
+            }
+        }
+    }
+    if (version >= 6u) {
+        uint32_t positionIdCount = 0;
+        if (!readStream(mFile, &positionIdCount) || uint64_t(positionIdCount) > mVertexCount) {
+            return;
+        }
+        mPositionIds.resize(positionIdCount);
+        for (uint32_t& positionId: mPositionIds) {
+            if (!readStream(mFile, &positionId)) {
+                return;
+            }
         }
     }
     mOffsets.resize(size_t(mNodeCount) + 1);
@@ -811,6 +944,13 @@ struct HttpByteRangeFetcher::Impl {
     bool valid = false;
     HttpByteRangeFetcher::RangeFetcher platformFetcher;
 
+#if defined(MANYMESH_HTTP_CIVETWEB)
+    bool civetwebHttps = false;
+    int civetwebPort = 80;
+    std::string civetwebHost;
+    std::string civetwebPath;
+#endif
+
 #if defined(_WIN32)
     bool https = false;
     INTERNET_PORT port = 80;
@@ -821,7 +961,104 @@ struct HttpByteRangeFetcher::Impl {
 
 namespace {
 
-#if defined(_WIN32)
+#if defined(MANYMESH_HTTP_CIVETWEB)
+
+struct ParsedCivetUrl {
+    bool https = false;
+    int port = 80;
+    std::string host;
+    std::string path;
+};
+
+bool parseCivetUrl(std::string const& url, ParsedCivetUrl* parsed, std::string* error) {
+    std::string rest;
+    if (url.rfind("https://", 0) == 0) {
+        parsed->https = true;
+        parsed->port = 443;
+        rest = url.substr(8);
+    } else if (url.rfind("http://", 0) == 0) {
+        parsed->https = false;
+        parsed->port = 80;
+        rest = url.substr(7);
+    } else {
+        *error = "URL must start with http:// or https://";
+        return false;
+    }
+
+    size_t const tailIndex = rest.find_first_of("/?#");
+    std::string const authority = rest.substr(0, tailIndex);
+    std::string tail = tailIndex == std::string::npos ? std::string() : rest.substr(tailIndex);
+    if (tail.empty() || tail[0] == '?' || tail[0] == '#') {
+        tail = "/" + tail;
+    }
+    parsed->path = std::move(tail);
+    if (authority.empty()) {
+        *error = "URL has no host";
+        return false;
+    }
+
+    std::string host = authority;
+    size_t portStart = std::string::npos;
+    if (authority.front() == '[') {
+        size_t const close = authority.find(']');
+        if (close == std::string::npos) {
+            *error = "URL has an unterminated IPv6 host";
+            return false;
+        }
+        host = authority.substr(1, close - 1);
+        if (close + 1 < authority.size()) {
+            if (authority[close + 1] != ':') {
+                *error = "URL has an invalid port";
+                return false;
+            }
+            portStart = close + 2;
+        }
+    } else {
+        size_t const colon = authority.rfind(':');
+        if (colon != std::string::npos) {
+            if (authority.find(':') != colon) {
+                *error = "IPv6 hosts must be wrapped in brackets";
+                return false;
+            }
+            host = authority.substr(0, colon);
+            portStart = colon + 1;
+        }
+    }
+    if (portStart != std::string::npos) {
+        int port = 0;
+        for (char c: authority.substr(portStart)) {
+            if (c < '0' || c > '9') {
+                *error = "URL has an invalid port";
+                return false;
+            }
+            port = port * 10 + int(c - '0');
+            if (port > 65535) {
+                *error = "URL has an invalid port";
+                return false;
+            }
+        }
+        if (port == 0) {
+            *error = "URL has an invalid port";
+            return false;
+        }
+        parsed->port = port;
+    }
+    if (host.empty()) {
+        *error = "URL has no host";
+        return false;
+    }
+    parsed->host = std::move(host);
+    return true;
+}
+
+void initializeCivetweb() {
+    static std::once_flag once;
+    std::call_once(once, []() { mg_init_library(0); });
+}
+
+#endif
+
+#if defined(_WIN32) && !defined(MANYMESH_HTTP_CIVETWEB)
 
 std::wstring widen(std::string const& value) {
     if (value.empty()) {
@@ -963,7 +1200,16 @@ HttpByteRangeFetcher::HttpByteRangeFetcher(std::string url, unsigned timeoutMs)
         : mImpl(new Impl()) {
     mImpl->url = std::move(url);
     mImpl->timeoutMs = std::max(timeoutMs, 1u);
-#if defined(_WIN32)
+#if defined(MANYMESH_HTTP_CIVETWEB)
+    ParsedCivetUrl parsed;
+    mImpl->valid = parseCivetUrl(mImpl->url, &parsed, &mImpl->error);
+    if (mImpl->valid) {
+        mImpl->civetwebHttps = parsed.https;
+        mImpl->civetwebPort = parsed.port;
+        mImpl->civetwebHost = std::move(parsed.host);
+        mImpl->civetwebPath = std::move(parsed.path);
+    }
+#elif defined(_WIN32)
     ParsedHttpUrl parsed;
     mImpl->valid = parseHttpUrl(mImpl->url, &parsed, &mImpl->error);
     if (mImpl->valid) {
@@ -1042,7 +1288,80 @@ bool HttpByteRangeFetcher::fetch(uint64_t offset, size_t size, std::vector<uint8
         return true;
     }
 
-#if defined(_WIN32)
+#if defined(MANYMESH_HTTP_CIVETWEB)
+    mImpl->error.clear();
+    initializeCivetweb();
+    char connectionError[256] = {};
+    mg_connection* connection = mg_connect_client(mImpl->civetwebHost.c_str(),
+            mImpl->civetwebPort, mImpl->civetwebHttps ? 1 : 0, connectionError,
+            sizeof(connectionError));
+    if (connection == nullptr) {
+        mImpl->error = connectionError[0] != '\0' ? connectionError
+                                                  : "mg_connect_client failed";
+        return false;
+    }
+
+    std::string hostHeader = mImpl->civetwebHost;
+    if (hostHeader.find(':') != std::string::npos) {
+        hostHeader = "[" + hostHeader + "]";
+    }
+    if ((mImpl->civetwebHttps && mImpl->civetwebPort != 443) ||
+            (!mImpl->civetwebHttps && mImpl->civetwebPort != 80)) {
+        hostHeader += ":" + std::to_string(mImpl->civetwebPort);
+    }
+    unsigned long long const end = offset + (size - 1);
+    int const written = mg_printf(connection,
+            "GET %s HTTP/1.1\r\nHost: %s\r\nRange: bytes=%llu-%llu\r\n"
+            "Accept-Encoding: identity\r\nConnection: close\r\n\r\n",
+            mImpl->civetwebPath.c_str(), hostHeader.c_str(),
+            static_cast<unsigned long long>(offset), end);
+    if (written <= 0) {
+        mImpl->error = "mg_printf failed";
+        mg_close_connection(connection);
+        return false;
+    }
+
+    char responseError[256] = {};
+    int const response = mg_get_response(connection, responseError, sizeof(responseError),
+            int(std::min(mImpl->timeoutMs, unsigned(INT_MAX))));
+    mg_response_info const* info = mg_get_response_info(connection);
+    if (response < 0 || info == nullptr) {
+        mImpl->error = responseError[0] != '\0' ? responseError : "mg_get_response failed";
+        mg_close_connection(connection);
+        return false;
+    }
+    if (info->status_code != 206 && !(info->status_code == 200 && offset == 0)) {
+        mImpl->error = "server did not honor the byte range (status " +
+                       std::to_string(info->status_code) + ")";
+        mg_close_connection(connection);
+        return false;
+    }
+
+    bytes->reserve(size);
+    while (bytes->size() < size) {
+        uint8_t chunk[64 * 1024];
+        size_t const want = std::min(size - bytes->size(), sizeof(chunk));
+        int const read = mg_read(connection, chunk, want);
+        if (read < 0) {
+            mImpl->error = "mg_read failed";
+            bytes->clear();
+            mg_close_connection(connection);
+            return false;
+        }
+        if (read == 0) {
+            break;
+        }
+        bytes->insert(bytes->end(), chunk, chunk + read);
+    }
+    mg_close_connection(connection);
+    if (bytes->size() != size) {
+        mImpl->error = "short read: expected " + std::to_string(size) + ", got " +
+                       std::to_string(bytes->size());
+        bytes->clear();
+        return false;
+    }
+    return true;
+#elif defined(_WIN32)
     mImpl->error.clear();
     DWORD const accessType = isLoopbackHost(mImpl->host) ? WINHTTP_ACCESS_TYPE_NO_PROXY
                                                          : WINHTTP_ACCESS_TYPE_DEFAULT_PROXY;

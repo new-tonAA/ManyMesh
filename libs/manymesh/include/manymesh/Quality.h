@@ -69,6 +69,14 @@ struct AttributeStats {
     //! True when the metric used nearest retained vertices instead of closest points on the
     //! simplified triangles. Large meshes use this path to keep validation affordable.
     bool approximated = false;
+
+    //! Reference vertex and simplified triangle that produced the maxima. These are diagnostic
+    //! only; they let a verbose quality-gate report identify a seam or chart outlier without
+    //! changing the measured values or the acceptance decision.
+    uint32_t worstNormalVertex = UINT32_MAX;
+    uint32_t worstNormalTriangle = UINT32_MAX;
+    uint32_t worstUvVertex = UINT32_MAX;
+    uint32_t worstUvTriangle = UINT32_MAX;
 };
 
 /**
@@ -93,7 +101,30 @@ struct CandidateErrorStats {
     AttributeStats attributes;
 };
 
+/**
+ * The reference vertices for repeated candidate measurements.
+ *
+ * A simplification unit evaluates several candidates against the same source triangle list.
+ * Extracting, sorting and sampling those source vertices once per unit avoids repeating that
+ * work for every candidate and every quality-gate retry.
+ */
+struct CandidateReference {
+    std::vector<uint32_t> vertices;
+};
+
+CandidateReference makeCandidateReference(
+        std::vector<uint32_t> const& referenceIndices, uint32_t maxSamples = 0);
+
 TopologyStats measureTopology(Mesh const& mesh, std::vector<uint32_t> const& indices);
+
+/**
+ * Same topology metrics, but vertices that share an exact position are welded first.
+ *
+ * Use this for any mesh whose index list may contain attribute-chart splits (UV/normal seams)
+ * or generated vertices. An id-based boundary count reports a false boundary down every seam;
+ * the welded count answers whether the rendered surface actually has a hole.
+ */
+TopologyStats measureWeldedTopology(Mesh const& mesh, std::vector<uint32_t> const& indices);
 
 AttributeStats measureAttributeError(Mesh const& mesh,
         std::vector<uint32_t> const& referenceIndices,
@@ -122,6 +153,11 @@ CandidateErrorStats measureCandidateErrors(Mesh const& mesh,
         std::vector<uint32_t> const& referenceIndices,
         std::vector<uint32_t> const& simplifiedIndices,
         uint32_t maxSamples = 0,
+        size_t approximateTriangles = 0);
+
+CandidateErrorStats measureCandidateErrors(Mesh const& mesh,
+        CandidateReference const& reference,
+        std::vector<uint32_t> const& simplifiedIndices,
         size_t approximateTriangles = 0);
 
 } // namespace manymesh

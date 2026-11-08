@@ -244,7 +244,9 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
   - [x] 本地文件分页 + 可插拔异步 page fetcher + LRU 缓存；GPU 侧有 std430 布局和间接绘制数据结构
   - [x] 真实 Vulkan 原型：compute shader DAG cut + `vkCmdDrawIndexedIndirect` + R32_UINT/D32 visibility buffer
   - [x] Windows 生产网络 transport：`HttpByteRangeFetcher`（WinHTTP，HTTP/HTTPS + Range + 重定向）
-  - [ ] Android/iOS HTTP 客户端绑定（缓存/解码接口已通用）
+  - [x] 便携网络 transport：Android/iOS/Linux/macOS 默认使用 vendored CivetWeb（HTTP Range；
+        HTTPS 需要平台提供 TLS 运行时），`-DMANYMESH_HTTP_CIVETWEB=OFF` 可改用注入式 `RangeFetcher`
+  - [ ] 移动端真机 HTTP/HTTPS 与网络切换验证
 - [ ] **M3 — 图像侧：移动端轻量神经重建**（首个切片，见 §7.3）
   - [x] 配对数据生成（多视角、同一相机列表、逐视角误差图）
   - [x] 轻量 CNN 重建：等分辨率下比粗几何高 **+1.88 dB**；半分辨率下比双三次高 **+0.98 dB**
@@ -252,14 +254,34 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
   - [x] 消融：**Geometry Error Map 目前没有带来有意义的收益**（−0.19 ~ +0.13 dB，符号不定）
   - [x] **时域累积（见 §8.5）**：亚像素抖动 + 多帧累积，与学习互补，合计 **+1.35 dB**
   - [x] **真时域**（见 §8.6）：pan + 精确旋转重投影，朴素混合 +0.66 dB；不重投影则 **−1.36 dB**
-  - [ ] 学习式时域模型 + 递归历史缓冲 + 遮挡 rejection 掩码
+  - [x] 学习式时域模型 + 递归历史缓冲 + 遮挡 rejection 掩码（§8.7–8.9；深度拒绝已在
+        真实平移序列上验证；但历史增益在 0/0.6/1.2 运动下为 −0.30/+0.15/−0.16，
+        符号不稳定，尚不能作为稳定的画质来源）
   - [ ] 时域化的误差信号（见 §8.3③），替代当前的空间误差图
   - [ ] depth / motion 等其余 buffer 输入（Mob-FGSR 只用颜色+深度+运动矢量）
-  - [ ] 部署路线：离线训练 + 运行时 LUT 查表，或极低比特量化（见 §8.3⑤）
+  - [x] 端到端耗时（§7.12）：低模渲染 1.6 ms，同分辨率 tiny 推理 40–167 ms；
+        低分辨率 tiny_up 13.6 ms 但画质低于双三次
+  - [ ] 部署路线：离线训练 + 运行时 LUT 查表，或极低比特量化（见 §8.3⑤）——
+        当前重建成本是主要阻塞，见 §7.12
   - [ ] LPIPS；移动端真机（能耗/发热）
 - [ ] **M4 — 联合优化（论文核心）**
+  - [x] 首个切片：等预算下 uniform vs 屏幕空间误差分配（§7.10）——**负结果**：
+        单物体上两种分配退化为同一个 cut；深度排序行上 uniform 仍高 0.56 dB，
+        且 38.5 dB 时 tiny 网络只有 +0.05 dB，排序没有被重建改变
+  - [x] 硬预算复验（dragon 7.18%，§7.10.3）：网络 +1.7 dB，但 uniform vs distance
+        只差 0.01 dB；**分配不是杠杆，总预算才是**
+  - [x] 低预算（20–30%）下的「分配 × 重建」交互：质量门下限处两种分配再次退化为同一
+        cut；26.44% 时历史对 PSNR 为 −0.12（SSIM +0.0035），未发现正向交互
+  - [x] 预算扫描（§7.10.4）：等 PSNR 下重建替代 **1.6–1.8×** 面数（容易视角），
+        难视角 **>2–2.7×**；这是 M4 的第一个正向结果
+  - [x] 单个跨预算模型（§7.10.5）：**1.5–1.7×**（容易）/ **>2–2.8×**（难），
+        完全未见的 19.20% 档只低 0.09–0.13 dB；M4 的部署形态成立
+  - [x] 多资产跨预算复验（§7.10.5）：加入 20 个 monkey 视角只掉 0.01–0.09 dB，
+        未见预算档 +0.08 dB；缩减仍 **>2.8× / >2.0×**
+  - [x] 12+4 视角复验（§7.10.5）：缩减仍 **>2.8× / >2.0×**；训练视角翻倍后
+        tiny 增益从 +1.26~+1.78 升到 +1.25~+1.94
+  - [ ] 运动感知的几何预算（静态/慢速/快速运动）与动态策略
   - 由「神经重建能力 + 预计视觉损失」反推几何预算
-  - 动态策略：不同场景/运动状态采用不同压缩程度
   - 与 Baseline 1 / 2 对比实验，产出论文
 - [ ] **M5 — 移动端落地**
   - Android / Vulkan 后端打通与真机实测
@@ -630,6 +652,14 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
 同一 2 px 阈值下，monkey 为 42.36 dB / 0.99526，torus 为 49.40 dB / 0.99944；
 它比固定 savings 更接近原始画面，因为误差只花在真正需要的屏幕区域。
 
+> **屏幕误差深度口径修正（本轮）**：上面的 `depth` 必须取包围球的**最近点**
+> （`dot(center - eye, forward) - radius`），而不是球心深度。近距离大 cluster 的球心
+> 可能比表面远得多，用球心会低估误差、把本该保留的细节点提前换成父节点，正好伤害
+> “近细远粗”。`GeometryError` 原本就是最近点口径，但 `LodGraph`、`mmgpu` 的 host
+> reference 和 GPU `screenError()` 仍是球心口径；本轮统一到
+> `screenSpaceErrorForSphere()` / `ScreenErrorProjection`，并 clamp 到近平面。
+> `test_manymesh` 新增 `ScreenSpaceErrorForSphereUsesNearestDepth` 回归。
+
 **运行时可行性**
 
 - DAG 构建、attribute QEM、质量门都是离线/编辑器侧，不需要每帧重跑。
@@ -648,13 +678,23 @@ reference 在 torus/monkey 上节点集合和三角形数完全一致，visibili
 Filament 公共 `RenderableManager`，因此证明的是算法与 GPU 数据布局可行，而不是 Filament
 后端集成已经完成。
 
-**仍未完成**：Filament Vulkan backend 侧的常驻 compute/indirect 路径，以及移动端
-（Android/iOS）HTTP 客户端绑定。跨 UV chart 的 seam 简化已在本轮补齐，见 §7.8。
+**当前状态**：`mm_bench --gpu-cut` 已通过 Filament 私有 `DriverApi` 在 OpenGL 和 Vulkan
+后端提交 compute cut，并用 `assembleLodSelection()` 复用 CPU 的跨节点去重与材质装配；
+torus 两端实测均为 `nodeMismatch=0 / triangleMismatch=0`（9 nodes、858 triangles）。
+首次 dispatch 约 OpenGL **779 ms**、Vulkan **645 ms**（均含 shader 编译），CPU 同一 cut
+约 **0.02–0.05 ms**。GLSL 450 与 GLSL ES 3.10 cut shader、`GpuLodCutParams`、计数器布局
+和相机屏幕误差数学已下沉到 `libs/manymesh`，`mm_bench` 与 backend 回归共用同一份实现，
+避免 sample 和测试各维护一份 shader。`compute_test` 为 Vulkan **7/7**、OpenGL
+**6 passed / 1 skipped**；其中 GLES 用例只验证 shader 能编译成 SPIR-V，尚未覆盖 Android
+真机驱动。当前路径仍同步回读选择结果并在 CPU 重建几何，**不是**常驻 GPU-driven 路径；
+默认构建未启用 Vulkan。**仍未完成**：Filament Vulkan backend 侧的常驻 compute/indirect
+路径、真实 GPU 侧 cut compaction 接入正式渲染器，以及 Android/iOS 真机网络与 GPU 验证。
+跨 UV chart 的 seam 简化已在本轮补齐，见 §7.8。
 `AsyncLodStreamingCache` 提供不阻塞调用线程的预取、可插拔 fetcher，以及直接接收
 `(byteOffset, byteCount)` 原始字节的 transport 接口。Windows 上的
 `HttpByteRangeFetcher` 已经用 WinHTTP 接通 HTTP/HTTPS Range 请求（本地回环 + `mm_bench
---stream-url` 端到端验证通过，0 失败页）；Android/iOS 只需把同样的回调绑定到平台 HTTP
-栈，缓存与解码层不需要改。Filament 的公共 `RenderableManager` 仍没有提交 indirect draw
+--stream-url` 端到端验证通过，0 失败页）；Android/iOS/Linux/macOS 默认走 vendored
+CivetWeb 的 HTTP Range 实现（本地回环 206 测试通过），缓存与解码层共用同一接口。Filament 的公共 `RenderableManager` 仍没有提交 indirect draw
 的入口；当前真实 GPU 路径位于独立工具中，生产集成需要改 Vulkan backend 或换自定义渲染器。
 
 **本轮性能优化**
@@ -668,6 +708,32 @@ Filament 公共 `RenderableManager`，因此证明的是算法与 GPU 数据布�
   持久 index buffer，不再销毁/重建 renderable。
 - `simplifyClusterInto` 的 `localPositions` / `localToGlobal` / `localIndices` /
   `destination` 改为跨单元复用的 scratch，按 unit 只做 `clear/resize`。
+- **extended-mesh 复用（2026-10 新增）**：`simplifyClusterInto` 的
+  `extendedMesh = mesh` 会为每个 cluster/group 复制整张共享网格，质量门却只读取
+  positions/normals/UVs/AO。现在 `SimplifyScratch` 用 `meshCacheEpoch` 在同一个构建批次内
+  复用 base 顶点快照，只追加 generated 尾部；`SimplifyProfile` 新增
+  `extendedMeshSeconds` / `extendedMeshCopies`，`mmgeo` 会打印
+  `extended-mesh: ... copies ...`。同一 cloth 命令（74,976 三角形、9 级、
+  `--target-ratio 0.5`）总构建 **21.07s → 18.63s（-11.6%）**，
+  `extended-mesh` **3.25s / 2197 copies → 0.28s / 120 copies**，DAG 的
+  `1986 nodes / 9 levels / 37488 drawn`、节点索引、误差和拓扑统计逐位不变。
+  monkey 同路径保持 `413 nodes / 7124 drawn / worst 20.2738 px`。新增
+  `CachedExtendedMeshDoesNotChangeSimplifiedOutput` 回归，覆盖同一 epoch 复用与
+  `epoch=0` 重新快照的输出一致性。
+- **corner 落点评估优化（2026-10 新增）**：串行 profile 定位到
+  `CornerSimplifier` 的 `target` 阶段：cloth 一次 DAG 构建有 1113 万次落点评分，
+  49.1s 花在重复的重心坐标、叉积/面积、`acos` 和最近三角形查询上。现在：
+  每个落点只算一次 `BarycentricWeights`，`triangleNormalAndQuality()` 用一次叉积同时
+  得到法线和质量，最近三角形查询先用两个塌缩端点的距离作上界、再用三角形平面距离作
+  `pointTriangleDistance2` 的严格下界，并在表面误差的数学下界已经打不过当前最优时直接
+  跳过整圈距离查询。同一 cloth 命令串行总时间
+  **101.19s → 85.93s（-15.1%）**，`target` **49.08s → 32.64s（-33.5%）**，
+  `evaluate` **63.58s → 49.34s（-22.4%）**，DAG 的
+  `1971 nodes / 7 levels / 37488 drawn / worst 8.8090 px`、生成顶点数和拓扑统计逐位
+  不变，`.mmb` 的 SHA256 与优化前完全相同。默认并行构建
+  **18.63s → 15.81s（-15.1%，多次运行 15.8–16.5s）**，输出仍是
+  `1986 nodes / 9 levels / 37488 drawn / worst 7.8916 px`，哈希同样一致。所有剪枝都是数学下界，
+  没有放松质量门或改变落点排序。
 - `selectionFromCut` 不再排序整个选择：先标记跨节点的共享顶点，只对边界面做哈希去重，
   同时删掉了原先“拼一遍索引再丢弃重建”的重复遍历。
 - 屏幕误差路径 `selectLodGraph` 与比例路径统一到同一个 cut 清理函数，距离感知选层也不会
@@ -683,8 +749,8 @@ Filament 公共 `RenderableManager`，因此证明的是算法与 GPU 数据布�
   允许完成并留在缓存里；快速转动相机不再积累过期页。新增回归测试覆盖该行为。
 - 同步/异步 cache 的必需页集合从 `std::set` 改为排序去重的 `std::vector`，每帧规划
   不再为每页分配红黑树节点；LRU 淘汰用二分查找判断“当前 cut 仍需要”。
-- 新增 `HttpByteRangeFetcher`：WinHTTP 实现的真实 HTTP/HTTPS 字节区间 transport，
-  支持重定向、超时、IPv6 和 `Range: bytes=a-b` 校验；`mm_bench --stream-url` 可直接
+- 新增 `HttpByteRangeFetcher`：Windows 用 WinHTTP、其余平台用 vendored CivetWeb，
+  支持超时、IPv6 和 `Range: bytes=a-b` 校验（WinHTTP 另支持重定向）；`mm_bench --stream-url` 可直接
   从服务器流式加载 `lod_graph.mmb`，`--stream-save` 用来导出同一份文件。
 - 质量门里的最近三角形查询从逐顶点扫描全部候选三角形改为 BVH；位置误差与属性误差共用
   同一次最近点查询，不再重复构建和遍历两棵树。对小 unit，候选网格本来就不大，但组父节点
@@ -700,18 +766,96 @@ Filament 公共 `RenderableManager`，因此证明的是算法与 GPU 数据布�
   `38098 / 74976 = 50.81%`。并行后的阶段耗时示例：clusterize `0.060s`、leaf setup
   `0.021s`、cluster chains `0.534s`、groups `1.163s`。monkey DAG 从 **3.21s** 降到
   **0.23s**。设置 `MANYMESH_BUILD_THREADS=1` 可强制走串行路径，用于复现与 A/B 对比。
-- `test_manymesh` 增至 **35 个**（34 个常规测试 + 1 个需
-  `MANYMESH_HTTP_RANGE_TEST_URL` 的网络测试），新增“并行构建逐位确定性”回归；常规测试
-  全部通过。
+- `test_manymesh` 增至 **44 个**（43 个常规测试 + 1 个需
+  `MANYMESH_HTTP_RANGE_TEST_URL` 的网络测试），新增“并行构建逐位确定性”、
+  “source + generated 全 cut 压缩”和“4 chart 副本焊接”回归；常规测试全部通过。
 - 同机位 960×720 视觉回归（`--no-shadows`，自动取景）：monkey 50% 为
   **7,872 面（50.00%）/ 40.99 dB / 0.99349**，aggressive 为 **6,042 面（38.38%）/
   38.12 dB / 0.99009**；torus 为 **562 / 1,152（48.78%）/ 40.56 dB / 0.99655**。
   diff 图只剩轮廓和法线插值差异，没有穿孔、翻面或新增非流形边。
+- **corner 简化剖析与热点清理（2026-10）**：`CornerSimplifyProfile` 现在把 corner 路径的
+  `setup / evaluate / topology / target / apply` 分开计时，`topology` 再拆成
+  `neighbor / triangles / local-triangles / local-edges`，并通过 `SimplifyProfile`
+  聚合到 `mmgeo` 的 cluster/group 两行输出。剖析显示 topology 占 evaluate 的约 80%，
+  其中 local-triangle 排序和 local-edge 去重是最大头。
+  现在 neighbor、affected、local-triangle 全部改用 thread-local 代际标记去重，不再排序；
+  local-edge 只统计被本次塌缩改写的三角形（其余边的 use count 不变），非流形 unit 自动回退
+  到完整 two-ring 检查。`MANYMESH_CORNER_FULL_EDGE_CHECK=1` 可强制走完整检查做 A/B，
+  三条测试资产在两条路径上输出逐位一致。
+  同时修掉了 incidence 列表中**已死亡三角形仍参与 local edge 计数**的问题；这会让一部分
+  本来合法的塌缩被误拒，torus 一度能到 30.03%（346 / 1,152）。修复后暴露出同一 source
+  corner 在相邻三角形上会被插值到不同 UV（实测最大差 0.04）。旧实现把这种分歧当成拒绝
+  条件，torus 因此停在 33.16%；现在默认不再拒绝，而是按 UV cluster 输出多个**同位置**
+  的 generated vertex，每个 chart 保留自己的仿射参数化。`--corner-split-uv 0` 只用于
+  复现旧的“平均 UV”行为做 A/B，默认值为 1。
+  当前默认质量门下的实测是：torus `--target-ratio 0.2` 为 **400 / 1,152 = 34.72%**，
+  closed、min quality 0.2869；monkey `--target-ratio 0.3` 为 **4,712 / 15,744 = 29.93%**，
+  `--target-ratio 0.2` 为 **4,162 / 15,744 = 26.44%**，
+  `boundary 168 / non-manifold 0 / duplicate 0 / flipped 0`。torus 的剩余拒绝是 group
+  topology 16 / geometry 1，UV 已不是主要阻塞。旧版 33.16% / 38.00% 的截图和 PSNR 属于
+  UV 拒绝门版本，不能当作当前默认结果引用。
+  单次 corner 评估从约 **5–10 µs** 降到 **1.5–3.8 µs**；加入下面的塌缩优先级后，
+  monkey DAG（7 级）约 **4.5s**，torus 约 **0.30s**。完整检查路径下同机 monkey 为 3.6s，
+  说明新路径本身贡献约 13–15%，其余差异来自修复后实际多做的塌缩与层级。
+  旧版视觉回归（UV 拒绝门，仅供历史对照；当前数字见上面的同目标 A/B）：
+  960×720，`aiDefaultMat`，`--no-shadows`；monkey eye
+  `(0,-0.016,3.25)`，torus eye `(0,0,3.2)`，target 均为原点）：
+  monkey 44.99% 为 **37.80 dB / 0.98573**，38.00% 为 **37.37 dB / 0.98135**；
+  torus 33.16% 为 **38.94 dB / 0.99451**（cloth 本轮未重跑）。逐图检查无穿孔、无翻面、
+  无新增边界，也没有可见的 UV 拉花。
+- **corner 塌缩优先级：表面偏差 + 属性 + 最差三角形质量（2026-10-19）**：
+  `CornerSimplifier` 之前按 QEM `cost` 从队列取边；placement 评分虽然看局部表面偏差，
+  但队列仍会先做“quadric 便宜、局部表面却更差”的塌缩。现在队列直接使用 placement
+  评分：`surfaceError/edgeLength + 0.25·uv/limit + 0.1·normal/limit +
+  0.1·barycentricOutside + 0.25·(1-minTriangleQuality) + 1e-6·QEM`。质量项权重 0.25
+  是 torus/monkey 扫描的平衡点：0.10 在 monkey 同目标下多保留约 4% 三角形，0.50 会把
+  DAG 压浅并退化到 7,518 面。质量门、焊接 boundary 集合和 chart UV 拆分都没有放宽。
+  同目标：torus `--target-ratio 0.2` **550 → 400（47.74% → 34.72%）**，monkey
+  `--target-ratio 0.3` **7,124 → 6,244（45.25% → 39.66%）**，拓扑缺陷仍全 0。
+  同面数（更公平）：monkey 新 7,084 面 vs 旧 7,124 面，960×720 同机位、`--no-shadows`：
+  **35.50 dB / 0.98590 vs 34.61 dB / 0.98443**，平均绝对差 0.002235 vs 0.002421；
+  torus 新 562 vs 旧 550 为 37.22 / 0.99646 vs 37.58 / 0.99554（PSNR 略低，但 SSIM
+  与平均误差更好）。代价是 monkey DAG 构建约 3.1s → 4.5s，运行时 cut 仍为 0.0018 ms。
+  cut 顶点同步下降：monkey 7,867 → 7,402，torus 625 → 562，移动端上传量更小。
+  同机位对照图：`out/ab-monkey-priority-montage.png`、`out/ab-torus-priority-montage.png`。
+- **属性误差 chart 选择（2026-10-19，本轮新增）**：`measureCandidateErrors()` 原先只为每个
+  源顶点取一个位置最近的三角形，再在这个三角形上插值 normal/UV。UV/normal seam 的同位置
+  副本会让 BVH 先命中另一张 chart，于是把本来匹配的源顶点误报成 45–72° 法线误差或
+  0.55–0.68 的 UV 误差。现在位置误差仍取真正最近三角形，但属性误差会在
+  `bestDistance + tinyTieTolerance` 内的候选三角形中，选择插值 normal/UV 最接近源顶点的
+  那个；质量门阈值、拓扑检查、boundary 集合都没有改变。
+  monkey `--target-ratio 0.3` **6,244（39.66%）→ 4,712（29.93%）**，
+  `--target-ratio 0.2` **→ 4,162（26.44%）**；group 属性拒绝 **80 → 12**，
+  `--quality-debug 1` 同参数构建约 **4.47s → 3.23s**。剩余 12 次属性拒绝仍有
+  max normal 45–72°、mean 1–5° 的离群点；本轮不为它们放宽门槛，后续需要区分
+  generated-vertex 参考点误差与真实 seam 损失。
+  960×720、同机位、`--no-shadows`、同一高模参考下，同 6,244 面新路径为
+  **27.10 dB / 0.97167 SSIM**，修复前同面数为 **25.24 dB / 0.92891**；26.44% 档目视
+  有明显面片感，但无孔洞、无翻面、无新增边界。对照图在
+  `out/ab-monkey-attrfix-ref.png`、`out/ab-monkey-attrfix-4162.png`、
+  `out/ab-monkey-attrfix-6244.png`。新增
+  `AttributeMetricsSelectTheSourceChartAtADuplicatePosition` 回归，验证两个同位置 chart
+  副本各自匹配自己的 normal/UV。
+- **共享网格 scratch 与焊接拓扑门（2026-10-18）**：corner 候选原先每次 attempt 都执行
+  `Mesh extended = mesh`，把整个共享网格（cloth 为 38k 源顶点 + 40k generated）复制一遍，
+  只为了追加少量 generated 顶点。现在 `SimplifyScratch` 每个 worker 保存一份 base mesh，
+  每次简化调用只复制一次，attempt 只重写 generated 尾部。另一个热点是焊接拓扑门：
+  `measureWeldedTopologyImpl` / `preservesWeldedBoundaries` 原先为每个候选分配
+  模型总顶点数的 `vector` 和 `std::map`；现在只哈希当前 unit 实际引用的顶点，边界集合改用
+  排序后的 `uint64_t` 数组。
+  同一命令（cloth 74,976 三角形，`--mode dag --levels 7 --cluster-tris 128`）：
+  DAG 构建 **8.42s → 6.63s（-21.3%）**，cluster chains **2.82s → 2.11s**，
+  groups **5.07s → 4.19s**；`1989 nodes / 8 levels / 272 roots / 589 leaves`、
+  cut `37488 / 74976 = 50.00%`、boundary `500`、non-manifold/duplicate/flipped `0`、
+  以及 `cut vertices 30953` 全部不变。monkey 同机位截图与优化前逐像素一致
+  （PSNR `inf`，SSIM `1.0`），`test_manymesh` 仍为 **57 passed + 1 skipped**。
+  这一步是 CPU 构建优化，不需要 RenderDoc；GPU 原型阶段再用 RenderDoc 分析 dispatch /
+  visibility pass 更合适。
 
-**下一批可优化点**：把 `mmgpu` 的 compute/indirect/visibility 路径接进 Filament Vulkan
-backend 并做持久 GPU buffer 与 GPU 侧 compaction；以及 Android/iOS 的 HTTP 客户端绑定。
-跨 UV chart 的配对 seam collapse 已在本轮补齐（§7.8）；三份以上同位置副本仍按保守策略
-锁定，不能靠放松质量门解决。
+**下一批可优化点**：Filament 应用层公共 compute/indirect/storage-buffer 入口、持久 GPU
+buffer 与 GPU 侧 cut compaction；把 mmgpu 的 visibility buffer 接进正式渲染器；
+移动端真机 HTTP/HTTPS 验证。CPU 侧 source + generated 顶点已按 cut 实际引用压缩
+（§10.1）；三份以上同位置副本由 corner 焊接路径处理，并有 4-copy 回归测试（§7.8）。
 
 ### 7.7 真实 Vulkan 原型：GPU cut、indirect draw 与 visibility buffer
 
@@ -720,18 +864,23 @@ std430 storage buffer 上传：
 
 1. compute shader 每个 DAG 节点一个 invocation，沿 parent 链判断祖先是否被剔除、是否已经
    足够粗，再检查节点自身误差，输出与 `selectLodGraphCut` 相同的非重叠 cut；
-2. CPU 侧根据 cut 生成 `GpuDrawIndexedIndirectCommand`，`firstIndex` 指向共享 index buffer，
+2. 同一个 dispatch 用 atomic range reservation 把选中节点的 index 复制进紧凑 index buffer，
+   并直接写 `VkDrawIndexedIndirectCommand`；`firstIndex` 指向 GPU 分配的紧凑范围，
    `firstInstance` 直接携带 DAG node id；
-3. 一次 `vkCmdDrawIndexedIndirect` 提交整个 cut；
-4. 片元写入两张 `R32_UINT`：cluster ID 和 triangle ID，同时用 `D32_SFLOAT` 做真实深度测试；
-5. 回读后与 CPU reference 按像素比较。
+3. 三轮 GPU 顶点压缩：第一轮按 index 引用标记 source 顶点，第二轮给标记顶点分配密集 id
+   并 gather 位置，第三轮把紧凑 index buffer 重写成新 id；三轮都没有跨 invocation 自旋，
+   避免移动 GPU 上的 forward-progress 风险；
+4. 一次 `vkCmdDrawIndexedIndirect` 消费 GPU 生成的 vertex/index/indirect buffer；
+5. 片元写入两张 `R32_UINT`：cluster ID 和 triangle ID，同时用 `D32_SFLOAT` 做真实深度测试；
+6. 回读后与 CPU reference 按像素比较。
 
 本机（Intel Iris Xe）实测：
 
-| 场景 | CPU cut | GPU cut | 可见像素 | 节点一致 | 三角形一致 | 深度差异 |
-|---|---:|---:|---:|---:|---:|---:|
-| torus, 640x360, 2 px | 9 nodes / 1,034 tris | 9 / 1,034 | 23,709 | 99.99% | 99.94% | 0 |
-| monkey, 640x360, 2 px | 139 nodes / 6,192 tris | 139 / 6,192 | 27,633 | 99.99% | 99.91% | 0 |
+| 场景 | CPU cut | GPU cut | GPU 紧凑顶点 | 可见像素 | 节点一致 | 三角形一致 | 深度差异 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| torus, 640x360, 2 px | 9 nodes / 1,062 tris | 9 / 1,062 | 592 / 637 | 23,700 | 99.99% | 99.93% | 0 |
+| monkey, 640x360, 2 px | 169 nodes / 11,136 tris | 169 / 11,136 | 7,604 / 9,908 | 27,648 | 99.98% | 99.93% | 0 |
+| cloth, 640x360, 2 px | 435 nodes / 36,068 tris | 435 / 36,068 | 18,637 / 38,091 | 32,878 | 99.89% | 99.75% | 0 |
 
 monkey 在 0.5/1/2/4/8 px 五档阈值下，GPU 与 CPU 的节点集合、三角形数和剔除计数全部一致；
 完全背对相机时两者都报告 1,152 个剔除三角形和 0 个可见像素。少于 1% 的 triangle-id
@@ -740,11 +889,89 @@ monkey 在 0.5/1/2/4/8 px 五档阈值下，GPU 与 CPU 的节点集合、三角
 视觉检查没有发现破面、洞或轮廓损坏。CPU/GPU/diff visibility 对照图位于
 `out/mmgpu-final-torus/` 与 `out/mmgpu-final-monkey/`（构建产物，不提交）。
 
-**接进 Filament 的具体缺口**：`VulkanDriver::dispatchCompute` 目前仍是空实现；
-`VulkanProgram` 的 `MAX_SHADER_MODULES` 只有 vertex/fragment 两个槽；descriptor set 与
-pipeline cache 也只覆盖图形管线。要在这里跑 compute cut，必须先扩展 shader stage、
-compute pipeline layout 和 storage-buffer descriptor 三处，而不是只补一个 dispatch 调用。
-这也是本轮把 GPU 路径放在独立 `mmgpu` 工具里验证、没有假装完成 backend 集成的原因。
+GPU 路径的 cut 压缩已经完整：compute shader 直接产出紧凑 index、indirect command 和紧凑
+顶点位置，draw 不再回读 CPU 再重建任何 buffer。三个模型上 GPU 紧凑 index 与 CPU
+`compactLodSelection` 逐元素一致（排序后比较），indirect command 数等于选中节点数。
+
+**接进 Filament 的具体缺口**：后端已经补上 compute 支持——`VulkanDriver::dispatchCompute`
+有真实实现，`VulkanProgram` 增加了 compute shader 槽，compute pipeline layout 与
+storage-buffer descriptor 也走同一套 descriptor set；`NoopDriver`、`OpenGLDriver` 和
+`WebGPUDriver` 同样实现了 dispatch，`DriverAPI` 也已补上 `drawIndexedIndirect`
+（Vulkan `vkCmdDrawIndexedIndirect`，OpenGL 逐条 `glDrawElementsIndirect`，以兼容 GLES 3.1）。
+`compute_test --api vulkan` 在本机 `out/cmake-vulkan`（`FILAMENT_SUPPORTS_VULKAN=ON`）
+构建上 5/5 通过，包括 compute 写 SSBO → fragment 读取的跨 bind point 用例、
+indirect command buffer → fragment shader 的回归用例，以及新增的
+`ComputeTest.manymeshGpuLodNodeTable`：把 `buildLodGraph()`/`flattenLodGraph()` 产出的
+`GpuLodNode` 表和 index buffer 原样上传为 SSBO，由 compute shader 逐节点读取
+parent/level/index range 等字段并回读校验，防止 C++ 结构体与 shader 布局再次漂移。
+仍然缺的是**应用层公共入口**：`Engine` 还没有暴露持久 storage buffer、compute program
+和 dispatch 句柄，因此正式 Filament 渲染器无法直接提交 mmgpu 的 cut/visibility 路径。
+这也是本轮把 GPU 路径放在独立 `mmgpu` 工具里验证、没有假装完成公共 API 集成的原因。
+
+---
+
+### 7.7.1 Filament OpenGL compute 修复与 draw-call 合并
+
+**OpenGL compute 原先不是“能跑但慢”，而是没有真正生效。** 三个独立缺陷叠在一起：
+
+1. `OpenGLProgram` 把 `SHADER_STORAGE_BUFFER` 和 `UNIFORM_BUFFER` 放进同一个分支，用
+   `glGetUniformBlockIndex` 查询 storage block。SSBO 使用独立的 block 命名空间，这个查询
+   必然返回 `GL_INVALID_INDEX`，descriptor 根本没有进入 binding map。
+2. descriptor set 只在 `draw2()` 前通过 `updateDescriptors()` 延迟绑定，
+   `dispatchCompute()` 没有对应调用，即使布局正确也不会提交。
+3. compute shader 写入 SSBO 后没有插入内存屏障，后续 `glCopyBufferSubData`/读回或
+   vertex/index/indirect 消费不保证看到结果。
+
+修复后：SSBO 走 `glGetProgramResourceIndex(..., GL_SHADER_STORAGE_BLOCK, ...)` 和
+`glShaderStorageBlockBinding()`；GLSL 的 block 名与后端/SPIR-V 的 instance 名不一致时，
+用 shader 声明的 binding 做唯一匹配回退；dispatch 前调用 `updateDescriptors()`，dispatch
+后插入覆盖 `GL_SHADER_STORAGE_BARRIER_BIT`、buffer update、vertex attribute、element
+array 和 command/indirect 的 `glMemoryBarrier`。`compute_test --api opengl` 从
+**1 passed / 1 failed** 变为 **4 passed / 1 skipped**，Vulkan 为 **5/5 passed**（均在
+`out/cmake-vulkan` 构建上复测；未启用 Vulkan 的构建目录不能运行 `--api vulkan`）。
+
+OpenGL 的 `drawIndexedIndirect` 使用 `glDrawElementsIndirect`（`glMultiDrawElementsIndirect`
+不是 GLES 3.1 核心入口，逐条提交可同时覆盖桌面与移动端）。本机 Intel/WGL
+驱动会拒绝“由异步/共享上下文路径分配的 buffer 直接作为 indirect source”的绘制并返回
+`GL_INVALID_OPERATION`；因此实现先把命令用 GPU 侧 `glCopyBufferSubData` 拷进驱动私有
+scratch buffer 再绘制，保持 GPU 驱动语义且不做 CPU 回读。Vulkan 路径直接消费原始
+indirect buffer，不受此限制。
+
+Vulkan 的第三个用例（`ComputeTest.graphicsConsumesComputeOutput`）还暴露并修复了一个
+descriptor set 生命周期问题：compute 的 `commit()` 会把 `bindDescriptorSet()` 暂存的
+set 消费掉，随后 graphics 的 `commit()` 找不到 set，fragment 读到全零。修复方式是在
+`VulkanDescriptorSetCache` 中保留逻辑上当前绑定的 set；当 commit 的 bind point 或
+pipeline layout 变化时，允许从当前 set 重新绑定。这样同一个 SSBO 可以同时用于
+`VK_PIPELINE_BIND_POINT_COMPUTE` 和 `VK_PIPELINE_BIND_POINT_GRAPHICS`，不再依赖调用方
+在 dispatch 和 draw 之间重复 `bindDescriptorSet()`。配合 `dispatchCompute()` 末尾的全局
+`VkMemoryBarrier`（compute write → indirect/vertex/uniform/fragment/transfer read），
+compute 的输出现在被 draw 正确消费。
+
+**RenderDoc 抓帧结果**：monkey 满细节 cut（4,626 三角形）在 960×540 下提交了
+**1,433 次 `glDrawElementsInstanced`**，平均每 draw 只有 3.2 个三角形；索引区间本身是
+连续的，但 `mm_bench` 仍按 DAG 节点逐个建 primitive，而且 Renderable 固定保留 1,433 个
+槽位，其中 1,432 个是 zero-index。逐帧遍历这些空 primitive 才是 CPU 主因，而不是
+三角形数或 GPU。
+
+`mm_bench` 现在做两层优化：
+
+- 把同一材质、索引区间恰好相邻的 cut 节点合并成一个 draw；Renderable 的 primitive
+  数量跟随合并组数，cut 改变时按需重建。
+- 可选 `--compact-cut-indices`：只在 cut 变化时把当前 cut 的索引按材质拼接成一个新
+  index buffer（不重建顶点），使任意 cut 都退化成每材质一个 draw。运行时若要避免每次
+  cut 变化都上传，应改用 indirect/multi-draw；这里保留两种路径做对照。
+
+| 路径（monkey，4,626 / 3,740 tris） | cut 节点 | draw calls | CPU 稳态帧时 |
+|---|---:|---:|---:|
+| 逐节点（`--no-merge-draws`） | 1,433 | 1,433 | 72.0 ms |
+| 连续区间合并（默认） | 1,433 | **1** | **7.4 ms** |
+| 逐节点 50% cut | 560 | 560 | — |
+| 区间合并 50% cut | 560 | 183 | 35.7 ms |
+| 50% cut + `--compact-cut-indices` | 560 | **1** | **7.05 ms** |
+
+三种满细节路径和两种 50% cut 路径的截图均逐像素一致（RGB max diff = 0）。`--no-merge-draws`
+保留用于复现瓶颈。GPU 帧时在这台机器上只有 0.21–0.22 ms，说明当前改的是 Filament/GL
+提交侧开销，不是着色或三角形吞吐。
 
 ---
 
@@ -758,8 +985,9 @@ per-index 拓扑看，这条接缝两侧各是一条边界；如果只塌缩其�
 
 - 每个简化单元按位置建立 `PositionKey` 映射；只有恰好两份副本、且两份都被标记为边界
   顶点时，才建立双向 `seamPartner` 关系。
-- 同一位置出现三份或更多副本时，无法在不知道 chart id 的情况下判断哪两份该一起移动，
-  因此保持锁定。这比猜测后产生裂缝更安全。
+- 同一位置出现三份或更多副本时，AttributeSimplifier 的双向 `seamPartner` 快速路径不建立
+  配对；CornerSimplifier 的焊接单元则把它们视为同一个位置，简化后再按 chart 输出
+  generated 顶点。`CornerSimplifierHandlesFourChartCopiesAtOnePosition` 覆盖了 4 副本情况。
 
 **成对评估与提交**
 
@@ -799,11 +1027,1036 @@ per-index 拓扑看，这条接缝两侧各是一条边界；如果只塌缩其�
 和 `out/seam-sphere-50.png`。人工目视对比未发现洞、裂缝或明显破面；torus 与 monkey 在
 50% 档可见地变粗，但轮廓和主要特征保持完整。
 
-**限制**：当前只支持精确的两副本 seam；三份以上同位置副本、以及需要生成新顶点并插值
-属性才能跨 chart 合并的极端情况仍保持锁定。这里没有放松质量门来换取更低的三角形数。
+**限制**：AttributeSimplifier 的快速路径只对精确的两副本建立配对；三份以上同位置副本
+需要走更慢的 corner 焊接路径。跨 chart 的 QEM 新位置已经能生成顶点并插值属性，但极端
+情况下仍会触发几何/属性门而提前停止。这里没有放松质量门来换取更低的三角形数。
+
+**3+ 副本与 UV 一致性（2026-10 回归）**
+
+- `CornerSimplifierHandlesFourChartCopiesAtOnePosition` 覆盖 4 份副本的拓扑；新增的
+  `CornerSimplifierKeepsAttributesOfThreeChartCopiesAtOnePosition` 用三个扇形 chart 组成
+  闭合圆盘，中心位置有 3 份不同 UV/normal 的副本，并验证简化后没有把不同 chart 的属性
+  合到同一个输出顶点。
+- 新增 `LodGraphKeepsThreeChartCopiesAndTheirUvIslands` 走完整 pipeline：`buildLodGraph`
+  → `selectLodGraphAtRatio` → `compactLodSelection`，确认存在一个跨三个 chart 的简化
+  父节点，并逐三角形检查每个顶点仍匹配某一个 chart 的仿射 position→UV 映射。
+- 这条端到端测试暴露了一个真实问题：粗层级里同一个 chart 顶点在相邻三角形上的
+  barycentric 外插会分叉，实测 UV 差可达 0.04。旧代码把这些 corner 平均后输出，结果是
+  位置和 UV 不再对应，纹理会在少数三角形上拉花；旧版本因此把分歧落点直接拒绝。
+- 当前实现改为按 `sourceVertex` 和 UV cluster 分区：位置相同的多个 generated vertex
+  可以并存，每个三角形引用自己 chart 的 UV/normal/AO。表面仍按位置焊接，所以不会开洞；
+  新增 `CornerSimplifierEmitsOneVertexPerDivergentUvCluster` 专门断言同位置多顶点、
+  UV 岛不被混合、拓扑仍 closed。`--corner-split-uv 0` 可关闭拆分做 A/B，默认开启。
+- 同目标 A/B（`mmgeo --mode dag`，同质量门）：torus `--target-ratio 0.2` 两者都是
+  **550 / 1,152 = 47.74%**，拆分版 cut 625 顶点（594 generated）对平均版 587（556
+  generated），多出的 38 个顶点就是同位置 UV 变体；monkey `--target-ratio 0.3` 拆分版
+  **7,124 / 15,744 = 45.25%**，平均版 **7,256 / 15,744 = 46.09%**，拆分版少 132 个
+  三角形且 cut 顶点 7,867 对 7,922。两者拓扑均为 non-manifold/duplicate/degenerate/
+  flipped = 0，UV 符号与面积比统计接近；拆分版用少量顶点换掉了 UV 平均的隐患。
 
 ---
 
+
+### 7.9 着色补偿：能补什么、补不了什么（实测）
+
+减面后的损失能不能用着色补回来？这一轮把整条链路做出来并量了一遍。
+
+新增能力：
+
+- `DetailBake`（`mmgeo --bake-normal N`）：把源网格法线场与 LOD 插值法线场之差，烘到
+  LOD 的 UV 布局里，输出 `detail-normal.png`（切线空间，neutral = `(128,128,255)`）。
+  只保留 LOD 丢掉的那部分，低频形状仍由 LOD 自己的顶点法线承担。
+- `computeUvTangents()`：按 UV 参数化计算逐顶点切线和手性，镜像 chart 会自动得到正确的
+  bitangent 符号。`mm_bench` 的 LOD 顶点缓冲改用它（之前是任意正交基）。
+- `mm_bench --detail-normal <png> --normal-strength s`，材质
+  `samples/materials/aiDetailNormal.mat`（带 `specularAntiAliasing: true`）。
+  `--roughness` 可单独做粗糙度补偿实验。
+- `repairShadingNormals()`（`mmgeo --shade-crease DEG`、`mm_bench --shade-crease DEG`，
+  UI 里的 “Smooth seam normals”）：只改着色法线，不改一个三角形。把同位置、
+  夹角小于 crease 的重复顶点法线按三角形内角加权平均，保留真实硬边。
+
+实测（960×720、同机位、`--no-shadows`、monkey，参考为 15,744 面全分辨率）：
+
+| 变体 | PSNR | SSIM |
+| --- | --- | --- |
+| LOD 7,084 面（44.99%） | 37.17 dB | 0.98708 |
+| LOD + 细节法线（s = 1.0） | 36.70 dB | 0.98311 |
+| LOD + 细节法线（s = 0.25） | 37.12 dB | 0.98638 |
+| LOD + 只开 specular AA（s = 0） | 37.18 dB | 0.98707 |
+| LOD + roughness 0.55 | 37.19 dB | 0.98672 |
+
+烘焙本身是有效的：monkey 45% 覆盖 97.4% UV，丢失法线细节 **mean 1.28° / max 89.98°**
+（568 个 UV 错配 texel 被保持 neutral、不计入均值）；monkey 38% 为 **mean 1.45°**。
+放大对比图里，细节法线反而在眼窝、口鼻边缘多出细碎明暗带。
+
+把误差按像素拆开看更能说明问题：monkey 44.99% 时，轮廓 ±2 px 只占 **1.5%** 的像素，却贡献
+**73.4%** 的平方误差；轮廓内部 PSNR 仍有 **42.85 dB**。着色不可能修正轮廓覆盖。
+
+原因不是烘焙错了，而是这条管线本身没有法线头寸：
+
+1. corner 简化**携带**高分辨率法线（`GeneratedVertex.normal`），LOD 顶点法线就是源法线，
+   三角形内部只剩线性插值误差（均值 0.7–1.6°），远小于几何位移。
+2. 参考图与 LOD 在同一个像素上采样的是**不同表面点**。把源表面在对应 UV 处的法线贴回
+   LOD，会让该像素的着色偏离参考图的该像素，所以逐像素 PSNR/SSIM 下降。
+3. 真正丢掉的是轮廓、遮挡/接触阴影、薄几何和投影；这些不是着色能补的。
+
+仍然值得用的场景：源资产有**顶点密度表达不了**的微表面细节（雕刻→游戏网格的
+normal/AO 烘焙），且 LOD 是低频代理而不是“保留原法线的抽稀”。本项目的默认建议是：
+不给携带法线的 LOD 贴细节法线；近处用更细的 LOD（`--distance-lod`），远处再降。
+着色层下一步的优先级是 AO/cavity 烘焙，而不是细节法线。
+
+UV 布局还有一条硬限制：单张 2D 法线贴图只能表示 `[0,1]` 的 atlas。baker 现在会检查
+LOD 实际引用的 UV：torus 的生成顶点把 UV 推到 `[-0.020, 1.047]`，cloth 是
+`[-2.39, 5.01] x [0, 3.70]` 的平铺布局，两者都会被**拒绝**并给出提示；要用得先做唯一化
+atlas（或每个 tile 烘一张），否则不同表面点会写进同一个 texel。monkey 的 UV 在 `[0,1]`
+内，是当前唯一通过检查的测试资产。
+
+**高度/视差补偿（新增，实测收益接近零）**：细节法线只能改着色，不能改“在 UV 的哪里
+采样”。`DetailBake` 因此新增 `bakeDetailHeightMap()`：把源表面与 LOD 表面都光栅化到
+同一张 `[0,1]` UV atlas，对每个共同覆盖的 texel 计算
+
+```text
+height = dot(sourcePosition - lodPosition, lodNormal)
+```
+
+再以 128 为中性编码到 R8，输出 `detail-height.png` 和记录
+`recommendedUvScale` 的 `.txt` sidecar。这个定义比“沿 LOD 法线双向打射线”更稳：
+后者在共面表面上会漏采样，也会把模型另一层表面误当成细节。修正后 monkey 45% 档的
+miss 从 **12,070** 降到 **5,481**，平均绝对位移从 **0.0106** 降到 **0.00154**；
+38.19% 档为 **6,408 misses / mean |h| 0.00169**。两个档位的推荐视差尺度都约为
+**0.0414**，512×512 烘焙约 **163–172 ms**。
+
+材质 `samples/materials/aiParallax.mat` 用迭代视差采样这张图，`mm_bench` 暴露
+`--detail-height`、`--parallax-scale`、`--parallax-layers`、`--parallax-strength` 和
+对应 UI 滑杆。方向已核对：Filament 的 `getWorldViewVector()` 是片元指向相机，因此
+“源表面在 LOD 前方”时正高度应对应
+`uv = baseUv + height * viewTangent.xy / viewTangent.z`，当前符号是正确的。
+
+960×720、`--no-shadows`、同一机位、细节法线 + POM 的结果：
+
+| monkey 44.99% 变体 | PSNR | SSIM |
+| --- | --- | --- |
+| 细节法线，POM 0 | 40.39 dB | 0.99300 |
+| 细节法线，POM 1.0 | 40.43 dB | 0.99306 |
+| 细节法线，POM 2.0 | 40.45 dB | 0.99308 |
+
+更激进的 38.19% 档也只有 **40.05 → 40.10 dB**。4 视角重复后差异消失：POM 0 的
+median / minimum 为 **42.40 / 40.05 dB**，POM 2.0 为 **42.38 / 40.10 dB**；SSIM
+median 从 0.99534 降到 0.99529。也就是说，单视角上的 0.06 dB 不是稳健收益。原因同样
+是没有法线头寸：monkey 的 LOD 已经保留了源法线，真正
+丢掉的是轮廓、薄几何和遮挡；POM 只能让内部 texel 换一个采样位置，不能增加轮廓覆盖。
+从高度场再求梯度生成“微法线”的实验也失败了：1× 强度会在特征边缘产生明显的黑色结壳
+（32.65 dB），0.1× 仍有暗边（40.04 dB），所以没有进入默认材质。
+
+结论：POM 是**可选的高度细节工具**，适合源资产本身有真实位移/微表面、而 LOD 是低频
+代理的情况；对本项目当前“携带源法线抽稀”的资产，默认关闭。生产上优先级仍是
+**近细远粗的几何 + 源网格 AO + 接缝法线修复**，而不是继续加大 POM 强度。
+
+**接缝法线统一（shading-only，实测）**：简化后的 `selected.ply` 有 7,724 个顶点，但只有
+3,628 个唯一位置；2,179 个位置组里同位置法线的中位差为 **2.47°**、P90 为 **11.11°**、
+最大 42.09°。这些缝在低模上会变成可见的明暗硬边。`--shade-crease 10` 之后，重复组法线
+中位差降到 **0.01°**，大于 5° 的重复法线对从 **2,318/7,610** 降到 **1,330/7,610**，
+而最大 42.09° 的真实折边保持不合并。
+
+| monkey 44.99% 变体 | PSNR | SSIM |
+| --- | --- | --- |
+| 原始 LOD 法线 | 41.90 dB | 0.99500 |
+| `--shade-crease 5` | 41.89 dB | 0.99499 |
+| `--shade-crease 10` | 41.90 dB | **0.99509** |
+| `--shade-crease 20` | 41.87 dB | 0.99505 |
+| `--shade-crease 30` | 41.78 dB | 0.99515 |
+
+torus 46.70% 上更干净：**45.81 → 45.91 dB**、**0.99825 → 0.99844 SSIM**（crease 10）。
+目视上 10° 能消掉鼻梁/右颊的细碎法线带；20°/30° 会把眼窝这类真实折边也抹平，出现
+暗斑，所以 UI 默认开启档是 **10°**，硬表面资产建议 5° 或关闭。它仍然只是“补着色接缝”，
+轮廓、遮挡和几何位移不在可补范围内：monkey 45% 时轮廓 ±2 px 占 1.5% 像素、贡献 73.4%
+平方误差。要进一步提升观感，优先级仍是近细远粗的 LOD 和轮廓保护，而不是更大的 crease。
+
+补偿强度现在是连续的：`--shade-strength F`（0..1）和 UI 的 `Shading strength` 滑杆把每个
+重复位置法线向 cluster 平均值线性插值，而不是只能全开或全关。`F=0` 完全保留原法线，
+`F=1` 等价于原来的满强度修复。UI 同时暴露 `Normal detail`（细节法线强度）和 `Roughness`
+滑杆，便于在编辑器里做“几何更省 / 着色补回”的 A/B。
+
+**自动强度（实测）**：`--shade-auto` 和 UI 的 “Auto strength (screen error)” 不再要求
+美术猜一个固定值。最坏屏幕误差 < 0.25 px 时接缝变化不可见，强度为 0；0.25→1 px 平滑
+升到 0.50；≥1 px 保持在 0.50。上限不是 1.0，因为全强度会把真实法线变化一起抹平。
+960×720、固定机位、`--no-shadows`、monkey 44.99% 的 A/B：
+
+| `--shade-strength` | PSNR | SSIM |
+| --- | --- | --- |
+| 0（原法线） | 41.84 dB | 0.99494 |
+| 0.25 | 41.91 dB | 0.99523 |
+| 0.50 | **41.93 dB** | **0.99535** |
+| 0.75 | 41.90 dB | 0.99529 |
+| 1.00 | 41.83 dB | 0.99504 |
+
+在 62.1% 和 38.2% 两个更轻/更重的 cut 上，0.50 同样优于 0 与 1.0（分别约 +0.09 dB
+和 +0.08 dB），所以自动策略在可见误差区间停在 0.50，而不是随减面比例继续加码。这个
+自动值只影响接缝法线；轮廓、遮挡、薄几何和几何位移仍然补不回来。
+
+**屏幕空间 cavity（新增，实测偏负）**：`samples/materials/aiCavity.mat` 在 fragment 里用
+`dFdx/dFdy` 估计世界空间平均曲率，只压暗凹处；`--shade-cavity F` 控制强度，UI 里有
+“Cavity shading” 滑杆，`--curvature-scale` 控制世界尺度（默认由包围盒自动求）。它必须
+配合 IBL 或阴影，因为纯直射光下 `MaterialInputs.ambientOcclusion` 不参与最终颜色；默认
+`aiDefaultMat` 不包含这段代码，开启时需要显式选择 `aiCavity.filamat`。
+
+960×720、`lightroom_14b` IBL、monkey 44.99%、参考为 15,744 面高模：
+
+| 变体 | PSNR | SSIM |
+| --- | --- | --- |
+| LOD | **36.29 dB** | **0.99293** |
+| LOD + cavity 0.10 | 36.00 dB | 0.99203 |
+| LOD + cavity 0.25 | 34.85 dB | 0.98869 |
+| LOD + cavity 0.50 | 31.54 dB | 0.98047 |
+
+结论：**这不是一个默认开启的“补画质”开关**。本管线的 LOD 已经携带源法线，屏幕空间曲率
+看到的是低模自身的面片梯度，压暗的是低模折面，而不是高模丢掉的细节；0.25 已能在眼窝/
+鼻翼看出效果，但会把低模的面片感一起放大。保留它作为美术可调的实验材质，默认强度 0。
+真正能补回这一层的顺序是：源网格 AO/cavity 烘焙（不是屏幕空间近似）→ 高度/位移或 POM
+→ 时域/神经重建；轮廓、薄几何和几何位移仍然补不回。
+
+**源网格 AO 烘焙（新增，实测有效）**：`AmbientOcclusion` 用 BVH 对源网格做余弦半球
+可见性采样，把结果烘到 LOD 顶点上。它不需要 UV atlas，因此 tiled/越界 UV 的 torus 和
+cloth 也能用。每条射线从顶点沿源网格法线偏移后发射，长度默认取源包围盒对角线的 10%；
+QEM 生成点可能落在源表面内侧，所以采样前先吸附到最近源三角形，否则整个实体会被判成
+全遮挡。重复位置顶点在采样后焊接平均值，避免 LOD seam 上出现一条细 AO 缝。
+
+`mm_bench --bake-ao --ao-samples 32 --ao-strength 0.5`（材质 `aiBakedAo`，UI 里有
+“Baked AO” 滑杆）和 `mmgeo --bake-ao 32 [--ao-radius R]`（写进 PLY 顶点色 R）使用同一套
+烘焙。960×720、`--no-shadows`、monkey（15,744 → 8,660 面，55.01%，32 samples，自动半径
+0.365，21,774 个 LOD 顶点，烘焙约 150–190 ms）：
+
+| `--ao-strength` | PSNR | SSIM |
+| --- | --- | --- |
+| 0（LOD 原样） | 41.64 dB | 0.99560 |
+| 0.25 | 44.00 dB | 0.99640 |
+| **0.50** | **44.92 dB** | **0.99660** |
+| 0.75 | 43.37 dB | 0.99603 |
+| 1.00 | 40.91 dB | 0.99482 |
+
+三视角重复验证（median / minimum）：无 AO 为 **45.35 / 41.64 dB**，AO 0.50 为
+**48.21 / 44.92 dB**；SSIM 0.99804 → 0.99845。AO 只补遮挡，不改变三角形或轮廓。
+在 62.0%、55.0% 和 45.0% 三个 cut 上，0.50 分别带来 **+3.78 / +3.28 / +2.69 dB**，
+所以默认强度固定为 0.50，而不是随减面比例继续加码。与 `--shade-crease 10` 叠加再得
+约 **+0.10 dB / +0.00023 SSIM**，两者可以同时开。
+
+> **参考系更正（重要）**：上面的 41.64 → 44.92 dB 是把 LOD+AO 与**同样开了顶点 AO 的
+> 高模参考**比较，也就是“材质一致”的对比。它对“未开 AO 的高模参考”并不成立：同一组
+> 960×720 monkey 44.99% 图，参考改成未开 AO 时，LOD 从 **42.51 dB** 掉到 **40.45 dB**
+> （顶点 AO）或 **41.77 dB**（贴图 AO）。因此 AO 的定位是**恢复高模本来就有的接触阴影**，
+> 不是凭空把未阴影的高模外观补回来。生产接入时必须让高模与 LOD 使用同一种 AO 表达，
+> 否则逐像素误差反而变大。
+
+> **视觉复验（本轮）**：固定机位、960×720、`--no-shadows`、单帧、monkey 55.01% cut，
+> 参考为 `--dag --savings 0 --bake-ao` 的高模 + 顶点 AO：LOD 不开 AO 为
+> **41.49 dB / 0.99595**；LOD + AO（0.50）为 **46.20 dB / 0.99718**，平均绝对差从
+> 0.001146 降到 0.000380；再叠 `--shade-crease 10` 为 **46.21 dB / 0.99721**。
+> 即 **+4.71 dB**、误差降到约 1/3，与上面的三档结果同向（相机不同，绝对值不同）。
+> 目视上恢复的是眼窝、眉弓、鼻翼和耳廓的接触阴影；轮廓台阶与薄几何没有变化。
+
+**统一着色补偿材质（新增，opt-in）**：`samples/materials/aiLodCompensated.mat` 把两条
+AO 路径合成一个材质：高模源 UV 烘出的 AO 贴图（`aoMap`，覆盖比顶点更细的腔体）与 DAG
+顶点 AO（顶点色 R，UV atlas 不可用时仍有效）取 `min`，再按 `aoStrength` 混合；可选的
+`normal` 是 `DetailBake` 输出的高模→当前 cut 切线空间细节法线，`roughnessBoost` 用来把
+失去的法线方差折算进高光粗糙度。`detail-normal.png` 的 alpha 存归一化丢失角
+（`angle / 90°`），材质的 `roughnessBoost` 只在 alpha 高的纹素上生效；旧的三通道贴图按
+alpha=1 读取，保持原行为。可选的 `heightMap` 走与 `aiParallax` 相同的迭代视差，
+并用同一个 UV 采样 normal/AO。`compensationStrength` 是运行时总闸门：0 时材质完全不
+改变 LOD，1 时按上述参数生效；因此 UI 可以让该材质常驻并即时 A/B。
+`mm_bench --shade-compensate` 选择该材质，
+`--compensate-size 512` 控制运行时烘焙分辨率，`--compensate-normal` 控制细节法线
+（默认负值：运行时烘焙自动 0，显式 `--detail-normal` 自动 1），`--roughness-boost`
+默认 0；`--parallax-strength` 默认负值，只有显式 `--detail-height` 时才自动为 1，
+避免没有高度图时白跑视差循环。UI 勾选 “Shading compensation (AO + detail)” 或按 `C` 即时开关，
+`--compensation-strength 0..1` 与 UI 的 Compensation amount 滑杆调总强度；Normal detail /
+Roughness compensation 滑杆和 “Rebake maps for this cut” 按钮用于美术微调。切换 cut 后
+细节法线需要按新三角形重烘，AO 贴图只烘一次。无 UV、平铺 UV 或越界 UV 时，贴图烘焙失败
+会自动改为顶点 AO（并重传紧凑顶点缓冲），不再停留在白色 AO 贴图。
+
+着色补偿的作用域可以按误差来源拆开看：
+
+| 误差来源 | 着色能否补 | 当前手段 |
+| --- | --- | --- |
+| 接缝/重复顶点法线不连续 | 能，且最稳定 | `repairShadingNormals()` / `--shade-crease 10` |
+| 腔体、接触阴影、方向性可见度 | 部分 | 顶点 AO、AO 贴图、bent normal |
+| 当前 cut 的褶皱/接触遮挡 | 部分，只乘间接光 | GTAO / SSCT（`--ssao` / `--ssct`） |
+| 被删掉的微法线 | 部分，依赖 UV/切线框架 | 高模→LOD 细节法线 |
+| 高光比剩余几何更锐 | 统计近似 | 丢失角→逐纹素粗糙度 |
+| 轮廓、薄几何、真实位移、覆盖错位 | **不能** | 几何质量门、MSAA、近细远粗、高模阴影代理 |
+
+因此正确的组合不是“把材质强度拉满”，而是先用几何/近细远粗守住轮廓，再用着色补表面。
+29.38% monkey 档的实测里，轮廓 XOR 只占 0.19% 像素却贡献 66.7% 平方误差；这部分无论
+AO、法线、POM 还是粗糙度都不会改善。
+
+逐纹素粗糙度的 45.25% monkey 复验：256² 细节图里丢失角平均 1.02°、最大 88.19°，
+alpha 平均 1.59/255，34.0% 纹素非零，alpha>32 的只有 257 个。960×720、固定材质、
+`--no-shadows` 下，`roughnessBoost=0` vs `0.5` 为 **41.088 vs 41.094 dB**，只有
+0.008% 像素变化超过 1 LSB（最大 10 LSB）。把同一张图的 alpha 人为设成 255 后，
+`0.5` 与 0 的差异扩大到 48.9 dB / 1.86% 像素，确认 shader 读取的是逐纹素 alpha。
+因此这条不是靠“整体加粗糙度”换稳定，而是只在烘焙确实发现丢失细节的地方生效。
+
+同一机位、960×720、`--no-shadows`、monkey 44.99% cut 的实测（每个候选都与**使用同一
+材质表达的高模参考**比较，避免 AO 参考系混淆）：
+
+| 方案 | PSNR | SSIM | 说明 |
+| --- | --- | --- | --- |
+| LOD 无补偿 vs 高模无补偿 | **42.60 dB** | 0.99559 | 保留源法线 + 自动接缝法线 |
+| LOD 顶点 AO 0.50 vs 高模顶点 AO | **43.36 dB** | 0.99558 | 当前推荐默认 |
+| LOD 512² 贴图 AO vs 高模贴图 AO | 42.77 dB | 0.99529 | 与无补偿接近；顶点密度足够时不划算 |
+| LOD 细节法线 vs 高模细节法线 | 41.64 dB | 0.99412 | 当前 UV/切线框架下反而降低 PSNR |
+
+结论：着色策略能补的是**低频可见性（AO）和微法线响应**；在本项目当前“保留源法线抽稀”的
+LOD 上，顶点 AO + `--shade-crease` 是唯一稳定收益项，512² 贴图 AO 没有明显超过顶点 AO，
+细节法线和 roughness boost 只能作为美术开关。轮廓覆盖、薄几何、接触几何和位移仍由几何
+本身决定；如果资产必须有这些，应回到减面质量门或离线高模→低模烘焙，而不是继续加屏幕
+空间强度。monkey 45% 时轮廓 ±2 px 只占 1.5% 像素却贡献 73.4% 平方误差，这是着色无法
+跨越的上限。
+
+**45.25% 档的误差上限（固定机位复验）**：960×720、`--no-shadows`、显式机位
+`eye 1.982729,1.347563,4.480644 / target 0,-0.015564,0.019503`，monkey 7,124 面对
+11,250 面的 DAG 满细节参考。按前景掩码拆分后，轮廓 XOR 仅 **736 px（0.11%）**，却贡献
+**68.3%** 的平方误差；两图共同覆盖区的 PSNR 为 **37.24 dB**，整图为 42.50 dB。着色只能在
+共同覆盖区内争取收益，逐个候选都与使用同一材质表达的高模参考比较：
+
+| 方案 | 共同覆盖区 PSNR | 相对无补偿 |
+| --- | --- | --- |
+| LOD 无补偿 | 37.24 dB | — |
+| 缝法线 10° / auto | **37.42 dB** | **+0.18 dB** |
+| AO 0.50 | 37.28 dB | +0.04 dB |
+| AO + 细节法线 0.25 | 37.17 dB | -0.07 dB |
+| roughness 0.40 / 0.60 | 36.25 / 36.62 dB | -0.99 / -0.62 dB |
+
+固定机位下，稳定的着色收益只有接缝法线；AO 的收益依赖视角和腔体可见度，细节法线与
+粗糙度调整都不能替代几何。复验图与 JSON 在 `out/shade-detail-check/`，整图 PSNR 依次为
+42.50 / 42.57 / 42.71 / 42.67 / 42.35 / 42.49 dB。这个拆分也说明为什么继续加 AO 或法线
+强度无法跨越 30–45% 档：大部分平方误差来自轮廓覆盖，而不是表面 BRDF。
+
+**着色项与边缘项的分工（本轮新增复验）**：上表说明材质项的作用范围。为了确认
+“把着色强度拉满”是否能跨过上限，本轮又补了两组同机位、同参考系的对照：
+
+| 方案 | 整图 PSNR | 共同覆盖区 PSNR | 轮廓 XOR 平方误差占比 |
+| --- | --- | --- | --- |
+| LOD 无补偿 | 42.50 dB | 37.24 dB | 68.3% |
+| 缝法线 10° / auto | 42.57 dB | 37.42 dB | 69.1% |
+| LOD 与参考都开 TAA | 41.00 dB | 31.40 dB | 6.9% |
+| tiny CNN 跨资产推理 | 42.65 dB | 36.85 dB | 64.1% |
+| 缝法线 + tiny CNN | 42.70 dB | 36.96 dB | 64.6% |
+
+TAA 两边都开、60 帧收敛后仍只有 41.00 dB / SSIM 0.99160（无 AA 为 42.50 / 0.99555）。
+它的 jitter 确实把轮廓 XOR 压到 6.9%，但代价是共同覆盖区从 37.24 掉到 31.40 dB，
+也就是把内部细节整体拖糊；静帧画质应选 MSAA，TAA 只在有真实运动矢量/时域采样
+预算时使用。tiny CNN 的整图 +0.15 dB 则来自边缘（XOR 占比降到 64.1%），内部反而
+-0.39 dB，但整图 SSIM 从 0.99555 升到 0.99583；它证明学习型重建能补“边缘/高频”，
+但不是 AO 或细节法线的替代品。dragon 同资产训练的 tiny 为 +1.88 dB，跨资产只剩
+0.15 dB，说明网络学到的是资产先验，部署需要多样本训练或按资产 fine-tune，
+不能指望一个通用模型无条件补回所有模型。复验图与 JSON 在 `out/temporal-check/`。
+
+因此推荐按保留率选补偿：≥45% 用缝法线 + 顶点 AO 0.5（参考必须同 AO 表达）；
+25–45% 用 4× MSAA + 缝法线，AO 只按 cluster 误差淡入；<25% 优先几何落点、近细远粗、
+高模阴影代理或学习型重建，不再继续加 AO/法线/roughness。UI 的 measured preset 和
+`--shade-error-driven` 已按这个判据实现。
+
+**三模型 / 三视角复验（本轮）**：960×720、`--no-shadows --auto-frame --ignore-ceiling`、
+每个候选裁到约 45–47% 面数。比较时高模和 LOD 使用**同一种 AO 表达**；monkey 用 256²
+AO 贴图，torus 用 256² AO 贴图，cloth 的 UV 是平铺/越界布局，自动走顶点 AO 回退。
+
+| 模型（保留面数） | LOD 无补偿 | LOD + 着色补偿 | delta | SSIM |
+| --- | --- | --- | --- | --- |
+| monkey 44.99% | 45.83 dB | **46.36 dB** | **+0.53 dB** | 0.99700 → 0.99812 |
+| torus 43.23% | 45.70 dB | 45.69 dB | -0.01 dB（中性） | 0.99813 → 0.99814 |
+| cloth 46.98% | 38.54 dB | **44.12 dB** | **+5.58 dB** | 0.99238 → 0.99539 |
+
+monkey 的收益集中在眼窝、眉弓、鼻翼、耳廓；torus 没有腔体，AO 均值 0.998，所以几乎
+不改变画面；cloth 是开放薄面，顶点 AO 均值只有 0.492，单独对照**未开 AO 的高模**会显得
+更暗（38.21 vs 44.52 dB），但对**同样开顶点 AO 的高模参考**提升 5.58 dB。这再次说明：
+着色补偿恢复的是高模已经存在的可见性响应，不是凭空恢复未阴影的外观。
+
+同一 monkey 三视角上，AO-only 为 46.36 dB；再叠加细节法线降到 **45.36 dB**（-1.00 dB），
+roughness +0.10 降到 **42.42 dB**（-3.94 dB）。因此默认仍只开 AO，细节法线和 roughness
+保留为美术开关。`compensationStrength=0` 与普通材质渲染的差异为 69.91 dB PSNR、
+平均 0.000013/255，仅 0.2% 像素超过 1/255，来自组合材质的 `specularAntiAliasing`，
+视觉上不可见。
+
+半径在 monkey 上并不敏感：0.15 / 0.365（自动）/ 0.75 / 1.5 的 PSNR 都是
+**44.91–44.92 dB**，SSIM 在 0.99658–0.99669 之间；自动值足以覆盖眼窝和耳廓。torus 是
+无腔体的封闭光滑面，AO 均值 0.994，效果近似中性（45.81 → 45.80 dB），目视没有压暗；
+这同时验证了吸附修复：修复前有生成点落在实体内部，torus 的 AO 最小值被错误地压到
+0.000，内圈出现明显黑带。
+
+生产接入时要注意三点：AO 应优先乘到 IBL/环境光项，`aiBakedAo` 为了在只有直射光的
+headless 对比里可见，同时乘了 `baseColor` 和 `ambientOcclusion`；源资产已有 AO 贴图时
+要避免二次压暗；蒙皮/形变网格需要按变形后的位置重烘或用预烘的局部 AO。`mm_bench`
+上传时已把 AO 压成 `UBYTE4`（相对 `FLOAT4` 每顶点 16 → 4 字节，实测末位量化误差
+PSNR 78.34 dB）。**AO 字段现已进入生产格式（本轮）**：`Mesh::ao` 是可选的源顶点字段，
+corner 简化按重心坐标把它插值到生成顶点（并 clamp 到 `[0,1]`，避免外插把可见度算到
+大于 1），`mmgeo --ao-field N` 在源网格上烘一次（monkey 9,908 顶点 / 16 samples /
+自动半径 0.365，约 46–74 ms），随后每个 DAG 节点、每个 cut 都自带 AO，不再按 cut 重烘。
+`lod_graph.mmb` 升到 **format version 7**：生成顶点记录从 9 个 word 增到 10 个（每顶点
++4 B），旧版本文件仍可读，缺失的 AO 默认为 1.0（无遮挡）。实测 monkey 生成顶点的 AO
+范围 0.000–1.000、均值 0.861，与源网格均值 0.837 一致；导出的 PLY 红通道 209 个不同取值。
+`test_manymesh` 新增 `LodGraphCarriesAmbientOcclusionThroughSimplification`，覆盖插值、
+序列化往返和 `appendGeneratedVertices` 的 AO 扩展。
+着色不能补回轮廓覆盖、薄几何、接触几何和几何位移——monkey 45% 时轮廓 ±2 px 只占
+1.5% 像素却贡献 73.4% 平方误差。
+
+**高模阴影代理（新增，opt-in，实测中性）**：`--shadow-proxy` 让源网格（或
+`--shadow-proxy-ratio <1` 选的更细 DAG cut）只参加阴影贴图，不写主相机颜色和深度。
+`samples/materials/shadowProxy.mat` 声明 `colorWrite : false`、`depthWrite : false`；
+Filament 的 depth variant 仍会把代理写入阴影图，所以主相机看不到它，阴影接收面却能用
+它的几何。代理与可见 LOD 共享 `g_lodVertexBuffer`，只多一条 index buffer；启用后
+LOD 自身停止投影，避免两套轮廓同时进阴影图。UI 有 “High-poly shadow proxy” 复选框
+（快捷键 `P`）、`Shadow proxy detail` 比例滑杆，以及 `Shadow bias` /
+`Shadow normal bias` 两个 offset 滑杆。
+
+这里有一个必须调 bias 的原因：源网格与 LOD 表面不是同一个面，太阳默认的
+`constantBias=0.001` / `normalBias=1` 会把 LOD 接收面判成被高模自身遮挡，额头出现细黑
+条纹。代理启用时默认改为 **0.010 m / 3.0**，条纹消失；代价是偏移过大时接触阴影会
+轻微脱离。960×720、monkey、同一显式机位、默认材质、太阳阴影的实测：
+
+| 档位 | 无代理 | + 高模阴影代理 | 代理 vs 无代理改变像素 |
+| --- | --- | --- | --- |
+| 55.01% | 31.23 dB / 0.99079 | 31.19 dB / 0.98895 | 0.35% |
+| 45.25% | 31.09 dB / 0.98949 | 31.08 dB / 0.98780 | 0.36% |
+
+结论要如实写：**单物体自阴影上它不是 PSNR 收益项**。高模与 LOD 的阴影贴图差异本来
+只覆盖约 0.3% 像素，1024² 阴影图又抹平了更细的腔体；代理的收益应该出现在“高模角色
+把耳廓/手指/武器轮廓投到地面或其他物体”这类跨物体接触阴影上，以及阴影图分辨率更高的
+场景。它仍然补不了屏幕空间轮廓覆盖，且多一次高模深度绘制，所以默认关闭；保留为生产
+渲染器可选的 shadow-only proxy 路径，不要当作减面后的通用画质修复。
+
+**按 cluster 屏幕误差加权（新增，opt-in）**：一个 cut 会同时包含近处细节点和远处粗节点，
+统一补偿强度必然对其中一类过度或不足。`recommendedShadingCompensationWeight()` 在
+0.25 px 以下返回 0、1 px 达到 1；`mm_bench --shade-error-driven` 把它写进顶点色 alpha，
+`aiLodCompensated.mat` 用 `compensationStrength * alpha` 统一门控 AO、bent normal、
+细节法线和 POM。这样近处 cluster 保持原始清晰度，粗 cluster 才吃补偿；顶点色 alpha 是
+新增的材质契约。单物体 monkey 50% cut（640×360、128² AO、16 rays）全局 vs 误差加权为
+**43.76 → 43.73 dB**，差异基本是噪声级，所以它不是 PSNR 收益项，默认关闭，价值在
+混合近远 cluster 的场景里避免“远近一刀切”。组合材质同时启用
+`specularAmbientOcclusion : simple`，AO 会衰减高光 IBL；顶点色 G/B 可选携带 bent normal。
+
+**运行时屏幕空间 AO / 接触阴影（新增，opt-in）**：烘焙 AO 知道源网格的腔体，但它不知道
+运行时实际画出的 cut 在哪里；GTAO 正好相反。`mm_bench --ssao` 在 View 上启用 Filament
+GTAO，`--ssct` 在同一个 SSAO pass 里沿主光方向做 screen-space cone trace，把当前深度
+缓冲中仍能看到的褶皱和接触暗部加回间接光。两者都不需要 UV、源网格或离线烘焙，适合
+无 UV 资产和动态 DAG cut；代价是每帧一次深度预处理和全屏 AO。UI 的
+“Screen-space AO (GTAO)” / “SSCT contact shadows” 可以实时 A/B，半径 0 自动取包围盒
+对角线的 10%，SSCT 的距离 0 自动取 25%；`SSAO quality` 和 `SSAO resolution`
+（Half/Full）分别控制采样预算和 AO buffer 分辨率，与 CLI 的
+`--ssao-quality` / `--ssao-resolution` 共用同一状态。
+
+比较这类屏幕空间项时必须让高模参考和 LOD 用同一种设置，否则指标会变成“谁多了一层
+暗部”而不是“谁更接近”。960×720、`--no-shadows`、`--ibl`、3–4 视角、固定机位的实测
+（PSNR 中位数 / SSIM 中位数）：
+
+| 资产与档位 | 无 SSAO | GTAO | GTAO + SSCT |
+| --- | --- | --- | --- |
+| cloth 48.09% | **44.82** / 0.99808 | 44.85 / 0.99808 | **45.04** / 0.99809 |
+| monkey 45.25% | **41.68** / 0.99692 | **41.72** / 0.99692 | 未单测 |
+| torus 47.74% | **39.19** / 0.99675 | 未单测 | 39.20 / 0.99673 |
+
+结论是：SSAO/SSCT 是**当前 cut 的可见性补偿**，不是几何替代品。它在布料这种大片连续
+褶皱上最有效（+0.22 dB），对 monkey 只有 +0.08 dB，对 torus 基本中性；它不会把轮廓、
+薄几何或已经被合并掉的腔体变回来。全分辨率 High 在 960×720 上的 GPU 中位增量约
+**+2.1～2.5 ms**；半分辨率 Medium + SSCT 在 cloth 上仍是 **45.04 dB / 0.99809**，
+GPU 增量约 **+0.88 ms**。因此移动端优先半分辨率 Medium，桌面静态对比再用全分辨率
+High。若资产已经有可靠的源 AO 贴图/顶点 AO，烘焙 AO 仍是主路径；SSAO 用来补
+“cut 自己产生的接触关系”，两者可以同时开，但比较时必须保持参考表达一致。
+
+**29.38% 极限档复验（本轮）**：同一 1024×640 机位、`--no-shadows`、monkey
+15,744 → 4,626 三角形（29.38%，boundary 168 与源一致，其余拓扑缺陷 0），参考为高模 +
+同一张源 UV AO 贴图。结果说明着色补偿在极限档的边界在哪里：
+
+| 变体 | PSNR | SSIM | 相对基线 |
+| --- | --- | --- | --- |
+| LOD 无补偿 | **39.78 dB** | 0.99159 | — |
+| + AO 贴图（strength 0.5） | 39.81 dB | 0.99083 | +0.03 dB |
+| + 细节法线 0.25 | 39.79 dB | 0.99077 | +0.01 dB |
+| + 细节法线 1.0 | 39.46 dB | 0.98934 | -0.35 dB |
+| + 细节法线 1.0 + POM 1.0（正视） | 39.46 dB | 0.98934 | 与无 POM 相同 |
+
+误差拆分：轮廓 XOR 只占 **0.19%** 像素，却贡献 **66.7%** 的平方误差；±2 px 轮廓带占
+1.03% 像素 / 72.7% 误差；轮廓内部 PSNR 为 35.16 dB。也就是说该档即使把内部着色做到
+完美，整图上限也只有约 45.4 dB，而且轮廓那 66.7% 完全不受材质影响。细节法线在 45% 档
+已经略降 PSNR，29.38% 档降得更多；把同一张图降到 256² 也只回到 39.49 dB，说明问题不是
+纹理分辨率或高频噪声，而是 LOD 表面点与高模参考像素已经不是同一个点。POM 在正视时
+没有可见变化，符合“只有掠射角才有视差位移”的预期；它在 `aiLodCompensated.mat` 中已与
+AO、细节法线共用 `compensationStrength` 总闸门，默认 `pomStrength=0` 之外仍需显式给
+`--detail-height` 才会启用。
+
+同时修正了一个会误伤生成顶点的检查：QEM 折叠产生的新顶点 UV 可能是 chart 角点的重心
+插值，落在 `[0,1]` 外几个千分点。原来的 1e-3 容差会让整张细节法线/高度图拒绝烘焙
+（monkey 29.38% 档实际越界 0.0008–0.0094），现在按 **2% 图集容差** 判断，真正平铺或
+换 wrap 的 UV（例如 ×3）仍会被拒绝；光栅器本身只覆盖纹理范围，不会采样到图外。
+
+**UV 空间 AO 贴图（新增，实测）**：顶点 AO 的上限是 LOD 顶点密度。为了捕捉比顶点更细的
+腔体，`AmbientOcclusion` 新增 `bakeAmbientOcclusionMap()`：按源 UV 三角形光栅化，在每个
+覆盖 texel 上用 BVH 做余弦半球可见性采样，再向 chart 外扩 4 texel，输出单通道 R8。
+`mmgeo --bake-ao-map N` 写 `ao-map.png`；`mm_bench --ao-map-size N` 运行时烘焙，
+`--ao-map file.png` 读取离线结果，材质 `samples/materials/aiBakedAoMap.mat`，UI 有
+“Baked AO map” 滑杆。它和顶点 AO 共用 `--ao-samples`/`--ao-radius`。
+
+monkey 512×512、32 samples：覆盖 **151,190** 个 texel（57.7% 的图），均值 **0.914**、
+最小 0.000，烘焙 **0.57–0.63 s**，R8 纹理 256 KiB（含 mip 约 341 KiB）。UV 越界或平铺
+布局（torus、cloth）会被拒绝并提示先做唯一化 atlas；这类资产继续用顶点 AO。
+
+32-sample 的半球估计会在贴图上留下 texel 级随机噪点，双线性过滤也消不掉。默认
+`smoothingPasses=1` 做一次 3×3 Gaussian，但只对 covered texel 求和，平滑完再做 4 texel
+外扩，所以 chart 之间不会互相串色。monkey 44.99% 档的贴图 AO 从 **41.77 dB** 提到
+**41.82 dB**，目视眼窝和鼻翼更干净。把源贴图从 512 提到 1024，同机位渲染 PSNR 为
+**57.8 dB**（平均绝对差 0.0285/255），烘焙时间却从 **0.57–0.63 s** 涨到 **2.34 s**、
+显存 4 倍；AO 是低频
+信号，512 已经覆盖当前测试资产的腔体频率，继续加分辨率不是优先项。
+
+`mm_bench --ao-map-size N` 在 `--ui`/`--dag` 路径烘焙的是高模源，在普通 headless 路径
+烘焙的是传进来的那个 mesh。后者适合“直接给这个 mesh 补 AO”，但不能替代高模→LOD 的
+源级烘焙；生产对比仍应先用 `mmgeo --bake-ao-map N` 生成 `ao-map.png`，再用
+`--ao-map` 加载。
+
+960×720、`--no-shadows`、monkey 7,084 面（44.99%）的三种参考系（PSNR / SSIM）：
+
+| 参考（高模） | LOD 无 AO | LOD + 顶点 AO 0.5 | LOD + 贴图 AO 0.5 |
+| --- | --- | --- | --- |
+| 无 AO | **42.51** / 0.99540 | 40.45 / 0.99432 | 41.77 / 0.99376 |
+| 顶点 AO 0.5 | 40.47 / 0.99424 | **43.17** / 0.99528 | 40.30 / 0.99267 |
+| 贴图 AO 0.5 | 41.65 / 0.99380 | 40.23 / 0.99282 | **42.69** / 0.99507 |
+
+结论有三条：
+
+1. **AO 表达必须匹配**。参考用顶点 AO 时，顶点 AO 比贴图 AO 高 **+2.87 dB**；参考用贴图
+   AO 时，贴图 AO 比顶点 AO 高 **+2.46 dB**。跨表达比较没有意义。
+2. **同表达下贴图只小胜**。在 monkey 55%/45%/38% 三个 cut 上，贴图 AO 比顶点 AO 高
+   **+0.04 / +0.06 / +0.08 dB**（CPU Lambert 复算为 +0.31 / +0.27 / +0.26 dB）。LOD 仍有
+   7–8 千个顶点时，顶点插值已经足够密；贴图的价值主要在“源资产本来就用 UV AO 贴图”和
+   更极端的 LOD，而不是无条件替代顶点 AO。
+3. **对未开 AO 的高模参考，AO 是改外观而不是恢复外观**。这也解释了为什么 `aiCavity`
+   屏幕空间腔体、细节法线在这个“保留源法线抽稀”的管线上都拿不到正收益；真正能同时改善
+   轮廓和内部误差的仍是近细远粗、时域抖动累积和更细的几何。
+
+**方向性可见性 / bent normal（新增，已验证生效）**：标量 AO 只回答“有多少光被挡”，
+不回答“剩下的光从哪个方向来”。减面把凹槽的开口形状抹平后，环境光会从已经被删除的
+几何方向照进来，这正是眼窝、鼻翼和耳廓看起来“发平”的原因。`AmbientOcclusion` 现在
+复用同一批半球采样，把未被遮挡的方向按余弦权重累加，得到每个顶点的 bent normal；采样
+按成对相反的方位角发射，完全可见的表面其 bent normal 精确等于几何法线，不会出现
+Monte-Carlo 倾斜。重复位置的生成顶点仍然先焊接再平均，避免 LOD seam 上出现方向跳变。
+
+数据打包进顶点色的 G/B（切线空间 xy，z 由 `sqrt(1-x²-y²)` 重建），R 继续保存标量 AO，
+因此一个 `UBYTE4` 同时携带两种可见性，不增加顶点带宽。材质 `aiBakedAo` 把它写入
+Filament 的 `material.bentNormal`：diffuse IBL 走方向性辐照度，
+`specularAmbientOcclusion : bentNormals` 再用同一个方向做 cone-traced 高光遮挡。这里
+有一个必须注意的顺序：**`material.bentNormal` 必须在 `prepareMaterial(material)` 之前
+赋值**。`prepareMaterial()` 内部会把 bent normal 转到世界空间并缓存到
+`shading_bentNormal`，之后再赋值只改返回结构体，对光照完全无效——本轮最初 0/1 强度
+逐像素完全一致就是这个原因，修正顺序后才真正生效。
+
+monkey 44.99% cut、1024×640、32 samples、自动半径 0.365：17,027 个顶点发生倾斜，
+平均 **8.4°**、最大 **89.6°**。同一帧只切换 `--bent-normal-strength 0 → 1`：
+平均绝对差 **0.15/255**、最大 **16/255**、117,400 个通道发生变化，PSNR **50.1 dB**；
+差异集中在眼窝、鼻翼、耳廓等凹槽。把太阳光关掉（`--sun-intensity 0`）做 IBL-only
+隔离，差值完全相同，证明变化来自方向性间接光而不是直射光。幅度不大是预期的：平均
+倾斜只有 8°，而太阳光在默认对比里占主导；它的价值是让凹槽的环境光方向正确，而不是
+替代几何。
+
+但**它不是一个 PSNR 收益项**。同机位把 44.99% cut 与“也开了 bent normal 的高模参考”
+相比：强度 0 为 **39.59 dB / 0.99436**，强度 1 为 **38.98 dB / 0.99300**。作为对照，
+高模自身开/关 bent normal 的画面差为 mean 0.13/255、max 14，和 LOD 的 0.15/255、max 16
+同量级——说明信号大小是对的，只是高模与 LOD 采样的是不同表面点，方向性变化无法逐像素
+对齐。因此 `--bent-normal-strength` 默认 **0（opt-in）**，和细节法线、POM、cavity 一样
+只在美术判断需要方向性环境光时打开；不要把它当作“减面后自动提升 PSNR”的开关。
+
+新增对比旋钮：`--bent-normal-strength`（0 等价于旧的纯标量 AO）、`--ibl`、
+`--ibl-intensity`、`--sun-intensity`；`--ui` 里有对应的 Bent normal / IBL intensity /
+Sun intensity 滑杆，可以把太阳光拉到 0 只看着色补偿。限制同样明确：它只影响间接光
+的 diffuse 与环境高光遮挡，补不了轮廓、薄几何、真实遮挡覆盖和几何位移；程序化 IBL
+只是三阶 SH，真实资产应接自己的环境贴图。另外当前为了对比方便复用了顶点色，生产上
+若资产已有顶点色，应改写到 `CUSTOM0`/独立 attribute，避免覆盖美术数据。
+
+**极端档位诊断（torus 20%）**：质量门并没有“误杀”一个已经足够好的 334 面结果。torus
+20% 目标（230 面）下，最接近的候选是 **334 面且焊接边界为 0**，但最大几何误差
+`0.030999` 超过预算 `0.025108`（约 23%）；另一个 **446 面候选**几何误差
+`0.024817` 已达标，却有 **566 条焊接边界而基准为 0**，是真实裂缝，因此被拓扑门拒绝。
+在默认 UV 拆分实现下，UV 分歧不再触发拒绝；torus `--target-ratio 0.2` 当前实测仍停在
+**550 / 1,152 = 47.74%**，closed、min quality 0.3228，剩余拒绝是 group topology 16 /
+geometry 7。33.16% 是旧 UV 拒绝门版本的数字，不是当前下限。这两类剩余问题分别需要更好的
+QEM 落点和跨缝重建，不能靠放松质量门解决。试过“局部误差最小落点”与
+“预算超限后改选落点”两种策略，都会改变整条塌缩顺序，使 torus 退化到 43%–48%；
+已回滚，保留原来的首个合法落点策略。
+
+`test_manymesh` 现为 **75 passed + 1 skipped**（共 76 个用例），新增同一位置三份 chart
+属性副本、同位置 divergent UV 拆分的 CornerSimplifier 回归，以及 LodGraph 端到端 3 副本
+回归（build → select → compact → UV 岛检查）；原有的 UV AO 贴图覆盖、确定性、凹角变暗和
+平铺 UV 拒绝回归全部
+保留，接缝法线、强度混合、自动强度策略以及源网格 AO 的确定性、焊接和离表面吸附回归也
+未回退；高度烘焙的“同几何全中性”“正负位移符号”和“平铺/超距拒绝”三个回归仍在。MSVC
+Release 的 76 个用例本轮完整跑过（75 pass + 1 个 HTTP 用例因本地无服务端而 skip），
+`mmgeo`、`mm_bench`、`manymesh` 均编译通过并完成了截图验证。
+
+**抗锯齿能补回多少轮廓（新增 A/B）**：29.38% monkey 档（4,626 三角形）在 1024×640 下，
+高模和 LOD 使用同一默认材质、同一机位。只给 LOD 开 MSAA 是不公平的，因此
+两套图都开同样的 MSAA 后再比较：
+
+| 方案 | PSNR | SSIM |
+|---|---:|---:|
+| 无 AA（参考/LOD 都关） | 39.76 dB | 0.99159 |
+| MSAA 2×（参考/LOD 都开） | **40.87 dB** | **0.99221** |
+| MSAA 4×（参考/LOD 都开） | **41.40 dB** | **0.99262** |
+| TAA（参考/LOD 都开） | 37.92 dB | 0.99060 |
+
+MSAA 2× 的 +1.11 dB、4× 的 +1.64 dB 来自轮廓像素的覆盖率平滑：它让 LOD 的边缘更接近
+高模 MSAA 参考，但没有恢复被减面删掉的几何。目视仍能看到眼窝、鼻翼、耳廓和内耳轮廓变粗。TAA 在这个静态机位
+反而下降，原因是历史反馈把边缘糊开并引入不匹配；本轮不把 TAA 当作补偿收益项。
+`mm_bench --msaa 4` / `--taa` 可复现；2×2 对照图在
+`out/shadecomp-monkey29/montage_msaa.png`。结论更新为：**着色补表面响应，MSAA 补边缘
+覆盖率，几何轮廓本身仍只能靠质量门、近细远粗或更高密度的小三角形**。
+移动端 4× MSAA 的带宽/填充成本明显高于桌面，建议先试 2× 或与动态分辨率配合；本轮没有
+Android/iOS 真机，不能把桌面 MSAA 数据直接当成移动端结论。
+
+**26.44% 档的着色饱和点（新增）**：monkey 4,162 面、960×720、固定机位、`--no-shadows`。
+基线 **26.37 dB / 0.96480**。10°/auto 缝法线 PSNR 不变（26.37 dB），SSIM 提到
+**0.96567**；顶点 AO 0.5 降到 **25.14 dB / 0.95846（-1.23 dB）**，目视在下巴和脸颊形成
+块状暗斑；参考与 LOD 同开 4× MSAA 为 **26.39 dB / 0.96541**，再叠缝法线为
+**26.38 dB / 0.96606**。该机位模型占画面更大，MSAA 的 PSNR 收益从 29.38% 档的
+**+1.64 dB** 缩到 **+0.02 dB**，说明 AA 收益依赖屏幕覆盖率，不能跨机位复用数字。
+结论：26% 档材质侧已经到顶，AO/细节法线/roughness 应保持关闭；保留缝法线改善 SSIM，
+MSAA 按移动端预算选 2×/4×；轮廓、耳廓和眼窝的缺失只能靠几何质量门、近细远粗、阴影
+代理或学习型重建。图在 `out/shade26/montage_26.png`，数据在
+`out/shade26/shading.json`、`out/shade26/msaa.json` 和 `out/shade26/within.json`。
+
+**38.00% 档的着色收益复测（新增）**：monkey 5,982 面，960×720，`--no-shadows`，高模与
+LOD 使用同一材质，并且每组都与自己的匹配参考比较（无 AA 对无 AA、AO 对 AO、MSAA 对 MSAA）：
+
+| 方案 | PSNR / SSIM | 相对收益 |
+|---|---:|---:|
+| 无 AA | 37.38 dB / 0.98135 | 基线 |
+| 4× MSAA | **38.81 dB / 0.98342** | **+1.43 dB** |
+| AO（同材质关闭补偿为 36.61 dB / 0.97843） | 37.33 dB / 0.98023 | +0.72 dB |
+| AO + 细节法线 0.25 | 37.28 dB / 0.97999 | -0.05 dB |
+| AO + 4× MSAA | 38.69 dB / 0.98240 | 低于单独 MSAA |
+
+AO 在这一档会沿下巴和颈部的大三角形形成块状暗斑，细节法线只补回 1.69° 的平均法线差，
+不足以抵消贴图重采样噪声；AO 与 MSAA 也不叠加。因此 38% 档应优先抗锯齿，AO 只在 45%
+以上或完整 IBL 管线中按距离淡入，细节法线继续默认关闭。对照图在
+`out/shadecomp38/montage_38.png`。
+
+**同机位 38% 复验（新增）**：上表的自动取景会改变模型在画面中的尺寸，不能跨批次直接
+比较 PSNR。固定同一相机、960×720、`--no-shadows`，用 `--dag --savings 0.62` 选到
+5,982 面（38.00%）重测：
+
+| 方案 | PSNR | SSIM |
+|---|---:|---:|
+| 无 AA | 41.81 dB | 0.99323 |
+| 4× MSAA | **42.07 dB** | 0.99355 |
+| 缝法线 10° / auto | 41.94 dB | **0.99383** |
+| 4× MSAA + 缝法线 10° / auto | **42.17 dB** | **0.99401** |
+
+在这一机位下，4× MSAA 为 +0.26 dB，缝法线修复为 +0.13 dB，两者叠加为 +0.36 dB；
+排序仍是 **MSAA 主收益、缝法线小幅正收益、AO/细节法线负收益**。缝法线修的是
+同位置重复法线在大三角形上的明暗断层，不增加三角形、也不改轮廓。UI 现在有
+“Use measured preset for this cut”：保留率 <45% 时自动选 4× MSAA + 10°/auto 缝法线，
+并关闭 AO、细节法线、POM 和 roughness 补偿；45%+ 时切到顶点 AO 0.5 + 10°/auto 缝法线。
+`--auto-shading-preset` 和 UI 的 “Auto apply measured preset” 会在每次 cut 变化后自动
+重跑同一判据，UI 手动滑杆仍可覆盖自动结果。自动档位只改着色/AA，不改变几何选择。
+同一判据已下沉为 `recommendedShadingCompensationPreset(retainedRatio, hasCompensation)`，
+位于 `manymesh/ShadingNormals.h`；`test_manymesh` 新增
+`ShadingCompensationPresetFollowsTheMeasuredLadder`，覆盖 45% 阈值、无 AO 材质回退和
+各档位的 MSAA/缝法线参数。
+
+**几何落点：着色补不回的轮廓，先靠落点少丢（本轮新增）**：`CornerSimplifier` 不再按
+QEM 成本返回第一个合法落点，而是同时评估 keep/remove 端点、中点、QEM 最优点、QEM
+最优点在局部切平面上的投影、以及它在源三角形上的最近点。排序使用局部双向表面偏差
+（被删源点到新三角形的距离 + 落点到源表面的距离）、落点到每个被改写三角形平面的
+偏差、UV/normal 误差和重心外插量。这样避免两个问题：QEM 最优点落进薄壳内部；以及
+落点在曲面上但偏离某个邻接三角形的平面，导致该 chart 的仿射 UV 被外插拉偏。现有
+`test_manymesh` 72 项中 71 通过、1 项按环境变量跳过。
+
+torus 1,152 面、同一 3/4 机位、960×720、`--no-shadows --msaa 4`，参考为原始高模：
+
+| 变体 | 面数 / 保留率 | PSNR | SSIM |
+|---|---:|---:|---:|
+| 旧压力测试 cut | 338 / 29.3% | 31.86 dB | 0.98370 |
+| 只按表面偏差排序（UV 外插偏大） | 382 / 33.2% | 31.12 dB | 0.97869 |
+| QEM-first 基线 | 444 / 38.5% | 32.49 dB | 0.98693 |
+| 表面 + 平面偏差约束（当前默认） | 452 / 39.2% | **33.89 dB** | **0.98773** |
+
+结论：**着色策略能把表面响应和边缘覆盖率补回一点，但补不了轮廓、薄几何和接触关系。**
+当减面进入 30% 区间，优先把顶点落点约束在源表面附近，而不是为了少几十个三角形把
+几何拉离表面；后者在 3/4 机位会损失约 2.4 dB，且 MSAA/接缝法线的 +0.3–0.4 dB 无法
+抵消。当前默认相对 QEM-first 在面数只多 1.8% 的情况下提高 **1.40 dB / 0.00080 SSIM**；
+更严格的平面权重可以把 torus 推到 474 面 / 34.29 dB，但默认选 0.5 权重的折中点。
+目视上 338/444 的环体左上有一处可见的平切凹口，452 默认结果已经消失。对照图见
+`out/torus-lod-montage-final.png`。
+
+同一落点策略在另外两类资产上做了 DAG 同路径复验（参考与 LOD 都走 `--dag`，避免直接
+加载 PLY 与运行时 DAG 的材质/光照差异污染指标）：monkey 6,928 面 / 44.00% 档在
+10°/auto 缝法线下从 **43.28 → 43.39 dB**（SSIM 0.99511 → 0.99549）；cloth 36,036 面 /
+48.06% 档从 **40.74 → 40.78 dB**（SSIM 0.99046 → 0.99083）。两例的边界边数量不变，
+non-manifold/duplicate/flipped 仍为 0。着色补偿是稳定正收益，但只有 0.04–0.11 dB：
+它能修接缝和 shading discontinuity，不能消除 cloth 大三角形造成的块状起伏，更不能
+恢复被减掉的轮廓。因此生产策略仍是几何质量门优先，AA 和法线修复作为廉价后处理，
+AO/细节法线/POM 只在中高档或资产确有对应细节时开启。
+
+---
+
+### 7.10 M4 首个切片：几何分配在重建回路里（负结果）
+
+M4 的原始假设是：**重建能力应该反过来决定几何预算**。要验证它，第一步不是训练一个
+联合模型，而是回答一个更便宜的问题：在总三角形预算固定时，**把三角形放在哪里**会
+不会改变重建后的画质排序？如果不会，联合优化就没有可优化的自由度。
+
+**工具**：`tools/m4alloc/run.py`。它把同一预算分配给两种策略：
+
+- **uniform**：`selectLodGraphAtRatio`，所有 cluster 按同一比例减面。
+- **distance**：`selectLodGraph` + 固定屏幕空间误差阈值，近/误差大的区域更细。
+
+脚本逐视角渲染（`mm_bench` 一次只报告当前视角的 cut）、用二分把 distance 的阈值校准
+到 uniform 的实际面数、再用同一个 tiny 网络（同种子、同迭代数、同一验证划分）分别
+训练。`--ignore-ceiling` 让 uniform 真正到达目标比例。
+
+#### 7.10.1 单物体没有分配自由度
+
+monkey，640×360，8 个方位角，budget 35%：
+
+| 策略 | 面数 | 实际比例 |
+|-|-|-|
+| uniform（`--savings 0.65`） | 5,504 | 34.96% |
+| distance（校准后 17.78 px） | 5,130 | 32.58% |
+
+两条策略的面数差了 6.8%，但更关键的是：**把 uniform 调到 0.326（5,130 面）或
+0.379（5,966 面）后，两种策略的输出逐像素完全相同**（RGB max diff = 0）。单物体
+位于画面中心、所有 cluster 深度接近时，屏幕误差选择器和比例选择器会落到同一个 DAG cut。
+这不是实现巧合，而是 DAG 层级离散：阈值在平台内移动不会换层，比例二分也只是在找
+同一个平台。
+
+同一批数据上：
+
+| budget | 策略 | 面数 | 双三次 | tiny | tiny 增益 |
+|-|-|-|-|-|-|
+| 35% | uniform | 5,504 | 38.98 dB | 38.98 dB | +0.00 |
+| 35% | distance | 5,130 | 38.32 dB | 38.34 dB | +0.01 |
+
+> **结论一：单物体基准测不了 M4。** 没有深度差异，就没有“近细远粗”可分配的东西；
+> 两种策略在等面数下是同一个 cut。此前把单物体上的 LOD 差异当作“分配策略差异”的
+> 任何解读都是错的。M4 必须使用有深度变化或视锥外几何的场景。
+
+#### 7.10.2 深度排序场景：uniform 仍然更好
+
+三实例行：3 个 monkey 沿 z 排开，总 47,232 面，相机位于近端；4 个视角、±20° 方位角、
+640×360：
+
+| 策略 | 面数（4 视角中位） | 双三次 | tiny | tiny 增益 |
+|-|-|-|-|-|
+| uniform | 16,532 | **38.52 dB** | **38.57 dB** | +0.05 |
+| distance（8.66 px） | 16,300 | 37.96 dB | 38.00 dB | +0.04 |
+
+这次两种分配的输出确实不同（0.03–0.46% 像素有差异），面数也接近（差 1.4%），
+但 **uniform 仍然高 0.56 dB**。distance 在近端/高误差区域多花三角形，代价是远端和
+低误差区域被压得更粗；在这条深度范围只有约 5.5–9.5 个单位的行上，后者的损失更大。
+
+> **结论二：按几何误差分配不是免费收益。** 屏幕空间误差只描述“几何差多少”，不描述
+> “重建能不能补回来”。在 38.5 dB 的画质上，tiny 网络只加 **+0.04~0.05 dB**，说明
+> 网络几乎没有 headroom；因此重建后的排序与重建前一致，M4 的“联合”没有发生。
+
+**质量下限处再次退化。** 把目标压到 20% 时，默认质量门把 uniform 停在 **15,050 面
+（31.86%）**；distance 校准到同一面数后，两者**逐像素相同**（RGB max diff = 0），
+双三次/tiny 都是 **37.36 / 37.39 dB（+0.03）**。也就是说，DAG 最粗的合法 cut 是唯一的，
+两种分配在质量下限处没有第二个选择。可比较的分配差异只存在于中间预算（如 35%），
+而那里 uniform 反而更好。
+
+> **结论三（对 M4 的修正）：** 当前最需要补的不是更聪明的分配权重，而是一个**网络真正
+> 有 headroom 的低预算档**。当粗几何本身还有 33–35 dB 时，网络能加 0.5–1 dB，分配策略
+> 的差异才有机会被重建放大或反转。35% 以上的预算对 monkey 这种资产已经接近“几何问题
+> 不重要”的区间，不适合做联合优化实验。
+>
+> 低预算复验（§8.9）确实把网络增益从 **+0.05 提到 +0.50 dB**，但同一档位上时域历史对
+> PSNR 是 **−0.12**。所以“网络有 headroom”是成立的，“用重建能力换几何预算”仍然没有
+> 成立；下一步要么换一个重建先验更强的模型，要么换误差结构不同的资产（扫描模型、
+> 强运动序列），而不是继续调分配权重。
+
+#### 7.10.3 更硬的资产：dragon 7% 预算
+
+monkey 在 38 dB 时网络没有 headroom，不能判断“分配是否会被重建改变”。换用扫描模型：
+以 `out/m3/lr_mesh.ply`（1,980,131 面，原模型的 27.4%）为基网格，mmgeo 只建一次 DAG，
+用新加的 `--target-ratio-cut` / `--screen-error-cut` 在同一个 DAG 上导出多条 cut；
+`tools/m4alloc/run_preselected.py` 直接渲染这些已选好的网格，不再为每个相机重建 DAG。
+
+严格等面数（原模型 7,219,045 面）：
+
+| 策略 | 面数（占原模型） | 双三次 | tiny | tiny 增益 |
+|-|-|-|-|-|
+| uniform（target 0.262） | 518,585（7.18%） | 29.81 dB | 31.50 dB | **+1.69** |
+| distance（2 px） | 518,385（7.18%） | 29.80 dB | 31.51 dB | **+1.71** |
+
+两种分配的渲染只有 0.01–0.04% 的像素不同，画质差 **0.01 dB**；网络在两边都贡献
+**+1.7 dB**。这同时确认了两件事：
+
+1. **硬预算确实给了网络 headroom。** 7% 面数下粗几何只有 29.8 dB，tiny 能补 1.7 dB，
+   远高于 monkey 35% 档的 +0.05。§7.10 的负结果不是“网络太弱到无法测量”。
+2. **分配仍然不是杠杆。** 即使几何误差大到 29.8 dB，uniform 和屏幕误差分配的
+   重建后画质几乎相同。重建改变的是**需要多少三角形**，不是**三角形放在哪里**。
+
+> **对 M4 的重新表述：** 联合优化的目标应该是“给定量化目标，重建能力把总几何预算
+> 降到多少”，而不是“让重建能力去改变 cluster 的分配权重”。前者有可测量的空间
+> （7% 预算下 +1.7 dB），后者在单物体和深度行上都接近零。
+
+#### 7.10.4 预算扫描：重建买到多少面数
+
+把 dragon 的 uniform cut 扫成 4 个预算档（6.92% / 9.60% / 13.71% / 19.20% 原模型面数），
+每个预算独立训练同一个 tiny（6 训练 / 2 验证视角），比较双三次和网络输出。目标图复用
+`out/m3` 的 8 个 HR 视角和同一相机列表，避免为每个预算重渲染 720 万面目标。
+
+| 面数 | 占原模型 | 双三次 | tiny | tiny 增益 |
+|-|-|-|-|-|
+| 499,277 | 6.92% | 36.25 dB | 37.05 dB | +0.79 |
+| 692,833 | 9.60% | 36.84 dB | 37.75 dB | +0.91 |
+| 989,836 | 13.71% | 37.42 dB | 38.53 dB | +1.11 |
+| 1,385,804 | 19.20% | 37.88 dB | 39.10 dB | +1.22 |
+
+在固定 PSNR 上做对数预算插值，网络替代掉的面数为：
+
+| 目标 PSNR | tiny 所需预算 | 双三次所需预算 | 预算缩减 |
+|-|-|-|-|
+| 37.05 dB | 6.92% | ~10.9% | **1.6×** |
+| 37.75 dB | 9.60% | ~17.5% | **1.8×** |
+| 38.53 dB | 13.71% | >19.2% | **>1.4×** |
+
+> **结论：在 7–14% 的硬预算区间，重建大约能替代 1.6–1.8 倍的面数。** 这是本项目第一个
+> 正向的“几何-重建耦合”结果，而且方向和 §7.10.1–7.10.3 一致：**重建改变的是需要多少
+> 三角形，不是三角形放在哪里。**
+
+**难视角复验（v08–v15，同一 4 档预算）**：上面 8 个视角里有 dragon 的背面/侧面，
+几何误差较小。换成另外 8 个更难视角后：
+
+| 面数 | 占原模型 | 双三次 | tiny | tiny 增益 |
+|-|-|-|-|-|
+| 499,277 | 6.92% | 29.58 dB | 30.84 dB | +1.26 |
+| 692,833 | 9.60% | 30.25 dB | 31.57 dB | +1.32 |
+| 989,836 | 13.71% | 30.53 dB | 32.08 dB | +1.55 |
+| 1,385,804 | 19.20% | 30.72 dB | 32.51 dB | +1.78 |
+
+在固定 PSNR 上：
+
+| 目标 PSNR | tiny 所需预算 | 双三次所需预算 | 预算缩减 |
+|-|-|-|-|
+| 30.84 dB | 6.92% | >19.2% | **>2.7×** |
+| 31.57 dB | 9.60% | >19.2% | **>2.0×** |
+| 32.08 dB | 13.71% | >19.2% | **>1.4×** |
+
+> **结论：视图越难，重建替代的面数越多。** 容易视角给出 1.6–1.8×，难视角在 30.84 dB
+> 处已经超过双三次的 19.2% 上限（>2.7×）。所以 **1.6–1.8× 是下界，不是上限**；
+> M4 的“重建换预算”在硬几何上成立，且幅度足以写进论文。
+
+> **限制（必须一起写）：** 每个预算的 tiny 是在同一批 6 个视角上单独训练的，这是
+> “每档一个模型”的域内上界，不是单个跨预算模型的部署结果。§7.11 显示跨资产/跨预算
+> 混训目前会损失 0.1–0.25 dB，所以实际部署的预算缩减会比这里小一些。两组目标图都带
+> 阴影，但相机覆盖不同，绝对值不能和 §7.10.3 的无阴影前视机位直接比较，可比的只有
+> 同一张表内的横向差距。
+
+#### 7.10.5 单个跨预算模型：缩减仍然成立
+
+上面的 1.6–2.8× 是每档预算单独训练的。部署形态应该是**一个模型跨预算**。用
+6.92% / 9.60% / 13.71% 三档训练一个 tiny，**完全留出 19.20% 档**做外推，验证集是
+每档最后 2 个视角。
+
+**难视角（v08–v15）：**
+
+| 预算 | 双三次 | 每档模型 | 跨预算 2000 iter | 跨预算 6000 iter |
+|-|-|-|-|-|
+| 6.92% | 29.58 | 30.47 | 30.81 | **30.85** |
+| 9.60% | 30.25 | 31.38 | 31.56 | **31.59** |
+| 13.71% | 30.53 | 31.94 | 31.95 | **31.98** |
+| 19.20%（未见） | 30.72 | 32.38 | 32.29 | 32.28 |
+
+**容易视角（v00–v07）：**
+
+| 预算 | 双三次 | 每档模型 | 跨预算 2000 iter |
+|-|-|-|-|
+| 6.92% | 36.25 | 37.03 | 36.99 |
+| 9.60% | 36.84 | 37.75 | 37.67 |
+| 13.71% | 37.42 | 38.53 | 38.41 |
+| 19.20%（未见） | 37.88 | 39.08 | 38.97 |
+
+> **结论一：跨预算模型几乎没有代价。** 难视角上，跨预算 6000 比每档模型在 6.92% /
+> 9.60% / 13.71% 上高 **+0.38 / +0.21 / +0.04 dB**（低预算档反而受益于更多数据）；
+> 容易视角上低 0.04–0.12 dB。留出的 19.20% 档只低 **0.09–0.13 dB**，没有出现
+> “没见过的预算就崩”的现象。
+
+> **结论二：预算缩减在单模型下仍然成立。** 用跨预算模型在固定 PSNR 上插值：
+> 容易视角 **1.5×（36.99 dB）/ 1.7×（37.67 dB）**；难视角 **>2.8×（30.85 dB）/
+> >2.0×（31.59 dB）**。难视角的双三次曲线只到 19.2%，所以 2.8× 是下界。
+
+> **结论三：这就是可以写进论文的 M4 形态。** 一个模型、一组固定权重、跨 3 个预算训练，
+> 在未见预算上仍能替代 1.5–2.8 倍的面数；而同一批实验里 uniform vs distance 分配只差
+> 0.01 dB。**联合优化的对象是预算，不是分配。**
+
+**多资产复验**：在同样的 dragon 三预算训练集（18 视角）里再加入 20 个 monkey 视角
+（单物体 35% × 8、深度行 31.86% × 8、深度行 35% × 4），总 38 个训练视角，其余设置不变：
+
+| 预算 | dragon-only 跨预算 | + monkey 跨预算 | 差值 |
+|-|-|-|-|
+| 6.92% | 30.85 | 30.76 | −0.09 |
+| 9.60% | 31.59 | 31.56 | −0.03 |
+| 13.71% | 31.98 | 31.97 | −0.01 |
+| 19.20%（未见） | 32.28 | **32.36** | **+0.08** |
+
+> **结论四：加入第二个资产几乎不影响预算缩减。** 已见预算档只掉 0.01–0.09 dB，完全
+> 未见的 19.20% 档反而 +0.08 dB。用 + monkey 模型在固定 PSNR 上插值，难视角仍然是
+> **>2.8×（30.76 dB）/ >2.0×（31.56 dB）**。所以这个 M4 结果不是 dragon 单资产的
+> 局部现象，至少在“dragon + monkey、多预算、多视角”这个测试台上成立。
+
+**12+4 视角复验**：把每档从 6 训练 / 2 验证扩到 **12 训练 / 4 验证**（m3 的 16 视角
+全部用上，v12–v15 留出，19.20% 档仍完全不参与训练）：
+
+| 预算 | 双三次 | 跨预算 tiny | tiny 增益 |
+|-|-|-|-|
+| 6.92% | 29.69 | 30.94 | +1.25 |
+| 9.60% | 30.25 | 31.73 | +1.48 |
+| 13.71% | 30.58 | 32.28 | +1.70 |
+| 19.20%（未见） | 30.76 | **32.70** | **+1.94** |
+
+> **结论五：视角翻倍后缩减仍然成立，而且网络增益更大。** 6.92% 档的 30.94 dB 仍高于
+> 双三次在 19.20% 档的 30.76 dB，所以固定 PSNR 下的缩减仍是 **>2.8×**；9.60% 档
+> **>2.0×**。训练视角从 6 增到 12 让 tiny 增益从 +1.26~+1.78 升到 +1.25~+1.94（低预算
+> 档持平，高预算档明显变好），说明这个结果不是 6 个视角的偶然。
+
+> **仍需注意**：4 个验证视角里仍有明显的视角方差（6.92% 档第一视角 32.5 dB，其余
+> 30.8–31.0 dB）；难视角的双三次曲线只到 19.2%，所以 >2.8× 是下界。论文里应写成
+> “在 dragon 7–19% 预算区间、12 训练 + 4 留出视角、单资产下的初步结果”，并补更多
+> 扫描资产和真实部署模型的复现。
+
+**复现**：
+
+```shell
+# 每档 6 训练 + 2 验证，19.20% 档完全不参与训练
+python tools/mmtrain/train.py --data out/m4-dragon/cross-train \
+    --val-data out/m4-dragon/cross-val/budget_989836 \
+    --model tiny --scale 1 --iterations 6000 --no-error-map \
+    --out out/m4-dragon/cross/cross_tiny
+# 逐档评估（含未见预算）
+python tools/mmtrain/train.py --data out/dragon-train \
+    --val-data out/m4-dragon/cross-val/budget_1385804 --model tiny --scale 1 \
+    --no-error-map --eval-only out/m4-dragon/cross/cross_tiny.pt
+```
+
+**复现**：
+
+```shell
+# 一次 DAG 构建，导出匹配的 uniform / distance cut（约 2 分钟）
+mmgeo out/m3/lr_mesh.ply --mode dag --target-ratio 0.262 \
+    --screen-error-cut 2 --eye 2.220,-6.737,220.771 \
+    --look-at 2.220,-6.737,9.837 --out out/m4-dragon/cuts --dump-format ply
+python tools/m4alloc/run_preselected.py \
+    --uniform-mesh out/m4-dragon/cuts/selected.ply \
+    --distance-mesh out/m4-dragon/cuts/selected_px_2.ply \
+    --target-mesh out/m3/hr_mesh.ply --out out/m4-dragon/run518 \
+    --views 8 --view-span 40 --eye 2.220,-6.737,220.771 \
+    --target 2.220,-6.737,9.837 --iterations 2000
+```
+
+---
+
+### 7.11 重建先验：多资产数据与容量（有提升，但量级不够）
+
+§7.10 的负结果有一个替代解释：tiny 网络在 dragon 12 视角上训练，先验太窄。这一节把
+训练集扩到 **32 个视角 / 3 种资产 / 4 个预算档**，并把验证集固定在 dragon 原来的
+4 个留出视角上，直接比较“更多数据”和“更大容量”。
+
+**数据**：dragon 12 个训练视角（原始 `out/m3`），加上 monkey 单物体 35% 档 8 视角、
+monkey 深度行 35% 档 4 视角、深度行质量下限（31.86%）8 视角；验证为 dragon 的
+12–15 号视角。`train.py` 新增 `--val-data`（独立验证目录）和 `--eval-only`
+（加载权重只做跨资产评估）。
+
+| 模型 / 数据 | dragon 验证 PSNR | SSIM | monkey 交叉 | row 交叉 |
+|-|-|-|-|-|
+| tiny，dragon-only 12 视角，2000 iter | **33.42** | 0.9784 | 38.37 | 38.05 |
+| tiny，mixed 32 视角，2000 iter | 33.14 | 0.9786 | 38.36 | 38.04 |
+| tiny，mixed 32 视角，6000 iter | 33.33 | 0.9798 | 38.43 | 38.19 |
+| unet，mixed 32 视角，6000 iter | 33.36 | **0.9800** | **38.46** | **38.30** |
+
+> **结论一：更多数据改善跨资产，但牺牲域内，而且 2000 iter 下还来不及体现。**
+> 2000 iter 的 mixed 模型跨资产与 dragon-only 持平（38.36 / 38.04）；把迭代加到 6000
+> 后 monkey +0.06 dB、深度行 +0.14 dB，dragon 上 −0.09 dB；U-Net 把跨资产提升拉到
+> +0.09 / +0.25 dB，dragon 仍是 −0.06 dB。量级全部在 **0.1–0.25 dB**，没有达到能改变
+> M4 排序的 +0.5–1 dB。
+
+> **结论二：容量不是瓶颈。** U-Net（17.6 万参数）相对 tiny（2 万参数）只多 0.03 dB；
+> 6000 iter 相对 2000 iter 只多 0.19 dB。这与 §7.3 的结论一致，只是这次是在 32 个
+> 视角上复现。
+
+> **结论三：硬预算下网络能补 1.7 dB（§7.10.3），所以限制不是“数据不够多”这么简单。**
+> 在 7% 几何上同一个 tiny 能补 1.7 dB；在 35% 几何上只有 0.05 dB。网络的价值随几何
+> 误差增长，而多资产数据只是在边际上改善泛化。要让 M4 成立，应该把预算推到网络真正
+> 有 headroom 的区间（本实验的 7%），而不是继续加数据或换更大的空间网络。
+
+---
+
+### 7.12 端到端：几何省下的时间被推理吃掉了
+
+§7.10 证明了低预算几何 + 重建能在**画质**上替代 1.5–2.8× 的面数。落地还差一步：
+把渲染和推理放在同一条帧预算里。这一节用 `tools/m4alloc/e2e.py` 和
+`bench_infer.py` 实测（dragon 7.2M 面，640×360，Iris Xe，PyTorch CPU eager）。
+
+**渲染**（GPU 中位，`--shadows`，60 帧）：
+
+| 配置 | 分辨率 | GPU 帧时 |
+|-|-|-|
+| 全模 7.2M 面 | 640×360 | 23.81 ms |
+| 全模 7.2M 面 | 320×180 | 20.46 ms |
+| 低模 499k 面（6.92%） | 640×360 | **1.59 ms** |
+| 低模 499k 面（6.92%） | 320×180 | **1.40 ms** |
+
+全模从 640×360 降到 320×180 只快 14%，再次说明这一帧是**几何受限**的；低模的渲染确实只要 1.4–1.6 ms。
+
+**推理**（tiny，20,259 参数，fp32 约 79 KiB / int8 约 20 KiB）：
+
+| 输入分辨率 | 1 线程 | 2 线程 | 4 线程 | 8 线程 | 16 线程 |
+|-|-|-|-|-|-|
+| 640×360（同分辨率 tiny） | 167.1 ms | 79.3 | 67.8 | 61.3 | **39.9** |
+| 320×180（后上采样 tiny_up） | 44.6 ms | 23.7 | **13.6** | 17.7 | — |
+
+模型很小，但计算量不小：640×360 上三层 32 通道 3×3 卷积是数十亿次乘加。
+
+**两条端到端管线：**
+
+| 管线 | 渲染 | 推理 | 合计 | 相对全模 | 画质（vs 全模） |
+|-|-|-|-|-|-|
+| A：低模 640×360 + tiny | 1.59 | 39.9（16 线程） | 41.5 ms | **0.57×（更慢）** | 30.94 dB（比粗帧 +1.25） |
+| A'：同上，单线程 | 1.59 | 167.1 | 168.7 ms | 0.14× | 30.94 |
+| B：低模 320×180 + tiny_up | 1.40 | 13.6（4 线程） | 15.0 ms | 1.59× | **28.07 dB**（双三次 28.69，**更差**） |
+
+> **结论一：几何省下的时间被推理吃掉了。** 同分辨率重建要 40–167 ms，是渲染 1.6 ms 的
+> 25–100 倍；16 线程下整帧仍比直接渲染全模慢（0.57×）。只有单线程时更快，但那个
+> 167 ms 远不是实时。
+>
+> **结论二：便宜的低分辨率推理保不住画质。** `tiny_up` 把卷积放到 320×180，4 线程
+> 13.6 ms、整帧 1.59× 加速；但它在 6.92% 预算上 28.07 dB，**低于双三次的 28.69 dB**，
+> 更远低于同分辨率管线的 30.94 dB。低分辨率特征图里没有足够的高频信息让网络合成细节，
+> 它只能做低频修正。
+>
+> **结论三：M4 的画质结论成立，但部署瓶颈从几何转到了重建。** 1.5–2.8× 的面数替代是
+> 真的；但当前 tiny 架构要在全分辨率上跑才能拿到 +1.25 dB（这一组验证视角；难视角
+> 单帧最高 +1.94），而全分辨率推理不实时。
+> 下一步不是继续压几何，而是把重建本身做便宜：NSS 式参数预测 + 隐状态、离线 LUT
+> （§8.3⑤）、INT8/低比特量化，或 GPU/NPU 推理。
+
+> **测量边界**：这是桌面 Iris Xe + PyTorch eager CPU 的数字，不是手机。优化过的移动
+> 推理运行时（NCNN / TFLite / ONNX Runtime、INT8）可能快数倍；但“小模型 = 便宜”在
+> 这里不成立，参数量 20k 并不代表 640×360 上的卷积便宜。移动端真实数字仍需要真机。
+
+**复现**：
+
+```shell
+python tools/m4alloc/e2e.py --model out/m4-dragon/cross/cross16_tiny.pt \
+    --budgets 499277:out/m4-dragon/cross16-val/budget_499277:out/m4-dragon/lr-dag2/selected.ply \
+    --full-mesh out/m3/hr_mesh.ply --eye 213.1540,-6.7370,9.8370 \
+    --target 2.220,-6.737,9.837 --out out/m4-dragon/e2e --threads 16 --shadows
+python tools/m4alloc/bench_infer.py --model out/m4-dragon/cross/cross16_tiny.pt \
+    --image out/m4-dragon/cross16-val/budget_499277/lr_v00.png \
+    --threads 1,2,4,8,16 --sizes 640x360
+python tools/m4alloc/bench_infer.py --model out/m4-dragon/cross/cross2_tiny_up.pt \
+    --arch tiny_up --scale 2 --image out/m4-dragon/budget16-lr320/budget_499277/lr_v00.png \
+    --threads 1,2,4,8 --sizes 320x180
+```
+
+---
 
 ## 8. 相关工作：移动端别人怎么做，以及由此对本方案的修正
 
@@ -1028,6 +2281,101 @@ per-index 拓扑看，这条接缝两侧各是一条边界；如果只塌缩其�
 
 ---
 
+### 8.9 真视差：平移序列、深度重投影与遮挡拒绝
+
+§8.6–8.8 的「真时域」其实是纯旋转：没有视差，也就没有真正的 disocclusion，历史拒绝
+只能验证「颜色裁剪有害」。这一轮补上了真正的平移。
+
+**数据链路**
+
+- `mm_bench --translate D --frames N` 让相机沿视线右方向平移 D 个世界单位，跨 N 帧；
+  相机和目标一起平移，视线方向不变。`--frames` 与 `--jitter` 分开，避免亚像素抖动
+  改变高模目标相机的采样位置。
+- `mm_bench --camera-out <file>` 写出每一帧精确的 eye/target/FOV/分辨率。深度和重投影
+  都读这份文件，而不是在 Python 里重新推导相机路径——半像素的偏差会表现为鬼影，
+  很难和重投影 bug 区分。
+- 新增 `tools/mmdepth`：按同一份相机列表把粗网格光栅化成 view-space 深度
+  （`MMDEPTH1`，float32）。Filament 公共 API 不暴露深度附件读回，所以这里用 CPU
+  光栅化生成与渲染完全同机位的深度。
+- `temporal.py --cameras ... --depth-dir ...` 用当前帧深度重建每个像素的世界位置，
+  投影到上一帧相机采样历史；同时采样上一帧深度，深度不一致（相对误差 >5%）就判为
+  disocclusion 并拒绝历史。
+
+**设置**：monkey，粗网格 7,074 / 15,744 面（44.93%），4 个方位角 × 8 帧，
+原生 160×90 → 640×360，总平移 0.6 个世界单位（相机距离约 3.25），`--no-shadows`。
+
+**朴素混合**（固定权重）：
+
+| 混合权重 | 重投影 | 深度拒绝 | 历史拒绝率 | PSNR | 相对粗帧 |
+|-|-|-|-|-|-|
+| 0.10 | 有 | 有 | 3.0–8.6% | 34.48 | −0.03 |
+| 0.25 | 有 | 有 | 3.0–8.6% | 34.17 | −0.34 |
+| 0.25 | 有 | 无 | 0% | 34.10 | −0.41 |
+| 0.50 | 有 | 有 | 3.0–8.6% | 32.52 | −2.00 |
+| 0.75 | 有 | 有 | 3.0–8.6% | 29.50 | −5.01 |
+| 0.50 | **无** | — | — | 27.37 | −7.14 |
+
+> **结论一：运动补偿仍然是分水岭。** 不对齐直接混合掉 7.14 dB；同样的混合加上深度
+> 重投影只掉 2.00 dB，相当于挽回 **+5.14 dB**。这是平移场景下对 §8.6「重投影不是优化项」
+> 的独立复现。
+
+> **结论二：正确重投影不等于朴素累积一定有用。** 在 4× 上采样 + 45% 粗几何的设置里，
+> 固定权重越大越差：历史经过双线性重采样后比当前帧更糊，平均进去会把当前帧的高频
+> 细节一起拉低。最好的固定权重（0.10–0.25）也只是接近中性。这与纯旋转的 +0.66 dB
+> 不矛盾：那里是 2× 上采样、几何更细，历史模糊的代价更小。
+
+> **结论三：深度拒绝是可测量的，但幅度取决于运动。** 同一 0.25 权重下，开启深度
+> 拒绝从 −0.41 提到 −0.34 dB（+0.07），拒绝 3.0–8.6% 的有效历史。平移越大，disocclusion
+> 比例越高，这一项才会变得重要。它验证了掩码本身正确，而不是一个可以忽略的开关。
+
+**学习式时域**（同一批 28 个训练三元组，2 个验证视角，tiny，2000 次迭代）：
+
+| 配置 | PSNR | SSIM | 相对粗帧 |
+|-|-|-|-|
+| 粗几何单帧 | 34.51 | — | — |
+| 学习式，仅当前帧 | 35.39 | 0.9838 | +0.88 |
+| **学习式，当前 + 重投影历史** | **35.54** | 0.9832 | **+1.03（比单帧 +0.15）** |
+
+> 网络把朴素混合丢掉的画质拿了回来，但历史只额外贡献 **+0.15 dB**，小于纯旋转的
+> +0.57 dB。原因有两层：平移产生了真实的 disocclusion，历史并非处处有效；同时 4×
+> 上采样下当前帧本身的信息缺口更大，网络更多是在补分辨率而不是补历史。
+> SSIM 在堆叠历史上略低（0.9838 → 0.9832），说明 PSNR 的小幅收益伴随轻微的时域平滑。
+
+**低预算复验（26.44%）**：同一序列换成 4,162 / 15,744 面的粗网格（质量门在
+`--target-ratio 0.2` 下的下限）：
+
+| 配置 | PSNR | SSIM | 相对粗帧 |
+|-|-|-|-|
+| 粗几何单帧 | 33.96 | — | — |
+| 朴素 0.50 混合，重投影 | 32.30 | — | −1.65 |
+| 朴素 0.50 混合，不重投影 | 27.23 | — | −6.72 |
+| 学习式，仅当前帧 | **34.46** | 0.9807 | +0.50 |
+| 学习式，当前 + 重投影历史 | 34.34 | **0.9842** | +0.38（比单帧 −0.12） |
+
+> **结论四（与 45% 档相反）：** 几何更差时，历史没有变得更有用；PSNR 上它从
+> **+0.15 翻成 −0.12**，只有 SSIM 提高（0.9807 → 0.9842）。也就是说，网络在低预算下
+> 更依赖当前帧的合成先验，历史带来的平滑在这里是负担。**“时域重建可以换取更低几何
+> 预算”在本数据上没有成立**，不能作为 M4 的正向证据。
+
+**运动强度扫描（45% 几何，同一 4 视角 × 8 帧）**：
+
+| 总平移 | 粗帧 | 重投影朴素混合 | 不重投影 | 学习式单帧 | 学习式 + 历史 | 历史增益 |
+|-|-|-|-|-|-|-|
+| 0.0 | 34.38 | 34.38（0.00） | 34.38（0.00） | **35.78** | 35.48 | **−0.30** |
+| 0.6 | 34.51 | 32.52（−2.00） | 27.37（−7.14） | 35.39 | **35.54** | **+0.15** |
+| 1.2 | 34.13 | 31.23（−2.90） | 26.31（−7.82） | **35.27** | 35.11 | **−0.16** |
+
+> **结论五：运动补偿的价值随运动增长，学习式历史的价值没有。** 不重投影的损失从
+> −7.14 增到 −7.82 dB，重投影把损失从 −2.90 挽回到可接受范围，说明几何对齐本身是稳的。
+> 但学习式历史增益在 0、0.6、1.2 三个档位上是 −0.30 / +0.15 / −0.16，**符号不稳定、
+> 量级接近噪声**。静态时单帧先验已经达到最高（35.78 dB），历史没有额外信息；运动越大，
+> 历史越不可靠。因此没有观察到“低运动 → 可以用更低几何预算”的正向区间。
+
+**仍未做**：递归隐状态（当前模型是单步前馈，历史缓冲由 `temporal.py` 递归累积）、
+把深度/运动矢量作为网络输入通道（目前只用于重投影）、以及长序列上的时域闪烁指标。
+
+---
+
 ## 9. 为什么这个方案优于「移动端 Nanite」
 
 - 不需要复刻 UE 级 Nanite
@@ -1126,6 +2474,92 @@ filament/src/details/FramePacer.cpp
 
 ---
 
+## 10. 当前实现状态（2026-10）
+
+### 10.1 已完成
+
+- **几何简化**：cluster 内与 cluster group 内均支持属性感知 QEM；corner 模式按三角形角点
+  跟踪法线/UV，允许 UV/normal seam 内部折叠，并可用 QEM 最优位置生成新顶点。
+- **Seam 与拓扑**：按精确焊接位置锁定 leaf 共享顶点；cut 组装按焊接位置去重，能够清理
+  不同节点或同节点不同 UV 顶点产生的重合面。视觉回归中 torus/monkey/sphere/cloth 均未
+  出现新增 boundary、non-manifold、duplicate、degenerate 或 flipped 三角形。
+- **层次 DAG**：cluster chain + group merge + 单成员 chain（root 后继续降面）；
+  --target-ratio 会选最接近预算且通过质量门的 cut。
+- **运行时**：CPU cut、分页流式缓存、异步预取、HTTP Range fetcher（Windows WinHTTP，其他平台 CivetWeb）、
+  间接绘制命令生成、编辑器滑杆/档位/近细远粗开关；DAG cut 的连续索引区间会合并成
+  一个 draw，也可用 `--compact-cut-indices` 把当前 cut 的索引按材质压成一个 buffer。
+- **顶点内存**：`compactLodSelection()` 现在同时压缩 source 与 generated，只保留当前
+  cut 实际引用的顶点并重写索引；monkey balanced cut 从 22,268 降到 7,516（33.8%），
+  torus 从 1,706 降到 502（29.4%），sphere 从 10,647 降到 2,019（19.0%）。压缩路径与
+  全量路径截图逐像素一致。流格式 v4/v5/v6 均可读取，v4 会回退到 `positionSource`。
+- **锁掩码构建**：`buildLockedMaskContext()` 之前对每个简化单元扫描整个网格的顶点；
+  现在只扫描该单元实际引用的 source 顶点，输出逐位不变。cloth DAG 从 17.2s 降到 10.3s，
+  monkey 从 3.9s 降到 2.1s，lock-mask build 从 9.5s 降到 0.37s（cloth）。
+- **GPU 原型**：`tools/mmgpu` 在真实 Vulkan 上执行 compute cut selection、GPU index/draw
+  压缩、三 pass GPU 顶点压缩、`vkCmdDrawIndexedIndirect` 和 visibility buffer；draw 消费的
+  vertex/index/indirect buffer 全部由 GPU 生成。cut、compaction 和 visibility 现在记录进
+  同一个 command buffer，每帧只有一次 `vkQueueSubmit` 和一次 `vkQueueWaitIdle`；torus
+  640x360、2 px 阈值下，五次帧的 warm 平均提交等待从原来三次提交合计 **2.56-3.01 ms**
+  降到 **1.24-1.42 ms**，GPU timestamp 为 cut 0.32-0.33 ms、compaction 0.05 ms、
+  visibility 0.11 ms；`--legacy-submit` 可在同机复现旧的三次提交路径做 A/B。
+  monkey 640x360 为 1.58 ms，cloth 320x180 为 5.38 ms（cut 3.68 ms）。阶段间用
+  compute→compute 与 compute→graphics barrier 连接；mark pass 在 shader 内读取 cut 的
+  实际压缩索引数，因此不需要阶段间主机回读。torus/monkey/sphere/cloth 四个模型上 GPU cut
+  与 CPU 一致，压缩后的 source 顶点集合和三角形拓扑一致，visibility 重叠 100%、深度差异
+  为 0；稠密顶点 ID 是并行 gather 产生的合法排列，不承诺与 CPU 逐位相同。Filament 后端
+  `VulkanDriver::dispatchCompute`/`readBufferSubData` 已实现，`compute_test --api vulkan`
+  在 Intel Iris Xe 上 2/2 通过（`out/cmake-vulkan` 构建）。
+  **RenderDoc 单提交证据（本轮）**：`out/renderdoc-mmgpu/single_torus_capture.rdc/.xml`
+  在 320x180、2 px 阈值下只有 **1 次 `vkQueueSubmit` / 1 次 `vkQueueWaitIdle`**，包含
+  **4 次 compute dispatch**（cut + 3 个顶点压缩 pass）、**1 次
+  `vkCmdDrawIndexedIndirect`**、1 个 render pass、3 次 image→buffer 回读和 7 个 barrier。
+  barrier 覆盖 host→compute/indirect/vertex-input、compute→compute、compute→graphics 与
+  graphics/transfer→host；host 上传和 compute 输出的目标阶段已从 `ALL_COMMANDS` /
+  `ALL_GRAPHICS` 收窄到实际消费者。`mmgpu` 的退出码也改为使用 source 顶点集合 + 三角形
+  拓扑契约，不再要求 GPU 并行分配的稠密顶点 ID 逐位相同；四模型单提交/legacy A/B 均
+  以 exit 0 通过。
+
+### 10.2 质量优先的下限
+
+--target-ratio 是目标而不是保证。当前默认门控下，torus 的 `--target-ratio 0.2` 实测停在
+**400 / 1,152 = 34.72%**，monkey 的 `--target-ratio 0.3` 停在
+**4,712 / 15,744 = 29.93%**，`--target-ratio 0.2` 停在 **4,162 / 15,744 = 26.44%**；
+剩余拒绝主要是 group topology/attributes，不再是 UV 平均或 QEM 落点。继续降低面数需要
+更严格的质量门调优、跨缝重建或更强的小三角形预算，本实现没有通过放松质量门换面数。
+同面数对照见 §7 的 corner 优先级条目：monkey 7,084 面对旧 7,124 面仍有 +0.89 dB PSNR
+和 +0.00147 SSIM；属性 chart 选择修复后同 6,244 面为 27.10 dB / 0.97167 SSIM，
+修复前为 25.24 dB / 0.92891。
+
+### 10.3 尚未完成
+
+- Filament **公共 API** 的常驻 compute + indirect draw 路径（后端已有 dispatch 与
+  `drawIndexedIndirect`，但应用层入口与持久 GPU buffer 尚未接线）。独立 Vulkan 原型
+  已经完成 cut 选择、GPU index/draw 压缩和三 pass GPU 顶点压缩；剩余工作是把它变成
+  Engine 的公共对象生命周期。
+- 把 mmgpu 的 Vulkan visibility buffer 接进 Filament 正式渲染器；当前是独立原型。
+- 移动端真机 HTTP/HTTPS 与网络切换验证（CivetWeb 已提供便携 HTTP Range 传输，
+  HTTPS 依赖平台 TLS 运行时）。
+- 移动端真机功耗、带宽与帧时验证。
+
+### 10.4 M5 移动端落地的前置条件（本轮评估）
+
+截至本轮，代码侧的移动端相关能力已经有可验证的部分：GLSL ES 3.10 的 cut shader、
+跨平台的 CivetWeb HTTP Range、Vulkan 后端的 compute/indirect 入口，以及无 Vulkan 时的
+OpenGL ES 兼容路径。但 M5 的验收项**无法在本机完成**：
+
+| 验收项 | 本机状态 | 缺少什么 |
+|-|-|-|
+| Android 构建 | 未配置 | `ANDROID_HOME` / `ANDROID_SDK_ROOT` 为空，无 `adb` / `sdkmanager` / NDK |
+| 真机帧时、功耗、发热 | 未测 | 一台 arm64-v8a 真机 + 稳定供电与温度采集 |
+| 真机 HTTP/HTTPS、网络切换 | 未测 | 真机网络与可控制的服务端 |
+
+因此论文中不能把 M5 写成“移动端实测”。当前能站住的表述是：**桌面 Iris Xe 核显作为
+移动 GPU 的代理**，并明确说明它不能代表手机的功耗/发热。若要继续 M5，最小闭环是：
+安装 Android command-line tools、platform-tools 与 NDK，连接一台支持 Vulkan 1.0 或
+GLES 3.1 的 arm64 设备，把 `mm_bench` 的 headless 路径移植成移动端 harness，再补齐
+Perfetto/电池数据。这一步需要外部硬件，不是代码侧能独立完成的。
+
+---
 ## 11. 参考
 
 - Google Filament — https://github.com/google/filament

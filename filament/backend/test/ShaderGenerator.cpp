@@ -100,7 +100,22 @@ ShaderGenerator::ShaderGenerator(std::string vertex, std::string fragment, Backe
 ShaderGenerator::Blob ShaderGenerator::transpileShader(ShaderStage stage, std::string shader,
         Backend backend, bool isMobile, const filamat::DescriptorSets& descriptorSets) noexcept {
     TProgram program;
-    const EShLanguage language = stage == ShaderStage::VERTEX ? EShLangVertex : EShLangFragment;
+    EShLanguage language = EShLangFragment;
+    char const* stageName = "fragment";
+    switch (stage) {
+        case ShaderStage::VERTEX:
+            language = EShLangVertex;
+            stageName = "vertex";
+            break;
+        case ShaderStage::FRAGMENT:
+            language = EShLangFragment;
+            stageName = "fragment";
+            break;
+        case ShaderStage::COMPUTE:
+            language = EShLangCompute;
+            stageName = "compute";
+            break;
+    }
     TShader tShader(language);
 
     // Add a target environment define after the #version declaration.
@@ -131,8 +146,7 @@ ShaderGenerator::Blob ShaderGenerator::transpileShader(ShaderStage stage, std::s
 
     bool ok = tShader.parse(&DefaultTBuiltInResource, version, false, msg);
     EXPECT_THAT(ok, ::testing::IsTrue()) <<
-            "ERROR: Unable to parse " <<
-            (stage == ShaderStage::VERTEX ? "vertex" : "fragment") << " shader:" <<
+            "ERROR: Unable to parse " << stageName << " shader:" <<
             tShader.getInfoLog();
 
     program.addShader(&tShader);
@@ -173,6 +187,12 @@ Program ShaderGenerator::getProgram(filament::backend::DriverApi&) noexcept {
     program.shader(ShaderStage::VERTEX, mVertexBlob.data(), mVertexBlob.size());
     program.shader(ShaderStage::FRAGMENT, mFragmentBlob.data(), mFragmentBlob.size());
     return program;
+}
+
+ShaderGenerator::Blob ShaderGenerator::transpileCompute(std::string compute, Backend backend,
+        bool isMobile) noexcept {
+    return transpileShader(
+            ShaderStage::COMPUTE, std::move(compute), backend, isMobile, filamat::DescriptorSets{});
 }
 
 Program ShaderGenerator::getProgramWithPushConstants(filament::backend::DriverApi&,

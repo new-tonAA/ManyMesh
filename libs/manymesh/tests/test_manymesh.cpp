@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
+#include <manymesh/AmbientOcclusion.h>
 #include <manymesh/AttributeSimplifier.h>
 #include <manymesh/Clusterizer.h>
+#include <manymesh/CornerSimplifier.h>
+#include <manymesh/DetailBake.h>
 #include <manymesh/GeometryError.h>
 #include <manymesh/GpuLod.h>
 #include <manymesh/Grouper.h>
 #include <manymesh/LodGraph.h>
 #include <manymesh/Mesh.h>
 #include <manymesh/Quality.h>
+#include <manymesh/ShadingNormals.h>
 #include <manymesh/Simplifier.h>
 #include <manymesh/Streaming.h>
 #include <manymesh/VisibilityBuffer.h>
@@ -90,6 +94,74 @@ void append(Mesh* destination, Mesh const& source) {
     for (uint32_t index: source.indices) {
         destination->indices.push_back(offset + index);
     }
+}
+
+// Three pie-slice charts cover a full disk. Every chart has its own centre vertex at the same
+// position and its own radial seam, so the centre has three attribute copies while the welded
+// surface is a closed disk. The charts use different UV islands and normals and the surface is
+// deliberately non-planar; this is the regression shape for 3+ seam copies.
+Mesh makeThreeSectorDisk(std::array<uint32_t, 3>* centres) {
+    Mesh mesh;
+    auto appendSector = [&mesh](float angleBegin, float angleEnd, float uOffset, float vOffset,
+                                float uvScale, math::float3 normal) {
+        constexpr uint32_t kRadialSteps = 8;
+        constexpr uint32_t kAngularSteps = 12;
+        constexpr float kRadius = 1.0f;
+        uint32_t const base = uint32_t(mesh.positions.size());
+
+        auto positionAt = [](float radius, float angle) {
+            float const x = radius * std::cos(angle);
+            float const y = radius * std::sin(angle);
+            float const z = 0.12f * std::sin(x * 2.1f) * std::cos(y * 1.7f);
+            return math::float3{ x, y, z };
+        };
+        auto uvAt = [uOffset, vOffset, uvScale](math::float3 const& position) {
+            float const u = uOffset + (position.x / kRadius + 1.0f) * 0.5f * uvScale;
+            float const v = vOffset + (position.y / kRadius + 1.0f) * 0.5f * uvScale;
+            return math::float2{ u, v };
+        };
+
+        mesh.positions.push_back(positionAt(0.0f, 0.0f));
+        mesh.normals.push_back(normal);
+        mesh.uvs.push_back(uvAt(mesh.positions.back()));
+
+        for (uint32_t ring = 1; ring <= kRadialSteps; ++ring) {
+            float const radius = kRadius * float(ring) / float(kRadialSteps);
+            for (uint32_t step = 0; step <= kAngularSteps; ++step) {
+                float const t = float(step) / float(kAngularSteps);
+                float const angle = angleBegin + (angleEnd - angleBegin) * t;
+                math::float3 const position = positionAt(radius, angle);
+                mesh.positions.push_back(position);
+                mesh.normals.push_back(normal);
+                mesh.uvs.push_back(uvAt(position));
+            }
+        }
+
+        uint32_t const firstRing = base + 1;
+        for (uint32_t step = 0; step < kAngularSteps; ++step) {
+            mesh.indices.insert(mesh.indices.end(),
+                    { base, firstRing + step, firstRing + step + 1 });
+        }
+        for (uint32_t ring = 1; ring < kRadialSteps; ++ring) {
+            uint32_t const inner = base + 1 + (ring - 1) * (kAngularSteps + 1);
+            uint32_t const outer = inner + (kAngularSteps + 1);
+            for (uint32_t step = 0; step < kAngularSteps; ++step) {
+                mesh.indices.insert(mesh.indices.end(),
+                        { inner + step, outer + step, outer + step + 1 });
+                mesh.indices.insert(mesh.indices.end(),
+                        { inner + step, outer + step + 1, inner + step + 1 });
+            }
+        }
+        return base;
+    };
+
+    (*centres)[0] = appendSector(0.0f, 2.0943951f, 0.02f, 0.03f, 0.30f,
+            normalize(math::float3{ 0.04f, 0.0f, 1.0f }));
+    (*centres)[1] = appendSector(2.0943951f, 4.1887902f, 0.36f, 0.03f, 0.28f,
+            normalize(math::float3{ -0.02f, 0.03f, 1.0f }));
+    (*centres)[2] = appendSector(4.1887902f, 6.2831853f, 0.70f, 0.03f, 0.27f,
+            normalize(math::float3{ 0.01f, -0.04f, 1.0f }));
+    return mesh;
 }
 
 using Triangle = std::array<uint32_t, 3>;
@@ -329,6 +401,120 @@ TEST(ManyMesh, ScreenSpaceErrorScalesWithDistanceAndError) {
     EXPECT_NEAR(screenSpaceError(1.0f, { 0.0f, 0.0f, -10.0f }, camera), 50.0f, 0.01f);
     EXPECT_NEAR(screenSpaceError(1.0f, { 0.0f, 0.0f, -20.0f }, camera), 25.0f, 0.01f);
     EXPECT_NEAR(screenSpaceError(2.0f, { 0.0f, 0.0f, -10.0f }, camera), 100.0f, 0.01f);
+}
+
+TEST(ManyMesh, ScreenSpaceErrorForSphereUsesNearestDepth) {
+    ViewCamera camera;
+    camera.eye = { 0.0f, 0.0f, 0.0f };
+    camera.target = { 0.0f, 0.0f, -1.0f };
+    camera.fovY = 1.5707963f; // 90 degrees, so tan(fov/2) == 1
+    camera.screenHeight = 1000;
+    camera.near = 0.01f;
+
+    ScreenErrorProjection const projection = makeScreenErrorProjection(camera);
+    ASSERT_TRUE(projection.valid);
+
+    // The sphere centre is 10 units away, but its nearest point is 8 units away. The error must
+    // use 8, matching screenSpaceError() at the nearest surface point.
+    Sphere const sphere{ { 0.0f, 0.0f, -10.0f }, 2.0f };
+    EXPECT_NEAR(screenSpaceErrorForSphere(1.0f, sphere, projection), 62.5f, 0.01f);
+    EXPECT_NEAR(screenSpaceError(1.0f, { 0.0f, 0.0f, -8.0f }, camera), 62.5f, 0.01f);
+
+    // A sphere that crosses the near plane is clamped to the near distance instead of being
+    // treated as infinitely far away or being allowed to divide by zero.
+    Sphere const crossing{ { 0.0f, 0.0f, 0.05f }, 0.1f };
+    EXPECT_NEAR(screenSpaceErrorForSphere(1.0f, crossing, projection), 50000.0f, 1.0f);
+}
+
+TEST(ManyMesh, LodGraphCutUsesNearestSphereDepth) {
+    // Root centre is 10 units away and its radius is 2, so the nearest surface is at depth 8.
+    // With a 1-unit accumulated error and 500 pixels/radian this is 62.5 px, not 50 px.
+    LodGraph graph;
+    graph.levelCount = 2;
+    graph.nodes.resize(3);
+    graph.nodes[0].level = 1;
+    graph.nodes[0].children = { 1, 2 };
+    graph.nodes[0].bounds = { { 0.0f, 0.0f, -10.0f }, 2.0f };
+    graph.nodes[0].accumulatedError = 1.0f;
+    for (uint32_t child: { 1u, 2u }) {
+        graph.nodes[child].level = 0;
+        graph.nodes[child].bounds = { { 0.0f, 0.0f, -10.0f }, 0.5f };
+    }
+    graph.roots = { 0 };
+    graph.leaves = { 1, 2 };
+
+    ViewCamera camera;
+    camera.eye = { 0.0f, 0.0f, 0.0f };
+    camera.target = { 0.0f, 0.0f, -1.0f };
+    camera.fovY = 1.5707963f;
+    camera.screenHeight = 1000;
+    camera.near = 0.01f;
+
+    // A centre-depth implementation would see 50 px and accept the root at 55 px.
+    LodGraphCut const fine = selectLodGraphCut(graph, camera, 55.0f);
+    ASSERT_EQ(fine.nodes.size(), 2u);
+    EXPECT_EQ(fine.nodes[0], 1u);
+    EXPECT_EQ(fine.nodes[1], 2u);
+
+    LodGraphCut const coarse = selectLodGraphCut(graph, camera, 70.0f);
+    ASSERT_EQ(coarse.nodes.size(), 1u);
+    EXPECT_EQ(coarse.nodes[0], 0u);
+}
+
+TEST(ManyMesh, FrustumCutKeepsSpheresIntersectingSidePlanes) {
+    using filament::math::float3;
+    LodGraph graph;
+    graph.levelCount = 1;
+    graph.baseTriangles = 1;
+    graph.roots = { 0 };
+    graph.leaves = { 0 };
+    graph.nodes.resize(1);
+    LodGraphNode& node = graph.nodes.front();
+    node.indices = { 0, 1, 2 };
+    node.baseTriangles = 1;
+
+    ViewCamera camera;
+    camera.eye = { 0.0f, 0.0f, 0.0f };
+    camera.target = { 0.0f, 0.0f, -1.0f };
+    camera.fovY = 1.5707963f;
+    camera.screenWidth = camera.screenHeight = 720;
+
+    // At z = -10 the side planes are at x and y = +/-10. An axis offset of 1.2 is
+    // only 1.2 / sqrt(2) from the plane, so a unit sphere still intersects the frustum.
+    float3 const axes[] = { { 1, 0, 0 }, { -1, 0, 0 }, { 0, 1, 0 }, { 0, -1, 0 } };
+    for (float3 const axis: axes) {
+        node.bounds = { float3{ 0, 0, -10 } + axis * 11.2f, 1.0f };
+        EXPECT_EQ(selectLodGraphCut(graph, camera, 2.0f).selectedTriangles, 1u);
+        EXPECT_EQ(selectLodGraph(graph, camera, 2.0f).selectedTriangles, 1u);
+
+        node.bounds.center += axis * 0.3f;
+        EXPECT_EQ(selectLodGraphCut(graph, camera, 2.0f).culledTriangles, 1u);
+        EXPECT_EQ(selectLodGraph(graph, camera, 2.0f).culledTriangles, 1u);
+    }
+}
+
+TEST(ManyMesh, AssembleLodSelectionMatchesTheGreedyCut) {
+    Mesh const mesh = makeGrid(20, 20, { 0.0f, 0.0f, 0.0f }, 1.0f, 0.3f);
+    LodGraphOptions options;
+    options.clusterize.maxVertices = 64;
+    options.clusterize.maxTriangles = 64;
+    options.clustersPerNode = 4;
+    options.levels = 4;
+    LodGraph const graph = buildLodGraph(mesh, options);
+
+    ViewCamera camera;
+    camera.eye = { 0.0f, 0.0f, 3.0f };
+    camera.target = { 0.0f, 0.0f, 0.0f };
+    LodGraphSelection const expected = selectLodGraph(graph, camera, 1.0f);
+
+    std::vector<uint32_t> nodes = expected.nodes;
+    std::sort(nodes.begin(), nodes.end());
+    LodGraphSelection const assembled = assembleLodSelection(graph, camera, nodes);
+    EXPECT_EQ(assembled.nodes.size(), expected.nodes.size());
+    EXPECT_EQ(assembled.selectedTriangles, expected.selectedTriangles);
+    EXPECT_EQ(assembled.indices, expected.indices);
+    EXPECT_EQ(assembled.materialIds, expected.materialIds);
+    EXPECT_EQ(assembled.submeshIds, expected.submeshIds);
 }
 
 TEST(ManyMesh, SelectionRespectsThePixelBudgetAndPrefersCoarserWhenFar) {
@@ -647,6 +833,43 @@ TEST(ManyMesh, PositionAndAttributeMetricsSeeRemovedDetail) {
     EXPECT_GT(attributes.maxUvError, 0.0f);
 }
 
+TEST(ManyMesh, AttributeMetricsSelectTheSourceChartAtADuplicatePosition) {
+    // Two charts share the origin but carry different normals and UVs. The position error is
+    // zero for both origin copies; the attribute comparison must pick each copy's own chart
+    // instead of whichever coincident triangle the BVH happened to visit first.
+    Mesh mesh;
+    mesh.positions = {
+        { 0.0f, 0.0f, 0.0f },
+        { 1.0f, 0.0f, 0.0f },
+        { 0.0f, 1.0f, 0.0f },
+        { 0.0f, 0.0f, 0.0f },
+        { -1.0f, 0.0f, 0.0f },
+        { 0.0f, -1.0f, 0.0f },
+    };
+    mesh.normals = {
+        { 0.0f, 0.0f, 1.0f },
+        { 0.0f, 0.0f, 1.0f },
+        { 0.0f, 0.0f, 1.0f },
+        { 1.0f, 0.0f, 0.0f },
+        { 1.0f, 0.0f, 0.0f },
+        { 1.0f, 0.0f, 0.0f },
+    };
+    mesh.uvs = {
+        { 0.1f, 0.1f },
+        { 0.2f, 0.1f },
+        { 0.1f, 0.2f },
+        { 0.9f, 0.9f },
+        { 0.8f, 0.9f },
+        { 0.9f, 0.8f },
+    };
+    mesh.indices = { 0, 1, 2, 3, 4, 5 };
+
+    AttributeStats const attributes = measureAttributeError(mesh, mesh.indices, mesh.indices);
+    EXPECT_EQ(attributes.samples, 6u);
+    EXPECT_NEAR(attributes.maxNormalErrorRadians, 0.0f, 1.0e-4f);
+    EXPECT_NEAR(attributes.maxUvError, 0.0f, 1.0e-4f);
+}
+
 TEST(ManyMesh, AttributeQemKeepsTopologyCleanAndRespectsTheTarget) {
     Mesh mesh = makeGrid(12, 12, {}, 1.0f, 0.6f);
     mesh.normals.assign(mesh.positions.size(), { 0.0f, 0.0f, 1.0f });
@@ -693,6 +916,38 @@ TEST(ManyMesh, QualityGatePreservesTheExactBoundaryEdgeSet) {
     EXPECT_LT(level.indices.size(), mesh.indices.size());
     EXPECT_EQ(boundaryEdgeSet(level.indices), boundaryEdgeSet(mesh.indices));
     EXPECT_EQ(level.topology.flippedTriangles, 0u);
+}
+
+TEST(ManyMesh, CachedExtendedMeshDoesNotChangeSimplifiedOutput) {
+    Mesh mesh = makeGrid(20, 20, {}, 1.0f, 0.45f);
+    mesh.normals.assign(mesh.positions.size(), { 0.0f, 0.0f, 1.0f });
+    mesh.uvs.resize(mesh.positions.size());
+    for (size_t i = 0; i < mesh.positions.size(); ++i) {
+        mesh.uvs[i] = { mesh.positions[i].x * 0.05f, mesh.positions[i].y * 0.05f };
+    }
+
+    SimplifyOptions options;
+    options.qualityGate = true;
+    options.attributeQem = true;
+    options.cornerSimplify = true;
+    options.meshCacheEpoch = 0xC0FFEEu;
+    size_t const target = (mesh.indices.size() / 2 / 3) * 3;
+
+    LodLevel first;
+    LodLevel reused;
+    simplifyIndices(mesh, mesh.indices, target, options, &first);
+    simplifyIndices(mesh, mesh.indices, target, options, &reused);
+
+    options.meshCacheEpoch = 0;
+    LodLevel uncached;
+    simplifyIndices(mesh, mesh.indices, target, options, &uncached);
+
+    ASSERT_TRUE(first.simplified);
+    EXPECT_EQ(first.indices, reused.indices);
+    EXPECT_EQ(first.indices, uncached.indices);
+    EXPECT_EQ(first.generatedVertices, reused.generatedVertices);
+    EXPECT_EQ(first.generatedVertices, uncached.generatedVertices);
+    EXPECT_FLOAT_EQ(first.worldError, uncached.worldError);
 }
 
 TEST(ManyMesh, SeamPairCollapseKeepsTheWeldedSurfaceClosed) {
@@ -1224,13 +1479,32 @@ TEST(ManyMesh, LodGraphReadsVersionTwoWithoutAStoredVertexCount) {
     std::memcpy(&rootCount, blob.data() + 12, sizeof(rootCount));
     std::memcpy(&leafCount, blob.data() + 16, sizeof(leafCount));
 
-    // v3 is [fixed header including vertexCount][roots][leaves][offsets][records]. Build the v2
-    // layout by dropping the four-byte vertex count and shifting every record offset back by 4.
+    // Version 6 is [header with vertexCount][roots][leaves][generated count][generated
+    // vertices][position id count][position ids][offsets][records]. Version 2 has the same fixed
+    // header without the vertex count and neither of the trailing vertex sections, so drop them
+    // and shift every record offset back by the removed bytes.
     constexpr size_t V2_HEADER_SIZE = 32;
-    constexpr size_t V3_HEADER_SIZE = 36;
+    constexpr size_t V6_HEADER_SIZE = 36;
+    size_t const generatedCountOffset =
+            V6_HEADER_SIZE + (size_t(rootCount) + leafCount) * sizeof(uint32_t);
+    ASSERT_LE(generatedCountOffset + sizeof(uint32_t), blob.size());
+    uint32_t generatedCount = 0;
+    std::memcpy(&generatedCount, blob.data() + generatedCountOffset, sizeof(generatedCount));
+    size_t const generatedEnd = generatedCountOffset + sizeof(uint32_t) +
+                                size_t(generatedCount) * 10u * sizeof(uint32_t);
+    ASSERT_LE(generatedEnd + sizeof(uint32_t), blob.size());
+    uint32_t positionIdCount = 0;
+    std::memcpy(&positionIdCount, blob.data() + generatedEnd, sizeof(positionIdCount));
+    size_t const positionIdsEnd =
+            generatedEnd + sizeof(uint32_t) + size_t(positionIdCount) * sizeof(uint32_t);
+    ASSERT_LE(positionIdsEnd, blob.size());
+    size_t const removedBytes =
+            (V6_HEADER_SIZE - V2_HEADER_SIZE) + (positionIdsEnd - generatedCountOffset);
     std::vector<uint8_t> v2;
     v2.insert(v2.end(), blob.begin(), blob.begin() + V2_HEADER_SIZE);
-    v2.insert(v2.end(), blob.begin() + V3_HEADER_SIZE, blob.end());
+    v2.insert(v2.end(), blob.begin() + V6_HEADER_SIZE,
+            blob.begin() + std::ptrdiff_t(generatedCountOffset));
+    v2.insert(v2.end(), blob.begin() + std::ptrdiff_t(positionIdsEnd), blob.end());
     uint32_t const version = 2;
     std::memcpy(v2.data() + 4, &version, sizeof(version));
 
@@ -1238,7 +1512,7 @@ TEST(ManyMesh, LodGraphReadsVersionTwoWithoutAStoredVertexCount) {
     for (uint32_t i = 0; i <= nodeCount; ++i) {
         uint64_t value = 0;
         std::memcpy(&value, v2.data() + offsets + size_t(i) * sizeof(value), sizeof(value));
-        value -= V3_HEADER_SIZE - V2_HEADER_SIZE;
+        value -= removedBytes;
         std::memcpy(v2.data() + offsets + size_t(i) * sizeof(value), &value, sizeof(value));
     }
 
@@ -1430,7 +1704,7 @@ TEST(ManyMesh, AsyncStreamingCacheDropsPagesQueuedForAnOlderCut) {
 }
 
 TEST(ManyMesh, HttpByteRangeFetcherValidatesUrls) {
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(MANYMESH_HTTP_CIVETWEB)
     HttpByteRangeFetcher const https("https://cdn.example.com/assets/lod_graph.mmb");
     EXPECT_TRUE(https.valid()) << https.lastError();
     EXPECT_EQ(https.url(), "https://cdn.example.com/assets/lod_graph.mmb");
@@ -1443,6 +1717,8 @@ TEST(ManyMesh, HttpByteRangeFetcherValidatesUrls) {
 
     EXPECT_FALSE(HttpByteRangeFetcher("ftp://example.com/lod_graph.mmb").valid());
     EXPECT_FALSE(HttpByteRangeFetcher("https://example.com:0/lod_graph.mmb").valid());
+    EXPECT_FALSE(HttpByteRangeFetcher("https://example.com:/lod_graph.mmb").valid());
+    EXPECT_FALSE(HttpByteRangeFetcher("http://[::1]:/lod_graph.mmb").valid());
     EXPECT_FALSE(HttpByteRangeFetcher("https://example.com:notaport/lod_graph.mmb").valid());
     EXPECT_FALSE(HttpByteRangeFetcher("https:///lod_graph.mmb").valid());
 #else
@@ -1600,6 +1876,1377 @@ TEST(ManyMesh, GpuLayoutAndVisibilityBufferFollowTheSelection) {
         }
     }
     EXPECT_TRUE(sawCluster);
+}
+
+TEST(ManyMesh, CornerSimplifierMovesSeamVerticesAndKeepsWeldedTopology) {
+    // Two 16x8 grids meet at x=16 with a UV discontinuity. The welded outline is a rectangle;
+    // the importer duplicates the seam column, so only a corner-attribute simplifier can reduce
+    // the interior without opening a crack.
+    Mesh mesh;
+    auto appendGrid = [&mesh](uint32_t offsetX, float uOffset) {
+        uint32_t const nx = 16;
+        uint32_t const ny = 8;
+        uint32_t const base = uint32_t(mesh.positions.size());
+        for (uint32_t j = 0; j <= ny; ++j) {
+            for (uint32_t i = 0; i <= nx; ++i) {
+                float const x = float(offsetX + i);
+                float const y = float(j);
+                mesh.positions.push_back({ x, y, 0.18f * std::sin(x * 0.7f) * std::cos(y * 0.9f) });
+                mesh.normals.push_back({ 0.0f, 0.0f, 1.0f });
+                mesh.uvs.push_back({ float(i) / float(nx) + uOffset, float(j) / float(ny) });
+            }
+        }
+        auto index = [base, nx](uint32_t i, uint32_t j) { return base + j * (nx + 1) + i; };
+        for (uint32_t j = 0; j < ny; ++j) {
+            for (uint32_t i = 0; i < nx; ++i) {
+                mesh.indices.insert(mesh.indices.end(),
+                        { index(i, j), index(i + 1, j), index(i + 1, j + 1) });
+                mesh.indices.insert(mesh.indices.end(),
+                        { index(i, j), index(i + 1, j + 1), index(i, j + 1) });
+            }
+        }
+    };
+    appendGrid(0, 0.0f);
+    appendGrid(16, 0.0f);
+
+    CornerSimplifyOptions options;
+    options.targetIndexCount = (mesh.indices.size() / 2 / 3) * 3;
+    options.lockBorder = true;
+    std::vector<uint32_t> simplified;
+    std::vector<GeneratedVertex> generated;
+    float worldError = 0.0f;
+    ASSERT_TRUE(simplifyWithCornerAttributes(mesh, mesh.indices, options, &simplified, &generated,
+            &worldError));
+    EXPECT_LT(simplified.size(), mesh.indices.size());
+    ASSERT_FALSE(generated.empty());
+    EXPECT_GT(worldError, 0.0f);
+
+    bool sawMovedVertex = false;
+    for (GeneratedVertex const& vertex: generated) {
+        EXPECT_TRUE(vertex.hasPosition);
+        ASSERT_LT(vertex.positionSource, mesh.positions.size());
+        if (length(vertex.position - mesh.positions[vertex.positionSource]) > 1e-6f) {
+            sawMovedVertex = true;
+        }
+    }
+    EXPECT_TRUE(sawMovedVertex) << "QEM should move at least one seam vertex";
+
+    Mesh result = mesh;
+    appendGeneratedVertices(&result, generated);
+    TopologyStats const base = measureWeldedTopology(mesh, mesh.indices);
+    TopologyStats const stats = measureWeldedTopology(result, simplified);
+    EXPECT_EQ(stats.boundaryEdges, base.boundaryEdges);
+    EXPECT_EQ(stats.nonManifoldEdges, 0u);
+    EXPECT_EQ(stats.duplicateTriangles, 0u);
+    EXPECT_EQ(stats.degenerateTriangles, 0u);
+    EXPECT_EQ(stats.flippedTriangles, 0u);
+    for (uint32_t index: simplified) {
+        EXPECT_LT(index, result.positions.size());
+    }
+}
+
+TEST(ManyMesh, CornerSimplifierHandlesFourChartCopiesAtOnePosition) {
+    // Four grids meet at a single welded position, so four attribute vertices share that exact
+    // point. Pairwise seam handling is not enough here: the welded topology must be reduced as
+    // one surface and each chart must get back the attributes it needs.
+    Mesh mesh;
+    auto appendGrid = [&mesh](uint32_t offsetX, uint32_t offsetY, float uOffset) {
+        uint32_t const nx = 16;
+        uint32_t const ny = 8;
+        uint32_t const base = uint32_t(mesh.positions.size());
+        for (uint32_t j = 0; j <= ny; ++j) {
+            for (uint32_t i = 0; i <= nx; ++i) {
+                float const x = float(offsetX + i);
+                float const y = float(offsetY + j);
+                mesh.positions.push_back({ x, y, 0.18f * std::sin(x * 0.7f) * std::cos(y * 0.9f) });
+                mesh.normals.push_back({ 0.0f, 0.0f, 1.0f });
+                mesh.uvs.push_back({ float(i) / float(nx) + uOffset, float(j) / float(ny) });
+            }
+        }
+        auto index = [base, nx](uint32_t i, uint32_t j) { return base + j * (nx + 1) + i; };
+        for (uint32_t j = 0; j < ny; ++j) {
+            for (uint32_t i = 0; i < nx; ++i) {
+                mesh.indices.insert(mesh.indices.end(),
+                        { index(i, j), index(i + 1, j), index(i + 1, j + 1) });
+                mesh.indices.insert(mesh.indices.end(),
+                        { index(i, j), index(i + 1, j + 1), index(i, j + 1) });
+            }
+        }
+    };
+    appendGrid(0, 0, 0.0f);
+    appendGrid(16, 0, 0.5f);
+    appendGrid(0, 8, 0.0f);
+    appendGrid(16, 8, 0.5f);
+
+    CornerSimplifyOptions options;
+    options.targetIndexCount = (mesh.indices.size() / 2 / 3) * 3;
+    options.lockBorder = true;
+    std::vector<uint32_t> simplified;
+    std::vector<GeneratedVertex> generated;
+    float worldError = 0.0f;
+    ASSERT_TRUE(simplifyWithCornerAttributes(mesh, mesh.indices, options, &simplified, &generated,
+            &worldError));
+    EXPECT_LT(simplified.size(), mesh.indices.size());
+
+    Mesh result = mesh;
+    appendGeneratedVertices(&result, generated);
+    TopologyStats const base = measureWeldedTopology(mesh, mesh.indices);
+    TopologyStats const stats = measureWeldedTopology(result, simplified);
+    EXPECT_EQ(stats.boundaryEdges, base.boundaryEdges);
+    EXPECT_EQ(stats.nonManifoldEdges, 0u);
+    EXPECT_EQ(stats.duplicateTriangles, 0u);
+    EXPECT_EQ(stats.degenerateTriangles, 0u);
+    EXPECT_EQ(stats.flippedTriangles, 0u);
+}
+
+TEST(ManyMesh, CornerSimplifierKeepsAttributesOfThreeChartCopiesAtOnePosition) {
+    std::array<uint32_t, 3> centres = {};
+    Mesh mesh = makeThreeSectorDisk(&centres);
+
+    CornerSimplifyOptions options;
+    options.targetIndexCount = (mesh.indices.size() / 2 / 3) * 3;
+    options.lockBorder = true;
+    std::vector<uint32_t> simplified;
+    std::vector<GeneratedVertex> generated;
+    float worldError = 0.0f;
+    ASSERT_TRUE(simplifyWithCornerAttributes(mesh, mesh.indices, options, &simplified, &generated,
+            &worldError));
+    EXPECT_LT(simplified.size(), mesh.indices.size());
+    EXPECT_GT(worldError, 0.0f);
+    ASSERT_FALSE(generated.empty());
+    bool sawMovedVertex = false;
+    for (GeneratedVertex const& vertex: generated) {
+        EXPECT_TRUE(vertex.hasPosition);
+        ASSERT_LT(vertex.positionSource, mesh.positions.size());
+        if (length(vertex.position - mesh.positions[vertex.positionSource]) > 1e-6f) {
+            sawMovedVertex = true;
+        }
+    }
+    EXPECT_TRUE(sawMovedVertex);
+
+    Mesh result = mesh;
+    appendGeneratedVertices(&result, generated);
+    TopologyStats const base = measureWeldedTopology(mesh, mesh.indices);
+    TopologyStats const stats = measureWeldedTopology(result, simplified);
+    EXPECT_EQ(stats.boundaryEdges, base.boundaryEdges);
+    EXPECT_EQ(stats.nonManifoldEdges, 0u);
+    EXPECT_EQ(stats.duplicateTriangles, 0u);
+    EXPECT_EQ(stats.degenerateTriangles, 0u);
+    EXPECT_EQ(stats.flippedTriangles, 0u);
+
+
+    auto sourceOf = [&generated, &mesh](uint32_t index) {
+        return index < mesh.vertexCount() ? index
+                                          : generated[index - mesh.vertexCount()].positionSource;
+    };
+    std::map<uint32_t, std::vector<uint32_t>> sourcesByOutput;
+    for (uint32_t index: simplified) {
+        sourcesByOutput[index].push_back(sourceOf(index));
+    }
+    for (auto const& [output, sources]: sourcesByOutput) {
+        for (size_t i = 0; i < sources.size(); ++i) {
+            for (size_t j = i + 1; j < sources.size(); ++j) {
+                if (sources[i] == sources[j]) {
+                    continue;
+                }
+                math::float2 const a = mesh.uvs[sources[i]];
+                math::float2 const b = mesh.uvs[sources[j]];
+                float const distance = length(a - b);
+                EXPECT_LE(distance, 1e-4f)
+                        << "output vertex " << output << " merged charts with different UVs";
+                float const normalDot = dot(normalize(mesh.normals[sources[i]]),
+                        normalize(mesh.normals[sources[j]]));
+                EXPECT_GE(normalDot, 1.0f - 1e-6f)
+                        << "output vertex " << output << " merged charts with different normals";
+            }
+        }
+    }
+    for (uint32_t centre: centres) {
+        EXPECT_LT(centre, mesh.vertexCount());
+        EXPECT_TRUE(std::any_of(simplified.begin(), simplified.end(), [&](uint32_t index) {
+            return sourceOf(index) == centre;
+        })) << "chart centre disappeared from the result";
+    }
+}
+
+TEST(ManyMesh, CornerSimplifierEmitsOneVertexPerDivergentUvCluster) {
+    std::array<uint32_t, 3> centres = {};
+    Mesh mesh = makeThreeSectorDisk(&centres);
+
+    CornerSimplifyOptions options;
+    options.targetIndexCount = (mesh.indices.size() / 2 / 3) * 3;
+    options.lockBorder = true;
+    std::vector<uint32_t> simplified;
+    std::vector<GeneratedVertex> generated;
+    float worldError = 0.0f;
+    ASSERT_TRUE(simplifyWithCornerAttributes(mesh, mesh.indices, options, &simplified, &generated,
+            &worldError));
+    EXPECT_LT(simplified.size(), mesh.indices.size());
+    ASSERT_FALSE(generated.empty());
+
+    auto uvDistance = [](math::float2 a, math::float2 b) {
+        math::float2 delta = a - b;
+        delta.x -= std::round(delta.x);
+        delta.y -= std::round(delta.y);
+        return length(delta);
+    };
+    // The three sector charts occupy non-overlapping U bands. A triangle must not mix them just
+    // because its three corners share a welded position.
+    auto chartOfUv = [](math::float2 uv) { return uv.x < 0.34f ? 0 : (uv.x < 0.67f ? 1 : 2); };
+
+    std::map<std::array<float, 3>, std::vector<uint32_t>> generatedByPosition;
+    for (uint32_t i = 0; i < generated.size(); ++i) {
+        math::float3 const& position = generated[i].position;
+        generatedByPosition[{ position.x, position.y, position.z }].push_back(i);
+    }
+    std::set<uint32_t> referenced;
+    for (uint32_t index: simplified) {
+        if (index >= mesh.vertexCount()) {
+            referenced.insert(index - uint32_t(mesh.vertexCount()));
+        }
+    }
+
+    bool sawDivergentCluster = false;
+    bool sawMultipleCharts = false;
+    for (auto const& [position, ids]: generatedByPosition) {
+        if (ids.size() < 2 || !std::all_of(ids.begin(), ids.end(),
+                                      [&](uint32_t id) { return referenced.count(id) != 0; })) {
+            continue;
+        }
+        float maxDistance = 0.0f;
+        std::array<bool, 3> charts = {};
+        for (uint32_t id: ids) {
+            charts[chartOfUv(generated[id].uv)] = true;
+        }
+        for (size_t i = 0; i < ids.size(); ++i) {
+            for (size_t j = i + 1; j < ids.size(); ++j) {
+                maxDistance = std::max(maxDistance,
+                        uvDistance(generated[ids[i]].uv, generated[ids[j]].uv));
+            }
+        }
+        if (maxDistance > 0.10f) {
+            sawDivergentCluster = true;
+            if (charts[0] + charts[1] + charts[2] > 1) {
+                sawMultipleCharts = true;
+            }
+        }
+    }
+    EXPECT_TRUE(sawDivergentCluster)
+            << "a moved position kept one averaged UV instead of chart-specific generated vertices";
+    EXPECT_TRUE(sawMultipleCharts)
+            << "same-position generated vertices did not preserve distinct chart islands";
+
+    std::vector<math::float2> outputUv(mesh.vertexCount() + generated.size());
+    for (uint32_t i = 0; i < mesh.vertexCount(); ++i) {
+        outputUv[i] = mesh.uvs[i];
+    }
+    for (size_t i = 0; i < generated.size(); ++i) {
+        outputUv[mesh.vertexCount() + i] = generated[i].uv;
+    }
+    for (size_t i = 0; i + 2 < simplified.size(); i += 3) {
+        int const chart = chartOfUv(outputUv[simplified[i]]);
+        EXPECT_EQ(chartOfUv(outputUv[simplified[i + 1]]), chart)
+                << "triangle mixes UV charts at vertex 1";
+        EXPECT_EQ(chartOfUv(outputUv[simplified[i + 2]]), chart)
+                << "triangle mixes UV charts at vertex 2";
+    }
+
+    Mesh result = mesh;
+    appendGeneratedVertices(&result, generated);
+    TopologyStats const base = measureWeldedTopology(mesh, mesh.indices);
+    TopologyStats const stats = measureWeldedTopology(result, simplified);
+    EXPECT_EQ(stats.boundaryEdges, base.boundaryEdges);
+    EXPECT_EQ(stats.nonManifoldEdges, 0u);
+    EXPECT_EQ(stats.duplicateTriangles, 0u);
+    EXPECT_EQ(stats.degenerateTriangles, 0u);
+    EXPECT_EQ(stats.flippedTriangles, 0u);
+}
+
+TEST(ManyMesh, LodGraphRoundTripsPositionIdsAndGeneratedPositions) {
+    Mesh mesh;
+    auto appendGrid = [&mesh](uint32_t offsetX) {
+        uint32_t const nx = 12;
+        uint32_t const ny = 8;
+        uint32_t const base = uint32_t(mesh.positions.size());
+        for (uint32_t j = 0; j <= ny; ++j) {
+            for (uint32_t i = 0; i <= nx; ++i) {
+                float const x = float(offsetX + i);
+                float const y = float(j);
+                mesh.positions.push_back({ x, y, 0.15f * std::sin(x * 0.7f) * std::cos(y * 0.9f) });
+                mesh.normals.push_back({ 0.0f, 0.0f, 1.0f });
+                mesh.uvs.push_back({ float(i) / float(nx), float(j) / float(ny) });
+            }
+        }
+        auto index = [base, nx](uint32_t i, uint32_t j) { return base + j * (nx + 1) + i; };
+        for (uint32_t j = 0; j < ny; ++j) {
+            for (uint32_t i = 0; i < nx; ++i) {
+                mesh.indices.insert(mesh.indices.end(),
+                        { index(i, j), index(i + 1, j), index(i + 1, j + 1) });
+                mesh.indices.insert(mesh.indices.end(),
+                        { index(i, j), index(i + 1, j + 1), index(i, j + 1) });
+            }
+        }
+    };
+    appendGrid(0);
+    appendGrid(12);
+
+    LodGraphOptions options;
+    options.clusterize.maxVertices = 64;
+    options.clusterize.maxTriangles = 64;
+    options.clustersPerNode = 4;
+    options.levels = 4;
+    options.ratio = 0.5f;
+    options.simplify.cornerSimplify = true;
+    options.simplify.attributeQem = true;
+    options.simplify.lockBorder = true;
+
+    LodGraph const graph = buildLodGraph(mesh, options);
+    ASSERT_FALSE(graph.generatedVertices.empty());
+    ASSERT_EQ(graph.positionIds.size(), graph.vertexCount);
+
+    std::vector<uint8_t> const blob = serializeLodGraph(graph);
+    StreamingLodGraph const streaming(blob);
+    ASSERT_TRUE(streaming.valid());
+    EXPECT_EQ(streaming.positionIds(), graph.positionIds);
+
+    LodGraph restored;
+    ASSERT_TRUE(deserializeLodGraph(blob, &restored));
+    EXPECT_EQ(restored.positionIds, graph.positionIds);
+    ASSERT_EQ(restored.generatedVertices.size(), graph.generatedVertices.size());
+    for (size_t i = 0; i < graph.generatedVertices.size(); ++i) {
+        EXPECT_TRUE(restored.generatedVertices[i].hasPosition);
+        EXPECT_TRUE(restored.generatedVertices[i] == graph.generatedVertices[i]);
+    }
+}
+
+TEST(ManyMesh, LodGraphCarriesAmbientOcclusionThroughSimplification) {
+    Mesh mesh = makeGrid(16, 16, {}, 1.0f, 0.35f);
+    ASSERT_FALSE(mesh.positions.empty());
+    mesh.ao.resize(mesh.positions.size());
+    for (size_t i = 0; i < mesh.positions.size(); ++i) {
+        mesh.ao[i] = 0.2f + 0.6f * (mesh.positions[i].x * 0.5f + 0.5f);
+    }
+
+    LodGraphOptions options;
+    options.clusterize.maxVertices = 64;
+    options.clusterize.maxTriangles = 64;
+    options.clustersPerNode = 4;
+    options.levels = 3;
+    options.ratio = 0.5f;
+    options.simplify.cornerSimplify = true;
+    options.simplify.attributeQem = true;
+
+    LodGraph const graph = buildLodGraph(mesh, options);
+    ASSERT_FALSE(graph.generatedVertices.empty());
+    float minAO = 1.0f;
+    float maxAO = 0.0f;
+    for (GeneratedVertex const& vertex: graph.generatedVertices) {
+        EXPECT_GE(vertex.ao, 0.0f);
+        EXPECT_LE(vertex.ao, 1.0f);
+        minAO = std::min(minAO, vertex.ao);
+        maxAO = std::max(maxAO, vertex.ao);
+    }
+    EXPECT_LT(minAO, maxAO);
+
+    std::vector<uint8_t> const blob = serializeLodGraph(graph);
+    LodGraph restored;
+    ASSERT_TRUE(deserializeLodGraph(blob, &restored));
+    ASSERT_EQ(restored.generatedVertices.size(), graph.generatedVertices.size());
+    for (size_t i = 0; i < graph.generatedVertices.size(); ++i) {
+        EXPECT_FLOAT_EQ(restored.generatedVertices[i].ao, graph.generatedVertices[i].ao);
+    }
+
+    Mesh dagMesh = mesh;
+    appendGeneratedVertices(&dagMesh, graph.generatedVertices);
+    ASSERT_EQ(dagMesh.ao.size(), dagMesh.positions.size());
+    size_t const sourceCount = mesh.positions.size();
+    for (size_t i = 0; i < graph.generatedVertices.size(); ++i) {
+        EXPECT_FLOAT_EQ(dagMesh.ao[sourceCount + i], graph.generatedVertices[i].ao);
+    }
+}
+
+TEST(ManyMesh, LodGraphKeepsThreeChartCopiesAndTheirUvIslands) {
+    // The disk is made of three charts whose centres share a position. A graph builder that
+    // fell back to the pairwise AttributeSimplifier seam lock would either refuse to simplify
+    // across the charts or weld the three centre attribute copies. Drive the whole pipeline:
+    // build the DAG, select a cut, compact it, and verify that every surviving triangle still
+    // matches exactly one chart's affine position-to-UV mapping.
+    std::array<uint32_t, 3> centres = {};
+    Mesh const mesh = makeThreeSectorDisk(&centres);
+    for (uint32_t centre: centres) {
+        ASSERT_LT(centre, mesh.vertexCount());
+        EXPECT_NEAR(length(mesh.positions[centre]), 0.0f, 1e-6f);
+    }
+
+    LodGraphOptions options;
+    options.clusterize.maxVertices = 64;
+    options.clusterize.maxTriangles = 64;
+    options.clustersPerNode = 16;
+    options.levels = 4;
+    options.ratio = 0.5f;
+    options.simplify.cornerSimplify = true;
+    options.simplify.attributeQem = true;
+    options.simplify.lockBorder = true;
+    options.simplify.qualityGate = true;
+
+    LodGraph const graph = buildLodGraph(mesh, options);
+    ASSERT_FALSE(graph.generatedVertices.empty());
+    ASSERT_EQ(graph.positionIds.size(), graph.vertexCount);
+    EXPECT_EQ(graph.sourceVertexCount(), mesh.vertexCount());
+
+    // Some simplified parent must span all three charts; otherwise the test never exercised a
+    // cross-chart merge and could pass while the seam logic is still locked.
+    auto chartOfUv = [](float u) { return u < 0.34f ? 0 : (u < 0.67f ? 1 : 2); };
+    bool sawCrossChartParent = false;
+    for (LodGraphNode const& node: graph.nodes) {
+        if (node.level == 0 || !node.simplified) {
+            continue;
+        }
+        std::array<bool, 3> chartsSeen = {};
+        for (uint32_t index: node.indices) {
+            ASSERT_LT(index, graph.vertexCount);
+            float const u =
+                    index < graph.sourceVertexCount()
+                            ? mesh.uvs[index].x
+                            : graph.generatedVertices[index - graph.sourceVertexCount()].uv.x;
+            chartsSeen[chartOfUv(u)] = true;
+        }
+        if (chartsSeen[0] && chartsSeen[1] && chartsSeen[2]) {
+            sawCrossChartParent = true;
+        }
+    }
+    EXPECT_TRUE(sawCrossChartParent) << "no simplified parent spans all three charts";
+
+    ViewCamera camera;
+    camera.eye = { 0.0f, 0.0f, 24.0f };
+    camera.target = { 0.0f, 0.0f, 0.0f };
+    camera.screenHeight = 720;
+    camera.screenWidth = 1280;
+    camera.near = 0.1f;
+    camera.far = 1000.0f;
+
+    LodGraphSelection const selection = selectLodGraphAtRatio(graph, camera, 0.35f, 1000.0f);
+    ASSERT_FALSE(selection.indices.empty());
+    EXPECT_LT(selection.selectedTriangles, graph.baseTriangles);
+
+    LodGraphCutGeometry const cut = compactLodSelection(graph, selection);
+    ASSERT_EQ(cut.indices.size(), size_t(cut.triangles) * 3);
+    ASSERT_EQ(cut.sourceVertexCount, graph.sourceVertexCount());
+    ASSERT_EQ(cut.generatedSourceIds.size(), cut.generatedVertices.size());
+
+    Mesh cutMesh;
+    cutMesh.positions.reserve(cut.vertexCount);
+    cutMesh.normals.reserve(cut.vertexCount);
+    cutMesh.uvs.reserve(cut.vertexCount);
+    for (uint32_t i = 0; i < cut.sourceVertexCount; ++i) {
+        cutMesh.positions.push_back(mesh.positions[i]);
+        cutMesh.normals.push_back(mesh.normals[i]);
+        cutMesh.uvs.push_back(mesh.uvs[i]);
+    }
+    for (GeneratedVertex const& vertex: cut.generatedVertices) {
+        EXPECT_TRUE(vertex.hasPosition);
+        cutMesh.positions.push_back(vertex.position);
+        cutMesh.normals.push_back(vertex.normal);
+        cutMesh.uvs.push_back(vertex.uv);
+    }
+    ASSERT_EQ(cutMesh.vertexCount(), cut.vertexCount);
+
+    TopologyStats const baseTopology = measureWeldedTopology(mesh, mesh.indices);
+    TopologyStats const cutTopology = measureWeldedTopology(cutMesh, cut.indices);
+    EXPECT_EQ(cutTopology.boundaryEdges, baseTopology.boundaryEdges);
+    EXPECT_EQ(cutTopology.nonManifoldEdges, 0u);
+    EXPECT_EQ(cutTopology.duplicateTriangles, 0u);
+    EXPECT_EQ(cutTopology.degenerateTriangles, 0u);
+    EXPECT_EQ(cutTopology.flippedTriangles, 0u);
+
+    // Each chart maps position to UV affinely: u = uOffset + scale * x, v = vOffset + scale * y.
+    // Every vertex of a triangle must agree with one chart's mapping. A weld that merges copies
+    // with different UVs shows up as a residual of nearly a full chart width, which no amount of
+    // normal simplification interpolation can produce.
+    struct ChartMapping {
+        float scale;
+        float uOffset;
+        float vOffset;
+    };
+    ChartMapping const charts[3] = {
+        { 0.15f, 0.17f, 0.18f },
+        { 0.14f, 0.50f, 0.17f },
+        { 0.135f, 0.835f, 0.165f },
+    };
+    std::array<size_t, 3> trianglesPerChart = {};
+    for (size_t i = 0; i + 2 < cut.indices.size(); i += 3) {
+        uint32_t const ia = cut.indices[i];
+        uint32_t const ib = cut.indices[i + 1];
+        uint32_t const ic = cut.indices[i + 2];
+        ASSERT_LT(ia, cut.vertexCount);
+        ASSERT_LT(ib, cut.vertexCount);
+        ASSERT_LT(ic, cut.vertexCount);
+        math::float3 const& pa = cutMesh.positions[ia];
+        math::float3 const& pb = cutMesh.positions[ib];
+        math::float3 const& pc = cutMesh.positions[ic];
+        math::float2 const& qa = cutMesh.uvs[ia];
+        math::float2 const& qb = cutMesh.uvs[ib];
+        math::float2 const& qc = cutMesh.uvs[ic];
+        size_t const chart = chartOfUv((qa.x + qb.x + qc.x) / 3.0f);
+        ChartMapping const& mapping = charts[chart];
+        float cost = 0.0f;
+        auto accumulate = [&](math::float3 const& position, math::float2 const& uv) {
+            cost = std::max(cost, std::abs(uv.x - (mapping.uOffset + mapping.scale * position.x)));
+            cost = std::max(cost, std::abs(uv.y - (mapping.vOffset + mapping.scale * position.y)));
+        };
+        accumulate(pa, qa);
+        accumulate(pb, qb);
+        accumulate(pc, qc);
+        EXPECT_LT(cost, 0.01f) << "triangle " << (i / 3) << " no longer matches chart " << chart
+                               << "'s UV mapping: p0=(" << pa.x << "," << pa.y << ") uv0=(" << qa.x
+                               << "," << qa.y << ") p1=(" << pb.x << "," << pb.y << ") uv1=("
+                               << qb.x << "," << qb.y << ") p2=(" << pc.x << "," << pc.y
+                               << ") uv2=(" << qc.x << "," << qc.y << ")";
+        ++trianglesPerChart[chart];
+    }
+    for (size_t chart = 0; chart < 3; ++chart) {
+        EXPECT_GT(trianglesPerChart[chart], 0u) << "chart " << chart << " lost its UV island";
+    }
+}
+
+TEST(ManyMesh, LodGraphReadsVersionFiveWithoutPositionIds) {
+    Mesh const mesh = makeGrid(12, 12, {}, 1.0f, 0.3f);
+    LodGraphOptions options;
+    options.clusterize.maxVertices = 64;
+    options.clusterize.maxTriangles = 64;
+    options.clustersPerNode = 4;
+    options.levels = 3;
+    options.simplify.cornerSimplify = true;
+    options.simplify.attributeQem = true;
+    LodGraph const graph = buildLodGraph(mesh, options);
+    ASSERT_FALSE(graph.generatedVertices.empty());
+    std::vector<uint8_t> const blob = serializeLodGraph(graph);
+
+    uint32_t rootCount = 0;
+    uint32_t leafCount = 0;
+    uint32_t generatedCount = 0;
+    std::memcpy(&rootCount, blob.data() + 12, sizeof(rootCount));
+    std::memcpy(&leafCount, blob.data() + 16, sizeof(leafCount));
+    size_t const generatedCountOffset = 36u + (size_t(rootCount) + leafCount) * sizeof(uint32_t);
+    std::memcpy(&generatedCount, blob.data() + generatedCountOffset, sizeof(generatedCount));
+    size_t const generatedEnd = generatedCountOffset + sizeof(uint32_t) +
+                                size_t(generatedCount) * 10u * sizeof(uint32_t);
+    ASSERT_LE(generatedEnd + sizeof(uint32_t), blob.size());
+    uint32_t positionIdCount = 0;
+    std::memcpy(&positionIdCount, blob.data() + generatedEnd, sizeof(positionIdCount));
+    size_t const positionIdsEnd =
+            generatedEnd + sizeof(uint32_t) + size_t(positionIdCount) * sizeof(uint32_t);
+    ASSERT_LE(positionIdsEnd, blob.size());
+
+    size_t const generatedStart = generatedCountOffset + sizeof(uint32_t);
+    std::vector<uint8_t> v5;
+    v5.insert(v5.end(), blob.begin(), blob.begin() + std::ptrdiff_t(generatedStart));
+    for (uint32_t i = 0; i < generatedCount; ++i) {
+        uint8_t const* record = blob.data() + generatedStart + size_t(i) * 10u * sizeof(uint32_t);
+        // Version 5 stored nine words per generated vertex; version 7 appends the AO word.
+        v5.insert(v5.end(), record, record + 9u * sizeof(uint32_t));
+    }
+    size_t const v5GeneratedEnd = v5.size();
+    v5.insert(v5.end(), blob.begin() + std::ptrdiff_t(positionIdsEnd), blob.end());
+    uint32_t const version = 5;
+    std::memcpy(v5.data() + 4, &version, sizeof(version));
+    size_t const removedBytes =
+            size_t(positionIdsEnd - generatedEnd) + size_t(generatedCount) * sizeof(uint32_t);
+    size_t const offsets = v5GeneratedEnd;
+    for (size_t i = 0; i <= graph.nodes.size(); ++i) {
+        uint64_t value = 0;
+        std::memcpy(&value, v5.data() + offsets + i * sizeof(value), sizeof(value));
+        value -= removedBytes;
+        std::memcpy(&v5.data()[offsets + i * sizeof(value)], &value, sizeof(value));
+    }
+
+    StreamingLodGraph const streaming(v5);
+    ASSERT_TRUE(streaming.valid());
+    EXPECT_TRUE(streaming.positionIds().empty());
+    LodGraph restored;
+    ASSERT_TRUE(deserializeLodGraph(v5, &restored));
+    EXPECT_TRUE(restored.positionIds.empty());
+    ASSERT_EQ(restored.generatedVertices.size(), graph.generatedVertices.size());
+    for (size_t i = 0; i < graph.generatedVertices.size(); ++i) {
+        EXPECT_TRUE(restored.generatedVertices[i].hasPosition);
+        EXPECT_EQ(restored.generatedVertices[i].position, graph.generatedVertices[i].position);
+        // Version 5 predates the AO word: decoding it must default to unoccluded.
+        EXPECT_FLOAT_EQ(restored.generatedVertices[i].ao, 1.0f);
+    }
+}
+
+TEST(ManyMesh, LodGraphReadsVersionFourByFallingBackToPositionSource) {
+    LodGraph graph;
+    graph.vertexCount = 6; // four source vertices plus two generated ones.
+    graph.baseTriangles = 1;
+    graph.levelCount = 1;
+    graph.roots = { 0 };
+    graph.leaves = { 0 };
+    graph.nodes.resize(1);
+    graph.nodes[0].indices = { 0, 1, 4 };
+    graph.nodes[0].baseTriangles = 1;
+    graph.generatedVertices.resize(2);
+    graph.generatedVertices[0].positionSource = 0;
+    graph.generatedVertices[0].position = { 7.0f, 0.0f, 0.0f };
+    graph.generatedVertices[0].normal = { 0.0f, 0.0f, 1.0f };
+    graph.generatedVertices[0].uv = { 0.1f, 0.2f };
+    graph.generatedVertices[0].hasPosition = true;
+    graph.generatedVertices[1].positionSource = 2;
+    graph.generatedVertices[1].position = { 8.0f, 0.0f, 0.0f };
+    graph.generatedVertices[1].normal = { 0.0f, 1.0f, 0.0f };
+    graph.generatedVertices[1].uv = { 0.3f, 0.4f };
+    graph.generatedVertices[1].hasPosition = true;
+    graph.positionIds = { 0, 1, 2, 3, 4, 5 };
+
+    std::vector<uint8_t> const blob = serializeLodGraph(graph);
+    uint32_t rootCount = 0;
+    uint32_t leafCount = 0;
+    uint32_t generatedCount = 0;
+    std::memcpy(&rootCount, blob.data() + 12, sizeof(rootCount));
+    std::memcpy(&leafCount, blob.data() + 16, sizeof(leafCount));
+    size_t const generatedCountOffset = 36u + (size_t(rootCount) + leafCount) * sizeof(uint32_t);
+    std::memcpy(&generatedCount, blob.data() + generatedCountOffset, sizeof(generatedCount));
+    ASSERT_EQ(generatedCount, 2u);
+    size_t const generatedStart = generatedCountOffset + sizeof(uint32_t);
+    size_t const generatedEnd = generatedStart + size_t(generatedCount) * 10u * sizeof(uint32_t);
+    uint32_t positionIdCount = 0;
+    std::memcpy(&positionIdCount, blob.data() + generatedEnd, sizeof(positionIdCount));
+    size_t const positionIdsEnd =
+            generatedEnd + sizeof(uint32_t) + size_t(positionIdCount) * sizeof(uint32_t);
+
+    std::vector<uint8_t> v4;
+    v4.insert(v4.end(), blob.begin(), blob.begin() + std::ptrdiff_t(generatedStart));
+    for (uint32_t i = 0; i < generatedCount; ++i) {
+        uint8_t const* record = blob.data() + generatedStart + size_t(i) * 10u * sizeof(uint32_t);
+        // Version 4 stored positionSource, normal and uv but not the explicit position.
+        v4.insert(v4.end(), record, record + sizeof(uint32_t));
+        v4.insert(v4.end(), record + 4u * sizeof(uint32_t), record + 9u * sizeof(uint32_t));
+    }
+    size_t const removedBytes =
+            size_t(positionIdsEnd - generatedEnd) + size_t(generatedCount) * 4u * sizeof(uint32_t);
+    size_t const offsets = v4.size();
+    v4.insert(v4.end(), blob.begin() + std::ptrdiff_t(positionIdsEnd), blob.end());
+    uint32_t const version = 4;
+    std::memcpy(v4.data() + 4, &version, sizeof(version));
+    for (size_t i = 0; i <= graph.nodes.size(); ++i) {
+        uint64_t value = 0;
+        std::memcpy(&value, v4.data() + offsets + i * sizeof(value), sizeof(value));
+        value -= removedBytes;
+        std::memcpy(&v4.data()[offsets + i * sizeof(value)], &value, sizeof(value));
+    }
+
+    LodGraph restored;
+    ASSERT_TRUE(deserializeLodGraph(v4, &restored));
+    ASSERT_EQ(restored.generatedVertices.size(), 2u);
+    EXPECT_TRUE(restored.positionIds.empty());
+    for (GeneratedVertex const& vertex: restored.generatedVertices) {
+        EXPECT_FALSE(vertex.hasPosition);
+    }
+    EXPECT_EQ(restored.generatedVertices[0].positionSource, 0u);
+    EXPECT_EQ(restored.generatedVertices[0].normal, graph.generatedVertices[0].normal);
+    EXPECT_EQ(restored.generatedVertices[0].uv, graph.generatedVertices[0].uv);
+    EXPECT_EQ(restored.generatedVertices[1].positionSource, 2u);
+
+    Mesh mesh;
+    mesh.positions = { { 0.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f }, { 2.0f, 0.0f, 0.0f },
+        { 3.0f, 0.0f, 0.0f } };
+    mesh.normals.assign(4, { 0.0f, 0.0f, 1.0f });
+    mesh.uvs.assign(4, { 0.0f, 0.0f });
+    appendGeneratedVertices(&mesh, restored.generatedVertices);
+    ASSERT_EQ(mesh.positions.size(), 6u);
+    EXPECT_EQ(mesh.positions[4], mesh.positions[0]);
+    EXPECT_EQ(mesh.positions[5], mesh.positions[2]);
+    EXPECT_EQ(mesh.normals[4], graph.generatedVertices[0].normal);
+    EXPECT_EQ(mesh.uvs[4], graph.generatedVertices[0].uv);
+}
+
+TEST(ManyMesh, CompactedCutRenumbersOnlyReferencedGeneratedVertices) {
+    LodGraph graph;
+    graph.vertexCount = 10;
+    graph.generatedVertices.resize(6);
+    for (size_t i = 0; i < graph.generatedVertices.size(); ++i) {
+        GeneratedVertex& vertex = graph.generatedVertices[i];
+        vertex.positionSource = uint32_t(i);
+        vertex.position = { 10.0f + float(i), 0.0f, 0.0f };
+        vertex.normal = { 0.0f, 0.0f, 1.0f };
+        vertex.uv = { 0.25f * float(i), 0.5f };
+        vertex.hasPosition = true;
+    }
+    graph.positionIds = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    graph.baseTriangles = 2;
+    graph.levelCount = 1;
+    graph.roots = { 0 };
+    graph.leaves = { 0 };
+    graph.nodes.resize(1);
+    graph.nodes[0].indices = { 0, 1, 9, 2, 9, 7 };
+    graph.nodes[0].baseTriangles = 2;
+
+    LodGraphSelection selection;
+    selection.indices = { 0, 1, 9, 2, 9, 7 };
+    selection.selectedTriangles = 2;
+    LodGraphCutGeometry const compacted = compactLodSelection(graph, selection);
+
+    EXPECT_EQ(compacted.sourceVertexCount, 4u);
+    EXPECT_EQ(compacted.triangles, 2u);
+    ASSERT_EQ(compacted.generatedVertices.size(), 2u);
+    EXPECT_EQ(compacted.vertexCount, 6u);
+    EXPECT_EQ(compacted.indices, (std::vector<uint32_t>{ 0, 1, 4, 2, 4, 5 }));
+    EXPECT_EQ(compacted.generatedSourceIds, (std::vector<uint32_t>{ 5, 3 }));
+    EXPECT_TRUE(compacted.sourceVertexIds.empty());
+    EXPECT_EQ(compacted.generatedVertices[0].position, graph.generatedVertices[5].position);
+    EXPECT_EQ(compacted.generatedVertices[0].normal, graph.generatedVertices[5].normal);
+    EXPECT_EQ(compacted.generatedVertices[0].uv, graph.generatedVertices[5].uv);
+    EXPECT_EQ(compacted.generatedVertices[1].position, graph.generatedVertices[3].position);
+}
+
+TEST(ManyMesh, CompactedCutCanCompactSourceVerticesToo) {
+    LodGraph graph;
+    graph.vertexCount = 12;
+    graph.generatedVertices.resize(2);
+    for (size_t i = 0; i < graph.generatedVertices.size(); ++i) {
+        GeneratedVertex& vertex = graph.generatedVertices[i];
+        vertex.position = { 10.0f + float(i), 0.0f, 0.0f };
+        vertex.normal = { 0.0f, 0.0f, 1.0f };
+        vertex.uv = { 0.5f, 0.5f };
+        vertex.hasPosition = true;
+    }
+
+    LodGraphSelection selection;
+    selection.indices = { 7, 3, 10, 7, 11, 3 };
+    selection.selectedTriangles = 2;
+    LodGraphCompactOptions options;
+    options.compactSourceVertices = true;
+    LodGraphCutGeometry const compacted = compactLodSelection(graph, selection, options);
+
+    EXPECT_EQ(compacted.sourceVertexCount, 2u);
+    EXPECT_EQ(compacted.sourceVertexIds, (std::vector<uint32_t>{ 7, 3 }));
+    EXPECT_EQ(compacted.generatedSourceIds, (std::vector<uint32_t>{ 0, 1 }));
+    EXPECT_EQ(compacted.triangles, 2u);
+    EXPECT_EQ(compacted.vertexCount, 4u);
+    EXPECT_EQ(compacted.indices, (std::vector<uint32_t>{ 0, 1, 2, 0, 3, 1 }));
+}
+TEST(ManyMesh, CompactedCutPreservesTheAssembledTriangles) {
+    Mesh const mesh = makeGrid(16, 16, {}, 1.0f, 0.4f);
+    LodGraphOptions options;
+    options.clusterize.maxVertices = 48;
+    options.clusterize.maxTriangles = 48;
+    options.clustersPerNode = 4;
+    options.levels = 4;
+    options.ratio = 0.5f;
+    options.simplify.cornerSimplify = true;
+    options.simplify.attributeQem = true;
+    LodGraph const graph = buildLodGraph(mesh, options);
+    ASSERT_FALSE(graph.generatedVertices.empty());
+
+    ViewCamera camera;
+    camera.eye = { 0.0f, 0.0f, 5.0f };
+    camera.target = { 0.0f, 0.0f, 0.0f };
+    camera.fovY = 0.78539816339f;
+    camera.screenWidth = 1280.0f;
+    camera.screenHeight = 720.0f;
+    LodGraphSelection const selection = selectLodGraph(graph, camera, 1000.0f);
+    ASSERT_FALSE(selection.indices.empty());
+
+    LodGraphCutGeometry const compacted = compactLodSelection(graph, selection);
+    ASSERT_EQ(compacted.indices.size(), selection.indices.size());
+    EXPECT_LT(compacted.vertexCount, graph.vertexCount);
+    EXPECT_EQ(compacted.vertexCount,
+            compacted.sourceVertexCount + compacted.generatedVertices.size());
+
+    std::vector<uint8_t> used(compacted.generatedVertices.size(), 0);
+    for (size_t triangle = 0; triangle < compacted.indices.size() / 3; ++triangle) {
+        for (size_t corner = 0; corner < 3; ++corner) {
+            size_t const index = triangle * 3 + corner;
+            uint32_t const before = selection.indices[index];
+            uint32_t const after = compacted.indices[index];
+            ASSERT_LT(after, compacted.vertexCount);
+            if (before < graph.sourceVertexCount()) {
+                EXPECT_EQ(after, before);
+                continue;
+            }
+            ASSERT_GE(after, compacted.sourceVertexCount);
+            size_t const local = size_t(after - compacted.sourceVertexCount);
+            ASSERT_LT(local, compacted.generatedVertices.size());
+            ASSERT_LT(local, compacted.generatedSourceIds.size());
+            used[local] = 1;
+            ASSERT_EQ(before - graph.sourceVertexCount(), compacted.generatedSourceIds[local]);
+            GeneratedVertex const& expected =
+                    graph.generatedVertices[compacted.generatedSourceIds[local]];
+            GeneratedVertex const& actual = compacted.generatedVertices[local];
+            EXPECT_EQ(actual.position, expected.position);
+            EXPECT_EQ(actual.normal, expected.normal);
+            EXPECT_EQ(actual.uv, expected.uv);
+            EXPECT_EQ(actual.positionSource, expected.positionSource);
+        }
+    }
+    for (uint8_t value: used) {
+        EXPECT_EQ(value, 1u);
+    }
+}
+
+TEST(ManyMesh, SelectedCutDropsFacesDuplicatedAtWeldedPositions) {
+    // Two roots supply the same triangle through different attribute vertices. Selection must
+    // compare canonical positions, not vertex ids, or the assembled cut contains a duplicate
+    // face and three false non-manifold edges.
+    LodGraph graph;
+    graph.vertexCount = 6;
+    graph.baseTriangles = 2;
+    graph.levelCount = 1;
+    graph.positionIds = { 0, 1, 2, 0, 1, 2 };
+    graph.roots = { 0, 1 };
+    graph.leaves = { 0, 1 };
+    graph.nodes.resize(2);
+    for (size_t i = 0; i < graph.nodes.size(); ++i) {
+        LodGraphNode& node = graph.nodes[i];
+        node.level = 0;
+        node.indices = { uint32_t(i * 3), uint32_t(i * 3 + 1), uint32_t(i * 3 + 2) };
+        node.baseTriangles = 1;
+        node.bounds.center = { 0.0f, 0.0f, 0.0f };
+        node.bounds.radius = 1.0f;
+        node.cone.apex = { 0.0f, 0.0f, 0.0f };
+        node.cone.axis = { 0.0f, 0.0f, 1.0f };
+        node.cone.cutoff = -2.0f;
+        node.materialId = 0;
+        node.submeshId = 0;
+    }
+
+    ViewCamera camera;
+    camera.eye = { 0.0f, 0.0f, 5.0f };
+    camera.target = { 0.0f, 0.0f, 0.0f };
+    camera.screenWidth = 128;
+    camera.screenHeight = 128;
+    LodGraphSelection const selection = selectLodGraphAtRatio(graph, camera, 1.0f, 1000.0f);
+    ASSERT_EQ(selection.nodes.size(), 2u);
+    EXPECT_EQ(selection.selectedTriangles, 1u);
+    EXPECT_EQ(selection.indices.size(), 3u);
+}
+
+namespace {
+
+Mesh makeBakeQuad(math::float3 normal) {
+    Mesh mesh;
+    mesh.positions = {
+        { 0.0f, 0.0f, 0.0f },
+        { 1.0f, 0.0f, 0.0f },
+        { 1.0f, 1.0f, 0.0f },
+        { 0.0f, 1.0f, 0.0f },
+    };
+    mesh.normals = { normal, normal, normal, normal };
+    mesh.uvs = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+    mesh.indices = { 0, 1, 2, 0, 2, 3 };
+    return mesh;
+}
+
+} // anonymous namespace
+
+TEST(ManyMesh, AmbientOcclusionLeavesAnOpenSurfaceVisible) {
+    Mesh const mesh = makeBakeQuad({ 0.0f, 0.0f, 1.0f });
+    AmbientOcclusionOptions options;
+    options.samples = 16;
+    AmbientOcclusionResult result;
+    ASSERT_TRUE(bakeVertexAmbientOcclusion(mesh, mesh, options, &result));
+    ASSERT_EQ(result.values.size(), mesh.positions.size());
+    for (float value: result.values) {
+        EXPECT_GE(value, 0.0f);
+        EXPECT_LE(value, 1.0f);
+        EXPECT_GT(value, 0.98f);
+    }
+    ASSERT_EQ(result.bentNormals.size(), mesh.positions.size());
+    for (size_t i = 0; i < result.bentNormals.size(); ++i) {
+        EXPECT_GT(dot(result.bentNormals[i], mesh.normals[i]), 0.999f);
+    }
+    EXPECT_LT(result.maxBendDegrees, 1.0f);
+}
+
+TEST(ManyMesh, AmbientOcclusionDarkensInsideACorner) {
+    // Floor at y = 0 plus a wall at x = 0. The point near the wall sees the wall in half of
+    // its hemisphere; the point far from it sees empty space only.
+    Mesh source;
+    source.positions = {
+        { 0.0f, 0.0f, 0.0f },
+        { 1.0f, 0.0f, 0.0f },
+        { 1.0f, 0.0f, 1.0f },
+        { 0.0f, 0.0f, 1.0f },
+        { 0.0f, 1.0f, 0.0f },
+        { 0.0f, 1.0f, 1.0f },
+    };
+    source.indices = { 0, 1, 2, 0, 2, 3, 0, 4, 5, 0, 5, 3 };
+
+    Mesh target;
+    target.positions = { { 0.1f, 0.0f, 0.5f }, { 0.9f, 0.0f, 0.5f } };
+    target.normals = { { 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f } };
+
+    AmbientOcclusionOptions options;
+    options.samples = 64;
+    options.radius = 0.25f;
+    options.weldDuplicatePositions = false;
+    AmbientOcclusionResult result;
+    ASSERT_TRUE(bakeVertexAmbientOcclusion(source, target, options, &result));
+    ASSERT_EQ(result.values.size(), 2u);
+    EXPECT_LT(result.values[0], 0.9f);
+    EXPECT_GT(result.values[1], 0.95f);
+    EXPECT_LT(result.values[0], result.values[1]);
+
+    // The wall blocks the -x half of the hemisphere. The surviving light comes from +x, so the
+    // bent normal must tilt away from the wall even though the geometric normal stays +y.
+    ASSERT_EQ(result.bentNormals.size(), 2u);
+    EXPECT_GT(result.bentNormals[0].x, 0.05f);
+    EXPECT_GT(dot(result.bentNormals[0], math::float3{ 0.0f, 1.0f, 0.0f }), 0.9f);
+    EXPECT_LT(result.bentNormals[1].x, 0.01f);
+    EXPECT_GT(dot(result.bentNormals[1], math::float3{ 0.0f, 1.0f, 0.0f }), 0.999f);
+    EXPECT_GT(result.tiltedVertices, 0u);
+    EXPECT_GT(result.maxBendDegrees, 1.0f);
+}
+
+TEST(ManyMesh, AmbientOcclusionIsDeterministicAndWeldsSeams) {
+    Mesh const source = makeBakeQuad({ 0.0f, 0.0f, 1.0f });
+    Mesh target = source;
+    target.positions.push_back(source.positions[0]);
+    target.normals.push_back(source.normals[0]);
+
+    AmbientOcclusionOptions options;
+    options.samples = 16;
+    options.weldDuplicatePositions = true;
+    AmbientOcclusionResult first;
+    AmbientOcclusionResult second;
+    ASSERT_TRUE(bakeVertexAmbientOcclusion(source, target, options, &first));
+    ASSERT_TRUE(bakeVertexAmbientOcclusion(source, target, options, &second));
+    ASSERT_EQ(first.values.size(), second.values.size());
+    ASSERT_EQ(first.bentNormals.size(), second.bentNormals.size());
+    for (size_t i = 0; i < first.values.size(); ++i) {
+        EXPECT_FLOAT_EQ(first.values[i], second.values[i]);
+        EXPECT_FLOAT_EQ(first.bentNormals[i].x, second.bentNormals[i].x);
+        EXPECT_FLOAT_EQ(first.bentNormals[i].y, second.bentNormals[i].y);
+        EXPECT_FLOAT_EQ(first.bentNormals[i].z, second.bentNormals[i].z);
+    }
+    EXPECT_EQ(first.values.front(), first.values.back());
+    EXPECT_FLOAT_EQ(first.bentNormals.front().x, first.bentNormals.back().x);
+    EXPECT_FLOAT_EQ(first.bentNormals.front().y, first.bentNormals.back().y);
+    EXPECT_FLOAT_EQ(first.bentNormals.front().z, first.bentNormals.back().z);
+    EXPECT_GT(first.weldedGroups, 0u);
+}
+
+TEST(ManyMesh, AmbientOcclusionSnapsOffSurfaceSamplesToTheSource) {
+    // QEM placement can leave a generated vertex slightly below the source floor. Sampling from
+    // there would see the floor from behind and report a fully occluded point. The bake must
+    // move the origin to the nearest source surface first.
+    Mesh source;
+    source.positions = {
+        { 0.0f, 0.0f, 0.0f },
+        { 1.0f, 0.0f, 0.0f },
+        { 1.0f, 0.0f, 1.0f },
+        { 0.0f, 0.0f, 1.0f },
+        { 0.0f, 1.0f, 0.0f },
+        { 0.0f, 1.0f, 1.0f },
+    };
+    source.indices = { 0, 1, 2, 0, 2, 3, 0, 4, 5, 0, 5, 3 };
+
+    Mesh target;
+    target.positions = { { 0.1f, -0.05f, 0.5f }, { 0.9f, -0.05f, 0.5f } };
+    target.normals = { { 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f } };
+
+    AmbientOcclusionOptions options;
+    options.samples = 64;
+    options.radius = 0.25f;
+    options.weldDuplicatePositions = false;
+    AmbientOcclusionResult result;
+    ASSERT_TRUE(bakeVertexAmbientOcclusion(source, target, options, &result));
+    EXPECT_GT(result.values[0], 0.01f);
+    EXPECT_LT(result.values[0], 0.9f);
+    EXPECT_GT(result.values[1], 0.95f);
+}
+
+TEST(ManyMesh, AmbientOcclusionRejectsAnEmptyMesh) {
+    Mesh empty;
+    AmbientOcclusionResult result;
+    EXPECT_FALSE(bakeVertexAmbientOcclusion(empty, empty, {}, &result));
+    EXPECT_TRUE(result.values.empty());
+}
+
+TEST(ManyMesh, AmbientOcclusionMapBakesTheUvLayoutAndIsDeterministic) {
+    Mesh const mesh = makeBakeQuad({ 0.0f, 0.0f, 1.0f });
+    AmbientOcclusionMapOptions options;
+    options.samples = 16;
+    options.size = 32;
+    options.dilationTexels = 1;
+    AmbientOcclusionMapResult first;
+    AmbientOcclusionMapResult second;
+    ASSERT_TRUE(bakeAmbientOcclusionMap(mesh, options, &first));
+    ASSERT_TRUE(bakeAmbientOcclusionMap(mesh, options, &second));
+    EXPECT_EQ(first.size, 32u);
+    EXPECT_EQ(first.values.size(), size_t(32) * 32);
+    EXPECT_EQ(first.values, second.values);
+    EXPECT_GT(first.coveredTexels, 0u);
+    EXPECT_GT(first.mean, 0.98f);
+    // An open quad must not be darkened by the bake.
+    for (uint8_t value: first.values) {
+        EXPECT_GE(value, 250);
+    }
+}
+
+TEST(ManyMesh, AmbientOcclusionMapDarkensTexelsNearAConcaveCorner) {
+    // Floor in the left half of the atlas, wall in the right half. The floor texel near x = 0
+    // sees half of its hemisphere blocked by the wall; the texel near x = 1 sees open space.
+    Mesh source;
+    source.positions = {
+        { 0.0f, 0.0f, 0.0f },
+        { 1.0f, 0.0f, 0.0f },
+        { 1.0f, 0.0f, 1.0f },
+        { 0.0f, 0.0f, 1.0f },
+        { 0.0f, 1.0f, 0.0f },
+        { 0.0f, 1.0f, 1.0f },
+    };
+    source.normals = {
+        { 0.0f, 1.0f, 0.0f },
+        { 0.0f, 1.0f, 0.0f },
+        { 0.0f, 1.0f, 0.0f },
+        { 0.0f, 1.0f, 0.0f },
+        { 1.0f, 0.0f, 0.0f },
+        { 1.0f, 0.0f, 0.0f },
+    };
+    source.uvs = {
+        { 0.0f, 0.0f },
+        { 0.5f, 0.0f },
+        { 0.5f, 1.0f },
+        { 0.0f, 1.0f },
+        { 0.5f, 0.0f },
+        { 1.0f, 0.0f },
+    };
+    // The wall needs its own bottom vertices: the floor vertices carry floor normals and UVs.
+    source.positions.push_back({ 0.0f, 0.0f, 0.0f });
+    source.normals.push_back({ 1.0f, 0.0f, 0.0f });
+    source.uvs.push_back({ 1.0f, 1.0f });
+    source.positions.push_back({ 0.0f, 0.0f, 1.0f });
+    source.normals.push_back({ 1.0f, 0.0f, 0.0f });
+    source.uvs.push_back({ 0.5f, 1.0f });
+    source.indices = { 0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7 };
+
+    AmbientOcclusionMapOptions options;
+    options.samples = 64;
+    options.size = 32;
+    options.radius = 0.25f;
+    options.dilationTexels = 0;
+    AmbientOcclusionMapResult result;
+    ASSERT_TRUE(bakeAmbientOcclusionMap(source, options, &result));
+    ASSERT_EQ(result.values.size(), size_t(32) * 32);
+    uint8_t const nearWall = result.values[size_t(16) * 32 + 2];
+    uint8_t const farFromWall = result.values[size_t(16) * 32 + 14];
+    EXPECT_LT(nearWall, 230);
+    EXPECT_GT(farFromWall, 245);
+    EXPECT_LT(nearWall, farFromWall);
+}
+
+TEST(ManyMesh, AmbientOcclusionMapRejectsATiledUvLayout) {
+    Mesh mesh = makeBakeQuad({ 0.0f, 0.0f, 1.0f });
+    for (auto& uv: mesh.uvs) {
+        uv = uv * 2.0f;
+    }
+    AmbientOcclusionMapResult result;
+    EXPECT_FALSE(bakeAmbientOcclusionMap(mesh, {}, &result));
+    EXPECT_TRUE(result.values.empty());
+}
+
+TEST(ManyMesh, DetailBakeIsNeutralForIdenticalGeometry) {
+    Mesh const mesh = makeBakeQuad({ 0.0f, 0.0f, 1.0f });
+    DetailBakeOptions options;
+    options.size = 64;
+    options.dilationTexels = 1;
+    DetailBakeResult bake;
+    ASSERT_TRUE(bakeDetailNormalMap(mesh, mesh, mesh.indices, options, &bake));
+    EXPECT_EQ(bake.size, 64u);
+    EXPECT_GT(bake.coveredTexels, 0u);
+    EXPECT_LT(bake.meanAngleDegrees, 0.01f);
+    for (size_t texel = 0; texel < size_t(64) * 64; ++texel) {
+        ASSERT_LE(std::abs(int(bake.rgba[texel * 4 + 0]) - 128), 1);
+        ASSERT_LE(std::abs(int(bake.rgba[texel * 4 + 1]) - 128), 1);
+        ASSERT_EQ(bake.rgba[texel * 4 + 2], 255);
+        ASSERT_EQ(bake.rgba[texel * 4 + 3], 0);
+    }
+}
+
+TEST(ManyMesh, DetailBakeCapturesTheLostNormal) {
+    Mesh const source = makeBakeQuad(normalize(math::float3{ 0.5f, 0.0f, 1.0f }));
+    Mesh const lod = makeBakeQuad({ 0.0f, 0.0f, 1.0f });
+    DetailBakeOptions options;
+    options.size = 64;
+    options.dilationTexels = 1;
+    DetailBakeResult bake;
+    ASSERT_TRUE(bakeDetailNormalMap(source, lod, lod.indices, options, &bake));
+    // The residual is 26.57 degrees: atan(0.5).
+    EXPECT_NEAR(bake.meanAngleDegrees, 26.565f, 0.1f);
+
+    size_t const center = (size_t(32) * 64 + 32) * 4;
+    float const x = (float(bake.rgba[center + 0]) / 255.0f) * 2.0f - 1.0f;
+    float const y = (float(bake.rgba[center + 1]) / 255.0f) * 2.0f - 1.0f;
+    float const z = (float(bake.rgba[center + 2]) / 255.0f) * 2.0f - 1.0f;
+    EXPECT_NEAR(x, 0.4472f, 0.02f);
+    EXPECT_NEAR(y, 0.0f, 0.02f);
+    EXPECT_NEAR(z, 0.8944f, 0.02f);
+    // 26.565 degrees normalized to a 90-degree range.
+    EXPECT_NEAR(bake.rgba[center + 3], 75, 2);
+}
+
+TEST(ManyMesh, UvTangentsFollowTheParameterization) {
+    Mesh const mesh = makeBakeQuad({ 0.0f, 0.0f, 1.0f });
+    std::vector<math::float3> tangents;
+    std::vector<float> signs;
+    computeUvTangents(mesh, mesh.indices, &tangents, &signs);
+    ASSERT_EQ(tangents.size(), mesh.positions.size());
+    for (size_t vertex = 0; vertex < tangents.size(); ++vertex) {
+        EXPECT_NEAR(tangents[vertex].x, 1.0f, 1e-4f);
+        EXPECT_NEAR(tangents[vertex].y, 0.0f, 1e-4f);
+        EXPECT_NEAR(tangents[vertex].z, 0.0f, 1e-4f);
+        EXPECT_EQ(signs[vertex], 1.0f);
+    }
+}
+
+TEST(ManyMesh, DetailBakeRejectsTiledUvLayout) {
+    Mesh const source = makeBakeQuad({ 0.0f, 0.0f, 1.0f });
+    Mesh lod = makeBakeQuad({ 0.0f, 0.0f, 1.0f });
+    for (math::float2& uv: lod.uvs) {
+        uv.x *= 3.0f;
+    }
+    DetailBakeOptions options;
+    options.size = 32;
+    DetailBakeResult bake;
+    EXPECT_FALSE(bakeDetailNormalMap(source, lod, lod.indices, options, &bake));
+}
+
+TEST(ManyMesh, DetailBakeAcceptsSmallUvOvershootFromGeneratedVertices) {
+    Mesh const source = makeBakeQuad({ 0.0f, 0.0f, 1.0f });
+    Mesh lod = makeBakeQuad({ 0.0f, 0.0f, 1.0f });
+    // A QEM generated vertex can blend chart corners and land just outside the atlas. The raster
+    // clips to the texture, so a sub-percent overshoot must not disable the whole bake.
+    for (math::float2& uv: lod.uvs) {
+        uv.x -= 0.005f;
+        uv.y += 0.005f;
+    }
+    DetailBakeOptions normalOptions;
+    normalOptions.size = 32;
+    DetailBakeResult normal;
+    EXPECT_TRUE(bakeDetailNormalMap(source, lod, lod.indices, normalOptions, &normal));
+
+    DetailHeightOptions heightOptions;
+    heightOptions.size = 32;
+    heightOptions.maximumDistance = 1.0f;
+    DetailHeightResult height;
+    EXPECT_TRUE(bakeDetailHeightMap(source, lod, lod.indices, heightOptions, &height));
+}
+
+TEST(ManyMesh, DetailHeightIsNeutralForIdenticalGeometry) {
+    Mesh const mesh = makeBakeQuad({ 0.0f, 0.0f, 1.0f });
+    DetailHeightOptions options;
+    options.size = 64;
+    options.dilationTexels = 1;
+    options.maximumDistance = 1.0f;
+    DetailHeightResult bake;
+    ASSERT_TRUE(bakeDetailHeightMap(mesh, mesh, mesh.indices, options, &bake));
+    EXPECT_EQ(bake.size, 64u);
+    EXPECT_GT(bake.coveredTexels, 0u);
+    EXPECT_FLOAT_EQ(bake.minHeight, 0.0f);
+    EXPECT_FLOAT_EQ(bake.maxHeight, 0.0f);
+    EXPECT_FLOAT_EQ(bake.heightRange, 0.0f);
+    for (uint8_t value: bake.values) {
+        EXPECT_EQ(value, 128);
+    }
+}
+
+TEST(ManyMesh, DetailHeightCapturesSignedDisplacement) {
+    Mesh const lod = makeBakeQuad({ 0.0f, 0.0f, 1.0f });
+    DetailHeightOptions options;
+    options.size = 64;
+    options.dilationTexels = 1;
+    options.maximumDistance = 1.0f;
+
+    Mesh source = lod;
+    for (math::float3& position: source.positions) {
+        position.z = 0.1f;
+    }
+    DetailHeightResult above;
+    ASSERT_TRUE(bakeDetailHeightMap(source, lod, lod.indices, options, &above));
+    EXPECT_NEAR(above.minHeight, 0.1f, 1e-4f);
+    EXPECT_NEAR(above.maxHeight, 0.1f, 1e-4f);
+    EXPECT_NEAR(above.meanAbsHeight, 0.1f, 1e-4f);
+    EXPECT_GT(above.recommendedUvScale, 0.0f);
+    size_t const center = (size_t(32) * 64 + 32);
+    EXPECT_GT(above.values[center], 128);
+
+    for (math::float3& position: source.positions) {
+        position.z = -0.1f;
+    }
+    DetailHeightResult below;
+    ASSERT_TRUE(bakeDetailHeightMap(source, lod, lod.indices, options, &below));
+    EXPECT_NEAR(below.minHeight, -0.1f, 1e-4f);
+    EXPECT_NEAR(below.maxHeight, -0.1f, 1e-4f);
+    EXPECT_LT(below.values[center], 128);
+}
+
+TEST(ManyMesh, DetailHeightRejectsTiledUvAndDistantDisplacement) {
+    Mesh const source = makeBakeQuad({ 0.0f, 0.0f, 1.0f });
+    Mesh lod = makeBakeQuad({ 0.0f, 0.0f, 1.0f });
+    DetailHeightOptions options;
+    options.size = 32;
+    DetailHeightResult bake;
+
+    for (math::float2& uv: lod.uvs) {
+        uv.x *= 3.0f;
+    }
+    EXPECT_FALSE(bakeDetailHeightMap(source, lod, lod.indices, options, &bake));
+
+    lod = source;
+    lod.positions[0].z = 1.0f;
+    lod.positions[1].z = 1.0f;
+    lod.positions[2].z = 1.0f;
+    lod.positions[3].z = 1.0f;
+    options.maximumDistance = 0.01f;
+    EXPECT_FALSE(bakeDetailHeightMap(source, lod, lod.indices, options, &bake));
+}
+
+TEST(ManyMesh, ShadingNormalsMergeSeamDuplicates) {
+    Mesh mesh;
+    mesh.positions = {
+        { 0.0f, 0.0f, 0.0f },
+        { 1.0f, 0.0f, 0.0f },
+        { 0.0f, 1.0f, 0.0f },
+        { 0.0f, 0.0f, 0.0f },
+    };
+    float const angle = 15.0f * 3.14159265358979323846f / 180.0f;
+    mesh.normals = {
+        { 0.0f, 0.0f, 1.0f },
+        { 0.0f, 0.0f, 1.0f },
+        { 0.0f, 0.0f, 1.0f },
+        { 0.0f, std::sin(angle), std::cos(angle) },
+    };
+    mesh.indices = { 0, 1, 2, 3, 1, 2 };
+
+    ShadingNormalOptions options;
+    options.creaseAngleDegrees = 25.0f;
+    ShadingNormalResult result;
+    repairShadingNormals(&mesh, mesh.indices, options, &result);
+
+    EXPECT_EQ(result.duplicateVertices, 1u);
+    EXPECT_EQ(result.mergedClusters, 1u);
+    EXPECT_EQ(result.changedVertices, 2u);
+    EXPECT_NEAR(mesh.normals[0].x, mesh.normals[3].x, 1e-5f);
+    EXPECT_NEAR(mesh.normals[0].y, mesh.normals[3].y, 1e-5f);
+    EXPECT_NEAR(mesh.normals[0].z, mesh.normals[3].z, 1e-5f);
+    EXPECT_NEAR(mesh.normals[0].y, std::sin(angle * 0.5f), 2e-3f);
+    EXPECT_NEAR(mesh.normals[0].z, std::cos(angle * 0.5f), 2e-3f);
+}
+
+TEST(ManyMesh, ShadingNormalsKeepHardEdges) {
+    Mesh mesh;
+    mesh.positions = {
+        { 0.0f, 0.0f, 0.0f },
+        { 1.0f, 0.0f, 0.0f },
+        { 0.0f, 1.0f, 0.0f },
+        { 0.0f, 0.0f, 0.0f },
+    };
+    mesh.normals = {
+        { 0.0f, 0.0f, 1.0f },
+        { 0.0f, 0.0f, 1.0f },
+        { 0.0f, 0.0f, 1.0f },
+        { 0.0f, 1.0f, 0.0f },
+    };
+    mesh.indices = { 0, 1, 2, 3, 1, 2 };
+
+    ShadingNormalOptions options;
+    options.creaseAngleDegrees = 25.0f;
+    ShadingNormalResult result;
+    repairShadingNormals(&mesh, mesh.indices, options, &result);
+
+    EXPECT_EQ(result.mergedClusters, 0u);
+    EXPECT_NEAR(mesh.normals[0].z, 1.0f, 1e-5f);
+    EXPECT_NEAR(mesh.normals[3].y, 1.0f, 1e-5f);
+}
+
+TEST(ManyMesh, ShadingNormalsStrengthBlendsHalfway) {
+    Mesh mesh;
+    mesh.positions = {
+        { 0.0f, 0.0f, 0.0f },
+        { 1.0f, 0.0f, 0.0f },
+        { 0.0f, 1.0f, 0.0f },
+        { 0.0f, 0.0f, 0.0f },
+    };
+    float const angle = 20.0f * 3.14159265358979323846f / 180.0f;
+    mesh.normals = {
+        { 0.0f, 0.0f, 1.0f },
+        { 0.0f, 0.0f, 1.0f },
+        { 0.0f, 0.0f, 1.0f },
+        { 0.0f, std::sin(angle), std::cos(angle) },
+    };
+    mesh.indices = { 0, 1, 2, 3, 1, 2 };
+
+    ShadingNormalOptions options;
+    options.creaseAngleDegrees = 30.0f;
+    options.strength = 0.5f;
+    ShadingNormalResult result;
+    repairShadingNormals(&mesh, mesh.indices, options, &result);
+
+    EXPECT_EQ(result.mergedClusters, 1u);
+    // Half of the way from each source normal toward the 10 degree cluster mean.
+    EXPECT_NEAR(mesh.normals[0].y, std::sin(angle * 0.25f), 2e-3f);
+    EXPECT_NEAR(mesh.normals[0].z, std::cos(angle * 0.25f), 2e-3f);
+    EXPECT_NEAR(mesh.normals[3].y, std::sin(angle * 0.75f), 2e-3f);
+    EXPECT_NEAR(mesh.normals[3].z, std::cos(angle * 0.75f), 2e-3f);
+}
+
+TEST(ManyMesh, ShadingStrengthRecommendationFadesIn) {
+    EXPECT_FLOAT_EQ(recommendedShadingNormalStrength(0.0f), 0.0f);
+    EXPECT_FLOAT_EQ(recommendedShadingNormalStrength(0.25f), 0.0f);
+    EXPECT_NEAR(recommendedShadingNormalStrength(0.625f), 0.25f, 1e-6f);
+    EXPECT_FLOAT_EQ(recommendedShadingNormalStrength(1.0f), 0.5f);
+    EXPECT_FLOAT_EQ(recommendedShadingNormalStrength(100.0f), 0.5f);
+}
+
+TEST(ManyMesh, ShadingCompensationWeightFadesInWithScreenError) {
+    EXPECT_FLOAT_EQ(recommendedShadingCompensationWeight(0.0f), 0.0f);
+    EXPECT_FLOAT_EQ(recommendedShadingCompensationWeight(0.25f), 0.0f);
+    EXPECT_NEAR(recommendedShadingCompensationWeight(0.625f), 0.5f, 1e-6f);
+    EXPECT_FLOAT_EQ(recommendedShadingCompensationWeight(1.0f), 1.0f);
+    EXPECT_FLOAT_EQ(recommendedShadingCompensationWeight(100.0f), 1.0f);
+}
+
+TEST(ManyMesh, ShadingCompensationPresetFollowsTheMeasuredLadder) {
+    ShadingCompensationPreset const low =
+            recommendedShadingCompensationPreset(0.3966f, true);
+    EXPECT_FALSE(low.useAmbientOcclusion);
+    EXPECT_TRUE(low.enableMsaa);
+    EXPECT_EQ(low.msaaSamples, 4);
+    EXPECT_FLOAT_EQ(low.normalCreaseDegrees, 10.0f);
+    EXPECT_TRUE(low.autoNormalStrength);
+    EXPECT_FLOAT_EQ(low.normalStrength, 0.5f);
+
+    ShadingCompensationPreset const high = recommendedShadingCompensationPreset(0.50f, true);
+    EXPECT_TRUE(high.useAmbientOcclusion);
+    EXPECT_FLOAT_EQ(high.ambientOcclusionStrength, 0.5f);
+    EXPECT_FALSE(high.enableMsaa);
+    EXPECT_FLOAT_EQ(high.normalCreaseDegrees, 10.0f);
+    EXPECT_TRUE(high.autoNormalStrength);
+
+    EXPECT_FALSE(recommendedShadingCompensationPreset(0.4499f, true).useAmbientOcclusion);
+    EXPECT_TRUE(recommendedShadingCompensationPreset(0.45f, true).useAmbientOcclusion);
+
+    ShadingCompensationPreset const noMaterial =
+            recommendedShadingCompensationPreset(0.70f, false);
+    EXPECT_FALSE(noMaterial.useAmbientOcclusion);
+    EXPECT_TRUE(noMaterial.enableMsaa);
+    EXPECT_EQ(noMaterial.msaaSamples, 4);
+}
+
+TEST(ManyMesh, ShadingNormalsDisabledByZeroCrease) {
+    Mesh mesh;
+    mesh.positions = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
+    mesh.normals = { { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.2f, 0.98f } };
+    mesh.indices = { 0, 1, 0 };
+
+    ShadingNormalOptions options;
+    options.creaseAngleDegrees = 0.0f;
+    ShadingNormalResult result;
+    repairShadingNormals(&mesh, mesh.indices, options, &result);
+
+    EXPECT_EQ(result.duplicateVertices, 0u);
+    EXPECT_NEAR(mesh.normals[1].y, 0.2f, 1e-6f);
 }
 
 int main(int argc, char** argv) {

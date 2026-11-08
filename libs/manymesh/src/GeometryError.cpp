@@ -66,17 +66,8 @@ bool makeBasis(ViewCamera const& camera, Basis* basis) {
 // A world space error at distance `depth` subtends roughly error/depth radians, which the
 // vertical field of view maps onto pixelsPerRadian pixels.
 float screenErrorAtDepth(float worldError, float depth, float pixelsPerRadian, float near) {
-    float const distance = std::max(depth, near);
+    float const distance = std::max(depth, std::max(near, 1e-6f));
     return (worldError / distance) * pixelsPerRadian;
-}
-
-// Same, for a bounding sphere: the nearest point of the cluster is what decides how visible
-// its error is, so the radius is taken off the depth. Erring on the pessimistic side means
-// we never under-tessellate a cluster that is closer than its centre suggests.
-float screenErrorForSphere(float worldError, Sphere const& sphere, ViewCamera const& camera,
-        Basis const& basis) {
-    float const depth = dot(sphere.center - camera.eye, basis.forward) - sphere.radius;
-    return screenErrorAtDepth(worldError, depth, basis.pixelsPerRadian, camera.near);
 }
 
 struct ScreenVertex {
@@ -118,15 +109,13 @@ bool sphereOutsideFrustum(Sphere const& sphere, ViewCamera const& camera, Basis 
     }
     // The four side planes: a sphere is outside one when its centre is further off axis than
     // the plane at its depth, by more than its radius.
-    float const halfHeight = depth * basis.tanHalfFovY;
-    float const halfWidth = halfHeight * basis.aspect;
-    if (std::abs(dot(d, basis.right)) - sphere.radius > halfWidth) {
-        return true;
-    }
-    if (std::abs(dot(d, basis.up)) - sphere.radius > halfHeight) {
-        return true;
-    }
-    return false;
+    // The side plane normals have length sqrt(1 + tanHalfFov^2).
+    float const tanX = basis.tanHalfFovY * basis.aspect;
+    float const tanY = basis.tanHalfFovY;
+    return std::abs(dot(d, basis.right)) - depth * tanX >
+                   sphere.radius * std::sqrt(1.0f + tanX * tanX) ||
+           std::abs(dot(d, basis.up)) - depth * tanY >
+                   sphere.radius * std::sqrt(1.0f + tanY * tanY);
 }
 
 float edgeFunction(float ax, float ay, float bx, float by, float px, float py) {
@@ -142,6 +131,30 @@ float screenSpaceError(float worldError, math::float3 worldPosition, ViewCamera 
     }
     float const depth = dot(worldPosition - camera.eye, basis.forward);
     return screenErrorAtDepth(worldError, depth, basis.pixelsPerRadian, camera.near);
+}
+
+ScreenErrorProjection makeScreenErrorProjection(ViewCamera const& camera) noexcept {
+    ScreenErrorProjection projection;
+    projection.eye = camera.eye;
+    projection.near = camera.near;
+
+    Basis basis;
+    if (!makeBasis(camera, &basis)) {
+        return projection;
+    }
+    projection.forward = basis.forward;
+    projection.pixelsPerRadian = basis.pixelsPerRadian;
+    projection.valid = true;
+    return projection;
+}
+
+float screenSpaceErrorForSphere(float worldError, Sphere const& sphere,
+        ScreenErrorProjection const& projection) noexcept {
+    if (!projection.valid) {
+        return 0.0f;
+    }
+    float const depth = dot(sphere.center - projection.eye, projection.forward) - sphere.radius;
+    return screenErrorAtDepth(worldError, depth, projection.pixelsPerRadian, projection.near);
 }
 
 namespace {
@@ -166,6 +179,7 @@ Selection selectImpl(std::vector<Cluster> const& clusters, std::vector<ClusterLo
 
     Basis basis;
     bool const haveCamera = makeBasis(camera, &basis);
+    ScreenErrorProjection const projection = makeScreenErrorProjection(camera);
 
     for (size_t c = 0; c < count; ++c) {
         ClusterLods const& clusterLods = lods[c];
@@ -192,8 +206,8 @@ Selection selectImpl(std::vector<Cluster> const& clusters, std::vector<ClusterLo
             // pixel budget. When even full detail does not fit, full detail is what we keep:
             // there is nothing better available.
             for (size_t level = clusterLods.levels.size(); level-- > 1;) {
-                float const screen = screenErrorForSphere(clusterLods.levels[level].worldError,
-                        clusters[c].bounds, camera, basis);
+                float const screen = screenSpaceErrorForSphere(
+                        clusterLods.levels[level].worldError, clusters[c].bounds, projection);
                 if (screen <= thresholdPx) {
                     chosen = level;
                     break;
@@ -203,7 +217,7 @@ Selection selectImpl(std::vector<Cluster> const& clusters, std::vector<ClusterLo
 
         LodLevel const& chosenLevel = clusterLods.levels[chosen];
         float const screen = haveCamera
-                ? screenErrorForSphere(chosenLevel.worldError, clusters[c].bounds, camera, basis)
+                ? screenSpaceErrorForSphere(chosenLevel.worldError, clusters[c].bounds, projection)
                 : 0.0f;
 
         selection.levelPerCluster[c] = uint32_t(chosen);

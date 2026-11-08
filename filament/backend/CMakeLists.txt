@@ -759,23 +759,36 @@ if (FILAMENT_BUILD_TESTING)
     # ==================================================================================================
     # Compute tests
     #
-    #if (NOT IOS AND NOT WASM)
-    #
-    #add_executable(compute_test
-    #        test/ComputeTest.cpp
-    #        test/Arguments.cpp
-    #        test/test_ComputeBasic.cpp
-    #        )
-    #
-    #target_link_libraries(compute_test PRIVATE
-    #        backend
-    #        getopt
-    #        gtest
-    #        )
-    #
-    #set_target_properties(compute_test PROPERTIES FOLDER Tests)
-    #
-    #endif()
+    if (NOT IOS AND NOT WASM)
+
+    add_executable(compute_test
+            test/ComputeTest.cpp
+            test/Arguments.cpp
+            test/ShaderGenerator.cpp
+            test/TrianglePrimitive.cpp
+            test/test_ComputeBasic.cpp
+            test/test_IndirectDraw.cpp
+            test/test_ManymeshCompute.cpp
+            )
+
+    target_link_libraries(compute_test PRIVATE
+            backend
+            filamat
+            getopt
+            gtest
+            manymesh
+            SPIRV
+            SPIRV-Tools
+            SPIRV-Tools-opt
+            glslang
+            spirv-cross-core
+            spirv-cross-glsl
+            spirv-cross-msl
+            )
+
+    set_target_properties(compute_test PROPERTIES FOLDER Tests)
+
+    endif()
 
     # ==================================================================================================
     # Metal utils tests

@@ -64,6 +64,31 @@ struct ViewCamera {
 float screenSpaceError(float worldError, math::float3 worldPosition, ViewCamera const& camera) noexcept;
 
 /**
+ * Camera quantities needed to evaluate screen-space error for many spheres without rebuilding
+ * the camera basis for every one of them.
+ *
+ * `valid` is false when the camera has a degenerate forward or up vector. In that case
+ * `screenSpaceErrorForSphere()` returns 0, matching `screenSpaceError()`.
+ */
+struct ScreenErrorProjection {
+    math::float3 eye{};
+    math::float3 forward{0.0f, 0.0f, -1.0f};
+    float pixelsPerRadian = 1.0f;
+    float near = 0.01f;
+    bool valid = false;
+};
+
+ScreenErrorProjection makeScreenErrorProjection(ViewCamera const& camera) noexcept;
+
+/**
+ * Screen-space error of a bounding sphere, using the nearest point of the sphere rather than
+ * its centre. A coarse cluster can be much closer to the camera than its centre, so using the
+ * centre underestimates its error and over-simplifies geometry close to the viewer.
+ */
+float screenSpaceErrorForSphere(float worldError, Sphere const& sphere,
+        ScreenErrorProjection const& projection) noexcept;
+
+/**
  * The result of picking a level for every cluster of one view.
  */
 struct Selection {

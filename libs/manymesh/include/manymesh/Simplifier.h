@@ -18,6 +18,7 @@
 #define TNT_MANYMESH_SIMPLIFIER_H
 
 #include <manymesh/Cluster.h>
+#include <manymesh/CornerSimplifier.h>
 #include <manymesh/Mesh.h>
 #include <manymesh/Quality.h>
 
@@ -69,6 +70,11 @@ struct LodLevel {
     //! False when no safe simplification was possible and level 0 was kept.
     bool simplified = false;
 
+    //! Vertices created by `cornerSimplify`. Indices at or above the input vertex count reference
+    //! this array; callers that want one self-contained buffer append them with
+    //! appendGeneratedVertices(). Empty for the classic simplifiers.
+    std::vector<GeneratedVertex> generatedVertices;
+
     size_t triangleCount() const noexcept { return indices.size() / 3; }
 };
 
@@ -80,15 +86,43 @@ struct LodLevel {
  */
 struct SimplifyProfile {
     double attributeQemSeconds = 0.0;
+    double cornerSeconds = 0.0;
+    double cornerSetupSeconds = 0.0;
+    double cornerEvaluateSeconds = 0.0;
+    double cornerEvaluateTopologySeconds = 0.0;
+    double cornerTopologyNeighborSeconds = 0.0;
+    double cornerTopologyTriangleSeconds = 0.0;
+    double cornerTopologyLocalTriangleSeconds = 0.0;
+    double cornerTopologyLocalEdgeSeconds = 0.0;
+    double cornerEvaluateTargetSeconds = 0.0;
+    double cornerApplySeconds = 0.0;
     double meshoptSeconds = 0.0;
     double candidateGateSeconds = 0.0;
+    double candidateCleanupSeconds = 0.0;
+    double candidateSliverSeconds = 0.0;
+    double candidateErrorSeconds = 0.0;
+    double candidateTopologySeconds = 0.0;
+    double weldedTopologySeconds = 0.0;
     double boundaryCheckSeconds = 0.0;
     double lockedMaskSeconds = 0.0;
+    double lockedMaskBuildSeconds = 0.0;
+    double extendedMeshSeconds = 0.0;
     uint64_t calls = 0;
     uint64_t attempts = 0;
     uint64_t attributeCandidates = 0;
+    uint64_t cornerCandidates = 0;
+    uint64_t cornerEvaluations = 0;
+    uint64_t cornerPlacementTests = 0;
+    uint64_t cornerApplied = 0;
     uint64_t meshoptCandidates = 0;
     uint64_t accepted = 0;
+    uint64_t rejectedNotSimplified = 0;
+    uint64_t rejectedTopology = 0;
+    uint64_t rejectedGeometry = 0;
+    uint64_t rejectedAttributes = 0;
+    uint64_t rejectedBoundary = 0;
+    uint64_t rejectedLocked = 0;
+    uint64_t extendedMeshCopies = 0;
 };
 
 struct SimplifyOptions {
@@ -122,6 +156,21 @@ struct SimplifyOptions {
     //! where both sides of an internal seam are present in the same unit. It never relaxes
     //! the boundary lock for an open edge that has no paired neighbour.
     bool seamCollapse = false;
+
+    //! Track attributes per triangle corner and weld duplicated positions. This lets a UV/normal
+    //! seam shrink as a whole (instead of being pinned by border locking) and may return generated
+    //! vertices in `LodLevel::generatedVertices`. The generated vertices only reuse existing
+    //! positions; see CornerSimplifier.h.
+    bool cornerSimplify = false;
+
+    //! Keep divergent per-chart UVs in separate generated vertices when a moved corner is shared
+    //! by several triangles. Disabling this is only useful for measuring the old averaged-UV
+    //! behavior; it can smear a texture across a chart seam.
+    bool cornerSplitDivergentUv = true;
+
+    //! Maps every vertex id to the position id used by `lockedVertices`. Generated vertices share
+    //! the position of an earlier vertex. nullptr means the identity mapping.
+    std::vector<uint32_t> const* vertexPositionIds = nullptr;
 
     //! Compare every candidate against the base unit and retry with a larger triangle budget
     //! when the collapse produced a crack, a non-manifold edge, a duplicate/degenerate face or
@@ -172,6 +221,11 @@ struct SimplifyOptions {
     //! vertex instead of searching every triangle for the closest point. That keeps a
     //! multi-million triangle chain from turning validation into an O(V*T) operation.
     size_t attributeApproximationTriangles = 250000;
+
+    //! Internal cache token for a batch of calls that share one immutable Mesh. Zero means
+    //! "do not reuse the extended vertex buffer across calls"; tools that build a whole chain
+    //! or DAG should assign one nonzero value and keep it for the batch.
+    uint64_t meshCacheEpoch = 0;
 };
 
 /**

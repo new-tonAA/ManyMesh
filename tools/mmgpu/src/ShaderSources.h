@@ -60,7 +60,28 @@ layout(std430, set = 0, binding = 2) buffer Counters {
     uint selectedCount;
     uint selectedTriangles;
     uint culledTriangles;
+    uint compactedIndexCount;
+    uint commandCount;
 } counters;
+
+layout(std430, set = 0, binding = 3) readonly buffer MeshIndices {
+    uint indices[];
+} meshIndices;
+
+layout(std430, set = 0, binding = 4) writeonly buffer CompactedIndices {
+    uint indices[];
+} compactedIndices;
+
+struct DrawCommand {
+    uint indexCount;
+    uint instanceCount;
+    uint firstIndex;
+    uint vertexOffset;
+    uint firstInstance;
+};
+layout(std430, set = 0, binding = 5) writeonly buffer DrawCommands {
+    DrawCommand commands[];
+} drawCommands;
 
 layout(push_constant) uniform Params {
     float eyeX;
@@ -96,26 +117,19 @@ bool outsideFrustum(GpuNode node) {
     if (depth + node.radius < pc.nearPlane || depth - node.radius > pc.farPlane) {
         return true;
     }
-    float halfHeight = depth * pc.tanHalfFov;
-    float halfWidth = halfHeight * pc.aspect;
-    if (abs(dot(d, right)) - node.radius > halfWidth) {
-        return true;
-    }
-    if (abs(dot(d, up)) - node.radius > halfHeight) {
-        return true;
-    }
-    return false;
+    float tanX = pc.tanHalfFov * pc.aspect;
+    float tanY = pc.tanHalfFov;
+    return abs(dot(d, right)) - depth * tanX > node.radius * sqrt(1.0 + tanX * tanX) ||
+           abs(dot(d, up)) - depth * tanY > node.radius * sqrt(1.0 + tanY * tanY);
 }
 
 float screenError(GpuNode node) {
     vec3 center = vec3(node.centerX, node.centerY, node.centerZ);
     vec3 eye = vec3(pc.eyeX, pc.eyeY, pc.eyeZ);
     vec3 forward = vec3(pc.forwardX, pc.forwardY, pc.forwardZ);
-    float depth = dot(center - eye, forward);
-    if (depth <= pc.nearPlane) {
-        return 3.402823466e+38;
-    }
-    return node.accumulatedError / depth * pc.pixelsPerRadian;
+    float depth = dot(center - eye, forward) - node.radius;
+    float distance = max(depth, max(pc.nearPlane, 1e-6));
+    return node.accumulatedError / distance * pc.pixelsPerRadian;
 }
 
 void main() {
@@ -158,6 +172,23 @@ void main() {
         uint slot = atomicAdd(counters.selectedCount, 1u);
         selectionOutput.values[slot] = nodeId;
         atomicAdd(counters.selectedTriangles, self.indexCount / 3u);
+
+        // Reserve one contiguous range in the compacted index buffer and one indirect command.
+        // The subsequent draw reads these buffers directly; no CPU compaction or command build
+        // is needed on the runtime path.
+        uint compactedOffset = atomicAdd(counters.compactedIndexCount, self.indexCount);
+        uint commandSlot = atomicAdd(counters.commandCount, 1u);
+        for (uint i = 0u; i < self.indexCount; ++i) {
+            compactedIndices.indices[compactedOffset + i] =
+                    meshIndices.indices[self.indexOffset + i];
+        }
+        DrawCommand command;
+        command.indexCount = self.indexCount;
+        command.instanceCount = 1u;
+        command.firstIndex = compactedOffset;
+        command.vertexOffset = 0u;
+        command.firstInstance = nodeId;
+        drawCommands.commands[commandSlot] = command;
     }
     if (selfCulled && !ancestorCulled) {
         // One count per culled subtree root, matching the CPU accounting.
@@ -254,6 +285,119 @@ layout(location = 1) out uint outTriangle;
 void main() {
     outNode = inNode;
     outTriangle = inTriBase + uint(gl_PrimitiveID);
+}
+)GLSL";
+
+//! Vertex compaction pass A: mark every referenced source vertex. One invocation per index;
+//! the first reference to a vertex wins the CAS, so no spin loop is needed.
+inline constexpr char const* COMPACT_MARK_GLSL = R"GLSL(
+#version 450
+layout(local_size_x = 64) in;
+layout(std430, set = 0, binding = 0) readonly buffer Indices {
+    uint indices[];
+} indexData;
+layout(std430, set = 0, binding = 1) buffer VertexMap {
+    uint map[];
+} vertexMap;
+layout(std430, set = 0, binding = 2) buffer Counter {
+    uint uniqueCount;
+    uint assignedCount;
+} counter;
+layout(std430, set = 0, binding = 3) readonly buffer CutCounter {
+    uint selectedCount;
+    uint selectedTriangles;
+    uint culledTriangles;
+    uint compactedIndexCount;
+    uint commandCount;
+} cutCounter;
+layout(push_constant) uniform Params {
+    uint indexCount;
+    uint vertexCount;
+    uint mode;
+    uint padding;
+} pc;
+const uint EMPTY = 0xFFFFFFFFu;
+const uint MARK = 0xFFFFFFFEu;
+void main() {
+    uint index = gl_GlobalInvocationID.x;
+    // The cut pass writes a compacted prefix of the index buffer and publishes its length in
+    // its counter block. Dispatch this pass over the full source capacity so the whole frame can
+    // be recorded without a host readback, then clamp to the prefix that is actually live.
+    const uint liveIndexCount = min(cutCounter.compactedIndexCount, pc.indexCount);
+    if (index >= liveIndexCount) {
+        return;
+    }
+    uint source = indexData.indices[index];
+    if (source < pc.vertexCount &&
+            atomicCompSwap(vertexMap.map[source], EMPTY, MARK) == EMPTY) {
+        atomicAdd(counter.uniqueCount, 1u);
+    }
+}
+)GLSL";
+
+//! Pass B: assign dense ids and gather positions. Iterating every source vertex keeps the
+//! assignment deterministic and avoids a second indirection list.
+inline constexpr char const* COMPACT_GATHER_GLSL = R"GLSL(
+#version 450
+layout(local_size_x = 64) in;
+layout(std430, set = 0, binding = 0) buffer VertexMap {
+    uint map[];
+} vertexMap;
+layout(std430, set = 0, binding = 1) readonly buffer Positions {
+    float positions[];
+} sourcePositions;
+layout(std430, set = 0, binding = 2) writeonly buffer CompactedPositions {
+    float positions[];
+} compactedPositions;
+layout(std430, set = 0, binding = 3) buffer Counter {
+    uint uniqueCount;
+    uint assignedCount;
+} counter;
+layout(push_constant) uniform Params {
+    uint indexCount;
+    uint vertexCount;
+    uint mode;
+    uint padding;
+} pc;
+const uint MARK = 0xFFFFFFFEu;
+void main() {
+    uint source = gl_GlobalInvocationID.x;
+    if (source >= pc.vertexCount || vertexMap.map[source] != MARK) {
+        return;
+    }
+    uint compact = atomicAdd(counter.assignedCount, 1u);
+    vertexMap.map[source] = compact;
+    compactedPositions.positions[compact * 3u + 0u] = sourcePositions.positions[source * 3u + 0u];
+    compactedPositions.positions[compact * 3u + 1u] = sourcePositions.positions[source * 3u + 1u];
+    compactedPositions.positions[compact * 3u + 2u] = sourcePositions.positions[source * 3u + 2u];
+}
+)GLSL";
+
+//! Pass C: rewrite the compacted index buffer in place. Each invocation owns exactly one index.
+inline constexpr char const* COMPACT_REWRITE_GLSL = R"GLSL(
+#version 450
+layout(local_size_x = 64) in;
+layout(std430, set = 0, binding = 0) buffer Indices {
+    uint indices[];
+} indexData;
+layout(std430, set = 0, binding = 1) readonly buffer VertexMap {
+    uint map[];
+} vertexMap;
+layout(push_constant) uniform Params {
+    uint indexCount;
+    uint vertexCount;
+    uint mode;
+    uint padding;
+} pc;
+void main() {
+    uint index = gl_GlobalInvocationID.x;
+    if (index >= pc.indexCount) {
+        return;
+    }
+    uint source = indexData.indices[index];
+    if (source < pc.vertexCount) {
+        indexData.indices[index] = vertexMap.map[source];
+    }
 }
 )GLSL";
 

@@ -1,0 +1,71 @@
+material {
+    name : AiBakedAo,
+    shadingModel : lit,
+    specularAntiAliasing : true,
+    // The source-mesh bent normal also drives cone-traced specular occlusion, so decimated
+    // concave regions do not pick up environment reflections through surfaces that were
+    // removed. This costs one cone intersection per pixel and needs no runtime tracing.
+    specularAmbientOcclusion : bentNormals,
+    requires : [
+        color
+    ],
+    parameters : [
+        {
+            type : float3,
+            name : baseColor
+        },
+        {
+            type : float,
+            name : metallic
+        },
+        {
+            type : float,
+            name : roughness
+        },
+        {
+            type : float,
+            name : reflectance
+        },
+        {
+            type : float,
+            name : aoStrength
+        },
+        {
+            type : float,
+            name : bentNormalStrength
+        }
+    ],
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        // G/B carry the tangent-space xy of the source mesh's bent normal. z is reconstructed
+        // because visibility is limited to the upper hemisphere. Strength 0 keeps the diffuse
+        // direction at the geometric normal (scalar-AO behaviour); strength 1 uses the full
+        // directional visibility. Specular cone occlusion remains active in both cases.
+        //
+        // This must be written before prepareMaterial(): that call transforms the bent normal
+        // into world space and caches it in shading_bentNormal. Writing it afterwards has no
+        // effect on lighting, which previously made bentNormalStrength a no-op.
+        vec2 bentXY = getColor().gb * 2.0 - 1.0;
+        float bentZ2 = max(0.0, 1.0 - dot(bentXY, bentXY));
+        vec3 bentNormal = vec3(bentXY, sqrt(bentZ2));
+        material.bentNormal = normalize(mix(vec3(0.0, 0.0, 1.0), bentNormal,
+                saturate(materialParams.bentNormalStrength)));
+
+        prepareMaterial(material);
+        // Vertex color R carries source-mesh ambient occlusion. Multiplying baseColor as well as
+        // ambientOcclusion makes the compensation visible with direct lighting only, which is
+        // what the comparison harness uses. In a full IBL pipeline the ambientOcclusion term is
+        // the physically meaningful half; baseColor darkening is the art-direction knob.
+        float ao = saturate(getColor().r);
+        float amount = saturate(materialParams.aoStrength);
+        float compensation = mix(1.0, ao, amount);
+
+        material.baseColor.rgb = materialParams.baseColor * compensation;
+        material.metallic = materialParams.metallic;
+        material.roughness = materialParams.roughness;
+        material.reflectance = materialParams.reflectance;
+        material.ambientOcclusion = compensation;
+    }
+}

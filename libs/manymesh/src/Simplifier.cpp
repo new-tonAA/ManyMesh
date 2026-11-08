@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#include <manymesh/Simplifier.h>
+#include "Parallel.h"
 
 #include <manymesh/AttributeSimplifier.h>
+#include <manymesh/Simplifier.h>
 
 #include <meshoptimizer.h>
 
-#include "Parallel.h"
-
 #include <algorithm>
 #include <array>
+#include <atomic>
 #include <chrono>
 #include <cmath>
 #include <cstdio>
@@ -31,6 +31,8 @@
 #include <iterator>
 #include <map>
 #include <set>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 namespace filament {
@@ -550,6 +552,18 @@ bool preservesBoundaryEdges(std::vector<uint32_t> const& source,
 
 using WeldedPosition = std::array<uint32_t, 3>;
 
+struct WeldedPositionHash {
+    size_t operator()(WeldedPosition const& position) const noexcept {
+        uint64_t hash = uint64_t(position[0]) * 0x9E3779B185EBCA87ull;
+        auto mix = [&hash](uint64_t value) {
+            hash ^= value + 0x9E3779B97F4A7C15ull + (hash << 6) + (hash >> 2);
+        };
+        mix(position[1]);
+        mix(position[2]);
+        return size_t(hash);
+    }
+};
+
 WeldedPosition weldedPosition(math::float3 position) noexcept {
     float const x = position.x == 0.0f ? 0.0f : position.x;
     float const y = position.y == 0.0f ? 0.0f : position.y;
@@ -571,28 +585,32 @@ WeldedPosition weldedPosition(math::float3 position) noexcept {
  */
 bool preservesWeldedBoundaries(Mesh const& mesh, std::vector<uint32_t> const& source,
         std::vector<uint32_t> const& candidate) {
-    std::map<WeldedPosition, uint32_t> canonical;
-    std::vector<uint32_t> welded(mesh.positions.size(), UINT32_MAX);
+    std::unordered_map<WeldedPosition, uint32_t, WeldedPositionHash> canonical;
+    std::unordered_map<uint32_t, uint32_t> welded;
+    canonical.reserve(source.size() / 3 + candidate.size() / 3);
+    welded.reserve(source.size() / 3 + candidate.size() / 3);
     auto weld = [&](uint32_t vertex) {
-        if (vertex >= welded.size()) {
+        if (vertex >= mesh.positions.size()) {
             return UINT32_MAX;
         }
-        if (welded[vertex] == UINT32_MAX) {
+        auto const [it, inserted] = welded.emplace(vertex, UINT32_MAX);
+        if (inserted) {
             uint32_t const id = uint32_t(canonical.size());
-            auto const [it, inserted] =
+            auto const [positionIt, positionInserted] =
                     canonical.emplace(weldedPosition(mesh.positions[vertex]), id);
-            (void) inserted;
-            welded[vertex] = it->second;
+            (void) positionInserted;
+            it->second = positionIt->second;
         }
-        return welded[vertex];
+        return it->second;
     };
 
     struct Topology {
-        std::set<UndirectedEdge> boundary;
+        std::vector<uint64_t> boundary;
         uint64_t nonManifold = 0;
     };
     auto topologyOf = [&](std::vector<uint32_t> const& indices) {
-        std::map<UndirectedEdge, uint32_t> use;
+        std::unordered_map<uint64_t, uint32_t> use;
+        use.reserve(indices.size());
         for (size_t i = 0; i + 2 < indices.size(); i += 3) {
             uint32_t const v[3] = { weld(indices[i + 0]), weld(indices[i + 1]),
                 weld(indices[i + 2]) };
@@ -602,17 +620,21 @@ bool preservesWeldedBoundaries(Mesh const& mesh, std::vector<uint32_t> const& so
             for (int e = 0; e < 3; ++e) {
                 uint32_t const a = v[e];
                 uint32_t const b = v[(e + 1) % 3];
-                use[{ std::min(a, b), std::max(a, b) }] += 1;
+                uint64_t const lo = std::min(a, b);
+                uint64_t const hi = std::max(a, b);
+                use[(hi << 32) | lo] += 1;
             }
         }
         Topology result;
+        result.boundary.reserve(use.size());
         for (auto const& [edge, count]: use) {
             if (count == 1) {
-                result.boundary.insert(edge);
+                result.boundary.push_back(edge);
             } else if (count > 2) {
                 result.nonManifold += 1;
             }
         }
+        std::sort(result.boundary.begin(), result.boundary.end());
         return result;
     };
 
@@ -621,56 +643,331 @@ bool preservesWeldedBoundaries(Mesh const& mesh, std::vector<uint32_t> const& so
     return base.boundary == simplified.boundary && simplified.nonManifold <= base.nonManifold;
 }
 
+/**
+ * Topology metrics for geometry whose vertices may be split by attribute chart.
+ *
+ * `measureTopology` counts edges between vertex ids. The corner simplifier deliberately emits
+ * several ids at one position (one per chart), so raw ids would report a boundary down every
+ * seam even though the welded surface is closed. This variant canonicalises vertices by exact
+ * position for the edge/triangle histogram, while still using the real corner normals for the
+ * flip test.
+ */
+TopologyStats measureWeldedTopologyImpl(Mesh const& mesh, std::vector<uint32_t> const& indices) {
+    TopologyStats result;
+    result.triangles = indices.size() / 3;
+
+    std::unordered_map<WeldedPosition, uint32_t, WeldedPositionHash> canonical;
+    std::unordered_map<uint32_t, uint32_t> welded;
+    canonical.reserve(indices.size() / 3);
+    welded.reserve(indices.size() / 3);
+    auto weld = [&](uint32_t vertex) {
+        if (vertex >= mesh.positions.size()) {
+            return UINT32_MAX;
+        }
+        auto const [it, inserted] = welded.emplace(vertex, UINT32_MAX);
+        if (inserted) {
+            uint32_t const id = uint32_t(canonical.size());
+            auto const [positionIt, positionInserted] =
+                    canonical.emplace(weldedPosition(mesh.positions[vertex]), id);
+            (void) positionInserted;
+            it->second = positionIt->second;
+        }
+        return it->second;
+    };
+
+    std::unordered_map<uint64_t, uint32_t> edgeUse;
+    edgeUse.reserve(indices.size());
+    std::vector<std::array<uint32_t, 3>> triangles;
+    triangles.reserve(result.triangles);
+    double qualitySum = 0.0;
+    result.minTriangleQuality = 1.0f;
+
+    for (size_t i = 0; i + 2 < indices.size(); i += 3) {
+        uint32_t const a = indices[i + 0];
+        uint32_t const b = indices[i + 1];
+        uint32_t const c = indices[i + 2];
+        float const quality = normalizedTriangleQuality(mesh, a, b, c);
+        result.minTriangleQuality = std::min(result.minTriangleQuality, quality);
+        qualitySum += double(quality);
+        if (!(quality > 0.0f)) {
+            result.degenerateTriangles += 1;
+            continue;
+        }
+        if (mesh.hasNormals()) {
+            math::float3 const& p0 = mesh.positions[a];
+            math::float3 const& p1 = mesh.positions[b];
+            math::float3 const& p2 = mesh.positions[c];
+            math::float3 const faceNormal = cross(p1 - p0, p2 - p0);
+            math::float3 const vertexNormal = mesh.normals[a] + mesh.normals[b] + mesh.normals[c];
+            if (dot(faceNormal, vertexNormal) < 0.0f) {
+                result.flippedTriangles += 1;
+            }
+        }
+
+        uint32_t const va = weld(a);
+        uint32_t const vb = weld(b);
+        uint32_t const vc = weld(c);
+        if (va == UINT32_MAX || vb == UINT32_MAX || vc == UINT32_MAX) {
+            continue;
+        }
+        std::array<uint32_t, 3> key = { va, vb, vc };
+        std::sort(key.begin(), key.end());
+        triangles.push_back(key);
+        uint32_t const v[3] = { va, vb, vc };
+        for (int e = 0; e < 3; ++e) {
+            uint32_t const lo = std::min(v[e], v[(e + 1) % 3]);
+            uint32_t const hi = std::max(v[e], v[(e + 1) % 3]);
+            edgeUse[(uint64_t(lo) << 32) | uint64_t(hi)] += 1;
+        }
+    }
+
+    std::sort(triangles.begin(), triangles.end());
+    for (size_t i = 1; i < triangles.size(); ++i) {
+        if (triangles[i] == triangles[i - 1]) {
+            result.duplicateTriangles += 1;
+        }
+    }
+    result.uniqueTriangles = result.triangles - result.duplicateTriangles;
+    result.edges = edgeUse.size();
+    for (auto const& [key, count]: edgeUse) {
+        (void) key;
+        if (count == 1) {
+            result.boundaryEdges += 1;
+        } else if (count > 2) {
+            result.nonManifoldEdges += 1;
+        }
+    }
+    if (result.triangles > 0) {
+        result.meanTriangleQuality = float(qualitySum / double(result.triangles));
+    }
+    return result;
+}
+
 // Rejects any candidate that creates an edge between two locked (seam) vertices that did not
 // exist in the source unit. Per-cluster simplification runs on small units and has a local
 // topology check, but a chord between two seam vertices is still locally manifold on one side;
 // it only becomes non-manifold when the neighbouring unit creates the mirror chord. This check
 // is independent of which simplifier produced the candidate, so it also covers the
-// meshoptimizer fallback, which knows nothing about the shared-vertex mask.
-bool respectsLockedMask(std::vector<uint32_t> const& source, std::vector<uint32_t> const& candidate,
-        SimplifyOptions const& options) {
-    if (options.lockedVertices == nullptr) {
+struct WeldedEdge {
+    WeldedPosition a{};
+    WeldedPosition b{};
+    bool operator==(WeldedEdge const& other) const noexcept { return a == other.a && b == other.b; }
+};
+
+struct WeldedEdgeHash {
+    size_t operator()(WeldedEdge const& edge) const noexcept {
+        WeldedPositionHash const hash;
+        size_t const first = hash(edge.a);
+        return first ^ (hash(edge.b) + 0x9E3779B97F4A7C15ull + (first << 6) + (first >> 2));
+    }
+};
+
+WeldedEdge makeWeldedEdge(WeldedPosition const& a, WeldedPosition const& b) noexcept {
+    if (std::lexicographical_compare(b.begin(), b.end(), a.begin(), a.end())) {
+        return { b, a };
+    }
+    return { a, b };
+}
+
+void printWeldedPosition(WeldedPosition const& position) noexcept {
+    float values[3];
+    std::memcpy(values, position.data(), sizeof(values));
+    std::fprintf(stderr, "(%.4f,%.4f,%.4f)", values[0], values[1], values[2]);
+}
+
+bool inputPosition(Mesh const& mesh, std::vector<uint32_t> const* positionIds, uint32_t vertex,
+        WeldedPosition* position) noexcept {
+    if (positionIds != nullptr && vertex < positionIds->size()) {
+        uint32_t const id = (*positionIds)[vertex];
+        if (id < mesh.positions.size()) {
+            *position = weldedPosition(mesh.positions[id]);
+            return true;
+        }
+    }
+    if (vertex < mesh.positions.size()) {
+        *position = weldedPosition(mesh.positions[vertex]);
         return true;
     }
-    std::vector<uint8_t> const& mask = *options.lockedVertices;
-    auto isLocked = [&mask](uint32_t vertex) { return vertex < mask.size() && mask[vertex] != 0; };
-    auto edgeOf = [](uint32_t a, uint32_t b) {
-        return std::make_pair(std::min(a, b), std::max(a, b));
-    };
+    return false;
+}
 
-    std::set<std::pair<uint32_t, uint32_t>> sourceEdges;
-    std::set<uint32_t> sourceLocked;
+bool candidatePosition(Mesh const& mesh, std::vector<uint32_t> const* positionIds,
+        std::vector<GeneratedVertex> const* generated, uint32_t vertex,
+        WeldedPosition* position) noexcept {
+    if (positionIds != nullptr && vertex < positionIds->size()) {
+        uint32_t const id = (*positionIds)[vertex];
+        if (id < mesh.positions.size()) {
+            *position = weldedPosition(mesh.positions[id]);
+            return true;
+        }
+    }
+    if (vertex < mesh.positions.size()) {
+        *position = weldedPosition(mesh.positions[vertex]);
+        return true;
+    }
+    if (generated != nullptr && vertex >= mesh.vertexCount()) {
+        size_t const local = size_t(vertex - mesh.vertexCount());
+        if (local < generated->size()) {
+            GeneratedVertex const& vertexData = (*generated)[local];
+            *position = weldedPosition(vertexData.hasPosition
+                                               ? vertexData.position
+                                               : mesh.positions[vertexData.positionSource]);
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Precomputed form of the shared-vertex mask check.
+ *
+ * The previous implementation rebuilt two std::maps and two std::sets for every candidate,
+ * and walked every vertex of the mesh each time. Per-cluster simplification calls this for
+ * hundreds of candidates, which made mask validation the largest CPU consumer on large
+ * imports. The source mesh and its mask do not change across attempts, so the locked
+ * positions and locked source edges are built once per simplify unit and every candidate is
+ * checked with hash lookups proportional to its own triangle count.
+ */
+struct LockedMaskContext {
+    Mesh const* mesh = nullptr;
+    std::vector<uint32_t> const* positionIds = nullptr;
+    std::unordered_map<WeldedPosition, uint32_t, WeldedPositionHash> lockedIndex;
+    std::unordered_set<WeldedEdge, WeldedEdgeHash> lockedEdges;
+    std::vector<WeldedPosition> lockedPositions;
+    std::vector<uint32_t> sourceLocked;
+    bool enabled = false;
+};
+
+void buildLockedMaskContext(Mesh const& mesh, std::vector<uint32_t> const& source,
+        SimplifyOptions const& options, LockedMaskContext* context) {
+    context->mesh = &mesh;
+    context->positionIds = options.vertexPositionIds;
+    if (options.lockedVertices == nullptr) {
+        return;
+    }
+    context->enabled = true;
+    std::vector<uint8_t> const& mask = *options.lockedVertices;
+    // Only locked positions that the unit actually references matter: every candidate is built
+    // from these vertices (plus generated vertices interpolated between them). Scanning the
+    // whole mesh here made the context build O(mesh vertices) per cluster/group, which dominated
+    // large imports. This keeps it O(unit references).
+    for (uint32_t vertex: source) {
+        if (vertex >= mesh.vertexCount()) {
+            continue;
+        }
+        uint32_t maskIndex = vertex;
+        if (context->positionIds != nullptr && vertex < context->positionIds->size()) {
+            maskIndex = (*context->positionIds)[vertex];
+        }
+        if (maskIndex >= mask.size() || mask[maskIndex] == 0) {
+            continue;
+        }
+        WeldedPosition position;
+        if (!inputPosition(mesh, context->positionIds, vertex, &position)) {
+            continue;
+        }
+        auto const inserted =
+                context->lockedIndex.emplace(position, uint32_t(context->lockedPositions.size()));
+        if (inserted.second) {
+            context->lockedPositions.push_back(position);
+        }
+    }
+    if (context->lockedIndex.empty()) {
+        return;
+    }
+
+    std::vector<uint8_t> sourceLocked(context->lockedPositions.size(), 0);
     for (size_t i = 0; i + 2 < source.size(); i += 3) {
-        uint32_t const v[3] = { source[i], source[i + 1], source[i + 2] };
-        for (int e = 0; e < 3; ++e) {
-            if (isLocked(v[e])) {
-                sourceLocked.insert(v[e]);
+        WeldedPosition positions[3];
+        uint32_t locked[3] = { UINT32_MAX, UINT32_MAX, UINT32_MAX };
+        for (int corner = 0; corner < 3; ++corner) {
+            if (!inputPosition(mesh, context->positionIds, source[i + corner],
+                        &positions[corner])) {
+                continue;
             }
-            if (isLocked(v[e]) && isLocked(v[(e + 1) % 3])) {
-                sourceEdges.insert(edgeOf(v[e], v[(e + 1) % 3]));
+            auto const found = context->lockedIndex.find(positions[corner]);
+            if (found != context->lockedIndex.end()) {
+                locked[corner] = found->second;
+                sourceLocked[locked[corner]] = 1;
+            }
+        }
+        for (int edge = 0; edge < 3; ++edge) {
+            int const next = (edge + 1) % 3;
+            if (locked[edge] != UINT32_MAX && locked[next] != UINT32_MAX) {
+                context->lockedEdges.insert(makeWeldedEdge(positions[edge], positions[next]));
             }
         }
     }
-    std::set<uint32_t> candidateLocked;
+    for (uint32_t i = 0; i < sourceLocked.size(); ++i) {
+        if (sourceLocked[i] != 0) {
+            context->sourceLocked.push_back(i);
+        }
+    }
+}
+
+// meshoptimizer fallback, which knows nothing about the shared-vertex mask.
+bool respectsLockedMask(Mesh const& mesh, std::vector<uint32_t> const& candidate,
+        SimplifyOptions const& options, std::vector<GeneratedVertex> const* generated,
+        LockedMaskContext const& context) {
+    if (!context.enabled || context.lockedIndex.empty()) {
+        return true;
+    }
+
+    thread_local std::vector<uint32_t> seen;
+    thread_local uint32_t generation = 0;
+    if (seen.size() < context.lockedPositions.size()) {
+        seen.resize(context.lockedPositions.size(), 0);
+    }
+    ++generation;
+    if (generation == 0) {
+        std::fill(seen.begin(), seen.end(), 0);
+        generation = 1;
+    }
+
     for (size_t i = 0; i + 2 < candidate.size(); i += 3) {
-        uint32_t const v[3] = { candidate[i], candidate[i + 1], candidate[i + 2] };
-        for (int e = 0; e < 3; ++e) {
-            if (isLocked(v[e])) {
-                candidateLocked.insert(v[e]);
+        WeldedPosition positions[3];
+        uint32_t locked[3] = { UINT32_MAX, UINT32_MAX, UINT32_MAX };
+        for (int corner = 0; corner < 3; ++corner) {
+            if (!candidatePosition(mesh, context.positionIds, generated, candidate[i + corner],
+                        &positions[corner])) {
+                continue;
             }
-            if (isLocked(v[e]) && isLocked(v[(e + 1) % 3]) &&
-                    sourceEdges.count(edgeOf(v[e], v[(e + 1) % 3])) == 0) {
+            auto const found = context.lockedIndex.find(positions[corner]);
+            if (found != context.lockedIndex.end()) {
+                locked[corner] = found->second;
+                seen[locked[corner]] = generation;
+            }
+        }
+        for (int edge = 0; edge < 3; ++edge) {
+            int const next = (edge + 1) % 3;
+            if (locked[edge] == UINT32_MAX || locked[next] == UINT32_MAX) {
+                continue;
+            }
+            if (context.lockedEdges.count(makeWeldedEdge(positions[edge], positions[next])) == 0) {
+                if (options.verbose) {
+                    std::fprintf(stderr, "locked-mask reject: new locked edge ");
+                    printWeldedPosition(positions[edge]);
+                    std::fprintf(stderr, " -> ");
+                    printWeldedPosition(positions[next]);
+                    std::fprintf(stderr, "\n");
+                }
                 return false;
             }
         }
     }
-    for (uint32_t vertex: sourceLocked) {
-        if (candidateLocked.count(vertex) == 0) {
+    for (uint32_t index: context.sourceLocked) {
+        if (seen[index] != generation) {
+            if (options.verbose) {
+                std::fprintf(stderr, "locked-mask reject: missing locked position ");
+                printWeldedPosition(context.lockedPositions[index]);
+                std::fprintf(stderr, "\n");
+            }
             return false;
         }
     }
     return true;
 }
+
 
 // Number of triangles to aim for at a given level of a chain rooted at `baseTriangles`.
 size_t targetIndexCountForLevel(size_t baseIndexCount, uint32_t level, float ratio) {
@@ -701,7 +998,45 @@ struct SimplifyScratch {
     std::vector<uint32_t> localToGlobal;
     std::vector<uint32_t> localIndices;
     std::vector<uint32_t> destination;
+    //! Base mesh plus the generated vertices of the current corner candidate. The base copy is
+    //! made once per simplification call; attempts only rewrite the tail. Copying the whole
+    //! shared mesh for every retry was a measurable DAG build cost on assets with many seams.
+    Mesh extendedMesh;
+    size_t extendedBaseVertexCount = 0;
+    uint64_t extendedMeshEpoch = 0;
 };
+
+uint64_t nextMeshCacheEpoch() {
+    static std::atomic<uint64_t> next{ 1 };
+    return next.fetch_add(1, std::memory_order_relaxed);
+}
+
+void appendGeneratedVerticesInPlace(Mesh* mesh, size_t baseVertexCount,
+        std::vector<GeneratedVertex> const& generated) {
+    size_t const count = baseVertexCount + generated.size();
+    bool const hasNormals = mesh->hasNormals();
+    bool const hasUVs = mesh->hasUVs();
+    mesh->positions.resize(count);
+    if (hasNormals) {
+        mesh->normals.resize(count);
+    }
+    if (hasUVs) {
+        mesh->uvs.resize(count);
+    }
+    for (size_t i = 0; i < generated.size(); ++i) {
+        GeneratedVertex const& vertex = generated[i];
+        size_t const index = baseVertexCount + i;
+        mesh->positions[index] = vertex.hasPosition
+                                         ? vertex.position
+                                         : mesh->positions[vertex.positionSource];
+        if (hasNormals) {
+            mesh->normals[index] = vertex.normal;
+        }
+        if (hasUVs) {
+            mesh->uvs[index] = vertex.uv;
+        }
+    }
+}
 
 void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
         std::vector<int32_t>* remap, SimplifyScratch* scratch, size_t targetIndexCount,
@@ -750,6 +1085,45 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
     float const complexity = options.qualityGate ? attributeComplexity(mesh, source) : 1.0f;
     TopologyStats const baseTopology =
             options.qualityGate ? measureTopology(mesh, source) : TopologyStats{};
+    TopologyStats const baseWeldedTopology =
+            options.qualityGate && (options.cornerSimplify || options.seamCollapse)
+                    ? measureWeldedTopologyImpl(mesh, source)
+                    : TopologyStats{};
+    CandidateReference candidateReference;
+    if (options.qualityGate) {
+        candidateReference = makeCandidateReference(source, options.attributeSampleLimit);
+    }
+    if (options.cornerSimplify && options.attributeQem &&
+            source.size() / 3 <= options.attributeQemMaxTriangles) {
+        bool const reuseExtended = options.meshCacheEpoch != 0 &&
+                                   scratch->extendedMeshEpoch == options.meshCacheEpoch;
+        if (!reuseExtended) {
+            auto const extendedStart = ProfileClock::now();
+            // The quality gate only reads vertex attributes. Keeping the source index buffer
+            // and primitive metadata here would copy them for every unit without ever using
+            // them, so the extended mesh is deliberately a vertex-only snapshot plus the
+            // generated tail appended below.
+            scratch->extendedMesh.positions = mesh.positions;
+            scratch->extendedMesh.normals = mesh.normals;
+            scratch->extendedMesh.uvs = mesh.uvs;
+            scratch->extendedMesh.ao = mesh.ao;
+            scratch->extendedMesh.indices.clear();
+            scratch->extendedMesh.materialIds.clear();
+            scratch->extendedMesh.submeshIds.clear();
+            scratch->extendedBaseVertexCount = mesh.positions.size();
+            scratch->extendedMeshEpoch = options.meshCacheEpoch;
+            if (profile != nullptr) {
+                profile->extendedMeshSeconds += profileSeconds(extendedStart);
+                profile->extendedMeshCopies += 1;
+            }
+        }
+    }
+    LockedMaskContext lockedMaskContext;
+    auto const lockedMaskBuildStart = ProfileClock::now();
+    buildLockedMaskContext(mesh, source, options, &lockedMaskContext);
+    if (profile != nullptr) {
+        profile->lockedMaskBuildSeconds += profileSeconds(lockedMaskBuildStart);
+    }
 
     size_t attemptTarget = targetIndexCount;
     bool accepted = false;
@@ -761,56 +1135,141 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
         struct Candidate {
             LodLevel level;
             bool acceptable = false;
+            uint32_t rejectMask = 0;
         };
         std::vector<Candidate> candidates;
 
         auto prepareCandidate = [&](std::vector<uint32_t> candidate, float relativeError,
-                                        float worldError) {
+                                        float worldError, Mesh const& geometry, bool repair,
+                                        bool measureCandidateTopology = true) {
             LodLevel level;
-            removeDegenerateAndDuplicateTriangles(mesh, &candidate);
-            if (options.qualityGate) {
-                repairSlivers(mesh, &candidate, options.minTriangleQuality, options.lockedVertices);
+            auto const cleanupStart = ProfileClock::now();
+            removeDegenerateAndDuplicateTriangles(geometry, &candidate);
+            if (profile != nullptr) {
+                profile->candidateCleanupSeconds += profileSeconds(cleanupStart);
+            }
+            if (options.qualityGate && repair) {
+                auto const sliverStart = ProfileClock::now();
+                repairSlivers(geometry, &candidate, options.minTriangleQuality,
+                        options.lockedVertices);
+                if (profile != nullptr) {
+                    profile->candidateSliverSeconds += profileSeconds(sliverStart);
+                }
             }
             level.indices = std::move(candidate);
-            CandidateErrorStats const errors =
-                    options.qualityGate ? measureCandidateErrors(mesh, source, level.indices,
-                                                  options.attributeSampleLimit,
-                                                  options.attributeApproximationTriangles)
-                                        : CandidateErrorStats{};
-            PositionStats const& geometry = errors.position;
-            level.worldError = geometry.samples > 0 ? geometry.maxError : worldError;
-            level.relativeError = geometry.samples > 0
-                                          ? geometry.maxError / std::max(meshScale, 1e-6f)
+            auto const topologyStart = ProfileClock::now();
+            if (options.qualityGate && measureCandidateTopology) {
+                level.topology = measureTopology(geometry, level.indices);
+            }
+            if (profile != nullptr) {
+                profile->candidateTopologySeconds += profileSeconds(topologyStart);
+            }
+            // Topology is far cheaper than the closest-triangle/attribute sampling below, and a
+            // candidate that already broke an edge or a face can never become acceptable. Skip
+            // the expensive error query for those candidates; their error fields are not used by
+            // the acceptance decision or by the selected cut.
+            bool const topologyRejected = options.qualityGate && measureCandidateTopology &&
+                                          !topologyAcceptable(level.topology, baseTopology,
+                                                  options);
+            CandidateErrorStats errors;
+            if (!topologyRejected) {
+                auto const errorStart = ProfileClock::now();
+                if (options.qualityGate) {
+                    errors = measureCandidateErrors(geometry, candidateReference, level.indices,
+                            options.attributeApproximationTriangles);
+                }
+                if (profile != nullptr) {
+                    profile->candidateErrorSeconds += profileSeconds(errorStart);
+                }
+            }
+            PositionStats const& positionStats = errors.position;
+            level.worldError = positionStats.samples > 0 ? positionStats.maxError : worldError;
+            level.relativeError = positionStats.samples > 0
+                                          ? positionStats.maxError / std::max(meshScale, 1e-6f)
                                           : relativeError;
-            level.topology =
-                    options.qualityGate ? measureTopology(mesh, level.indices) : TopologyStats{};
             level.attributes = errors.attributes;
             level.attempts = attempt + 1;
             level.simplified = level.indices.size() < source.size();
             return level;
         };
 
-        auto acceptable = [&](LodLevel const& level) {
+        auto acceptable = [&](LodLevel const& level, Mesh const& geometry, bool weldedBoundary,
+                                  bool weldedTopology,
+                                  std::vector<GeneratedVertex> const* generated,
+                                  uint32_t* rejectMask) {
             auto const boundaryStart = ProfileClock::now();
             bool boundaryOk =
                     !options.qualityGate || source.size() / 3 > options.attributeQemMaxTriangles;
             if (!boundaryOk) {
-                boundaryOk = options.seamCollapse
-                                     ? preservesWeldedBoundaries(mesh, source, level.indices)
+                boundaryOk = weldedBoundary
+                                     ? preservesWeldedBoundaries(geometry, source, level.indices)
                                      : preservesBoundaryEdges(source, level.indices);
             }
             if (profile != nullptr) {
                 profile->boundaryCheckSeconds += profileSeconds(boundaryStart);
             }
+            TopologyStats const& topologyBase = weldedTopology ? baseWeldedTopology : baseTopology;
+            bool const topologyOk = !options.qualityGate ||
+                                    topologyAcceptable(level.topology, topologyBase, options);
+            if (!topologyOk && options.verbose) {
+                std::fprintf(stderr,
+                        "topology detail: candidate boundary=%llu nonManifold=%llu "
+                        "duplicate=%llu degenerate=%llu flipped=%llu minQuality=%.6f | "
+                        "base boundary=%llu nonManifold=%llu minQuality=%.6f welded=%d\n",
+                        (unsigned long long) level.topology.boundaryEdges,
+                        (unsigned long long) level.topology.nonManifoldEdges,
+                        (unsigned long long) level.topology.duplicateTriangles,
+                        (unsigned long long) level.topology.degenerateTriangles,
+                        (unsigned long long) level.topology.flippedTriangles,
+                        level.topology.minTriangleQuality,
+                        (unsigned long long) topologyBase.boundaryEdges,
+                        (unsigned long long) topologyBase.nonManifoldEdges,
+                        topologyBase.minTriangleQuality, weldedTopology ? 1 : 0);
+            }
+            bool const geometryOk =
+                    !options.qualityGate || geometryAcceptable(level, options, meshScale);
+            bool const attributesOk =
+                    !options.qualityGate || attributesAcceptable(level.attributes, options);
             bool result = !options.qualityGate ||
-                          (topologyAcceptable(level.topology, baseTopology, options) &&
-                                  geometryAcceptable(level, options, meshScale) &&
-                                  attributesAcceptable(level.attributes, options) && boundaryOk);
+                          (topologyOk && geometryOk && attributesOk && boundaryOk);
+            uint32_t mask = 0;
+            if (!topologyOk) {
+                mask |= 1u;
+            }
+            if (!geometryOk) {
+                mask |= 2u;
+            }
+            if (!attributesOk) {
+                mask |= 4u;
+            }
+            if (!boundaryOk) {
+                mask |= 8u;
+            }
             if (result && options.qualityGate) {
                 auto const lockStart = ProfileClock::now();
-                result = respectsLockedMask(source, level.indices, options);
+                result = respectsLockedMask(geometry, level.indices, options, generated,
+                        lockedMaskContext);
+                if (!result) {
+                    mask |= 16u;
+                }
                 if (profile != nullptr) {
                     profile->lockedMaskSeconds += profileSeconds(lockStart);
+                }
+            }
+            if (rejectMask != nullptr) {
+                *rejectMask = mask;
+            }
+            if (profile != nullptr && !result) {
+                if (!topologyOk) {
+                    profile->rejectedTopology += 1;
+                } else if (!geometryOk) {
+                    profile->rejectedGeometry += 1;
+                } else if (!attributesOk) {
+                    profile->rejectedAttributes += 1;
+                } else if (!boundaryOk) {
+                    profile->rejectedBoundary += 1;
+                } else {
+                    profile->rejectedLocked += 1;
                 }
             }
             return result;
@@ -844,14 +1303,93 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
                 Candidate candidate;
                 auto const gateStart = ProfileClock::now();
                 candidate.level = prepareCandidate(std::move(attributeIndices),
-                        attributeWorldError / std::max(meshScale, 1e-6f), attributeWorldError);
+                        attributeWorldError / std::max(meshScale, 1e-6f), attributeWorldError, mesh,
+                        true);
                 if (profile != nullptr) {
                     profile->candidateGateSeconds += profileSeconds(gateStart);
                 }
-                candidate.acceptable = candidate.level.simplified && acceptable(candidate.level);
+                candidate.acceptable =
+                        candidate.level.simplified &&
+                        acceptable(candidate.level, mesh, options.seamCollapse,
+                                options.seamCollapse, nullptr, &candidate.rejectMask);
                 if (profile != nullptr) {
                     profile->attributeCandidates += 1;
                 }
+                candidates.push_back(std::move(candidate));
+            }
+        }
+
+        // Corner-attribute simplification. Welding duplicated positions turns a UV/normal seam
+        // into an interior edge, so the surface can keep shrinking once the classic path is
+        // pinned by per-chart borders. Any attribute value a chart needs at a welded position
+        // that no input vertex has becomes a generated vertex. The quality gate below still sees
+        // one vertex buffer, so cracks, flips and attribute jumps are rejected exactly as before.
+        if (options.cornerSimplify && options.attributeQem &&
+                source.size() / 3 <= options.attributeQemMaxTriangles) {
+            CornerSimplifyOptions cornerOptions;
+            CornerSimplifyProfile cornerProfile;
+            cornerOptions.profile = &cornerProfile;
+            cornerOptions.targetIndexCount = attemptTarget;
+            cornerOptions.lockBorder = options.lockBorder;
+            cornerOptions.lockedVertices = options.lockedVertices;
+            cornerOptions.vertexPositionIds = options.vertexPositionIds;
+            cornerOptions.minTriangleQuality = options.minTriangleQuality;
+            cornerOptions.maxNormalErrorDegrees = options.maxNormalErrorDegrees;
+            cornerOptions.maxUvError = options.maxUvError;
+            cornerOptions.positionWeight = options.attributePositionWeight;
+            cornerOptions.normalWeight = options.attributeNormalWeight;
+            cornerOptions.uvWeight = options.attributeUvWeight;
+            cornerOptions.splitDivergentUv = options.cornerSplitDivergentUv;
+
+            std::vector<uint32_t> cornerIndices;
+            std::vector<GeneratedVertex> generated;
+            float cornerWorldError = 0.0f;
+            auto const cornerStart = ProfileClock::now();
+            bool const cornerSimplified = simplifyWithCornerAttributes(mesh, source, cornerOptions,
+                    &cornerIndices, &generated, &cornerWorldError);
+            if (profile != nullptr) {
+                profile->cornerSeconds += profileSeconds(cornerStart);
+                profile->cornerSetupSeconds += cornerProfile.setupSeconds;
+                profile->cornerEvaluateSeconds += cornerProfile.evaluateSeconds;
+                profile->cornerEvaluateTopologySeconds += cornerProfile.evaluateTopologySeconds;
+                profile->cornerTopologyNeighborSeconds += cornerProfile.topologyNeighborSeconds;
+                profile->cornerTopologyTriangleSeconds += cornerProfile.topologyTriangleSeconds;
+                profile->cornerTopologyLocalTriangleSeconds +=
+                        cornerProfile.topologyLocalTriangleSeconds;
+                profile->cornerTopologyLocalEdgeSeconds += cornerProfile.topologyLocalEdgeSeconds;
+                profile->cornerEvaluateTargetSeconds += cornerProfile.evaluateTargetSeconds;
+                profile->cornerApplySeconds += cornerProfile.applySeconds;
+                profile->cornerEvaluations += cornerProfile.evaluations;
+                profile->cornerPlacementTests += cornerProfile.placementTests;
+                profile->cornerApplied += cornerProfile.applied;
+            }
+            if (cornerSimplified) {
+                appendGeneratedVerticesInPlace(&scratch->extendedMesh,
+                        scratch->extendedBaseVertexCount, generated);
+                Mesh const& extended = scratch->extendedMesh;
+                Candidate candidate;
+                auto const gateStart = ProfileClock::now();
+                candidate.level = prepareCandidate(std::move(cornerIndices),
+                        cornerWorldError / std::max(meshScale, 1e-6f), cornerWorldError, extended,
+                        false, false);
+                // The corner pass is allowed to split one welded position into several chart
+                // vertices. Its topology therefore has to be measured on the welded surface,
+                // exactly like its boundary check below.
+                auto const weldedTopologyStart = ProfileClock::now();
+                candidate.level.topology =
+                        measureWeldedTopologyImpl(extended, candidate.level.indices);
+                if (profile != nullptr) {
+                    profile->weldedTopologySeconds += profileSeconds(weldedTopologyStart);
+                }
+                candidate.level.generatedVertices = std::move(generated);
+                if (profile != nullptr) {
+                    profile->candidateGateSeconds += profileSeconds(gateStart);
+                    profile->cornerCandidates += 1;
+                }
+                candidate.acceptable =
+                        candidate.level.simplified &&
+                        acceptable(candidate.level, extended, true, true,
+                                &candidate.level.generatedVertices, &candidate.rejectMask);
                 candidates.push_back(std::move(candidate));
             }
         }
@@ -875,12 +1413,14 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
             }
             Candidate fallback;
             auto const gateStart = ProfileClock::now();
-            fallback.level =
-                    prepareCandidate(std::move(candidate), resultError, resultError * localScale);
+            fallback.level = prepareCandidate(std::move(candidate), resultError,
+                    resultError * localScale, mesh, true);
             if (profile != nullptr) {
                 profile->candidateGateSeconds += profileSeconds(gateStart);
             }
-            fallback.acceptable = fallback.level.simplified && acceptable(fallback.level);
+            fallback.acceptable = fallback.level.simplified &&
+                                  acceptable(fallback.level, mesh, options.seamCollapse,
+                                          options.seamCollapse, nullptr, &fallback.rejectMask);
             if (profile != nullptr) {
                 profile->meshoptCandidates += 1;
             }
@@ -911,17 +1451,25 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
                 std::fprintf(stderr,
                         "quality reject: source=%zu target=%zu got=%zu attempt=%u "
                         "boundary=%llu/%llu nonManifold=%llu/%llu minQuality=%.4f/%.4f "
-                        "normal=%.2f/%.2fdeg uv=%.4f/%.4f world=%.6f/%.6f rel=%.6f\n",
+                        "duplicate=%llu degenerate=%llu flipped=%llu "
+                        "normal=%.2f/%.2fdeg uv=%.4f/%.4f world=%.6f/%.6f rel=%.6f "
+                        "worstN=%u/%u worstUv=%u/%u reason=0x%x\n",
                         source.size(), attemptTarget, level.indices.size(), attempt + 1,
                         (unsigned long long) level.topology.boundaryEdges,
                         (unsigned long long) baseTopology.boundaryEdges,
                         (unsigned long long) level.topology.nonManifoldEdges,
                         (unsigned long long) baseTopology.nonManifoldEdges,
                         level.topology.minTriangleQuality, baseTopology.minTriangleQuality,
+                        (unsigned long long) level.topology.duplicateTriangles,
+                        (unsigned long long) level.topology.degenerateTriangles,
+                        (unsigned long long) level.topology.flippedTriangles,
                         level.attributes.maxNormalErrorRadians * 57.2957795f,
                         level.attributes.meanNormalErrorRadians * 57.2957795f,
                         level.attributes.maxUvError, level.attributes.meanUvError, level.worldError,
-                        std::max(options.targetError, 1e-5f) * meshScale, level.relativeError);
+                        std::max(options.targetError, 1e-5f) * meshScale, level.relativeError,
+                        level.attributes.worstNormalVertex, level.attributes.worstNormalTriangle,
+                        level.attributes.worstUvVertex, level.attributes.worstUvTriangle,
+                        candidate.rejectMask);
             }
             if (candidate.acceptable) {
                 *out = level;
@@ -980,6 +1528,8 @@ std::vector<LodLevel> simplifyChainByMaterial(Mesh const& mesh, SimplifyOptions 
     unsigned int const flags = options.lockBorder ? meshopt_SimplifyLockBorder : 0;
     std::vector<int32_t> remap(mesh.positions.size(), -1);
     SimplifyScratch scratch;
+    SimplifyOptions localOptions = options;
+    localOptions.meshCacheEpoch = nextMeshCacheEpoch();
     std::vector<std::vector<LodLevel>> chains;
     chains.reserve(partitions.size());
 
@@ -997,7 +1547,7 @@ std::vector<LodLevel> simplifyChainByMaterial(Mesh const& mesh, SimplifyOptions 
             }
             LodLevel next;
             simplifyClusterInto(indices, mesh, &remap, &scratch, target, options.targetError,
-                    worldScale, options, flags, &next, nullptr);
+                    worldScale, localOptions, flags, &next, nullptr);
             next.materialId = primitive.first;
             next.submeshId = primitive.second;
             if (!next.simplified || next.indices.size() >= levels.back().indices.size()) {
@@ -1042,6 +1592,10 @@ std::vector<LodLevel> simplifyChainByMaterial(Mesh const& mesh, SimplifyOptions 
 
 } // anonymous namespace
 
+TopologyStats measureWeldedTopology(Mesh const& mesh, std::vector<uint32_t> const& indices) {
+    return measureWeldedTopologyImpl(mesh, indices);
+}
+
 float relativeToWorldScale(Mesh const& mesh) noexcept {
     if (mesh.positions.empty()) {
         return 1.0f;
@@ -1067,6 +1621,8 @@ std::vector<LodLevel> simplifyChain(Mesh const& mesh, SimplifyOptions const& opt
     unsigned int const flags = options.lockBorder ? meshopt_SimplifyLockBorder : 0;
     std::vector<int32_t> remap(mesh.positions.size(), -1);
     SimplifyScratch scratch;
+    SimplifyOptions localOptions = options;
+    localOptions.meshCacheEpoch = nextMeshCacheEpoch();
 
     levels.resize(1);
     levels[0].indices = mesh.indices;
@@ -1092,7 +1648,7 @@ std::vector<LodLevel> simplifyChain(Mesh const& mesh, SimplifyOptions const& opt
         // level. It costs one extra pass but yields better quality, and it makes the reported
         // error absolute with respect to the input instead of relative to an intermediate.
         simplifyClusterInto(mesh.indices, mesh, &remap, &scratch, target, options.targetError,
-                worldScale, options, flags, &next, nullptr);
+                worldScale, localOptions, flags, &next, nullptr);
         next.materialId = levels[0].materialId;
         next.submeshId = levels[0].submeshId;
 
@@ -1118,6 +1674,8 @@ std::vector<ClusterLods> simplifyClusters(Mesh const& mesh, ClusterSet const& cl
 
     float const worldScale = relativeToWorldScale(mesh);
     unsigned int const flags = options.lockBorder ? meshopt_SimplifyLockBorder : 0;
+    SimplifyOptions localOptions = options;
+    localOptions.meshCacheEpoch = nextMeshCacheEpoch();
 
     std::vector<SimplifyProfile> profiles(clusters.clusters.size());
     detail::parallelFor(clusters.clusters.size(), [&](size_t c) {
@@ -1147,7 +1705,7 @@ std::vector<ClusterLods> simplifyClusters(Mesh const& mesh, ClusterSet const& cl
 
             LodLevel next;
             simplifyClusterInto(base, mesh, &remap, &scratch, target, options.targetError,
-                    worldScale, options, flags, &next, &profiles[c]);
+                    worldScale, localOptions, flags, &next, &profiles[c]);
             next.materialId = clusters.clusters[c].materialId;
             next.submeshId = clusters.clusters[c].submeshId;
 
@@ -1169,15 +1727,37 @@ std::vector<ClusterLods> simplifyClusters(Mesh const& mesh, ClusterSet const& cl
     if (profile != nullptr) {
         for (SimplifyProfile const& local: profiles) {
             profile->attributeQemSeconds += local.attributeQemSeconds;
+            profile->cornerSeconds += local.cornerSeconds;
+            profile->cornerSetupSeconds += local.cornerSetupSeconds;
+            profile->cornerEvaluateSeconds += local.cornerEvaluateSeconds;
+            profile->cornerEvaluateTopologySeconds += local.cornerEvaluateTopologySeconds;
+            profile->cornerTopologyNeighborSeconds += local.cornerTopologyNeighborSeconds;
+            profile->cornerTopologyTriangleSeconds += local.cornerTopologyTriangleSeconds;
+            profile->cornerTopologyLocalTriangleSeconds += local.cornerTopologyLocalTriangleSeconds;
+            profile->cornerTopologyLocalEdgeSeconds += local.cornerTopologyLocalEdgeSeconds;
+            profile->cornerEvaluateTargetSeconds += local.cornerEvaluateTargetSeconds;
+            profile->cornerApplySeconds += local.cornerApplySeconds;
+            profile->cornerEvaluations += local.cornerEvaluations;
+            profile->cornerPlacementTests += local.cornerPlacementTests;
+            profile->cornerApplied += local.cornerApplied;
             profile->meshoptSeconds += local.meshoptSeconds;
             profile->candidateGateSeconds += local.candidateGateSeconds;
+            profile->candidateCleanupSeconds += local.candidateCleanupSeconds;
+            profile->candidateSliverSeconds += local.candidateSliverSeconds;
+            profile->candidateErrorSeconds += local.candidateErrorSeconds;
+            profile->candidateTopologySeconds += local.candidateTopologySeconds;
+            profile->weldedTopologySeconds += local.weldedTopologySeconds;
             profile->boundaryCheckSeconds += local.boundaryCheckSeconds;
             profile->lockedMaskSeconds += local.lockedMaskSeconds;
+            profile->lockedMaskBuildSeconds += local.lockedMaskBuildSeconds;
+            profile->extendedMeshSeconds += local.extendedMeshSeconds;
             profile->calls += local.calls;
             profile->attempts += local.attempts;
             profile->attributeCandidates += local.attributeCandidates;
+            profile->cornerCandidates += local.cornerCandidates;
             profile->meshoptCandidates += local.meshoptCandidates;
             profile->accepted += local.accepted;
+            profile->extendedMeshCopies += local.extendedMeshCopies;
         }
     }
 

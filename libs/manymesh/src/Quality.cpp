@@ -369,6 +369,165 @@ public:
         return true;
     }
 
+    //! Finds the closest triangle for position error, and among triangles whose closest point is
+    //! within `tieTolerance2` of that distance, the one whose interpolated normal and UV match the
+    //! source vertex best. Seam-split charts share a position; taking the geometrically first
+    //! triangle would compare a source UV against a different chart and report a false outlier.
+    bool nearestForAttributes(Mesh const& mesh, std::vector<uint32_t> const& indices,
+            math::float3 point, uint32_t referenceVertex, float tieTolerance2,
+            uint32_t* outPositionTriangle, float positionWeights[3], float* outDistance2,
+            uint32_t* outAttributeTriangle, float attributeWeights[3], float* outNormalError,
+            float* outUvError) const {
+        if (mTriangleCount == 0) {
+            return false;
+        }
+
+        struct StackEntry {
+            uint32_t node;
+            float distance2;
+        };
+        struct TieCandidate {
+            uint32_t triangle = UINT32_MAX;
+            float weights[3] = { 1.0f, 0.0f, 0.0f };
+            float distance2 = 0.0f;
+        };
+        std::array<StackEntry, 128> stack{};
+        std::array<TieCandidate, 32> ties{};
+        size_t stackSize = 0;
+        size_t tieCount = 0;
+
+        float bestDistance2 = std::numeric_limits<float>::max();
+        uint32_t bestTriangle = UINT32_MAX;
+        float bestWeights[3] = { 1.0f, 0.0f, 0.0f };
+
+        auto compactTies = [&]() {
+            size_t write = 0;
+            for (size_t i = 0; i < tieCount; ++i) {
+                if (ties[i].distance2 <= bestDistance2 + tieTolerance2) {
+                    ties[write++] = ties[i];
+                }
+            }
+            tieCount = write;
+        };
+        auto push = [&](uint32_t node) {
+            if (node == UINT32_MAX || stackSize >= stack.size()) {
+                return;
+            }
+            float const distance2 = boxDistance2(mNodes[node], point);
+            if (distance2 <= bestDistance2 + tieTolerance2) {
+                stack[stackSize++] = { node, distance2 };
+            }
+        };
+
+        push(mRoot);
+        while (stackSize > 0) {
+            StackEntry const entry = stack[--stackSize];
+            if (entry.distance2 > bestDistance2 + tieTolerance2) {
+                continue;
+            }
+            Node const& node = mNodes[entry.node];
+            if (node.count > 0) {
+                for (uint32_t i = 0; i < node.count; ++i) {
+                    uint32_t const triangle = mOrder[node.first + i];
+                    Triangle const& tri = mTriangles[triangle];
+                    float w0 = 0.0f;
+                    float w1 = 0.0f;
+                    float w2 = 0.0f;
+                    closestPointBarycentric(tri.p[0], tri.p[1], tri.p[2], point, &w0, &w1, &w2);
+                    math::float3 const closest = tri.p[0] * w0 + tri.p[1] * w1 + tri.p[2] * w2;
+                    math::float3 const delta = closest - point;
+                    float const distance2 = dot(delta, delta);
+                    if (distance2 < bestDistance2) {
+                        bestDistance2 = distance2;
+                        bestTriangle = triangle;
+                        bestWeights[0] = w0;
+                        bestWeights[1] = w1;
+                        bestWeights[2] = w2;
+                        compactTies();
+                    }
+                    if (distance2 <= bestDistance2 + tieTolerance2) {
+                        TieCandidate candidate;
+                        candidate.triangle = triangle;
+                        candidate.weights[0] = w0;
+                        candidate.weights[1] = w1;
+                        candidate.weights[2] = w2;
+                        candidate.distance2 = distance2;
+                        if (tieCount < ties.size()) {
+                            ties[tieCount++] = candidate;
+                        } else {
+                            size_t farthest = 0;
+                            for (size_t t = 1; t < tieCount; ++t) {
+                                if (ties[t].distance2 > ties[farthest].distance2) {
+                                    farthest = t;
+                                }
+                            }
+                            if (distance2 < ties[farthest].distance2) {
+                                ties[farthest] = candidate;
+                            }
+                        }
+                    }
+                }
+                continue;
+            }
+            push(node.left);
+            push(node.right);
+        }
+
+        if (bestTriangle == UINT32_MAX) {
+            return false;
+        }
+        compactTies();
+
+        uint32_t bestAttributeTriangle = bestTriangle;
+        float bestAttributeWeights[3] = { bestWeights[0], bestWeights[1], bestWeights[2] };
+        float bestNormal = 0.0f;
+        float bestUv = 0.0f;
+        float bestAttributeScore = std::numeric_limits<float>::max();
+        for (size_t i = 0; i < tieCount; ++i) {
+            TieCandidate const& candidate = ties[i];
+            uint32_t const a = indices[candidate.triangle * 3 + 0];
+            uint32_t const b = indices[candidate.triangle * 3 + 1];
+            uint32_t const c = indices[candidate.triangle * 3 + 2];
+            float normalError = 0.0f;
+            float uvError = 0.0f;
+            if (mesh.hasNormals()) {
+                math::float3 const normal = mesh.normals[a] * candidate.weights[0] +
+                                            mesh.normals[b] * candidate.weights[1] +
+                                            mesh.normals[c] * candidate.weights[2];
+                normalError = normalAngle(mesh.normals[referenceVertex], normal);
+            }
+            if (mesh.hasUVs()) {
+                math::float2 const uv = mesh.uvs[a] * candidate.weights[0] +
+                                        mesh.uvs[b] * candidate.weights[1] +
+                                        mesh.uvs[c] * candidate.weights[2];
+                uvError = wrappedUvDistance(mesh.uvs[referenceVertex], uv);
+            }
+            float const score = normalError + uvError;
+            if (score < bestAttributeScore) {
+                bestAttributeScore = score;
+                bestAttributeTriangle = candidate.triangle;
+                bestAttributeWeights[0] = candidate.weights[0];
+                bestAttributeWeights[1] = candidate.weights[1];
+                bestAttributeWeights[2] = candidate.weights[2];
+                bestNormal = normalError;
+                bestUv = uvError;
+            }
+        }
+
+        *outPositionTriangle = bestTriangle;
+        positionWeights[0] = bestWeights[0];
+        positionWeights[1] = bestWeights[1];
+        positionWeights[2] = bestWeights[2];
+        *outDistance2 = bestDistance2;
+        *outAttributeTriangle = bestAttributeTriangle;
+        attributeWeights[0] = bestAttributeWeights[0];
+        attributeWeights[1] = bestAttributeWeights[1];
+        attributeWeights[2] = bestAttributeWeights[2];
+        *outNormalError = bestNormal;
+        *outUvError = bestUv;
+        return true;
+    }
+
 private:
     struct Triangle {
         math::float3 p[3];
@@ -519,17 +678,15 @@ TopologyStats measureTopology(Mesh const& mesh, std::vector<uint32_t> const& ind
 
 namespace {
 
-CandidateErrorStats measureErrors(Mesh const& mesh, std::vector<uint32_t> const& referenceIndices,
-        std::vector<uint32_t> const& simplifiedIndices, uint32_t maxSamples,
-        size_t approximateTriangles, bool wantPosition, bool wantAttributes) {
+CandidateErrorStats measureErrors(Mesh const& mesh, std::vector<uint32_t> const& reference,
+        std::vector<uint32_t> const& simplifiedIndices, size_t approximateTriangles,
+        bool wantPosition, bool wantAttributes) {
     CandidateErrorStats result;
     bool const hasAttributes = mesh.hasNormals() || mesh.hasUVs();
     if (!wantPosition && !(wantAttributes && hasAttributes)) {
         return result;
     }
 
-    std::vector<uint32_t> const reference =
-            sampledVertices(referencedVertices(referenceIndices), maxSamples);
     if (reference.empty() || simplifiedIndices.size() < 3) {
         return result;
     }
@@ -547,6 +704,18 @@ CandidateErrorStats measureErrors(Mesh const& mesh, std::vector<uint32_t> const&
         bvh = std::make_unique<TriangleBvh>(mesh, simplifiedIndices);
     }
 
+    float tieTolerance2 = 0.0f;
+    if (!approximate && wantAttributes && hasAttributes && !mesh.positions.empty()) {
+        math::float3 lo = mesh.positions[0];
+        math::float3 hi = lo;
+        for (math::float3 const& position: mesh.positions) {
+            lo = min(lo, position);
+            hi = max(hi, position);
+        }
+        float const diagonal2 = dot(hi - lo, hi - lo);
+        tieTolerance2 = std::max(diagonal2 * 1.0e-10f, 1.0e-12f);
+    }
+
     double positionSum = 0.0;
     double normalSum = 0.0;
     double uvSum = 0.0;
@@ -557,12 +726,33 @@ CandidateErrorStats measureErrors(Mesh const& mesh, std::vector<uint32_t> const&
         float weights[3] = { 1.0f, 0.0f, 0.0f };
         float distance2 = 0.0f;
 
+        float normalError = 0.0f;
+        float uvError = 0.0f;
+        uint32_t attributeTriangle = UINT32_MAX;
+        bool haveError = false;
         if (approximate) {
             uint32_t nearestVertex = UINT32_MAX;
             if (!grid->nearest(mesh, mesh.positions[vertex], &nearestVertex, &distance2)) {
                 continue;
             }
             a = b = c = nearestVertex;
+            haveError = true;
+        } else if (wantAttributes && hasAttributes) {
+            uint32_t positionTriangle = UINT32_MAX;
+            float positionWeights[3] = { 1.0f, 0.0f, 0.0f };
+            float attributeWeights[3] = { 1.0f, 0.0f, 0.0f };
+            if (!bvh->nearestForAttributes(mesh, simplifiedIndices, mesh.positions[vertex],
+                        vertex, tieTolerance2, &positionTriangle, positionWeights, &distance2,
+                        &attributeTriangle, attributeWeights, &normalError, &uvError)) {
+                continue;
+            }
+            a = simplifiedIndices[attributeTriangle * 3 + 0];
+            b = simplifiedIndices[attributeTriangle * 3 + 1];
+            c = simplifiedIndices[attributeTriangle * 3 + 2];
+            weights[0] = attributeWeights[0];
+            weights[1] = attributeWeights[1];
+            weights[2] = attributeWeights[2];
+            haveError = true;
         } else {
             uint32_t bestTriangle = UINT32_MAX;
             if (!bvh->nearest(mesh.positions[vertex], &bestTriangle, weights, &distance2)) {
@@ -571,6 +761,10 @@ CandidateErrorStats measureErrors(Mesh const& mesh, std::vector<uint32_t> const&
             a = simplifiedIndices[bestTriangle * 3 + 0];
             b = simplifiedIndices[bestTriangle * 3 + 1];
             c = simplifiedIndices[bestTriangle * 3 + 2];
+            haveError = true;
+        }
+        if (!haveError) {
+            continue;
         }
 
         if (wantPosition) {
@@ -580,21 +774,43 @@ CandidateErrorStats measureErrors(Mesh const& mesh, std::vector<uint32_t> const&
             result.position.samples += 1;
         }
         if (wantAttributes && hasAttributes) {
-            if (mesh.hasNormals()) {
-                math::float3 const normal = mesh.normals[a] * weights[0] +
-                                            mesh.normals[b] * weights[1] +
-                                            mesh.normals[c] * weights[2];
-                float const angle = normalAngle(mesh.normals[vertex], normal);
-                normalSum += double(angle);
-                result.attributes.maxNormalErrorRadians =
-                        std::max(result.attributes.maxNormalErrorRadians, angle);
-            }
-            if (mesh.hasUVs()) {
-                math::float2 const uv = mesh.uvs[a] * weights[0] + mesh.uvs[b] * weights[1] +
-                                        mesh.uvs[c] * weights[2];
-                float const error = wrappedUvDistance(mesh.uvs[vertex], uv);
-                uvSum += double(error);
-                result.attributes.maxUvError = std::max(result.attributes.maxUvError, error);
+            if (!approximate) {
+                normalSum += double(normalError);
+                uvSum += double(uvError);
+                if (normalError > result.attributes.maxNormalErrorRadians) {
+                    result.attributes.maxNormalErrorRadians = normalError;
+                    result.attributes.worstNormalVertex = vertex;
+                    result.attributes.worstNormalTriangle = attributeTriangle;
+                }
+                if (uvError > result.attributes.maxUvError) {
+                    result.attributes.maxUvError = uvError;
+                    result.attributes.worstUvVertex = vertex;
+                    result.attributes.worstUvTriangle = attributeTriangle;
+                }
+            } else {
+                if (mesh.hasNormals()) {
+                    math::float3 const normal = mesh.normals[a] * weights[0] +
+                                                mesh.normals[b] * weights[1] +
+                                                mesh.normals[c] * weights[2];
+                    float const angle = normalAngle(mesh.normals[vertex], normal);
+                    normalSum += double(angle);
+                    if (angle > result.attributes.maxNormalErrorRadians) {
+                        result.attributes.maxNormalErrorRadians = angle;
+                        result.attributes.worstNormalVertex = vertex;
+                        result.attributes.worstNormalTriangle = UINT32_MAX;
+                    }
+                }
+                if (mesh.hasUVs()) {
+                    math::float2 const uv = mesh.uvs[a] * weights[0] + mesh.uvs[b] * weights[1] +
+                                            mesh.uvs[c] * weights[2];
+                    float const error = wrappedUvDistance(mesh.uvs[vertex], uv);
+                    uvSum += double(error);
+                    if (error > result.attributes.maxUvError) {
+                        result.attributes.maxUvError = error;
+                        result.attributes.worstUvVertex = vertex;
+                        result.attributes.worstUvTriangle = UINT32_MAX;
+                    }
+                }
             }
             result.attributes.samples += 1;
         }
@@ -613,12 +829,18 @@ CandidateErrorStats measureErrors(Mesh const& mesh, std::vector<uint32_t> const&
 
 } // namespace
 
+CandidateReference makeCandidateReference(
+        std::vector<uint32_t> const& referenceIndices, uint32_t maxSamples) {
+    return { sampledVertices(referencedVertices(referenceIndices), maxSamples) };
+}
+
 AttributeStats measureAttributeError(Mesh const& mesh,
         std::vector<uint32_t> const& referenceIndices,
         std::vector<uint32_t> const& simplifiedIndices, uint32_t maxSamples,
         size_t approximateTriangles) {
-    return measureErrors(mesh, referenceIndices, simplifiedIndices, maxSamples,
-            approximateTriangles, false, true)
+    CandidateReference const reference = makeCandidateReference(referenceIndices, maxSamples);
+    return measureErrors(mesh, reference.vertices, simplifiedIndices, approximateTriangles, false,
+                   true)
             .attributes;
 }
 
@@ -631,8 +853,9 @@ AttributeStats measureAttributeError(Mesh const& mesh,
 PositionStats measurePositionError(Mesh const& mesh, std::vector<uint32_t> const& referenceIndices,
         std::vector<uint32_t> const& simplifiedIndices, uint32_t maxSamples,
         size_t approximateTriangles) {
-    return measureErrors(mesh, referenceIndices, simplifiedIndices, maxSamples,
-            approximateTriangles, true, false)
+    CandidateReference const reference = makeCandidateReference(referenceIndices, maxSamples);
+    return measureErrors(mesh, reference.vertices, simplifiedIndices, approximateTriangles, true,
+                   false)
             .position;
 }
 
@@ -640,8 +863,16 @@ CandidateErrorStats measureCandidateErrors(Mesh const& mesh,
         std::vector<uint32_t> const& referenceIndices,
         std::vector<uint32_t> const& simplifiedIndices, uint32_t maxSamples,
         size_t approximateTriangles) {
-    return measureErrors(mesh, referenceIndices, simplifiedIndices, maxSamples,
-            approximateTriangles, true, true);
+    CandidateReference const reference = makeCandidateReference(referenceIndices, maxSamples);
+    return measureErrors(mesh, reference.vertices, simplifiedIndices, approximateTriangles, true,
+            true);
+}
+
+CandidateErrorStats measureCandidateErrors(Mesh const& mesh,
+        CandidateReference const& reference, std::vector<uint32_t> const& simplifiedIndices,
+        size_t approximateTriangles) {
+    return measureErrors(mesh, reference.vertices, simplifiedIndices, approximateTriangles, true,
+            true);
 }
 
 } // namespace manymesh

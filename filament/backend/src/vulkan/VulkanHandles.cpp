@@ -49,6 +49,8 @@ inline VulkanBufferBinding getBufferObjectBinding(BufferObjectBinding bindingTyp
             return VulkanBufferBinding::UNIFORM;
         case BufferObjectBinding::SHADER_STORAGE:
             return VulkanBufferBinding::SHADER_STORAGE;
+        case BufferObjectBinding::INDIRECT:
+            return VulkanBufferBinding::INDIRECT;
             // when adding more buffer-types here, make sure to update VulkanBuffer::loadFromCpu()
             // if necessary.
     }
@@ -74,7 +76,7 @@ void clampToFramebuffer(VkRect2D* rect, uint32_t fbWidth, uint32_t fbHeight) {
 template<typename Bitmask>
 inline void fromStageFlags(backend::ShaderStageFlags stage, descriptor_binding_t binding,
         Bitmask& mask) {
-    if (UTILS_UNLIKELY(binding >= fvkutils::getFragmentStageShift<Bitmask>())) {
+    if (UTILS_UNLIKELY(binding >= fvkutils::getComputeStageShift<Bitmask>())) {
         return;
     }
     if ((bool) (stage & ShaderStageFlags::VERTEX)) {
@@ -82,6 +84,9 @@ inline void fromStageFlags(backend::ShaderStageFlags stage, descriptor_binding_t
     }
     if ((bool) (stage & ShaderStageFlags::FRAGMENT)) {
         mask.set(binding + fvkutils::getFragmentStageShift<Bitmask>());
+    }
+    if ((bool) (stage & ShaderStageFlags::COMPUTE)) {
+        mask.set(binding + fvkutils::getComputeStageShift<Bitmask>());
     }
 }
 
@@ -135,7 +140,7 @@ BitmaskGroup fromBackendLayout(DescriptorSetLayout const& layout) {
                 break;
             }
             case DescriptorType::SHADER_STORAGE_BUFFER:
-                PANIC_POSTCONDITION("Shader storage is not supported");
+                fromStageFlags(descriptor.stageFlags, descriptor.binding, mask.shaderStorage);
                 break;
         }
     }

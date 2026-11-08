@@ -54,6 +54,44 @@ struct GpuLodNode {
 
 static_assert(sizeof(GpuLodNode) == 88, "GPU node layout must match the shader declaration");
 
+/**
+ * std430 parameter block consumed by the GPU DAG-cut shader. The C++ layout and the GLSL
+ * declaration must stay byte-identical; both the sample and the backend regression build this
+ * value through makeGpuLodCutParams() so the camera math cannot drift between them.
+ */
+struct GpuLodCutParams {
+    float eyeX = 0.0f;
+    float eyeY = 0.0f;
+    float eyeZ = 0.0f;
+    float nearPlane = 0.0f;
+    float forwardX = 0.0f;
+    float forwardY = 0.0f;
+    float forwardZ = 0.0f;
+    float farPlane = 0.0f;
+    float rightX = 0.0f;
+    float rightY = 0.0f;
+    float rightZ = 0.0f;
+    float tanHalfFov = 0.0f;
+    float upX = 0.0f;
+    float upY = 0.0f;
+    float upZ = 0.0f;
+    float aspect = 1.0f;
+    float threshold = 0.0f;
+    float pixelsPerRadian = 1.0f;
+    uint32_t nodeCount = 0;
+    uint32_t maxSelectedNodes = 0;
+};
+
+static_assert(sizeof(GpuLodCutParams) == 80, "GPU cut parameter layout must match the shader");
+
+struct GpuLodCutCounters {
+    uint32_t selectedCount = 0;
+    uint32_t selectedTriangles = 0;
+    uint32_t culledTriangles = 0;
+};
+
+static_assert(sizeof(GpuLodCutCounters) == 12, "GPU cut counters must match the shader");
+
 enum : uint32_t {
     GPU_LOD_NODE_ROOT = 1u << 0,
     GPU_LOD_NODE_LEAF = 1u << 1,
@@ -64,9 +102,26 @@ struct GpuLodBuffer {
     std::vector<GpuLodNode> nodes;
     std::vector<uint32_t> children;
     std::vector<uint32_t> indices;
+    //! Generated attribute vertices appended after the source vertex buffer. `indices` already
+    //! contains the remapped ids, so a renderer uploads these next to the source vertices.
+    std::vector<GeneratedVertex> generatedVertices;
+    uint32_t vertexCount = 0;
 };
 
 GpuLodBuffer flattenLodGraph(LodGraph const& graph);
+
+/**
+ * Builds the camera/parameter block for the GPU cut. nodeCount is the size of the flattened
+ * node table; the selection buffer must hold at least that many uint32_t values.
+ */
+GpuLodCutParams makeGpuLodCutParams(ViewCamera const& camera, uint32_t nodeCount,
+        float thresholdPx) noexcept;
+
+/**
+ * Returns the GLSL 450 or GLSL ES 3.10 source for the GPU DAG cut. Keeping the source in the
+ * library makes the sample and the backend regression exercise exactly the same traversal.
+ */
+char const* gpuLodCutShaderSource(bool mobile) noexcept;
 
 /**
  * One entry of a draw-indirect buffer. Kept separate from backend-specific types so it can be

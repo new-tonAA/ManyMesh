@@ -39,6 +39,8 @@ VkBufferUsageFlags getVkBufferUsage(VulkanBufferBinding usage) {
             return VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
         case VulkanBufferBinding::SHADER_STORAGE:
             return VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+        case VulkanBufferBinding::INDIRECT:
+            return VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
         case VulkanBufferBinding::UNKNOWN:
             return 0;
     }
@@ -194,6 +196,9 @@ VulkanBufferCache::BufferPool& VulkanBufferCache::getPool(VulkanBufferBinding bi
             break;
         case VulkanBufferBinding::SHADER_STORAGE:
             poolIndex = 3;
+            break;
+        case VulkanBufferBinding::INDIRECT:
+            poolIndex = 4;
             break;
         case VulkanBufferBinding::UNKNOWN:
             PANIC_LOG("There's no pool for buffers with unkown binding.");

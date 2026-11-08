@@ -69,10 +69,28 @@ struct LodGraph {
     std::vector<LodGraphNode> nodes;
     std::vector<uint32_t> roots;
     std::vector<uint32_t> leaves;
-    //! Number of vertices the node index lists may reference.
+
+    //! Attribute vertices added by `SimplifyOptions::cornerSimplify`. Node indices at or above
+    //! the source vertex count reference this array, exactly as described in CornerSimplifier.h.
+    //! The builder globally deduplicates them, so a cut can mix levels and still share one
+    //! vertex buffer.
+    std::vector<GeneratedVertex> generatedVertices;
+
+    //! Canonical position id for every vertex, including generated vertices. Vertices that
+    //! occupy exactly the same position share an id. Cut assembly uses it to drop faces that two
+    //! nodes produced from different attribute vertices at the same location.
+    std::vector<uint32_t> positionIds;
+
+    //! Number of vertices the node index lists may reference, including generatedVertices.
     uint32_t vertexCount = 0;
     uint32_t levelCount = 0;
     uint64_t baseTriangles = 0;
+
+    //! Size of the original source vertex buffer: vertexCount - generatedVertices.size().
+    uint32_t sourceVertexCount() const noexcept {
+        size_t const generated = generatedVertices.size();
+        return vertexCount >= generated ? vertexCount - uint32_t(generated) : 0;
+    }
 };
 
 struct LodGraphOptions {
@@ -112,6 +130,7 @@ struct LodGraphBuildStats {
     uint64_t groupSimplifyAccepted = 0;
     uint64_t groupSimplifyAttempts = 0;
     uint64_t seamLockedVertices = 0;
+    uint64_t generatedVertices = 0;
 
     SimplifyProfile clusterSimplify;
     SimplifyProfile groupSimplify;
@@ -146,6 +165,55 @@ struct LodGraphSelection {
 };
 
 /**
+ * A selected cut whose generated-vertex tail has been compacted to what the cut actually uses.
+ *
+ * Node index lists reference one global vertex space: the source vertices followed by every
+ * generated vertex any simplification produced. A cut typically touches only a fraction of
+ * those generated vertices, yet a renderer that uploads the global space pays for all of them.
+ * By default this structure keeps source ids unchanged, copies the referenced generated
+ * vertices into a dense tail in first-use order, and rewrites every generated index
+ * accordingly. LodGraphCompactOptions::compactSourceVertices additionally compacts the source
+ * range, so a committed cut can be uploaded as one densely packed buffer.
+ *
+ * The input selection must already be assembled (and position-deduplicated), as returned by
+ * selectLodGraph(). Compaction is O(indices + generatedVertices) and allocation-light, but it
+ * still rewrites the index list; use it when a cut is committed, not for every candidate cut in
+ * a slider search.
+ */
+
+struct LodGraphCompactOptions {
+    //! Also compact the source vertex range to the vertices the cut references. The default
+    //! keeps source ids unchanged so a renderer can keep its original source buffer. Turn this
+    //! on when a cut is committed and the renderer uploads a dedicated cut buffer; then the
+    //! upload scales with the visible cut instead of the whole imported mesh.
+    bool compactSourceVertices = false;
+};
+struct LodGraphCutGeometry {
+    std::vector<uint32_t> indices;
+
+    //! Generated vertices referenced by the cut, in first-use order.
+    std::vector<GeneratedVertex> generatedVertices;
+
+    //! Index into LodGraph::generatedVertices for every entry of generatedVertices. A renderer
+    //! that keeps the full source attribute buffer can use this to gather positions, normals,
+    //! UVs and ambient occlusion without searching or comparing floating-point attributes.
+    std::vector<uint32_t> generatedSourceIds;
+
+    //! Index into the original source buffer for every entry of the compact source range.
+    //! Empty means the source range was not compacted and source ids are unchanged.
+    std::vector<uint32_t> sourceVertexIds;
+
+    uint32_t sourceVertexCount = 0;
+
+    uint32_t vertexCount = 0;
+
+    uint32_t triangles = 0;
+};
+
+LodGraphCutGeometry compactLodSelection(LodGraph const& graph, LodGraphSelection const& selection,
+        LodGraphCompactOptions const& options = {});
+
+/**
  * The runtime-facing half of a selection: which DAG nodes to draw and their triangle counts,
  * without concatenating every node's index list.
  *
@@ -172,6 +240,18 @@ LodGraphCut selectLodGraphCut(LodGraph const& graph, ViewCamera const& camera, f
  */
 LodGraphSelection selectLodGraph(LodGraph const& graph, ViewCamera const& camera,
         float thresholdPx);
+
+/**
+ * Assembles a render selection from node ids chosen by another selector, such as a compute
+ * shader traversing the flattened GpuLodBuffer. The node set must already form a valid,
+ * non-overlapping DAG cut; this function applies the same cross-node triangle deduplication and
+ * per-node screen-error bookkeeping as selectLodGraph().
+ *
+ * `culledTriangles` is optional accounting for subtrees the caller culled while selecting.
+ * Passing a node id outside the graph, or a node that is not part of `graph`, is ignored.
+ */
+LodGraphSelection assembleLodSelection(LodGraph const& graph, ViewCamera const& camera,
+        std::vector<uint32_t> nodes, uint64_t culledTriangles = 0);
 
 /**
  * Finds the smallest screen-error threshold that reaches `targetTriangleRatio`, then returns

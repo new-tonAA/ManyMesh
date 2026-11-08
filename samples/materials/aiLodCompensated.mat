@@ -1,0 +1,158 @@
+material {
+    name : AiLodCompensated,
+    shadingModel : lit,
+    specularAntiAliasing : true,
+    // AO also attenuates specular IBL, so decimated cavities do not reflect through surfaces
+    // that the source mesh still had. It is driven by the same compensation gate as diffuse AO.
+    specularAmbientOcclusion : simple,
+    requires : [
+        color,
+        uv0
+    ],
+    parameters : [
+        {
+            type : float3,
+            name : baseColor
+        },
+        {
+            type : float,
+            name : metallic
+        },
+        {
+            type : float,
+            name : roughness
+        },
+        {
+            type : float,
+            name : reflectance
+        },
+        {
+            type : float,
+            name : aoStrength
+        },
+        {
+            type : float,
+            name : bentNormalStrength
+        },
+        {
+            type : float,
+            name : normalStrength
+        },
+        {
+            type : float,
+            name : roughnessBoost
+        },
+        {
+            type : float,
+            name : compensationStrength
+        },
+        {
+            type : float,
+            name : pomScale
+        },
+        {
+            type : float,
+            name : pomStrength
+        },
+        {
+            type : float,
+            name : pomLayers
+        },
+        {
+            type : sampler2d,
+            name : aoMap
+        },
+        {
+            type : sampler2d,
+            name : normal
+        },
+        {
+            type : sampler2d,
+            name : heightMap
+        }
+    ],
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        highp vec2 uv = getUV0();
+        highp vec2 uvDx = dFdx(uv);
+        highp vec2 uvDy = dFdy(uv);
+        // The vertex alpha optionally carries a per-cluster weight computed from the DAG
+        // node's screen-space error. Near, already-detailed clusters fade out while coarse
+        // clusters keep the full compensation. The material parameter remains the master gate.
+        float vertexCompensation = saturate(getColor().a);
+        float compensationAmount = saturate(materialParams.compensationStrength) *
+                                   vertexCompensation;
+
+        // The height map stores signed displacement along the interpolated LOD normal, with 0.5
+        // as neutral. Iterating the one-step parallax solution moves the lookup to where the
+        // source surface would project, which recovers interior depth that a coarse chord lost.
+        // It cannot extend the silhouette. pomStrength and the global gate both scale it, so an
+        // unbaked fallback map (height = 0.5) leaves the LOD unchanged.
+        float parallax = compensationAmount * saturate(materialParams.pomStrength);
+        highp mat3 tangentFromWorld = transpose(getWorldTangentFrame());
+        highp vec3 viewTangent = tangentFromWorld * getWorldViewVector();
+        float scale = materialParams.pomScale * parallax;
+        if (abs(scale) > 1e-8 && viewTangent.z > 0.05) {
+            float layers = clamp(materialParams.pomLayers, 1.0, 32.0);
+            highp vec2 baseUv = uv;
+            for (int i = 0; i < 32; i++) {
+                if (float(i) >= layers) {
+                    break;
+                }
+                float raw = textureGrad(materialParams_heightMap, uv, uvDx, uvDy).r;
+                float height = (raw - 0.5) * 2.0 * scale;
+                highp vec2 next = baseUv + height * (viewTangent.xy / viewTangent.z);
+                uv = mix(uv, next, 0.5);
+            }
+            uv = clamp(uv, vec2(0.0), vec2(1.0));
+        }
+
+        // The map stores the high-poly normal in the LOD's tangent frame. Its neutral value is
+        // (0, 0, 1), so an unbaked fallback leaves the retained LOD normals untouched.
+        vec4 detailSample = textureGrad(materialParams_normal, uv, uvDx, uvDy);
+        vec3 detail = detailSample.xyz * 2.0 - 1.0;
+        detail.xy *= materialParams.normalStrength * compensationAmount;
+        material.normal = normalize(detail);
+
+        // The source-mesh bent normal is optional. Vertex colour G/B carry its tangent-space
+        // xy; the neutral (0.5, 0.5) value reconstructs to the geometric normal, so assets
+        // without a baked field are unaffected. Setting it before prepareMaterial() is
+        // required: that call caches the transformed shading_bentNormal.
+        vec2 bentXY = getColor().gb * 2.0 - 1.0;
+        float bentZ2 = max(0.0, 1.0 - dot(bentXY, bentXY));
+        vec3 bentNormal = vec3(bentXY, sqrt(bentZ2));
+        material.bentNormal = normalize(mix(vec3(0.0, 0.0, 1.0), bentNormal,
+                saturate(materialParams.bentNormalStrength * compensationAmount)));
+
+        // prepareMaterial() has to see the normal: it transforms the shading frame once and
+        // caches it for all later lighting terms.
+        prepareMaterial(material);
+
+        // Two independent visibility estimates can arrive here: the source-mesh AO map and the
+        // per-vertex AO carried through the DAG. Both use 1 as neutral, so min() keeps whichever
+        // estimate knows about the cavity and degrades to a no-op when neither was baked.
+        float mapAo = saturate(textureGrad(materialParams_aoMap, uv, uvDx, uvDy).r);
+        float vertexAo = saturate(getColor().r);
+        float sourceAo = min(mapAo, vertexAo);
+        // compensationStrength is the runtime A/B gate: 0 leaves the LOD completely untouched,
+        // so the UI can switch this material in without rebuilding it or its instances.
+        float compensation = mix(1.0, sourceAo,
+                saturate(materialParams.aoStrength) * compensationAmount);
+
+        // Darkening baseColor makes AO visible under direct-only comparison lighting. In a full
+        // IBL pipeline ambientOcclusion is the physically meaningful term; the baseColor term is
+        // the art-direction half and can be reduced by lowering aoStrength.
+        material.baseColor.rgb = materialParams.baseColor * compensation;
+        material.metallic = materialParams.metallic;
+        // Geometric detail that was removed cannot be recovered, but its lost normal variance can
+        // be folded into roughness so highlights do not stay sharper than the remaining surface.
+        // detailSample.a is the normalized angle of the dropped normal, so the widening happens
+        // only where the bake actually found missing detail instead of dulling the whole asset.
+        material.roughness = saturate(materialParams.roughness +
+                materialParams.roughnessBoost * compensationAmount * detailSample.a);
+        material.reflectance = materialParams.reflectance;
+        material.ambientOcclusion = compensation;
+    }
+}

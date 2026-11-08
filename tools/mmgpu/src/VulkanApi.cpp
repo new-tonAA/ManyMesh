@@ -123,6 +123,11 @@ bool VulkanApi::loadDeviceFunctions(VkInstance instance) {
     MMGPU_LOAD(CmdBeginRenderPass)
     MMGPU_LOAD(CmdEndRenderPass)
     MMGPU_LOAD(CmdCopyImageToBuffer)
+    MMGPU_LOAD(CreateQueryPool)
+    MMGPU_LOAD(DestroyQueryPool)
+    MMGPU_LOAD(GetQueryPoolResults)
+    MMGPU_LOAD(CmdResetQueryPool)
+    MMGPU_LOAD(CmdWriteTimestamp)
 
     MMGPU_LOAD(QueueSubmit)
     MMGPU_LOAD(QueueWaitIdle)

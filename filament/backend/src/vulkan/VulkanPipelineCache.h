@@ -123,6 +123,10 @@ public:
     // Each of the following methods are fast and do not make Vulkan calls.
     void bindLayout(VkPipelineLayout layout) noexcept;
     void bindProgram(fvkmemory::resource_ptr<VulkanProgram> program) noexcept;
+
+    // Returns a cached compute pipeline for the given shader and layout.
+    VkPipeline getOrCreateComputePipeline(VkShaderModule shader,
+            VkPipelineLayout layout) noexcept;
     void bindRasterState(RasterState const& rasterState) noexcept;
     void bindStencilState(StencilState const& stencilState) noexcept;
     void bindRenderPass(fvkmemory::resource_ptr<VulkanRenderPass> renderPass,
@@ -235,12 +239,30 @@ private:
         Timestamp lastUsed;
     };
 
+    struct ComputePipelineKey {
+        VkShaderModule shader;
+        VkPipelineLayout layout;
+    };
+    static_assert(sizeof(ComputePipelineKey) == sizeof(VkShaderModule) + sizeof(VkPipelineLayout),
+            "ComputePipelineKey must not have implicit padding.");
+
+    using ComputePipelineHashFn = utils::hash::MurmurHashFn<ComputePipelineKey>;
+    struct ComputePipelineEqual {
+        bool operator()(ComputePipelineKey const& a, ComputePipelineKey const& b) const noexcept {
+            return a.shader == b.shader && a.layout == b.layout;
+        }
+    };
+
     using PipelineMap = tsl::robin_map<PipelineKey, PipelineCacheEntry,
             PipelineHashFn, PipelineEqual>;
 
     PipelineCacheEntry* getOrCreatePipeline() noexcept;
 
     PipelineMap mPipelines;
+
+    using ComputePipelineMap = tsl::robin_map<ComputePipelineKey, PipelineCacheEntry,
+            ComputePipelineHashFn, ComputePipelineEqual>;
+    ComputePipelineMap mComputePipelines;
 
     // Creates a pipeline, with all optional dynamic pipeline states diabled.
     // Note - because PipelineDynamicOptions is defined within VulkanPipelineCache,

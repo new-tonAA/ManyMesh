@@ -46,6 +46,7 @@
 #include <utils/Panic.h>
 
 #include <chrono>
+#include <cstring>
 #include <mutex>
 #ifndef NDEBUG
 #include <set>  // For VulkanDriver::debugCommandBegin
@@ -1018,7 +1019,10 @@ void VulkanDriver::createProgramR(Handle<HwProgram> ph, Program&& program, utils
     vprogram.inc();
     mResourceManager.associateHandle(ph.getId(), std::move(tag));
 
-    if (!mContext.shouldUsePipelineCachePrewarming()) {
+    // Compute pipelines are created on demand by dispatchCompute(), so there is nothing for the
+    // graphics pipeline prewarmer to do. Moreover, it would try to build a graphics pipeline for
+    // a program that has no vertex or fragment shader.
+    if (vprogram->hasComputeShader() || !mContext.shouldUsePipelineCachePrewarming()) {
         return;
     }
 
@@ -2589,7 +2593,58 @@ void VulkanDriver::readTexture(Handle<HwTexture> src, uint8_t level, uint16_t la
 
 void VulkanDriver::readBufferSubData(backend::BufferObjectHandle boh,
         uint32_t offset, uint32_t size, backend::BufferDescriptor&& p) {
-    // TODO: implement readBufferSubData
+    FVK_SYSTRACE_SCOPE();
+
+    auto bo = resource_ptr<VulkanBufferObject>::cast(&mResourceManager, boh);
+    FILAMENT_CHECK_PRECONDITION(!mCurrentRenderPass.renderPass)
+            << "readBufferSubData() cannot be invoked inside a render pass.";
+    FILAMENT_CHECK_PRECONDITION(offset + size <= bo->byteCount)
+            << "readBufferSubData() out of bounds: offset=" << offset << " size=" << size
+            << " byteCount=" << bo->byteCount;
+
+    // Make sure any previously recorded work (e.g. a compute dispatch) has been submitted before
+    // the copy is issued, and give it a chance to complete below.
+    endCommandRecording();
+
+    VkBufferCreateInfo bufferInfo{
+        .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+        .pNext = nullptr,
+        .flags = 0,
+        .size = size,
+        .usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+        .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+        .queueFamilyIndexCount = 0,
+        .pQueueFamilyIndices = nullptr,
+    };
+    VmaAllocationCreateInfo allocInfo{
+        .flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT |
+                VMA_ALLOCATION_CREATE_MAPPED_BIT,
+        .usage = VMA_MEMORY_USAGE_AUTO,
+    };
+    VkBuffer stagingBuffer = VK_NULL_HANDLE;
+    VmaAllocation stagingAllocation = VK_NULL_HANDLE;
+    VmaAllocationInfo allocationInfo{};
+    VkResult result = vmaCreateBuffer(mAllocator, &bufferInfo, &allocInfo, &stagingBuffer,
+            &stagingAllocation, &allocationInfo);
+    FILAMENT_CHECK_POSTCONDITION(result == VK_SUCCESS)
+            << "Unable to allocate readback buffer, error=" << static_cast<int32_t>(result);
+
+    VulkanCommandBuffer& commands = mCommands.get();
+    commands.acquire(bo);
+    VkBufferCopy const region{
+        .srcOffset = offset,
+        .dstOffset = 0,
+        .size = size,
+    };
+    vkCmdCopyBuffer(commands.buffer(), bo->getVkBuffer(), stagingBuffer, 1, &region);
+
+    mCommands.flush();
+    mCommands.wait();
+
+    vmaInvalidateAllocation(mAllocator, stagingAllocation, 0, size);
+    memcpy(p.buffer, allocationInfo.pMappedData, size);
+
+    vmaDestroyBuffer(mAllocator, stagingBuffer, stagingAllocation);
     scheduleDestroy(std::move(p));
 }
 
@@ -2984,6 +3039,23 @@ void VulkanDriver::draw2(uint32_t indexOffset, uint32_t indexCount, uint32_t ins
     vkCmdDrawIndexed(cmdbuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstId);
 }
 
+void VulkanDriver::drawIndexedIndirect(Handle<HwBufferObject> indirectBuffer,
+        uint32_t indirectOffset, uint32_t drawCount, uint32_t stride) {
+    FVK_SYSTRACE_SCOPE();
+
+    if (UTILS_VERY_UNLIKELY(!mRenderPrimitiveState.bound)) {
+        return;
+    }
+
+    prepareDraw();
+
+    auto bo = resource_ptr<VulkanBufferObject>::cast(&mResourceManager, indirectBuffer);
+    VulkanCommandBuffer& commands = *mCurrentRenderPass.commandBuffer;
+    commands.acquire(bo);
+    vkCmdDrawIndexedIndirect(commands.buffer(), bo->getVkBuffer(), indirectOffset,
+            drawCount, stride);
+}
+
 void VulkanDriver::drawArrays(uint32_t vertexOffset, uint32_t vertexCount,
         uint32_t instanceCount) {
     FVK_SYSTRACE_SCOPE();
@@ -3006,7 +3078,67 @@ void VulkanDriver::draw(PipelineState state, Handle<HwRenderPrimitive> rph,
 }
 
 void VulkanDriver::dispatchCompute(Handle<HwProgram> program, math::uint3 workGroupCount) {
-    // FIXME: implement me
+    FVK_SYSTRACE_SCOPE();
+    FILAMENT_CHECK_PRECONDITION(!mCurrentRenderPass.renderTarget)
+            << "dispatchCompute must be called outside of a render pass.";
+
+    auto vprogram = resource_ptr<VulkanProgram>::cast(&mResourceManager, program);
+    FILAMENT_CHECK_PRECONDITION(vprogram->hasComputeShader())
+            << "Program does not contain a compute shader.";
+
+    // Compute dispatches do not go through bindPipeline(), so build the layout from the descriptor
+    // sets that were stashed by bindDescriptorSet().
+    VulkanDescriptorSetLayout::DescriptorSetLayoutArray vkLayouts = {};
+    fvkutils::DescriptorSetMask descriptorSetMask;
+    auto const& boundSets = mDescriptorSetCache.getBoundSets();
+    for (size_t i = 0; i < boundSets.size(); i++) {
+        if (!boundSets[i]) {
+            continue;
+        }
+        vkLayouts[i] = boundSets[i]->boundLayout;
+        descriptorSetMask.set(i);
+    }
+
+    VkPipelineLayout const pipelineLayout = mPipelineLayoutCache.getLayout(vkLayouts, vprogram);
+    VkPipeline const pipeline = mPipelineCache.getOrCreateComputePipeline(
+            vprogram->getComputeShader(), pipelineLayout);
+
+    VulkanCommandBuffer& commands = mCommands.get();
+    VkCommandBuffer const cmdbuffer = commands.buffer();
+    commands.acquire(vprogram);
+
+    vkCmdBindPipeline(cmdbuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
+    mDescriptorSetCache.commit(&commands, pipelineLayout, descriptorSetMask,
+            VK_PIPELINE_BIND_POINT_COMPUTE);
+    vprogram->flushPushConstants(pipelineLayout);
+
+    vkCmdDispatch(cmdbuffer, workGroupCount.x, workGroupCount.y, workGroupCount.z);
+
+    // A compute dispatch can produce any of the buffers consumed by the following draw:
+    // vertex/index data, indirect draw arguments, uniform/storage buffers sampled by the
+    // vertex or fragment stage, or a transfer source. Filament does not track buffer usage
+    // across the compute/graphics boundary, so use one conservative global barrier. Without
+    // this, a driver is free to start vertex input or an indirect draw before the dispatch's
+    // writes are visible.
+    VkMemoryBarrier const computeToGraphicsBarrier{
+            .sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
+            .srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT,
+            .dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT |
+                             VK_ACCESS_INDEX_READ_BIT |
+                             VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT |
+                             VK_ACCESS_UNIFORM_READ_BIT |
+                             VK_ACCESS_SHADER_READ_BIT |
+                             VK_ACCESS_TRANSFER_READ_BIT,
+    };
+    vkCmdPipelineBarrier(cmdbuffer,
+            VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+            VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT |
+                    VK_PIPELINE_STAGE_VERTEX_INPUT_BIT |
+                    VK_PIPELINE_STAGE_VERTEX_SHADER_BIT |
+                    VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT |
+                    VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT |
+                    VK_PIPELINE_STAGE_TRANSFER_BIT,
+            0, 1, &computeToGraphicsBarrier, 0, nullptr, 0, nullptr);
 }
 
 void VulkanDriver::scissor(Viewport scissorBox) {

@@ -2154,6 +2154,23 @@ void WebGPUDriver::drawArrays(const uint32_t vertexOffset, const uint32_t vertex
     mRenderPassEncoder.Draw(vertexCount, instanceCount, vertexOffset, 0);
 }
 
+void WebGPUDriver::drawIndexedIndirect(Handle<HwBufferObject> indirectBuffer,
+        uint32_t indirectOffset, uint32_t drawCount, uint32_t stride) {
+    FWGPU_SYSTRACE_SCOPE();
+    for (size_t i = 0; i < MAX_DESCRIPTOR_SET_COUNT; i++) {
+        auto& binding = mCurrentDescriptorSets[i];
+        if (binding.bindGroup) {
+            mRenderPassEncoder.SetBindGroup(i, binding.bindGroup, binding.offsetCount,
+                    binding.offsets.data());
+        }
+    }
+
+    auto* bo = handleCast<WebGPUBufferObject>(indirectBuffer);
+    for (uint32_t i = 0; i < drawCount; ++i) {
+        mRenderPassEncoder.DrawIndexedIndirect(bo->getBuffer(), indirectOffset + i * stride);
+    }
+}
+
 void WebGPUDriver::draw(PipelineState pipelineState,
         Handle<HwRenderPrimitive> renderPrimitiveHandle, const uint32_t indexOffset,
         const uint32_t indexCount, const uint32_t instanceCount) {

@@ -18,6 +18,13 @@ set(RESOURCE_BINS)
 
 set(MATERIAL_SRCS
         materials/aiDefaultMat.mat
+        materials/aiBakedAo.mat
+        materials/aiBakedAoMap.mat
+        materials/aiCavity.mat
+        materials/aiDetailNormal.mat
+        materials/aiLodCompensated.mat
+        materials/aiParallax.mat
+        materials/shadowProxy.mat
         materials/bakedColor.mat
         materials/bakedTexture.mat
         materials/aoPreview.mat
@@ -371,7 +378,11 @@ elseif (NOT ANDROID)
     add_demo(material_sandbox)
     add_demo(materialinstancestress)
     add_demo(mm_bench)
-    target_link_libraries(mm_bench PRIVATE manymesh)
+    target_sources(mm_bench PRIVATE mm_gpu_cut.cpp)
+    target_include_directories(mm_bench PRIVATE
+            ${ROOT_DIR}/filament/backend/include
+            ${ROOT_DIR}/filament/src)
+    target_link_libraries(mm_bench PRIVATE manymesh glslang SPIRV)
     add_demo(multiple_windows)
     # Tint does not support setting gl_PointSize, disable the relevant sample if using WebGPU
     # https://github.com/gpuweb/gpuweb/issues/1190

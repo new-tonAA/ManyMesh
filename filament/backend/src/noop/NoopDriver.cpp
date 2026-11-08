@@ -433,6 +433,10 @@ void NoopDriver::drawArrays(uint32_t vertexOffset, uint32_t vertexCount,
         uint32_t instanceCount) {
 }
 
+void NoopDriver::drawIndexedIndirect(Handle<HwBufferObject> indirectBuffer,
+        uint32_t indirectOffset, uint32_t drawCount, uint32_t stride) {
+}
+
 void NoopDriver::draw(PipelineState pipelineState, Handle<HwRenderPrimitive> rph,
         uint32_t indexOffset, uint32_t indexCount, uint32_t instanceCount) {
 }

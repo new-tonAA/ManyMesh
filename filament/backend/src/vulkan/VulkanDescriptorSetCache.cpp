@@ -35,11 +35,17 @@ namespace {
 using Bitmask = fvkutils::UniformBufferBitmask;
 static_assert(sizeof(Bitmask) * 8 == fvkutils::MAX_DESCRIPTOR_SET_BITMASK_BITS);
 
-Bitmask foldBitsInHalf(Bitmask bitset) {
+template<typename BitmaskType>
+bool hasBindingInAnyStage(BitmaskType const& mask, uint8_t binding) {
+    return mask.test(binding + fvkutils::getVertexStageShift<BitmaskType>()) ||
+           mask.test(binding + fvkutils::getFragmentStageShift<BitmaskType>()) ||
+           mask.test(binding + fvkutils::getComputeStageShift<BitmaskType>());
+}
+
+Bitmask foldShaderStages(Bitmask bitset) {
     Bitmask outBitset;
     bitset.forEachSetBit([&](size_t index) {
-        constexpr size_t BITMASK_LOWER_BITS_LEN = sizeof(outBitset) * 4;
-        outBitset.set(index % BITMASK_LOWER_BITS_LEN);
+        outBitset.set(index % Bitmask::BITS_PER_WORD);
     });
     return outBitset;
 }
@@ -71,7 +77,7 @@ public:
           mSize(0),
           mUnusedCount(0) {
         DescriptorCount const actual = mCount * capacity;
-        VkDescriptorPoolSize sizes[4];
+        VkDescriptorPoolSize sizes[5];
         uint8_t npools = 0;
         if (actual.ubo) {
             sizes[npools++] = {
@@ -95,6 +101,12 @@ public:
             sizes[npools++] = {
                 .type = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
                 .descriptorCount = actual.inputAttachment,
+            };
+        }
+        if (actual.shaderStorage) {
+            sizes[npools++] = {
+                .type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+                .descriptorCount = actual.shaderStorage,
             };
         }
         VkDescriptorPoolCreateInfo info{
@@ -272,6 +284,7 @@ VulkanDescriptorSetCache::~VulkanDescriptorSetCache() = default;
 void VulkanDescriptorSetCache::terminate() noexcept{
     mDescriptorPool.reset();
     mStashedSets = {};
+    mCurrentSets = {};
     mLastBoundInfo = {};
 }
 
@@ -282,26 +295,37 @@ void VulkanDescriptorSetCache::bind(uint8_t setIndex,
         backend::DescriptorSetOffsetArray&& offsets) {
     set->setOffsets(std::move(offsets));
     mStashedSets[setIndex] = set;
+    mCurrentSets[setIndex] = set;
 }
 
 void VulkanDescriptorSetCache::unbind(uint8_t setIndex) {
     mStashedSets[setIndex] = {};
+    mCurrentSets[setIndex] = {};
 }
 
 void VulkanDescriptorSetCache::commit(VulkanCommandBuffer* commands,
-        VkPipelineLayout pipelineLayout, fvkutils::DescriptorSetMask const& setMask) {
+        VkPipelineLayout pipelineLayout, fvkutils::DescriptorSetMask const& setMask,
+        VkPipelineBindPoint bindPoint) {
     // setMask indicates the set of descriptor sets the driver wants to bind, curMask is the
     // actual set of sets that *needs* to be bound.
     fvkutils::DescriptorSetMask curMask = setMask;
 
-    auto const& updateSets = mStashedSets;
+    // Start from the sets stashed by bindDescriptorSet(). If a set was already bound and the
+    // stash was consumed by a previous commit (for example a compute dispatch), fall back to the
+    // currently bound set so that it can be re-bound to a different pipeline bind point.
+    DescriptorSetArray updateSets = mStashedSets;
+    bool const bindPointChanged = mLastBoundInfo.bindPoint != bindPoint;
     curMask.forEachSetBit([&](size_t index) {
+        if (!updateSets[index] && bindPointChanged) {
+            updateSets[index] = mCurrentSets[index];
+        }
         if (!updateSets[index]) {
             curMask.unset(index);
         }
     });
 
-    if (mLastBoundInfo.pipelineLayout == pipelineLayout) {
+    if (mLastBoundInfo.pipelineLayout == pipelineLayout &&
+            mLastBoundInfo.bindPoint == bindPoint) {
         auto& lastBoundSets = mLastBoundInfo.boundSets;
         curMask.forEachSetBit([&](size_t index) {
             auto& set = updateSets[index];
@@ -317,12 +341,13 @@ void VulkanDescriptorSetCache::commit(VulkanCommandBuffer* commands,
         VkCommandBuffer const cmdbuffer = commands->buffer();
         VkDescriptorSet const vkset = set->getVkSet();
         commands->acquire(set);
-        vkCmdBindDescriptorSets(cmdbuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, index,
+        vkCmdBindDescriptorSets(cmdbuffer, bindPoint, pipelineLayout, index,
                 1, &vkset, set->uniqueDynamicUboCount, set->getOffsets()->data());
         set->referencedBy(*commands);
     });
     mLastBoundInfo = {
         pipelineLayout,
+        bindPoint,
         setMask,
         updateSets,
     };
@@ -337,12 +362,11 @@ void VulkanDescriptorSetCache::updateBuffer(fvkmemory::resource_ptr<VulkanDescri
         .offset = offset,
         .range = size,
     };
-    VkDescriptorType type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    auto const& layoutMask = set->getLayout()->bitmask;
+    VkDescriptorType type = hasBindingInAnyStage(layoutMask.shaderStorage, binding)
+            ? VK_DESCRIPTOR_TYPE_STORAGE_BUFFER : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 
-    if (set->dynamicUboMask.test(
-                binding + fvkutils::getVertexStageShift<fvkutils::UniformBufferBitmask>()) ||
-            set->dynamicUboMask.test(
-                    binding + fvkutils::getFragmentStageShift<fvkutils::UniformBufferBitmask>())) {
+    if (hasBindingInAnyStage(set->dynamicUboMask, binding)) {
         type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
     }
     VkWriteDescriptorSet descriptorWrite = {
@@ -418,10 +442,11 @@ void VulkanDescriptorSetCache::cloneSet(fvkmemory::resource_ptr<VulkanDescriptor
     // Each bitmask denotes a binding index, and separated into two stages - vertex and buffer
     // We fold the two stages into just the lower half of the bits to denote a combined set of
     // bindings.
-    Bitmask const ubo = layout->bitmask.ubo | layout->bitmask.dynamicUbo;
+    Bitmask const ubo = layout->bitmask.ubo | layout->bitmask.dynamicUbo |
+            layout->bitmask.shaderStorage;
     // Don't copy the samplers in the mask
     Bitmask samplers = layout->bitmask.sampler ^ samplerMask;
-    Bitmask const copyBindings = foldBitsInHalf(ubo | samplers);
+    Bitmask const copyBindings = foldShaderStages(ubo | samplers);
 
     VkDescriptorSet const srcSet = set->getVkSet();
     copySet(srcSet, newSet, copyBindings);

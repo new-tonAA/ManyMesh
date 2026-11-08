@@ -453,6 +453,12 @@ private:
     // creation is asynchronous, on the job worker thread.
     std::atomic<GLuint> mLastAssignedEmulatedUboId{ 0 };
 
+    // Driver-owned staging buffer for indirect draws. Some GL drivers (Intel WGL observed)
+    // reject indirect draws whose command buffer was allocated through a different context
+    // path, so the commands are copied GPU-side into this buffer before drawing.
+    GLuint mIndirectDrawBuffer = 0;
+    uint32_t mIndirectDrawBufferCapacity = 0;
+
     // this must be accessed from the driver thread only
     std::vector<GLTexture*> mTexturesWithStreamsAttached;
 

@@ -60,7 +60,7 @@ private:
         uint64_t immutableSamplerHash = 0;
         uint64_t padding = 0;
     };
-    static_assert(sizeof(LayoutKey) == 96);
+    static_assert(sizeof(LayoutKey) == 160);
 
     using LayoutKeyHashFn = utils::hash::MurmurHashFn<LayoutKey>;
     struct LayoutKeyEqual {

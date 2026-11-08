@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-#include <manymesh/LodGraph.h>
-
 #include "Parallel.h"
+
+#include <manymesh/LodGraph.h>
 
 #include <algorithm>
 #include <array>
+#include <atomic>
 #include <chrono>
 #include <cmath>
+#include <cstring>
 #include <functional>
 #include <limits>
 #include <queue>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -32,6 +35,163 @@ namespace filament {
 namespace manymesh {
 
 namespace {
+
+struct GeneratedVertexKey {
+    uint32_t positionSource = 0;
+    int32_t position[3] = {};
+    int32_t normal[3] = {};
+    int32_t uv[2] = {};
+    int32_t ao = 0;
+
+    bool operator==(GeneratedVertexKey const& other) const noexcept {
+        return positionSource == other.positionSource && position[0] == other.position[0] &&
+               position[1] == other.position[1] && position[2] == other.position[2] &&
+               normal[0] == other.normal[0] && normal[1] == other.normal[1] &&
+               normal[2] == other.normal[2] && uv[0] == other.uv[0] && uv[1] == other.uv[1] &&
+               ao == other.ao;
+    }
+};
+
+struct GeneratedVertexKeyHash {
+    size_t operator()(GeneratedVertexKey const& key) const noexcept {
+        uint64_t hash = uint64_t(key.positionSource) * 0x9E3779B185EBCA87ull;
+        auto mix = [&hash](uint64_t value) {
+            hash ^= value + 0x9E3779B97F4A7C15ull + (hash << 6) + (hash >> 2);
+        };
+        mix(uint64_t(uint32_t(key.position[0])));
+        mix(uint64_t(uint32_t(key.position[1])));
+        mix(uint64_t(uint32_t(key.position[2])));
+        mix(uint64_t(uint32_t(key.normal[0])));
+        mix(uint64_t(uint32_t(key.normal[1])));
+        mix(uint64_t(uint32_t(key.normal[2])));
+        mix(uint64_t(uint32_t(key.uv[0])));
+        mix(uint64_t(uint32_t(key.uv[1])));
+        mix(uint64_t(uint32_t(key.ao)));
+        return size_t(hash);
+    }
+};
+
+int32_t quantizeGeneratedAttribute(float value) { return int32_t(std::lround(value * 65536.0f)); }
+
+GeneratedVertexKey generatedVertexKey(GeneratedVertex const& vertex) {
+    GeneratedVertexKey key;
+    // positionSource is a build-time lock hint, not part of the rendered vertex. Two corners
+    // with the same position, normal and UV are interchangeable to the GPU, so share them.
+    key.position[0] = quantizeGeneratedAttribute(vertex.position.x);
+    key.position[1] = quantizeGeneratedAttribute(vertex.position.y);
+    key.position[2] = quantizeGeneratedAttribute(vertex.position.z);
+    key.normal[0] = quantizeGeneratedAttribute(vertex.normal.x);
+    key.normal[1] = quantizeGeneratedAttribute(vertex.normal.y);
+    key.normal[2] = quantizeGeneratedAttribute(vertex.normal.z);
+    key.uv[0] = quantizeGeneratedAttribute(vertex.uv.x);
+    key.uv[1] = quantizeGeneratedAttribute(vertex.uv.y);
+    key.ao = quantizeGeneratedAttribute(vertex.ao);
+    return key;
+}
+
+struct PositionKey {
+    uint32_t x = 0;
+    uint32_t y = 0;
+    uint32_t z = 0;
+
+    bool operator==(PositionKey const& other) const noexcept {
+        return x == other.x && y == other.y && z == other.z;
+    }
+};
+
+struct PositionKeyHash {
+    size_t operator()(PositionKey const& key) const noexcept {
+        uint64_t hash = uint64_t(key.x) * 0x9E3779B185EBCA87ull;
+        hash ^= uint64_t(key.y) + 0x9E3779B97F4A7C15ull + (hash << 6) + (hash >> 2);
+        hash ^= uint64_t(key.z) + 0x9E3779B97F4A7C15ull + (hash << 6) + (hash >> 2);
+        return size_t(hash);
+    }
+};
+
+PositionKey positionKey(math::float3 position) noexcept {
+    float const x = position.x == 0.0f ? 0.0f : position.x;
+    float const y = position.y == 0.0f ? 0.0f : position.y;
+    float const z = position.z == 0.0f ? 0.0f : position.z;
+    PositionKey key;
+    std::memcpy(&key.x, &x, sizeof(float));
+    std::memcpy(&key.y, &y, sizeof(float));
+    std::memcpy(&key.z, &z, sizeof(float));
+    return key;
+}
+
+uint32_t resolvePositionId(std::vector<uint32_t> const& positionIds, uint32_t vertex) noexcept {
+    uint32_t result = vertex;
+    for (size_t guard = 0; guard < positionIds.size() && result < positionIds.size(); ++guard) {
+        uint32_t const next = positionIds[result];
+        if (next == result) {
+            break;
+        }
+        result = next;
+    }
+    return result;
+}
+
+/**
+ * Appends one level's generated vertices to the graph-wide buffer and rewrites that level's
+ * local index range to the global ids.
+ *
+ * Every simplification unit starts with the same graph vertex count, so its generated ids are
+ * `baseVertexCount + local`. Deduplicating them globally is important: adjacent units and
+ * successive hierarchy levels frequently invent the exact same chart corner, and sharing it
+ * keeps the single vertex buffer used by a mixed-level cut bounded.
+ */
+void appendGeneratedVerticesToGraph(LodGraph* graph, Mesh* mesh,
+        std::vector<GeneratedVertex> const& generated, uint32_t baseVertexCount,
+        std::unordered_map<GeneratedVertexKey, uint32_t, GeneratedVertexKeyHash>* lookup,
+        std::unordered_map<PositionKey, uint32_t, PositionKeyHash>* positions,
+        std::vector<uint32_t>* positionIds, std::vector<uint32_t>* indices) {
+    if (generated.empty()) {
+        return;
+    }
+    bool const hasNormals = mesh->hasNormals();
+    bool const hasUVs = mesh->hasUVs();
+    bool const hasAO = mesh->hasAO();
+    std::vector<uint32_t> localToGlobal;
+    localToGlobal.reserve(generated.size());
+
+    for (GeneratedVertex const& source: generated) {
+        GeneratedVertex vertex = source;
+        vertex.positionSource = resolvePositionId(*positionIds, source.positionSource);
+        vertex.position =
+                source.hasPosition ? source.position : mesh->positions[vertex.positionSource];
+        vertex.hasPosition = true;
+        GeneratedVertexKey const key = generatedVertexKey(vertex);
+        auto const inserted = lookup->emplace(key, graph->vertexCount);
+        if (inserted.second) {
+            graph->generatedVertices.push_back(vertex);
+            mesh->positions.push_back(vertex.position);
+            if (hasNormals) {
+                mesh->normals.push_back(vertex.normal);
+            }
+            if (hasUVs) {
+                mesh->uvs.push_back(vertex.uv);
+            }
+            if (hasAO) {
+                mesh->ao.push_back(vertex.ao);
+            }
+            PositionKey const positionKeyValue = positionKey(vertex.position);
+            auto const positionInserted = positions->emplace(positionKeyValue, graph->vertexCount);
+            positionIds->push_back(positionInserted.first->second);
+            graph->vertexCount += 1;
+        }
+        localToGlobal.push_back(inserted.first->second);
+    }
+
+    for (uint32_t& index: *indices) {
+        if (index < baseVertexCount) {
+            continue;
+        }
+        size_t const local = size_t(index - baseVertexCount);
+        if (local < localToGlobal.size()) {
+            index = localToGlobal[local];
+        }
+    }
+}
 
 Sphere mergeSpheres(Sphere const& a, Sphere const& b) {
     math::float3 const delta = b.center - a.center;
@@ -66,7 +226,8 @@ Cone mergeCones(Cone const& a, Cone const& b) {
 
 std::vector<std::vector<uint32_t>> groupNodes(LodGraph const& graph,
         std::vector<uint32_t> const& current, uint32_t clustersPerNode, size_t vertexCount,
-        std::vector<int32_t>* lastOwner, std::vector<uint32_t>* touchedOwners) {
+        std::vector<uint32_t> const* positionIds, std::vector<int32_t>* lastOwner,
+        std::vector<uint32_t>* touchedOwners) {
     std::vector<std::vector<uint32_t>> groups;
     if (current.empty() || clustersPerNode <= 1) {
         for (uint32_t node: current) {
@@ -80,7 +241,16 @@ std::vector<std::vector<uint32_t>> groupNodes(LodGraph const& graph,
     std::vector<uint32_t> vertices;
     for (size_t c = 0; c < count; ++c) {
         LodGraphNode const& node = graph.nodes[current[c]];
-        vertices = node.indices;
+        vertices.clear();
+        vertices.reserve(node.indices.size());
+        for (uint32_t vertex: node.indices) {
+            if (positionIds != nullptr && vertex < positionIds->size()) {
+                vertex = (*positionIds)[vertex];
+            }
+            if (vertex < vertexCount) {
+                vertices.push_back(vertex);
+            }
+        }
         std::sort(vertices.begin(), vertices.end());
         vertices.erase(std::unique(vertices.begin(), vertices.end()), vertices.end());
         for (uint32_t vertex: vertices) {
@@ -185,25 +355,17 @@ bool sphereOutsideFrustum(Sphere const& sphere, ViewCamera const& camera,
     if (depth + sphere.radius < camera.near || depth - sphere.radius > camera.far) {
         return true;
     }
-    float const halfHeight = depth * basis.tanHalfFovY;
-    float const halfWidth = halfHeight * basis.aspect;
-    if (std::abs(dot(d, basis.right)) - sphere.radius > halfWidth) {
-        return true;
-    }
-    if (std::abs(dot(d, basis.up)) - sphere.radius > halfHeight) {
-        return true;
-    }
-    return false;
+    // The side plane normals have length sqrt(1 + tanHalfFov^2).
+    float const tanX = basis.tanHalfFovY * basis.aspect;
+    float const tanY = basis.tanHalfFovY;
+    return std::abs(dot(d, basis.right)) - depth * tanX >
+                   sphere.radius * std::sqrt(1.0f + tanX * tanX) ||
+           std::abs(dot(d, basis.up)) - depth * tanY >
+                   sphere.radius * std::sqrt(1.0f + tanY * tanY);
 }
 
-float screenErrorForNode(LodGraphNode const& node, ViewCamera const& camera,
-        CameraBasis const& basis) {
-    float const depth = dot(node.bounds.center - camera.eye, basis.forward);
-    if (depth <= camera.near) {
-        return std::numeric_limits<float>::max();
-    }
-    float const pixelsPerRadian = float(camera.screenHeight) / (2.0f * basis.tanHalfFovY);
-    return node.accumulatedError / depth * pixelsPerRadian;
+float screenErrorForNode(LodGraphNode const& node, ScreenErrorProjection const& projection) {
+    return screenSpaceErrorForSphere(node.accumulatedError, node.bounds, projection);
 }
 
 // Per-camera quantities that do not depend on the selected error threshold. The ratio solver
@@ -219,12 +381,13 @@ NodeMetrics makeNodeMetrics(LodGraph const& graph, ViewCamera const& camera,
     NodeMetrics metrics;
     metrics.screenError.resize(graph.nodes.size(), 0.0f);
     metrics.culled.resize(graph.nodes.size(), 0);
+    ScreenErrorProjection const projection = makeScreenErrorProjection(camera);
     for (size_t i = 0; i < graph.nodes.size(); ++i) {
         LodGraphNode const& node = graph.nodes[i];
         if (basis.valid && sphereOutsideFrustum(node.bounds, camera, basis)) {
             metrics.culled[i] = 1;
         } else if (basis.valid) {
-            metrics.screenError[i] = screenErrorForNode(node, camera, basis);
+            metrics.screenError[i] = screenErrorForNode(node, projection);
         }
     }
     return metrics;
@@ -384,56 +547,16 @@ LodGraphSelection selectionFromCut(LodGraph const& graph, NodeMetrics const& met
     }
 
     // Two independently simplified clusters can both produce the same triangle at a shared
-    // border. Each node is clean on its own, so the per-node quality gate cannot see it. Drop
-    // degenerates and duplicate faces here: the remaining copy covers the same surface, and
-    // removing the extra face also removes the false non-manifold edges it created.
-    // Only a face whose three vertices occur in more than one selected node can be produced by
-    // two nodes. The interior of a node is already unique, so ownership flags and a hash set
-    // over those boundary faces replace the full-selection sort. Generation stamps let one
-    // thread reuse the vertex-sized arrays across selections without clearing millions of
-    // entries for meshes where the current cut touches only a small fraction of the vertices.
-    struct OwnershipScratch {
-        std::vector<uint32_t> owner;
-        std::vector<uint32_t> seen;
-        std::vector<uint32_t> shared;
-        uint32_t generation = 0;
+    // border, and a SeamSimplifier output can contain coincident faces built from different
+    // attribute vertices at one position. Each node is clean on its own by index, so the
+    // per-node quality gate cannot see either case. Deduplicate the assembled cut by canonical
+    // position ids: the remaining copy covers the same surface, and removing the extra faces
+    // also removes the false non-manifold edges they create.
+    auto const positionOf = [&graph](uint32_t vertex) {
+        return vertex < graph.positionIds.size() ? graph.positionIds[vertex] : vertex;
     };
-    thread_local OwnershipScratch ownership;
-    uint32_t generation = ++ownership.generation;
-    if (generation == 0) {
-        std::fill(ownership.seen.begin(), ownership.seen.end(), 0);
-        std::fill(ownership.shared.begin(), ownership.shared.end(), 0);
-        generation = 1;
-        ownership.generation = 1;
-    }
-    if (ownership.owner.size() < graph.vertexCount) {
-        ownership.owner.resize(graph.vertexCount, UINT32_MAX);
-        ownership.seen.resize(graph.vertexCount, 0);
-        ownership.shared.resize(graph.vertexCount, 0);
-    }
-    for (uint32_t nodeId: cut.nodes) {
-        for (uint32_t vertex: graph.nodes[nodeId].indices) {
-            if (vertex >= graph.vertexCount) {
-                continue;
-            }
-            if (ownership.seen[vertex] != generation) {
-                ownership.seen[vertex] = generation;
-                ownership.owner[vertex] = nodeId;
-            } else if (ownership.owner[vertex] != nodeId) {
-                ownership.shared[vertex] = generation;
-            }
-        }
-    }
-
-    auto const isBoundaryFace = [generation, vertexCount = graph.vertexCount](uint32_t a,
-                                        uint32_t b, uint32_t c) {
-        return a < vertexCount && b < vertexCount && c < vertexCount &&
-               ownership.shared[a] == generation && ownership.shared[b] == generation &&
-               ownership.shared[c] == generation;
-    };
-
-    // Open addressing keeps the boundary test allocation-free per face. Keys are sorted so the
-    // result ignores winding, matching the previous duplicate definition.
+    // Open addressing keeps the test allocation-free per face. Keys are sorted so the result
+    // ignores winding, matching the previous duplicate definition.
     struct TriangleSet {
         struct Slot {
             uint32_t a = UINT32_MAX;
@@ -496,8 +619,8 @@ LodGraphSelection selectionFromCut(LodGraph const& graph, NodeMetrics const& met
 
     // Ratio selection evaluates many cuts back to back. Reuse the table so a slider drag does
     // not allocate a fresh hash set for every threshold.
-    thread_local TriangleSet boundaryFaces;
-    boundaryFaces.clear();
+    thread_local TriangleSet seenFaces;
+    seenFaces.clear();
     std::vector<uint32_t> indices;
     std::vector<uint32_t> materialIds;
     std::vector<uint32_t> submeshIds;
@@ -513,7 +636,7 @@ LodGraphSelection selectionFromCut(LodGraph const& graph, NodeMetrics const& met
             if (a == b || b == c || c == a) {
                 continue;
             }
-            if (isBoundaryFace(a, b, c) && !boundaryFaces.insert(a, b, c)) {
+            if (!seenFaces.insert(positionOf(a), positionOf(b), positionOf(c))) {
                 continue;
             }
             indices.push_back(a);
@@ -565,7 +688,18 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
     }
 
     auto const leafSetupStart = Clock::now();
-    graph.vertexCount = uint32_t(mesh.positions.size());
+    uint32_t const sourceVertexCount = uint32_t(mesh.positions.size());
+    graph.vertexCount = sourceVertexCount;
+    Mesh graphMesh = mesh;
+    std::vector<uint32_t> graphPositionIds(sourceVertexCount);
+    std::unordered_map<PositionKey, uint32_t, PositionKeyHash> graphPositions;
+    graphPositions.reserve(sourceVertexCount * 2);
+    for (uint32_t i = 0; i < sourceVertexCount; ++i) {
+        auto const inserted = graphPositions.emplace(positionKey(graphMesh.positions[i]), i);
+        graphPositionIds[i] = inserted.first->second;
+    }
+    std::unordered_map<GeneratedVertexKey, uint32_t, GeneratedVertexKeyHash> generatedLookup;
+    generatedLookup.reserve(1024);
     graph.levelCount = 1;
     graph.nodes.reserve(clusters.clusters.size() * 2);
     graph.leaves.reserve(clusters.clusters.size());
@@ -588,7 +722,7 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
     // A vertex referenced by more than one leaf is a seam vertex. Per-cluster chains must not
     // move or rewrite such a vertex, otherwise both sides can collapse into the same chord and
     // the assembled cut contains overlapping triangles and non-manifold edges.
-    std::vector<uint32_t> vertexLeafUse(mesh.positions.size(), 0);
+    std::vector<uint32_t> vertexLeafUse(sourceVertexCount, 0);
     {
         std::vector<uint32_t> vertices;
         for (uint32_t leaf: graph.leaves) {
@@ -596,13 +730,13 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
             std::sort(vertices.begin(), vertices.end());
             vertices.erase(std::unique(vertices.begin(), vertices.end()), vertices.end());
             for (uint32_t vertex: vertices) {
-                vertexLeafUse[vertex] += 1;
+                vertexLeafUse[graphPositionIds[vertex]] += 1;
             }
         }
     }
-    std::vector<uint8_t> sharedVertexMask(mesh.positions.size(), 0);
+    std::vector<uint8_t> sharedVertexMask(sourceVertexCount, 0);
     for (size_t v = 0; v < vertexLeafUse.size(); ++v) {
-        sharedVertexMask[v] = vertexLeafUse[v] > 1 ? 1 : 0;
+        sharedVertexMask[v] = vertexLeafUse[graphPositionIds[v]] > 1 ? 1 : 0;
     }
     if (stats != nullptr) {
         stats->leafSetupSeconds = secondsSince(leafSetupStart);
@@ -629,10 +763,14 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
             if (!level.simplified || level.indices.size() >= graph.nodes[previous].indices.size()) {
                 break;
             }
+            std::vector<uint32_t> nodeIndices = level.indices;
+            appendGeneratedVerticesToGraph(&graph, &graphMesh, level.generatedVertices,
+                    sourceVertexCount, &generatedLookup, &graphPositions, &graphPositionIds,
+                    &nodeIndices);
             LodGraphNode node;
             node.level = uint32_t(l);
             node.children = { previous };
-            node.indices = level.indices;
+            node.indices = std::move(nodeIndices);
             node.bounds = graph.nodes[graph.leaves[c]].bounds;
             node.cone = graph.nodes[graph.leaves[c]].cone;
             node.materialId = level.materialId;
@@ -672,26 +810,30 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
 
     std::vector<uint32_t> current = std::move(chainTops);
     SimplifyOptions simplifyOptions = options.simplify;
+    static std::atomic<uint64_t> nextMeshCacheEpoch{ 1 };
+    simplifyOptions.meshCacheEpoch = nextMeshCacheEpoch.fetch_add(1, std::memory_order_relaxed);
     simplifyOptions.levels = 1;
     simplifyOptions.qualityAttempts = std::max(1u, options.simplify.qualityAttempts);
     // A group contains both sides of its internal UV/normal seams. Pair their boundary
     // collapses so the group can reduce past the old 1/3-barrier without opening a crack.
     simplifyOptions.seamCollapse = true;
 
-    std::vector<int32_t> groupLastOwner(mesh.positions.size(), -1);
+    std::vector<int32_t> groupLastOwner(sourceVertexCount, -1);
     std::vector<uint32_t> groupTouchedOwners;
 
     for (uint32_t depth = 0; depth < options.levels && !current.empty(); ++depth) {
         uint32_t const level = maxChainLevel + 1 + depth;
+        uint32_t const levelVertexCount = graph.vertexCount;
         auto const groupBuildStart = Clock::now();
         std::vector<std::vector<uint32_t>> groups =
-                groupNodes(graph, current, std::max(2u, options.clustersPerNode),
-                        mesh.positions.size(), &groupLastOwner, &groupTouchedOwners);
+                groupNodes(graph, current, std::max(2u, options.clustersPerNode), sourceVertexCount,
+                        &graphPositionIds, &groupLastOwner, &groupTouchedOwners);
         struct GroupBuildResult {
             bool candidate = false;
             bool promoted = false;
             uint32_t attempts = 0;
             uint64_t seamLockedVertices = 0;
+            std::vector<GeneratedVertex> generatedVertices;
             LodGraphNode parent;
             SimplifyProfile profile;
         };
@@ -701,7 +843,7 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
         detail::parallelFor(groups.size(), [&](size_t groupIndex) {
             std::vector<uint32_t> const& members = groups[groupIndex];
             GroupBuildResult& result = results[groupIndex];
-            if (members.size() < 2) {
+            if (members.empty()) {
                 return;
             }
             result.candidate = true;
@@ -710,11 +852,11 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
             thread_local std::vector<uint32_t> memberTouched;
             thread_local std::vector<uint8_t> groupLockMask;
             thread_local std::vector<uint32_t> groupLocked;
-            if (memberUse.size() != mesh.positions.size()) {
-                memberUse.assign(mesh.positions.size(), 0);
+            if (memberUse.size() != sourceVertexCount) {
+                memberUse.assign(sourceVertexCount, 0);
             }
-            if (groupLockMask.size() != mesh.positions.size()) {
-                groupLockMask.assign(mesh.positions.size(), 0);
+            if (groupLockMask.size() != levelVertexCount) {
+                groupLockMask.assign(levelVertexCount, 0);
             }
             for (uint32_t vertex: groupLocked) {
                 groupLockMask[vertex] = 0;
@@ -733,23 +875,35 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
                 combined.insert(combined.end(), indices.begin(), indices.end());
             }
 
+            auto positionOf = [&graphPositionIds](uint32_t vertex) {
+                return vertex < graphPositionIds.size() ? graphPositionIds[vertex] : vertex;
+            };
+            std::vector<uint32_t> memberVertices;
             for (uint32_t member: members) {
                 std::vector<uint32_t> vertices = graph.nodes[member].indices;
                 std::sort(vertices.begin(), vertices.end());
                 vertices.erase(std::unique(vertices.begin(), vertices.end()), vertices.end());
                 for (uint32_t vertex: vertices) {
-                    if (memberUse[vertex] == 0) {
-                        memberTouched.push_back(vertex);
+                    uint32_t const position = positionOf(vertex);
+                    if (position >= sourceVertexCount) {
+                        continue;
                     }
-                    memberUse[vertex] += 1;
+                    if (memberUse[position] == 0) {
+                        memberTouched.push_back(position);
+                    }
+                    memberUse[position] += 1;
+                    memberVertices.push_back(vertex);
                 }
             }
-            for (uint32_t vertex: memberTouched) {
-                if (vertexLeafUse[vertex] > memberUse[vertex]) {
+            for (uint32_t vertex: memberVertices) {
+                uint32_t const position = positionOf(vertex);
+                if (position < sourceVertexCount && vertexLeafUse[position] > memberUse[position]) {
                     groupLockMask[vertex] = 1;
                     groupLocked.push_back(vertex);
                 }
-                memberUse[vertex] = 0;
+            }
+            for (uint32_t position: memberTouched) {
+                memberUse[position] = 0;
             }
             memberTouched.clear();
             result.seamLockedVertices = groupLocked.size();
@@ -758,13 +912,24 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
                     (size_t(double(combined.size()) * double(options.ratio)) / 3) * 3);
             SimplifyOptions localOptions = simplifyOptions;
             localOptions.lockedVertices = &groupLockMask;
+            localOptions.vertexPositionIds = &graphPositionIds;
             LodLevel simplified;
-            simplifyIndices(mesh, combined, target, localOptions, &simplified, &result.profile);
+            simplifyIndices(graphMesh, combined, target, localOptions, &simplified,
+                    &result.profile);
             result.attempts = simplified.attempts;
             if (!simplified.simplified || simplified.indices.size() >= combined.size()) {
                 return;
             }
+            // A single-member group is a chain level: it continues simplifying a node that has
+            // no siblings left to merge with. Require a real reduction so a nearly exhausted
+            // cluster does not add a level (and a full set of generated vertices) for a handful
+            // of triangles. Multi-member groups are still allowed to reduce as little as the
+            // quality gate accepts, because their main job is to unlock interior edges.
+            if (members.size() == 1 && simplified.indices.size() + 6 > combined.size()) {
+                return;
+            }
             result.promoted = true;
+            result.generatedVertices = std::move(simplified.generatedVertices);
 
             LodGraphNode parent;
             parent.level = level;
@@ -809,15 +974,51 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
                 stats->groupSimplifyCalls += 1;
                 stats->groupSimplifyAttempts += result.attempts;
                 stats->groupSimplify.attributeQemSeconds += result.profile.attributeQemSeconds;
+                stats->groupSimplify.cornerSeconds += result.profile.cornerSeconds;
+                stats->groupSimplify.cornerSetupSeconds += result.profile.cornerSetupSeconds;
+                stats->groupSimplify.cornerEvaluateSeconds += result.profile.cornerEvaluateSeconds;
+                stats->groupSimplify.cornerEvaluateTopologySeconds +=
+                        result.profile.cornerEvaluateTopologySeconds;
+                stats->groupSimplify.cornerTopologyNeighborSeconds +=
+                        result.profile.cornerTopologyNeighborSeconds;
+                stats->groupSimplify.cornerTopologyTriangleSeconds +=
+                        result.profile.cornerTopologyTriangleSeconds;
+                stats->groupSimplify.cornerTopologyLocalTriangleSeconds +=
+                        result.profile.cornerTopologyLocalTriangleSeconds;
+                stats->groupSimplify.cornerTopologyLocalEdgeSeconds +=
+                        result.profile.cornerTopologyLocalEdgeSeconds;
+                stats->groupSimplify.cornerEvaluateTargetSeconds +=
+                        result.profile.cornerEvaluateTargetSeconds;
+                stats->groupSimplify.cornerApplySeconds += result.profile.cornerApplySeconds;
+                stats->groupSimplify.cornerEvaluations += result.profile.cornerEvaluations;
+                stats->groupSimplify.cornerPlacementTests += result.profile.cornerPlacementTests;
+                stats->groupSimplify.cornerApplied += result.profile.cornerApplied;
                 stats->groupSimplify.meshoptSeconds += result.profile.meshoptSeconds;
                 stats->groupSimplify.candidateGateSeconds += result.profile.candidateGateSeconds;
+                stats->groupSimplify.candidateCleanupSeconds +=
+                        result.profile.candidateCleanupSeconds;
+                stats->groupSimplify.candidateSliverSeconds +=
+                        result.profile.candidateSliverSeconds;
+                stats->groupSimplify.candidateErrorSeconds += result.profile.candidateErrorSeconds;
+                stats->groupSimplify.candidateTopologySeconds +=
+                        result.profile.candidateTopologySeconds;
+                stats->groupSimplify.weldedTopologySeconds += result.profile.weldedTopologySeconds;
                 stats->groupSimplify.boundaryCheckSeconds += result.profile.boundaryCheckSeconds;
                 stats->groupSimplify.lockedMaskSeconds += result.profile.lockedMaskSeconds;
+                stats->groupSimplify.extendedMeshSeconds += result.profile.extendedMeshSeconds;
                 stats->groupSimplify.calls += result.profile.calls;
                 stats->groupSimplify.attempts += result.profile.attempts;
                 stats->groupSimplify.attributeCandidates += result.profile.attributeCandidates;
+                stats->groupSimplify.cornerCandidates += result.profile.cornerCandidates;
                 stats->groupSimplify.meshoptCandidates += result.profile.meshoptCandidates;
                 stats->groupSimplify.accepted += result.profile.accepted;
+                stats->groupSimplify.extendedMeshCopies += result.profile.extendedMeshCopies;
+                stats->groupSimplify.rejectedNotSimplified += result.profile.rejectedNotSimplified;
+                stats->groupSimplify.rejectedTopology += result.profile.rejectedTopology;
+                stats->groupSimplify.rejectedGeometry += result.profile.rejectedGeometry;
+                stats->groupSimplify.rejectedAttributes += result.profile.rejectedAttributes;
+                stats->groupSimplify.rejectedBoundary += result.profile.rejectedBoundary;
+                stats->groupSimplify.rejectedLocked += result.profile.rejectedLocked;
             }
             if (!result.promoted) {
                 next.insert(next.end(), members.begin(), members.end());
@@ -826,6 +1027,9 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
             if (stats != nullptr) {
                 stats->groupSimplifyAccepted += 1;
             }
+            appendGeneratedVerticesToGraph(&graph, &graphMesh, result.generatedVertices,
+                    levelVertexCount, &generatedLookup, &graphPositions, &graphPositionIds,
+                    &result.parent.indices);
             uint32_t const id = uint32_t(graph.nodes.size());
             for (uint32_t member: members) {
                 graph.nodes[member].parent = id;
@@ -844,8 +1048,26 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
         current = std::move(next);
     }
 
+    // Keep one canonical id per exact position. Source seam duplicates and generated vertices
+    // that landed on the same point then compare equal during cut assembly, which is what lets
+    // selection drop faces produced twice from different attribute vertices.
+    graph.positionIds.resize(graph.vertexCount, 0);
+    for (uint32_t i = 0; i < sourceVertexCount && i < graph.vertexCount; ++i) {
+        auto const position = graphPositions.find(positionKey(mesh.positions[i]));
+        graph.positionIds[i] = position != graphPositions.end() ? position->second : i;
+    }
+    for (size_t g = 0; g < graph.generatedVertices.size(); ++g) {
+        uint32_t const vertex = sourceVertexCount + uint32_t(g);
+        if (vertex >= graph.vertexCount) {
+            break;
+        }
+        auto const position = graphPositions.find(positionKey(graph.generatedVertices[g].position));
+        graph.positionIds[vertex] = position != graphPositions.end() ? position->second : vertex;
+    }
+
     graph.roots = current.empty() ? graph.leaves : current;
     if (stats != nullptr) {
+        stats->generatedVertices = graph.generatedVertices.size();
         stats->totalSeconds = secondsSince(buildStart);
     }
     return graph;
@@ -856,6 +1078,84 @@ LodGraphSelection selectLodGraph(LodGraph const& graph, ViewCamera const& camera
     return selectImpl(graph, camera, thresholdPx);
 }
 
+LodGraphSelection assembleLodSelection(LodGraph const& graph, ViewCamera const& camera,
+        std::vector<uint32_t> nodes, uint64_t culledTriangles) {
+    CameraBasis const basis = makeBasis(camera);
+    NodeMetrics const metrics = makeNodeMetrics(graph, camera, basis);
+    CutAtError cut;
+    cut.culledTriangles = culledTriangles;
+    cut.nodes.reserve(nodes.size());
+    for (uint32_t nodeId: nodes) {
+        if (nodeId >= graph.nodes.size()) {
+            continue;
+        }
+        LodGraphNode const& node = graph.nodes[nodeId];
+        if (metrics.culled[nodeId] != 0) {
+            continue;
+        }
+        cut.nodes.push_back(nodeId);
+        cut.triangles += node.triangleCount();
+    }
+    return selectionFromCut(graph, metrics, cut);
+}
+
+LodGraphCutGeometry compactLodSelection(LodGraph const& graph, LodGraphSelection const& selection,
+        LodGraphCompactOptions const& options) {
+    LodGraphCutGeometry geometry;
+    uint32_t const graphSourceCount = graph.sourceVertexCount();
+    geometry.indices = selection.indices;
+    geometry.triangles = uint32_t(selection.indices.size() / 3);
+
+    uint32_t sourceCount = graphSourceCount;
+    if (options.compactSourceVertices) {
+        // Source ids are dense, so a flat table beats a hash map. The table is thread-local to
+        // keep a committed cut allocation-light when a renderer rebuilds it repeatedly.
+        thread_local std::vector<int32_t> sourceRemap;
+        sourceRemap.assign(graphSourceCount, -1);
+        geometry.sourceVertexIds.reserve(
+                std::min(size_t(graphSourceCount), geometry.indices.size()));
+        for (uint32_t& vertex: geometry.indices) {
+            if (vertex >= graphSourceCount) {
+                continue;
+            }
+            int32_t& compact = sourceRemap[vertex];
+            if (compact < 0) {
+                compact = int32_t(geometry.sourceVertexIds.size());
+                geometry.sourceVertexIds.push_back(vertex);
+            }
+            vertex = uint32_t(compact);
+        }
+        sourceCount = uint32_t(geometry.sourceVertexIds.size());
+    }
+
+    size_t const generatedCount = graph.generatedVertices.size();
+    if (generatedCount != 0 && !geometry.indices.empty()) {
+        thread_local std::vector<int32_t> remap;
+        remap.assign(generatedCount, -1);
+        geometry.generatedVertices.reserve(std::min(generatedCount, size_t(geometry.triangles)));
+        for (uint32_t& vertex: geometry.indices) {
+            if (vertex < graphSourceCount) {
+                continue;
+            }
+            size_t const local = size_t(vertex - graphSourceCount);
+            if (local >= generatedCount) {
+                // Selection assembly only emits ids that exist in the graph. Keep the input intact
+                // instead of silently folding a malformed id onto a valid vertex.
+                continue;
+            }
+            int32_t& compact = remap[local];
+            if (compact < 0) {
+                compact = int32_t(geometry.generatedVertices.size());
+                geometry.generatedVertices.push_back(graph.generatedVertices[local]);
+                geometry.generatedSourceIds.push_back(uint32_t(local));
+            }
+            vertex = sourceCount + uint32_t(compact);
+        }
+    }
+    geometry.sourceVertexCount = sourceCount;
+    geometry.vertexCount = sourceCount + uint32_t(geometry.generatedVertices.size());
+    return geometry;
+}
 LodGraphCut selectLodGraphCut(LodGraph const& graph, ViewCamera const& camera, float thresholdPx) {
     LodGraphCut cut;
     cut.baseTriangles = graph.baseTriangles;
@@ -863,13 +1163,14 @@ LodGraphCut selectLodGraphCut(LodGraph const& graph, ViewCamera const& camera, f
     cut.trianglesPerLevel.assign(graph.levelCount, 0);
 
     CameraBasis const basis = makeBasis(camera);
+    ScreenErrorProjection const projection = makeScreenErrorProjection(camera);
     std::function<void(uint32_t)> visit = [&](uint32_t nodeId) {
         LodGraphNode const& node = graph.nodes[nodeId];
         if (basis.valid && sphereOutsideFrustum(node.bounds, camera, basis)) {
             cut.culledTriangles += node.baseTriangles;
             return;
         }
-        float const screenError = basis.valid ? screenErrorForNode(node, camera, basis) : 0.0f;
+        float const screenError = basis.valid ? screenErrorForNode(node, projection) : 0.0f;
         if (!node.children.empty() && screenError > thresholdPx) {
             for (uint32_t child: node.children) {
                 visit(child);

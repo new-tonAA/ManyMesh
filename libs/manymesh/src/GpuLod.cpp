@@ -16,17 +16,22 @@
 
 #include <manymesh/GpuLod.h>
 
+#include "GpuLodCutShaders.h"
+
 #include <algorithm>
+#include <cmath>
 
 namespace filament {
 namespace manymesh {
 
 GpuLodBuffer flattenLodGraph(LodGraph const& graph) {
     GpuLodBuffer buffer;
+    buffer.vertexCount = graph.vertexCount;
+    buffer.generatedVertices = graph.generatedVertices;
     buffer.nodes.reserve(graph.nodes.size());
     size_t indexCount = 0;
     size_t childCount = 0;
-    for (LodGraphNode const& node : graph.nodes) {
+    for (LodGraphNode const& node: graph.nodes) {
         indexCount += node.indices.size();
         childCount += node.children.size();
     }
@@ -55,16 +60,15 @@ GpuLodBuffer flattenLodGraph(LodGraph const& graph) {
         node.level = source.level;
         node.materialId = source.materialId;
         node.submeshId = source.submeshId;
-        node.flags = (source.parent == UINT32_MAX ? GPU_LOD_NODE_ROOT : 0u)
-                | (source.children.empty() ? GPU_LOD_NODE_LEAF : 0u)
-                | (source.simplified ? GPU_LOD_NODE_SIMPLIFIED : 0u);
+        node.flags = (source.parent == UINT32_MAX ? GPU_LOD_NODE_ROOT : 0u) |
+                     (source.children.empty() ? GPU_LOD_NODE_LEAF : 0u) |
+                     (source.simplified ? GPU_LOD_NODE_SIMPLIFIED : 0u);
         node.parent = source.parent;
-        node.baseTriangles = source.baseTriangles > UINT32_MAX
-                ? UINT32_MAX
-                : uint32_t(source.baseTriangles);
+        node.baseTriangles =
+                source.baseTriangles > UINT32_MAX ? UINT32_MAX : uint32_t(source.baseTriangles);
         buffer.indices.insert(buffer.indices.end(), source.indices.begin(), source.indices.end());
-        buffer.children.insert(buffer.children.end(),
-                source.children.begin(), source.children.end());
+        buffer.children.insert(buffer.children.end(), source.children.begin(),
+                source.children.end());
         buffer.nodes.push_back(node);
     }
     return buffer;
@@ -74,7 +78,7 @@ std::vector<GpuDrawIndexedIndirectCommand> buildIndirectDraws(GpuLodBuffer const
         LodGraphSelection const& selection) {
     std::vector<GpuDrawIndexedIndirectCommand> commands;
     commands.reserve(selection.nodes.size());
-    for (uint32_t nodeId : selection.nodes) {
+    for (uint32_t nodeId: selection.nodes) {
         if (nodeId >= buffer.nodes.size()) {
             continue;
         }
@@ -91,6 +95,44 @@ std::vector<GpuDrawIndexedIndirectCommand> buildIndirectDraws(GpuLodBuffer const
         commands.push_back(command);
     }
     return commands;
+}
+
+GpuLodCutParams makeGpuLodCutParams(ViewCamera const& camera, uint32_t nodeCount,
+        float thresholdPx) noexcept {
+    GpuLodCutParams params;
+    math::float3 const toTarget = camera.target - camera.eye;
+    float const targetLength = length(toTarget);
+    math::float3 const forward =
+            targetLength > 1e-8f ? toTarget / targetLength : math::float3{ 0.0f, 0.0f, -1.0f };
+    math::float3 const right = normalize(cross(forward, camera.up));
+    math::float3 const up = cross(right, forward);
+    float const tanHalfFov = std::tan(camera.fovY * 0.5f);
+
+    params.eyeX = camera.eye.x;
+    params.eyeY = camera.eye.y;
+    params.eyeZ = camera.eye.z;
+    params.nearPlane = camera.near;
+    params.forwardX = forward.x;
+    params.forwardY = forward.y;
+    params.forwardZ = forward.z;
+    params.farPlane = camera.far;
+    params.rightX = right.x;
+    params.rightY = right.y;
+    params.rightZ = right.z;
+    params.tanHalfFov = tanHalfFov;
+    params.upX = up.x;
+    params.upY = up.y;
+    params.upZ = up.z;
+    params.aspect = float(camera.screenWidth) / float(std::max(camera.screenHeight, 1u));
+    params.threshold = thresholdPx;
+    params.pixelsPerRadian = float(camera.screenHeight) / (2.0f * tanHalfFov);
+    params.nodeCount = nodeCount;
+    params.maxSelectedNodes = nodeCount;
+    return params;
+}
+
+char const* gpuLodCutShaderSource(bool mobile) noexcept {
+    return mobile ? detail::kGpuLodCutGles310 : detail::kGpuLodCutGlsl450;
 }
 
 } // namespace manymesh

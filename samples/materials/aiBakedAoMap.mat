@@ -1,0 +1,52 @@
+material {
+    name : AiBakedAoMap,
+    shadingModel : lit,
+    specularAntiAliasing : true,
+    requires : [
+        uv0
+    ],
+    parameters : [
+        {
+            type : float3,
+            name : baseColor
+        },
+        {
+            type : float,
+            name : metallic
+        },
+        {
+            type : float,
+            name : roughness
+        },
+        {
+            type : float,
+            name : reflectance
+        },
+        {
+            type : float,
+            name : aoStrength
+        },
+        {
+            type : sampler2d,
+            name : aoMap
+        }
+    ],
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        // The map stores source-mesh visibility in R. It has texel density instead of vertex
+        // density, so it keeps the small cavities (eye sockets, nostrils, folds) that a coarse
+        // LOD interpolates away. Multiplying baseColor keeps the effect visible under
+        // direct-only lighting; ambientOcclusion is the physically meaningful term in a full
+        // IBL pipeline.
+        float ao = saturate(texture(materialParams_aoMap, getUV0()).r);
+        float compensation = mix(1.0, ao, saturate(materialParams.aoStrength));
+        material.baseColor.rgb = materialParams.baseColor * compensation;
+        material.metallic = materialParams.metallic;
+        material.roughness = materialParams.roughness;
+        material.reflectance = materialParams.reflectance;
+        material.ambientOcclusion = compensation;
+    }
+}
