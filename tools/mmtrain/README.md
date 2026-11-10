@@ -1,5 +1,128 @@
 # mmtrain
 
+## Equal-triangle LOD experiment
+
+`lod_oracle.py` measures whether an image reconstruction model changes which parts of a mesh
+benefit most from additional triangles. Capture needs Python 3.11 or later and native builds of
+`mmgeo` and `mm_bench`.
+Scoring needs NumPy and Pillow. To score with a frozen reconstruction model, also install
+PyTorch and supply a three-channel, 32-wide `Tiny` checkpoint trained with
+`--model tiny --scale 1 --no-error-map` on separate assets.
+
+```sh
+python tools/mmtrain/lod_oracle.py capture \
+    --mmgeo out/cmake-release/tools/mmgeo/mmgeo \
+    --mm-bench out/cmake-release/samples/mm_bench \
+    --mesh assets/models/monkey/monkey.obj assets/models/cloth/cloth.obj \
+    --out out/lod-oracle --ratio 0.60 --height 360 --views 8 --swaps 32
+python tools/mmtrain/lod_oracle.py score --capture out/lod-oracle \
+    --checkpoint out/m3/models/tiny_s1_no.pt --out out/lod-oracle/score.json
+```
+
+Pass the Windows `.exe` paths when using native Windows builds. Use a new capture directory
+for each geometry export. To prepare geometry before the renderer is built, omit
+`--mm-bench` from `capture` and then run
+`lod_oracle.py render --capture out/lod-oracle --mm-bench <renderer>`.
+Omit `--checkpoint` from `score` to measure identity reconstruction as a control.
+
+Each view starts from `selectLodGraphAtRatio`. A candidate splits a selected node and merges
+a disjoint set of selected siblings. Both changes must exchange the same number of triangles,
+and the exported triangle count is checked again after assembly and deduplication.
+`mmgeo --oracle-swaps N` samples candidates from both ends of a geometric ranking based on
+the change in projected error multiplied by projected bounding-sphere radius squared.
+The experiment is limited to these sampled one-step swaps. A view can yield zero swaps.
+
+Capture records binary, asset, graph, and camera hashes. Every candidate and its baseline use
+the same camera and an untextured material with shadows disabled. Scoring compares the
+baseline, the geometric choice, the raw image oracle, and the reconstruction oracle over the
+same candidate set. The oracles include the baseline as a legal no-op. They use full-frame RGB
+MSE against the full-detail mesh rendered at the same resolution. The score also records
+foreground-union MSE and the raw silhouette XOR divided by its union. For these
+flat-background captures, foreground
+is estimated by comparing RGB against the clear color.
+
+Two separate effects are reported. The gain over the baseline measures the opportunity for
+local triangle reallocation. The gain over the **raw oracle's choice evaluated after
+reconstruction** measures the additional opportunity specifically from reconstruction-aware
+ranking. These are offline results at equal submitted triangle counts. This protocol does
+not estimate device frame time or temporal stability.
+
+## Camera trajectory experiment
+
+Use `--arc-degrees` below 360 to sample an ordered camera arc while moving closer to the
+asset. The following settings reproduce the two budget conditions. Use the same assets and
+camera settings at both budgets.
+
+```sh
+for ratio in 0.55 0.75; do
+    run_dir="out/lod-arc-$ratio"
+    python tools/mmtrain/lod_oracle.py capture \
+        --mmgeo out/cmake-release/tools/mmgeo/mmgeo \
+        --mm-bench out/cmake-release/samples/mm_bench \
+        --mesh assets/models/monkey/monkey.obj assets/models/cloth/cloth.obj \
+            assets/models/torus/torus.obj assets/models/sphere/sphere.obj \
+            assets/models/rounded_cube/rounded_cube.obj \
+        --out "$run_dir" --ratio "$ratio" --height 216 --views 8 --swaps 6 \
+        --start-degrees 32 --arc-degrees 21
+    python tools/mmtrain/lod_oracle.py score --capture "$run_dir" \
+        --checkpoint out/m3/models/tiny_s1_no.pt --strengths 0 0.5 1 1.5 \
+        --out "$run_dir/score.json"
+done
+python tools/mmtrain/lod_sequence.py --score out/lod-arc-{0.55,0.75}/score.json \
+    --out out/lod-arc-summary.json
+```
+
+The sequence tool compares the current selector, a geometric swap score, and the per-frame
+RGB oracle. It also uses dynamic programming to find the lowest total RGB MSE across the
+sampled candidate paths. The image-guarded path requires RGB and silhouette errors to stay
+at or below the corresponding baseline values in every frame. It also limits the
+mean squared change in the screen-space RGB residual between consecutive frames to its
+baseline value. The all-guarded path adds the same constraint on triangle churn, measured
+as the symmetric difference of triangle IDs divided by their union. A baseline path is
+always feasible. The oracle sees reference images and the full trajectory.
+
+The temporal image metric subtracts the full-detail reference at each camera pose before
+measuring changes in residual. It is sensitive to motion of the error across the screen
+and does not track surface correspondences. Each strength scales the same frozen network's
+RGB residual before clipping. Report the additional PSNR from ranking at that strength
+against the raw oracle's choice evaluated at the same strength.
+
+## Predicting stable swaps
+
+Capture a second arc with the same settings and `--start-degrees 212` in a separate output
+directory at each budget. Score it with `lod_oracle.py score`. For predictor training alone,
+omit the checkpoint and strength options when scoring both arcs.
+
+```sh
+python tools/mmtrain/lod_predictor.py \
+    --score out/lod-arc-{0.55,0.75}/score.json out/lod-opposite-{0.55,0.75}/score.json \
+    --out out/lod-predictor.json
+```
+
+Each fold reserves a whole source asset by content hash. All its cameras and budgets are
+held out, including during feature normalization. Training balances assets, then frames,
+then swap candidates. The ridge regressor and the 16-unit MLP predict a bounded utility
+computed from RGB PSNR gain and a penalty for increased silhouette error. Inputs are the
+projected errors and bounding radii for the split and merge, the triangle fraction exchanged,
+the requested budget, and the geometric score. The report stores the normalization and
+weights from each fold. It requires NumPy, Pillow, and PyTorch.
+
+During replay, the no-op has score zero. The causal policy takes the previous selected cut
+and the current candidates. It permits a candidate if its triangle churn from that cut is
+at most the churn of falling back to the current baseline. It discounts a candidate's
+predicted utility for changing triangles and requires a fixed score margin for swaps.
+Only the training and evaluation stages read reference pixels. The same replay also runs
+the geometric score under the churn limit and the MLP without history.
+The utility oracle uses the same causal rule with measured utility instead of a
+prediction. It uses reference images and serves only as a diagnostic.
+
+The churn limit is relative to the feasible fallback from the actual previous selection.
+It can differ from the transition between the two baseline frames. The report compares
+both paths using the same reference images and metrics. This is a CPU replay with the
+sampled candidate sets, before implementation in the live Filament selection loop.
+
+## Image reconstruction training
+
 Trains and compares reconstruction networks for ManyMesh: coarse geometry goes in, a full
 quality picture is supposed to come out.
 

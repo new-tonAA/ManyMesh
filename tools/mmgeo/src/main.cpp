@@ -80,6 +80,7 @@ struct Options {
     //! Extra uniform-ratio cuts exported from the same DAG build, to match the triangle count
     //! of a screen-error cut without rebuilding.
     std::vector<float> targetRatioCuts;
+    uint32_t oracleSwaps = 0;
     bool writeDag = true;
     bool writeVisibility = false;
     bool attributeQem = true;
@@ -164,6 +165,8 @@ Options:
                        exported as selected_px_<P>.ply from the same DAG build
   --target-ratio-cut R Comma separated uniform ratios; each one is exported as
                        selected_ratio_<R>.ply from the same DAG build
+  --oracle-swaps N     export up to N equal-triangle split/merge candidates for the selected cut
+                       (DAG mode; 0 disables, maximum 256)
   --write-dag 0|1      write lod_graph.mmb and lod_graph.json (default: 1)
   --visibility 0|1     write a software visibility buffer for the DAG selection (default: 0)
   --attribute-qem 0|1  use position+normal+UV QEM for small units (default: 1)
@@ -808,6 +811,159 @@ GeometryOutput outputFromDagSelection(LodGraphSelection const& selection) {
     return result;
 }
 
+bool exportOracleSwaps(Mesh const& mesh, Mesh const& dagMesh, LodGraph const& graph,
+        ViewCamera const& camera, LodGraphSelection const& selection, Options const& options) {
+    std::vector<uint32_t> sortedNodes = selection.nodes;
+    std::sort(sortedNodes.begin(), sortedNodes.end());
+    LodGraphSelection const baseline = assembleLodSelection(graph, camera, sortedNodes);
+    std::vector<bool> active(graph.nodes.size());
+    std::set<uint32_t> parents;
+    for (uint32_t const id: baseline.nodes) {
+        active[id] = true;
+        if (graph.nodes[id].parent != UINT32_MAX) {
+            parents.insert(graph.nodes[id].parent);
+        }
+    }
+
+    struct Change {
+        uint32_t id;
+        float error;
+        float childError;
+        float radiusPx;
+        float score;
+    };
+    ScreenErrorProjection const projection = makeScreenErrorProjection(camera);
+    auto measure = [&](uint32_t id, size_t* delta, Change* change) {
+        LodGraphNode const& node = graph.nodes[id];
+        size_t childTriangles = 0;
+        float childError = 0.0f;
+        for (uint32_t const childId: node.children) {
+            LodGraphNode const& child = graph.nodes[childId];
+            childTriangles += child.triangleCount();
+            childError = std::max(childError, screenSpaceErrorForSphere(
+                    child.accumulatedError, child.bounds, projection));
+        }
+        if (childTriangles <= node.triangleCount()) {
+            return false;
+        }
+        *delta = childTriangles - node.triangleCount();
+        float const error = screenSpaceErrorForSphere(node.accumulatedError,
+                node.bounds, projection);
+        float const radius = screenSpaceErrorForSphere(node.bounds.radius, node.bounds, projection);
+        *change = { id, error, childError, radius, (error - childError) * radius * radius };
+        return std::isfinite(change->score);
+    };
+
+    std::map<size_t, std::vector<Change>> merges;
+    for (uint32_t const id: parents) {
+        auto const& children = graph.nodes[id].children;
+        if (std::all_of(children.begin(), children.end(),
+                    [&](uint32_t child) { return active[child]; })) {
+            size_t delta;
+            Change change;
+            if (measure(id, &delta, &change)) {
+                merges[delta].push_back(change);
+            }
+        }
+    }
+    for (auto& entry: merges) {
+        std::stable_sort(entry.second.begin(), entry.second.end(),
+                [](Change const& a, Change const& b) { return a.score < b.score; });
+    }
+
+    struct Swap {
+        Change split;
+        Change merge;
+        size_t delta;
+    };
+    std::vector<Swap> swaps;
+    for (uint32_t const id: baseline.nodes) {
+        size_t delta;
+        Change split;
+        if (!measure(id, &delta, &split)) {
+            continue;
+        }
+        auto const it = merges.find(delta);
+        if (it == merges.end()) {
+            continue;
+        }
+        // Sample both an inexpensive and an expensive merge. This gives the experiment
+        // variation in geometric score without generating the full Cartesian product.
+        Change const* cheapest = nullptr;
+        Change const* priciest = nullptr;
+        for (Change const& merge: it->second) {
+            if (graph.nodes[id].parent != merge.id) {
+                cheapest = &merge;
+                break;
+            }
+        }
+        for (auto merge = it->second.rbegin(); merge != it->second.rend(); ++merge) {
+            if (graph.nodes[id].parent != merge->id) {
+                priciest = &*merge;
+                break;
+            }
+        }
+        if (cheapest) {
+            swaps.push_back({ split, *cheapest, delta });
+            if (priciest != cheapest) {
+                swaps.push_back({ split, *priciest, delta });
+            }
+        }
+    }
+    std::stable_sort(swaps.begin(), swaps.end(), [](Swap const& a, Swap const& b) {
+        return a.split.score - a.merge.score > b.split.score - b.merge.score;
+    });
+
+    std::ofstream manifest(join(options.outDir, "oracle.csv"));
+    if (!manifest) {
+        return false;
+    }
+    manifest.precision(std::numeric_limits<float>::max_digits10);
+    manifest << "stem,triangles,split,merge,exchanged_triangles,split_px,split_child_px,"
+                "split_radius_px,merge_px,merge_child_px,merge_radius_px,geometric_score\n";
+    GeometryOutput reference{ mesh.indices, mesh.materialIds, mesh.submeshIds };
+    dumpMesh(mesh, reference, options, "oracle_reference");
+    dumpMesh(dagMesh, outputFromDagSelection(baseline), options, "oracle_baseline");
+    manifest << "oracle_reference," << reference.indices.size() / 3 << ",,,,,,,,,,\n";
+    manifest << "oracle_baseline," << baseline.indices.size() / 3 << ",,,,,,,,,,\n";
+
+    uint32_t exported = 0;
+    for (size_t i = 0; i < swaps.size(); ++i) {
+        // Alternate the ends of the geometric ranking so the dataset contains both
+        // plausible improvements and deliberately unfavorable reallocations.
+        Swap const& swap = swaps[i % 2 == 0 ? i / 2 : swaps.size() - 1 - i / 2];
+        std::vector<uint32_t> nodes;
+        for (uint32_t const id: baseline.nodes) {
+            if (id != swap.split.id && graph.nodes[id].parent != swap.merge.id) {
+                nodes.push_back(id);
+            }
+        }
+        auto const& children = graph.nodes[swap.split.id].children;
+        nodes.insert(nodes.end(), children.begin(), children.end());
+        nodes.push_back(swap.merge.id);
+        std::sort(nodes.begin(), nodes.end());
+        LodGraphSelection const candidate = assembleLodSelection(graph, camera, nodes);
+        // Frustum culling and position deduplication can change the actual triangle count.
+        if (candidate.nodes != nodes || candidate.indices.size() != baseline.indices.size()) {
+            continue;
+        }
+        std::string const stem = "oracle_swap_" + std::to_string(exported);
+        dumpMesh(dagMesh, outputFromDagSelection(candidate), options, stem);
+        manifest << stem << ',' << candidate.indices.size() / 3 << ',' << swap.split.id << ','
+                 << swap.merge.id << ',' << swap.delta << ',' << swap.split.error << ','
+                 << swap.split.childError << ',' << swap.split.radiusPx << ',' << swap.merge.error
+                 << ',' << swap.merge.childError << ',' << swap.merge.radiusPx << ','
+                 << swap.split.score - swap.merge.score << '\n';
+        if (++exported == options.oracleSwaps) {
+            break;
+        }
+    }
+    printf("  oracle: exported %u equal-triangle swaps at %zu triangles\n", exported,
+            baseline.indices.size() / 3);
+    manifest.close();
+    return bool(manifest);
+}
+
 void writeDagJson(Mesh const& mesh, LodGraph const& graph, LodGraphSelection const& selection,
         Options const& options, float maxScreenError, char const* path) {
     std::ofstream file(path);
@@ -1311,6 +1467,7 @@ int handleArguments(int argc, char* argv[], Options* options) {
         { "target-ratio", utils::getopt::required_argument, 0, 'R' },
         { "screen-error-cut", utils::getopt::required_argument, 0, 'i' },
         { "target-ratio-cut", utils::getopt::required_argument, 0, 'k' },
+        { "oracle-swaps", utils::getopt::required_argument, 0, 256 },
         { "write-dag", utils::getopt::required_argument, 0, 'J' },
         { "visibility", utils::getopt::required_argument, 0, 'V' },
         { "attribute-qem", utils::getopt::required_argument, 0, 'a' },
@@ -1351,6 +1508,16 @@ int handleArguments(int argc, char* argv[], Options* options) {
     while ((opt = utils::getopt::getopt_long(argc, argv, OPTSTR, OPTIONS, &optionIndex)) >= 0) {
         char const* arg = utils::getopt::optarg;
         switch (opt) {
+            case 256: {
+                char* end = nullptr;
+                unsigned long const count = std::strtoul(arg, &end, 10);
+                if (end == arg || *end != '\0' || count > 256) {
+                    std::cerr << "--oracle-swaps expects an integer in [0, 256]" << std::endl;
+                    return -1;
+                }
+                options->oracleSwaps = uint32_t(count);
+                break;
+            }
             case '?':
                 std::cerr << "Unknown option. Run with --help for the list." << std::endl;
                 return -1;
@@ -1555,6 +1722,10 @@ int main(int argc, char* argv[]) {
 
     int const optionIndex = handleArguments(argc, argv, &options);
     if (optionIndex < 0) {
+        return 1;
+    }
+    if (options.oracleSwaps && !options.dagMode) {
+        std::cerr << "--oracle-swaps requires --mode dag" << std::endl;
         return 1;
     }
 
@@ -1785,6 +1956,11 @@ int main(int argc, char* argv[]) {
                         ? selectLodGraphAtRatio(graph, camera, options.targetTriangleRatio,
                                   std::numeric_limits<float>::infinity())
                         : selectLodGraphTier(graph, camera, tier);
+        if (options.oracleSwaps && !exportOracleSwaps(mesh, dagMesh, graph, camera,
+                    selection, options)) {
+            std::cerr << "Could not write oracle experiment manifest." << std::endl;
+            return 1;
+        }
         LodGraphCompactOptions compactOptions;
         compactOptions.compactSourceVertices = true;
         LodGraphCutGeometry const compacted = compactLodSelection(graph, selection, compactOptions);
