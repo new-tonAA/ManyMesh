@@ -256,6 +256,8 @@ Epic 的 SIGGRAPH 2021 资料指出，Nanite 的物体空间标量简化误差�
 
 一层和两层参考在这 160 帧中选择了相同路径。每个有候选的帧平均有 5.56 个交换。共享栅格的三角形数量中位数为 6,765，逐一完整栅格化各切分的合计中位数为 54,872。相对于所有候选并集，一层参考额外使用 117 个三角形的中位数。Python 原型中位打分时间为 116 毫秒，包含两层参考与全部候选的栅格化，不能据此声称实时。
 
-另外用未参与这组开发的 Pirate、Shader Ball、Lucy，在新起点 118° 和 42° 相机弧线上采集 24 帧。Pirate 的 8 帧没有单次等面数交换。Shader Ball 和 Lucy 各有 8 帧、96 个候选。对这 24 帧，几何打分无超过 ±0.01 dB 的变化。局部参考仅轮廓产生 2 帧改善、1 帧退化；加入深度产生 **3 帧改善、2 帧退化**，整组平均 +0.103 dB，中位 0 dB。Lucy 单条轨迹平均 +0.323 dB，Shader Ball 平均 −0.016 dB。加入深度的路径有 0 帧几何轮廓退化、2 条时间边比基线更差。完整参考的逐帧严格选择有 11 帧改善、0 帧退化，说明这批候选仍有剩余机会。
+另外用未参与这组开发的 Pirate、Shader Ball、Lucy，在新起点 118° 和 42° 相机弧线上采集 24 帧。Pirate 的 8 帧没有单次等面数交换。Shader Ball 和 Lucy 各有 8 帧、96 个候选。对这 24 帧，几何打分无超过 ±0.01 dB 的变化。局部参考仅轮廓产生 2 帧改善、1 帧退化；加入深度产生 **3 帧改善、2 帧退化**，整组平均 +0.103 dB，中位 0 dB。Lucy 单条轨迹平均 +0.323 dB，Shader Ball 平均 −0.016 dB。Shader Ball 的两个退化帧各损失 −0.075 和 −0.051 dB。加入深度的路径有 0 帧几何轮廓退化、2 条时间边比基线更差。完整参考的逐帧严格选择有 11 帧改善、0 帧退化，说明这批候选仍有剩余机会。
 
 新资产有候选帧的共享栅格三角形中位数为 33,589，逐切分完整栅格化的合计中位数为 469,484。Python 原型中位打分时间约 631 毫秒。额外数据和逐帧路径保存在 `out/lod-proxy-results/pilot.json` 与 `out/lod-proxy-results/unseen.json`。两个代理参考深度在新资产中也选出相同路径。此实验表明少量局部细化包含有用的方向和遮挡信号，同时暴露出无等面数配对、材质影响以及计算成本三个待解决问题。现阶段没有训练网络，也没有在生产选择器上达到实时性能。
+
+继续查证发现，FastMesh 已做实时视角相关多分辨率网格和误差度量，Hoppe 的 progressive mesh 也早已按视角选择性细化。NVIDIA 的 Appearance-Driven Simplification 则直接优化图像外观，并能联合处理材质与网格。由此，局部渲染误差、逐视角网格复杂度分配、法线或材质感知都不能单独作为本工作的首创。当前最窄的研究问题是，能否把多候选共享的局部细化参考用于**硬三角形预算下的一组层次合法重分配**，同时预测跨帧成本并在有限的 GPU 代价内取得可复现收益。已有原型只测单对等面数交换，未证明这一点。 [FastMesh](https://escholarship.org/uc/item/9s30k0b0) · [View-Dependent Refinement of Progressive Meshes](https://hhoppe.com/proj/vdrpm/) · [Appearance-Driven Simplification](https://research.nvidia.com/labs/rtr/publication/hasselgren2021diffmodeling/)
