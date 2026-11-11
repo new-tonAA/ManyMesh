@@ -121,6 +121,42 @@ It can differ from the transition between the two baseline frames. The report co
 both paths using the same reference images and metrics. This is a CPU replay with the
 sampled candidate sets, before implementation in the live Filament selection loop.
 
+## Visibility feature ablation
+
+Use the same captures and scores as the stable-swap experiment.
+
+```sh
+python tools/mmtrain/lod_visibility.py \
+    --capture out/lod-arc-{0.55,0.75} out/lod-opposite-{0.55,0.75} \
+    --out out/lod-visibility.json
+python tools/mmtrain/lod_predictor.py \
+    --score out/lod-arc-{0.55,0.75}/score.json out/lod-opposite-{0.55,0.75}/score.json \
+    --visibility out/lod-visibility.json --out out/lod-predictor-visibility.json
+```
+
+The extractor reads the camera and triangle lists from the current frame. It verifies
+that each candidate uses the same vertex space and triangle count as its baseline. It
+rasterizes the baseline once, retains the fragments from unchanged triangles, and
+rasterizes only the added triangles for each candidate. The resulting features describe
+the visible area and occlusion of removed and added triangles, silhouette gain and loss,
+boundary contact, and the change in relative depth. Capture manifest hashes and candidate
+names tie the features to the scores.
+
+This is a two-sided software depth pass at capture resolution with the same camera
+projection as the capture. It expects the framed assets to lie between the camera planes.
+It uses geometry and camera data without reading any images. The predictor appends
+the visibility features to its existing input and uses the same folds and training settings.
+Run the predictor without `--visibility` for the paired geometry-only control.
+
+For geometric silhouette supervision, pass `--silhouette-out out/lod-silhouette.json`
+to the extractor and `--silhouette out/lod-silhouette.json` to both predictor runs.
+The optional label pass rasterizes the full-detail geometry separately and computes
+the silhouette XOR divided by the union. It writes those reference-dependent values
+to a separate file for training and evaluation. The visibility feature output is
+identical in either mode. The earlier RGB mask remains available for comparisons
+with previous runs. Shaded pixels can match the clear color even on visible geometry,
+so the RGB mask is an approximation of coverage.
+
 ## Image reconstruction training
 
 Trains and compares reconstruction networks for ManyMesh: coarse geometry goes in, a full

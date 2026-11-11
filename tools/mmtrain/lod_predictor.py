@@ -27,7 +27,9 @@ import numpy as np
 import torch
 from torch import nn
 
+from lod_oracle import digest
 from lod_sequence import evaluate_trajectory, psnr_gain
+from lod_visibility import SILHOUETTE_METRIC, VISIBILITY_FIELDS
 
 
 PROJECTION_FIELDS = ("split_px", "split_child_px", "split_radius_px",
@@ -49,19 +51,41 @@ class Trajectory:
     capture: dict
     metadata: list
     views: list
+    visibility: dict
 
     @property
     def asset(self):
         return self.metadata[0]["asset_sha256"]
 
 
-def load_trajectories(paths):
+def load_trajectories(paths, visibility, silhouettes):
     trajectories = []
     seen = set()
     graph_by_asset = {}
     for path in paths:
         data = json.loads(path.read_text(encoding="utf-8"))
         capture = data["capture"]
+        if visibility is not None or silhouettes is not None:
+            capture_id = digest(path.parent / "geometry.json")
+        visibility_frames = {}
+        if visibility is not None:
+            visibility_frames = visibility[capture_id]
+            for view in data["views"]:
+                frame = visibility_frames[view["directory"]]
+                expected = {r["stem"] for r in view["candidates"][1:]}
+                if set(frame) != expected or any(
+                        len(values) != len(VISIBILITY_FIELDS)
+                        or not np.all(np.isfinite(values)) or np.any(np.asarray(values) < 0)
+                        for values in frame.values()):
+                    raise ValueError(f"Visibility data does not match candidates: {path}")
+        if silhouettes is not None:
+            for view in data["views"]:
+                outline = silhouettes[capture_id][view["directory"]]
+                if (set(outline) != {row["stem"] for row in view["candidates"]}
+                        or any(not 0 <= error <= 1 for error in outline.values())):
+                    raise ValueError(f"Silhouette labels do not match candidates: {path}")
+                for row in view["candidates"]:
+                    row["silhouette_xor_over_union"] = outline[row["stem"]]
         if not 0 < capture.get("arc_degrees", 360) < 360:
             raise ValueError(f"Expected an ordered camera arc: {path}")
         pairs = zip(capture["views"], data["views"], strict=True)
@@ -77,16 +101,19 @@ def load_trajectories(paths):
             if identity in seen:
                 raise ValueError(f"Duplicate trajectory: {path} ({metadata[0]['asset']})")
             seen.add(identity)
-            trajectories.append(Trajectory(path, capture, metadata, views))
+            trajectories.append(Trajectory(path, capture, metadata, views, visibility_frames))
     return trajectories
 
 
-def features(row, capture):
+def features(row, capture, visibility):
     scale = 216 / capture["height"]
     projection = [np.log1p(float(row[field]) * scale) for field in PROJECTION_FIELDS]
     exchange = np.log1p(100 * int(row["exchanged_triangles"]) / int(row["triangles"]))
     score = float(row["geometric_score"]) * scale ** 3
-    return projection + [exchange, capture["target_ratio"], np.sign(score) * np.log1p(abs(score))]
+    geometry = projection + [exchange, capture["target_ratio"],
+                             np.sign(score) * np.log1p(abs(score))]
+    visible = np.log1p(100 * np.asarray(visibility.get(row["stem"], [])))
+    return geometry + visible.tolist()
 
 
 def measured_utility(baseline, row):
@@ -103,8 +130,9 @@ def training_data(trajectories):
     for t in trajectories:
         for view in t.views:
             baseline, *candidates = view["candidates"]
+            visible = t.visibility.get(view["directory"], {})
             for row in candidates:
-                x.append(features(row, t.capture))
+                x.append(features(row, t.capture, visible))
                 y.append(measured_utility(baseline, row))
                 weights.append(1 / (active_frames[t.asset] * len(candidates)))
     if not x:
@@ -143,11 +171,11 @@ def train(trajectories):
             "mlp": layers, "training_candidates": len(y)}
 
 
-def scores_for_frame(rows, capture, model):
+def scores_for_frame(rows, capture, model, visibility):
     geometric = np.array([float(row["geometric_score"] or 0) for row in rows])
     if len(rows) == 1:
         return geometric, np.zeros(1), np.zeros(1)
-    x = np.asarray([features(row, capture) for row in rows[1:]])
+    x = np.asarray([features(row, capture, visibility) for row in rows[1:]])
     x = standardize(x, np.asarray(model["center"]), np.asarray(model["scale"]))
     ridge = np.asarray(model["ridge"])
     hidden, output = model["mlp"]
@@ -172,8 +200,9 @@ def causal_path(scores, churn, margin, switch_cost):
 
 
 def evaluate(t, model):
-    geometric, ridge, mlp = map(list, zip(*(scores_for_frame(v["candidates"], t.capture, model)
-                                           for v in t.views)))
+    predictions = [scores_for_frame(v["candidates"], t.capture, model,
+                                    t.visibility.get(v["directory"], {})) for v in t.views]
+    geometric, ridge, mlp = map(list, zip(*predictions))
     # Diagnostic only: the measured utility uses reference renders. This path isolates
     # the limitations of the greedy transition rule from errors in the utility predictor.
     measured = []
@@ -199,10 +228,25 @@ def evaluate(t, model):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--score", type=Path, nargs="+", required=True)
+    parser.add_argument("--visibility", type=Path, help="Geometry-only features from lod_visibility")
+    parser.add_argument("--silhouette", type=Path,
+                        help="Use independent geometry silhouette labels for training and evaluation")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
     torch.set_num_threads(1)
-    trajectories = load_trajectories(args.score)
+    visibility = None
+    if args.visibility:
+        data = json.loads(args.visibility.read_text(encoding="utf-8"))
+        if tuple(data["features"]) != VISIBILITY_FIELDS:
+            parser.error("unexpected visibility feature schema")
+        visibility = data["captures"]
+    silhouettes = None
+    if args.silhouette:
+        data = json.loads(args.silhouette.read_text(encoding="utf-8"))
+        if data["metric"] != SILHOUETTE_METRIC:
+            parser.error("unexpected silhouette label metric")
+        silhouettes = data["captures"]
+    trajectories = load_trajectories(args.score, visibility, silhouettes)
     assets = sorted({t.asset for t in trajectories})
     if len(assets) < 3:
         parser.error("whole-asset validation requires at least three assets")
@@ -217,10 +261,13 @@ def main():
                       "model": model, "trajectories": reports})
         print(f"{folds[-1]['test_asset']}: {len(test)} held-out trajectories, "
               f"{model['training_candidates']} training swaps", flush=True)
-    result = {"features": FEATURES, "seed": MLP_SEED, "mlp_width": MLP_WIDTH,
+    field_names = FEATURES + VISIBILITY_FIELDS if visibility is not None else FEATURES
+    result = {"features": field_names, "seed": MLP_SEED, "mlp_width": MLP_WIDTH,
               "mlp_steps": MLP_STEPS, "ridge_penalty": RIDGE_PENALTY,
               "silhouette_cost": SILHOUETTE_COST, "gain_limit_db": GAIN_LIMIT_DB,
               "accept_margin_db": ACCEPT_MARGIN_DB, "churn_cost": CHURN_COST, "folds": folds}
+    if silhouettes is not None:
+        result["silhouette_metric"] = SILHOUETTE_METRIC
     args.out.write_text(json.dumps(result, indent=2, allow_nan=False) + "\n", encoding="utf-8")
 
 
