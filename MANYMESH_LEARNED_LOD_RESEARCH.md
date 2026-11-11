@@ -241,3 +241,21 @@ GPU 时间不是三角形数量的线性函数。先用三角形预算隔离算�
 改善和退化按相对现有预算选择的 PSNR 变化超过 ±0.01 dB 计数。四组策略的整组中位增益均为 0 dB。在更直接的几何轮廓标签下，这组可见性特征降低了两种 MLP 策略的表现。仅换成几何标签的原输入因果 MLP 改善 14 帧、退化 9 帧，但仍有 17 帧轮廓变差，而因果几何打分有 9 帧。这些结果支持保留几何轮廓标签作为后续评估口径。可见性特征继续作为离线消融选项。
 
 复现命令见 [可见性消融](tools/mmtrain/README.md#visibility-feature-ablation)。四组逐帧结果和模型权重位于 `out/lod-visibility-results/`，分别是 `geometry-control.json`、`held-out.json`、`geometry-silhouette.json` 和 `visibility-silhouette.json`。这组结果复用了相同资产和轨迹，属于配对消融，运行时开销需单独测量。
+
+## 12. 用局部细化参考评估等面数交换
+
+预算下的视角相关 LOD 已有 Funkhouser 与 Séquin 的 SIGGRAPH 1993 工作。Lindstrom 与 Turk 在 2000 年用逐像素差分引导离线简化，也讨论了用多层片元缓冲或局部重绘评估边折叠。Charalambos 在 2006 年已将实际可见像素数纳入 HLOD 细化准则。NVIDIA 的 2021 年工作通过可微渲染生成保外观的简化资产。把预算、可见性和图像误差用于 LOD 已有明确先例。 [Adaptive Display](https://pixl.cs.princeton.edu/pubs/Funkhouser_1993_ADA/index.php) · [Image-Driven Simplification](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf) · [Coherent HLOD Refinement](https://diglib.eg.org/server/api/core/bitstreams/ad004952-4a0b-4a6e-a99c-6ed56d9a2c4a/content) · [Appearance-Driven Simplification](https://research.nvidia.com/publication/2021-04_appearance-driven-automatic-3d-model-simplification)
+
+Epic 的 SIGGRAPH 2021 资料指出，Nanite 的物体空间标量简化误差缺少方向信息，投影时也没有考虑表面角度，掠射视角可能分配过多细节。这里测试的是选定层次结构上能否重新分配三角形，仍受已有节点划分的限制。树叶等聚合几何的覆盖和过绘属于另一类问题，Epic 的 5.8 文档已给出 Preserve Area 和 Nanite Foliage 的体素方案。 [Nanite Deep Dive，Glancing Angle Surfaces](https://advances.realtimerendering.com/s2021/Karis_Nanite_SIGGRAPH_Advances_2021_final.pdf) · [Working with Nanite](https://dev.epicgames.com/documentation/unreal-engine/working-with-naniteenabled-content) · [Nanite Foliage](https://dev.epicgames.com/documentation/en-us/unreal-engine/nanite-foliage)
+
+本轮检验一个更窄的差异。给当前所有等面数交换构造同一个参考切分，只将候选触及的基线节点细化一层或两层，保留其余区域的基线几何来处理遮挡。然后对每个候选评估轮廓和相对深度误差相对于基线的改善。多个候选共有的三角形只生成一次片元。整个打分阶段只读当前相机与层次几何。完整参考图和几何轮廓标签用于随后测量选中路径。该原型的可检验假设是，层次结构中少量额外节点就能提供足够好的方向与遮挡信息，使等面数交换比投影标量打分更可靠。
+
+对照使用同一候选集、相同面数和同一因果切换约束，同时记录逐帧结果。实验比较一层与两层参考，以及只用轮廓和加入深度两种损失。因果选择仅依赖当前分数和上一帧实际选中的切分。代理参考可能偏好细分节点，尤其当它与候选的局部细分相同时，因此结果以完整参考的独立测量为准。软件栅格化使用双面几何和单像素采样，适用范围与第 11 节相同，未测量生产 GPU 选切、流送和材质成本。
+
+先在已有 5 个资产、两档预算、两个相机起点的 20 条轨迹上回放，共 160 帧、800 个候选。计数阈值为相对基线 ±0.01 dB。使用相同的因果路径约束，几何打分为 10 帧改善、14 帧退化。局部参考仅轮廓为 11 帧改善、1 帧退化；加入相对深度后为 **30 帧改善、5 帧退化**。后者的整组平均增益为 +0.256 dB，中位增益为 0 dB，0 帧几何轮廓退化、6 条时间边比基线更差。已有资产包含方法开发中接触过的场景，独立资产结果必须另看。
+
+一层和两层参考在这 160 帧中选择了相同路径。每个有候选的帧平均有 5.56 个交换。共享栅格的三角形数量中位数为 6,765，逐一完整栅格化各切分的合计中位数为 54,872。相对于所有候选并集，一层参考额外使用 117 个三角形的中位数。Python 原型中位打分时间为 116 毫秒，包含两层参考与全部候选的栅格化，不能据此声称实时。
+
+另外用未参与这组开发的 Pirate、Shader Ball、Lucy，在新起点 118° 和 42° 相机弧线上采集 24 帧。Pirate 的 8 帧没有单次等面数交换。Shader Ball 和 Lucy 各有 8 帧、96 个候选。对这 24 帧，几何打分无超过 ±0.01 dB 的变化。局部参考仅轮廓产生 2 帧改善、1 帧退化；加入深度产生 **3 帧改善、2 帧退化**，整组平均 +0.103 dB，中位 0 dB。Lucy 单条轨迹平均 +0.323 dB，Shader Ball 平均 −0.016 dB。加入深度的路径有 0 帧几何轮廓退化、2 条时间边比基线更差。完整参考的逐帧严格选择有 11 帧改善、0 帧退化，说明这批候选仍有剩余机会。
+
+新资产有候选帧的共享栅格三角形中位数为 33,589，逐切分完整栅格化的合计中位数为 469,484。Python 原型中位打分时间约 631 毫秒。额外数据和逐帧路径保存在 `out/lod-proxy-results/pilot.json` 与 `out/lod-proxy-results/unseen.json`。两个代理参考深度在新资产中也选出相同路径。此实验表明少量局部细化包含有用的方向和遮挡信号，同时暴露出无等面数配对、材质影响以及计算成本三个待解决问题。现阶段没有训练网络，也没有在生产选择器上达到实时性能。

@@ -157,6 +157,33 @@ identical in either mode. The earlier RGB mask remains available for comparisons
 with previous runs. Shaded pixels can match the clear color even on visible geometry,
 so the RGB mask is an approximation of coverage.
 
+## Local finer reference for swap selection
+
+Use captures from a ManyMesh build that writes MMLG v7 graphs. The score files must
+come from ordered camera arcs. Create geometric silhouette labels with
+`lod_visibility.py --silhouette-out` as above, then run the replay.
+
+```sh
+python tools/mmtrain/lod_proxy.py \
+    --scores out/lod-arc-{0.55,0.75}/score.json out/lod-opposite-{0.55,0.75}/score.json \
+    --silhouette out/lod-silhouette.json --out out/lod-proxy.json
+```
+
+For each frame, the proxy refines only the baseline nodes affected by any sampled
+swap. One and two refinement steps give two reference cuts shared by every
+candidate. Each triangle in the union is rasterized once, and each cut resolves
+its own depth buffer. The replay compares silhouette IoU loss and a surface loss
+that charges one for foreground/background disagreement and relative depth error
+elsewhere on the foreground union. The baseline is a valid no-op in each policy.
+
+The proxy ranks cuts using the camera and LOD graph alone. Full-detail renders and
+silhouette labels supply the evaluation. The causal comparison uses the same
+triangle churn constraint for the geometric and proxy scores. The report records
+each selected path, per-frame quality, and triangle counts for the shared raster
+pass. Prototype timings include proxy construction, software rasterization and
+scoring for both refinement depths. They exclude capture loading, validation
+and Filament image capture. They do not measure GPU runtime or streaming bandwidth.
+
 ## Image reconstruction training
 
 Trains and compares reconstruction networks for ManyMesh: coarse geometry goes in, a full
