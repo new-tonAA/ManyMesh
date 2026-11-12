@@ -377,8 +377,8 @@ void writePly(Mesh const& mesh, std::vector<uint32_t> const& indices, char const
     bool const hasSubmeshes = submeshIds != nullptr && submeshIds->size() == faceCount;
     bool const hasNormals = mesh.normals.size() == mesh.positions.size();
     bool const hasUVs = mesh.uvs.size() == mesh.positions.size();
-    bool const hasAo = ambientOcclusion != nullptr &&
-                       ambientOcclusion->size() == mesh.positions.size();
+    bool const hasAo =
+            ambientOcclusion != nullptr && ambientOcclusion->size() == mesh.positions.size();
     bool const hasBentNormals = bentNormals != nullptr &&
                                 bentNormals->size() == mesh.positions.size() && hasNormals &&
                                 hasUVs;
@@ -422,8 +422,8 @@ void writePly(Mesh const& mesh, std::vector<uint32_t> const& indices, char const
         }
         if (hasAo) {
             float const value = std::clamp((*ambientOcclusion)[vertex], 0.0f, 1.0f);
-            unsigned char const channel = static_cast<unsigned char>(
-                    std::clamp(std::lround(value * 255.0f), 0L, 255L));
+            unsigned char const channel =
+                    static_cast<unsigned char>(std::clamp(std::lround(value * 255.0f), 0L, 255L));
             unsigned char green = channel;
             unsigned char blue = channel;
             if (hasBentNormals && vertex < tangents.size()) {
@@ -448,10 +448,10 @@ void writePly(Mesh const& mesh, std::vector<uint32_t> const& indices, char const
                         bentX *= scale;
                         bentY *= scale;
                     }
-                    green = static_cast<unsigned char>(std::clamp(
-                            std::lround((bentX * 0.5f + 0.5f) * 255.0f), 0L, 255L));
-                    blue = static_cast<unsigned char>(std::clamp(
-                            std::lround((bentY * 0.5f + 0.5f) * 255.0f), 0L, 255L));
+                    green = static_cast<unsigned char>(
+                            std::clamp(std::lround((bentX * 0.5f + 0.5f) * 255.0f), 0L, 255L));
+                    blue = static_cast<unsigned char>(
+                            std::clamp(std::lround((bentY * 0.5f + 0.5f) * 255.0f), 0L, 255L));
                 }
             }
             file.write(reinterpret_cast<char const*>(&channel), 1);
@@ -620,8 +620,7 @@ void bakeAoMap(Mesh const& source, Options const& options) {
     bakeOptions.radius = options.aoRadius;
     AmbientOcclusionMapResult bake;
     if (!bakeAmbientOcclusionMap(source, bakeOptions, &bake)) {
-        std::cerr << "  AO map bake skipped: it needs source normals and UVs in [0,1]"
-                  << std::endl;
+        std::cerr << "  AO map bake skipped: it needs source normals and UVs in [0,1]" << std::endl;
         return;
     }
     std::string const path = join(options.outDir, "ao-map.png");
@@ -631,16 +630,15 @@ void bakeAoMap(Mesh const& source, Options const& options) {
     }
     printf("  baked %s (%ux%u, %zu covered texels, %.3f mean, %u samples, radius %.5f%s, "
            "%.1f ms)\n",
-            path.c_str(), bake.size, bake.size, bake.coveredTexels, bake.mean,
-            bakeOptions.samples, bake.radius, options.aoRadius > 0.0f ? "" : " (auto)",
-            bake.bakeMs);
+            path.c_str(), bake.size, bake.size, bake.coveredTexels, bake.mean, bakeOptions.samples,
+            bake.radius, options.aoRadius > 0.0f ? "" : " (auto)", bake.bakeMs);
 }
 
 // Bakes the high-poly normal field into the low-poly UV layout. The map holds only the detail
 // the LOD lost: its neutral value is (0, 0, 1), so the LOD's own vertex normals still carry the
 // large-scale shape.
-void bakeDetailNormal(Mesh const& source, Mesh const& lod,
-        std::vector<uint32_t> const& indices, Options const& options) {
+void bakeDetailNormal(Mesh const& source, Mesh const& lod, std::vector<uint32_t> const& indices,
+        Options const& options) {
     if (options.bakeNormalSize == 0) {
         return;
     }
@@ -661,14 +659,14 @@ void bakeDetailNormal(Mesh const& source, Mesh const& lod,
     printf("  baked %s (%ux%u, %.1f%% of UV space covered, lost normal detail: mean %.2f deg, "
            "max %.2f deg, %zu UV-mismatch texels kept neutral)\n",
             path.c_str(), bake.size, bake.size,
-            100.0 * double(bake.coveredTexels) / double(bake.lodTexels),
-            bake.meanAngleDegrees, bake.maxAngleDegrees, bake.mismatchedTexels);
+            100.0 * double(bake.coveredTexels) / double(bake.lodTexels), bake.meanAngleDegrees,
+            bake.maxAngleDegrees, bake.mismatchedTexels);
 }
 
 // Bakes the source displacement into the selected LOD's UV layout. The map is signed around
 // 0.5, so a material can sample it with iterative parallax mapping without a second scale map.
-void bakeDetailHeight(Mesh const& source, Mesh const& lod,
-        std::vector<uint32_t> const& indices, Options const& options) {
+void bakeDetailHeight(Mesh const& source, Mesh const& lod, std::vector<uint32_t> const& indices,
+        Options const& options) {
     if (options.bakeHeightSize == 0) {
         return;
     }
@@ -746,8 +744,7 @@ void writeGeometry(Mesh const& mesh, GeometryOutput const& geometry, char const*
         printf("  shade normals: crease %.1f deg, strength %.2f, %zu duplicate vertices, "
                "%zu merged clusters, %zu changed vertices, max %.2f deg\n",
                 options.shadeCreaseDegrees, options.shadeStrength, result.duplicateVertices,
-                result.mergedClusters,
-                result.changedVertices, result.maxMergedAngleDegrees);
+                result.mergedClusters, result.changedVertices, result.maxMergedAngleDegrees);
         output = &shaded;
     }
     if (options.dumpPly) {
@@ -843,15 +840,15 @@ bool exportOracleSwaps(Mesh const& mesh, Mesh const& dagMesh, LodGraph const& gr
         for (uint32_t const childId: node.children) {
             LodGraphNode const& child = graph.nodes[childId];
             childTriangles += child.triangleCount();
-            childError = std::max(childError, screenSpaceErrorForSphere(
-                    child.accumulatedError, child.bounds, projection));
+            childError = std::max(childError,
+                    screenSpaceErrorForSphere(child.accumulatedError, child.bounds, projection));
         }
         if (childTriangles <= node.triangleCount()) {
             return false;
         }
         *delta = childTriangles - node.triangleCount();
-        float const error = screenSpaceErrorForSphere(node.accumulatedError,
-                node.bounds, projection);
+        float const error =
+                screenSpaceErrorForSphere(node.accumulatedError, node.bounds, projection);
         float const radius = screenSpaceErrorForSphere(node.bounds.radius, node.bounds, projection);
         *change = { id, error, childError, radius, (error - childError) * radius * radius };
         return std::isfinite(change->score);
@@ -968,20 +965,19 @@ bool exportOracleSwaps(Mesh const& mesh, Mesh const& dagMesh, LodGraph const& gr
             float score;
         };
         auto combinations = [](std::vector<std::pair<Change, size_t>> changes) {
-            std::stable_sort(changes.begin(), changes.end(), [](auto const& a, auto const& b) {
-                return a.first.score > b.first.score;
-            });
+            std::stable_sort(changes.begin(), changes.end(),
+                    [](auto const& a, auto const& b) { return a.first.score > b.first.score; });
             if (changes.size() > 48) {
                 changes.resize(48);
             }
             std::vector<ChangeSet> result;
             for (size_t i = 0; i < changes.size(); ++i) {
-                result.push_back({ { changes[i].first }, changes[i].second,
-                        changes[i].first.score });
+                result.push_back(
+                        { { changes[i].first }, changes[i].second, changes[i].first.score });
                 for (size_t j = i + 1; j < changes.size(); ++j) {
                     result.push_back({ { changes[i].first, changes[j].first },
-                            changes[i].second + changes[j].second,
-                            changes[i].first.score + changes[j].first.score });
+                        changes[i].second + changes[j].second,
+                        changes[i].first.score + changes[j].first.score });
                 }
             }
             return result;
@@ -1063,7 +1059,8 @@ bool exportOracleSwaps(Mesh const& mesh, Mesh const& dagMesh, LodGraph const& gr
             return result;
         };
         uint32_t compositeCount = 0;
-        for (size_t i = 0; i < composites.size() && compositeCount < options.oracleComposites; ++i) {
+        for (size_t i = 0; i < composites.size() && compositeCount < options.oracleComposites;
+                ++i) {
             Composite const& swap = composites[i % 2 == 0 ? i / 2 : composites.size() - 1 - i / 2];
             std::set<uint32_t> splitIds;
             std::set<uint32_t> mergeIds;
@@ -1110,12 +1107,10 @@ bool exportOracleSwaps(Mesh const& mesh, Mesh const& dagMesh, LodGraph const& gr
             auto const& s = swap.splits.changes;
             auto const& m = swap.merges.changes;
             manifest << stem << ',' << candidate.indices.size() / 3 << ',' << ids(s) << ','
-                     << ids(m) << ',' << swap.splits.delta << ','
-                     << projected(s, &Change::error) << ','
-                     << projected(s, &Change::childError) << ','
-                     << projected(s, &Change::radiusPx) << ','
-                     << projected(m, &Change::error) << ','
-                     << projected(m, &Change::childError) << ','
+                     << ids(m) << ',' << swap.splits.delta << ',' << projected(s, &Change::error)
+                     << ',' << projected(s, &Change::childError) << ','
+                     << projected(s, &Change::radiusPx) << ',' << projected(m, &Change::error)
+                     << ',' << projected(m, &Change::childError) << ','
                      << projected(m, &Change::radiusPx) << ',' << swap.score << '\n';
             ++compositeCount;
         }
@@ -1686,8 +1681,7 @@ int handleArguments(int argc, char* argv[], Options* options) {
                 char* end = nullptr;
                 unsigned long const count = std::strtoul(arg, &end, 10);
                 if (end == arg || *end != '\0' || count > 256) {
-                    std::cerr << "--oracle-composites expects an integer in [0, 256]"
-                              << std::endl;
+                    std::cerr << "--oracle-composites expects an integer in [0, 256]" << std::endl;
                     return -1;
                 }
                 options->oracleComposites = uint32_t(count);
@@ -1851,8 +1845,7 @@ int handleArguments(int argc, char* argv[], Options* options) {
                 options->aoRadius = std::max(0.0f, float(atof(arg)));
                 break;
             case 'H':
-                options->shadeCreaseDegrees =
-                        std::clamp(float(atof(arg)), 0.0f, 45.0f);
+                options->shadeCreaseDegrees = std::clamp(float(atof(arg)), 0.0f, 45.0f);
                 break;
             case 'S':
                 options->shadeStrength = std::clamp(float(atof(arg)), 0.0f, 1.0f);
@@ -1984,7 +1977,8 @@ int main(int argc, char* argv[]) {
         if (options.bakeNormalSize > 0 || options.bakeHeightSize > 0) {
             std::cerr << "  detail maps are baked for one selected cluster/DAG cut; chain mode "
                          "has no single selected LOD, so --bake-normal/--bake-height were "
-                         "ignored" << std::endl;
+                         "ignored"
+                      << std::endl;
         }
 
         if (options.dumpObj) {
@@ -2045,9 +2039,8 @@ int main(int argc, char* argv[]) {
             }
             printf("  generated AO: %.3f .. %.3f (%.3f mean)%s\n", minAO, maxAO,
                     sumAO / float(graph.generatedVertices.size()),
-                    options.aoFieldSamples > 0
-                            ? ""
-                            : " [no source AO field; all vertices unoccluded]");
+                    options.aoFieldSamples > 0 ? ""
+                                               : " [no source AO field; all vertices unoccluded]");
         }
         printf("  build phases: clusterize %.3fs, leaf setup %.3fs, cluster chains %.3fs, "
                "groups %.3fs (simplify %.3fs)\n",
@@ -2090,8 +2083,7 @@ int main(int argc, char* argv[]) {
                     name, profile.candidateCleanupSeconds, profile.candidateSliverSeconds,
                     profile.candidateTopologySeconds, profile.weldedTopologySeconds,
                     profile.candidateErrorSeconds);
-            printf("  %s extended-mesh: %.3fs, copies %llu\n", name,
-                    profile.extendedMeshSeconds,
+            printf("  %s extended-mesh: %.3fs, copies %llu\n", name, profile.extendedMeshSeconds,
                     (unsigned long long) profile.extendedMeshCopies);
             double const microsecondsPerEvaluation =
                     profile.cornerEvaluations != 0 ? profile.cornerEvaluateSeconds * 1e6 /
@@ -2131,9 +2123,8 @@ int main(int argc, char* argv[]) {
                         ? selectLodGraphAtRatio(graph, camera, options.targetTriangleRatio,
                                   std::numeric_limits<float>::infinity())
                         : selectLodGraphTier(graph, camera, tier);
-        if ((options.oracleSwaps || options.oracleComposites) && !exportOracleSwaps(
-                    mesh, dagMesh, graph, camera,
-                    selection, options)) {
+        if ((options.oracleSwaps || options.oracleComposites) &&
+                !exportOracleSwaps(mesh, dagMesh, graph, camera, selection, options)) {
             std::cerr << "Could not write oracle experiment manifest." << std::endl;
             return 1;
         }
@@ -2152,6 +2143,32 @@ int main(int argc, char* argv[]) {
         printDagStats(dagMesh, graph, selection, camera,
                 options.useTargetRatio ? std::numeric_limits<float>::infinity()
                                        : profile.maxScreenErrorPx);
+        if (options.useTargetRatio) {
+            uint64_t const visibleBase = graph.baseTriangles > selection.culledTriangles
+                                                 ? graph.baseTriangles - selection.culledTriangles
+                                                 : graph.baseTriangles;
+            uint64_t const budget =
+                    uint64_t(std::ceil(double(visibleBase) * double(options.targetTriangleRatio)));
+            if (selection.selectedTriangles > budget) {
+                // The roots are the coarsest legal cut, so no selection can get under this budget.
+                printf("  budget unreachable: coarsest legal cut is %llu triangles "
+                       "(%.2f%%), budget is %llu (%.2f%%)\n",
+                        (unsigned long long) selection.selectedTriangles,
+                        visibleBase > 0
+                                ? 100.0 * double(selection.selectedTriangles) / double(visibleBase)
+                                : 0.0,
+                        (unsigned long long) budget,
+                        visibleBase > 0 ? 100.0 * double(budget) / double(visibleBase) : 0.0);
+            } else {
+                printf("  budget reached: %llu <= %llu triangles (%.2f%% <= %.2f%%)\n",
+                        (unsigned long long) selection.selectedTriangles,
+                        (unsigned long long) budget,
+                        visibleBase > 0
+                                ? 100.0 * double(selection.selectedTriangles) / double(visibleBase)
+                                : 0.0,
+                        visibleBase > 0 ? 100.0 * double(budget) / double(visibleBase) : 0.0);
+            }
+        }
 
         if (options.dumpObj) {
             GeometryOutput const geometry = outputFromDagSelection(selection);
@@ -2172,7 +2189,8 @@ int main(int argc, char* argv[]) {
                             ao.meanBendDegrees, ao.maxBendDegrees, ao.bakeMs);
                     if (!options.dumpPly) {
                         std::cerr << "  AO vertex colors are written to PLY only; use "
-                                     "--dump-format ply to keep them" << std::endl;
+                                     "--dump-format ply to keep them"
+                                  << std::endl;
                     }
                 } else {
                     std::cerr << "  source AO bake failed" << std::endl;
@@ -2192,7 +2210,7 @@ int main(int argc, char* argv[]) {
         // The DAG build dominates the runtime, so export any extra screen-error cuts while it
         // is in memory. The M4 allocation experiment renders these meshes directly instead of
         // rebuilding a DAG for every camera.
-        for (float const px : options.screenErrorCuts) {
+        for (float const px: options.screenErrorCuts) {
             LodGraphSelection const cut = selectLodGraph(graph, camera, px);
             GeometryOutput const cutGeometry = outputFromDagSelection(cut);
             char name[64];
@@ -2200,15 +2218,15 @@ int main(int argc, char* argv[]) {
                     options.dumpPly ? "selected_px_%g.ply" : "selected_px_%g.obj", double(px));
             std::string const cutPath = join(options.outDir, name);
             writeGeometry(dagMesh, cutGeometry, cutPath.c_str(), options, nullptr, nullptr);
-            printf("  screen-error cut %.4g px: %llu triangles (%.4f%%), wrote %s\n",
-                    double(px), (unsigned long long) cut.selectedTriangles,
+            printf("  screen-error cut %.4g px: %llu triangles (%.4f%%), wrote %s\n", double(px),
+                    (unsigned long long) cut.selectedTriangles,
                     graph.baseTriangles > 0
                             ? 100.0 * double(cut.selectedTriangles) / double(graph.baseTriangles)
                             : 0.0,
                     cutPath.c_str());
         }
 
-        for (float const ratio : options.targetRatioCuts) {
+        for (float const ratio: options.targetRatioCuts) {
             LodGraphSelection const cut = selectLodGraphAtRatio(graph, camera, ratio,
                     std::numeric_limits<float>::infinity());
             GeometryOutput const cutGeometry = outputFromDagSelection(cut);
@@ -2218,8 +2236,8 @@ int main(int argc, char* argv[]) {
                     double(ratio));
             std::string const cutPath = join(options.outDir, name);
             writeGeometry(dagMesh, cutGeometry, cutPath.c_str(), options, nullptr, nullptr);
-            printf("  uniform cut %.4g: %llu triangles (%.4f%%), wrote %s\n",
-                    double(ratio), (unsigned long long) cut.selectedTriangles,
+            printf("  uniform cut %.4g: %llu triangles (%.4f%%), wrote %s\n", double(ratio),
+                    (unsigned long long) cut.selectedTriangles,
                     graph.baseTriangles > 0
                             ? 100.0 * double(cut.selectedTriangles) / double(graph.baseTriangles)
                             : 0.0,
@@ -2377,8 +2395,7 @@ int main(int argc, char* argv[]) {
         std::string const selectedPath =
                 join(options.outDir, options.dumpPly ? "selected.ply" : "selected.obj");
         writeGeometry(mesh, geometry, selectedPath.c_str(), options,
-                aoValues.empty() ? nullptr : &aoValues,
-                bentValues.empty() ? nullptr : &bentValues);
+                aoValues.empty() ? nullptr : &aoValues, bentValues.empty() ? nullptr : &bentValues);
         printf("  wrote %s\n", selectedPath.c_str());
     }
 
