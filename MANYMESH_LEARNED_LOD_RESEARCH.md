@@ -293,3 +293,9 @@ Epic 的 SIGGRAPH 2021 资料指出，Nanite 的物体空间标量简化误差�
 对 `groupNodes` 的第二个假设是 submesh 标签可能过度限制同材质邻接节点。实验只移除 `submeshId` 相等条件，仍要求共享顶点形成邻接、材质相同，并使用原有完整的几何、拓扑、法线及 UV 门限。Pirate（分组 8）和 Lucy（分组 8）的 DAG 输出均与基线逐项一致：节点/层级/根数量分别为 158/7/46 和 810/7/75，目标切分分别为 2,822/5,010 和 18,396/33,446，最大选中误差也未变化。当前两个模型没有触发跨 submesh 候选，因此不保留该代码改动，也不把此约束作为 Pirate 预算不可达的成因。
 
 这项试验只排除了两个模型上的一个简单约束假设；它不能说明跨 submesh 聚组在其他资产上普遍无效。若未来发现真实候选，仍需核对材质一致性、边界连续性和每节点输出语义后再评估。
+
+## 16. 硬预算、视角误差与时间连贯性的先行工作核查
+
+本轮扩大了创新点的先行工作核查。Gobbetti 与 Bouvier 已在每帧对多个多分辨率三角网格执行质量最大化并满足渲染时间约束的优化；它覆盖了“给定预算，把几何复杂度分到哪里”的核心问题。[Time-Critical Multiresolution Rendering of Large Complex Models](https://doi.org/10.1016/S0010-4485(00)00068-3)。Hoppe 的 progressive mesh 与 view-dependent refinement 已支持任意网格的连续分辨率、按视锥/朝向/屏幕误差细化，并利用连续相机运动的时间连贯性。[Progressive Meshes](https://hhoppe.com/proj/pm/) · [View-Dependent Refinement](https://hhoppe.com/proj/vdrpm/)。FastMesh 已提供任意三角网格的实时视角相关多分辨率更新和保守误差界。[FastMesh](https://escholarship.org/uc/item/9s30k0b0)。NVIDIA 的 appearance-driven simplification 已用可微渲染和图像差异联合优化网格与着色模型，并覆盖 LOD 生成。[NVIDIA Research](https://research.nvidia.com/publication/2021-04_appearance-driven-automatic-3d-model-simplification)。
+
+因此，“硬面数预算”“逐视角分配”“帧间连贯”“图像误差”都不是单独可主张的创新。当前仍可检验但尚未建立新颖性的组合问题是：在 ManyMesh 已构建且质量合法的固定 DAG 切分上，使用当前帧的受限图像评价和实测运行成本，在严格三角形预算下选取帧间稳定的 cut；针对预算不达根切分下限的素材，则显式报告不可达，不伪称选择器达成目标。该问题与旧工作在表示、候选集合、误差模型、计算代价和适用场景上的边界必须通过实现及同预算基线实验逐项证明。当前代理误差慢、组合候选非加性未测出、学习筛选弱、预算可达性受层次限制，这些仍是阻碍 SIGGRAPH 级主张的实际缺口。
