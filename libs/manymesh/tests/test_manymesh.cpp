@@ -998,6 +998,64 @@ TEST(ManyMesh, SeamPairCollapseKeepsTheWeldedSurfaceClosed) {
     EXPECT_EQ(stats.nonManifoldEdges, 0u);
 }
 
+TEST(ManyMesh, SeamUnitGateComparesTopologyAgainstItsOwnMeasurementBase) {
+    // Regression: a group unit that contains both sides of a UV seam is gated with
+    // `seamCollapse`, so its *base* topology is measured welded. The attribute-QEM and
+    // meshoptimizer candidates are still measured with raw vertex ids. Comparing the two
+    // rejected every candidate whose per-index boundary count exceeded the welded base's outer
+    // border, even when `preservesWeldedBoundaries()` proved the rendered surface was intact.
+    // That silently ended group chains early and is why `--target-ratio` stopped at a floor.
+    Mesh mesh;
+    auto appendGrid = [&mesh](uint32_t offsetX) {
+        uint32_t const nx = 12;
+        uint32_t const ny = 6;
+        uint32_t const base = uint32_t(mesh.positions.size());
+        for (uint32_t j = 0; j <= ny; ++j) {
+            for (uint32_t i = 0; i <= nx; ++i) {
+                float const x = float(offsetX + i);
+                float const y = float(j);
+                mesh.positions.push_back({ x, y, 0.15f * std::sin(x * 0.7f) * std::cos(y * 0.9f) });
+                mesh.uvs.push_back({ float(i) / float(nx), float(j) / float(ny) });
+            }
+        }
+        auto index = [base, nx](uint32_t i, uint32_t j) { return base + j * (nx + 1) + i; };
+        for (uint32_t j = 0; j < ny; ++j) {
+            for (uint32_t i = 0; i < nx; ++i) {
+                mesh.indices.insert(mesh.indices.end(),
+                        { index(i, j), index(i + 1, j), index(i + 1, j + 1) });
+                mesh.indices.insert(mesh.indices.end(),
+                        { index(i, j), index(i + 1, j + 1), index(i, j + 1) });
+            }
+        }
+    };
+    appendGrid(0);
+    // The second grid duplicates the shared column, so the unit has a UV/normal seam in the
+    // middle. Its per-index boundary is the outer border plus both seam copies; its welded
+    // boundary is only the outer border.
+    appendGrid(12);
+
+    SimplifyOptions options;
+    options.qualityGate = true;
+    options.attributeQem = true;
+    options.lockBorder = true;
+    options.seamCollapse = true;
+    options.levels = 1;
+    options.qualityAttempts = 4;
+    options.targetError = 0.05f;
+
+    size_t const target = (mesh.indices.size() / 2 / 3) * 3;
+    LodLevel level;
+    simplifyIndices(mesh, mesh.indices, target, options, &level);
+
+    ASSERT_TRUE(level.simplified);
+    EXPECT_LT(level.indices.size(), mesh.indices.size());
+    // Accepting the candidate must not have opened the surface.
+    TopologyStats const welded = measureWeldedTopology(mesh, level.indices);
+    EXPECT_EQ(welded.nonManifoldEdges, 0u);
+    EXPECT_EQ(welded.flippedTriangles, 0u);
+    EXPECT_EQ(weldedBoundarySet(mesh, level.indices), weldedBoundarySet(mesh, mesh.indices));
+}
+
 TEST(ManyMesh, MaterialAndSubmeshIdsSurviveClusteringAndLods) {
     Mesh mesh = makeGrid(12, 12, {}, 1.0f, 0.3f);
     Mesh const second = makeGrid(12, 12, { 100.0f, 0.0f, 0.0f }, 1.0f, 0.3f);

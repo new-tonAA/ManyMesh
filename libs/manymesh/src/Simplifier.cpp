@@ -1193,8 +1193,15 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
             return level;
         };
 
+        // `weldedBoundary` selects how the boundary is compared (welded set for seam pairing,
+        // per-index set otherwise). `candidateTopologyWelded` says how `level.topology` itself
+        // was measured: the corner pass re-measures welded topology, while the attribute-QEM and
+        // meshoptimizer candidates are measured with raw vertex ids. The base stats must match
+        // the candidate measurement. Comparing an unwelded candidate against the welded base
+        // rejects every seam that the candidate legitimately keeps: a group unit's welded base
+        // boundary is only the outer border, so the seam itself looks like a new hole.
         auto acceptable = [&](LodLevel const& level, Mesh const& geometry, bool weldedBoundary,
-                                  bool weldedTopology,
+                                  bool candidateTopologyWelded,
                                   std::vector<GeneratedVertex> const* generated,
                                   uint32_t* rejectMask) {
             auto const boundaryStart = ProfileClock::now();
@@ -1208,7 +1215,8 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
             if (profile != nullptr) {
                 profile->boundaryCheckSeconds += profileSeconds(boundaryStart);
             }
-            TopologyStats const& topologyBase = weldedTopology ? baseWeldedTopology : baseTopology;
+            TopologyStats const& topologyBase =
+                    candidateTopologyWelded ? baseWeldedTopology : baseTopology;
             bool const topologyOk = !options.qualityGate ||
                                     topologyAcceptable(level.topology, topologyBase, options);
             if (!topologyOk && options.verbose) {
@@ -1224,7 +1232,7 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
                         level.topology.minTriangleQuality,
                         (unsigned long long) topologyBase.boundaryEdges,
                         (unsigned long long) topologyBase.nonManifoldEdges,
-                        topologyBase.minTriangleQuality, weldedTopology ? 1 : 0);
+                        topologyBase.minTriangleQuality, candidateTopologyWelded ? 1 : 0);
             }
             bool const geometryOk =
                     !options.qualityGate || geometryAcceptable(level, options, meshScale);
@@ -1311,7 +1319,8 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
                 candidate.acceptable =
                         candidate.level.simplified &&
                         acceptable(candidate.level, mesh, options.seamCollapse,
-                                options.seamCollapse, nullptr, &candidate.rejectMask);
+                                /*candidateTopologyWelded=*/false, nullptr,
+                                &candidate.rejectMask);
                 if (profile != nullptr) {
                     profile->attributeCandidates += 1;
                 }
@@ -1388,7 +1397,8 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
                 }
                 candidate.acceptable =
                         candidate.level.simplified &&
-                        acceptable(candidate.level, extended, true, true,
+                        acceptable(candidate.level, extended, /*weldedBoundary=*/true,
+                                /*candidateTopologyWelded=*/true,
                                 &candidate.level.generatedVertices, &candidate.rejectMask);
                 candidates.push_back(std::move(candidate));
             }
@@ -1420,7 +1430,8 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
             }
             fallback.acceptable = fallback.level.simplified &&
                                   acceptable(fallback.level, mesh, options.seamCollapse,
-                                          options.seamCollapse, nullptr, &fallback.rejectMask);
+                                          /*candidateTopologyWelded=*/false, nullptr,
+                                          &fallback.rejectMask);
             if (profile != nullptr) {
                 profile->meshoptCandidates += 1;
             }
