@@ -317,6 +317,48 @@ std::vector<std::vector<uint32_t>> groupNodes(LodGraph const& graph,
     return groups;
 }
 
+// Splits a rejected group into two spatially coherent halves. The halves are independent parent
+// candidates, so a clean subset can still promote when the quality gate rejects the group
+// because of one or two members. Every half goes through the same simplification and gates as a
+// whole group; this only changes the candidate partition.
+void splitGroupMembers(LodGraph const& graph, std::vector<uint32_t> const& members,
+        std::vector<uint32_t>* first, std::vector<uint32_t>* second) {
+    first->clear();
+    second->clear();
+    if (members.size() < 2) {
+        first->insert(first->end(), members.begin(), members.end());
+        return;
+    }
+    math::float3 lo = graph.nodes[members[0]].bounds.center;
+    math::float3 hi = lo;
+    for (uint32_t member: members) {
+        math::float3 const& center = graph.nodes[member].bounds.center;
+        lo = min(lo, center);
+        hi = max(hi, center);
+    }
+    math::float3 const extent = hi - lo;
+    int axis = 0;
+    if (extent.y > extent.x && extent.y >= extent.z) {
+        axis = 1;
+    } else if (extent.z > extent.x && extent.z > extent.y) {
+        axis = 2;
+    }
+    std::vector<uint32_t> sorted = members;
+    std::stable_sort(sorted.begin(), sorted.end(), [&graph, axis](uint32_t a, uint32_t b) {
+        math::float3 const& ca = graph.nodes[a].bounds.center;
+        math::float3 const& cb = graph.nodes[b].bounds.center;
+        float const va = axis == 0 ? ca.x : (axis == 1 ? ca.y : ca.z);
+        float const vb = axis == 0 ? cb.x : (axis == 1 ? cb.y : cb.z);
+        if (va != vb) {
+            return va < vb;
+        }
+        return a < b;
+    });
+    size_t const half = sorted.size() / 2;
+    first->insert(first->end(), sorted.begin(), sorted.begin() + half);
+    second->insert(second->end(), sorted.begin() + half, sorted.end());
+}
+
 struct CameraBasis {
     math::float3 forward;
     math::float3 right;
@@ -836,14 +878,10 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
             LodGraphNode parent;
             SimplifyProfile profile;
         };
-        std::vector<GroupBuildResult> results(groups.size());
-
-        auto const groupSimplifyStart = Clock::now();
-        detail::parallelFor(groups.size(), [&](size_t groupIndex) {
-            std::vector<uint32_t> const& members = groups[groupIndex];
-            GroupBuildResult& result = results[groupIndex];
+        auto buildGroup = [&](std::vector<uint32_t> const& members) {
+            GroupBuildResult result;
             if (members.empty()) {
-                return;
+                return result;
             }
             result.candidate = true;
 
@@ -917,7 +955,7 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
                     &result.profile);
             result.attempts = simplified.attempts;
             if (!simplified.simplified || simplified.indices.size() >= combined.size()) {
-                return;
+                return result;
             }
             // A single-member group is a chain level: it continues simplifying a node that has
             // no siblings left to merge with. Require a real reduction so a nearly exhausted
@@ -925,7 +963,7 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
             // of triangles. Multi-member groups are still allowed to reduce as little as the
             // quality gate accepts, because their main job is to unlock interior edges.
             if (members.size() == 1 && simplified.indices.size() + 6 > combined.size()) {
-                return;
+                return result;
             }
             result.promoted = true;
             result.generatedVertices = std::move(simplified.generatedVertices);
@@ -953,76 +991,142 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
                         parent.selfError + graph.nodes[member].accumulatedError);
             }
             result.parent = std::move(parent);
-        });
+            return result;
+        };
+
+        auto const groupSimplifyStart = Clock::now();
+        std::vector<GroupBuildResult> results(groups.size());
+        detail::parallelFor(groups.size(),
+                [&](size_t groupIndex) { results[groupIndex] = buildGroup(groups[groupIndex]); });
         if (stats != nullptr) {
             stats->groupSimplifySeconds += secondsSince(groupSimplifyStart);
         }
 
         std::vector<uint32_t> next;
         bool createdParent = false;
+
+        // A group the quality gate rejects leaves every member unsimplified, even when only one
+        // or two members caused the rejection. Retry each rejected multi-member group as two
+        // spatially coherent halves, recursively up to two splits, so a clean subset can still
+        // produce a parent. Halves go through the same simplification and gates as a group: this
+        // changes the candidate partition, not the quality contract.
+        struct GroupDecision {
+            std::vector<std::vector<uint32_t>> parentMembers;
+            std::vector<GroupBuildResult> parents;
+            std::vector<uint32_t> leftover;
+        };
+        std::vector<GroupDecision> decisions(groups.size());
+        struct RetrySlot {
+            size_t owner = 0;
+            std::vector<uint32_t> members;
+        };
+        std::vector<RetrySlot> pending;
+        constexpr uint32_t MAX_SPLIT_DEPTH = 2;
+        auto enqueueSplit = [&](size_t owner, std::vector<uint32_t> const& members,
+                                    uint32_t splitDepth, std::vector<RetrySlot>* queue) {
+            std::vector<uint32_t> first;
+            std::vector<uint32_t> second;
+            splitGroupMembers(graph, members, &first, &second);
+            for (std::vector<uint32_t>* half: { &first, &second }) {
+                if (half->empty()) {
+                    continue;
+                }
+                if (half->size() <= 1 || splitDepth >= MAX_SPLIT_DEPTH) {
+                    decisions[owner].leftover.insert(decisions[owner].leftover.end(), half->begin(),
+                            half->end());
+                } else {
+                    queue->push_back({ owner, std::move(*half) });
+                }
+            }
+        };
         for (size_t groupIndex = 0; groupIndex < groups.size(); ++groupIndex) {
-            std::vector<uint32_t> const& members = groups[groupIndex];
-            GroupBuildResult& result = results[groupIndex];
-            if (!result.candidate) {
-                next.insert(next.end(), members.begin(), members.end());
+            if (results[groupIndex].promoted) {
                 continue;
             }
+            if (groups[groupIndex].size() <= 2) {
+                decisions[groupIndex].leftover = groups[groupIndex];
+            } else {
+                enqueueSplit(groupIndex, groups[groupIndex], 0, &pending);
+            }
+        }
+        for (uint32_t splitDepth = 0; splitDepth < MAX_SPLIT_DEPTH && !pending.empty();
+                ++splitDepth) {
+            auto const retryStart = Clock::now();
+            std::vector<GroupBuildResult> retryResults(pending.size());
+            detail::parallelFor(pending.size(), [&](size_t retryIndex) {
+                retryResults[retryIndex] = buildGroup(pending[retryIndex].members);
+            });
             if (stats != nullptr) {
-                stats->groupCandidates += 1;
-                stats->seamLockedVertices += result.seamLockedVertices;
-                stats->groupSimplifyCalls += 1;
-                stats->groupSimplifyAttempts += result.attempts;
-                stats->groupSimplify.attributeQemSeconds += result.profile.attributeQemSeconds;
-                stats->groupSimplify.cornerSeconds += result.profile.cornerSeconds;
-                stats->groupSimplify.cornerSetupSeconds += result.profile.cornerSetupSeconds;
-                stats->groupSimplify.cornerEvaluateSeconds += result.profile.cornerEvaluateSeconds;
-                stats->groupSimplify.cornerEvaluateTopologySeconds +=
-                        result.profile.cornerEvaluateTopologySeconds;
-                stats->groupSimplify.cornerTopologyNeighborSeconds +=
-                        result.profile.cornerTopologyNeighborSeconds;
-                stats->groupSimplify.cornerTopologyTriangleSeconds +=
-                        result.profile.cornerTopologyTriangleSeconds;
-                stats->groupSimplify.cornerTopologyLocalTriangleSeconds +=
-                        result.profile.cornerTopologyLocalTriangleSeconds;
-                stats->groupSimplify.cornerTopologyLocalEdgeSeconds +=
-                        result.profile.cornerTopologyLocalEdgeSeconds;
-                stats->groupSimplify.cornerEvaluateTargetSeconds +=
-                        result.profile.cornerEvaluateTargetSeconds;
-                stats->groupSimplify.cornerApplySeconds += result.profile.cornerApplySeconds;
-                stats->groupSimplify.cornerEvaluations += result.profile.cornerEvaluations;
-                stats->groupSimplify.cornerPlacementTests += result.profile.cornerPlacementTests;
-                stats->groupSimplify.cornerApplied += result.profile.cornerApplied;
-                stats->groupSimplify.meshoptSeconds += result.profile.meshoptSeconds;
-                stats->groupSimplify.candidateGateSeconds += result.profile.candidateGateSeconds;
-                stats->groupSimplify.candidateCleanupSeconds +=
-                        result.profile.candidateCleanupSeconds;
-                stats->groupSimplify.candidateSliverSeconds +=
-                        result.profile.candidateSliverSeconds;
-                stats->groupSimplify.candidateErrorSeconds += result.profile.candidateErrorSeconds;
-                stats->groupSimplify.candidateTopologySeconds +=
-                        result.profile.candidateTopologySeconds;
-                stats->groupSimplify.weldedTopologySeconds += result.profile.weldedTopologySeconds;
-                stats->groupSimplify.boundaryCheckSeconds += result.profile.boundaryCheckSeconds;
-                stats->groupSimplify.lockedMaskSeconds += result.profile.lockedMaskSeconds;
-                stats->groupSimplify.extendedMeshSeconds += result.profile.extendedMeshSeconds;
-                stats->groupSimplify.calls += result.profile.calls;
-                stats->groupSimplify.attempts += result.profile.attempts;
-                stats->groupSimplify.attributeCandidates += result.profile.attributeCandidates;
-                stats->groupSimplify.cornerCandidates += result.profile.cornerCandidates;
-                stats->groupSimplify.meshoptCandidates += result.profile.meshoptCandidates;
-                stats->groupSimplify.accepted += result.profile.accepted;
-                stats->groupSimplify.extendedMeshCopies += result.profile.extendedMeshCopies;
-                stats->groupSimplify.rejectedNotSimplified += result.profile.rejectedNotSimplified;
-                stats->groupSimplify.rejectedTopology += result.profile.rejectedTopology;
-                stats->groupSimplify.rejectedGeometry += result.profile.rejectedGeometry;
-                stats->groupSimplify.rejectedAttributes += result.profile.rejectedAttributes;
-                stats->groupSimplify.rejectedBoundary += result.profile.rejectedBoundary;
-                stats->groupSimplify.rejectedLocked += result.profile.rejectedLocked;
+                stats->groupSimplifySeconds += secondsSince(retryStart);
             }
-            if (!result.promoted) {
-                next.insert(next.end(), members.begin(), members.end());
-                continue;
+            std::vector<RetrySlot> nextPending;
+            for (size_t retryIndex = 0; retryIndex < pending.size(); ++retryIndex) {
+                RetrySlot& slot = pending[retryIndex];
+                GroupBuildResult& retry = retryResults[retryIndex];
+                if (retry.promoted) {
+                    decisions[slot.owner].parentMembers.push_back(std::move(slot.members));
+                    decisions[slot.owner].parents.push_back(std::move(retry));
+                } else {
+                    enqueueSplit(slot.owner, slot.members, splitDepth + 1, &nextPending);
+                }
             }
+            pending = std::move(nextPending);
+        }
+
+        auto accumulateGroupStats = [&](GroupBuildResult const& result) {
+            if (stats == nullptr) {
+                return;
+            }
+            stats->groupCandidates += 1;
+            stats->seamLockedVertices += result.seamLockedVertices;
+            stats->groupSimplifyCalls += 1;
+            stats->groupSimplifyAttempts += result.attempts;
+            stats->groupSimplify.attributeQemSeconds += result.profile.attributeQemSeconds;
+            stats->groupSimplify.cornerSeconds += result.profile.cornerSeconds;
+            stats->groupSimplify.cornerSetupSeconds += result.profile.cornerSetupSeconds;
+            stats->groupSimplify.cornerEvaluateSeconds += result.profile.cornerEvaluateSeconds;
+            stats->groupSimplify.cornerEvaluateTopologySeconds +=
+                    result.profile.cornerEvaluateTopologySeconds;
+            stats->groupSimplify.cornerTopologyNeighborSeconds +=
+                    result.profile.cornerTopologyNeighborSeconds;
+            stats->groupSimplify.cornerTopologyTriangleSeconds +=
+                    result.profile.cornerTopologyTriangleSeconds;
+            stats->groupSimplify.cornerTopologyLocalTriangleSeconds +=
+                    result.profile.cornerTopologyLocalTriangleSeconds;
+            stats->groupSimplify.cornerTopologyLocalEdgeSeconds +=
+                    result.profile.cornerTopologyLocalEdgeSeconds;
+            stats->groupSimplify.cornerEvaluateTargetSeconds +=
+                    result.profile.cornerEvaluateTargetSeconds;
+            stats->groupSimplify.cornerApplySeconds += result.profile.cornerApplySeconds;
+            stats->groupSimplify.cornerEvaluations += result.profile.cornerEvaluations;
+            stats->groupSimplify.cornerPlacementTests += result.profile.cornerPlacementTests;
+            stats->groupSimplify.cornerApplied += result.profile.cornerApplied;
+            stats->groupSimplify.meshoptSeconds += result.profile.meshoptSeconds;
+            stats->groupSimplify.candidateGateSeconds += result.profile.candidateGateSeconds;
+            stats->groupSimplify.candidateCleanupSeconds += result.profile.candidateCleanupSeconds;
+            stats->groupSimplify.candidateSliverSeconds += result.profile.candidateSliverSeconds;
+            stats->groupSimplify.candidateErrorSeconds += result.profile.candidateErrorSeconds;
+            stats->groupSimplify.candidateTopologySeconds +=
+                    result.profile.candidateTopologySeconds;
+            stats->groupSimplify.weldedTopologySeconds += result.profile.weldedTopologySeconds;
+            stats->groupSimplify.boundaryCheckSeconds += result.profile.boundaryCheckSeconds;
+            stats->groupSimplify.lockedMaskSeconds += result.profile.lockedMaskSeconds;
+            stats->groupSimplify.extendedMeshSeconds += result.profile.extendedMeshSeconds;
+            stats->groupSimplify.calls += result.profile.calls;
+            stats->groupSimplify.attempts += result.profile.attempts;
+            stats->groupSimplify.attributeCandidates += result.profile.attributeCandidates;
+            stats->groupSimplify.cornerCandidates += result.profile.cornerCandidates;
+            stats->groupSimplify.meshoptCandidates += result.profile.meshoptCandidates;
+            stats->groupSimplify.accepted += result.profile.accepted;
+            stats->groupSimplify.extendedMeshCopies += result.profile.extendedMeshCopies;
+            stats->groupSimplify.rejectedNotSimplified += result.profile.rejectedNotSimplified;
+            stats->groupSimplify.rejectedTopology += result.profile.rejectedTopology;
+            stats->groupSimplify.rejectedGeometry += result.profile.rejectedGeometry;
+            stats->groupSimplify.rejectedAttributes += result.profile.rejectedAttributes;
+            stats->groupSimplify.rejectedBoundary += result.profile.rejectedBoundary;
+            stats->groupSimplify.rejectedLocked += result.profile.rejectedLocked;
+        };
+        auto appendParent = [&](std::vector<uint32_t> const& members, GroupBuildResult& result) {
             if (stats != nullptr) {
                 stats->groupSimplifyAccepted += 1;
             }
@@ -1036,6 +1140,25 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
             graph.nodes.push_back(std::move(result.parent));
             next.push_back(id);
             createdParent = true;
+        };
+
+        for (size_t groupIndex = 0; groupIndex < groups.size(); ++groupIndex) {
+            std::vector<uint32_t> const& members = groups[groupIndex];
+            GroupBuildResult& result = results[groupIndex];
+            if (!result.candidate) {
+                next.insert(next.end(), members.begin(), members.end());
+                continue;
+            }
+            accumulateGroupStats(result);
+            if (result.promoted) {
+                appendParent(members, result);
+            }
+            GroupDecision& decision = decisions[groupIndex];
+            for (size_t parentIndex = 0; parentIndex < decision.parents.size(); ++parentIndex) {
+                accumulateGroupStats(decision.parents[parentIndex]);
+                appendParent(decision.parentMembers[parentIndex], decision.parents[parentIndex]);
+            }
+            next.insert(next.end(), decision.leftover.begin(), decision.leftover.end());
         }
         if (stats != nullptr) {
             stats->groupBuildSeconds += secondsSince(groupBuildStart);

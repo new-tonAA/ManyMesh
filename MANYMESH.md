@@ -862,6 +862,50 @@ buffer 与 GPU 侧 cut compaction；把 mmgpu 的 visibility buffer 接进正式
 移动端真机 HTTP/HTTPS 验证。CPU 侧 source + generated 顶点已按 cut 实际引用压缩
 （§10.1）；三份以上同位置副本由 corner 焊接路径处理，并有 4-copy 回归测试（§7.8）。
 
+#### 7.6.1 组失败后的空间二分重试（2026-11）
+
+两处改动都只影响「局部简化单元的划分与判定」，没有放松任何质量门。
+
+**1. 拓扑比较使用候选自己的测量基底。** group 单元开启 `seamCollapse` 时，基底拓扑按
+焊接位置测量；attribute-QEM 与 meshoptimizer 候选仍按原始索引测量。此前候选的
+`boundaryEdges` 被拿去和「只含外边界的焊接基底」比较，候选内部合法的 seam 被当成新洞，
+group 链提前终止。`acceptable()` 现在显式接收候选的测量方式。Pirate（5,010 面，默认
+`--split-charts 1`、`--dag-group 8`、`--target-ratio 0.55`）从 **158 节点 / 7 级 / 46 根 /
+2,822 面（56.33%）** 变为 **171 节点 / 8 级 / 45 根 / 2,756 面（55.01%）**；
+预算 `ceil(5010 × 0.55) = 2756`，因此该预算从**不可达变为精确可达**。group 接受数
+14 → 27。
+
+> 更正：`MANYMESH_LEARNED_LOD_RESEARCH.md` §14 的「Pirate 55% 不可达」是在该修复之前
+> 采集的。修复后同一默认配置可以达到 55%。
+
+**2. 组失败后的空间二分重试。** 一个多成员组被质量门拒绝时，所有成员都会停在原层级，
+即使只有一两个成员导致拒绝。现在把被拒组按包围盒最长轴切成两半，分别作为独立父节点
+候选，最多递归两层（8 → 4 → 2）。两半仍走完整简化与质量门，改变的是候选划分，不是
+质量契约；只有原始组失败时才产生额外调用。
+
+同机、同参数、Release（`mmgeo --mode dag --dag-group 8`）：
+
+| 资产 / 预算 | 修复后、重试前 | 加入二分重试 | DAG 构建 |
+|-|-|-|-|
+| Pirate 55% | 2,756 面（55.01%），最差 19.62 px，45 根 | **2,756 面，最差 11.93 px**，29 根 | 1.20 s → 1.98 s |
+| Pirate 30% | 2,658 面（53.05%），22.32 px | **2,552 面（50.94%）**，22.32 px | 1.16 s → 1.95 s |
+| Lucy 55% | 18,396 面（55.00%），5.89 px，52 根 | 18,396 面，**5.38 px**，18 根 | 5.91 s → 9.06 s |
+| Lucy 30% | 16,560 面（49.51%），14.35 px | **16,044 面（47.97%）**，**12.04 px** | 5.98 s → 9.06 s |
+| Monkey / Torus / Sphere | —— | 节点、面数、误差逐位不变 | —— |
+
+Monkey/Torus/Sphere 的根数本来就只有 1–3 个，没有可重试的失败组，所以输出完全不变。
+所有选中 cut 的拓扑统计与改动前一致（boundary / non-manifold / duplicate / degenerate /
+flipped 均不变），没有新增破洞或翻面。代价是失败组较多的资产 DAG 构建约 **1.5–1.65×**。
+同预算下最差屏幕误差下降，是因为重试补出了更多中间父节点：选择器在相同面数预算内可以
+选到更细、误差分布更均匀的 cut（Pirate 55% 的选中节点数 48 → 53）。
+
+`mmgeo --target-ratio` 现在会额外打印预算是否可达：
+
+```text
+budget reached: 2756 <= 2756 triangles (55.01% <= 55.01%)
+budget unreachable: coarsest legal cut is 2822 triangles (56.33%), budget is 2756 (55.01%)
+```
+
 ### 7.7 真实 Vulkan 原型：GPU cut、indirect draw 与 visibility buffer
 
 `tools/mmgpu/` 是独立的 Vulkan 1.0 工具。它从 OBJ 构建 ManyMesh DAG，把 `GpuLodNode` 作为
