@@ -665,6 +665,11 @@ Geometry Budget + Neural Reconstruction Capability → Optimal Rendering Cost
 - DAG 构建、attribute QEM、质量门都是离线/编辑器侧，不需要每帧重跑。
 - 运行时只做一次 DAG cut：`selectLodGraphCut` 只输出选中的节点，不拼接索引/材质数组。
   在 588 节点的 monkey DAG 上，CPU 单线程实测 **0.0031 ms/次**。
+- 每帧调用时可保留一个 `LodGraphCut cut`，使用
+  `selectLodGraphCut(graph, camera, thresholdPx, cut)` 原地更新。节点与各层统计缓冲区
+  会保留容量，容量足够后选面不再分配堆内存；切换相机、空场景或其他 DAG 都会重置结果。
+  每个并发调用者需要独立的输出。`mm_bench` 的 CPU 相机更新已使用此接口，cut 不变时
+  也复用上一帧的屏幕误差数组；原来返回新 `LodGraphCut` 的接口继续可用。
 - 需要完整索引数组的编辑器路径 `selectLodGraph` 为 0.115~0.253 ms/次（monkey，距离模式），
   0.657~0.892 ms/次（savings 模式，含 32 次阈值二分和预算内细化）。两者都远低于 16.7 ms。
 - `mm_bench` 的 UI 调参路径也已改成生产形状：所有 DAG 节点的索引一次性打包进一个静态

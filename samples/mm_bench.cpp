@@ -318,6 +318,7 @@ std::vector<float> g_lodTangentSigns;
 mm::LodGraph g_lodGraph;
 mm::LodGraphBuildStats g_lodGraphBuildStats;
 mm::LodGraphSelection g_lodSelection;
+mm::LodGraphCut g_lodRuntimeCut;
 mm::LodTier g_lodTier = mm::LodTier::Balanced;
 mm::ViewCamera g_lodCamera;
 mm::TopologyStats g_lodTopology;
@@ -2185,16 +2186,25 @@ bool updateLodSelection(Engine* engine, bool cameraUpdate = false) {
         if (selectedOnGpu) {
             changed = !cameraUpdate || selection.nodes != g_lodSelection.nodes;
         } else if (cameraUpdate) {
-            mm::LodGraphCut cut = mm::selectLodGraphCut(g_lodGraph, g_lodCamera, g_lodScreenErrorPx);
+            mm::selectLodGraphCut(g_lodGraph, g_lodCamera, g_lodScreenErrorPx, g_lodRuntimeCut);
+            mm::LodGraphCut const& cut = g_lodRuntimeCut;
             changed = cut.nodes != g_lodSelection.nodes;
             if (changed && (g_ui || g_compactVertices || g_shadeErrorDriven)) {
                 selection = mm::assembleLodSelection(g_lodGraph, g_lodCamera,
-                        std::move(cut.nodes), cut.culledTriangles);
+                        cut.nodes, cut.culledTriangles);
             } else {
                 // Static draw ranges and compact-cut indices both consume node IDs directly.
-                selection.nodes = std::move(cut.nodes);
+                if (changed) {
+                    selection.nodes = cut.nodes;
+                    selection.nodesPerLevel = cut.nodesPerLevel;
+                    selection.trianglesPerLevel = cut.trianglesPerLevel;
+                }
+                selection.baseTriangles = cut.baseTriangles;
                 selection.selectedTriangles = cut.selectedTriangles;
-                selection.screenErrorPerNode = std::move(cut.screenErrorPerNode);
+                // Keep both the traversal scratch and the previous frame's error buffer alive.
+                selection.screenErrorPerNode.swap(g_lodSelection.screenErrorPerNode);
+                selection.screenErrorPerNode.assign(
+                        cut.screenErrorPerNode.begin(), cut.screenErrorPerNode.end());
                 selection.culledTriangles = cut.culledTriangles;
             }
         } else {
@@ -2340,8 +2350,8 @@ void reportLodStats() {
     auto const cutStart = std::chrono::steady_clock::now();
     mm::LodGraphCut runtimeCut;
     for (int i = 0; i < iterations; ++i) {
-        runtimeCut = mm::selectLodGraphCut(g_lodGraph, g_lodCamera,
-                g_distanceLod ? g_lodScreenErrorPx : g_lodMaxScreenError);
+        mm::selectLodGraphCut(g_lodGraph, g_lodCamera,
+                g_distanceLod ? g_lodScreenErrorPx : g_lodMaxScreenError, runtimeCut);
     }
     auto const cutEnd = std::chrono::steady_clock::now();
     double const averageMs = std::chrono::duration<double, std::milli>(cutEnd - cutStart).count() /

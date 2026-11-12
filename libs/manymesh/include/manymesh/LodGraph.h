@@ -234,6 +234,15 @@ struct LodGraphCut {
 LodGraphCut selectLodGraphCut(LodGraph const& graph, ViewCamera const& camera, float thresholdPx);
 
 /**
+ * Replaces `cut` while retaining its vector capacities for subsequent frames. Once the buffers
+ * fit the selected nodes and graph levels, selection performs no heap allocations. The same
+ * output may be reused with another graph; all counts and lists are reset on every call.
+ * Concurrent callers must supply separate outputs.
+ */
+void selectLodGraphCut(LodGraph const& graph, ViewCamera const& camera, float thresholdPx,
+        LodGraphCut& cut);
+
+/**
  * Picks a non-overlapping cut through the DAG: a node is drawn either whole or replaced by its
  * children, never both. The coarsest node whose accumulated screen error fits `thresholdPx`
  * wins, which is the hierarchy's best quality for that triangle budget.

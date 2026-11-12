@@ -87,7 +87,7 @@ install(DIRECTORY ${PUBLIC_HDR_DIR}/manymesh DESTINATION include)
 # ==================================================================================================
 if (FILAMENT_BUILD_TESTING AND NOT ANDROID AND NOT WASM AND NOT IOS)
     set(TARGET test_manymesh)
-    add_executable(${TARGET} tests/test_manymesh.cpp)
+    add_executable(${TARGET} tests/test_manymesh.cpp tests/test_lod_runtime.cpp)
     target_link_libraries(${TARGET} PRIVATE manymesh gtest)
     if (MANYMESH_HTTP_CIVETWEB)
         target_compile_definitions(${TARGET} PRIVATE MANYMESH_HTTP_CIVETWEB=1)

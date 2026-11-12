@@ -24,7 +24,6 @@
 #include <chrono>
 #include <cmath>
 #include <cstring>
-#include <functional>
 #include <limits>
 #include <queue>
 #include <unordered_map>
@@ -1158,13 +1157,28 @@ LodGraphCutGeometry compactLodSelection(LodGraph const& graph, LodGraphSelection
 }
 LodGraphCut selectLodGraphCut(LodGraph const& graph, ViewCamera const& camera, float thresholdPx) {
     LodGraphCut cut;
+    selectLodGraphCut(graph, camera, thresholdPx, cut);
+    return cut;
+}
+
+void selectLodGraphCut(LodGraph const& graph, ViewCamera const& camera, float thresholdPx,
+        LodGraphCut& cut) {
+    cut.nodes.clear();
+    cut.screenErrorPerNode.clear();
+    cut.nodesPerLevel.resize(graph.levelCount);
+    std::fill(cut.nodesPerLevel.begin(), cut.nodesPerLevel.end(), 0);
+    cut.trianglesPerLevel.resize(graph.levelCount);
+    std::fill(cut.trianglesPerLevel.begin(), cut.trianglesPerLevel.end(), 0);
     cut.baseTriangles = graph.baseTriangles;
-    cut.nodesPerLevel.assign(graph.levelCount, 0);
-    cut.trianglesPerLevel.assign(graph.levelCount, 0);
+    cut.selectedTriangles = 0;
+    cut.culledTriangles = 0;
 
     CameraBasis const basis = makeBasis(camera);
     ScreenErrorProjection const projection = makeScreenErrorProjection(camera);
-    std::function<void(uint32_t)> visit = [&](uint32_t nodeId) {
+    auto visit = [&](auto&& self, uint32_t nodeId) -> void {
+        if (nodeId >= graph.nodes.size()) {
+            return;
+        }
         LodGraphNode const& node = graph.nodes[nodeId];
         if (basis.valid && sphereOutsideFrustum(node.bounds, camera, basis)) {
             cut.culledTriangles += node.baseTriangles;
@@ -1173,7 +1187,7 @@ LodGraphCut selectLodGraphCut(LodGraph const& graph, ViewCamera const& camera, f
         float const screenError = basis.valid ? screenErrorForNode(node, projection) : 0.0f;
         if (!node.children.empty() && screenError > thresholdPx) {
             for (uint32_t child: node.children) {
-                visit(child);
+                self(self, child);
             }
             return;
         }
@@ -1185,9 +1199,8 @@ LodGraphCut selectLodGraphCut(LodGraph const& graph, ViewCamera const& camera, f
         cut.selectedTriangles += triangles;
     };
     for (uint32_t root: graph.roots) {
-        visit(root);
+        visit(visit, root);
     }
-    return cut;
 }
 
 LodGraphSelection selectLodGraphAtRatio(LodGraph const& graph, ViewCamera const& camera,
