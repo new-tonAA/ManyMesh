@@ -98,29 +98,66 @@ def surface_loss(depth, reference):
     return np.array([outline, surface])
 
 
-def frame_scores(path, view, width, height, graph):
+def frame_scores(path, view, width, height, graph, measure_interactions=False):
     with (path / "oracle.csv").open(newline="") as stream:
         rows = list(csv.DictReader(stream))[1:]
     positions, faces, vertices = read_cut(path / "oracle_baseline.obj", True)
     baseline = graph.faces(faces)
     if len(positions) != graph.vertices or len(baseline) != int(rows[0]["triangles"]):
         raise ValueError(f"Unexpected baseline geometry: {path}")
+    graph_json = path / "lod_graph.json"
+    selected = None
+    parents = None
+    if graph_json.exists():
+        metadata = json.loads(graph_json.read_text(encoding="utf-8"))
+        selected = metadata["selectedNodes"]
+        parents = [node["parent"] for node in metadata["dag"]]
+        if graph.cut(selected) != baseline:
+            raise ValueError(f"Selected nodes disagree with exported baseline: {path}")
+
+    def below(node, ancestor):
+        while node != 0xffffffff:
+            if node == ancestor:
+                return True
+            node = parents[node]
+        return False
+
     candidates, touched = [baseline], set()
+    components, component_ranges = [], []
     for row in rows[1:]:
-        split, merge = int(row["split"]), int(row["merge"])
-        split_children, _ = graph.node(split)
-        merge_children, _ = graph.node(merge)
-        old_nodes = {split, *merge_children}
+        splits = [int(value) for value in row["split"].split("+")]
+        merges = [int(value) for value in row["merge"].split("+")]
+        old_nodes = set(splits)
+        for merge in merges:
+            if selected is None:
+                old_nodes.update(graph.node(merge)[0])
+            else:
+                old_nodes.update(node for node in selected if below(node, merge))
         old_faces = graph.cut(old_nodes)
-        if not split_children or not merge_children or not old_faces <= baseline:
+        if (any(not graph.node(split)[0] for split in splits)
+                or any(not graph.node(merge)[0] for merge in merges)
+                or not old_faces <= baseline):
             raise ValueError(f"Unexpected swap nodes: {path / row['stem']}")
-        candidate = (baseline - old_faces) | graph.cut({merge, *split_children})
+        new_nodes = set(merges)
+        for split in splits:
+            new_nodes.update(graph.node(split)[0])
+        candidate = (baseline - old_faces) | graph.cut(new_nodes)
         _, exported, candidate_vertices = read_cut(path / f"{row['stem']}.obj", False)
         if (candidate_vertices != vertices or len(candidate) != len(baseline)
                 or candidate != graph.faces(exported)):
             raise ValueError(f"Graph swap disagrees with exported cut: {path / row['stem']}")
         candidates.append(candidate)
         touched.update(old_nodes)
+        if measure_interactions and len(splits) + len(merges) > 2:
+            first = len(components)
+            for split in splits:
+                components.append((baseline - graph.cut({split})) |
+                                  graph.cut(graph.node(split)[0]))
+            for merge in merges:
+                descendants = {node for node in selected if below(node, merge)}
+                components.append((baseline - graph.cut(descendants)) |
+                                  graph.cut({merge}))
+            component_ranges.append((len(candidates) - 1, first, len(components)))
 
     start = perf_counter()
     # Every candidate is evaluated against the same reference. Refine only regions
@@ -129,7 +166,7 @@ def frame_scores(path, view, width, height, graph):
     fine_nodes = graph.refine(touched)
     one_level = unchanged | graph.cut(fine_nodes)
     two_levels = unchanged | graph.cut(graph.refine(fine_nodes))
-    cuts = [*candidates, one_level, two_levels]
+    cuts = [*candidates, *components, one_level, two_levels]
     triangles = sorted(set.union(*cuts))
     ids = {tri: i for i, tri in enumerate(triangles)}
     projected = project(positions, view["eye"], view["target"], width, height)
@@ -145,9 +182,22 @@ def frame_scores(path, view, width, height, graph):
     for level, reference in enumerate(depths[-2:], 1):
         errors = np.array([surface_loss(z, reference) for z in depths[:-2]])
         gains = errors[0] - errors
-        scores[f"proxy{level}_outline"] = gains[:, 0]
-        scores[f"proxy{level}_surface"] = gains[:, 1]
-    return scores, {
+        scores[f"proxy{level}_outline"] = gains[:len(candidates), 0]
+        scores[f"proxy{level}_surface"] = gains[:len(candidates), 1]
+        if level == 1 and measure_interactions:
+            def fixed_surface(image):
+                difference = np.abs(image - reference)
+                denominator = np.maximum(image, reference)
+                return float(np.sum(np.divide(difference, denominator,
+                                              out=np.zeros_like(difference),
+                                              where=denominator > 0))) / len(image)
+
+            fixed = np.array([fixed_surface(image) for image in depths[:-2]])
+            fixed_gain = fixed[0] - fixed
+            interactions = [fixed_gain[index] - fixed_gain[
+                    len(candidates) + first:len(candidates) + last].sum()
+                    for index, first, last in component_ranges]
+    work = {
         "candidates": len(rows) - 1,
         "baseline_triangles": len(baseline),
         "candidate_triangles_outside_baseline": len(set.union(*candidates) - baseline),
@@ -157,6 +207,12 @@ def frame_scores(path, view, width, height, graph):
         "independent_raster_triangles": sum(map(len, cuts)),
         "prototype_ms": 1000 * (perf_counter() - start),
     }
+    if measure_interactions:
+        work["interaction_count"] = len(component_ranges)
+        work["interaction_mean_abs"] = float(np.mean(np.abs(interactions))) if interactions else 0
+        work["interaction_max_abs"] = float(np.max(np.abs(interactions))) if interactions else 0
+        work["interaction_values"] = [float(value) for value in interactions]
+    return scores, work
 
 
 @lru_cache(maxsize=4)
@@ -171,6 +227,8 @@ def main():
     parser.add_argument("--scores", nargs="+", type=Path, required=True)
     parser.add_argument("--silhouette", nargs="+", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--interactions", action="store_true",
+                        help="Measure deviation from summed single-operation proxy gains")
     args = parser.parse_args()
     outlines = {}
     for path in args.silhouette:
@@ -194,7 +252,7 @@ def main():
                 raise ValueError(f"Capture metadata disagree: {root}")
             path = root / meta["directory"]
             graph = graph_for(meta["graph_sha256"], (path / "lod_graph.mmb").read_bytes())
-            frame, work = frame_scores(path, meta, width, height, graph)
+            frame, work = frame_scores(path, meta, width, height, graph, args.interactions)
             rows = view["candidates"]
             with (path / "oracle.csv").open(newline="") as stream:
                 keys = ("stem", "triangles", "split", "merge", "geometric_score")

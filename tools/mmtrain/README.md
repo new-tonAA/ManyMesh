@@ -159,6 +159,18 @@ so the RGB mask is an approximation of coverage.
 
 ## Local finer reference for swap selection
 
+The optional `--composites N` capture argument exports up to N equal-triangle
+reallocations with one or two splits and one or two ancestor merges. The exporter
+assembles every cut and checks its actual post-deduplication triangle count. It
+writes `lod_graph.json` so the proxy can identify all selected descendants of
+an ancestor merge. Existing `--swaps N` captures retain their previous format.
+
+```sh
+python tools/mmtrain/lod_oracle.py capture --mmgeo /path/to/mmgeo \
+    --out out/lod-composites --mesh /path/to/model.obj \
+    --ratio 0.75 --views 4 --swaps 4 --composites 8
+```
+
 Use captures from a ManyMesh build that writes MMLG v7 graphs. The score files must
 come from ordered camera arcs. Create geometric silhouette labels with
 `lod_visibility.py --silhouette-out` as above, then run the replay.
@@ -183,6 +195,21 @@ each selected path, per-frame quality, and triangle counts for the shared raster
 pass. Prototype timings include proxy construction, software rasterization and
 scoring for both refinement depths. They exclude capture loading, validation
 and Filament image capture. They do not measure GPU runtime or streaming bandwidth.
+
+Pass `--interactions` for a composite capture to compare a complete reallocation
+with the sum of its individual operations. It uses a fixed image denominator, so
+disjoint screen changes add exactly. Each difference is reported in `work_by_frame`.
+
+After a whole-asset predictor replay, measure how many candidates its ranking
+must retain to include the best rendered cut:
+
+```sh
+python tools/mmtrain/lod_screening.py --score out/lod-composites/score.json \
+    --predictor out/lod-predictor.json --out out/lod-screening.json
+```
+
+The full-detail image errors are used only for evaluating candidate recall and
+best attainable quality inside each shortlist.
 
 ## Image reconstruction training
 

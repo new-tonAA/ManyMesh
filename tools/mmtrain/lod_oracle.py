@@ -74,6 +74,7 @@ def export_geometry(args):
         "height": args.height,
         "target_ratio": args.ratio,
         "max_swaps": args.swaps,
+        "max_composites": args.composites,
         "arc_degrees": args.arc_degrees,
         "start_degrees": args.start_degrees,
         "views": [],
@@ -88,8 +89,10 @@ def export_geometry(args):
             path.mkdir()
             run([args.mmgeo.resolve(), mesh.resolve(), "--out", path, "--mode", "dag",
                  "--target-ratio", args.ratio, "--oracle-swaps", args.swaps,
+                 "--oracle-composites", args.composites,
                  "--eye", eye, "--look-at", target, "--screen-height", args.height,
-                 "--dump-obj", "0", "--dump-format", "obj", "--write-json", "0"],
+                 "--dump-obj", "0", "--dump-format", "obj",
+                 "--write-json", "1" if args.composites else "0"],
                 path / "mmgeo.log")
             current_hash = digest(path / "lod_graph.mmb")
             if graph_hash is not None and graph_hash != current_hash:
@@ -253,6 +256,7 @@ def main():
     collect.add_argument("--start-degrees", type=float, default=0.0)
     collect.add_argument("--height", type=int, default=180)
     collect.add_argument("--swaps", type=int, default=16)
+    collect.add_argument("--composites", type=int, default=0)
     render = commands.add_parser("render")
     render.add_argument("--capture", type=Path, required=True)
     render.add_argument("--mm-bench", type=Path, required=True)
@@ -265,7 +269,8 @@ def main():
     args = parser.parse_args()
     if args.command == "capture":
         if not (0 < args.ratio < 1 and args.views >= 1 and args.height >= 64
-                and 1 <= args.swaps <= 256 and 0 < args.arc_degrees <= 360
+                and 0 <= args.swaps <= 256 and 0 <= args.composites <= 256
+                and args.swaps + args.composites > 0 and 0 < args.arc_degrees <= 360
                 and math.isfinite(args.start_degrees)):
             parser.error("capture requires 0 < ratio < 1, views >= 1, height >= 64, swaps 1–256")
         export_geometry(args)
