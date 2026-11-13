@@ -93,6 +93,40 @@ struct LodGraph {
     }
 };
 
+//! Observations, not causal labels. Profiles count gate rejections across all backoff attempts.
+struct LodGroupObservation {
+    uint32_t level = 0;
+    uint32_t trial = 0; //!< Zero: production build; otherwise a diagnostic partition id.
+    std::vector<uint32_t> members;
+    std::vector<uint32_t> inputIndices;
+    std::vector<uint32_t> lockedVertices; //!< Explicit mask; lockBorder also applies in simplifier.
+    uint64_t inputTriangles = 0;
+    uint64_t outputTriangles = 0;
+    float accumulatedError = 0;
+    bool promoted = false;
+    SimplifyProfile profile;
+};
+
+struct LodRegroupObservation {
+    uint32_t level = 0;
+    uint32_t trial = 0;
+    uint64_t baselineTriangles = 0;
+    uint64_t candidateTriangles = 0;
+    float baselineError = 0;
+    float candidateError = 0;
+    //! Screening result only: fewer assembled faces, same boundary, no nonmanifold edges,
+    //! and no increase in maximum accumulated error. Does not identify a causal blocked edge.
+    bool improves = false;
+};
+
+//! Caller-owned, reset at build entry. No trial geometry is committed or serialized.
+struct LodGraphDiagnostics {
+    std::vector<LodGroupObservation> groups;
+    std::vector<LodRegroupObservation> trials;
+    uint64_t trialInputTriangles = 0;
+    double trialSeconds = 0;
+};
+
 struct LodGraphOptions {
     ClusterizeOptions clusterize;
 
@@ -108,6 +142,12 @@ struct LodGraphOptions {
     //! Used for every parent simplification. Border locking is important here: a parent must
     //! not move the vertices it shares with a sibling.
     SimplifyOptions simplify;
+
+    //! Optional detailed ledger and read-only local counterfactuals. Requires qualityGate.
+    LodGraphDiagnostics* diagnostics = nullptr;
+
+    //! Additional input-triangle work budget for the whole build; zero records only the ledger.
+    uint64_t diagnosticTriangleBudget = 0;
 };
 
 /**

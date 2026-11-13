@@ -25,7 +25,9 @@
 #include <cmath>
 #include <cstring>
 #include <limits>
+#include <map>
 #include <queue>
+#include <set>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -713,6 +715,9 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
     if (stats != nullptr) {
         *stats = {};
     }
+    if (options.diagnostics != nullptr) {
+        *options.diagnostics = {};
+    }
 
     LodGraph graph;
     if (mesh.empty() || options.levels == 0) {
@@ -877,6 +882,7 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
             std::vector<GeneratedVertex> generatedVertices;
             LodGraphNode parent;
             SimplifyProfile profile;
+            LodGroupObservation observation;
         };
         auto buildGroup = [&](std::vector<uint32_t> const& members) {
             GroupBuildResult result;
@@ -944,6 +950,19 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
             }
             memberTouched.clear();
             result.seamLockedVertices = groupLocked.size();
+            if (options.diagnostics != nullptr) {
+                result.observation.level = level;
+                result.observation.members = members;
+                result.observation.inputIndices = combined;
+                result.observation.lockedVertices = groupLocked;
+                std::sort(result.observation.lockedVertices.begin(),
+                        result.observation.lockedVertices.end());
+                result.observation.lockedVertices.erase(std::unique(
+                        result.observation.lockedVertices.begin(),
+                        result.observation.lockedVertices.end()),
+                        result.observation.lockedVertices.end());
+                result.observation.inputTriangles = combined.size() / 3;
+            }
 
             size_t const target = std::max<size_t>(3,
                     (size_t(double(combined.size()) * double(options.ratio)) / 3) * 3);
@@ -1016,6 +1035,28 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
             std::vector<uint32_t> leftover;
         };
         std::vector<GroupDecision> decisions(groups.size());
+        auto record = [&](GroupBuildResult const& result, uint32_t trial = 0) {
+            if (options.diagnostics == nullptr) {
+                return;
+            }
+            LodGroupObservation observation = result.observation;
+            observation.trial = trial;
+            observation.promoted = result.promoted;
+            observation.outputTriangles = result.promoted ? result.parent.triangleCount() :
+                    observation.inputTriangles;
+            observation.accumulatedError = result.parent.accumulatedError;
+            if (!result.promoted) {
+                for (uint32_t member: observation.members) {
+                    observation.accumulatedError = std::max(observation.accumulatedError,
+                            graph.nodes[member].accumulatedError);
+                }
+            }
+            observation.profile = result.profile;
+            options.diagnostics->groups.push_back(std::move(observation));
+        };
+        for (GroupBuildResult const& result: results) {
+            record(result);
+        }
         struct RetrySlot {
             size_t owner = 0;
             std::vector<uint32_t> members;
@@ -1063,6 +1104,7 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
             for (size_t retryIndex = 0; retryIndex < pending.size(); ++retryIndex) {
                 RetrySlot& slot = pending[retryIndex];
                 GroupBuildResult& retry = retryResults[retryIndex];
+                record(retry);
                 if (retry.promoted) {
                     decisions[slot.owner].parentMembers.push_back(std::move(slot.members));
                     decisions[slot.owner].parents.push_back(std::move(retry));
@@ -1126,6 +1168,169 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
             stats->groupSimplify.rejectedBoundary += result.profile.rejectedBoundary;
             stats->groupSimplify.rejectedLocked += result.profile.rejectedLocked;
         };
+        // Read-only screening. A smaller assembled region is evidence for a partition opportunity,
+        // not proof that any individual rejected edge was blocked by a boundary lock.
+        if (options.diagnostics != nullptr && options.simplify.qualityGate &&
+                options.diagnostics->trialInputTriangles < options.diagnosticTriangleBudget) {
+            auto const trialStart = Clock::now();
+            auto& diagnostics = *options.diagnostics;
+            using Edge = std::pair<uint32_t, uint32_t>;
+            std::map<Edge, std::vector<size_t>> edgeOwners;
+            for (size_t g = 0; g < groups.size(); ++g) {
+                std::set<Edge> edges;
+                for (uint32_t member: groups[g]) {
+                    auto const& indices = graph.nodes[member].indices;
+                    for (size_t t = 0; t < indices.size(); t += 3) {
+                        for (size_t e = 0; e < 3; ++e) {
+                            uint32_t a = graphPositionIds[indices[t + e]];
+                            uint32_t b = graphPositionIds[indices[t + (e + 1) % 3]];
+                            if (a != b) edges.emplace(std::min(a, b), std::max(a, b));
+                        }
+                    }
+                }
+                for (Edge const& edge: edges) edgeOwners[edge].push_back(g);
+            }
+            std::set<std::pair<size_t, size_t>> pairs;
+            for (auto const& entry: edgeOwners) {
+                for (size_t a: entry.second) for (size_t b: entry.second) {
+                    if (a < b) pairs.emplace(a, b);
+                }
+            }
+            std::vector<bool> visited(groups.size(), false);
+            for (auto const& pair: pairs) {
+                size_t const a = pair.first, b = pair.second;
+                if (visited[a] || visited[b] || (results[a].promoted && results[b].promoted) ||
+                        groups[a].size() + groups[b].size() > 16) continue;
+                auto const& na = graph.nodes[groups[a][0]];
+                auto const& nb = graph.nodes[groups[b][0]];
+                if (na.materialId != nb.materialId || na.submeshId != nb.submeshId) continue;
+                visited[a] = visited[b] = true;
+                std::vector<LodGraphNode> baseline;
+                std::vector<std::vector<GeneratedVertex>> baselineGenerated;
+                auto addBaseline = [&](size_t g) {
+                    if (results[g].promoted) {
+                        baseline.push_back(results[g].parent);
+                        baselineGenerated.push_back(results[g].generatedVertices);
+                    } else {
+                        for (auto const& p: decisions[g].parents) {
+                            baseline.push_back(p.parent);
+                            baselineGenerated.push_back(p.generatedVertices);
+                        }
+                        for (uint32_t id: decisions[g].leftover) {
+                            baseline.push_back(graph.nodes[id]);
+                            baselineGenerated.emplace_back();
+                        }
+                    }
+                };
+                addBaseline(a);
+                addBaseline(b);
+                // Share exact position ids between both assemblies, including trial-local vertices.
+                std::unordered_map<PositionKey, uint32_t, PositionKeyHash> positions;
+                struct Assembly {
+                    uint64_t triangles = 0;
+                    float error = 0;
+                    std::map<Edge, uint32_t> edges;
+                };
+                auto assemble = [&](std::vector<LodGraphNode> const& nodes,
+                                        std::vector<std::vector<GeneratedVertex>> const& generated) {
+                    Assembly output;
+                    std::set<std::array<uint32_t, 3>> faces;
+                    for (size_t n = 0; n < nodes.size(); ++n) {
+                        output.error = std::max(output.error, nodes[n].accumulatedError);
+                        auto const& indices = nodes[n].indices;
+                        for (size_t t = 0; t < indices.size(); t += 3) {
+                            std::array<uint32_t, 3> face;
+                            for (size_t v = 0; v < 3; ++v) {
+                                uint32_t const id = indices[t + v];
+                                math::float3 position;
+                                if (id < levelVertexCount) position = graphMesh.positions[id];
+                                else {
+                                    auto const& vertex = generated[n][id - levelVertexCount];
+                                    position = vertex.hasPosition ? vertex.position :
+                                            graphMesh.positions[vertex.positionSource];
+                                }
+                                face[v] = positions.emplace(positionKey(position),
+                                        uint32_t(positions.size())).first->second;
+                            }
+                            std::sort(face.begin(), face.end());
+                            if (face[0] == face[1] || face[1] == face[2] ||
+                                    !faces.insert(face).second) continue;
+                            ++output.triangles;
+                            for (size_t e = 0; e < 3; ++e) {
+                                uint32_t const x = face[e], y = face[(e + 1) % 3];
+                                ++output.edges[{ std::min(x, y), std::max(x, y) }];
+                            }
+                        }
+                    }
+                    return output;
+                };
+                Assembly const base = assemble(baseline, baselineGenerated);
+                auto boundary = [](Assembly const& assembly) {
+                    std::vector<Edge> edges;
+                    for (auto const& edge: assembly.edges) {
+                        if (edge.second == 1) edges.push_back(edge.first);
+                    }
+                    return edges;
+                };
+                uint64_t work = 0;
+                for (size_t g: { a, b }) for (uint32_t id: groups[g]) {
+                    work += graph.nodes[id].triangleCount();
+                }
+                uint32_t count = 0;
+                auto evaluate = [&](std::vector<uint32_t> const& first,
+                                        std::vector<uint32_t> const& second) {
+                    if (count >= 16 || first.empty() || second.empty() ||
+                            work > options.diagnosticTriangleBudget -
+                                    diagnostics.trialInputTriangles) return;
+                    ++count;
+                    uint32_t const trial = uint32_t(diagnostics.trials.size() + 1);
+                    diagnostics.trialInputTriangles += work;
+                    std::vector<LodGraphNode> nodes;
+                    std::vector<std::vector<GeneratedVertex>> generated;
+                    for (auto const* members: { &first, &second }) {
+                        GroupBuildResult result = buildGroup(*members);
+                        record(result, trial);
+                        if (result.promoted) {
+                            nodes.push_back(std::move(result.parent));
+                            generated.push_back(std::move(result.generatedVertices));
+                        } else for (uint32_t id: *members) {
+                            nodes.push_back(graph.nodes[id]);
+                            generated.emplace_back();
+                        }
+                    }
+                    Assembly const candidate = assemble(nodes, generated);
+                    bool manifold = true;
+                    for (auto const& edge: candidate.edges) {
+                        if (edge.second > 2) manifold = false;
+                    }
+                    bool const improves = manifold && boundary(base) == boundary(candidate) &&
+                            std::isfinite(candidate.error) && candidate.error <= base.error &&
+                            candidate.triangles < base.triangles;
+                    diagnostics.trials.push_back({ level, trial, base.triangles,
+                            candidate.triangles, base.error, candidate.error, improves });
+                };
+                // Stable node order; interleave moves and swaps so neither exhausts the cap alone.
+                for (uint32_t x: groups[a]) {
+                    auto first = groups[a], second = groups[b];
+                    first.erase(std::find(first.begin(), first.end(), x));
+                    second.push_back(x);
+                    evaluate(first, second);
+                    for (uint32_t y: groups[b]) {
+                        first = groups[a]; second = groups[b];
+                        *std::find(first.begin(), first.end(), x) = y;
+                        *std::find(second.begin(), second.end(), y) = x;
+                        evaluate(first, second);
+                    }
+                }
+                for (uint32_t y: groups[b]) {
+                    auto first = groups[a], second = groups[b];
+                    second.erase(std::find(second.begin(), second.end(), y));
+                    first.push_back(y);
+                    evaluate(first, second);
+                }
+            }
+            diagnostics.trialSeconds += secondsSince(trialStart);
+        }
         auto appendParent = [&](std::vector<uint32_t> const& members, GroupBuildResult& result) {
             if (stats != nullptr) {
                 stats->groupSimplifyAccepted += 1;

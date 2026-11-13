@@ -70,6 +70,8 @@ struct Options {
     float targetError = 1e-2f;
 
     uint32_t dagGroupSize = 8;
+    std::string dagDiagnostics;
+    uint64_t dagDiagnosticWork = 0;
     bool useTier = true;
     std::string tierName = "balanced";
     bool useTargetRatio = false;
@@ -158,6 +160,8 @@ Options:
   --split-charts 0|1   keep clusters inside connected attribute charts (default: 1)
   --group-size N       clusters merged into one simplification unit (default: 1)
   --dag-group N        children merged into one DAG parent per level (default: 8)
+  --dag-diagnostics P  write detailed build ledger and read-only regroup trials to JSON
+  --dag-diagnostic-work N additional input-triangle budget (default: 0, ledger only)
   --tier maximum|balanced|aggressive
                        quality/saving tier for DAG selection (default: balanced)
   --target-ratio F     DAG selection: smallest cut that reaches this triangle ratio
@@ -1621,6 +1625,8 @@ int handleArguments(int argc, char* argv[], Options* options) {
         { "split-charts", utils::getopt::required_argument, 0, 'c' },
         { "group-size", utils::getopt::required_argument, 0, 'g' },
         { "dag-group", utils::getopt::required_argument, 0, 'D' },
+        { "dag-diagnostics", utils::getopt::required_argument, 0, 258 },
+        { "dag-diagnostic-work", utils::getopt::required_argument, 0, 259 },
         { "tier", utils::getopt::required_argument, 0, 'T' },
         { "target-ratio", utils::getopt::required_argument, 0, 'R' },
         { "screen-error-cut", utils::getopt::required_argument, 0, 'i' },
@@ -1735,6 +1741,16 @@ int handleArguments(int argc, char* argv[], Options* options) {
             case 'D':
                 options->dagGroupSize = std::max(2u, uint32_t(atoi(arg)));
                 break;
+            case 258:
+                options->dagDiagnostics = arg;
+                break;
+            case 259: {
+                char* end = nullptr;
+                unsigned long long const work = std::strtoull(arg, &end, 10);
+                if (*arg == '-' || end == arg || *end != '\0') return -1;
+                options->dagDiagnosticWork = work;
+                break;
+            }
             case 'T':
                 options->tierName = arg;
                 options->useTier = true;
@@ -1896,6 +1912,10 @@ int main(int argc, char* argv[]) {
         std::cerr << "oracle candidates require --mode dag" << std::endl;
         return 1;
     }
+    if (!options.dagDiagnostics.empty() && (!options.dagMode || !options.qualityGate)) {
+        std::cerr << "DAG diagnostics require --mode dag and --quality-gate 1" << std::endl;
+        return 1;
+    }
 
     if (argc - optionIndex < 1) {
         printUsage(argv[0]);
@@ -2019,9 +2039,66 @@ int main(int argc, char* argv[]) {
         graphOptions.levels = options.levels;
         graphOptions.ratio = options.ratio;
         graphOptions.simplify = simplifyOptions;
+        LodGraphDiagnostics diagnostics;
+        if (!options.dagDiagnostics.empty()) graphOptions.diagnostics = &diagnostics;
+        graphOptions.diagnosticTriangleBudget = options.dagDiagnosticWork;
 
         LodGraphBuildStats buildStats;
         LodGraph const graph = buildLodGraph(mesh, graphOptions, &buildStats);
+        if (!options.dagDiagnostics.empty()) {
+            std::ofstream file(options.dagDiagnostics);
+            auto array = [&file](std::vector<uint32_t> const& values) {
+                file << '[';
+                for (size_t i = 0; i < values.size(); ++i) {
+                    if (i) file << ',';
+                    file << values[i];
+                }
+                file << ']';
+            };
+            file.precision(9);
+            file << "{\"schema\":1,\"qualityGate\":" << options.qualityGate
+                 << ",\"trialInputTriangles\":" << diagnostics.trialInputTriangles
+                 << ",\"trialSeconds\":" << diagnostics.trialSeconds << ",\"groups\":[";
+            for (size_t i = 0; i < diagnostics.groups.size(); ++i) {
+                auto const& g = diagnostics.groups[i];
+                auto const& p = g.profile;
+                if (i) file << ',';
+                file << "{\"level\":" << g.level << ",\"trial\":" << g.trial
+                     << ",\"members\":";
+                array(g.members);
+                file << ",\"inputIndices\":"; array(g.inputIndices);
+                file << ",\"lockedVertices\":"; array(g.lockedVertices);
+                file << ",\"inputTriangles\":" << g.inputTriangles
+                     << ",\"outputTriangles\":" << g.outputTriangles
+                     << ",\"promoted\":" << g.promoted
+                     << ",\"accumulatedError\":" << g.accumulatedError
+                     << ",\"attempts\":" << p.attempts
+                     << ",\"rejectedTopology\":" << p.rejectedTopology
+                     << ",\"rejectedGeometry\":" << p.rejectedGeometry
+                     << ",\"rejectedAttributes\":" << p.rejectedAttributes
+                     << ",\"rejectedBoundary\":" << p.rejectedBoundary
+                     << ",\"rejectedLocked\":" << p.rejectedLocked
+                     << ",\"rejectedNotSimplified\":" << p.rejectedNotSimplified << '}';
+            }
+            file << "],\"trials\":[";
+            for (size_t i = 0; i < diagnostics.trials.size(); ++i) {
+                auto const& t = diagnostics.trials[i];
+                if (i) file << ',';
+                file << "{\"level\":" << t.level << ",\"trial\":" << t.trial
+                     << ",\"baselineTriangles\":" << t.baselineTriangles
+                     << ",\"candidateTriangles\":" << t.candidateTriangles
+                     << ",\"baselineError\":" << t.baselineError
+                     << ",\"candidateError\":" << t.candidateError
+                     << ",\"improves\":" << t.improves << '}';
+            }
+            file << "]}\n";
+            file.close();
+            if (!file) {
+                std::cerr << "Failed to write DAG diagnostics: " << options.dagDiagnostics
+                          << std::endl;
+                return 1;
+            }
+        }
         Mesh dagMesh = mesh;
         appendGeneratedVertices(&dagMesh, graph.generatedVertices);
         printf("  DAG built: %zu nodes, %u levels (%.2fs)\n", graph.nodes.size(), graph.levelCount,

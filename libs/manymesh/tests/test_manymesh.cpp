@@ -2683,6 +2683,56 @@ TEST(ManyMesh, CompactedCutCanCompactSourceVerticesToo) {
     EXPECT_EQ(compacted.vertexCount, 4u);
     EXPECT_EQ(compacted.indices, (std::vector<uint32_t>{ 0, 1, 2, 0, 3, 1 }));
 }
+TEST(ManyMesh, RegroupDiagnosticsAreIsolatedAndBounded) {
+    Mesh const mesh = makeGrid(16, 16, {}, 1.0f, 0.4f);
+    LodGraphOptions options;
+    options.clusterize.maxVertices = 24;
+    options.clusterize.maxTriangles = 24;
+    options.clustersPerNode = 4;
+    options.levels = 3;
+    options.ratio = 0.5f;
+    options.simplify.cornerSimplify = true;
+    LodGraph const baseline = buildLodGraph(mesh, options);
+    LodGraphDiagnostics diagnostics;
+    options.diagnostics = &diagnostics;
+    options.diagnosticTriangleBudget = 20000;
+    LodGraph const observed = buildLodGraph(mesh, options);
+    EXPECT_EQ(observed.roots, baseline.roots);
+    EXPECT_EQ(observed.positionIds, baseline.positionIds);
+    ASSERT_EQ(observed.nodes.size(), baseline.nodes.size());
+    EXPECT_EQ(observed.generatedVertices.size(), baseline.generatedVertices.size());
+    for (size_t i = 0; i < baseline.nodes.size(); ++i) {
+        EXPECT_EQ(observed.nodes[i].indices, baseline.nodes[i].indices);
+        EXPECT_EQ(observed.nodes[i].children, baseline.nodes[i].children);
+        EXPECT_EQ(observed.nodes[i].parent, baseline.nodes[i].parent);
+        EXPECT_EQ(observed.nodes[i].accumulatedError, baseline.nodes[i].accumulatedError);
+    }
+    ASSERT_FALSE(diagnostics.groups.empty());
+    EXPECT_LE(diagnostics.trialInputTriangles, options.diagnosticTriangleBudget);
+    for (auto const& g: diagnostics.groups) {
+        EXPECT_EQ(g.inputIndices.size(), g.inputTriangles * 3);
+        EXPECT_LE(g.outputTriangles, g.inputTriangles);
+        for (uint32_t v: g.lockedVertices) {
+            EXPECT_NE(std::find(g.inputIndices.begin(), g.inputIndices.end(), v),
+                    g.inputIndices.end());
+        }
+    }
+    auto const trials = diagnostics.trials;
+    ASSERT_FALSE(trials.empty());
+    buildLodGraph(mesh, options);
+    ASSERT_EQ(diagnostics.trials.size(), trials.size());
+    for (size_t i = 0; i < trials.size(); ++i) {
+        EXPECT_EQ(diagnostics.trials[i].candidateTriangles, trials[i].candidateTriangles);
+        EXPECT_EQ(diagnostics.trials[i].improves, trials[i].improves);
+    }
+    options.diagnosticTriangleBudget = 0;
+    buildLodGraph(mesh, options);
+    EXPECT_TRUE(diagnostics.trials.empty());
+    EXPECT_EQ(diagnostics.trialInputTriangles, 0u);
+    buildLodGraph(Mesh{}, options);
+    EXPECT_TRUE(diagnostics.groups.empty());
+}
+
 TEST(ManyMesh, CompactedCutPreservesTheAssembledTriangles) {
     Mesh const mesh = makeGrid(16, 16, {}, 1.0f, 0.4f);
     LodGraphOptions options;
