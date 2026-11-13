@@ -857,7 +857,6 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
     std::vector<uint32_t> current = std::move(chainTops);
     SimplifyOptions simplifyOptions = options.simplify;
     static std::atomic<uint64_t> nextMeshCacheEpoch{ 1 };
-    simplifyOptions.meshCacheEpoch = nextMeshCacheEpoch.fetch_add(1, std::memory_order_relaxed);
     simplifyOptions.levels = 1;
     simplifyOptions.qualityAttempts = std::max(1u, options.simplify.qualityAttempts);
     // A group contains both sides of its internal UV/normal seams. Pair their boundary
@@ -868,6 +867,10 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
     std::vector<uint32_t> groupTouchedOwners;
 
     for (uint32_t depth = 0; depth < options.levels && !current.empty(); ++depth) {
+        // Committing the previous level can append vertex attributes to graphMesh. The cached
+        // quality-gate snapshot is immutable only within a level, including read-only trials.
+        // Reusing its epoch across levels made serial workers validate against a stale mesh.
+        simplifyOptions.meshCacheEpoch = nextMeshCacheEpoch.fetch_add(1, std::memory_order_relaxed);
         uint32_t const level = maxChainLevel + 1 + depth;
         uint32_t const levelVertexCount = graph.vertexCount;
         auto const groupBuildStart = Clock::now();

@@ -1192,6 +1192,7 @@ TEST(ManyMesh, LodGraphBuildIsDeterministicAcrossSerialAndParallelWork) {
     options.ratio = 0.5f;
     options.simplify.qualityGate = true;
     options.simplify.attributeQem = true;
+    options.simplify.cornerSimplify = true;
 
     auto setBuildThreads = [](char const* value) {
 #if defined(_WIN32)
@@ -1244,7 +1245,11 @@ TEST(ManyMesh, LodGraphBuildIsDeterministicAcrossSerialAndParallelWork) {
     // single worker, then compare two parallel runs against it field by field. This catches both
     // lost updates between jobs and any worker-count-dependent tie breaking.
     setBuildThreads("1");
-    LodGraph const serial = buildLodGraph(mesh, options);
+    LodGraphBuildStats serialStats;
+    LodGraph const serial = buildLodGraph(mesh, options, &serialStats);
+    // Several group levels append generated attributes; each needs a fresh cached snapshot.
+    ASSERT_FALSE(serial.generatedVertices.empty());
+    EXPECT_GE(serialStats.groupSimplify.extendedMeshCopies, 2u);
     setBuildThreads("0");
     LodGraph const parallel = buildLodGraph(mesh, options);
     LodGraph const parallelAgain = buildLodGraph(mesh, options);

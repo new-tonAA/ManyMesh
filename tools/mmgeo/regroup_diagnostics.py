@@ -6,9 +6,11 @@ assets, including the procedural controls. Parameters are frozen below.
 """
 
 import argparse
+import hashlib
 import json
 import math
 import os
+import platform
 from pathlib import Path
 import subprocess
 import time
@@ -44,6 +46,8 @@ def main():
     parser.add_argument('--mmgeo', type=Path, required=True)
     parser.add_argument('--out', type=Path, default=Path('out/regroup-diagnostics'))
     parser.add_argument('--work', type=int, default=50000)
+    parser.add_argument('--write-graphs', action='store_true',
+                        help='retain MMLG files for the cut audit')
     args = parser.parse_args()
     if args.work < 0:
         parser.error('--work must be nonnegative')
@@ -59,6 +63,16 @@ def main():
         ('pirate', 'third_party/meshoptimizer/demo/pirate.obj'),
         ('monkey', 'assets/models/monkey/monkey.obj'),
         ('torus', 'assets/models/torus/torus.obj')))
+    manifest = dict(
+        sourceCommit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root,
+                                             text=True).strip(),
+        trackedDiffSha256=hashlib.sha256(subprocess.check_output(
+            ['git', 'diff', '--binary', 'HEAD'], cwd=root)).hexdigest(),
+        platform=platform.platform(),
+        executableSha256=hashlib.sha256(args.mmgeo.resolve().read_bytes()).hexdigest(),
+        triangleBudget=args.work,
+        assets={name: hashlib.sha256(path.read_bytes()).hexdigest() for name, path in assets})
+    (output / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
     summary = []
     for name, path in assets:
         for threads in (1, 4):
@@ -67,7 +81,8 @@ def main():
             ledger = target / 'diagnostics.json'
             command = [str(args.mmgeo.resolve()), '--mode', 'dag', '--levels', '5',
                        '--ratio', '0.7', '--dag-group', '8', '--corner-seam', '1',
-                       '--quality-gate', '1', '--dump-obj', '0', '--write-dag', '0',
+                       '--quality-gate', '1', '--dump-obj', '0',
+                       '--write-dag', str(int(args.write_graphs)),
                        '--out', str(target), '--dag-diagnostics', str(ledger),
                        '--dag-diagnostic-work', str(args.work), str(path)]
             env = dict(os.environ, MANYMESH_BUILD_THREADS=str(threads))
@@ -89,8 +104,8 @@ def main():
                 assert data['groups'] == serial['groups'], f'{name}: ledger changed with threads'
                 assert trials == serial['trials'], f'{name}: trials changed with threads'
             summary.append(row)
+            (output / 'summary.json').write_text(json.dumps(summary, indent=2) + '\n')
             print(json.dumps(row), flush=True)
-    (output / 'summary.json').write_text(json.dumps(summary, indent=2) + '\n')
 
 
 if __name__ == '__main__':
