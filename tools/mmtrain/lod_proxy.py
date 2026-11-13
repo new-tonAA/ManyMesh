@@ -98,7 +98,40 @@ def surface_loss(depth, reference):
     return np.array([outline, surface])
 
 
-def frame_scores(path, view, width, height, graph, measure_interactions=False):
+def resolve_cuts(cuts, triangles, face, pixel, depth, count):
+    """Resolve shared fragments once, preserving exact per-cut nearest depth.
+
+    The intersection includes the finer references and optional interaction cuts:
+    geometry common only to the candidates must not occlude either reference.
+    Duplicate cuts share a read-only result (notably identical refinement levels).
+    """
+    common = set.intersection(*cuts)
+    common_ids = np.array([tri in common for tri in triangles], dtype=bool)
+    shared = common_ids[face]
+    base = z_buffer(pixel[shared], depth[shared], count)
+    variable_face = face[~shared]
+    variable_pixel, variable_depth = pixel[~shared], depth[~shared]
+    ids = {tri: i for i, tri in enumerate(triangles)}
+    cache, resolved = {}, []
+    for cut in cuts:
+        key = frozenset(cut - common)
+        if key not in cache:
+            included = np.zeros(len(triangles), dtype=bool)
+            included[[ids[tri] for tri in key]] = True
+            keep = included[variable_face]
+            image = np.maximum(base, z_buffer(variable_pixel[keep], variable_depth[keep], count))
+            image.flags.writeable = False
+            cache[key] = image
+        resolved.append(cache[key])
+    return resolved, {
+        "common_raster_triangles": len(common),
+        "shared_fragments": int(shared.sum()),
+        "variable_fragments": len(variable_face),
+        "unique_depth_resolves": len(cache),
+    }
+
+
+def frame_scores(path, view, width, height, graph, measure_interactions=False, shared_depth=False):
     with (path / "oracle.csv").open(newline="") as stream:
         rows = list(csv.DictReader(stream))[1:]
     positions, faces, vertices = read_cut(path / "oracle_baseline.obj", True)
@@ -160,6 +193,23 @@ def frame_scores(path, view, width, height, graph, measure_interactions=False):
             component_ranges.append((len(candidates) - 1, first, len(components)))
 
     start = perf_counter()
+    if len(candidates) == 1:
+        # With no reallocations, no nodes are touched: both finer references
+        # equal the baseline. Every gain is exactly zero without rasterization.
+        scores = {f"proxy{level}_{loss}": np.zeros(1)
+                  for level in (1, 2) for loss in ("outline", "surface")}
+        work = {
+            "candidates": 0, "baseline_triangles": len(baseline),
+            "candidate_triangles_outside_baseline": 0,
+            "proxy1_triangles_outside_candidates": 0,
+            "proxy2_triangles_outside_candidates": 0,
+            "shared_raster_triangles": 0, "independent_raster_triangles": 0,
+            "prototype_ms": 1000 * (perf_counter() - start),
+        }
+        if measure_interactions:
+            work.update(interaction_count=0, interaction_mean_abs=0,
+                        interaction_max_abs=0, interaction_values=[])
+        return scores, work
     # Every candidate is evaluated against the same reference. Refine only regions
     # touched by at least one candidate, so unrelated regions keep their baseline LOD.
     unchanged = baseline - graph.cut(touched)
@@ -168,15 +218,18 @@ def frame_scores(path, view, width, height, graph, measure_interactions=False):
     two_levels = unchanged | graph.cut(graph.refine(fine_nodes))
     cuts = [*candidates, *components, one_level, two_levels]
     triangles = sorted(set.union(*cuts))
-    ids = {tri: i for i, tri in enumerate(triangles)}
     projected = project(positions, view["eye"], view["target"], width, height)
     face, pixel, depth = fragments(projected, triangles, width, height)
-    depths = []
-    for cut in cuts:
-        included = np.zeros(len(triangles), dtype=bool)
-        included[[ids[tri] for tri in cut]] = True
-        keep = included[face]
-        depths.append(z_buffer(pixel[keep], depth[keep], width * height))
+    if shared_depth:
+        depths, resolve_work = resolve_cuts(cuts, triangles, face, pixel, depth, width * height)
+    else:
+        ids = {tri: i for i, tri in enumerate(triangles)}
+        depths, resolve_work = [], {}
+        for cut in cuts:
+            included = np.zeros(len(triangles), dtype=bool)
+            included[[ids[tri] for tri in cut]] = True
+            keep = included[face]
+            depths.append(z_buffer(pixel[keep], depth[keep], width * height))
 
     scores = {}
     for level, reference in enumerate(depths[-2:], 1):
@@ -206,6 +259,7 @@ def frame_scores(path, view, width, height, graph, measure_interactions=False):
         "shared_raster_triangles": len(triangles),
         "independent_raster_triangles": sum(map(len, cuts)),
         "prototype_ms": 1000 * (perf_counter() - start),
+        **resolve_work,
     }
     if measure_interactions:
         work["interaction_count"] = len(component_ranges)
@@ -229,7 +283,13 @@ def main():
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--interactions", action="store_true",
                         help="Measure deviation from summed single-operation proxy gains")
+    parser.add_argument("--proxy-height", type=int,
+                        help="Score geometry on a smaller grid; evaluate images at capture size")
+    parser.add_argument("--shared-depth", action="store_true",
+                        help="Resolve common fragments once (experimental CPU cost tradeoff)")
     args = parser.parse_args()
+    if args.proxy_height is not None and args.proxy_height <= 0:
+        parser.error("--proxy-height must be positive")
     outlines = {}
     for path in args.silhouette:
         data = json.loads(path.read_text(encoding="utf-8"))
@@ -244,6 +304,10 @@ def main():
         width, height = geometry["width"], geometry["height"]
         if (width, height) != (trajectory.capture["width"], trajectory.capture["height"]):
             raise ValueError(f"Capture dimensions disagree: {root}")
+        if args.proxy_height is not None:
+            if args.proxy_height > height:
+                raise ValueError("Proxy height must not exceed capture height")
+            width, height = max(1, round(width * args.proxy_height / height)), args.proxy_height
         views = {view["directory"]: view for view in geometry["views"]}
         scores, cost = [], []
         for meta, view in zip(trajectory.metadata, trajectory.views, strict=True):
@@ -252,7 +316,8 @@ def main():
                 raise ValueError(f"Capture metadata disagree: {root}")
             path = root / meta["directory"]
             graph = graph_for(meta["graph_sha256"], (path / "lod_graph.mmb").read_bytes())
-            frame, work = frame_scores(path, meta, width, height, graph, args.interactions)
+            frame, work = frame_scores(path, meta, width, height, graph, args.interactions,
+                                       args.shared_depth)
             rows = view["candidates"]
             with (path / "oracle.csv").open(newline="") as stream:
                 keys = ("stem", "triangles", "split", "merge", "geometric_score")
@@ -273,7 +338,8 @@ def main():
 
         report = evaluate_trajectory(root, trajectory.metadata, trajectory.views, [], select_paths)
         report.update(capture_sha256=digest(manifest), target_ratio=geometry["target_ratio"],
-                      start_degrees=geometry["start_degrees"], work_by_frame=cost)
+                      start_degrees=geometry["start_degrees"], work_by_frame=cost,
+                      proxy_width=width, proxy_height=height, shared_depth=args.shared_depth)
         reports.append(report)
         print(f"{root.name} {report['asset']}: {sum(w['candidates'] for w in cost)} swaps",
               flush=True)

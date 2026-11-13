@@ -211,6 +211,35 @@ python tools/mmtrain/lod_screening.py --score out/lod-composites/score.json \
 The full-detail image errors are used only for evaluating candidate recall and
 best attainable quality inside each shortlist.
 
+## Proxy cost and visual audit
+
+`lod_proxy.py --shared-depth` resolves geometry common to all candidates,
+interaction cuts and finer references once. This is optional: CPU savings depend
+on asset and overlap. By default, frames with no swaps skip rasterization, since
+both finer references then equal the baseline and every gain is exactly zero.
+`--proxy-height 108` is an experimental smaller scoring grid; image evaluation
+still uses the capture resolution. The retained experiment shows worse silhouettes.
+
+```sh
+python tools/mmtrain/lod_proxy_benchmark.py --captures out/lod-sequence-075 \
+    out/lod-proxy-unseen-055 out/lod-proxy-unseen-075 --repeats 3 --out out/paired.json
+python -m unittest discover -s tools/mmtrain -p test_lod_proxy.py
+```
+
+Use `lod_audit.py --report <proxy-report.json> --captures <capture-directories...>
+--out <directory>` to generate per-asset best and worst PSNR cases, including
+no-ops, with full detail, baseline, selected cut, and both absolute RGB errors at
+8x. Optional `--exposure 4 --crop` applies a fixed multiplier to the RGB panels,
+uses common foreground bounds, and enlarges pixels 2x with nearest sampling.
+Metrics use original pixels. JSON records sources and display settings. Supply
+every capture referenced by the report. These small frames support debugging;
+publication figures need larger, better lit captures.
+
+See [retained results](results/proxy-grid-20261113/summary.json) and research
+notes section 19. Benchmarking uses warmup and alternating implementation order;
+reported times cover proxy construction, rasterization and scoring, excluding OBJ
+loading, validation and Filament rendering.
+
 ## Image reconstruction training
 
 Trains and compares reconstruction networks for ManyMesh: coarse geometry goes in, a full

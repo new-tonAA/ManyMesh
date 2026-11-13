@@ -1,0 +1,2990 @@
+{
+  "scope": "CPU offline replay, historical captures; not device frame time",
+  "full_resolution_strategy_equality": true,
+  "variants": {
+    "before": {
+      "frames": 184,
+      "median_ms": 28.67174999846611,
+      "total_ms": 14469.219699960377,
+      "improved_frames": 33,
+      "degraded_frames": 7,
+      "mean_gain_db": 0.23596197479500172,
+      "median_gain_db": 0.0,
+      "worse_silhouette_frames": 0,
+      "worse_temporal_edges": 8
+    },
+    "after": {
+      "frames": 184,
+      "median_ms": 32.73730000000796,
+      "total_ms": 13165.863400001399,
+      "improved_frames": 33,
+      "degraded_frames": 7,
+      "mean_gain_db": 0.23596197479500172,
+      "median_gain_db": 0.0,
+      "worse_silhouette_frames": 0,
+      "worse_temporal_edges": 8
+    },
+    "half": {
+      "frames": 184,
+      "median_ms": 16.684099999110913,
+      "total_ms": 9712.802599940915,
+      "improved_frames": 37,
+      "degraded_frames": 14,
+      "mean_gain_db": 0.19523334118323404,
+      "median_gain_db": 0.0,
+      "worse_silhouette_frames": 12,
+      "worse_temporal_edges": 17
+    }
+  },
+  "report_sha256": {
+    "before": "6fcba47227b7738b9e0b8ac98063783f5ec272f65b65c926d0fbf5eb1a120947",
+    "after": "9da9516b3653c31fad79b1265f648108c6acc4c9e1b6d81083b814ecb10c06d5",
+    "half": "137b4f0d86f27d8cdda009339441ed08e92080933b91b7f220666ba851e0a06b"
+  },
+  "trajectories": [
+    {
+      "asset": "monkey.obj",
+      "capture_sha256": "ddea6bb6264c68afec5631f4d6a2520117fa4cccaf660e32246c66813aa8d687",
+      "triangle_counts": [
+        8660,
+        8660,
+        8660,
+        8660,
+        8660,
+        8660,
+        8660,
+        8660
+      ],
+      "full": {
+        "chosen": [
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 8.762922546074097e-06,
+        "mean_triangle_churn": 0.0,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          9.605878813439814e-06,
+          8.238969614788479e-06,
+          8.493044057736337e-06,
+          1.031674326450726e-05,
+          1.0472302879803375e-05,
+          7.70813908280423e-06,
+          6.505380109439176e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 9.049320191208243e-06,
+        "mean_triangle_churn": 0.003326050803795611,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 2,
+        "edges_with_worse_churn": 1,
+        "psnr_gain_db_by_frame": [
+          -0.8739083449191548,
+          0.0057618678265699275,
+          -0.6244802547929563,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          1.1060857999790655e-05,
+          7.938233532086882e-06,
+          9.343584470026129e-06,
+          1.031674326450726e-05,
+          1.0472302879803375e-05,
+          7.70813908280423e-06,
+          6.505380109439176e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.023282355626569277,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "asset": "cloth.obj",
+      "capture_sha256": "ddea6bb6264c68afec5631f4d6a2520117fa4cccaf660e32246c66813aa8d687",
+      "triangle_counts": [
+        41236,
+        41236,
+        41236,
+        41236,
+        41236,
+        41236,
+        41236,
+        41236
+      ],
+      "full": {
+        "chosen": [
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 8.00076106174447e-06,
+        "mean_triangle_churn": 0.00948055594865381,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          6.356866078589971e-06,
+          6.564278796884477e-06,
+          5.704776795666044e-06,
+          7.608326187545715e-06,
+          8.980550408868692e-06,
+          9.530169379202647e-06,
+          1.1260359785453741e-05
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.038249286393910564,
+          0.015305385763103432,
+          0.0,
+          0.007970821960822203,
+          0.0048383975227404685
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 8.00076106174447e-06,
+        "mean_triangle_churn": 0.00948055594865381,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          6.356866078589971e-06,
+          6.564278796884477e-06,
+          5.704776795666044e-06,
+          7.608326187545715e-06,
+          8.980550408868692e-06,
+          9.530169379202647e-06,
+          1.1260359785453741e-05
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.038249286393910564,
+          0.015305385763103432,
+          0.0,
+          0.007970821960822203,
+          0.0048383975227404685
+        ]
+      }
+    },
+    {
+      "asset": "torus.obj",
+      "capture_sha256": "ddea6bb6264c68afec5631f4d6a2520117fa4cccaf660e32246c66813aa8d687",
+      "triangle_counts": [
+        554,
+        554,
+        554,
+        554,
+        554,
+        554,
+        554,
+        554
+      ],
+      "full": {
+        "chosen": [
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 1.1304443437281537e-05,
+        "mean_triangle_churn": 0.0,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          9.164786868160726e-06,
+          9.05934994118909e-06,
+          9.335117357904512e-06,
+          1.1884637444895198e-05,
+          1.1774689010085007e-05,
+          1.1620056570791075e-05,
+          1.6292466867945158e-05
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 1.1304443437281537e-05,
+        "mean_triangle_churn": 0.0,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          9.164786868160726e-06,
+          9.05934994118909e-06,
+          9.335117357904512e-06,
+          1.1884637444895198e-05,
+          1.1774689010085007e-05,
+          1.1620056570791075e-05,
+          1.6292466867945158e-05
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "asset": "monkey.obj",
+      "capture_sha256": "8c76b312e7f0667305f14541878ff4f0b69f963113e5b114f9e88f7b46709fae",
+      "triangle_counts": [
+        11808,
+        11808,
+        11808,
+        11808,
+        11808,
+        11808,
+        11808,
+        11808
+      ],
+      "full": {
+        "chosen": [
+          "oracle_swap_2",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 2.616576979985085e-06,
+        "mean_triangle_churn": 0.01991704248214244,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 1,
+        "psnr_gain_db_by_frame": [
+          0.6620836107770238,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          3.536275643085092e-06,
+          2.4296830014701506e-06,
+          1.926478529871713e-06,
+          3.2341180516638905e-06,
+          3.1934513213459697e-06,
+          2.1655964908736334e-06,
+          1.8304358215851474e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.07436399217221135,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.06505530520278574,
+          0.0
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.00012877651057380168,
+        "mean_temporal_error_mse": 2.8498147543339095e-06,
+        "mean_triangle_churn": 0.02005534816937649,
+        "frames_with_worse_silhouette": 3,
+        "edges_with_worse_temporal_error": 3,
+        "edges_with_worse_churn": 1,
+        "psnr_gain_db_by_frame": [
+          0.6201368815742979,
+          -0.0005162807991682977,
+          -1.837718634605736,
+          -1.3090388672032014,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.00023020233377904617,
+          0.0,
+          0.0002079434393844874,
+          0.0005920663114268799,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          3.552529978232258e-06,
+          2.6824595353675454e-06,
+          2.7363522678901985e-06,
+          3.787877865042616e-06,
+          3.1934513213459697e-06,
+          2.1655964908736334e-06,
+          1.8304358215851474e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.048264462809917356,
+          0.0,
+          0.0,
+          0.02706766917293233,
+          0.0,
+          0.06505530520278574,
+          0.0
+        ]
+      }
+    },
+    {
+      "asset": "cloth.obj",
+      "capture_sha256": "8c76b312e7f0667305f14541878ff4f0b69f963113e5b114f9e88f7b46709fae",
+      "triangle_counts": [
+        56232,
+        56232,
+        56232,
+        56232,
+        56232,
+        56232,
+        56232,
+        56232
+      ],
+      "full": {
+        "chosen": [
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_2",
+          "oracle_swap_2",
+          "oracle_swap_2",
+          "oracle_swap_2"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 9.748715655862955e-07,
+        "mean_triangle_churn": 0.009563640304121815,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.000990070452338297,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          4.944284136897029e-07,
+          4.340463445087105e-07,
+          3.7230459361436184e-07,
+          3.815751226428431e-07,
+          1.106407198857314e-06,
+          1.964920327881739e-06,
+          2.070418957909398e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.01626303070925864,
+          0.009838966554592108,
+          0.008076514346439958,
+          0.006664303438496987,
+          0.01615805256659023,
+          0.009944614513474776
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_2",
+          "oracle_swap_2",
+          "oracle_swap_2",
+          "oracle_swap_2"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 9.748715655862955e-07,
+        "mean_triangle_churn": 0.009563640304121815,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.000990070452338297,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          4.944284136897029e-07,
+          4.340463445087105e-07,
+          3.7230459361436184e-07,
+          3.815751226428431e-07,
+          1.106407198857314e-06,
+          1.964920327881739e-06,
+          2.070418957909398e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.01626303070925864,
+          0.009838966554592108,
+          0.008076514346439958,
+          0.006664303438496987,
+          0.01615805256659023,
+          0.009944614513474776
+        ]
+      }
+    },
+    {
+      "asset": "torus.obj",
+      "capture_sha256": "8c76b312e7f0667305f14541878ff4f0b69f963113e5b114f9e88f7b46709fae",
+      "triangle_counts": [
+        832,
+        832,
+        832,
+        832,
+        832,
+        832,
+        832,
+        856
+      ],
+      "full": {
+        "chosen": [
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_swap_1"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": -7.682390013749905e-05,
+        "mean_temporal_error_mse": 4.67374346277431e-06,
+        "mean_triangle_churn": 0.10324246145449585,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 2,
+        "edges_with_worse_churn": 1,
+        "psnr_gain_db_by_frame": [
+          -0.9985360968508075,
+          -1.235270257190185,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.7535050244584744
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          -0.00025549310168625433,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          -0.00035909809941373806
+        ],
+        "temporal_error_mse_by_edge": [
+          2.8414800926603e-06,
+          3.3620514067011536e-06,
+          4.218154201823289e-06,
+          5.717013876253109e-06,
+          6.976014005869729e-06,
+          4.7080708953669e-06,
+          4.893419760745696e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.41069723018147086,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.312
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_swap_1"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 2.0587612389979734e-05,
+        "mean_temporal_error_mse": 4.684020508900167e-06,
+        "mean_triangle_churn": 0.10324246145449585,
+        "frames_with_worse_silhouette": 2,
+        "edges_with_worse_temporal_error": 2,
+        "edges_with_worse_churn": 1,
+        "psnr_gain_db_by_frame": [
+          -0.9460667849679678,
+          -1.3488828445694112,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.7535050244584744
+        ],
+        "silhouette_delta_by_frame": [
+          0.0002690237574140006,
+          0.0002547752411195753,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          -0.00035909809941373806
+        ],
+        "temporal_error_mse_by_edge": [
+          2.85427342125524e-06,
+          3.421197400987213e-06,
+          4.218154201823289e-06,
+          5.717013876253109e-06,
+          6.976014005869729e-06,
+          4.7080708953669e-06,
+          4.893419760745696e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.41069723018147086,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.312
+        ]
+      }
+    },
+    {
+      "asset": "sphere.obj",
+      "capture_sha256": "58493c3e92c69ca0ba748e60fa84673ab08c89362e3328e288aa4ec81f523510",
+      "triangle_counts": [
+        4436,
+        4436,
+        4436,
+        4436,
+        4436,
+        4436,
+        4436,
+        4436
+      ],
+      "full": {
+        "chosen": [
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_swap_4"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 1.08204951843958e-05,
+        "mean_triangle_churn": 0.04876379799322516,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0015120946766829354
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          7.107779275708915e-06,
+          9.660513184358333e-06,
+          1.1849038766790179e-05,
+          1.2386358829508892e-05,
+          1.2151505243543872e-05,
+          1.148347063756259e-05,
+          1.1104800353297817e-05
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.03933701657458564,
+          0.0,
+          0.30200956937799045
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_swap_4"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 1.08204951843958e-05,
+        "mean_triangle_churn": 0.04876379799322516,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0015120946766829354
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          7.107779275708915e-06,
+          9.660513184358333e-06,
+          1.1849038766790179e-05,
+          1.2386358829508892e-05,
+          1.2151505243543872e-05,
+          1.148347063756259e-05,
+          1.1104800353297817e-05
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.03933701657458564,
+          0.0,
+          0.30200956937799045
+        ]
+      }
+    },
+    {
+      "asset": "rounded_cube.obj",
+      "capture_sha256": "58493c3e92c69ca0ba748e60fa84673ab08c89362e3328e288aa4ec81f523510",
+      "triangle_counts": [
+        660,
+        660,
+        660,
+        660,
+        660,
+        660,
+        660,
+        660
+      ],
+      "full": {
+        "chosen": [
+          "oracle_swap_1",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": -1.1128917378917357e-05,
+        "mean_temporal_error_mse": 5.925786325628233e-06,
+        "mean_triangle_churn": 0.024896265560165973,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 1,
+        "edges_with_worse_churn": 1,
+        "psnr_gain_db_by_frame": [
+          -0.06597585734079855,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          -8.903133903133886e-05,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          4.476987456519104e-06,
+          6.771320689840547e-06,
+          8.497555655671994e-06,
+          6.89517499092906e-06,
+          4.428533500675587e-06,
+          5.0010816477305484e-06,
+          5.409850338030786e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.17427385892116182,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 5.9228462425791775e-06,
+        "mean_triangle_churn": 0.0,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          4.4564068751757185e-06,
+          6.771320689840547e-06,
+          8.497555655671994e-06,
+          6.89517499092906e-06,
+          4.428533500675587e-06,
+          5.0010816477305484e-06,
+          5.409850338030786e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "asset": "sphere.obj",
+      "capture_sha256": "08d0b4d3e5e8de18fbaa3acae2040f68e6b24a2395da62a80621df6234810e9d",
+      "triangle_counts": [
+        6048,
+        6048,
+        6048,
+        6048,
+        6048,
+        6048,
+        6048,
+        6048
+      ],
+      "full": {
+        "chosen": [
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_baseline",
+          "oracle_swap_4",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 1.98684294828871e-06,
+        "mean_triangle_churn": 0.011842844468734017,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 1,
+        "psnr_gain_db_by_frame": [
+          0.05880855771486393,
+          1.249387473100198,
+          0.0,
+          0.0052157738088787105,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          9.523927455184292e-08,
+          1.0721680500133154e-06,
+          2.7127433179091037e-06,
+          2.4786314475054827e-06,
+          2.490806782901057e-06,
+          3.35123583623723e-06,
+          1.7070759289029372e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.04271844660194175,
+          0.04018146467919637,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_baseline",
+          "oracle_swap_4",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 1.98684294828871e-06,
+        "mean_triangle_churn": 0.011842844468734017,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 1,
+        "psnr_gain_db_by_frame": [
+          0.05880855771486393,
+          1.249387473100198,
+          0.0,
+          0.0052157738088787105,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          9.523927455184292e-08,
+          1.0721680500133154e-06,
+          2.7127433179091037e-06,
+          2.4786314475054827e-06,
+          2.490806782901057e-06,
+          3.35123583623723e-06,
+          1.7070759289029372e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.04271844660194175,
+          0.04018146467919637,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "asset": "rounded_cube.obj",
+      "capture_sha256": "08d0b4d3e5e8de18fbaa3acae2040f68e6b24a2395da62a80621df6234810e9d",
+      "triangle_counts": [
+        900,
+        900,
+        900,
+        900,
+        900,
+        900,
+        900,
+        900
+      ],
+      "full": {
+        "chosen": [
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_swap_0",
+          "oracle_swap_0"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": -0.0001367837757708775,
+        "mean_temporal_error_mse": 2.833657514364937e-06,
+        "mean_triangle_churn": 0.04220779220779221,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          8.419978087426408,
+          8.572228827451642
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          -0.0005022917059082062,
+          -0.0005919785002588137
+        ],
+        "temporal_error_mse_by_edge": [
+          7.970804044599798e-07,
+          1.8145522630837607e-06,
+          4.811715464354512e-06,
+          5.005531402818952e-06,
+          3.920879122406294e-06,
+          2.6938932276449125e-06,
+          7.919507157861468e-07
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.29545454545454547,
+          0.0
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0"
+        ],
+        "median_psnr_gain_db": 0.009715887286621252,
+        "mean_silhouette_delta": -0.00011631197069999175,
+        "mean_temporal_error_mse": 3.145332825814144e-06,
+        "mean_triangle_churn": 0.05023547880690738,
+        "frames_with_worse_silhouette": 2,
+        "edges_with_worse_temporal_error": 3,
+        "edges_with_worse_churn": 1,
+        "psnr_gain_db_by_frame": [
+          -4.675430888974737,
+          0.02585093665708956,
+          0.006253886690103009,
+          -0.8316235856778142,
+          0.013177887883139495,
+          0.005236459696630864,
+          8.419978087426408,
+          8.572228827451642
+        ],
+        "silhouette_delta_by_frame": [
+          8.904719501335711e-05,
+          0.0,
+          0.0,
+          7.472724555372884e-05,
+          0.0,
+          0.0,
+          -0.0005022917059082062,
+          -0.0005919785002588137
+        ],
+        "temporal_error_mse_by_edge": [
+          1.567832495227062e-06,
+          1.8106586397724749e-06,
+          5.525299274119027e-06,
+          5.716148642069764e-06,
+          3.9143279457808805e-06,
+          2.6911120679436555e-06,
+          7.919507157861468e-07
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.3516483516483517,
+          0.0
+        ]
+      }
+    },
+    {
+      "asset": "monkey.obj",
+      "capture_sha256": "49bfd2f1eb0c7a354d3aa94852c520dda3585e6855a3df3151b9bdd0ccb22954",
+      "triangle_counts": [
+        8660,
+        8660,
+        8660,
+        8660,
+        8660,
+        8660,
+        8660,
+        8660
+      ],
+      "full": {
+        "chosen": [
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0"
+        ],
+        "median_psnr_gain_db": 0.001161278564541346,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 7.76615484723845e-06,
+        "mean_triangle_churn": 0.0,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0017253306956214265,
+          0.0010130605424702025,
+          0.0008034193513184759,
+          0.0007933721299975952,
+          0.0006111757823213033,
+          0.0013094965866124893,
+          0.0014526356315392053,
+          0.0013399423948735748
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          4.769689117266262e-06,
+          7.221188791824528e-06,
+          9.373806511045871e-06,
+          1.0858451324951548e-05,
+          9.712675306296114e-06,
+          6.888500340536542e-06,
+          5.538772538748288e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0"
+        ],
+        "median_psnr_gain_db": 0.001161278564541346,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 7.76615484723845e-06,
+        "mean_triangle_churn": 0.0,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0017253306956214265,
+          0.0010130605424702025,
+          0.0008034193513184759,
+          0.0007933721299975952,
+          0.0006111757823213033,
+          0.0013094965866124893,
+          0.0014526356315392053,
+          0.0013399423948735748
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          4.769689117266262e-06,
+          7.221188791824528e-06,
+          9.373806511045871e-06,
+          1.0858451324951548e-05,
+          9.712675306296114e-06,
+          6.888500340536542e-06,
+          5.538772538748288e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "asset": "cloth.obj",
+      "capture_sha256": "49bfd2f1eb0c7a354d3aa94852c520dda3585e6855a3df3151b9bdd0ccb22954",
+      "triangle_counts": [
+        41236,
+        41236,
+        41236,
+        41236,
+        41236,
+        41236,
+        41236,
+        41236
+      ],
+      "full": {
+        "chosen": [
+          "oracle_swap_1",
+          "oracle_swap_1",
+          "oracle_swap_1",
+          "oracle_swap_1",
+          "oracle_swap_1",
+          "oracle_swap_1",
+          "oracle_swap_1",
+          "oracle_swap_1"
+        ],
+        "median_psnr_gain_db": 0.016177771076566577,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 5.908348911571685e-06,
+        "mean_triangle_churn": 0.012576446796866248,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.005286462539087736,
+          0.015107520409288398,
+          0.018699596184474716,
+          0.017248021743844755,
+          0.00735974514314352,
+          0.010321242875986125,
+          0.022759122699800464,
+          0.020059526931549908
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          6.291972425632993e-06,
+          3.8478891219337275e-06,
+          4.024956209663855e-06,
+          4.851146196270504e-06,
+          8.795510642643112e-06,
+          7.217851415607351e-06,
+          6.329116369250253e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.014779866644199986,
+          0.0,
+          0.03516462572068423,
+          0.01869069069069069,
+          0.011429122561666626,
+          0.007970821960822203,
+          0.0
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_swap_0",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 5.9177342219974334e-06,
+        "mean_triangle_churn": 0.01386085549044927,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 1,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          6.297225726688246e-06,
+          3.858828350057891e-06,
+          4.034473956466707e-06,
+          4.857202944335638e-06,
+          8.803421496223002e-06,
+          7.227616376990057e-06,
+          6.3453707032204915e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.02377072749928113,
+          0.0,
+          0.03516462572068423,
+          0.01869069069069069,
+          0.011429122561666626,
+          0.007970821960822203,
+          0.0
+        ]
+      }
+    },
+    {
+      "asset": "torus.obj",
+      "capture_sha256": "49bfd2f1eb0c7a354d3aa94852c520dda3585e6855a3df3151b9bdd0ccb22954",
+      "triangle_counts": [
+        554,
+        554,
+        554,
+        554,
+        554,
+        554,
+        554,
+        554
+      ],
+      "full": {
+        "chosen": [
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 9.019733897947086e-06,
+        "mean_triangle_churn": 0.0,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          8.242925109931617e-06,
+          7.624271484410957e-06,
+          5.933511755483952e-06,
+          7.504248999298995e-06,
+          1.114528157285218e-05,
+          9.857604685871762e-06,
+          1.2830293677780137e-05
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 9.019733897947086e-06,
+        "mean_triangle_churn": 0.0,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          8.242925109931617e-06,
+          7.624271484410957e-06,
+          5.933511755483952e-06,
+          7.504248999298995e-06,
+          1.114528157285218e-05,
+          9.857604685871762e-06,
+          1.2830293677780137e-05
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "asset": "sphere.obj",
+      "capture_sha256": "49bfd2f1eb0c7a354d3aa94852c520dda3585e6855a3df3151b9bdd0ccb22954",
+      "triangle_counts": [
+        4436,
+        4436,
+        4436,
+        4436,
+        4436,
+        4436,
+        4436,
+        4436
+      ],
+      "full": {
+        "chosen": [
+          "oracle_swap_2",
+          "oracle_swap_2",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": -0.00013496654808155376,
+        "mean_temporal_error_mse": 8.95024909016478e-06,
+        "mean_triangle_churn": 0.0,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          -0.00013681762210972746,
+          -0.00012896569512509636,
+          -0.00024336821611097622,
+          -0.00057058085130663
+        ],
+        "temporal_error_mse_by_edge": [
+          4.584649277237808e-06,
+          5.208247120347992e-06,
+          7.774639637997523e-06,
+          1.1092006929210908e-05,
+          1.1960903123141591e-05,
+          1.1267590917982346e-05,
+          1.0763706625235288e-05
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_swap_2",
+          "oracle_swap_2",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": -0.00013496654808155376,
+        "mean_temporal_error_mse": 8.95024909016478e-06,
+        "mean_triangle_churn": 0.0,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          -0.00013681762210972746,
+          -0.00012896569512509636,
+          -0.00024336821611097622,
+          -0.00057058085130663
+        ],
+        "temporal_error_mse_by_edge": [
+          4.584649277237808e-06,
+          5.208247120347992e-06,
+          7.774639637997523e-06,
+          1.1092006929210908e-05,
+          1.1960903123141591e-05,
+          1.1267590917982346e-05,
+          1.0763706625235288e-05
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "asset": "rounded_cube.obj",
+      "capture_sha256": "49bfd2f1eb0c7a354d3aa94852c520dda3585e6855a3df3151b9bdd0ccb22954",
+      "triangle_counts": [
+        660,
+        660,
+        660,
+        660,
+        660,
+        660,
+        660,
+        660
+      ],
+      "full": {
+        "chosen": [
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 9.222926359809839e-06,
+        "mean_triangle_churn": 0.0,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          7.393188122070762e-06,
+          7.135096527993552e-06,
+          7.92574933276281e-06,
+          1.0235595165172475e-05,
+          1.115863121763637e-05,
+          1.0667601982798184e-05,
+          1.0044622170234719e-05
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 9.222926359809839e-06,
+        "mean_triangle_churn": 0.0,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          7.393188122070762e-06,
+          7.135096527993552e-06,
+          7.92574933276281e-06,
+          1.0235595165172475e-05,
+          1.115863121763637e-05,
+          1.0667601982798184e-05,
+          1.0044622170234719e-05
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "asset": "monkey.obj",
+      "capture_sha256": "3fdd0fcfde1ebd8bc964f634ec1cd0c91c97f3de92c9181b2bed94ea543a020b",
+      "triangle_counts": [
+        11808,
+        11808,
+        11808,
+        11808,
+        11808,
+        11808,
+        11808,
+        11808
+      ],
+      "full": {
+        "chosen": [
+          "oracle_swap_4",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0"
+        ],
+        "median_psnr_gain_db": 0.006239449814078887,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 9.619546334154853e-07,
+        "mean_triangle_churn": 0.005296928741833883,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 2,
+        "edges_with_worse_churn": 2,
+        "psnr_gain_db_by_frame": [
+          0.0062056855114048055,
+          -0.4813720779362194,
+          0.0785801268963556,
+          0.004673687109478277,
+          0.008007700613970808,
+          0.006273214116752969,
+          0.0045787507382525254,
+          0.0549747130858343
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          5.454781450162107e-07,
+          6.600619407610049e-08,
+          8.805152087289882e-07,
+          1.2933629389352552e-06,
+          1.2620285452729602e-06,
+          1.733836870173859e-06,
+          9.524545317050228e-07
+        ],
+        "triangle_churn_by_edge": [
+          0.021116138763197588,
+          0.015962362429639585,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0"
+        ],
+        "median_psnr_gain_db": 0.0071404573653618885,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 9.609657763011921e-07,
+        "mean_triangle_churn": 0.0028980994694801387,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 1,
+        "psnr_gain_db_by_frame": [
+          0.0062056855114048055,
+          0.08838860173536645,
+          0.0785801268963556,
+          0.004673687109478277,
+          0.008007700613970808,
+          0.006273214116752969,
+          0.0045787507382525254,
+          0.0549747130858343
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          5.419553420505474e-07,
+          6.26069972417127e-08,
+          8.805152087289882e-07,
+          1.2933629389352552e-06,
+          1.2620285452729602e-06,
+          1.733836870173859e-06,
+          9.524545317050228e-07
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.02028669628636097,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "asset": "cloth.obj",
+      "capture_sha256": "3fdd0fcfde1ebd8bc964f634ec1cd0c91c97f3de92c9181b2bed94ea543a020b",
+      "triangle_counts": [
+        56232,
+        56232,
+        56232,
+        56232,
+        56232,
+        56232,
+        56232,
+        56232
+      ],
+      "full": {
+        "chosen": [
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4"
+        ],
+        "median_psnr_gain_db": 0.018143211211960497,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 1.7768697761273772e-06,
+        "mean_triangle_churn": 0.01023527078418926,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.006939767638071361,
+          0.0062289566806189665,
+          0.048982976097752234,
+          0.06264152832745482,
+          0.033742837900072126,
+          0.012153141800282413,
+          0.024133280623638585,
+          0.006753905261571801
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          2.748033156296702e-06,
+          1.614617805821168e-06,
+          6.232888168753168e-07,
+          9.122822068986014e-07,
+          1.7589290700674175e-06,
+          1.9088645023311164e-06,
+          2.872072874601317e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.009803748075527792,
+          0.0,
+          0.009521955363621883,
+          0.010155876784798033,
+          0.019372336303758234,
+          0.007300046068251887,
+          0.015492932893366979
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4"
+        ],
+        "median_psnr_gain_db": 0.018143211211960497,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 1.7768697761273772e-06,
+        "mean_triangle_churn": 0.01023527078418926,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.006939767638071361,
+          0.0062289566806189665,
+          0.048982976097752234,
+          0.06264152832745482,
+          0.033742837900072126,
+          0.012153141800282413,
+          0.024133280623638585,
+          0.006753905261571801
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          2.748033156296702e-06,
+          1.614617805821168e-06,
+          6.232888168753168e-07,
+          9.122822068986014e-07,
+          1.7589290700674175e-06,
+          1.9088645023311164e-06,
+          2.872072874601317e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.009803748075527792,
+          0.0,
+          0.009521955363621883,
+          0.010155876784798033,
+          0.019372336303758234,
+          0.007300046068251887,
+          0.015492932893366979
+        ]
+      }
+    },
+    {
+      "asset": "torus.obj",
+      "capture_sha256": "3fdd0fcfde1ebd8bc964f634ec1cd0c91c97f3de92c9181b2bed94ea543a020b",
+      "triangle_counts": [
+        832,
+        832,
+        832,
+        832,
+        832,
+        832,
+        832,
+        832
+      ],
+      "full": {
+        "chosen": [
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 4.6047530424193585e-06,
+        "mean_triangle_churn": 0.0,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          2.419609085564755e-06,
+          4.195719472471476e-06,
+          5.028398701377559e-06,
+          3.6035796215962097e-06,
+          4.027675655621716e-06,
+          5.7804861500110105e-06,
+          7.177802610292778e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_swap_5",
+          "oracle_swap_2",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_5",
+          "oracle_swap_4"
+        ],
+        "median_psnr_gain_db": 7.643439310960455e-05,
+        "mean_silhouette_delta": 9.128625742186623e-05,
+        "mean_temporal_error_mse": 4.49762983246302e-06,
+        "mean_triangle_churn": 0.17557898153097765,
+        "frames_with_worse_silhouette": 4,
+        "edges_with_worse_temporal_error": 3,
+        "edges_with_worse_churn": 3,
+        "psnr_gain_db_by_frame": [
+          -0.017598730572956436,
+          1.065061378351701,
+          -0.06313148278976573,
+          -0.035980720193608685,
+          0.7001103040959686,
+          0.01369746998958533,
+          -0.007641043823404524,
+          0.0077939126096237335
+        ],
+        "silhouette_delta_by_frame": [
+          0.001082396815855243,
+          0.0005107901562459987,
+          0.0009689922480620155,
+          -0.0006844622685482078,
+          -0.00021574882275271403,
+          -0.0004069175991861648,
+          0.00019131432944327533,
+          -0.000716074799744516
+        ],
+        "temporal_error_mse_by_edge": [
+          2.1157828278264054e-06,
+          3.9359591563302155e-06,
+          5.091747345173226e-06,
+          3.3927058937450225e-06,
+          3.7890521362286213e-06,
+          5.86676392471522e-06,
+          7.29139754322243e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.41069723018147086,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.4091778202676864,
+          0.4091778202676864
+        ]
+      }
+    },
+    {
+      "asset": "sphere.obj",
+      "capture_sha256": "3fdd0fcfde1ebd8bc964f634ec1cd0c91c97f3de92c9181b2bed94ea543a020b",
+      "triangle_counts": [
+        6048,
+        6048,
+        6048,
+        6048,
+        6048,
+        6048,
+        6048,
+        6048
+      ],
+      "full": {
+        "chosen": [
+          "oracle_swap_0",
+          "oracle_swap_2",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_4"
+        ],
+        "median_psnr_gain_db": 0.0023463453798796986,
+        "mean_silhouette_delta": -0.00011984691859417634,
+        "mean_temporal_error_mse": 3.3004244656832167e-06,
+        "mean_triangle_churn": 0.019661243294914744,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 1,
+        "edges_with_worse_churn": 3,
+        "psnr_gain_db_by_frame": [
+          -0.012582172157381496,
+          0.0041400829741023645,
+          0.04423648960629717,
+          0.024319076959014998,
+          0.000552607785657033,
+          0.02463639052639681,
+          0.00010712344162807413,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          -0.00015311590874291826,
+          -0.0002892263195950831,
+          -0.0001368176221097279,
+          -0.0002579313902501936,
+          -0.00012168410805548789,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          5.789138975897991e-07,
+          1.4895892321065597e-06,
+          2.969598881536854e-06,
+          3.690475480978502e-06,
+          5.234142795651212e-06,
+          5.796369753666941e-06,
+          3.3438812182526485e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.04208481709291033,
+          0.04903225806451613,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.046511627906976744
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_swap_0",
+          "oracle_swap_2",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_4",
+          "oracle_swap_0",
+          "oracle_swap_4",
+          "oracle_swap_4"
+        ],
+        "median_psnr_gain_db": 0.0020700414870511823,
+        "mean_silhouette_delta": -8.753420232352437e-05,
+        "mean_temporal_error_mse": 3.300512756468312e-06,
+        "mean_triangle_churn": 0.03295027983976524,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 1,
+        "edges_with_worse_churn": 5,
+        "psnr_gain_db_by_frame": [
+          -0.012582172157381496,
+          0.0041400829741023645,
+          0.04423648960629717,
+          0.024319076959014998,
+          0.0,
+          0.02463639052639681,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          -0.00015311590874291826,
+          -0.0002892263195950831,
+          0.0,
+          -0.0002579313902501936,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          5.789138975897991e-07,
+          1.4895892321065597e-06,
+          2.969598881536854e-06,
+          3.69072269517092e-06,
+          5.23439000984363e-06,
+          5.796431557222356e-06,
+          3.343943021808063e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.04208481709291033,
+          0.04903225806451613,
+          0.0,
+          0.046511627906976744,
+          0.046511627906976744,
+          0.046511627906976744,
+          0.0
+        ]
+      }
+    },
+    {
+      "asset": "rounded_cube.obj",
+      "capture_sha256": "3fdd0fcfde1ebd8bc964f634ec1cd0c91c97f3de92c9181b2bed94ea543a020b",
+      "triangle_counts": [
+        900,
+        900,
+        900,
+        900,
+        900,
+        900,
+        900,
+        900
+      ],
+      "full": {
+        "chosen": [
+          "oracle_swap_0",
+          "oracle_swap_5",
+          "oracle_swap_5",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_5"
+        ],
+        "median_psnr_gain_db": 2.7738546778328246,
+        "mean_silhouette_delta": -0.00022024242378028422,
+        "mean_temporal_error_mse": 2.4066126002011165e-06,
+        "mean_triangle_churn": 0.0468187274909964,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 3,
+        "psnr_gain_db_by_frame": [
+          3.8023645328642,
+          1.5535949844295147,
+          4.576361976529675,
+          3.1041695821723425,
+          2.4435397734933066,
+          3.573148074461909,
+          2.142910276264282,
+          2.242119454954388
+        ],
+        "silhouette_delta_by_frame": [
+          -0.0004451963315822278,
+          -0.00016788382439351961,
+          -0.00031678149996040237,
+          -0.0002988419872992156,
+          -0.000211595429538722,
+          -0.00019964064683569574,
+          -6.27825213460573e-05,
+          -5.921714928643334e-05
+        ],
+        "temporal_error_mse_by_edge": [
+          3.106988112743981e-06,
+          2.847722224658602e-06,
+          2.1566967040895538e-06,
+          2.796177990903149e-06,
+          2.604216214482547e-06,
+          1.8851319156990387e-06,
+          1.449355038830943e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.1092436974789916,
+          0.0,
+          0.1092436974789916,
+          0.0,
+          0.0,
+          0.0,
+          0.1092436974789916
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_5",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0",
+          "oracle_swap_0"
+        ],
+        "median_psnr_gain_db": 2.7738546778328246,
+        "mean_silhouette_delta": -0.0001819553801965275,
+        "mean_temporal_error_mse": 2.4065949420424266e-06,
+        "mean_triangle_churn": 0.031212484993997598,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 2,
+        "psnr_gain_db_by_frame": [
+          3.8023645328642,
+          1.5535949844295147,
+          4.576361976529675,
+          3.1041695821723425,
+          2.4435397734933066,
+          3.573148074461909,
+          2.142910276264282,
+          2.2428765932475923
+        ],
+        "silhouette_delta_by_frame": [
+          -0.0004451963315822278,
+          0.0,
+          -0.00023758612497030176,
+          -0.0002988419872992156,
+          -0.000211595429538722,
+          -0.00019964064683569574,
+          -6.27825213460573e-05,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          3.106988112743981e-06,
+          2.847722224658602e-06,
+          2.1566967040895538e-06,
+          2.796177990903149e-06,
+          2.604216214482547e-06,
+          1.8851319156990387e-06,
+          1.4492314317201135e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.1092436974789916,
+          0.1092436974789916,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "asset": "pirate.obj",
+      "capture_sha256": "c616731239e7ae9b6966b2a29e4dab24abe6e9f10a3387ec155959aa756f05a9",
+      "triangle_counts": [
+        2822,
+        2822,
+        2822,
+        2822,
+        2822,
+        2822,
+        2822,
+        2822
+      ],
+      "full": {
+        "chosen": [
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 2.3815433812892325e-05,
+        "mean_triangle_churn": 0.0,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          2.368151439162591e-05,
+          2.829403703524231e-05,
+          2.5313993423909266e-05,
+          2.342286655788897e-05,
+          2.2173322264441287e-05,
+          2.139459736893315e-05,
+          2.2427705648205382e-05
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 2.3815433812892325e-05,
+        "mean_triangle_churn": 0.0,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          2.368151439162591e-05,
+          2.829403703524231e-05,
+          2.5313993423909266e-05,
+          2.342286655788897e-05,
+          2.2173322264441287e-05,
+          2.139459736893315e-05,
+          2.2427705648205382e-05
+        ],
+        "triangle_churn_by_edge": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "asset": "shader_ball.obj",
+      "capture_sha256": "c616731239e7ae9b6966b2a29e4dab24abe6e9f10a3387ec155959aa756f05a9",
+      "triangle_counts": [
+        37308,
+        37308,
+        37308,
+        37308,
+        37308,
+        37308,
+        37308,
+        37308
+      ],
+      "full": {
+        "chosen": [
+          "oracle_swap_3",
+          "oracle_swap_3",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": -1.8651143922712372e-05,
+        "mean_temporal_error_mse": 5.512497120817232e-06,
+        "mean_triangle_churn": 0.016740399059697434,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 2,
+        "edges_with_worse_churn": 1,
+        "psnr_gain_db_by_frame": [
+          -0.07490010561892543,
+          -0.051273735641851205,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          -0.00014920915138169898,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          5.480244503048217e-06,
+          4.562894355269678e-06,
+          4.1981916384678504e-06,
+          6.2923432168770644e-06,
+          5.576967017936283e-06,
+          5.8471103544725414e-06,
+          6.629728759648986e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.04419281277030746,
+          0.035438772017587744,
+          0.0,
+          0.01394729837636412,
+          0.013841567291311755,
+          0.0,
+          0.009762342962310955
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_swap_6",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_6",
+          "oracle_swap_6",
+          "oracle_swap_6"
+        ],
+        "median_psnr_gain_db": 0.009149333831033921,
+        "mean_silhouette_delta": 0.0,
+        "mean_temporal_error_mse": 5.491298502439924e-06,
+        "mean_triangle_churn": 0.011677717342899185,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.006565299116587259,
+          0.006186334909232907,
+          0.014247518194063988,
+          0.00972068479762314,
+          0.007498269135548715,
+          0.010811167947729941,
+          0.008577982864444703,
+          0.009773759122808002
+        ],
+        "silhouette_delta_by_frame": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          5.423508840961192e-06,
+          4.528655185394493e-06,
+          4.1881176599148095e-06,
+          6.281094971370573e-06,
+          5.566151397317695e-06,
+          5.834935055327806e-06,
+          6.616626406792904e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.04419281277030746,
+          0.0,
+          0.0,
+          0.01394729837636412,
+          0.013841567291311755,
+          0.0,
+          0.009762342962310955
+        ]
+      }
+    },
+    {
+      "asset": "lucy.obj",
+      "capture_sha256": "22924e25f7eb04ad81c2c1ba77f62558cbb704ce0ba59bda14d5ea1ddaba164a",
+      "triangle_counts": [
+        25084,
+        25084,
+        25084,
+        25084,
+        25084,
+        25084,
+        25084,
+        25084
+      ],
+      "full": {
+        "chosen": [
+          "oracle_swap_6",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline",
+          "oracle_baseline"
+        ],
+        "median_psnr_gain_db": 0.0,
+        "mean_silhouette_delta": -8.338270515953277e-05,
+        "mean_temporal_error_mse": 2.199226436005002e-06,
+        "mean_triangle_churn": 0.015091580294644408,
+        "frames_with_worse_silhouette": 0,
+        "edges_with_worse_temporal_error": 0,
+        "edges_with_worse_churn": 1,
+        "psnr_gain_db_by_frame": [
+          0.46712426548747416,
+          1.7752437780915682,
+          0.34387573106478053,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          -0.00034164673727365893,
+          -0.0003254149040026033,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          1.5127655248525088e-06,
+          1.4728404191435897e-06,
+          2.0601596024482007e-06,
+          2.213494247423847e-06,
+          1.935254633622149e-06,
+          3.5609971168822776e-06,
+          2.639073507662445e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.019814485889086245,
+          0.0,
+          0.03624691744627549,
+          0.0,
+          0.010548439544751556,
+          0.012440077651440118,
+          0.02659114153095744
+        ]
+      },
+      "half": {
+        "chosen": [
+          "oracle_swap_6",
+          "oracle_swap_4",
+          "oracle_swap_4",
+          "oracle_swap_6",
+          "oracle_swap_6",
+          "oracle_swap_4",
+          "oracle_swap_2",
+          "oracle_swap_2"
+        ],
+        "median_psnr_gain_db": 0.2651357172305262,
+        "mean_silhouette_delta": -7.818030239625226e-05,
+        "mean_temporal_error_mse": 2.196877900088866e-06,
+        "mean_triangle_churn": 0.013334638094020704,
+        "frames_with_worse_silhouette": 1,
+        "edges_with_worse_temporal_error": 3,
+        "edges_with_worse_churn": 0,
+        "psnr_gain_db_by_frame": [
+          0.46712426548747416,
+          1.7752437780915682,
+          0.34387573106478053,
+          -0.1862651373902458,
+          0.36654972651994183,
+          0.18639570339627184,
+          -0.042081704739959015,
+          0.0
+        ],
+        "silhouette_delta_by_frame": [
+          -0.00034164673727365893,
+          -0.0003254149040026033,
+          0.0,
+          0.0003089274284681794,
+          0.0,
+          -0.0002673082063619353,
+          0.0,
+          0.0
+        ],
+        "temporal_error_mse_by_edge": [
+          1.5127655248525088e-06,
+          1.4728404191435897e-06,
+          2.1324079564837775e-06,
+          2.2424183084411913e-06,
+          1.8335259818116134e-06,
+          3.523853180158456e-06,
+          2.660333929730926e-06
+        ],
+        "triangle_churn_by_edge": [
+          0.019814485889086245,
+          0.0,
+          0.023948322041909564,
+          0.0,
+          0.010548439544751556,
+          0.012440077651440118,
+          0.02659114153095744
+        ]
+      }
+    }
+  ]
+}

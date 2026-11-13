@@ -1,0 +1,134 @@
+[
+  {
+    "capture_sha256": "8c76b312e7f0667305f14541878ff4f0b69f963113e5b114f9e88f7b46709fae",
+    "frame": "out\\lod-sequence-075\\00_monkey_v00",
+    "asset_sha256": "7b754119aa286ff618b9ac30038c8aa9a093e2820242913728c8b20d8000ca88",
+    "scores_identical": true,
+    "samples_ms": {
+      "independent": [
+        38.79610000149114,
+        49.08230000000913,
+        42.0938000024762
+      ],
+      "shared": [
+        34.65909999795258,
+        34.045699998387136,
+        34.885499997471925
+      ]
+    },
+    "median_ms": {
+      "independent": 42.0938000024762,
+      "shared": 34.65909999795258
+    }
+  },
+  {
+    "capture_sha256": "8c76b312e7f0667305f14541878ff4f0b69f963113e5b114f9e88f7b46709fae",
+    "frame": "out\\lod-sequence-075\\01_cloth_v00",
+    "asset_sha256": "3dbcb96aaf5142ee16922c6138e23fa8dd8471e847c58978fd09df596168c24f",
+    "scores_identical": true,
+    "samples_ms": {
+      "independent": [
+        197.1655000015744,
+        234.28440000134287,
+        219.01849999994738
+      ],
+      "shared": [
+        160.32129999803146,
+        170.97520000243094,
+        179.95899999368703
+      ]
+    },
+    "median_ms": {
+      "independent": 219.01849999994738,
+      "shared": 170.97520000243094
+    }
+  },
+  {
+    "capture_sha256": "8c76b312e7f0667305f14541878ff4f0b69f963113e5b114f9e88f7b46709fae",
+    "frame": "out\\lod-sequence-075\\02_torus_v00",
+    "asset_sha256": "6a97e75507caf5322d9c8bba243304a880c08152ab76836d2c35af02f87cb4ec",
+    "scores_identical": true,
+    "samples_ms": {
+      "independent": [
+        10.255900000629481,
+        9.49459999537794,
+        10.517800001252908
+      ],
+      "shared": [
+        11.085799997090362,
+        10.303700000804383,
+        10.209000000031665
+      ]
+    },
+    "median_ms": {
+      "independent": 10.255900000629481,
+      "shared": 10.303700000804383
+    }
+  },
+  {
+    "capture_sha256": "c616731239e7ae9b6966b2a29e4dab24abe6e9f10a3387ec155959aa756f05a9",
+    "frame": "out\\lod-proxy-unseen-055\\00_pirate_v00",
+    "asset_sha256": "cf11ea6f1fad6688123fbb80c5ca39ad5e48908cfa53d68e09a3f03f53c524a1",
+    "scores_identical": true,
+    "samples_ms": {
+      "independent": [
+        9.368500002892688,
+        6.700199999613687,
+        6.84210000326857
+      ],
+      "shared": [
+        6.308199997874908,
+        12.352800004009623,
+        12.76950000465149
+      ]
+    },
+    "median_ms": {
+      "independent": 6.84210000326857,
+      "shared": 12.352800004009623
+    }
+  },
+  {
+    "capture_sha256": "c616731239e7ae9b6966b2a29e4dab24abe6e9f10a3387ec155959aa756f05a9",
+    "frame": "out\\lod-proxy-unseen-055\\01_shader_ball_v00",
+    "asset_sha256": "e30e91435d93f762a8c781896e56b863e7b76182e512b8e7ef627afc215cd48f",
+    "scores_identical": true,
+    "samples_ms": {
+      "independent": [
+        236.0359999947832,
+        215.78149999550078,
+        185.639600000286
+      ],
+      "shared": [
+        185.6610000031651,
+        163.3083999986411,
+        159.19120000035036
+      ]
+    },
+    "median_ms": {
+      "independent": 215.78149999550078,
+      "shared": 163.3083999986411
+    }
+  },
+  {
+    "capture_sha256": "22924e25f7eb04ad81c2c1ba77f62558cbb704ce0ba59bda14d5ea1ddaba164a",
+    "frame": "out\\lod-proxy-unseen-075\\00_lucy_v00",
+    "asset_sha256": "689d7c8bc69f3d02d8b2a961b76cd40b154829719e4076fbcea86d498685b42a",
+    "scores_identical": true,
+    "samples_ms": {
+      "independent": [
+        153.29059999930905,
+        116.04410000290954,
+        117.58669999835547
+      ],
+      "shared": [
+        145.18049999605864,
+        126.48169999738457,
+        120.58239999896614
+      ]
+    },
+    "median_ms": {
+      "independent": 117.58669999835547,
+      "shared": 126.48169999738457
+    }
+  }
+]

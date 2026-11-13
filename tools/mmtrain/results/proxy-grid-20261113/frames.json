@@ -1,0 +1,160 @@
+{
+  "policy": "proxy1_surface_causal",
+  "exposure": 4.0,
+  "crop": true,
+  "report_sha256": "9da9516b3653c31fad79b1265f648108c6acc4c9e1b6d81083b814ecb10c06d5",
+  "assets": [
+    {
+      "sheet": "monkey-7b754119.png",
+      "worst": {
+        "asset": "monkey.obj",
+        "frame": "out\\lod-predictor-opposite-075\\00_monkey_v01",
+        "stem": "oracle_swap_0",
+        "psnr_gain_db": -0.4813720779362194,
+        "silhouette_delta": 0.0,
+        "triangles": 11808
+      },
+      "best": {
+        "asset": "monkey.obj",
+        "frame": "out\\lod-sequence-075\\00_monkey_v00",
+        "stem": "oracle_swap_2",
+        "psnr_gain_db": 0.6620836107770238,
+        "silhouette_delta": 0.0,
+        "triangles": 11808
+      }
+    },
+    {
+      "sheet": "cloth-3dbcb96a.png",
+      "worst": {
+        "asset": "cloth.obj",
+        "frame": "out\\lod-sequence-055\\01_cloth_v00",
+        "stem": "oracle_baseline",
+        "psnr_gain_db": 0.0,
+        "silhouette_delta": 0.0,
+        "triangles": 41236
+      },
+      "best": {
+        "asset": "cloth.obj",
+        "frame": "out\\lod-predictor-opposite-075\\01_cloth_v03",
+        "stem": "oracle_swap_4",
+        "psnr_gain_db": 0.06264152832745482,
+        "silhouette_delta": 0.0,
+        "triangles": 56232
+      }
+    },
+    {
+      "sheet": "torus-6a97e755.png",
+      "worst": {
+        "asset": "torus.obj",
+        "frame": "out\\lod-sequence-075\\02_torus_v01",
+        "stem": "oracle_swap_4",
+        "psnr_gain_db": -1.235270257190185,
+        "silhouette_delta": -0.00025549310168625433,
+        "triangles": 832
+      },
+      "best": {
+        "asset": "torus.obj",
+        "frame": "out\\lod-sequence-075\\02_torus_v07",
+        "stem": "oracle_swap_1",
+        "psnr_gain_db": 0.7535050244584744,
+        "silhouette_delta": -0.00035909809941373806,
+        "triangles": 856
+      }
+    },
+    {
+      "sheet": "sphere-4faad281.png",
+      "worst": {
+        "asset": "sphere.obj",
+        "frame": "out\\lod-predictor-opposite-075\\03_sphere_v00",
+        "stem": "oracle_swap_0",
+        "psnr_gain_db": -0.012582172157381496,
+        "silhouette_delta": 0.0,
+        "triangles": 6048
+      },
+      "best": {
+        "asset": "sphere.obj",
+        "frame": "out\\lod-sequence-extra-075\\00_sphere_v01",
+        "stem": "oracle_swap_4",
+        "psnr_gain_db": 1.249387473100198,
+        "silhouette_delta": 0.0,
+        "triangles": 6048
+      }
+    },
+    {
+      "sheet": "rounded_cube-8d224cdc.png",
+      "worst": {
+        "asset": "rounded_cube.obj",
+        "frame": "out\\lod-sequence-extra-055\\01_rounded_cube_v00",
+        "stem": "oracle_swap_1",
+        "psnr_gain_db": -0.06597585734079855,
+        "silhouette_delta": -8.903133903133886e-05,
+        "triangles": 660
+      },
+      "best": {
+        "asset": "rounded_cube.obj",
+        "frame": "out\\lod-sequence-extra-075\\01_rounded_cube_v07",
+        "stem": "oracle_swap_0",
+        "psnr_gain_db": 8.572228827451642,
+        "silhouette_delta": -0.0005919785002588137,
+        "triangles": 900
+      }
+    },
+    {
+      "sheet": "pirate-cf11ea6f.png",
+      "worst": {
+        "asset": "pirate.obj",
+        "frame": "out\\lod-proxy-unseen-055\\00_pirate_v00",
+        "stem": "oracle_baseline",
+        "psnr_gain_db": 0.0,
+        "silhouette_delta": 0.0,
+        "triangles": 2822
+      },
+      "best": {
+        "asset": "pirate.obj",
+        "frame": "out\\lod-proxy-unseen-055\\00_pirate_v00",
+        "stem": "oracle_baseline",
+        "psnr_gain_db": 0.0,
+        "silhouette_delta": 0.0,
+        "triangles": 2822
+      }
+    },
+    {
+      "sheet": "shader_ball-e30e9143.png",
+      "worst": {
+        "asset": "shader_ball.obj",
+        "frame": "out\\lod-proxy-unseen-055\\01_shader_ball_v00",
+        "stem": "oracle_swap_3",
+        "psnr_gain_db": -0.07490010561892543,
+        "silhouette_delta": -0.00014920915138169898,
+        "triangles": 37308
+      },
+      "best": {
+        "asset": "shader_ball.obj",
+        "frame": "out\\lod-proxy-unseen-055\\01_shader_ball_v02",
+        "stem": "oracle_baseline",
+        "psnr_gain_db": 0.0,
+        "silhouette_delta": 0.0,
+        "triangles": 37308
+      }
+    },
+    {
+      "sheet": "lucy-689d7c8b.png",
+      "worst": {
+        "asset": "lucy.obj",
+        "frame": "out\\lod-proxy-unseen-075\\00_lucy_v03",
+        "stem": "oracle_baseline",
+        "psnr_gain_db": 0.0,
+        "silhouette_delta": 0.0,
+        "triangles": 25084
+      },
+      "best": {
+        "asset": "lucy.obj",
+        "frame": "out\\lod-proxy-unseen-075\\00_lucy_v01",
+        "stem": "oracle_swap_4",
+        "psnr_gain_db": 1.7752437780915682,
+        "silhouette_delta": -0.0003254149040026033,
+        "triangles": 25084
+      }
+    }
+  ]
+}
