@@ -149,3 +149,24 @@ the implementation gate. Before any dynamic structure, the next useful study mus
 candidate-versus-source coverage intervals over a regenerated pool, compare their full construction
 and update cost against exact reranking, and test phase/resolution robustness. Stop if interval
 enumeration is dense or if rankings change materially under modest raster-phase changes.
+
+## Full-orbit phase screen (2026-11-17)
+
+To separate a narrow per-view ranking flip from an orbit-level objective, the same two legal Torus
+candidates (1656 and 2275) were evaluated at 65 uniformly spaced camera angles over `[2.13, 2.48]`
+radians. Each pass used the existing 128x128, 3x depth/coverage raster and Gaussian `sigma=0.9`,
+with the candidate and source shifted together by each of four subpixel phases `(+/-0.1, +/-0.1)`.
+For every phase, the sampled orbit-mean loss ranked candidate 2275 first. Candidate 1656's mean was
+332x–1,804x the mean for 2275. This differs from the narrow 3x interval where candidate 1656 wins
+4 of 49 sampled views: a local event can flip a per-view winner while the sampled orbit-average
+ranking remains stable under these four phase shifts.
+
+Artifacts are `out/camera-phase-average-20261117/phase-0.json` through `phase-3.json`; each binds
+the capture, candidate report, and script hashes. This is a two-candidate frozen-pool screen, and
+the 65-angle average is a numerical quadrature, not an exact continuous-camera integral. It does
+not establish an algorithm or a SIGGRAPH contribution. It weakens the ranking-certificate framing
+and motivates a separate falsifiable question: can an event-driven evaluation of the *integrated
+filtered image loss over a camera path* beat a well-sampled multi-view baseline in decision quality
+and total cost? Any such work must include exact raster/filter event costs, compare against the
+existing image-driven simplification baseline, and stop if ranking or benefit does not generalize
+across assets, paths, phase, and resolution.
