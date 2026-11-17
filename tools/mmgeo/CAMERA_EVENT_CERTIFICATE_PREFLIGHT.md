@@ -161,8 +161,13 @@ For every phase, the sampled orbit-mean loss ranked candidate 2275 first. Candid
 4 of 49 sampled views: a local event can flip a per-view winner while the sampled orbit-average
 ranking remains stable under these four phase shifts.
 
-Artifacts are `out/camera-phase-average-20261117/phase-0.json` through `phase-3.json`; each binds
-the capture, candidate report, and script hashes. This is a two-candidate frozen-pool screen, and
+The 260 per-angle losses are preserved in
+[`CAMERA_PHASE_AVERAGE_20261117.csv`](CAMERA_PHASE_AVERAGE_20261117.csv). The four detailed local
+JSON records are `out/camera-phase-average-20261117/phase-0.json` through `phase-3.json`; each binds
+the capture, candidate report, and script hashes. Input hashes are capture
+`091a30aba8a3d09db01de91bfc537b7d73a42550d6b350c3f976d9e723644c31`, candidate report
+`36b5cc07196eb53d6885d42fa58b9eae6844174d12e329fcfef4f15abfed3c76`, and driver
+`591b883158ec91ef364716311291358235585048ec241421c670bef08928fb3b`. This is a two-candidate frozen-pool screen, and
 the 65-angle average is a numerical quadrature, not an exact continuous-camera integral. It does
 not establish an algorithm or a SIGGRAPH contribution. It weakens the ranking-certificate framing
 and motivates a separate falsifiable question: can an event-driven evaluation of the *integrated
