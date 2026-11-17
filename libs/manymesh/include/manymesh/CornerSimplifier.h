@@ -19,6 +19,7 @@
 
 #include <manymesh/Mesh.h>
 
+#include <array>
 #include <vector>
 
 #include <stddef.h>
@@ -76,6 +77,29 @@ struct CornerSimplifyProfile {
     uint64_t applied = 0;
 };
 
+/** Initial-state geometric candidate capture for offline, equal-candidate research comparisons.
+ * IDs refer to the welded initialPositions/initialTriangles, not to source attribute vertices.
+ * Captures the existing scorer's best legal placement per directed edge, not every placement.
+ * This is not an appearance/UV export or a proof of global quality-gate acceptance.
+ */
+struct CornerCollapseCandidate {
+    uint32_t remove = 0;
+    uint32_t keep = 0;
+    math::float3 targetPosition{};
+    float priority = 0.0f;
+    std::vector<uint32_t> affectedTriangles;
+};
+
+struct CornerCandidateCapture {
+    //! Hard cap on copied candidates; zero captures only the initial welded geometry.
+    size_t maxCandidates = 0;
+    std::vector<math::float3> initialPositions;
+    std::vector<std::array<uint32_t, 3>> initialTriangles;
+    std::vector<CornerCollapseCandidate> candidates;
+    //! Count includes legal initial candidates omitted because of maxCandidates.
+    uint64_t legalCandidates = 0;
+};
+
 struct CornerSimplifyOptions {
     //! Stop once the result has at most this many indices.
     size_t targetIndexCount = 0;
@@ -113,6 +137,10 @@ struct CornerSimplifyOptions {
 
     //! Optional stage timing sink. Null disables profiling.
     CornerSimplifyProfile* profile = nullptr;
+
+    //! Optional initial-candidate capture. Cleared on entry. Caller must provide an exclusive sink
+    //! per invocation; shared sinks are not thread-safe. Null preserves the production path.
+    CornerCandidateCapture* candidateCapture = nullptr;
 };
 
 /**

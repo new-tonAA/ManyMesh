@@ -889,6 +889,10 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
         };
         auto buildGroup = [&](std::vector<uint32_t> const& members) {
             GroupBuildResult result;
+            if (options.diagnostics != nullptr) {
+                result.profile.rejectedMaskCounts =
+                        std::make_shared<std::array<uint64_t, 32>>();
+            }
             if (members.empty()) {
                 return result;
             }
@@ -1170,6 +1174,16 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
             stats->groupSimplify.rejectedAttributes += result.profile.rejectedAttributes;
             stats->groupSimplify.rejectedBoundary += result.profile.rejectedBoundary;
             stats->groupSimplify.rejectedLocked += result.profile.rejectedLocked;
+            if (result.profile.rejectedMaskCounts) {
+                if (!stats->groupSimplify.rejectedMaskCounts) {
+                    stats->groupSimplify.rejectedMaskCounts =
+                            std::make_shared<std::array<uint64_t, 32>>();
+                }
+                for (size_t i = 0; i < stats->groupSimplify.rejectedMaskCounts->size(); ++i) {
+                    (*stats->groupSimplify.rejectedMaskCounts)[i] +=
+                            (*result.profile.rejectedMaskCounts)[i];
+                }
+            }
         };
         // Read-only screening. A smaller assembled region is evidence for a partition opportunity,
         // not proof that any individual rejected edge was blocked by a boundary lock.

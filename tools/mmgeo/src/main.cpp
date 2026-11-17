@@ -2078,7 +2078,13 @@ int main(int argc, char* argv[]) {
                      << ",\"rejectedAttributes\":" << p.rejectedAttributes
                      << ",\"rejectedBoundary\":" << p.rejectedBoundary
                      << ",\"rejectedLocked\":" << p.rejectedLocked
-                     << ",\"rejectedNotSimplified\":" << p.rejectedNotSimplified << '}';
+                     << ",\"rejectedNotSimplified\":" << p.rejectedNotSimplified
+                     << ",\"rejectedMaskCounts\":[";
+                for (size_t mask = 0; mask < p.rejectedMaskCounts->size(); ++mask) {
+                    if (mask) file << ',';
+                    file << (*p.rejectedMaskCounts)[mask];
+                }
+                file << "]}";
             }
             file << "],\"trials\":[";
             for (size_t i = 0; i < diagnostics.trials.size(); ++i) {

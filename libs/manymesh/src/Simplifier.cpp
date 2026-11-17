@@ -1268,6 +1268,9 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
                 *rejectMask = mask;
             }
             if (profile != nullptr && !result) {
+                if (profile->rejectedMaskCounts) {
+                    (*profile->rejectedMaskCounts)[mask] += 1;
+                }
                 if (!topologyOk) {
                     profile->rejectedTopology += 1;
                 } else if (!geometryOk) {
@@ -1768,6 +1771,15 @@ std::vector<ClusterLods> simplifyClusters(Mesh const& mesh, ClusterSet const& cl
             profile->cornerCandidates += local.cornerCandidates;
             profile->meshoptCandidates += local.meshoptCandidates;
             profile->accepted += local.accepted;
+            if (local.rejectedMaskCounts) {
+                if (!profile->rejectedMaskCounts) {
+                    profile->rejectedMaskCounts =
+                            std::make_shared<std::array<uint64_t, 32>>();
+                }
+                for (size_t i = 0; i < profile->rejectedMaskCounts->size(); ++i) {
+                    (*profile->rejectedMaskCounts)[i] += (*local.rejectedMaskCounts)[i];
+                }
+            }
             profile->extendedMeshCopies += local.extendedMeshCopies;
         }
     }

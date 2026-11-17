@@ -1520,6 +1520,13 @@ bool attributesMatch(Mesh const& mesh, uint32_t global, Corner const& corner) {
 bool simplifyWithCornerAttributes(Mesh const& mesh, std::vector<uint32_t> const& source,
         CornerSimplifyOptions const& options, std::vector<uint32_t>* outIndices,
         std::vector<GeneratedVertex>* outGenerated, float* outWorldError) {
+    if (options.candidateCapture != nullptr) {
+        auto& capture = *options.candidateCapture;
+        capture.initialPositions.clear();
+        capture.initialTriangles.clear();
+        capture.candidates.clear();
+        capture.legalCandidates = 0;
+    }
     if (outIndices == nullptr || outGenerated == nullptr) {
         return false;
     }
@@ -1749,6 +1756,18 @@ bool simplifyWithCornerAttributes(Mesh const& mesh, std::vector<uint32_t> const&
     };
     using Queue = std::priority_queue<Candidate, std::vector<Candidate>, std::greater<Candidate>>;
     Queue queue;
+    bool captureInitialCandidates = options.candidateCapture != nullptr;
+    if (captureInitialCandidates) {
+        auto& capture = *options.candidateCapture;
+        capture.initialPositions.reserve(unit.vertices.size());
+        for (auto const& vertex: unit.vertices) {
+            capture.initialPositions.push_back(vertex.position);
+        }
+        capture.initialTriangles.reserve(unit.triangles.size());
+        for (auto const& triangle: unit.triangles) {
+            capture.initialTriangles.push_back(triangle.vertices);
+        }
+    }
 
     auto pushEdge = [&](uint32_t a, uint32_t b) {
         if (a == b || a >= unit.vertices.size() || b >= unit.vertices.size()) {
@@ -1768,6 +1787,24 @@ bool simplifyWithCornerAttributes(Mesh const& mesh, std::vector<uint32_t> const&
             candidate.keepVersion = unit.vertices[keep].version;
             candidate.error = evaluation.priority;
             queue.push(candidate);
+            if (captureInitialCandidates) {
+                auto& capture = *options.candidateCapture;
+                ++capture.legalCandidates;
+                if (capture.candidates.size() < capture.maxCandidates) {
+                    CornerCollapseCandidate observed;
+                    observed.remove = remove;
+                    observed.keep = keep;
+                    observed.targetPosition = evaluation.targetPosition;
+                    observed.priority = evaluation.priority;
+                    observed.affectedTriangles = unit.incident[remove];
+                    observed.affectedTriangles.insert(observed.affectedTriangles.end(),
+                            unit.incident[keep].begin(), unit.incident[keep].end());
+                    std::sort(observed.affectedTriangles.begin(), observed.affectedTriangles.end());
+                    observed.affectedTriangles.erase(std::unique(observed.affectedTriangles.begin(),
+                            observed.affectedTriangles.end()), observed.affectedTriangles.end());
+                    capture.candidates.push_back(std::move(observed));
+                }
+            }
         }
     };
 
@@ -1788,6 +1825,7 @@ bool simplifyWithCornerAttributes(Mesh const& mesh, std::vector<uint32_t> const&
                         .count();
     }
 
+    captureInitialCandidates = false;
     float largestWorldError = 0.0f;
     thread_local std::vector<uint64_t> pushedEdges;
     size_t const maxIterations = unit.triangles.size() * 4 + 16;

@@ -22,6 +22,8 @@
 #include <manymesh/Mesh.h>
 #include <manymesh/Quality.h>
 
+#include <array>
+#include <memory>
 #include <vector>
 
 #include <stddef.h>
@@ -122,6 +124,9 @@ struct SimplifyProfile {
     uint64_t rejectedAttributes = 0;
     uint64_t rejectedBoundary = 0;
     uint64_t rejectedLocked = 0;
+    //! Optional exact five-bit rejection-mask histogram, enabled only for DAG diagnostics.
+    //! Bits 0..4 mean topology, geometry, attributes, boundary, and locked-mask failure.
+    std::shared_ptr<std::array<uint64_t, 32>> rejectedMaskCounts;
     uint64_t extendedMeshCopies = 0;
 };
 

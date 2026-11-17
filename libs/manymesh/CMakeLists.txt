@@ -34,6 +34,10 @@ set(SRCS
         src/Clusterizer.cpp
         src/CornerSimplifier.cpp
         src/DetailBake.cpp
+        src/DiscreteFilterEnergy.cpp
+        src/DiscreteFilterEnergy.h
+        src/FilteredBoundaryError.cpp
+        src/FilteredBoundaryError.h
         src/GeometryError.cpp
         src/GpuLod.cpp
         src/GpuLodCutShaders.h
@@ -87,7 +91,9 @@ install(DIRECTORY ${PUBLIC_HDR_DIR}/manymesh DESTINATION include)
 # ==================================================================================================
 if (FILAMENT_BUILD_TESTING AND NOT ANDROID AND NOT WASM AND NOT IOS)
     set(TARGET test_manymesh)
-    add_executable(${TARGET} tests/test_manymesh.cpp tests/test_lod_runtime.cpp)
+    add_executable(${TARGET} tests/test_manymesh.cpp tests/test_lod_runtime.cpp
+            tests/test_filtered_boundary.cpp tests/test_corner_capture.cpp
+            tests/test_discrete_filter_energy.cpp)
     target_link_libraries(${TARGET} PRIVATE manymesh gtest)
     if (MANYMESH_HTTP_CIVETWEB)
         target_compile_definitions(${TARGET} PRIVATE MANYMESH_HTTP_CIVETWEB=1)
