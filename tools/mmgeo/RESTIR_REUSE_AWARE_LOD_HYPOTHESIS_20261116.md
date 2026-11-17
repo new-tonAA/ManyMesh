@@ -158,14 +158,12 @@ baselines, not just related work ([GRIS foundations](https://research.nvidia.com
 [Compatibility-Guided Neighbor Selection](https://research.nvidia.com/labs/rtr/publication/junkins2026compatibility/),
 [MCMC mutation](https://doi.org/10.1145/3629166)).
 
-The surviving research question is consequently narrower: can an *offline collapse order* improve
-the full quality/cost/covariance Pareto frontier after the same LoD-aware GRIS reuse and runtime
-controls are applied? The direct search so far has not
-found this exact mesh-construction objective, but search incompleteness prevents a novelty claim.
-The present workstation cannot run the required ray-tracing experiment; the UV-map preflight does
-not provide `w_i`, `g_i`, or inter-frame covariance. Do not implement a simplifier score or treat
-the two-candidate example as evidence of a mesh-quality gain until a path-tracing measurement path
-is available.
+The surviving research question was whether an *offline collapse order* could improve the full
+quality/cost/covariance Pareto frontier after the same LoD-aware GRIS reuse and runtime controls.
+The direct search did not find this exact mesh-construction objective, but search incompleteness
+prevents a novelty claim. Per the user's instruction on 2026-11-17, this ray-tracing line is no
+longer active. Its CPU proxies still do not provide full image-quality evidence and must not be
+presented as mesh-quality gains.
 
 ## Repository feasibility
 

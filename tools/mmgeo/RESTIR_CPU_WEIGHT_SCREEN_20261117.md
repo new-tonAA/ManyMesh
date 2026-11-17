@@ -57,7 +57,7 @@ A targeted web search for ReSTIR mesh simplification, path reuse with LOD simpli
 
 ## Next research gate
 
-Keep the hypothesis low-confidence and do not alter the production simplifier. The next decisive test must use a real path-tracing estimator and compare ordinary versus contribution-aware collapse orders at matched geometry and total cost, with the published ReSTIR-LoD mapping and modern reuse controls held fixed. Measure reference-image bias/error, independent-run variance, temporal/spatial covariance, ESS, runtime, and memory on several materials, views, transition frames, and held-out assets. The candidate survives only if it improves a full quality/cost frontier beyond runtime-only controls. The current Falcor/ReSTIR-LoD checkout has not rendered a frame; dependency acquisition remains the immediate feasibility gate.
+Per the user's 2026-11-17 instruction, the ray-tracing hypothesis is inactive. This one-vertex CPU result is retained only as a bounded diagnostic; it is not image-quality evidence and will not drive the simplifier.
 
 ## Reproducibility
 
