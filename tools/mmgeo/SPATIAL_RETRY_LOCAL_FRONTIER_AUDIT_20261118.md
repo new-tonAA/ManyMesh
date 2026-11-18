@@ -116,6 +116,14 @@ rows as one mesh-wide triangle saving. At Cloth generation 6, for example, the r
 recover 1,426 triangles at the same group-union maximum error. This is a positive result for the
 existing generic spatial split on these captured builds, not evidence for the proposed witness split.
 
+## Full retry-work budget curve follow-up (2026-11-18)
+
+The four archived audits were extended from four budget samples (25/50/75/100%) to 101 caps from 0% through 100% of each generation's total all-retry triangle-input work. At every cap, first-pass rejection-mask ranks and smallest-work-first greedily select whole retry trees that fit. If a selected union exceeds the baseline group-union error cap, its valid triangle saving is scored as zero. The hindsight knapsack oracle selects only whole trees that save triangles and satisfy that error cap. This isolates ranking quality but is still a retrospective work proxy: package outcomes, total retry work, raster quality, wall time, and peak memory are not predicted or measured.
+
+Only 8 asset/generation rows had any oracle-eligible tree: Cloth generations 5-9 and Shapes generations 4-6. Material Sphere had retries that reduced triangles only with higher error, and Monkey had no retry trees. Aggregating the 101-point saved-triangle curves across those 8 rows, smallest-work-first reaches 83.7% of oracle integrated savings. Total, attribute, topology, and geometry rejection-density ranks reach 75.0%, 76.1%, 69.0%, and 72.2%, respectively. Against smallest-work-first by row, total reject density wins 0 / ties 5 / loses 3; attribute wins 2 / ties 2 / loses 4; topology wins 1 / ties 2 / loses 5; geometry wins 0 / ties 2 / loses 6. The few attribute wins are outweighed by losses and are not held out.
+
+This strengthens the negative decision: **close scalar rejection-mask ranking as the repair-allocation candidate.** The schema-2 details may still diagnose where a specific split should occur, but another mask or scalar rank should not justify a runtime-policy workaround, another expensive build, or a SIGGRAPH claim. Reopen only with a distinct, specified witness-to-partition mechanism that predicts a cut-level gain over spatial median and cost-only controls, then evaluate it on held-out assets with a conventional raster metric and measured memory/time. Reproduction artifacts: `out/spatial-retry-audit-20261118-fullcurve/{cloth,shapes,material-sphere,monkey,summary}.json`; analyzer: `summarize_spatial_retry_budget_curves.py`.
+
 ## Decision
 
 This reveals real local headroom that the prior adjacent-group swap screen did not measure. The
@@ -128,11 +136,11 @@ group's maximum accumulated error; counts alone are not a quality result.
 
 No retry-specific wall time, total build time delta, peak-memory delta, filtered-raster metric, or
 held-out-asset result was available in these captures. This therefore does **not** show an equal-cost
-gain, a new algorithm, or SIGGRAPH readiness. The next decision gate remains a schema-2 runtime
-capture that identifies which gate witness caused each rejection, followed by a matched split-budget
-comparison against this spatial-median retry. A viable candidate must show that its witness-conditioned
-allocation spends less measured work for the same strict-gate cut, or improves the complete cut's
-rasterized quality at the same measured work.
+gain, a new algorithm, or SIGGRAPH readiness. The follow-up full-budget screen below closes scalar
+rejection-mask ranking as a candidate. A schema-2 runtime capture is justified only if a distinct,
+explicit witness-to-partition mechanism is specified first. Any viable candidate must beat spatial
+median and cost-only controls on complete strict-gate cuts, at matched measured work, raster quality,
+and memory on held-out assets.
 
 ## Reproduction and provenance
 
@@ -146,9 +154,18 @@ python -I tools/mmgeo/audit_spatial_retry_frontier.py `
 ```
 
 Repeat with `shapes-regroup-pilot-200k`, `material-sphere-regroup-pilot-200k`, and
-`monkey-regroup-pilot-200k`. These are existing captures, not new `mmgeo` executions. Captures bind
-to workspace HEAD `422c7e50c4c802f88788dbf27e6d01273dc343ec`. The current audit script SHA-256 is
-`394ed0d7ff42ec2e9b30964e7a3504902052b8ea75ec150a861d9633007704b1`.
+`monkey-regroup-pilot-200k`. These are existing captures, not new `mmgeo` executions. For the full-budget
+rerun, write each result into `out/spatial-retry-audit-20261118-fullcurve/` and then run:
+
+```powershell
+python -I tools/mmgeo/summarize_spatial_retry_budget_curves.py `
+  out/spatial-retry-audit-20261118-fullcurve `
+  --out out/spatial-retry-audit-20261118-fullcurve/summary.json
+```
+
+Captures bind to workspace HEAD `422c7e50c4c802f88788dbf27e6d01273dc343ec`. The updated audit script
+SHA-256 is `239330b061d0ed8cfbf3f60b3156c90d478dbe8e1f4b0cf1fdaede64315821a2`; the new summary script
+SHA-256 is `973a1dbaf991756423a5c6dea904530e926849981ceb59cda294f4f72c07b474`.
 
 | Asset | diagnostics.json SHA-256 | lod_graph.json SHA-256 |
 |---|---|---|

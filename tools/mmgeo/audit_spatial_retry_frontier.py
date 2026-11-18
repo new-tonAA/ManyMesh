@@ -243,6 +243,8 @@ def audit_level(rows, nodes):
             "scope": "retrospective feature ranking; first-pass masks rank roots, frozen full-tree work/outcomes evaluate quality",
             "policies": policies,
         },
+        "fullBudgetFrontier": full_budget_frontier(
+            retry_packages, baseline_error, retry_input_triangles),
         "triangleSavingsPerRetryInputTriangle": retry_triangles_saved / retry_input_triangles
             if retry_input_triangles else 0.0,
         "rootsWithRetries": retry_roots,
@@ -271,6 +273,80 @@ def rejection_features(row):
                 if mask & 1) / denominator,
         "geometryRejectsPerKInput": sum(count for mask, count in enumerate(counts)
                 if mask & 2) / denominator,
+    }
+
+
+def full_budget_frontier(retry_packages, baseline_error, retry_input_triangles):
+    """Compare whole-package policies over 101 matched work caps.
+
+    Ranking policies see only first-pass features and measured package work. Their
+    completed outcomes are used only to score whether the selected union stays under
+    the baseline error cap. The oracle is hindsight and packs only quality-valid,
+    triangle-saving packages.
+    """
+    eligible = [item for item in retry_packages
+            if item["work"] > 0 and item["saved"] > 0 and item["error"] <= baseline_error]
+    total_work = sum(item["work"] for item in eligible)
+    if not total_work:
+        return {"scope": "101 matched caps over eligible retry work", "eligibleWork": 0,
+                "policies": {}}
+
+    dp = [0] * (total_work + 1)
+    for item in eligible:
+        for used in range(total_work, item["work"] - 1, -1):
+            dp[used] = max(dp[used], dp[used - item["work"]] + item["saved"])
+    oracle = []
+    best = 0
+    cursor = 0
+    for budget_pct in range(101):
+        cap = min(total_work, retry_input_triangles * budget_pct // 100)
+        while cursor <= cap:
+            best = max(best, dp[cursor])
+            cursor += 1
+        oracle.append(best)
+
+    rankers = {
+        feature: sorted(retry_packages,
+            key=lambda item: (-item["features"][feature], item["tieKey"]))
+        for feature in ("rejectsPerKInput", "attributeRejectsPerKInput",
+            "topologyRejectsPerKInput", "geometryRejectsPerKInput")
+    }
+    rankers["smallestWorkFirst"] = sorted(retry_packages,
+            key=lambda item: (item["work"], item["tieKey"]))
+    result = {}
+    for name, ordered in rankers.items():
+        points = []
+        for budget_pct in range(101):
+            cap = retry_input_triangles * budget_pct // 100
+            used = saved = 0
+            max_error = baseline_error
+            for item in ordered:
+                if item["work"] and used + item["work"] <= cap:
+                    used += item["work"]
+                    saved += item["saved"]
+                    max_error = max(max_error, item["error"])
+            valid = max_error <= baseline_error
+            points.append({"budgetPercent": budget_pct, "workUsed": used,
+                "trianglesSaved": saved if valid else 0, "valid": valid,
+                "oracleSaved": oracle[budget_pct]})
+        oracle_area = sum(point["oracleSaved"] for point in points)
+        policy_area = sum(point["trianglesSaved"] for point in points)
+        nonzero_oracle = [point for point in points if point["oracleSaved"] > 0]
+        result[name] = {
+            "integratedSavedTriangleRatioToOracle": policy_area / oracle_area
+                if oracle_area else 1.0,
+            "oracleMatchRateWhereOraclePositive": sum(
+                point["trianglesSaved"] == point["oracleSaved"]
+                for point in nonzero_oracle) / len(nonzero_oracle) if nonzero_oracle else 1.0,
+            "qualityValidBudgetFraction": sum(point["valid"] for point in points) / len(points),
+            "points": points,
+        }
+    return {
+        "scope": "101 matched caps over total all-retry work; ranking sees first-pass masks and package work; invalid selected unions score zero; oracle sees outcomes",
+        "totalAllRetryWork": retry_input_triangles,
+        "eligibleWork": total_work,
+        "oracleIntegratedSavedTriangles": sum(oracle),
+        "policies": result,
     }
 
 
