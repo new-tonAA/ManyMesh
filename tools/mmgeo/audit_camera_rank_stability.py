@@ -37,6 +37,10 @@ def main():
                         help='fragment-transactions cost audit containing a frozen candidate pool')
     parser.add_argument('--pool-frame', type=int, default=0)
     parser.add_argument('--frames', type=int, default=6)
+    parser.add_argument('--angle-start', type=float, default=2.13)
+    parser.add_argument('--angle-end', type=float, default=2.48)
+    parser.add_argument('--phase-x', type=float, default=0.0)
+    parser.add_argument('--phase-y', type=float, default=0.0)
     parser.add_argument('--size', type=int, default=128)
     parser.add_argument('--scale', type=int, default=3)
     parser.add_argument('--out', type=Path, required=True)
@@ -45,6 +49,13 @@ def main():
         parser.error('--frames must be at least 2')
 
     p = load('camera_rank_pilot', 'depth_candidate_pilot.py')
+    project_without_phase = p.project
+    def project_with_phase(positions, transform):
+        result = project_without_phase(positions, transform)
+        result[:, 0] += args.phase_x
+        result[:, 1] += args.phase_y
+        return result
+    p.project = project_with_phase
     positions, triangles, candidates = p.load_capture(args.capture)
     candidate_report = json.loads(args.candidate_report.read_text())
     frames = candidate_report['frames']
@@ -56,7 +67,9 @@ def main():
         raise ValueError('candidate IDs must be unique and in range')
 
     sigma = .9
-    angles = np.linspace(2.13, 2.48, args.frames)
+    if args.angle_end <= args.angle_start:
+        parser.error('--angle-end must exceed --angle-start')
+    angles = np.linspace(args.angle_start, args.angle_end, args.frames)
     output = dict(
         scope='frozen legal initial candidates; exhaustive sampled depth/coverage oracle; no PBR',
         warning='no committed edits, no temporal update method, no speed or novelty claim',
@@ -64,7 +77,8 @@ def main():
         candidateReportSha256=hashlib.sha256(args.candidate_report.read_bytes()).hexdigest(),
         scriptSha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         poolFrame=args.pool_frame, candidateIds=ids, size=args.size, scale=args.scale,
-        sigma=sigma, angles=[float(x) for x in angles], views=[])
+        sigma=sigma, phasePixels=[args.phase_x, args.phase_y],
+        angles=[float(x) for x in angles], views=[])
     score_matrix = []
     started = time.perf_counter()
 
