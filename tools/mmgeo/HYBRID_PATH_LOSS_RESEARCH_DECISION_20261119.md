@@ -1,0 +1,105 @@
+# Exact path loss + lightweight learning: combination decision (2026-11-19)
+
+## Question
+
+Can the exact filtered path-loss evaluator and a laptop-sized learned mesh optimizer be combined
+into a useful, potentially novel simplifier?
+
+## Initial learned residual pilot
+
+The first pilot combined the two directly: exact event-integrated loss was the training target; a
+small CPU MLP predicted the residual of a cheap raster score; the corrected score chose a top-K
+set; the exact evaluator re-scored that set. The paired table contains 264 collapse candidates in
+23 groups over eight assets.
+
+- On 13 one-sample groups, asset-held-out MLP top-2 includes an exact minimizer in 12/13 groups,
+  versus 11/13 for raster. Mean best-of-two normalized regret is 1.12% versus 2.10%.
+- Across all 23 groups, MLP and raster top-4 both include a minimizer in 21/23 groups.
+- Holding out a camera direction removes the apparent gain: both methods reach 11/13 top-2 and
+  2.10% mean regret. Joint asset-and-direction holdout also ties at 9/11 and 2.49%.
+- At 64 raster samples, the held-out path screen is already saturated at 7/7 top-1 for raster;
+  MLP adds no ranking value.
+
+This pilot does not establish runtime savings: shared event setup remains, and no sequential
+collapse replay or production integration was measured. Keep this scalar-residual MLP branch
+closed as a contribution claim. Reproduction is in
+[`HYBRID_LEARNED_PATH_LOSS_20261119.md`](HYBRID_LEARNED_PATH_LOSS_20261119.md) and
+[`audit_path_loss_residual_hybrid.py`](audit_path_loss_residual_hybrid.py).
+
+## Prior-art boundary
+
+The individual ingredients are established. Neural Mesh Simplification learns a lightweight
+network to propose/select mesh triangles in one pass
+([CVPR 2022 paper](https://openaccess.thecvf.com/content/CVPR2022/papers/Potamias_Neural_Mesh_Simplification_CVPR_2022_paper.pdf)).
+Appearance-Driven Automatic 3D Model Simplification optimizes mesh and shading against image-space
+differences with a differentiable renderer
+([EGSR 2021 paper](https://diglib.eg.org/items/82ec8df1-d62a-40f0-a007-90374b5140dc)).
+Continuous from-segment visibility computes visibility intervals analytically along a camera
+translation segment ([Popescu et al., TVCG 2025](https://www.cs.purdue.edu/cgvlab/www/resources/papers/Popescu-TVCG-2025-1DVisibility.pdf)).
+Therefore, “neural simplification + image loss,” “camera path awareness,” and “analytic visibility
+events” are each too broad to claim as new.
+
+## Exact bound replay prototype
+
+I changed the combined method into an offline replay. For each candidate and each screen cell, the
+event solver records an exact, nonnegative loss contribution. Evaluating a subset of cells gives a
+valid lower bound on total candidate loss. The replay fully evaluates the first candidate in cheap
+raster order as an incumbent, then evaluates cells for each later candidate until its accumulated
+lower bound cannot beat that incumbent. It changes only work order and early stopping; the exact
+winner remains the decision rule. A contribution-sorted policy is also reported as a *clairvoyant
+upper bound* because it uses the unseen exact cell losses to choose work.
+
+The probe and replay are [`probe_shared_envelope_raster_tile.py`](probe_shared_envelope_raster_tile.py)
+and [`audit_exact_loss_cell_pruning.py`](audit_exact_loss_cell_pruning.py). The screen used 12
+legal collapses, a 32x16 output tile subdivided into sixteen 8x4 cells, 8 temporal raster samples
+for the cheap ordering, and orthographic path radius 1. It included rounded cube and Material
+Sphere at 45° and 90° pan, plus Torus and Pirate at both directions. All audited replays selected
+an exact minimizer. The check uses relative tolerances, including for near-zero losses.
+
+| Held-out group | Fixed cell order | Cheap raster cell order | Small MLP order | Oracle order |
+|---|---:|---:|---:|---:|
+| Rounded Cube, pan 45° | 133/192 | 113/192 | 62/192* | 58/192 |
+| Material Sphere, pan 45° | 136/192 | 77/192 | 46/192* | 28/192 |
+| Rounded Cube, pan 90° | 137/192 | 93/192 | 64/192† | 60/192 |
+| Pirate unit 5, pan 90° | 133/192 | 30/192 | 30/192‡ | 30/192 |
+| Torus, pan 90° | 95/192 | 32/192 | 32/192‡ | 32/192 |
+
+Counts are exact cell integrations needed by the replay to certify the selected candidate, not
+measured end-to-end speedups. `*` trains on the other asset at pan 45°; `†` trains on the same
+asset at pan 45°; `‡` trains on other assets at pan 45°. A second multi-asset training screen
+reduced Rounded Cube at pan 90° from 93 raster-ordered cells to 93 learned-ordered cells (tie),
+and Pirate from 30 to 34 (small regression); Torus remained tied at 32. When trained only on
+Rounded Cube and tested on Pirate, the MLP increased the count from 30 to 142, although the exact
+certificate still selected the right candidate. So far the robust gain comes from cheap raster
+cell ordering, not from learning. The MLP sometimes helps within a narrow asset/path split, but
+does not consistently improve on the non-learned policy under asset/path holdout.
+
+Cheap raster cell ordering avoided 41%–84% of candidate-cell integrations in the five
+nontrivial held-out groups; an easy zero-loss group required only 27/192 integrations even with
+fixed cell order. This is not a speed result: shared event setup took about 0.11–0.65 seconds and all candidate
+setup plus integration took about 0.13–0.19 seconds. The replay does not yet include the cost of
+incrementally stopping the real solver, candidate preparation that cannot be skipped, or
+sequential simplification. A runtime implementation may save much less than the cell counts
+suggest.
+
+Reproduce the Rounded Cube 45° screen and replay with:
+
+```powershell
+python tools/mmgeo/probe_shared_envelope_raster_tile.py --capture out/pathloss-captures/rounded_cube.json --seed-candidate 72 --candidate-limit 12 --angle 2.3 --size 64 --scale 1 --tile-width 32 --tile-height 16 --steps 8 --pan-angle 45 --path-radius 1 --loss-cell-width 8 --loss-cell-height 4 --out out/pathloss-captures/rounded-cube-cell-pruning.json
+python tools/mmgeo/audit_exact_loss_cell_pruning.py out/pathloss-captures/rounded-cube-cell-pruning.json --train-on out/pathloss-captures/material-sphere-cell-pruning.json
+```
+
+## Decision and remaining gate
+
+The exact lower-bound mechanism is now an implemented and reproducible research prototype, and
+the cheap raster map is a useful work-order baseline. The learned allocator has not passed the
+cross-asset/path comparison. The numerical screens are small, use one localized tile and
+depth-only loss, and cover only orthographic translation. They are evidence of an algorithmic
+direction, not a SIGGRAPH contribution.
+
+The next required work is to incorporate per-cell lower-bound stopping into the actual candidate
+solver and measure full cost, then expand to larger candidate pools, full-frame RGB/material loss,
+perspective or camera rotation, and sequential legal collapses. Re-run asset-and-path held-out
+learning only after those captures exist. A focused search is still needed for prior work on
+certified adaptive image-error refinement for mesh simplification. If raster ordering accounts
+for the gain and learning remains tied or worse, remove the network rather than keep it for novelty.
