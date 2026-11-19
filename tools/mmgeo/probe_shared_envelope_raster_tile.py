@@ -24,7 +24,7 @@ from probe_real_collapse_depth_events import (
     upper_envelope,
     visible_with_envelope,
 )
-from probe_shared_envelope_2d_tile import exact_cached_source_events
+from probe_shared_envelope_2d_tile import dense_visible, exact_cached_source_events
 from probe_shared_depth_envelope_batch import candidate_geometry, choose_local_candidates
 
 
@@ -210,8 +210,51 @@ def raster_local_path(positions, triangles, union_faces, candidate_data, rect, s
     return candidate_energy, source_time, patch_time
 
 
+def triangle_normals(positions, triangles):
+    normals = np.zeros((len(triangles), 3), dtype=float)
+    for face_id, face in enumerate(triangles):
+        if face is None:
+            continue
+        a, b, c = (positions[int(index)] for index in face)
+        normal = np.cross(b - a, c - a)
+        length = float(np.linalg.norm(normal))
+        if length > 1e-20:
+            normals[face_id] = normal / length
+    return normals
+
+
+def exact_cached_source_normal_events(pixel_samples, source_events, path,
+                                      source_normals, candidate_normals):
+    """Exact path integral of squared filtered flat-normal RGB difference for one pixel."""
+    events = {float(path[0]), float(path[1])}
+    for index, (common, _starts, _source_local, candidate_local, _weight) in enumerate(
+            pixel_samples):
+        events.update(source_events[index])
+        target, _depth_count = overlay_events(common, candidate_local, path)
+        events.update(target)
+    ordered = sorted(events)
+    energy = 0.0
+    for lo, hi in zip(ordered, ordered[1:]):
+        if not lo < hi:
+            continue
+        mid = 0.5 * (lo + hi)
+        source_pixel = np.zeros(3, dtype=float)
+        candidate_pixel = np.zeros(3, dtype=float)
+        for common, starts, source_local, candidate_local, weight in pixel_samples:
+            source = dense_visible(common, starts, source_local, mid)
+            candidate = dense_visible(common, starts, candidate_local, mid)
+            if source is not None:
+                source_pixel += weight * source_normals[int(source["face"])]
+            if candidate is not None:
+                candidate_pixel += weight * candidate_normals[int(candidate["face"])]
+        delta = source_pixel - candidate_pixel
+        energy += (hi - lo) * float(np.dot(delta, delta))
+    return max(0.0, energy)
+
+
 def exact_candidate_cell(item, cell_id, rect, cell_width, cell_height, exact_ray_cache,
-                         source_event_cache, path, pan_direction, horizontal_cache):
+                         source_event_cache, path, pan_direction, horizontal_cache,
+                         source_normals=None):
     """Integrate one screen cell exactly for one candidate, returning loss and ray tests."""
     cell_x, cell_y = map(int, cell_id.split(","))
     x0 = rect[0] + cell_x * cell_width
@@ -220,6 +263,7 @@ def exact_candidate_cell(item, cell_id, rect, cell_width, cell_height, exact_ray
     y1 = min(rect[3], y0 + cell_height)
     rect_width = rect[2] - rect[0]
     energy = 0.0
+    normal_energy = 0.0
     ray_tests = 0
     for py in range(y0, y1):
         for px in range(x0, x1):
@@ -240,7 +284,52 @@ def exact_candidate_cell(item, cell_id, rect, cell_width, cell_height, exact_ray
                                 unchanged + candidate_local, weight))
             energy += exact_cached_source_events(
                 samples, source_event_cache[pixel_index], item["path"])
-    return energy, ray_tests
+            if source_normals is not None:
+                normal_energy += exact_cached_source_normal_events(
+                    samples, source_event_cache[pixel_index], item["path"],
+                    source_normals, item["faceNormals"])
+    return energy, normal_energy, ray_tests
+
+
+def dense_flat_normal_energy(item, rect, exact_ray_cache, path, pan_direction,
+                             horizontal_cache, steps):
+    """Midpoint temporal reference for the filtered, per-face normal RGB pass."""
+    pixel_cache = []
+    ray_tests = 0
+    for taps in exact_ray_cache:
+        samples = []
+        for (sample_x, sample_y, weight, common, starts, source_local, by_face) in taps:
+            if horizontal_cache:
+                candidate_local = instantiate_lines(
+                    item["localRows"][sample_y], sample_x, path)
+            else:
+                candidate_local, tested = instantiate_path_lines(
+                    item["localCoefficients"], sample_x, sample_y, pan_direction,
+                    path, item["localGrid"])
+                ray_tests += tested
+            unchanged = [by_face[i] for i in item["unchangedUnion"] if i in by_face]
+            samples.append((common, starts, source_local,
+                            unchanged + candidate_local, weight))
+        pixel_cache.append(samples)
+
+    lo, hi = map(float, path)
+    dt = (hi - lo) / steps
+    total = 0.0
+    for step in range(steps):
+        t = lo + (step + 0.5) * dt
+        for samples in pixel_cache:
+            source_pixel = np.zeros(3, dtype=float)
+            candidate_pixel = np.zeros(3, dtype=float)
+            for common, starts, source_local, candidate_local, weight in samples:
+                source = dense_visible(common, starts, source_local, t)
+                candidate = dense_visible(common, starts, candidate_local, t)
+                if source is not None:
+                    source_pixel += weight * item["sourceNormals"][int(source["face"])]
+                if candidate is not None:
+                    candidate_pixel += weight * item["faceNormals"][int(candidate["face"])]
+            delta = source_pixel - candidate_pixel
+            total += float(np.dot(delta, delta)) * dt
+    return total, ray_tests
 
 
 def main():
@@ -265,7 +354,14 @@ def main():
                         help="also accumulate exact loss by smaller screen cells; 0 disables")
     parser.add_argument("--loss-cell-height", type=int, default=0)
     parser.add_argument("--online-pruning", action="store_true",
-                        help="raster-order cells and stop exact candidate integration using lower bounds")
+                        help="stop exact candidate integration when partial cell loss reaches the incumbent")
+    parser.add_argument("--cell-order-policy", choices=("fixed", "raster", "learned"),
+                        default="raster",
+                        help="exact-cell evaluation order used by online pruning")
+    parser.add_argument("--cell-order-train-captures", type=Path, nargs="+", default=None,
+                        help="complete exact/raster cell captures for the tiny learned order policy")
+    parser.add_argument("--flat-normal-loss", action="store_true",
+                        help="also integrate a filtered per-face normal RGB pass exactly and by dense time samples")
     parser.add_argument("--reference-capture", type=Path, default=None,
                         help="full exact capture used only to audit the selected online candidate")
     parser.add_argument("--steps", type=int, nargs="+", default=[32, 128])
@@ -277,8 +373,14 @@ def main():
     if (args.loss_cell_width < 0 or args.loss_cell_height < 0 or
             bool(args.loss_cell_width) != bool(args.loss_cell_height)):
         parser.error("loss-cell width and height must both be positive or both be zero")
-    if args.online_pruning and (not args.loss_cell_width or not args.reference_capture):
-        parser.error("online pruning needs positive loss-cell dimensions and --reference-capture")
+    if args.online_pruning and (not args.loss_cell_width or not args.loss_cell_height):
+        parser.error("online pruning needs positive loss-cell dimensions")
+    if args.cell_order_policy == "learned" and not args.cell_order_train_captures:
+        parser.error("learned cell order requires --cell-order-train-captures")
+    if args.cell_order_policy != "raster" and not args.online_pruning:
+        parser.error("cell-order policies apply only with --online-pruning")
+    if args.online_pruning and args.flat_normal_loss:
+        parser.error("online pruning currently certifies the depth/coverage objective only")
     if any(step <= 0 for step in args.steps):
         parser.error("all path sample counts must be positive")
 
@@ -296,6 +398,8 @@ def main():
         candidates, triangles, args.seed_candidate, args.candidate_limit)
     transform = raster.camera(world_positions, args.angle, args.size)
     projected = raster.project(world_positions, transform)
+    camera_center, camera_radius, camera_basis, _camera_size = transform
+    camera_positions = ((world_positions - camera_center) / camera_radius) @ camera_basis.T
     pan_radians = math.radians(args.pan_angle)
     pan_direction = (math.cos(pan_radians), math.sin(pan_radians))
     triangles_list = triangles.tolist()
@@ -332,6 +436,8 @@ def main():
 
     # Screen-space projected mesh and target positions match depth_candidate_pilot.raster.
     projected_depth = np.column_stack((projected[:, 0], projected[:, 1], projected[:, 2]))
+    source_face_normals = (triangle_normals(camera_positions, triangles_list)
+                           if args.flat_normal_loss else None)
     common_face_ids = [i for i in range(len(triangles)) if i not in batch_local_faces]
     local_face_ids = sorted(batch_local_faces)
     union_faces = {"common": np.asarray(common_face_ids, dtype=np.int64),
@@ -416,6 +522,7 @@ def main():
     for candidate_id in candidate_ids:
         started = time.perf_counter()
         candidate = dict(candidates[candidate_id])
+        world_target = np.asarray(candidate["target"], dtype=float)
         candidate["target"] = raster.project(np.asarray([candidate["target"]]), transform)[0].tolist()
         post, face_by_id, _valid_faces, local_faces = candidate_geometry(
             projected_depth.tolist(), triangles_list, candidate)
@@ -424,9 +531,25 @@ def main():
         patch_ids = sorted(unchanged_union) + [i for i in local_faces if face_by_id[i] is not None]
         patch_triangles = np.asarray([face_by_id[i] if i in local_set else triangles[i]
                                      for i in patch_ids], dtype=np.int64)
+        candidate_face_normals = (source_face_normals.copy()
+                                  if args.flat_normal_loss else None)
+        if args.flat_normal_loss:
+            candidate_camera_positions = camera_positions.copy()
+            candidate_camera_positions[int(candidate["keep"])] = (
+                (world_target - camera_center) / camera_radius) @ camera_basis.T
+            for face_id in local_faces:
+                face = face_by_id[face_id]
+                if face is not None:
+                    candidate_face_normals[face_id] = triangle_normals(
+                        candidate_camera_positions, [face])[0]
         item = {"id": candidate_id, "positions": np.asarray(post, dtype=float),
                 "patchTriangles": patch_triangles, "exactCellEnergy": {},
                 "path": path, "unchangedUnion": unchanged_union}
+        if args.flat_normal_loss:
+            item["sourceNormals"] = source_face_normals
+            item["faceNormals"] = candidate_face_normals
+            item["exactNormalEnergy"] = 0.0
+            item["exactNormalCellEnergy"] = {}
         if horizontal_cache:
             item["localRows"] = {
                 sample_y: triangle_line_records(post, face_by_id, local_faces, sample_y)
@@ -466,15 +589,106 @@ def main():
         for item in candidate_data}
     candidate_order = sorted(candidate_ids, key=lambda cid: sum(raster_cell_by_id[cid].values()))
 
+    learned_cell_model = None
+    learned_cell_priorities = {}
+    learned_training_seconds = 0.0
+    learned_inference_seconds = 0.0
+    if args.cell_order_policy == "learned":
+        def cell_features(raster_cells):
+            total = sum(max(0.0, float(raster_cells.get(cell, 0.0))) for cell in cell_ids)
+            nx = max((int(cell.split(",")[0]) for cell in cell_ids), default=0) or 1
+            ny = max((int(cell.split(",")[1]) for cell in cell_ids), default=0) or 1
+            rows = []
+            for cell in cell_ids:
+                x, y = map(int, cell.split(","))
+                share = max(0.0, float(raster_cells.get(cell, 0.0))) / max(total, 1e-30)
+                rows.append([math.log10(share + 1e-8), x / nx, y / ny])
+            return np.asarray(rows, dtype=np.float64)
+
+        train_x, train_y = [], []
+        learned_training_started = time.perf_counter()
+        for train_path in args.cell_order_train_captures:
+            train_data = json.loads(train_path.read_text(encoding="utf-8"))
+            exact_rows = {int(row["candidateId"]): row
+                          for row in train_data.get("candidateExactCellLosses", [])}
+            raster_rows = {int(row["candidateId"]): row["cells"]
+                           for row in train_data.get("candidateRasterCellLosses", [])}
+            if not exact_rows:
+                parser.error(f"training capture has no exact cell labels: {train_path}")
+            train_cell_ids = sorted(next(iter(exact_rows.values()))["cells"])
+            if (set(exact_rows) != set(raster_rows) or
+                    set(train_cell_ids) != set(cell_ids) or
+                    any(not row.get("complete", True) for row in exact_rows.values())):
+                parser.error(f"training capture has incomplete or incompatible cell labels: {train_path}")
+            available = sorted({int(row["steps"]) for row in
+                                train_data.get("candidateRasterRows", [])})
+            train_step = min(available)
+            for candidate_id, exact_row in exact_rows.items():
+                raster_cells = {cell: float(raster_rows[candidate_id].get(
+                    f"{train_step}:{cell}", 0.0)) for cell in cell_ids}
+                exact_total = max(float(exact_row["whole"]), 1e-30)
+                train_x.append(cell_features(raster_cells))
+                train_y.extend(math.log10(max(float(exact_row["cells"][cell]), 0.0) /
+                                          exact_total + 1e-8) for cell in cell_ids)
+        x_train = np.vstack(train_x)
+        y_train = np.asarray(train_y, dtype=np.float64)
+        x_mean = x_train.mean(axis=0)
+        x_scale = np.maximum(x_train.std(axis=0), 1e-6)
+        x_train = np.clip((x_train - x_mean) / x_scale, -5.0, 5.0)
+        y_mean = float(y_train.mean())
+        y_scale = max(float(y_train.std()), 1e-6)
+        y_train = (y_train - y_mean) / y_scale
+        # A tiny NumPy MLP keeps this CPU-only scheduler independent of framework DLLs.
+        rng = np.random.default_rng(23)
+        w1 = rng.normal(0.0, 0.1, (x_train.shape[1], 8))
+        b1 = np.zeros(8, dtype=np.float64)
+        w2 = rng.normal(0.0, 0.1, (8, 1))
+        b2 = np.zeros(1, dtype=np.float64)
+        params = [w1, b1, w2, b2]
+        first_moments = [np.zeros_like(p) for p in params]
+        second_moments = [np.zeros_like(p) for p in params]
+        alpha, beta1, beta2, rate = 1e-3, 0.9, 0.999, 0.02
+        for iteration in range(1, 401):
+            z1 = x_train @ w1 + b1
+            hidden = np.maximum(z1, 0.0)
+            error = hidden @ w2 + b2 - y_train[:, None]
+            grad_w2 = hidden.T @ error / len(x_train) + alpha * w2
+            grad_b2 = error.mean(axis=0)
+            grad_hidden = error @ w2.T
+            grad_z1 = grad_hidden * (z1 > 0.0)
+            gradients = [x_train.T @ grad_z1 / len(x_train) + alpha * w1,
+                         grad_z1.mean(axis=0), grad_w2, grad_b2]
+            for index, (parameter, gradient) in enumerate(zip(params, gradients)):
+                first_moments[index] = beta1 * first_moments[index] + (1.0 - beta1) * gradient
+                second_moments[index] = beta2 * second_moments[index] + (1.0 - beta2) * gradient ** 2
+                corrected_first = first_moments[index] / (1.0 - beta1 ** iteration)
+                corrected_second = second_moments[index] / (1.0 - beta2 ** iteration)
+                parameter -= rate * corrected_first / (np.sqrt(corrected_second) + 1e-8)
+        learned_training_seconds = time.perf_counter() - learned_training_started
+
+        def predict_cell_share(features):
+            standardized = np.clip((features - x_mean) / x_scale, -5.0, 5.0)
+            hidden = np.maximum(standardized @ w1 + b1, 0.0)
+            return ((hidden @ w2 + b2).ravel() * y_scale + y_mean)
+
+        for candidate_id in candidate_ids:
+            learned_inference_started = time.perf_counter()
+            learned_cell_priorities[candidate_id] = predict_cell_share(
+                cell_features(raster_cell_by_id[candidate_id]))
+            learned_inference_seconds += time.perf_counter() - learned_inference_started
+
     candidate_setup_seconds = 0.0
     online_trace = []
     incumbent_id = None
     incumbent_energy = float("inf")
     for candidate_id in candidate_order:
         item = candidate_by_id[candidate_id]
-        if args.online_pruning:
+        if args.online_pruning and args.cell_order_policy == "raster":
             cell_order = sorted(cell_ids,
                                 key=lambda cell: (-raster_cell_by_id[candidate_id][cell], cell))
+        elif args.online_pruning and args.cell_order_policy == "learned":
+            predicted = dict(zip(cell_ids, learned_cell_priorities[candidate_id]))
+            cell_order = sorted(cell_ids, key=lambda cell: (-float(predicted[cell]), cell))
         else:
             cell_order = cell_ids
         lower_bound = 0.0
@@ -482,12 +696,16 @@ def main():
         pruned = False
         started = time.perf_counter()
         for cell_id in cell_order:
-            energy, ray_tests = exact_candidate_cell(
+            energy, normal_energy, ray_tests = exact_candidate_cell(
                 item, cell_id, rect, cell_width, cell_height, exact_ray_cache,
-                source_event_cache, path, pan_direction, horizontal_cache)
+                source_event_cache, path, pan_direction, horizontal_cache,
+                source_face_normals)
             path_line_candidate_tests += ray_tests
             item["exactCellEnergy"][cell_id] = energy
             lower_bound += energy
+            if args.flat_normal_loss:
+                item["exactNormalCellEnergy"][cell_id] = normal_energy
+                item["exactNormalEnergy"] += normal_energy
             visited.append(cell_id)
             if args.online_pruning and math.isfinite(incumbent_energy):
                 tolerance = 1e-12 * max(abs(incumbent_energy), 1e-300)
@@ -507,6 +725,29 @@ def main():
     if not horizontal_cache:
         triangle_scan_visits = path_line_candidate_tests
     solver_core_finished = time.perf_counter()
+
+    flat_normal_rows = []
+    flat_normal_dense_seconds = {}
+    if args.flat_normal_loss:
+        for step in args.steps:
+            started = time.perf_counter()
+            dense_energies = []
+            for item in candidate_data:
+                dense_energy, ray_tests = dense_flat_normal_energy(
+                    item, rect, exact_ray_cache, path, pan_direction,
+                    horizontal_cache, step)
+                path_line_candidate_tests += ray_tests
+                dense_energies.append(dense_energy)
+            flat_normal_dense_seconds[step] = time.perf_counter() - started
+            for item, dense_energy in zip(candidate_data, dense_energies):
+                exact_energy = float(item["exactNormalEnergy"])
+                flat_normal_rows.append({
+                    "candidateId": item["id"], "steps": step,
+                    "exactEnergy": exact_energy, "denseEnergy": dense_energy,
+                    "absoluteError": abs(dense_energy - exact_energy),
+                    "relativeError": abs(dense_energy - exact_energy) /
+                                     max(abs(exact_energy), 1e-12),
+                })
 
     reference_exact = {}
     reference_winners = []
@@ -554,6 +795,17 @@ def main():
             "maxRelativeEnergyError": max(row["relativeError"] for row in errors),
             "sumExactEnergy": sum(row["exactEnergy"] for row in errors),
         }
+    flat_normal_summary = {}
+    if args.flat_normal_loss:
+        for step in args.steps:
+            rows = [row for row in flat_normal_rows if row["steps"] == step]
+            flat_normal_summary[str(step)] = {
+                "denseSeconds": flat_normal_dense_seconds[step],
+                "sumAbsoluteEnergyError": sum(row["absoluteError"] for row in rows),
+                "maxRelativeEnergyError": max(row["relativeError"] for row in rows),
+                "sumExactEnergy": sum(row["exactEnergy"] for row in rows),
+                "sumDenseEnergy": sum(row["denseEnergy"] for row in rows),
+            }
     output = {
         "scope": "pixel-aligned CPU raster tile; orthographic image-plane pan; box-filter samples",
         "warning": "Python raster oracle, one mesh and one tile; not a GPU or production benchmark",
@@ -579,8 +831,25 @@ def main():
         "candidateExactSetupAndIntegrationSeconds": candidate_setup_seconds,
         "solverCoreSeconds": solver_core_finished - probe_core_start,
         "onlinePruning": args.online_pruning,
+        "cellOrderPolicy": args.cell_order_policy,
+        "onlineSelectedCandidateId": incumbent_id if args.online_pruning else None,
+        "onlineSelectedExactLoss": incumbent_energy if args.online_pruning else None,
+        "learnedTrainingSeconds": learned_training_seconds,
+        "learnedInferenceSeconds": learned_inference_seconds,
+        "learnedCoreSecondsExcludingTraining": (
+            (solver_core_finished - probe_core_start - learned_training_seconds)
+            if args.cell_order_policy == "learned" else None),
+        "cellOrderTrainingCaptures": ([str(path) for path in args.cell_order_train_captures]
+                                       if args.cell_order_train_captures else None),
         "onlineSchedule": online_trace if args.online_pruning else None,
         "onlineReferenceAudit": reference_audit,
+        "flatNormalLoss": args.flat_normal_loss,
+        "candidateFlatNormalEnergies": ([
+            {"candidateId": item["id"], "exactEnergy": item["exactNormalEnergy"],
+             "cellEnergies": item["exactNormalCellEnergy"]}
+            for item in candidate_data] if args.flat_normal_loss else None),
+        "flatNormalDenseResults": flat_normal_summary,
+        "flatNormalCandidateRows": flat_normal_rows,
         "triangleLineScanVisits": triangle_scan_visits,
         "lineCacheAuditMaxCoefficientDifference": line_cache_audit_difference,
         "lineCacheAuditFaceMismatch": line_cache_audit_face_mismatch,

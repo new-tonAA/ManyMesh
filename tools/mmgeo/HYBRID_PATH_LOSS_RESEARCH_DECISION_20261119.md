@@ -102,6 +102,44 @@ python tools/mmgeo/probe_shared_envelope_raster_tile.py --capture out/pathloss-c
 python tools/mmgeo/probe_shared_envelope_raster_tile.py --capture out/pathloss-captures/rounded_cube.json --seed-candidate 72 --candidate-limit 12 --angle 2.3 --size 64 --scale 1 --tile-width 32 --tile-height 16 --steps 1 --pan-angle 45 --path-radius 1 --loss-cell-width 8 --loss-cell-height 4 --online-pruning --reference-capture out/pathloss-captures/rounded-cube-full-1sample.json --out out/pathloss-captures/rounded-cube-online-1sample.json
 ```
 
+## Online learned cell ordering screen (2026-11-19)
+
+I connected a tiny NumPy MLP to the actual online exact-cell loop. The first candidate is fully
+integrated to establish an exact incumbent. Later candidates are integrated cell by cell; their
+partial sum of nonnegative exact cell losses is a valid lower bound, and the candidate is stopped
+once that sum reaches the incumbent. The learned model only orders cells. It cannot accept a
+collapse or change the winner without the exact bound. Its input is cheap-raster cell-loss share
+and normalized cell coordinates; its target is the log fraction of exact candidate loss in each
+cell. Training and inference require no external ML framework.
+
+For a 12-candidate Rounded Cube screen (192 candidate-cell integrations without pruning), an MLP
+trained on three other meshes at 45-degree pan and evaluated on the held-out Rounded Cube at
+90-degree pan needed 29 exact cell integrations in both runs, versus 113 for raster cell ordering.
+Both policies selected candidate 72, whose loss was fully evaluated; every rejected candidate had
+a partial exact lower bound at least that incumbent. The raster run took 0.270-0.297 s in the
+measured core. The learned run took 0.480-0.555 s including per-process training (0.275-0.318 s);
+subtracting training gives 0.206-0.237 s, while inference over 12 candidates took about 0.00058 s.
+That subtraction estimates the cost when one pre-trained model is reused. It is not a measured
+multi-query benchmark, and the Python timings are noisy.
+
+The cross-asset result did not transfer uniformly. On Material Sphere at the held-out 90-degree
+pan, the MLP and raster both required 27/192 exact integrations; learned total core time was 1.161 s
+versus 1.046 s for raster. Thus the online interface works and can cut exact calls on one controlled
+screen, but current data does not show robust quality-preserving speed gains across meshes. The
+NumPy ranker, single 64x16 tile, orthographic pan path, and 12 local candidates are an exploratory
+prototype, not SIGGRAPH evidence. No full-resolution/color objective, sequential collapse replay,
+production integration, broad joint asset/path holdout, or resource-profiled run was performed.
+
+Reproduce the held-out Rounded Cube query with:
+
+```powershell
+python tools/mmgeo/probe_shared_envelope_raster_tile.py --capture out/pathloss-captures/rounded_cube.json --seed-candidate 72 --candidate-limit 12 --angle 2.3 --size 64 --scale 1 --tile-width 32 --tile-height 16 --steps 1 --pan-angle 90 --path-radius 1 --loss-cell-width 8 --loss-cell-height 4 --online-pruning --cell-order-policy learned --cell-order-train-captures out/pathloss-captures/material-sphere-cell-pruning.json out/pathloss-captures/pirate-unit5-cell-pan45.json out/pathloss-captures/torus-cell-pan45.json --out out/pathloss-captures/rounded-cube-online-learned-pan90.json
+```
+
+The next gate is a frozen model evaluated on several independent meshes and path directions with
+paired raster/learned wall-time repeats. Keep the simple raster policy if the learned advantage
+does not persist after training is amortized.
+
 ## Decision and remaining gate
 
 The exact lower-bound mechanism now runs online in the Python research probe and shows a modest
