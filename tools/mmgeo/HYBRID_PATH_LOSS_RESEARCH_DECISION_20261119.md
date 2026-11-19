@@ -584,6 +584,78 @@ python $probe "$data/material_sphere.json" --remove-fraction .20 --out "$data/gl
 [Surface Simplification Using Quadric Error Metrics](https://www.cs.cmu.edu/~garland/quadrics/) ·
 [Image-Driven Simplification](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf)
 
+## Pixel-level early stopping and reusable scene records
+
+The pixel-bound arm starts each view with all known contributions outside the swept support.
+Within the support it adds nonnegative exact pixel losses and conservatively rounds each
+incremental sum down. Pixels can be traversed in scan order or descending current loss. A
+candidate that crosses the incumbent limit stops before any further visibility queries. Its
+partial patch cannot replace a complete patch in the reuse cache.
+
+The separate geometry reuse arm takes old face coefficients from the current scene index
+and retains already computed replacement coefficients when a patch signature survives an
+edit. It can also cache full current-scene intersection lists by tap. The list cache evicts
+least recently used entries at a configured line-record budget. An accepted edit invalidates
+all taps of every pixel intersecting its old or new patch, even if the edit had been hidden.
+The original-scene index remains separate. These changes preserve the objective and the
+candidate queue.
+
+The comparisons use the whole-unit four-edge shortlist at the same 20% face budget as the
+previous section. A pixel visit counts an iteration of the patch update loop, including cases
+where no envelope rebuild is needed. A tap rebuild counts reconstruction of the visible
+envelope at one subpixel position. The timing tool also records per-process CPU time to reduce
+confounding from other workloads on the host.
+
+| Mesh | Pixel visits, view bound / pixel bound | Tap rebuilds, view bound / pixel bound |
+|---|---:|---:|
+| Rounded Cube | 3,737 / 3,822 | 843 / 953 |
+| Torus | 23,701 / 27,090 | 9,959 / 11,890 |
+| Pirate unit 5 | 5,824 / 6,388 | 998 / 1,381 |
+| Material Sphere | 50,710 / 54,553 | 12,873 / 15,389 |
+
+The four pixel-bound runs reproduced all 1,481 edge and placement decisions of the view-only
+bound. A separate Rounded Cube run completed the scores of 109 interrupted proposals and
+rebuilt every final pixel, with a maximum pixel loss difference of 3.97e-14. The pixel bound
+still increased both work counters on all four meshes. Interrupting a candidate can remove a
+complete patch that the view-only baseline would have reused at a later collapse. A timing
+result without these work counters would be especially hard to interpret on this shared host.
+
+The instrumented Rounded Cube pair recorded 795 complete patch cache hits with the view
+bound and 711 with the pixel bound. This supports an interaction with future reuse.
+
+| Mesh | CPU seconds, reference / face and line reuse | Scene-line cache hits / queries | Peak line records, one view |
+|---|---:|---:|---:|
+| Rounded Cube | 2.09 / 1.84 | 251 / 843 | 548 |
+| Torus | 17.84 / 15.47 | 1,749 / 9,959 | 1,362 |
+| Pirate unit 5 | 19.97 / 16.98 | 230 / 998 | 392 |
+| Material Sphere | 70.39 / 78.28 | 2,044 / 12,873 | 3,814 |
+
+The combined cache used a limit of 8,192 records per view. All four paired runs gave exactly
+the same selected per-view scores, edges, and placements. Rounded Cube also audited all
+62 view-pruned proposals and independently rebuilt the final views, with the same 3.97e-14
+maximum pixel difference. A 16-record limit exercised eviction and reproduced the same
+trajectory. CPU times include setup and are single paired runs. The combined option saved
+12–15% on the first three meshes and used 11% more CPU time on Material Sphere. A cache hit
+skips a line query and still builds the new visible envelope, so hit counts and envelope
+rebuild counts measure different work.
+
+On the 236-edit Material Sphere prefix (5% face removal), the four configurations took
+56.73 s without reuse, 54.67 s with face coefficients alone, 49.75 s with scene-line caching
+alone, and 46.89 s with both. The selected edges, placements, and per-view scores of all
+four match the first 236 edits of the 20% run. These single-run timings show an early
+benefit from both layers, while the 20% pair does not establish an overall Sphere speedup.
+Keep the new modes optional. An adaptive policy would need paired measurements through
+the later portion of the trajectory and validation on additional meshes.
+
+```powershell
+$env:OPENBLAS_NUM_THREADS = "1"
+$probe = "tools/mmgeo/probe_global_path_qem.py"
+$data = "out/pathloss-captures"
+python $probe "$data/rounded_cube.json" --remove-fraction .20 --pixel-order loss --audit-pruning --audit-final-views --score-only --out "$data/pixel-rounded-audit.json"
+python $probe "$data/material_sphere.json" --remove-fraction .20 --score-only --out "$data/face-ray-sphere-base.json"
+python $probe "$data/material_sphere.json" --remove-fraction .20 --reuse-face-records --ray-cache-lines 8192 --score-only --out "$data/face-ray-sphere-reuse.json"
+```
+
 ## Decision and remaining gate
 
 The exact lower-bound mechanism now runs online in the Python research probe and shows a modest

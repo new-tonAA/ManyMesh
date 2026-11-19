@@ -63,6 +63,7 @@ def audit_final_views(views, positions, faces, source_normals, args):
 def run(unit, args, target_faces, rerank):
     name = "path" if rerank else "qem"
     started = time.perf_counter()
+    started_cpu = time.process_time()
     queue = ProgressiveQEM(unit["positions"], unit["triangles"])
     queue_setup_seconds = time.perf_counter() - started
     initial_faces = queue.face_count
@@ -114,9 +115,12 @@ def run(unit, args, target_faces, rerank):
     print(f"{name}: {initial_faces} to {queue.face_count} faces in {len(rows)} edits", flush=True)
     result = {"initialFaces": initial_faces, "finalFaces": queue.face_count, "steps": rows,
               "queueSetupSeconds": queue_setup_seconds, "viewSetupSeconds": view_setup_seconds,
-              "runSeconds": time.perf_counter() - started}
+              "runSeconds": time.perf_counter() - started,
+              "runCpuSeconds": time.process_time() - started_cpu}
     if rerank and args.audit_final_views:
         result["finalViewAudit"] = audit_final_views(views, queue.p, faces, source_normals, args)
+    if rerank:
+        result["perViewRayCachePeak"] = [view.ray_cache_peak for view in views]
     return result
 
 
@@ -137,6 +141,11 @@ def main():
     parser.add_argument("--quality-scale", type=int, default=2)
     parser.add_argument("--quality-steps", type=int, default=4)
     parser.add_argument("--audit-pruning", action="store_true")
+    parser.add_argument("--pixel-order", choices=("off", "scan", "loss"), default="off",
+                        help="optionally prune within views in scan or descending current-loss order")
+    parser.add_argument("--reuse-face-records", action="store_true")
+    parser.add_argument("--ray-cache-lines", type=int, default=0,
+                        help="limit cached current-scene line records per view, zero disables it")
     parser.add_argument("--audit-final-views", action="store_true",
                         help="independently rebuild every pixel of the final scoring views")
     parser.add_argument("--score-only", action="store_true")
@@ -146,7 +155,7 @@ def main():
                    args.quality_steps) < 1
             or not all(math.isfinite(v) for v in
                        (args.angle, args.pan_angle, args.radius, args.normal_weight))
-            or args.radius <= 0.0 or args.normal_weight < 0.0):
+            or args.radius <= 0.0 or args.normal_weight < 0.0 or args.ray_cache_lines < 0):
         parser.error("invalid face budget, sampling, or loss settings")
     args.exhaustive = args.partial_only_bound = False
     capture = args.capture.read_bytes()
@@ -163,6 +172,8 @@ def main():
     path = run(unit, args, target_faces, True)
     result = {"captureSha256": digest, "unitIndex": args.unit_index, "targetFaces": target_faces,
               "pool": args.pool, "normalWeight": args.normal_weight, "auditedPruning": args.audit_pruning,
+              "pixelOrder": args.pixel_order,
+              "reuseFaceRecords": args.reuse_face_records, "rayCacheLines": args.ray_cache_lines,
               "optimization": {"size": args.size, "scale": args.scale, "angle": args.angle,
                                "panAngle": args.pan_angle, "radius": args.radius},
               "qem": qem, "path": path}

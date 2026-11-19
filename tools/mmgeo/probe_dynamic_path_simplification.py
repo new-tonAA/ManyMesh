@@ -20,7 +20,9 @@ from probe_incremental_path_visibility import (
     make_grid,
     unchanged_reason,
 )
-from probe_shared_envelope_raster_tile import instantiate_path_lines, triangle_path_coefficients
+from probe_shared_envelope_raster_tile import (
+    build_path_triangle_grid, instantiate_path_lines, triangle_path_coefficients,
+)
 
 
 class SceneIndex:
@@ -76,6 +78,15 @@ class PatchResult:
     pixels: dict
     intersected: set
     tap_rebuilds: int
+    pixel_visits: int
+    partial_loss: float | None = None
+
+
+@dataclass
+class PixelBudget:
+    limit: float
+    current_losses: dict
+    order: str
 
 
 def link_cycle(vertex, incident, faces):
@@ -169,14 +180,24 @@ def candidates_for_tile(world, projected, faces, rect, center, direction, path, 
 
 
 def evaluate(candidate, projected, faces, scene, original, current, points, direction, path,
-             use_dominance, cached_patch=None, invalid_pixels=None, normal_data=None):
+             use_dominance, cached_patch=None, invalid_pixels=None, normal_data=None,
+             pixel_budget=None, prepare_pixel=None, reuse_face_records=False, scene_lines=None):
     keep, _remove = candidate.edge
     ids = candidate.faces.keys()
-    vertices = {v for tri in candidate.faces.values() if tri is not None for v in tri}
-    replacement_positions = {v: projected[v] for v in vertices}
-    replacement_positions[keep] = candidate.projected_target
-    old_records, old_bins = make_grid(projected, faces, ids)
-    records, bins = make_grid(replacement_positions, candidate.faces, ids)
+    if reuse_face_records:
+        old_records = [scene.records[i] for i in ids if i in scene.records]
+        old_bins = build_path_triangle_grid(old_records)
+    else:
+        old_records, old_bins = make_grid(projected, faces, ids)
+    if reuse_face_records and cached_patch is not None:
+        records = cached_patch.records
+        bins = build_path_triangle_grid(records)
+    else:
+        vertices = {v for tri in candidate.faces.values() if tri is not None for v in tri}
+        replacement_positions = {v: projected[v] for v in vertices}
+        replacement_positions[keep] = candidate.projected_target
+        records, bins = make_grid(replacement_positions, candidate.faces, ids)
+    lines_at = scene.lines if scene_lines is None else scene_lines
     if cached_patch is None:
         changed_pixels = {}
         intersected = set()
@@ -186,8 +207,22 @@ def evaluate(candidate, projected, faces, scene, original, current, points, dire
                           if i not in invalid_pixels}
         intersected = cached_patch.intersected
         pixels = sorted(invalid_pixels)
+    lower = 0.0
+    if pixel_budget is not None:
+        losses = pixel_budget.current_losses
+        if cached_patch is not None:
+            lower = math.nextafter(math.fsum(
+                changed_pixels[i][1] if i in changed_pixels else losses.get(i, 0.0)
+                for i in candidate.support if i not in invalid_pixels), -math.inf)
+        if lower > pixel_budget.limit:
+            return PatchResult(records, changed_pixels, intersected, 0, 0, lower)
+        if pixel_budget.order == "loss":
+            pixels = sorted(pixels, key=lambda i: (-losses.get(i, 0.0), i))
     rebuilt = 0
-    for i in pixels:
+    visits = 0
+    for visits, i in enumerate(pixels, 1):
+        if prepare_pixel is not None and i not in original:
+            prepare_pixel(i)
         envelopes = []
         for (x, y), cached in zip(points[i], current[i], strict=True):
             old_lines = instantiate_path_lines(old_records, x, y, direction, path, old_bins)[0]
@@ -200,14 +235,20 @@ def evaluate(candidate, projected, faces, scene, original, current, points, dire
             if reusable:
                 envelopes.append(cached)
             else:
-                combined = [line for line in scene.lines(x, y, direction, path)
+                combined = [line for line in lines_at(x, y, direction, path)
                             if line["face"] not in ids]
                 combined.extend(new_lines)
                 envelopes.append(front_envelope(combined, path))
                 rebuilt += 1
         if any(a is not b for a, b in zip(envelopes, current[i], strict=True)):
             changed_pixels[i] = envelopes, filtered_pixel_loss(original[i], envelopes, normal_data)
-    return PatchResult(records, changed_pixels, intersected, rebuilt)
+        if pixel_budget is not None:
+            loss = changed_pixels[i][1] if i in changed_pixels else losses.get(i, 0.0)
+            # Round down at each addition so an accumulated rounding error cannot prune a tie.
+            lower = math.nextafter(lower + loss, -math.inf)
+            if lower > pixel_budget.limit:
+                return PatchResult(records, changed_pixels, intersected, rebuilt, visits, lower)
+    return PatchResult(records, changed_pixels, intersected, rebuilt, visits)
 
 
 def full_front(scene, points, direction, path):

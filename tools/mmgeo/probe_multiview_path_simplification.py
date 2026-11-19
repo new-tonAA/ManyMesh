@@ -2,7 +2,7 @@
 """Score multiple continuous raster paths with exact candidate early stopping."""
 
 import argparse
-from collections import ChainMap, defaultdict
+from collections import ChainMap, OrderedDict, defaultdict
 from copy import copy
 from dataclasses import replace
 import hashlib
@@ -15,6 +15,7 @@ import numpy as np
 
 from depth_candidate_pilot import camera, project
 from probe_dynamic_path_simplification import (
+    PixelBudget,
     SceneIndex,
     candidates_for_tile,
     collapse_map_bound,
@@ -54,6 +55,32 @@ class View:
         self.losses = {}
         self.stamps = {}
         self.cache = {}
+        self.reuse_face_records = args.reuse_face_records
+        self.ray_cache_limit = args.ray_cache_lines
+        self.ray_cache = OrderedDict()
+        self.ray_cache_size = 0
+        self.ray_cache_peak = 0
+        self.ray_hits = 0
+        self.ray_misses = 0
+        self.full_patch_hits = 0
+
+    def cached_lines(self, x, y, direction, path):
+        key = (x, y)
+        if key in self.ray_cache:
+            self.ray_hits += 1
+            self.ray_cache.move_to_end(key)
+            return self.ray_cache[key]
+        self.ray_misses += 1
+        lines = self.scene.lines(x, y, direction, path)
+        weight = max(1, len(lines))
+        if weight <= self.ray_cache_limit:
+            while self.ray_cache_size + weight > self.ray_cache_limit:
+                _, evicted = self.ray_cache.popitem(last=False)
+                self.ray_cache_size -= max(1, len(evicted))
+            self.ray_cache[key] = lines
+            self.ray_cache_size += weight
+            self.ray_cache_peak = max(self.ray_cache_size, self.ray_cache_peak)
+        return lines
 
     def proposal(self, candidate, faces):
         keep, remove = candidate.edge
@@ -76,17 +103,17 @@ class View:
         support = set(proposal.support)
         return math.fsum(value for i, value in self.losses.items() if i not in support)
 
-    def score(self, proposal, outside_loss, faces, normal_data, epoch, reuse):
-        for i in proposal.support:
-            if i in self.original:
-                continue
-            y, x = divmod(i, self.size)
-            points = [(x + (sx + 0.5) / self.scale, y + (sy + 0.5) / self.scale)
-                      for sy in range(self.scale) for sx in range(self.scale)]
-            self.points[i] = points
-            self.original[i] = [front_envelope(self.original_scene.lines(
-                tx, ty, self.direction, self.path), self.path) for tx, ty in points]
-            self.front[i] = self.original[i]
+    def prepare_pixel(self, i):
+        y, x = divmod(i, self.size)
+        points = [(x + (sx + 0.5) / self.scale, y + (sy + 0.5) / self.scale)
+                  for sy in range(self.scale) for sx in range(self.scale)]
+        self.points[i] = points
+        self.original[i] = [front_envelope(self.original_scene.lines(
+            tx, ty, self.direction, self.path), self.path) for tx, ty in points]
+        self.front[i] = self.original[i]
+
+    def score(self, proposal, outside_loss, faces, normal_data, epoch, reuse,
+              cap=None, pixel_order="scan"):
         previous = self.cache.get(proposal.edge) if reuse else None
         patch, invalid = None, None
         if previous is not None and proposal.signature == previous[0]:
@@ -94,18 +121,28 @@ class View:
             invalid = {i for i in patch.intersected if self.stamps.get(i, 0) > previous[1]}
         if patch is not None and not invalid:
             result = patch
-            rebuilt = 0
+            rebuilt = visits = 0
+            self.full_patch_hits += 1
         else:
+            budget = (PixelBudget(math.nextafter(cap - outside_loss, math.inf),
+                                  self.losses, pixel_order)
+                      if cap is not None else None)
             result = evaluate(proposal, self.projected, faces, self.scene, self.original,
                               self.front, self.points, self.direction, self.path, True,
-                              patch, invalid, normal_data)
+                              patch, invalid, normal_data, budget, self.prepare_pixel,
+                              self.reuse_face_records,
+                              self.cached_lines if self.ray_cache_limit else None)
             rebuilt = result.tap_rebuilds
+            visits = result.pixel_visits
+            if result.partial_loss is not None:
+                lower = math.nextafter(outside_loss + result.partial_loss, -math.inf)
+                return lower, None, rebuilt, visits
         if reuse:
             self.cache[proposal.edge] = (proposal.signature, epoch - 1, result)
         pixel_losses = (result.pixels[i][1] if i in result.pixels else self.losses.get(i, 0.0)
                         for i in proposal.support)
         score = math.fsum((outside_loss, math.fsum(pixel_losses)))
-        return score, result, rebuilt
+        return score, result, rebuilt, visits
 
     def apply(self, proposal, result, epoch):
         self.projected[proposal.edge[0]] = proposal.projected_target
@@ -115,6 +152,12 @@ class View:
             self.losses[i] = loss
         for i in result.intersected:
             self.stamps[i] = epoch
+            if self.ray_cache_limit:
+                # Invalidate even occluded geometry: the query retains all intersecting lines.
+                for key in self.points[i]:
+                    entry = self.ray_cache.pop(key, None)
+                    if entry is not None:
+                        self.ray_cache_size -= max(1, len(entry))
 
 
 class CollapseDisplacementBudget:
@@ -153,6 +196,11 @@ def select_path_edge(views, candidates, faces, world, source_normals, current_no
     scores, complete, pending = {}, {}, {}
     counts = [0] * len(views)
     rebuilt = [0] * len(views)
+    visits = [0] * len(views)
+    pixel_stops = 0
+    hits_before = [view.ray_hits for view in views]
+    misses_before = [view.ray_misses for view in views]
+    patches_before = [view.full_patch_hits for view in views]
     best = math.inf
     for candidate in candidates:
         edge = candidate.edge
@@ -169,9 +217,20 @@ def select_path_edge(views, candidates, faces, world, source_normals, current_no
                 if args.audit_pruning:
                     pending[edge] = projections, outside, normals, values, lower
                 break
-            value, patch, taps = view.score(projections[i], outside[i], faces, normals, epoch, True)
+            cap = None
+            if args.pixel_order != "off" and not args.exhaustive and math.isfinite(best):
+                prefix = math.fsum(values if args.partial_only_bound else (*values, *outside[i + 1:]))
+                cap = math.nextafter((best + 2e-12) - prefix, math.inf)
+            value, patch, taps, pixels = view.score(projections[i], outside[i], faces, normals,
+                                                     epoch, True, cap, args.pixel_order)
             counts[i] += 1
             rebuilt[i] += taps
+            visits[i] += pixels
+            if patch is None:
+                pixel_stops += 1
+                if args.audit_pruning:
+                    pending[edge] = projections, outside, normals, values, math.fsum((prefix, value))
+                break
             values.append(value)
             patches.append(patch)
         else:
@@ -181,6 +240,9 @@ def select_path_edge(views, candidates, faces, world, source_normals, current_no
             best = min(best, score)
     choice = winner(scores)
     elapsed = time.perf_counter() - started
+    hits = [view.ray_hits - before for view, before in zip(views, hits_before)]
+    misses = [view.ray_misses - before for view, before in zip(views, misses_before)]
+    full_patch_hits = [view.full_patch_hits - before for view, before in zip(views, patches_before)]
     if args.audit_pruning:
         full = scores.copy()
         for edge, (projections, outside, normals, values, lower) in pending.items():
@@ -195,6 +257,9 @@ def select_path_edge(views, candidates, faces, world, source_normals, current_no
     return choice, complete[choice], {
         "completedCandidates": len(scores), "perViewEvaluations": counts,
         "perViewTapRebuilds": rebuilt, "scorerSeconds": elapsed,
+        "perViewPixelVisits": visits, "pixelStops": pixel_stops,
+        "perViewRayCacheHits": hits, "perViewRayCacheMisses": misses,
+        "perViewFullPatchHits": full_patch_hits,
         "auditedPrunedCandidates": len(pending),
     }
 
@@ -289,6 +354,8 @@ def run(unit, control, args):
               "normalWeight": args.normal_weight, "qemShortlist": args.qem_shortlist,
               "displacementCap": budget.cap if budget is not None else None,
               "displacementRetryPool": args.displacement_retry_pool,
+              "pixelOrder": args.pixel_order,
+              "reuseFaceRecords": args.reuse_face_records, "rayCacheLines": args.ray_cache_lines,
               "stopReason": stop_reason}
     if budget is not None:
         geometry = collapse_map_bound(replay_geometry(unit, []), replay_geometry(unit, rows), rows)
@@ -313,6 +380,11 @@ def main():
     parser.add_argument("--exhaustive", action="store_true")
     parser.add_argument("--partial-only-bound", action="store_true",
                         help="ablate the unchanged-pixel contribution of unscored views")
+    parser.add_argument("--pixel-order", choices=("off", "scan", "loss"), default="off",
+                        help="optionally prune within views in scan or descending current-loss order")
+    parser.add_argument("--reuse-face-records", action="store_true")
+    parser.add_argument("--ray-cache-lines", type=int, default=0,
+                        help="limit cached current-scene line records per view, zero disables it")
     parser.add_argument("--score-only", action="store_true",
                         help="skip independent held-out rendering for scoring comparisons")
     parser.add_argument("--qem-shortlist", type=int,
@@ -327,6 +399,8 @@ def main():
         parser.error("view offsets must be finite and start with zero for the primary view")
     if args.qem_shortlist is not None and args.qem_shortlist < 1:
         parser.error("QEM shortlist size must be positive")
+    if args.ray_cache_lines < 0:
+        parser.error("ray cache size must be nonnegative")
     control_bytes = args.control.read_bytes()
     control = json.loads(control_bytes)
     capture = args.capture.read_bytes()
