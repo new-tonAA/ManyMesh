@@ -2,7 +2,7 @@
 """Compare cached and fresh path-loss decisions in a dynamic local simplifier."""
 
 import argparse
-from collections import Counter, defaultdict
+from collections import ChainMap, Counter, defaultdict
 from dataclasses import dataclass
 import hashlib
 import json
@@ -12,7 +12,7 @@ import time
 
 import numpy as np
 
-from depth_candidate_pilot import camera, project
+from depth_candidate_pilot import camera, project, raster
 from probe_incremental_path_visibility import (
     compare,
     filtered_pixel_loss,
@@ -169,7 +169,7 @@ def candidates_for_tile(world, projected, faces, rect, center, direction, path, 
 
 
 def evaluate(candidate, projected, faces, scene, original, current, points, direction, path,
-             use_dominance, cached_patch=None, invalid_pixels=None):
+             use_dominance, cached_patch=None, invalid_pixels=None, normal_data=None):
     keep, _remove = candidate.edge
     ids = candidate.faces.keys()
     vertices = {v for tri in candidate.faces.values() if tri is not None for v in tri}
@@ -206,7 +206,7 @@ def evaluate(candidate, projected, faces, scene, original, current, points, dire
                 envelopes.append(front_envelope(combined, path))
                 rebuilt += 1
         if any(a is not b for a, b in zip(envelopes, current[i], strict=True)):
-            changed_pixels[i] = envelopes, filtered_pixel_loss(original[i], envelopes)
+            changed_pixels[i] = envelopes, filtered_pixel_loss(original[i], envelopes, normal_data)
     return PatchResult(records, changed_pixels, intersected, rebuilt)
 
 
@@ -226,7 +226,7 @@ def winner(scores):
 
 
 def audit_candidate_scores(candidates, projected, faces, original, points, direction, path,
-                           baseline):
+                           baseline, proposal_normals):
     full = {}
     for candidate in candidates:
         geometry = projected.copy()
@@ -236,14 +236,54 @@ def audit_candidate_scores(candidates, projected, faces, original, points, direc
             topology[i] = face
         front = full_front(SceneIndex(geometry, topology), points, direction, path)
         full[candidate.edge] = math.fsum(
-            filtered_pixel_loss(a, b) for a, b in zip(original, front, strict=True))
+            filtered_pixel_loss(a, b, proposal_normals.get(candidate.edge))
+            for a, b in zip(original, front, strict=True))
     difference = max(abs(full[e] - baseline[e]) for e in full)
     if winner(full) != winner(baseline) or difference > 1e-11:
         raise ValueError(f"full candidate rebuild audit failed, maximum difference {difference:g}")
     return difference
 
 
-def run(unit, args):
+def source_quadrics(positions, faces):
+    """Accumulate area-weighted plane quadrics, matching the progressive QEM control."""
+    triangles = np.asarray(faces, dtype=np.int64)
+    points = positions[triangles]
+    normals = np.cross(points[:, 1] - points[:, 0], points[:, 2] - points[:, 0])
+    twice_area = np.linalg.norm(normals, axis=1)
+    valid = twice_area > 0.0
+    normals[valid] /= twice_area[valid, None]
+    planes = np.column_stack((normals, -np.sum(normals * points[:, 0], axis=1)))
+    face_quadrics = planes[:, :, None] * planes[:, None, :] * (0.5 * twice_area[:, None, None])
+    quadrics = np.zeros((len(positions), 4, 4), dtype=np.float64)
+    for corner in range(3):
+        np.add.at(quadrics, triangles[:, corner], face_quadrics)
+    return quadrics
+
+
+def quadric_cost(candidate, quadrics, origin):
+    a, b = candidate.edge
+    point = np.append(candidate.target - origin, 1.0)
+    return max(0.0, float(point @ (quadrics[a] + quadrics[b]) @ point))
+
+
+def indexed_normals(world, faces):
+    ids = [i for i, face in enumerate(faces) if face is not None]
+    return dict(zip(ids, flat_world_normals(world, [faces[i] for i in ids]), strict=True))
+
+
+def placement_normals(world, candidate):
+    keep, _ = candidate.edge
+    result = {}
+    for i, face in candidate.faces.items():
+        if face is None:
+            continue
+        a, b, c = (candidate.target if v == keep else world[v] for v in face)
+        normal = np.cross(b - a, c - a)
+        result[i] = normal / np.linalg.norm(normal)
+    return result
+
+
+def run(unit, args, decision="path"):
     world = np.asarray(unit["positions"], dtype=float)
     transform = camera(world, args.angle, args.size)
     projected = project(world, transform)
@@ -263,7 +303,13 @@ def run(unit, args):
     started = time.perf_counter()
     scene = SceneIndex(projected, faces)
     original = full_front(scene, points, direction, path)
+    source_normals = indexed_normals(world, faces) if args.normal_weight else None
+    current_normals = source_normals.copy() if source_normals is not None else None
     setup_seconds = time.perf_counter() - started
+    quadric_origin = world.mean(axis=0)
+    quadric_start = time.perf_counter()
+    quadrics = source_quadrics(world - quadric_origin, faces) if decision == "qem" else None
+    quadric_seconds = time.perf_counter() - quadric_start if quadrics is not None else None
     front = original.copy()
     losses = [0.0] * len(points)
     stamps = [0] * len(points)
@@ -275,6 +321,11 @@ def run(unit, args):
         started = time.perf_counter()
         candidates = list(candidates_for_tile(world, projected, faces, rect, center,
                                                direction, path, args.pool))
+        proposal_normals = {
+            c.edge: (source_normals, ChainMap(placement_normals(world, c), current_normals),
+                     args.normal_weight)
+            for c in candidates
+        } if current_normals is not None else {}
         selection_seconds = time.perf_counter() - started
         if not candidates:
             break
@@ -282,8 +333,16 @@ def run(unit, args):
         answer = {}
         work = {}
         best_update = None
-        for policy in ("intersections", "dominance", "cached"):
+        for policy in (("intersections", "dominance", "cached") if quadrics is None else ("qem",)):
             started = time.perf_counter()
+            if policy == "qem":
+                choice = min(candidates, key=lambda c: (quadric_cost(c, quadrics, quadric_origin),
+                                                        c.edge))
+                work[policy] = {"edge": choice.edge, "seconds": time.perf_counter() - started}
+                best_update = evaluate(choice, projected, faces, scene, original, front,
+                                       points, direction, path, True,
+                                       normal_data=proposal_normals.get(choice.edge))
+                continue
             scores = {}
             results = {}
             taps = hits = matching_geometry = reused_pixels = 0
@@ -304,7 +363,7 @@ def run(unit, args):
                 else:
                     record = evaluate(candidate, projected, faces, scene, original, front,
                                       points, direction, path, policy != "intersections",
-                                      patch, invalid)
+                                      patch, invalid, proposal_normals.get(edge))
                     taps += record.tap_rebuilds
                 results[edge] = record
                 scores[edge] = candidate_energy(losses, record.pixels, current_energy)
@@ -319,18 +378,19 @@ def run(unit, args):
             if policy == "cached":
                 cache = next_cache
                 best_update = results[edge]
-        edge = work["intersections"]["edge"]
+        edge = work["intersections" if quadrics is None else "qem"]["edge"]
         if any(row["edge"] != edge for row in work.values()):
             raise ValueError(f"decision differs at step {epoch}: {work}")
-        discrepancy = max(abs(scores[e] - answer["intersections"][e])
-                          for scores in answer.values() for e in scores)
-        if discrepancy > 1e-11:
+        discrepancy = (max(abs(scores[e] - answer["intersections"][e])
+                           for scores in answer.values() for e in scores) if answer else None)
+        if discrepancy is not None and discrepancy > 1e-11:
             raise ValueError(f"candidate scores differ by {discrepancy:g}")
         full_difference = (audit_candidate_scores(candidates, projected, faces, original, points,
-                                                  direction, path, answer["intersections"])
-                           if args.audit_all_candidates else None)
+                                                  direction, path, answer["intersections"],
+                                                  proposal_normals)
+                           if args.audit_all_candidates and answer else None)
         choice = next(c for c in candidates if c.edge == edge)
-        keep, _ = edge
+        keep, remove = edge
         shared_vertices = len(set(edge) & prior_vertices)
         shared_faces = len(choice.faces.keys() & prior_patch)
         prior_vertices = set(edge)
@@ -345,22 +405,110 @@ def run(unit, args):
             front[i], losses[i] = envelopes, loss
         for i in best_update.intersected:
             stamps[i] = epoch
+        if current_normals is not None:
+            for face_id in choice.faces:
+                current_normals.pop(face_id)
+            current_normals.update(proposal_normals[edge][1].maps[0])
+        if quadrics is not None:
+            quadrics[keep] += quadrics[remove]
+            quadrics[remove].fill(0.0)
         apply_seconds = time.perf_counter() - started
         # A fresh scene built from the accepted mesh audits both the invalidation
         # footprint and dynamic face-bin updates across overlapping edits.
         reference = full_front(SceneIndex(projected, faces), points, direction, path)
-        ref_losses = [filtered_pixel_loss(a, b) for a, b in zip(original, reference, strict=True)]
+        ref_normals = ((source_normals, indexed_normals(world, faces), args.normal_weight)
+                       if current_normals is not None else None)
+        ref_losses = [filtered_pixel_loss(a, b, ref_normals)
+                      for a, b in zip(original, reference, strict=True)]
         audit = compare([(reference, ref_losses)], [(front, losses)], path)
-        steps.append({"step": epoch, "edge": edge, "candidates": len(candidates),
+        steps.append({"step": epoch, "edge": edge, "target": choice.target.tolist(),
+                      "candidates": len(candidates),
                       "loss": math.fsum(losses), "sharedVerticesWithPrevious": shared_vertices,
                       "sharedFacesWithPrevious": shared_faces, "maxCandidateDifference": discrepancy,
                       "maxFullCandidateDifference": full_difference,
                       "candidateGenerationSeconds": selection_seconds, "applySeconds": apply_seconds,
                       "policies": work, **audit})
     return {"tile": rect, "initialSetupSeconds": setup_seconds, "initialFaces": initial_faces,
+            "quadricSetupSeconds": quadric_seconds,
             "finalFaces": sum(face is not None for face in faces),
             "maxCacheEntries": max((row["candidates"] for row in steps), default=0),
             "steps": steps}
+
+
+def replay_geometry(unit, steps):
+    world = np.array(unit["positions"], dtype=float)
+    faces = np.array(unit["triangles"], dtype=np.int64)
+    for step in steps:
+        keep, remove = step["edge"]
+        world[keep] = step["target"]
+        faces[faces == remove] = keep
+    alive = ((faces[:, 0] != faces[:, 1]) & (faces[:, 1] != faces[:, 2]) &
+             (faces[:, 2] != faces[:, 0]))
+    return world, faces[alive]
+
+
+def raster_attributes(projected, faces, normals, displacement, size, scale):
+    shifted = projected.copy()
+    shifted[:, :2] -= displacement
+    image, owners = raster(shifted, faces, np.ones(len(faces), dtype=bool),
+                           (0, 0, size, size), scale)
+    normal_image = np.zeros((*owners.shape, 3), dtype=float)
+    valid = owners >= 0
+    normal_image[valid] = normals[owners[valid]]
+    shape = (size, scale, size, scale)
+    return (image.reshape(*shape, 2).mean(axis=(1, 3)),
+            normal_image.reshape(*shape, 3).mean(axis=(1, 3)))
+
+
+def flat_world_normals(positions, faces):
+    a, b, c = positions[np.asarray(faces, dtype=np.int64).reshape(-1, 3)].transpose(1, 0, 2)
+    normals = np.cross(b - a, c - a)
+    length = np.linalg.norm(normals, axis=1)
+    nonzero = length > 0.0
+    normals[nonzero] /= length[nonzero, None]
+    return normals
+
+
+def heldout_raster_quality(unit, path_steps, qem_steps, args):
+    count = min(len(path_steps), len(qem_steps))
+    meshes = {"original": replay_geometry(unit, []),
+              "path": replay_geometry(unit, path_steps[:count]),
+              "qem": replay_geometry(unit, qem_steps[:count])}
+    if len(meshes["path"][1]) != len(meshes["qem"][1]):
+        raise ValueError("the final meshes must use the same face budget")
+    size = args.quality_size
+    # Avoid revisiting the optimization segment. The last two paths also change azimuth.
+    views = (("differentPan", args.angle, args.pan_angle + 37.0),
+             ("changedView", args.angle + 0.65, args.pan_angle - 29.0),
+             ("oppositeView", args.angle + math.pi, args.pan_angle + 15.0))
+    radius = 1.25 * args.radius * size / args.size
+    times = [radius * (2.0 * (i + 0.5) / args.quality_steps - 1.0)
+             for i in range(args.quality_steps)]
+    rows = []
+    normals = {name: flat_world_normals(*mesh) for name, mesh in meshes.items()}
+    for label, azimuth, pan in views:
+        transform = camera(meshes["original"][0], azimuth, size)
+        direction = np.asarray([math.cos(math.radians(pan)), math.sin(math.radians(pan))])
+        projected = {name: project(mesh[0], transform) for name, mesh in meshes.items()}
+        totals = {name: np.zeros(3) for name in ("path", "qem")}
+        for t in times:
+            displacement = direction * t
+            source, source_normals = raster_attributes(projected["original"],
+                                                       meshes["original"][1],
+                                                       normals["original"], displacement,
+                                                       size, args.quality_scale)
+            for name in totals:
+                image, normal = raster_attributes(projected[name], meshes[name][1], normals[name],
+                                                  displacement, size, args.quality_scale)
+                totals[name][:2] += np.square(source - image).mean(axis=(0, 1))
+                totals[name][2] += np.square(source_normals - normal).sum(axis=2).mean()
+        metrics = ("coverageMse", "depthMse", "flatNormalSquaredDistance")
+        rows.append({"view": label, "azimuth": azimuth, "panAngle": pan,
+                     **{name: dict(zip(metrics, values.tolist(), strict=True))
+                        for name, values in ((k, v / len(times)) for k, v in totals.items())}})
+    return {"matchedEdits": count, "matchedFaces": len(meshes["path"][1]),
+            "size": size, "scale": args.quality_scale, "steps": len(times),
+            "radius": radius, "views": rows}
 
 
 def main():
@@ -379,9 +527,18 @@ def main():
     parser.add_argument("--radius", type=float, default=1.0)
     parser.add_argument("--audit-all-candidates", action="store_true",
                         help="independently rebuild the full viewport tile for every proposal")
+    parser.add_argument("--compare-qem", action="store_true",
+                        help="compare midpoint QEM and evaluate final meshes on other raster paths")
+    parser.add_argument("--normal-weight", type=float, default=0.0,
+                        help="weight of squared filtered flat-normal difference in the exact loss")
+    parser.add_argument("--quality-size", type=int, default=80)
+    parser.add_argument("--quality-scale", type=int, default=2)
+    parser.add_argument("--quality-steps", type=int, default=8)
     args = parser.parse_args()
-    if (min(args.edits, args.pool, args.scale, *args.extent) < 1
-            or max(args.extent) > args.size or not math.isfinite(args.radius) or args.radius <= 0):
+    if (min(args.edits, args.pool, args.scale, args.quality_size, args.quality_scale,
+            args.quality_steps, *args.extent) < 1
+            or max(args.extent) > args.size or not math.isfinite(args.radius) or args.radius <= 0
+            or not math.isfinite(args.normal_weight) or args.normal_weight < 0):
         parser.error("invalid edit budget, sample scale, tile, or path radius")
     capture = args.capture.read_bytes()
     units = json.loads(capture)["units"]
@@ -393,10 +550,15 @@ def main():
     if not 0 <= args.seed < len(unit["candidates"]):
         parser.error("invalid seed candidate index")
     result = run(unit, args)
+    if args.compare_qem:
+        control = run(unit, args, "qem")
+        result["qemControl"] = control
+        result["heldoutRasterQuality"] = heldout_raster_quality(
+            unit, result["steps"], control["steps"], args)
     result.update({"captureSha256": digest, "seed": args.seed, "unitIndex": args.unit_index,
                    "requestedEdits": args.edits, "pool": args.pool, "scale": args.scale,
                    "size": args.size, "angle": args.angle, "panAngle": args.pan_angle,
-                   "radius": args.radius})
+                   "radius": args.radius, "normalWeight": args.normal_weight})
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     print(f"{len(result['steps'])} decisions audited, wrote {args.out}")

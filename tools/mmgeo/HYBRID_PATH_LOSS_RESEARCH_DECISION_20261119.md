@@ -307,6 +307,75 @@ $data = "out/pathloss-captures"
 python tools/mmgeo/probe_dynamic_path_simplification.py "$data/rounded_cube.json" --seed 72 --edits 8 --pool 12 --audit-all-candidates --out "$data/dynamic-rounded-pan90.json"
 ```
 
+## Matched-budget quality outside the optimization path
+
+The dynamic probe now has a midpoint QEM control. Both methods regenerate current edges with
+the same screen-local shortlist, orientation and topology checks, and midpoint placements.
+The QEM control sums area-weighted original face-plane quadrics and accumulates them at each
+merge, as in the existing geometry baseline. The two runs diverge according to their own scores.
+This isolates the ranking decision under the probe's constraints. A full-mesh QEM implementation
+with optimized placements is still a separate baseline.
+
+After 20 Rounded Cube collapses (1,200 to 1,160 faces), the two methods chose different edges
+at 18 of 20 steps. The exact coverage-plus-depth loss on the optimization segment was
+`2.25e-5` for path ranking and `0.372` for midpoint QEM. Independent raster evaluation uses
+80x80 full frames with four taps per pixel and eight midpoint poses per test path. It compares
+box-filtered coverage, depth, and world-space flat triangle normals against the original mesh.
+The two visible test paths change the pan direction and radius, and one also changes azimuth
+by 0.65 radians. An opposite-azimuth test gave all zeros because the altered region was hidden.
+
+| Rounded Cube held-out path | Metric | Midpoint QEM | Coverage and depth | Coverage, depth, and normals |
+|---|---|---:|---:|---:|
+| Same view, new pan | Coverage MSE | 8.54e-6 | 0 | 0 |
+| Same view, new pan | Depth MSE | 5.01e-6 | 1.36e-9 | 2.71e-9 |
+| Same view, new pan | Flat-normal squared distance | 1.27e-5 | 1.45e-5 | 5.69e-6 |
+| Changed view and pan | Coverage MSE | 3.66e-6 | 0 | 1.22e-6 |
+| Changed view and pan | Depth MSE | 1.82e-6 | 1.41e-9 | 6.29e-7 |
+| Changed view and pan | Flat-normal squared distance | 7.81e-6 | 1.11e-5 | 6.78e-6 |
+
+The coverage and depth improvement coexists with higher flat-normal error on both visible
+test paths. To measure the tradeoff, the probe can also integrate squared differences of
+filtered visible flat normals. A face normal is constant over each visibility interval, so
+the interval partition already used for coverage and depth suffices. The preselected
+weight of 0.25 puts the maximum unit-normal squared difference on the same scale as a
+unit coverage mismatch. Existing geometry-based invalidation also covers modified normals.
+
+The normal objective reduced the two visible held-out normal errors versus QEM by 55% and 13%.
+It gave up some of the coverage and depth advantage of the two-channel objective on the changed
+view. On the optimization segment, the joint objective was 0.0562 versus 0.455 for midpoint QEM.
+All three update policies agreed at all 20 path-ranked decisions, and the accepted states had
+zero measured pixel-loss difference against fresh reconstruction. The normal-aware run
+rebuilt 2,088 taps with intersections alone, 1,872 with dominance, and 1,729 with partial cache
+reuse. These measurements concern a small local edit budget and the two visible held-out paths.
+
+Material Sphere is a counterexample with the same 0.25 weight, 20 edits, 12 candidate edges
+per step, and the same evaluation settings. Both meshes ended at 9,388 of 9,428 faces.
+The optimization-segment objective was 0.0129 with path ranking and 0.0720 with QEM.
+On the three held-out paths, the path-ranked mesh had 1.33x, 5.59x, and 2.96x the QEM depth
+errors, and 1.11x, 2.19x, and 2.79x the flat-normal errors. On the changed view both coverage
+errors were zero. The other two coverage errors were 1.35x and 2.64x the QEM errors.
+All 20 decisions matched across the visibility update policies, and all accepted states
+matched fresh per-pixel reconstruction. Intersections, dominance, and partial reuse rebuilt
+1,626, 1,499, and 1,456 taps, respectively. Scoring took 8.18, 8.12, and 7.53 seconds in one
+run, excluding candidate generation, commit, and independent validation.
+
+These two meshes separate implementation correctness from generalization. The cache preserves
+the optimized objective, and a single optimization path can favor edits that increase error
+elsewhere. Retain Material Sphere as a failure case for evaluating a multi-view objective or
+a geometry constraint. Both assets are now development cases for any such change. Use other
+assets and paths before drawing a generalization conclusion.
+
+```powershell
+$data = "out/pathloss-captures"
+$probe = "tools/mmgeo/probe_dynamic_path_simplification.py"
+python $probe "$data/rounded_cube.json" --seed 72 --edits 20 --pool 12 --compare-qem --out "$data/quality-rounded-pan90.json"
+python $probe "$data/rounded_cube.json" --seed 72 --edits 20 --pool 12 --compare-qem --normal-weight 0.25 --out "$data/quality-rounded-normal-pan90.json"
+python $probe "$data/material_sphere.json" --seed 16518 --edits 20 --pool 12 --compare-qem --normal-weight 0.25 --out "$data/quality-sphere-normal-pan90.json"
+```
+
+[Surface Simplification Using Quadric Error Metrics](https://www.cs.cmu.edu/afs/cs.cmu.edu/user/garland/www/quadrics/index.html) ·
+[Image-Driven Simplification](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf)
+
 ## Decision and remaining gate
 
 The exact lower-bound mechanism now runs online in the Python research probe and shows a modest

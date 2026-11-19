@@ -97,7 +97,7 @@ def repair_front(front, edited_ids, new_lines, scene_lines):
     return result, exposed_duration, exposed_inputs
 
 
-def filtered_pixel_loss(original, current):
+def filtered_pixel_loss(original, current, normal_data=None):
     envelopes = original + current
     weight = 1.0 / len(original)
     edges = sorted({edge for front in envelopes for lo, hi, _ in front for edge in (lo, hi)})
@@ -106,6 +106,7 @@ def filtered_pixel_loss(original, current):
     for lo, hi in zip(edges, edges[1:]):
         mid = lo + 0.5 * (hi - lo)
         coverage, slope, intercept = 0, 0.0, 0.0
+        normal = np.zeros(3) if normal_data is not None else None
         for i, front in enumerate(envelopes):
             while front[indices[i]][1] <= lo:
                 indices[i] += 1
@@ -115,10 +116,15 @@ def filtered_pixel_loss(original, current):
                 coverage += sign
                 slope += sign * line["slope"]
                 intercept += sign * line["intercept"]
+                if normal is not None:
+                    face_normals = normal_data[0 if sign > 0 else 1]
+                    normal += sign * face_normals[line["face"]]
         duration = hi - lo
         midpoint_depth = slope * mid + intercept
         total += duration * (coverage ** 2 + midpoint_depth ** 2
                              + (slope * duration) ** 2 / 12.0)
+        if normal is not None:
+            total += duration * normal_data[2] * float(normal @ normal)
     return total * weight ** 2
 
 
