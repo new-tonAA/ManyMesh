@@ -95,6 +95,8 @@ def main():
         parser.error("capture does not contain per-cell exact losses; rerun probe with --loss-cell-width/height")
     cell_rows = {int(row["candidateId"]): row
                  for row in data["candidateExactCellLosses"]}
+    if any(not row.get("complete", True) for row in cell_rows.values()):
+        parser.error("offline scheduling replay requires full exact cell labels")
     raster_cell_rows = {int(row["candidateId"]): row["cells"]
                         for row in data.get("candidateRasterCellLosses", [])}
     for candidate_id, row in cell_rows.items():

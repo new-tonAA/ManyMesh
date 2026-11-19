@@ -39,7 +39,7 @@ translation segment ([Popescu et al., TVCG 2025](https://www.cs.purdue.edu/cgvla
 Therefore, “neural simplification + image loss,” “camera path awareness,” and “analytic visibility
 events” are each too broad to claim as new.
 
-## Exact bound replay prototype
+## Exact bound replay and online implementation
 
 I changed the combined method into an offline replay. For each candidate and each screen cell, the
 event solver records an exact, nonnegative loss contribution. Evaluating a subset of cells gives a
@@ -47,7 +47,9 @@ valid lower bound on total candidate loss. The replay fully evaluates the first 
 raster order as an incumbent, then evaluates cells for each later candidate until its accumulated
 lower bound cannot beat that incumbent. It changes only work order and early stopping; the exact
 winner remains the decision rule. A contribution-sorted policy is also reported as a *clairvoyant
-upper bound* because it uses the unseen exact cell losses to choose work.
+upper bound* because it uses the unseen exact cell losses to choose work. The probe now has an
+online mode that actually evaluates only the scheduled cells; a saved full evaluation can audit
+that it selects an exact minimizer.
 
 The probe and replay are [`probe_shared_envelope_raster_tile.py`](probe_shared_envelope_raster_tile.py)
 and [`audit_exact_loss_cell_pruning.py`](audit_exact_loss_cell_pruning.py). The screen used 12
@@ -76,29 +78,40 @@ does not consistently improve on the non-learned policy under asset/path holdout
 
 Cheap raster cell ordering avoided 41%–84% of candidate-cell integrations in the five
 nontrivial held-out groups; an easy zero-loss group required only 27/192 integrations even with
-fixed cell order. This is not a speed result: shared event setup took about 0.11–0.65 seconds and all candidate
-setup plus integration took about 0.13–0.19 seconds. The replay does not yet include the cost of
-incrementally stopping the real solver, candidate preparation that cannot be skipped, or
-sequential simplification. A runtime implementation may save much less than the cell counts
-suggest.
+fixed cell order. In online mode, the probe includes candidate preparation, raster work, shared
+event setup, and scheduled exact integration in its core wall time:
 
-Reproduce the Rounded Cube 45° screen and replay with:
+| Case | Full exact core | Online core | Exact cell integrations | Reference winner |
+|---|---:|---:|---:|---|
+| Rounded Cube, pan 45°, 1 raster sample, mean of two runs | 0.302 s | 0.251 s | 192 → 97 | yes |
+| Rounded Cube, pan 90°, 1 raster sample | 0.323 s | 0.271 s | 192 → 113 | yes |
+| Rounded Cube, pan 45°, 8 raster samples | 0.388 s | 0.346 s | 192 → 113 | yes |
+| Material Sphere, pan 45°, 1 sample, mean of three runs | 1.304 s | 1.214 s | 192 → 132 | yes |
+
+The measured core reduction is about 11%–17% for Rounded Cube and 7% for Material Sphere.
+On the latter, shared event setup alone is about 0.68 s, so candidate pruning has limited impact.
+The 8-sample raster order costs more than one sample and saved less time in the Rounded Cube
+case. The one-sample raster can have large score error; it is used only to order work, while the
+exact lower bound and complete incumbent determine the result. These timings are a small Python
+prototype benchmark, not C++ production performance, and need more repetitions and meshes.
+
+Reproduce the Rounded Cube 45° online comparison with:
 
 ```powershell
-python tools/mmgeo/probe_shared_envelope_raster_tile.py --capture out/pathloss-captures/rounded_cube.json --seed-candidate 72 --candidate-limit 12 --angle 2.3 --size 64 --scale 1 --tile-width 32 --tile-height 16 --steps 8 --pan-angle 45 --path-radius 1 --loss-cell-width 8 --loss-cell-height 4 --out out/pathloss-captures/rounded-cube-cell-pruning.json
-python tools/mmgeo/audit_exact_loss_cell_pruning.py out/pathloss-captures/rounded-cube-cell-pruning.json --train-on out/pathloss-captures/material-sphere-cell-pruning.json
+python tools/mmgeo/probe_shared_envelope_raster_tile.py --capture out/pathloss-captures/rounded_cube.json --seed-candidate 72 --candidate-limit 12 --angle 2.3 --size 64 --scale 1 --tile-width 32 --tile-height 16 --steps 1 --pan-angle 45 --path-radius 1 --loss-cell-width 8 --loss-cell-height 4 --out out/pathloss-captures/rounded-cube-full-1sample.json
+python tools/mmgeo/probe_shared_envelope_raster_tile.py --capture out/pathloss-captures/rounded_cube.json --seed-candidate 72 --candidate-limit 12 --angle 2.3 --size 64 --scale 1 --tile-width 32 --tile-height 16 --steps 1 --pan-angle 45 --path-radius 1 --loss-cell-width 8 --loss-cell-height 4 --online-pruning --reference-capture out/pathloss-captures/rounded-cube-full-1sample.json --out out/pathloss-captures/rounded-cube-online-1sample.json
 ```
 
 ## Decision and remaining gate
 
-The exact lower-bound mechanism is now an implemented and reproducible research prototype, and
-the cheap raster map is a useful work-order baseline. The learned allocator has not passed the
-cross-asset/path comparison. The numerical screens are small, use one localized tile and
-depth-only loss, and cover only orthographic translation. They are evidence of an algorithmic
-direction, not a SIGGRAPH contribution.
+The exact lower-bound mechanism now runs online in the Python research probe and shows a modest
+end-to-end win on these localized depth-only cases. The cheap raster map is a useful work-order
+baseline. The learned allocator has not passed the cross-asset/path comparison. The numerical
+screens are small, use one localized tile, and cover only orthographic translation. They are
+evidence of an algorithmic direction, not a SIGGRAPH contribution.
 
-The next required work is to incorporate per-cell lower-bound stopping into the actual candidate
-solver and measure full cost, then expand to larger candidate pools, full-frame RGB/material loss,
+The next required work is to port the online policy to the actual mesh candidate solver and measure
+full cost, then expand to larger candidate pools, full-frame RGB/material loss,
 perspective or camera rotation, and sequential legal collapses. Re-run asset-and-path held-out
 learning only after those captures exist. A focused search is still needed for prior work on
 certified adaptive image-error refinement for mesh simplification. If raster ordering accounts

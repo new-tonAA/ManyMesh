@@ -210,6 +210,39 @@ def raster_local_path(positions, triangles, union_faces, candidate_data, rect, s
     return candidate_energy, source_time, patch_time
 
 
+def exact_candidate_cell(item, cell_id, rect, cell_width, cell_height, exact_ray_cache,
+                         source_event_cache, path, pan_direction, horizontal_cache):
+    """Integrate one screen cell exactly for one candidate, returning loss and ray tests."""
+    cell_x, cell_y = map(int, cell_id.split(","))
+    x0 = rect[0] + cell_x * cell_width
+    y0 = rect[1] + cell_y * cell_height
+    x1 = min(rect[2], x0 + cell_width)
+    y1 = min(rect[3], y0 + cell_height)
+    rect_width = rect[2] - rect[0]
+    energy = 0.0
+    ray_tests = 0
+    for py in range(y0, y1):
+        for px in range(x0, x1):
+            pixel_index = (py - rect[1]) * rect_width + px - rect[0]
+            samples = []
+            for (sample_x, sample_y, weight, common, starts, source_local,
+                 by_face) in exact_ray_cache[pixel_index]:
+                if horizontal_cache:
+                    candidate_local = instantiate_lines(
+                        item["localRows"][sample_y], sample_x, item["path"])
+                else:
+                    candidate_local, tested = instantiate_path_lines(
+                        item["localCoefficients"], sample_x, sample_y, pan_direction,
+                        item["path"], item["localGrid"])
+                    ray_tests += tested
+                unchanged = [by_face[i] for i in item["unchangedUnion"] if i in by_face]
+                samples.append((common, starts, source_local,
+                                unchanged + candidate_local, weight))
+            energy += exact_cached_source_events(
+                samples, source_event_cache[pixel_index], item["path"])
+    return energy, ray_tests
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--capture", type=Path, default=Path("out/filter-real-candidates/monkey.json"))
@@ -231,6 +264,10 @@ def main():
     parser.add_argument("--loss-cell-width", type=int, default=0,
                         help="also accumulate exact loss by smaller screen cells; 0 disables")
     parser.add_argument("--loss-cell-height", type=int, default=0)
+    parser.add_argument("--online-pruning", action="store_true",
+                        help="raster-order cells and stop exact candidate integration using lower bounds")
+    parser.add_argument("--reference-capture", type=Path, default=None,
+                        help="full exact capture used only to audit the selected online candidate")
     parser.add_argument("--steps", type=int, nargs="+", default=[32, 128])
     parser.add_argument("--out", type=Path,
                         default=Path("out/shared-envelope-raster-tile-20261119.json"))
@@ -240,9 +277,12 @@ def main():
     if (args.loss_cell_width < 0 or args.loss_cell_height < 0 or
             bool(args.loss_cell_width) != bool(args.loss_cell_height)):
         parser.error("loss-cell width and height must both be positive or both be zero")
+    if args.online_pruning and (not args.loss_cell_width or not args.reference_capture):
+        parser.error("online pruning needs positive loss-cell dimensions and --reference-capture")
     if any(step <= 0 for step in args.steps):
         parser.error("all path sample counts must be positive")
 
+    probe_core_start = time.perf_counter()
     raw = json.loads(args.capture.read_text(encoding="utf-8"))
     if not 0 <= args.unit_index < len(raw["units"]):
         parser.error(f"unit-index must be in [0, {len(raw['units']) - 1}]")
@@ -371,10 +411,10 @@ def main():
     common_event_setup_seconds = time.perf_counter() - common_start
 
     candidate_data = []
-    exact_event_seconds = 0.0
-    candidate_setup_seconds = 0.0
+    candidate_preparation_seconds = 0.0
     legacy_check_diff = None
     for candidate_id in candidate_ids:
+        started = time.perf_counter()
         candidate = dict(candidates[candidate_id])
         candidate["target"] = raster.project(np.asarray([candidate["target"]]), transform)[0].tolist()
         post, face_by_id, _valid_faces, local_faces = candidate_geometry(
@@ -384,65 +424,23 @@ def main():
         patch_ids = sorted(unchanged_union) + [i for i in local_faces if face_by_id[i] is not None]
         patch_triangles = np.asarray([face_by_id[i] if i in local_set else triangles[i]
                                      for i in patch_ids], dtype=np.int64)
-        candidate_data.append({"id": candidate_id, "positions": np.asarray(post, dtype=float),
-                               "patchTriangles": patch_triangles,
-                               "exactCellEnergy": {}})
-        started = time.perf_counter()
+        item = {"id": candidate_id, "positions": np.asarray(post, dtype=float),
+                "patchTriangles": patch_triangles, "exactCellEnergy": {},
+                "path": path, "unchangedUnion": unchanged_union}
         if horizontal_cache:
-            local_rows = {
+            item["localRows"] = {
                 sample_y: triangle_line_records(post, face_by_id, local_faces, sample_y)
                 for sample_y in sample_y_values
             }
-            local_coefficients = None
+            item["localCoefficients"] = None
         else:
-            local_rows = None
-            local_coefficients = triangle_path_coefficients(post, face_by_id, local_faces)
-        local_grid = (None if horizontal_cache else
-                      build_path_triangle_grid(local_coefficients))
+            item["localCoefficients"] = triangle_path_coefficients(
+                post, face_by_id, local_faces)
+        item["localGrid"] = (None if horizontal_cache else
+                             build_path_triangle_grid(item["localCoefficients"]))
+        candidate_data.append(item)
+        candidate_preparation_seconds += time.perf_counter() - started
 
-        for pixel_index, taps in enumerate(exact_ray_cache):
-            samples = []
-            for sample_x, sample_y, weight, common, starts, source_local, by_face in taps:
-                if horizontal_cache:
-                    candidate_local = instantiate_lines(local_rows[sample_y], sample_x, path)
-                else:
-                    candidate_local, tested = instantiate_path_lines(
-                        local_coefficients, sample_x, sample_y, pan_direction, path, local_grid)
-                    path_line_candidate_tests += tested
-                unchanged = [by_face[i] for i in unchanged_union if i in by_face]
-                samples.append((common, starts, source_local, unchanged + candidate_local, weight))
-            exact_energy = exact_cached_source_events(
-                samples, source_event_cache[pixel_index], path)
-            candidate_data[-1].setdefault("exactEnergy", 0.0)
-            candidate_data[-1]["exactEnergy"] += exact_energy
-            if args.loss_cell_width:
-                rect_width = rect[2] - rect[0]
-                px = rect[0] + pixel_index % rect_width
-                py = rect[1] + pixel_index // rect_width
-                cell_x = (px - rect[0]) // args.loss_cell_width
-                cell_y = (py - rect[1]) // args.loss_cell_height
-                cell_key = f"{cell_x},{cell_y}"
-                candidate_data[-1]["exactCellEnergy"][cell_key] = (
-                    candidate_data[-1]["exactCellEnergy"].get(cell_key, 0.0) + exact_energy)
-        candidate_setup_seconds += time.perf_counter() - started
-        if candidate_id == candidate_ids[0] and horizontal_cache:
-            # Independent implementation cross-check against the un-cached exact overlay.
-            started = time.perf_counter()
-            legacy_sum = 0.0
-            for taps in exact_ray_cache:
-                samples = []
-                for sample_x, sample_y, weight, common, _starts, source_local, by_face in taps:
-                    candidate_local = mesh_lines_for_ids(
-                        post, face_by_id, local_faces, sample_y, sample_x, path)
-                    unchanged = [by_face[i] for i in unchanged_union if i in by_face]
-                    samples.append((common, source_local, unchanged + candidate_local, weight))
-                legacy_sum += exact_envelope_overlay(samples, path)[0]
-            legacy_check_diff = abs(legacy_sum - candidate_data[-1]["exactEnergy"])
-            candidate_data[-1]["legacyAuditSeconds"] = time.perf_counter() - started
-
-    dense_rows = []
-    if not horizontal_cache:
-        triangle_scan_visits = path_line_candidate_tests
     dense_results = {step: [] for step in args.steps}
     dense_common_seconds = {}
     dense_patch_seconds = {}
@@ -454,12 +452,94 @@ def main():
         dense_patch_seconds[step] = patch_seconds
         for index, item in enumerate(candidate_data):
             dense_results[step].append(float(energies[index]))
-            exact_energy = float(item["exactEnergy"])
+    base_raster_steps = min(args.steps)
+    rect_width, rect_height = rect[2] - rect[0], rect[3] - rect[1]
+    cell_width = args.loss_cell_width or rect_width
+    cell_height = args.loss_cell_height or rect_height
+    cell_ids = [f"{cx},{cy}"
+                for cy in range(math.ceil(rect_height / cell_height))
+                for cx in range(math.ceil(rect_width / cell_width))]
+    candidate_by_id = {item["id"]: item for item in candidate_data}
+    raster_cell_by_id = {
+        item["id"]: {cell: float(item.get("rasterCellEnergy", {}).get(
+            f"{base_raster_steps}:{cell}", 0.0)) for cell in cell_ids}
+        for item in candidate_data}
+    candidate_order = sorted(candidate_ids, key=lambda cid: sum(raster_cell_by_id[cid].values()))
+
+    candidate_setup_seconds = 0.0
+    online_trace = []
+    incumbent_id = None
+    incumbent_energy = float("inf")
+    for candidate_id in candidate_order:
+        item = candidate_by_id[candidate_id]
+        if args.online_pruning:
+            cell_order = sorted(cell_ids,
+                                key=lambda cell: (-raster_cell_by_id[candidate_id][cell], cell))
+        else:
+            cell_order = cell_ids
+        lower_bound = 0.0
+        visited = []
+        pruned = False
+        started = time.perf_counter()
+        for cell_id in cell_order:
+            energy, ray_tests = exact_candidate_cell(
+                item, cell_id, rect, cell_width, cell_height, exact_ray_cache,
+                source_event_cache, path, pan_direction, horizontal_cache)
+            path_line_candidate_tests += ray_tests
+            item["exactCellEnergy"][cell_id] = energy
+            lower_bound += energy
+            visited.append(cell_id)
+            if args.online_pruning and math.isfinite(incumbent_energy):
+                tolerance = 1e-12 * max(abs(incumbent_energy), 1e-300)
+                if lower_bound >= incumbent_energy - tolerance:
+                    pruned = len(visited) < len(cell_order)
+                    break
+        candidate_setup_seconds += time.perf_counter() - started
+        item["exactEnergy"] = lower_bound
+        item["exactEvaluationComplete"] = not pruned
+        if not pruned and lower_bound < incumbent_energy:
+            incumbent_id = candidate_id
+            incumbent_energy = lower_bound
+        online_trace.append({"candidateId": candidate_id, "cellOrder": cell_order,
+                             "visitedCells": visited, "evaluatedCellCount": len(visited),
+                             "lowerBound": lower_bound, "pruned": pruned,
+                             "exactEvaluationComplete": not pruned})
+    if not horizontal_cache:
+        triangle_scan_visits = path_line_candidate_tests
+    solver_core_finished = time.perf_counter()
+
+    reference_exact = {}
+    reference_winners = []
+    reference_audit = None
+    if args.reference_capture:
+        reference_data = json.loads(args.reference_capture.read_text(encoding="utf-8"))
+        reference_exact = {int(row["candidateId"]): float(row["exactEnergy"])
+                           for row in reference_data["candidateRasterRows"]
+                           if int(row["steps"]) == base_raster_steps}
+        if set(reference_exact) != set(candidate_ids):
+            parser.error("reference capture candidate IDs do not match this run")
+        reference_best = min(reference_exact.values())
+        tolerance = 1e-12 * max(abs(reference_best), 1e-300)
+        reference_winners = [cid for cid, value in reference_exact.items()
+                             if value <= reference_best + tolerance]
+        reference_audit = {"selectedCandidateId": incumbent_id,
+                           "selectedCandidateIsExactWinner": incumbent_id in reference_winners,
+                           "referenceWinnerIds": reference_winners,
+                           "selectedReferenceLoss": reference_exact[incumbent_id],
+                           "minimumReferenceLoss": reference_best}
+
+    dense_rows = []
+    for step in args.steps:
+        for index, item in enumerate(candidate_data):
+            exact_energy = reference_exact.get(item["id"], float(item["exactEnergy"]))
+            raster_energy = dense_results[step][index]
             dense_rows.append({
                 "candidateId": item["id"], "steps": step,
-                "exactEnergy": exact_energy, "rasterEnergy": float(energies[index]),
-                "absoluteError": abs(float(energies[index]) - exact_energy),
-                "relativeError": abs(float(energies[index]) - exact_energy) /
+                "exactEnergy": exact_energy, "rasterEnergy": raster_energy,
+                "scheduledLowerBound": item["exactEnergy"],
+                "exactEvaluationComplete": item["exactEvaluationComplete"],
+                "absoluteError": abs(raster_energy - exact_energy),
+                "relativeError": abs(raster_energy - exact_energy) /
                                  max(abs(exact_energy), 1e-12),
             })
 
@@ -493,7 +573,14 @@ def main():
         "tilePixels": args.tile_width * args.tile_height,
         "path": path,
         "commonEventSetupSeconds": common_event_setup_seconds,
+        "candidatePreparationSeconds": candidate_preparation_seconds,
+        "rasterLocalPathSeconds": sum(dense_common_seconds.values()) +
+                                  sum(dense_patch_seconds.values()),
         "candidateExactSetupAndIntegrationSeconds": candidate_setup_seconds,
+        "solverCoreSeconds": solver_core_finished - probe_core_start,
+        "onlinePruning": args.online_pruning,
+        "onlineSchedule": online_trace if args.online_pruning else None,
+        "onlineReferenceAudit": reference_audit,
         "triangleLineScanVisits": triangle_scan_visits,
         "lineCacheAuditMaxCoefficientDifference": line_cache_audit_difference,
         "lineCacheAuditFaceMismatch": line_cache_audit_face_mismatch,
@@ -503,7 +590,8 @@ def main():
         "candidateExactCellLosses": ([
             {"candidateId": item["id"], "cells": item["exactCellEnergy"],
              "sum": sum(item["exactCellEnergy"].values()),
-             "whole": item["exactEnergy"]}
+             "whole": item["exactEnergy"],
+             "complete": item["exactEvaluationComplete"]}
             for item in candidate_data] if args.loss_cell_width else None),
         "candidateRasterCellLosses": ([
             {"candidateId": item["id"], "cells": item.get("rasterCellEnergy", {})}
