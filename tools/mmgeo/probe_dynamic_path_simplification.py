@@ -509,7 +509,7 @@ def flat_world_normals(positions, faces):
     return normals
 
 
-def heldout_raster_quality(unit, path_steps, qem_steps, args, extra_steps=None):
+def heldout_raster_quality(unit, path_steps, qem_steps, args, extra_steps=None, views=None):
     policies = {"path": path_steps, "qem": qem_steps, **(extra_steps or {})}
     count = min(map(len, policies.values()))
     meshes = {"original": replay_geometry(unit, []),
@@ -518,9 +518,10 @@ def heldout_raster_quality(unit, path_steps, qem_steps, args, extra_steps=None):
         raise ValueError("the final meshes must use the same face budget")
     size = args.quality_size
     # Avoid revisiting the optimization segment. The last two paths also change azimuth.
-    views = (("differentPan", args.angle, args.pan_angle + 37.0),
-             ("changedView", args.angle + 0.65, args.pan_angle - 29.0),
-             ("oppositeView", args.angle + math.pi, args.pan_angle + 15.0))
+    if views is None:
+        views = (("differentPan", args.angle, args.pan_angle + 37.0),
+                 ("changedView", args.angle + 0.65, args.pan_angle - 29.0),
+                 ("oppositeView", args.angle + math.pi, args.pan_angle + 15.0))
     radius = 1.25 * args.radius * size / args.size
     times = [radius * (2.0 * (i + 0.5) / args.quality_steps - 1.0)
              for i in range(args.quality_steps)]

@@ -517,6 +517,73 @@ python $probe "$data/material_sphere.json" --control "$data/quality-sphere-norma
 python tools/mmgeo/probe_dynamic_path_simplification.py out/filter-real-candidates/pirate.json --seed 3000 --unit-index 5 --edits 20 --pool 12 --compare-qem --normal-weight 0.25 --out "$data/quality-pirate-normal-pan90.json"
 ```
 
+## Whole-mesh QEM with optimized placements
+
+The [global comparison](probe_global_path_qem.py) uses the existing progressive QEM queue for
+both trajectories. The queue ranks each edge's best legal placement among the quadric minimizer,
+its endpoints, and its midpoint. The geometry control takes the first legal edge. The path
+method scores the first four distinct legal edges with three continuous raster paths, using
+each edge's QEM placement. The queue considers the entire capture unit. Both trajectories use
+the same topology, boundary, orientation, and triangle quality rules at their respective current
+meshes. The swept support includes the projected placement, which can lie beyond the old edge.
+Every scored patch is checked against the edit actually accepted by the queue.
+
+The loss uses the earlier 0.25 flat-normal weight. Quality is independently measured on six
+holdout azimuths 24°, 75°, 155°, 190°, 275°, and 330° from the reference azimuth, each with
+a different pan direction. Each holdout path uses four midpoint poses, 80x80 pixels, and four
+taps per pixel. The combined error averages coverage MSE, depth MSE, and 0.25 times squared
+flat-normal distance across these paths.
+
+| Mesh | Removed faces | Held-out mean, QEM | Held-out mean, path reranking |
+|---|---:|---:|---:|
+| Rounded Cube | 60 (5%) | 1.23e-7 | 1.15e-7 |
+| Torus | 58 (5%) | 7.41e-6 | 7.22e-6 |
+| Pirate unit 5 | 152 (5%) | 8.26e-8 | 8.57e-8 |
+| Material Sphere | 94 (1%) | 8.89e-14 | 3.21e-13 |
+
+The sphere errors in the 1% run are both near zero at this sampling resolution. The absolute
+values matter more than their ratio. The earlier local gains on Rounded Cube and Torus shrink
+to 7% and 3% in this full-unit comparison. Pirate reverses direction and regresses by 4%.
+The 5% Rounded Cube run audited 29 pruned candidates without an edge disagreement.
+
+| Mesh at 20% removal | Final faces | Held-out QEM | Held-out reranking | Reranking / QEM runtime |
+|---|---:|---:|---:|---:|
+| Rounded Cube | 960 | 3.86e-6 | 4.35e-6 | 2.18 / 0.48 s |
+| Torus | 922 | 1.46e-4 | 1.27e-4 | 7.05 / 0.47 s |
+| Pirate unit 5 | 2,426 | 6.47e-6 | 5.22e-6 | 6.86 / 1.22 s |
+| Material Sphere | 7,542 | 2.35e-5 | 2.30e-5 | 49.04 / 3.89 s |
+
+All methods reached the requested matched face budgets. Pirate and Torus improved by 19% and
+13% in mean held-out error. Sphere improved by 1.9%, with lower error on every holdout path
+in this run. Rounded Cube was 13% worse than QEM. These timings are one run per comparison
+in Python, including queue and view setup and excluding held-out renders. Relative to scoring
+all three views of every proposal, this filter skipped 119 of 1,440 evaluations on Rounded
+Cube, 23 of 1,380 on Torus, 181 of 3,636 on Pirate, and 179 of 11,316 on Sphere. The current
+bound therefore removes little of the full-unit scoring overhead in this experiment.
+
+The archived QEM implementation independently reproduced all 1,481 baseline edge and vertex
+placement decisions at the 20% budgets. The refactored scorer also reproduced the earlier
+local Rounded Cube top-four trajectory. On the global Rounded Cube run it audited 62 pruned
+proposals and reproduced all 120 chosen edges. Rebuilding every final-view pixel from the
+accepted geometry gave a maximum absolute pixel-loss difference of 3.97e-14 versus the cache.
+
+The benchmark shows modest quality gains on some meshes with a stronger baseline and a
+substantial runtime cost. It makes the placement-matched global queue the reference for
+future scoring changes. Additional improvements need wider assets and a scoring method with
+larger savings at unchanged decisions.
+
+```powershell
+$probe = "tools/mmgeo/probe_global_path_qem.py"
+$data = "out/pathloss-captures"
+python $probe "$data/rounded_cube.json" --remove-fraction .05 --audit-pruning --out "$data/global-qem4-rounded.json"
+python $probe "$data/rounded_cube.json" --remove-fraction .20 --audit-pruning --audit-final-views --score-only --out "$data/global-qem4-20pct-rounded-audit.json"
+python $probe out/filter-real-candidates/pirate.json --unit-index 5 --remove-fraction .20 --out "$data/global-qem4-20pct-pirate.json"
+python $probe "$data/material_sphere.json" --remove-fraction .20 --out "$data/global-qem4-20pct-sphere.json"
+```
+
+[Surface Simplification Using Quadric Error Metrics](https://www.cs.cmu.edu/~garland/quadrics/) ·
+[Image-Driven Simplification](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf)
+
 ## Decision and remaining gate
 
 The exact lower-bound mechanism now runs online in the Python research probe and shows a modest

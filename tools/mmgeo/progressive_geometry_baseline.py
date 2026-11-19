@@ -24,6 +24,7 @@ class ProgressiveQEM:
         if len(self.f) and (self.f.min()<0 or self.f.max()>=len(self.p)):
             raise ValueError('invalid index')
         self.alive=np.ones(len(self.f),bool)
+        self.face_count=len(self.f)
         self.inc=[set() for _ in self.p]
         self.q=np.zeros((len(self.p),4,4))
         self.versions=np.zeros(len(self.p),dtype=int)
@@ -126,38 +127,74 @@ class ProgressiveQEM:
             if quality(new,la)<min(.02,quality(old,lb))-1e-12:return False
         return True
 
-    def advance(self,target_triangles):
-        count=int(self.alive.sum())
-        while count>target_triangles and self.heap:
-            cost,u,v,vu,vv,index,point=heapq.heappop(self.heap)
-            if vu!=self.versions[u] or vv!=self.versions[v]:continue
-            if not self.inc[u] or not self.inc[v]:continue
-            target=np.asarray(point)
-            if not self.legal(u,v,target):self.rejected+=1;continue
-            affected=self.inc[u]|self.inc[v]
-            touched=set(int(i) for fi in affected for i in self.f[fi])
-            old_u=self.p[u].copy();old_v=self.p[v].copy()
-            for fi in affected:
-                for vertex in self.f[fi]:self.inc[vertex].discard(fi)
-                self.f[fi][self.f[fi]==v]=u
-                if len(set(self.f[fi]))<3:self.alive[fi]=False;count-=1
-                else:
-                    for vertex in self.f[fi]:self.inc[vertex].add(fi)
-            self.p[u]=target;self.q[u]+=self.q[v];self.q[v]=0
-            for vertex in touched:self.versions[vertex]+=1
-            self.actions.append(dict(keep=u,remove=v,target=list(point),qem=cost,
-                                     oldKeep=old_u.tolist(),oldRemove=old_v.tolist(),faces=count))
-            # Regenerate all current edges touching changed one-rings, including edges
-            # whose endpoints did not move but whose link/normal tests have changed.
-            edges=set()
-            for vertex in touched:
-                for neighbor in self.neighbors(vertex):edges.add(tuple(sorted((vertex,neighbor))))
-            for a,b in sorted(edges):self.push(a,b)
-            if len(self.heap)>max(10000,count*40):
-                self.heap=[e for e in self.heap if e[3]==self.versions[e[1]] and
-                           e[4]==self.versions[e[2]]]
-                heapq.heapify(self.heap)
-        return count
+    def shortlist(self, limit):
+        """Peek at distinct live edges, keeping each edge's cheapest legal placement."""
+        chosen = []
+        retained = []
+        seen = set()
+        while len(chosen) < limit and self.heap:
+            entry = heapq.heappop(self.heap)
+            _, u, v, vu, vv, _, point = entry
+            if vu != self.versions[u] or vv != self.versions[v]:
+                continue
+            if not self.inc[u] or not self.inc[v]:
+                continue
+            edge = (u, v)
+            if edge in seen:
+                retained.append(entry)
+                continue
+            if not self.legal(u, v, np.asarray(point)):
+                self.rejected += 1
+                continue
+            seen.add(edge)
+            retained.append(entry)
+            chosen.append(entry)
+        for entry in retained:
+            heapq.heappush(self.heap, entry)
+        return chosen
+
+    def accept(self, entry):
+        """Apply a placement returned by shortlist at the current mesh epoch."""
+        cost, u, v, vu, vv, _, point = entry
+        if vu != self.versions[u] or vv != self.versions[v]:
+            raise ValueError("cannot accept a stale QEM placement")
+        affected = self.inc[u] | self.inc[v]
+        touched = {int(i) for fi in affected for i in self.f[fi]}
+        old_u, old_v = self.p[u].tolist(), self.p[v].tolist()
+        for fi in affected:
+            for vertex in self.f[fi]:
+                self.inc[vertex].discard(fi)
+            self.f[fi][self.f[fi] == v] = u
+            if len(set(self.f[fi])) < 3:
+                self.alive[fi] = False
+                self.face_count -= 1
+            else:
+                for vertex in self.f[fi]:
+                    self.inc[vertex].add(fi)
+        self.p[u] = point
+        self.q[u] += self.q[v]
+        self.q[v] = 0
+        for vertex in touched:
+            self.versions[vertex] += 1
+        self.actions.append(dict(keep=u, remove=v, target=list(point), qem=cost,
+                                 oldKeep=old_u, oldRemove=old_v, faces=self.face_count))
+        # Link and normal tests can change on edges with stationary endpoints.
+        edges = {tuple(sorted((vertex, neighbor)))
+                 for vertex in touched for neighbor in self.neighbors(vertex)}
+        for a, b in sorted(edges):
+            self.push(a, b)
+        if len(self.heap) > max(10000, self.face_count * 40):
+            self.heap = [e for e in self.heap if e[3] == self.versions[e[1]] and
+                         e[4] == self.versions[e[2]]]
+            heapq.heapify(self.heap)
+
+    def advance(self, target_triangles):
+        while self.face_count > target_triangles:
+            shortlist = self.shortlist(1)
+            if not shortlist:
+                break
+            self.accept(shortlist[0])
+        return self.face_count
 
 
 def main():

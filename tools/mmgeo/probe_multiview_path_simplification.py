@@ -57,9 +57,13 @@ class View:
 
     def proposal(self, candidate, faces):
         keep, remove = candidate.edge
-        target = (self.projected[keep] + self.projected[remove]) * 0.5
         ids = sorted({v for face_id in candidate.faces for v in faces[face_id]})
         xy = self.projected[ids, :2]
+        if candidate.projected_target is None:
+            target = project(np.asarray([candidate.target]), self.transform)[0]
+            xy = np.vstack((xy, target[:2]))
+        else:
+            target = (self.projected[keep] + self.projected[remove]) * 0.5
         lo = xy.min(axis=0) - self.shift_max - 1e-8
         hi = xy.max(axis=0) - self.shift_min + 1e-8
         support = tuple(y * self.size + x
@@ -140,6 +144,61 @@ class CollapseDisplacementBudget:
         self.members[remove] = []
 
 
+def select_path_edge(views, candidates, faces, world, source_normals, current_normals, epoch,
+                     args):
+    started = time.perf_counter()
+    edges = {candidate.edge for candidate in candidates}
+    for view in views:
+        view.cache = {edge: value for edge, value in view.cache.items() if edge in edges}
+    scores, complete, pending = {}, {}, {}
+    counts = [0] * len(views)
+    rebuilt = [0] * len(views)
+    best = math.inf
+    for candidate in candidates:
+        edge = candidate.edge
+        projections = [view.proposal(candidate, faces) for view in views]
+        outside = [view.outside_loss(proposal) for view, proposal in zip(views, projections)]
+        normals = ((source_normals, ChainMap(placement_normals(world, candidate), current_normals),
+                    args.normal_weight) if current_normals is not None else None)
+        values, patches = [], []
+        for i, view in enumerate(views):
+            lower = (math.fsum(values) if args.partial_only_bound
+                     else math.fsum((*values, *outside[i:])))
+            # Allow all candidates in the same numerical tie class as the incumbent.
+            if not args.exhaustive and lower > best + 2e-12:
+                if args.audit_pruning:
+                    pending[edge] = projections, outside, normals, values, lower
+                break
+            value, patch, taps = view.score(projections[i], outside[i], faces, normals, epoch, True)
+            counts[i] += 1
+            rebuilt[i] += taps
+            values.append(value)
+            patches.append(patch)
+        else:
+            score = math.fsum(values)
+            scores[edge] = score
+            complete[edge] = projections, patches, normals, values
+            best = min(best, score)
+    choice = winner(scores)
+    elapsed = time.perf_counter() - started
+    if args.audit_pruning:
+        full = scores.copy()
+        for edge, (projections, outside, normals, values, lower) in pending.items():
+            first = len(values)
+            more = [view.score(projections[i], outside[i], faces, normals, epoch, False)[0]
+                    for i, view in enumerate(views[first:], first)]
+            full[edge] = math.fsum((*values, *more))
+            if lower > full[edge] + 1e-11:
+                raise ValueError("partial loss exceeded its completed candidate score")
+        if winner(full) != choice:
+            raise ValueError(f"early stopping changed the chosen edge at step {epoch}")
+    return choice, complete[choice], {
+        "completedCandidates": len(scores), "perViewEvaluations": counts,
+        "perViewTapRebuilds": rebuilt, "scorerSeconds": elapsed,
+        "auditedPrunedCandidates": len(pending),
+    }
+
+
 def run(unit, control, args):
     world = np.asarray(unit["positions"], dtype=float)
     faces = [tuple(face) for face in unit["triangles"]]
@@ -193,56 +252,9 @@ def run(unit, control, args):
             admitted = set(ordered[:args.qem_shortlist])
             # Preserve the scorer's original candidate order inside the geometric budget.
             candidates = [candidate for candidate in candidates if candidate.edge in admitted]
-        edges = {candidate.edge for candidate in candidates}
-        for view in views:
-            # Bound cache storage by the live pool, even for candidates pruned early this step.
-            view.cache = {edge: value for edge, value in view.cache.items() if edge in edges}
-        scores, complete, pending = {}, {}, {}
-        counts = [0] * len(views)
-        rebuilt = [0] * len(views)
-        best = math.inf
-        for candidate in candidates:
-            edge = candidate.edge
-            projections = [view.proposal(candidate, faces) for view in views]
-            outside = [view.outside_loss(proposal) for view, proposal in zip(views, projections)]
-            normals = ((source_normals, ChainMap(placement_normals(world, candidate),
-                                                  current_normals), args.normal_weight)
-                       if current_normals is not None else None)
-            values = []
-            patches = []
-            for i, view in enumerate(views):
-                lower = (math.fsum(values) if args.partial_only_bound
-                         else math.fsum((*values, *outside[i:])))
-                # Allow all candidates in the same numerical tie class as the incumbent.
-                if not args.exhaustive and lower > best + 2e-12:
-                    if args.audit_pruning:
-                        pending[edge] = projections, outside, normals, values, lower
-                    break
-                value, patch, taps = view.score(projections[i], outside[i], faces, normals,
-                                                epoch, True)
-                counts[i] += 1
-                rebuilt[i] += taps
-                values.append(value)
-                patches.append(patch)
-            else:
-                score = math.fsum(values)
-                scores[edge] = score
-                complete[edge] = projections, patches, normals, values
-                best = min(best, score)
-        choice = winner(scores)
-        scoring_seconds = time.perf_counter() - started
-        if args.audit_pruning:
-            full = scores.copy()
-            for edge, (projections, outside, normals, values, lower) in pending.items():
-                first = len(values)
-                more = [view.score(projections[i], outside[i], faces, normals, epoch, False)[0]
-                        for i, view in enumerate(views[first:], first)]
-                full[edge] = math.fsum((*values, *more))
-                if lower > full[edge] + 1e-11:
-                    raise ValueError("partial loss exceeded its completed candidate score")
-            if winner(full) != choice:
-                raise ValueError(f"early stopping changed the chosen edge at step {epoch}")
-        projections, patches, normals, values = complete[choice]
+        shortlist_seconds = time.perf_counter() - started
+        choice, (projections, patches, normals, values), stats = select_path_edge(
+            views, candidates, faces, world, source_normals, current_normals, epoch, args)
         for view, proposal, patch in zip(views, projections, patches, strict=True):
             view.apply(proposal, patch, epoch)
         chosen = projections[0]
@@ -269,10 +281,8 @@ def run(unit, control, args):
                      "legalPool": pool_count, "poolAfterDisplacement": displacement_count,
                      "retriedDisplacementPool": retried,
                      "chosenDisplacement": distances.get(choice), **qem_info,
-                     "candidates": len(candidates), "completedCandidates": len(scores),
-                     "perViewScore": values, "perViewEvaluations": counts,
-                     "perViewTapRebuilds": rebuilt, "seconds": scoring_seconds,
-                     "auditedPrunedCandidates": len(pending)})
+                     "candidates": len(candidates), "perViewScore": values,
+                     "seconds": shortlist_seconds + stats["scorerSeconds"], **stats})
     result = {"steps": rows, "setupSeconds": setup_seconds, "tile": rect,
               "viewOffsets": args.view_offsets, "auditedPruning": args.audit_pruning,
               "exhaustive": args.exhaustive, "partialOnlyBound": args.partial_only_bound,
