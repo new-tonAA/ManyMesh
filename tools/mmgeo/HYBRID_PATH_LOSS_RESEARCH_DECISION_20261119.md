@@ -442,6 +442,81 @@ python $probe out/filter-real-candidates/torus.json --control "$data/quality-tor
 For the same-state sequence comparison, add `--score-only` and run separately with no other
 option, `--partial-only-bound`, and `--exhaustive`.
 
+## Geometric gates for three-path simplification
+
+The same 12 legal midpoint proposals are generated before geometry screening. The first arm
+admits the four lowest accumulated QEM contraction costs, then orders the admitted proposals
+by the three-path objective. It preserves the earlier traversal order within that shortlist.
+An endpoint check with a one-edge shortlist reproduced the Rounded Cube QEM trajectory,
+including all 20 edge IDs and placements. QEM plane error is available in the run output as a
+proxy for geometric distortion.
+
+| Mesh, 40 removed faces | Midpoint QEM | Unguarded three-path loss | Top-four QEM shortlist |
+|---|---:|---:|---:|
+| Rounded Cube | 8.05e-6 | 1.66e-6 | 2.13e-6 |
+| Torus | 4.61e-4 | 5.04e-4 | 2.75e-4 |
+| Material Sphere | 4.97e-5 | 9.56e-5 | 1.00e-4 |
+| Pirate unit 5 | 1.02e-6 | 1.14e-6 | 8.06e-7 |
+
+Each entry is the held-out mean of coverage MSE + depth MSE + 0.25 times flat-normal squared
+distance, using the three unchanged validation paths. The top-four arm improved Torus by 40%
+versus QEM and remained about twice as costly in image error on Material Sphere. It admitted
+80 candidates per mesh and used 190, 226, 203, and 214 exact view evaluations in table order,
+including early stopping. Completion of skipped admitted candidates confirmed each chosen edge.
+On Pirate unit 5 the fixed top-four rule improved on QEM by 21% at 2,992 faces.
+Relative to QEM, it improved three of the four tested meshes and doubled error on Material Sphere.
+
+The second arm holds a geometric budget defined by the largest source-to-representative distance
+over the reference QEM trajectory. It keeps the original vertex IDs represented by each live
+vertex and rejects a proposed merge whose target would exceed the cap for any member of either
+group. The reference trace supplies an offline matched budget. This experiment includes its
+results only at the actual number of edits available to all controls.
+
+For any source triangle, interpolate the source vertex coordinates and their final representative
+coordinates with the same barycentric weights. The norm of their difference is bounded by the
+largest source vertex displacement. The final audit checks that the surviving triangle images
+are the final mesh and that each collapsed triangle projects onto an edge or vertex still in that
+mesh. If both conditions hold, the map covers the final surface, and the vertex displacement
+also bounds the symmetric Hausdorff distance between the two surfaces. It can be much looser
+than the actual distance. Geometric bounds have earlier alternatives in
+[Simplification Envelopes](https://www.cs.umd.edu/~varshney/papers/simp_env.pdf).
+
+| Mesh | Edits under cap | Maximum displacement cap / observed bound | Held-out mean, QEM / displacement gate |
+|---|---:|---:|---:|
+| Rounded Cube | 20 | 0.03537 / 0.03297 | 8.05e-6 / 3.28e-5 |
+| Torus | 20 | 0.32811 / 0.32445 | 4.61e-4 / 3.93e-4 |
+| Material Sphere | 18 | 0.09379 / 0.09067 | 4.76e-5 / 8.38e-5 |
+| Pirate unit 5 | 20 | 0.01551 / 0.01432 | 1.02e-6 / 9.97e-7 |
+
+Distances are in capture coordinates. All four final maps passed the surface coverage check.
+Material Sphere exhausted the legal proposals within its 12-edge pool under the cap, so its
+quality comparison uses 18 edits for all arms. Rounded Cube's held-out error increased by a
+factor of 4.08 even though its computed geometric upper bound was below QEM's final bound.
+This directly limits what the geometric certificate can guarantee about rendered fidelity.
+The cap and map audit use double precision.
+
+A separate retry arm widened the legal geometric pool to 48 only when the original pool
+contained no feasible proposal. It scored at most 12 eligible edges. Material Sphere used
+the wider pool once, at edit 19, and completed all 20 edits. The source-to-representative
+bound remained 0.09186 under the unchanged 0.09379 cap. At the matched 9,388 faces its
+held-out mean was 8.52e-5, versus 9.57e-5 for single-path ranking and 4.97e-5 for QEM.
+Widening resolved this observed stall and left the quality gap.
+
+Treat the fixed top-four rule as a candidate for a larger controlled comparison. The
+displacement limit addresses a separate geometric requirement, and held-out fidelity
+needs its own evidence. The current pilots use one local region and midpoint placements.
+A broader result needs a larger edit budget, different assets and validation paths, and
+a full-mesh QEM baseline with optimized placements.
+
+```powershell
+$data = "out/pathloss-captures"
+$probe = "tools/mmgeo/probe_multiview_path_simplification.py"
+python $probe "$data/material_sphere.json" --control "$data/quality-sphere-normal-pan90.json" --qem-shortlist 4 --audit-pruning --out "$data/guard-qem4-sphere-normal-pan90.json"
+python $probe "$data/material_sphere.json" --control "$data/quality-sphere-normal-pan90.json" --match-qem-displacement --audit-pruning --out "$data/guard-map-sphere-normal-pan90.json"
+python $probe "$data/material_sphere.json" --control "$data/quality-sphere-normal-pan90.json" --match-qem-displacement --displacement-retry-pool 48 --audit-pruning --out "$data/guard-map48-sphere-normal-pan90.json"
+python tools/mmgeo/probe_dynamic_path_simplification.py out/filter-real-candidates/pirate.json --seed 3000 --unit-index 5 --edits 20 --pool 12 --compare-qem --normal-weight 0.25 --out "$data/quality-pirate-normal-pan90.json"
+```
+
 ## Decision and remaining gate
 
 The exact lower-bound mechanism now runs online in the Python research probe and shows a modest

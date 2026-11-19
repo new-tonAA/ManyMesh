@@ -447,6 +447,46 @@ def replay_geometry(unit, steps):
     return world, faces[alive]
 
 
+def collapse_map_bound(source, target, steps):
+    """Bound both surface distances when the collapse map covers exactly the final mesh."""
+    positions, faces = source
+    simplified, target_faces = target
+    representative = np.arange(len(positions))
+    for step in steps:
+        keep, remove = step["edge"]
+        if (not 0 <= keep < len(positions) or not 0 <= remove < len(positions)
+                or keep == remove or representative[keep] != keep
+                or representative[remove] != remove):
+            raise ValueError("collapse map must merge two distinct live vertices")
+        representative[remove] = keep
+    while True:
+        compressed = representative[representative]
+        if np.array_equal(compressed, representative):
+            break
+        representative = compressed
+    mapped = representative[faces]
+    alive = ((mapped[:, 0] != mapped[:, 1]) & (mapped[:, 1] != mapped[:, 2]) &
+             (mapped[:, 2] != mapped[:, 0]))
+    final_vertices = set(target_faces.flat)
+    final_edges = {tuple(sorted((face[i], face[(i + 1) % 3])))
+                   for face in target_faces for i in range(3)}
+    covers_both = np.array_equal(mapped[alive], target_faces)
+    for face in mapped[~alive]:
+        image = sorted(set(face))
+        if ((len(image) == 1 and image[0] not in final_vertices) or
+                (len(image) == 2 and tuple(image) not in final_edges)):
+            covers_both = False
+            break
+    used = np.unique(faces)
+    displacement = np.linalg.norm(simplified[representative[used]] - positions[used], axis=1)
+    bound = float(displacement.max(initial=0.0))
+    center = 0.5 * (positions.min(axis=0) + positions.max(axis=0))
+    radius = max(1e-12, float(np.linalg.norm(positions - center, axis=1).max()))
+    return {"maxVertexDisplacement": bound, "relativeToSourceRadius": bound / radius,
+            "coversBothSurfaces": bool(covers_both),
+            "symmetricSurfaceDistanceUpperBound": bound if covers_both else None}
+
+
 def raster_attributes(projected, faces, normals, displacement, size, scale):
     shifted = projected.copy()
     shifted[:, :2] -= displacement
@@ -506,9 +546,11 @@ def heldout_raster_quality(unit, path_steps, qem_steps, args, extra_steps=None):
         rows.append({"view": label, "azimuth": azimuth, "panAngle": pan,
                      **{name: dict(zip(metrics, values.tolist(), strict=True))
                         for name, values in ((k, v / len(times)) for k, v in totals.items())}})
+    geometry = {name: collapse_map_bound(meshes["original"], meshes[name], steps[:count])
+                for name, steps in policies.items()}
     return {"matchedEdits": count, "matchedFaces": len(meshes["path"][1]),
             "size": size, "scale": args.quality_scale, "steps": len(times),
-            "radius": radius, "views": rows}
+            "radius": radius, "views": rows, "geometry": geometry}
 
 
 def main():
