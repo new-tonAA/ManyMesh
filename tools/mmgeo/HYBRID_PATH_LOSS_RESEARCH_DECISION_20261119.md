@@ -126,7 +126,7 @@ The cross-asset result did not transfer uniformly. On Material Sphere at the hel
 pan, the MLP and raster both required 27/192 exact integrations; learned total core time was 1.161 s
 versus 1.046 s for raster. Thus the online interface works and can cut exact calls on one controlled
 screen, but current data does not show robust quality-preserving speed gains across meshes. The
-NumPy ranker, single 64x16 tile, orthographic pan path, and 12 local candidates are an exploratory
+NumPy ranker, single 32x16 tile, orthographic pan path, and 12 local candidates are an exploratory
 prototype, not SIGGRAPH evidence. No full-resolution/color objective, sequential collapse replay,
 production integration, broad joint asset/path holdout, or resource-profiled run was performed.
 
@@ -139,6 +139,63 @@ python tools/mmgeo/probe_shared_envelope_raster_tile.py --capture out/pathloss-c
 The next gate is a frozen model evaluated on several independent meshes and path directions with
 paired raster/learned wall-time repeats. Keep the simple raster policy if the learned advantage
 does not persist after training is amortized.
+
+## Position baseline and sparse shared visibility
+
+An offline replay tested a simpler spatial baseline on four meshes at 45° and 90° pan. For each
+held-out mesh and pan, the training data came from the other three meshes at the opposite pan.
+The prior is the average fraction of candidate loss in each cell, computed on informative training
+candidates. Raster scores still order candidates and cells. The prior breaks ties in cell raster
+scores. Across the eight captures, raster ordering used 443 cell integrations and raster with the
+position tie-break used 307. The latter reduced work on three captures and tied on five, with the
+same minimum loss on all eight. Position alone used 321. These captures use the same local tile
+layout and eight temporal raster samples. This is a count replay, and the earlier online MLP used
+different splits or raster budgets. It motivates a matched comparison against a position baseline.
+
+A separate optimization reduces the shared visibility work paid before any candidate can be
+pruned. For each screen axis, subtract the maximum path displacement from the lower bound and the
+minimum displacement from the upper bound. The initial bounds contain all changed source
+triangles and all replacement vertices. Projection is affine for the orthographic image-plane
+translation in this probe. A pixel
+whose entire footprint lies outside those swept bounds has zero filtered difference at every time.
+The probe omits those pixels from the event cache and, at the remaining samples, partitions only
+the intersected faces. This preserves the grid of loss contributions for downstream pruning.
+
+| Model and path | Cached raster taps | Shared setup | Full solver core |
+|---|---:|---:|---:|
+| Rounded Cube, 90°, one tap per pixel | 512 → 28 | 115 → 38 ms | 313 → 129 ms |
+| Material Sphere, 90°, one tap per pixel | 512 → 16 | 666 → 279 ms | 1,358 → 755 ms |
+| Rounded Cube, 0°, four taps per pixel | 2,048 → 72 | 204 → 15 ms | 607 → 129 ms |
+
+Each row is one sequential baseline/optimized pair on a 32x16 tile with 12 candidates, 16 loss
+cells, and one temporal raster sample. All 576 per-candidate cell losses and all 36 full candidate
+losses were identical in the saved outputs. These are Python CPU wall times. Cached tap count
+describes event storage demand. The savings depend on how much of the evaluation tile the swept
+bounds occupy. Process peak working set remains unmeasured. The follow-up
+comparison combining the smaller event cache and learned ordering was deferred after the host
+reported under 1 GiB of available memory.
+
+Conservative screen coverage and hierarchical space-time visibility culling are established in
+[Hierarchical Stochastic Motion Blur Rasterization](https://fileadmin.cs.lth.se/graphics/research/papers/2011/mbtraversal/).
+Edge-collapse decisions driven by rendered differences are established in
+[Image-Driven Simplification](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf).
+The research question is whether certificates of unchanged visibility can be propagated across
+successive legal collapses to avoid rebuilding overlapping event caches, while preserving the
+same filtered objective. These localized runs measure the reuse opportunity inside one batch.
+
+Add `--swept-support` to the full integration command above to compare the two setups. The table
+uses `--pan-angle 90` with Rounded Cube seed 72 and Material Sphere seed 16518, and
+`--pan-angle 0 --scale 2` with Rounded Cube seed 72. Keep the full candidate-cell outputs for the
+equality check. The position replay uses:
+
+```powershell
+$data = "out/pathloss-captures"
+python tools/mmgeo/audit_path_loss_position_prior.py `
+    --pair "$data/rounded-cube-cell-pruning.json" "$data/rounded-cube-cell-pruning-pan90.json" `
+    --pair "$data/material-sphere-cell-pruning.json" "$data/material-sphere-cell-pruning-pan90.json" `
+    --pair "$data/pirate-unit5-cell-pan45.json" "$data/pirate-unit5-cell-pan90.json" `
+    --pair "$data/torus-cell-pan45.json" "$data/torus-cell-pan90.json"
+```
 
 ## Decision and remaining gate
 

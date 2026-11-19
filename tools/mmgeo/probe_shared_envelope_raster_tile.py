@@ -268,9 +268,12 @@ def exact_candidate_cell(item, cell_id, rect, cell_width, cell_height, exact_ray
     for py in range(y0, y1):
         for px in range(x0, x1):
             pixel_index = (py - rect[1]) * rect_width + px - rect[0]
+            taps = exact_ray_cache[pixel_index]
+            if not taps:
+                continue
             samples = []
             for (sample_x, sample_y, weight, common, starts, source_local,
-                 by_face) in exact_ray_cache[pixel_index]:
+                 by_face) in taps:
                 if horizontal_cache:
                     candidate_local = instantiate_lines(
                         item["localRows"][sample_y], sample_x, item["path"])
@@ -344,6 +347,8 @@ def main():
                         help="image-plane pan direction in degrees; 0 is horizontal")
     parser.add_argument("--general-rays", action="store_true",
                         help="use barycentric path-ray intersections even for horizontal pans")
+    parser.add_argument("--swept-support", action="store_true",
+                        help="build shared visibility only inside the batch's swept screen bounds")
     parser.add_argument("--path-radius", type=float, default=None,
                         help="override the auto path half-length, in projected pixels")
     parser.add_argument("--size", type=int, default=64)
@@ -385,7 +390,10 @@ def main():
         parser.error("all path sample counts must be positive")
 
     probe_core_start = time.perf_counter()
-    raw = json.loads(args.capture.read_text(encoding="utf-8"))
+    capture_bytes = args.capture.read_bytes()
+    raw = json.loads(capture_bytes)
+    capture_sha256 = hashlib.sha256(capture_bytes).hexdigest()
+    del capture_bytes
     if not 0 <= args.unit_index < len(raw["units"]):
         parser.error(f"unit-index must be in [0, {len(raw['units']) - 1}]")
     unit = raw["units"][args.unit_index]
@@ -444,17 +452,31 @@ def main():
                    "local": np.asarray(local_face_ids, dtype=np.int64)}
 
     # Event cache at every actual 2x2 raster sample location in the output tile.
+    common_start = time.perf_counter()
+    if args.swept_support:
+        # A tap evaluates geometry at sample + t * direction. Subtract both end
+        # displacements to bound every tap that can meet a changed triangle.
+        shift = np.asarray(path)[:, None] * np.asarray(pan_direction)
+        lower = bound_points[:, :2].min(axis=0) - shift.max(axis=0)
+        upper = bound_points[:, :2].max(axis=0) - shift.min(axis=0)
+        padding = 1e-9 * max(1.0, path_radius, float(np.abs(bound_points[:, :2]).max()))
+        support_lo_x, support_lo_y = lower - padding
+        support_hi_x, support_hi_y = upper + padding
     ray_cache = []
     for py in range(rect[1], rect[3]):
         for px in range(rect[0], rect[2]):
             taps = []
+            if args.swept_support and (px + 1 < support_lo_x or px > support_hi_x or
+                                       py + 1 < support_lo_y or py > support_hi_y):
+                ray_cache.append(taps)
+                continue
             for sy in range(args.scale):
                 for sx in range(args.scale):
                     sample_x = px + (sx + 0.5) / args.scale
                     sample_y = py + (sy + 0.5) / args.scale
                     taps.append((sample_x, sample_y, 1.0 / (args.scale * args.scale)))
             ray_cache.append(taps)
-    common_start = time.perf_counter()
+    active_pixels = sum(bool(taps) for taps in ray_cache)
     sample_y_values = sorted({sample_y for taps in ray_cache
                               for _sample_x, sample_y, _weight in taps})
     horizontal_cache = (not args.general_rays and
@@ -467,10 +489,13 @@ def main():
             for sample_y in sample_y_values
         }
         source_coefficients = None
-    else:
+    elif active_pixels:
         source_rows = None
         source_coefficients = triangle_path_coefficients(
             projected_depth, triangles_list, range(len(triangles)))
+    else:
+        source_rows = None
+        source_coefficients = ()
     source_grid = (None if horizontal_cache else
                    build_path_triangle_grid(source_coefficients))
     exact_ray_cache = []
@@ -490,8 +515,15 @@ def main():
                     source_coefficients, sample_x, sample_y, pan_direction, path, source_grid)
                 path_line_candidate_tests += tested
             by_face = {line["face"]: line for line in source_lines}
-            common_lines = [by_face[i] for i in common_face_ids if i in by_face]
-            source_local = [by_face[i] for i in local_face_ids if i in by_face]
+            if args.swept_support:
+                # Preserve the baseline face order without visiting absent faces.
+                common_lines, source_local = [], []
+                for face_id in sorted(by_face):
+                    partition = source_local if face_id in batch_local_faces else common_lines
+                    partition.append(by_face[face_id])
+            else:
+                common_lines = [by_face[i] for i in common_face_ids if i in by_face]
+                source_local = [by_face[i] for i in local_face_ids if i in by_face]
             common, _events, _depths = upper_envelope(common_lines, path)
             starts = [segment["lo"] for segment in common]
             cached_taps.append((sample_x, sample_y, weight, common, starts,
@@ -499,8 +531,8 @@ def main():
             source_events.append(overlay_events(common, source_local, path)[0])
         exact_ray_cache.append(cached_taps)
         source_event_cache.append(source_events)
-    if horizontal_cache:
-        audit_x, audit_y, _audit_weight = ray_cache[0][0]
+    if horizontal_cache and active_pixels:
+        audit_x, audit_y, _audit_weight = next(taps[0] for taps in ray_cache if taps)
         cached_audit = instantiate_lines(source_rows[audit_y], audit_x, path)
         legacy_audit = mesh_lines(projected_depth, triangles_list, audit_y, audit_x, path)
         cached_by_face = {line["face"]: line for line in cached_audit}
@@ -589,7 +621,6 @@ def main():
         for item in candidate_data}
     candidate_order = sorted(candidate_ids, key=lambda cid: sum(raster_cell_by_id[cid].values()))
 
-    learned_cell_model = None
     learned_cell_priorities = {}
     learned_training_seconds = 0.0
     learned_inference_seconds = 0.0
@@ -754,9 +785,26 @@ def main():
     reference_audit = None
     if args.reference_capture:
         reference_data = json.loads(args.reference_capture.read_text(encoding="utf-8"))
-        reference_exact = {int(row["candidateId"]): float(row["exactEnergy"])
-                           for row in reference_data["candidateRasterRows"]
-                           if int(row["steps"]) == base_raster_steps}
+        reference_settings = {
+            "captureSha256": capture_sha256, "unitIndex": args.unit_index,
+            "cameraAngle": args.angle, "panAngle": args.pan_angle,
+            "imageSize": args.size, "scale": args.scale, "tileRect": list(rect),
+            "path": list(path),
+        }
+        if any(reference_data.get(key) != value for key, value in reference_settings.items()):
+            parser.error("reference capture does not match the mesh, camera path, or tile")
+        if reference_data.get("onlinePruning"):
+            parser.error("reference capture must use full exact integration")
+        # Exact event loss does not depend on the raster sample budget.
+        exact_cells = reference_data.get("candidateExactCellLosses")
+        if exact_cells:
+            if any(not row.get("complete", True) for row in exact_cells):
+                parser.error("reference capture contains incomplete exact cell integrations")
+            reference_exact = {int(row["candidateId"]): float(row["whole"])
+                               for row in exact_cells}
+        else:
+            reference_exact = {int(row["candidateId"]): float(row["exactEnergy"])
+                               for row in reference_data["candidateRasterRows"]}
         if set(reference_exact) != set(candidate_ids):
             parser.error("reference capture candidate IDs do not match this run")
         reference_best = min(reference_exact.values())
@@ -772,28 +820,36 @@ def main():
     dense_rows = []
     for step in args.steps:
         for index, item in enumerate(candidate_data):
-            exact_energy = reference_exact.get(item["id"], float(item["exactEnergy"]))
+            exact_energy = reference_exact.get(item["id"])
+            if exact_energy is None and item["exactEvaluationComplete"]:
+                exact_energy = float(item["exactEnergy"])
             raster_energy = dense_results[step][index]
             dense_rows.append({
                 "candidateId": item["id"], "steps": step,
                 "exactEnergy": exact_energy, "rasterEnergy": raster_energy,
                 "scheduledLowerBound": item["exactEnergy"],
                 "exactEvaluationComplete": item["exactEvaluationComplete"],
-                "absoluteError": abs(raster_energy - exact_energy),
-                "relativeError": abs(raster_energy - exact_energy) /
-                                 max(abs(exact_energy), 1e-12),
+                "absoluteError": (abs(raster_energy - exact_energy)
+                                  if exact_energy is not None else None),
+                "relativeError": (abs(raster_energy - exact_energy) /
+                                  max(abs(exact_energy), 1e-12)
+                                  if exact_energy is not None else None),
             })
 
     summary = {}
     for step in args.steps:
         errors = [row for row in dense_rows if row["steps"] == step]
+        complete = all(row["exactEnergy"] is not None for row in errors)
         summary[str(step)] = {
             "commonRasterSeconds": dense_common_seconds[step],
             "candidatePatchSeconds": dense_patch_seconds[step],
             "denseTotalSeconds": dense_common_seconds[step] + dense_patch_seconds[step],
-            "sumAbsoluteEnergyError": sum(row["absoluteError"] for row in errors),
-            "maxRelativeEnergyError": max(row["relativeError"] for row in errors),
-            "sumExactEnergy": sum(row["exactEnergy"] for row in errors),
+            "sumAbsoluteEnergyError": (sum(row["absoluteError"] for row in errors)
+                                       if complete else None),
+            "maxRelativeEnergyError": (max(row["relativeError"] for row in errors)
+                                       if complete else None),
+            "sumExactEnergy": (sum(row["exactEnergy"] for row in errors)
+                               if complete else None),
         }
     flat_normal_summary = {}
     if args.flat_normal_loss:
@@ -809,7 +865,7 @@ def main():
     output = {
         "scope": "pixel-aligned CPU raster tile; orthographic image-plane pan; box-filter samples",
         "warning": "Python raster oracle, one mesh and one tile; not a GPU or production benchmark",
-        "captureSha256": hashlib.sha256(args.capture.read_bytes()).hexdigest(),
+        "captureSha256": capture_sha256,
         "scriptSha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "seedCandidate": args.seed_candidate,
         "unitIndex": args.unit_index,
@@ -825,6 +881,9 @@ def main():
         "tilePixels": args.tile_width * args.tile_height,
         "path": path,
         "commonEventSetupSeconds": common_event_setup_seconds,
+        "sweptSupport": args.swept_support,
+        "activeEventPixels": active_pixels,
+        "activeEventTaps": sample_ray_count,
         "candidatePreparationSeconds": candidate_preparation_seconds,
         "rasterLocalPathSeconds": sum(dense_common_seconds.values()) +
                                   sum(dense_patch_seconds.values()),
