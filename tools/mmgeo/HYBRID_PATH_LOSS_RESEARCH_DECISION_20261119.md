@@ -256,6 +256,57 @@ python $probe "$data/rounded_cube.json" --seed 72 --count 6 --pan-angle 45 --sca
 python $probe "$data/material_sphere.json" --seed 16518 --count 6 --out "$data/incremental-sphere-pan90.json"
 ```
 
+## Live candidate regeneration and partial score reuse
+
+The [dynamic simplification probe](probe_dynamic_path_simplification.py) now rebuilds its candidate
+pool from the current topology after accepting each edge. It proposes midpoint placements in a
+fixed screen tile and admits interior edges whose endpoint links are cycles. It checks common link
+vertices, duplicate faces, and orientation of surviving faces. All methods receive the same
+candidate pool, ordered by projected proximity to the seed. The loss is relative to the original
+mesh, using the same path and filtered depth and coverage channels as the replay. This is a local
+CPU simplifier with a fixed candidate budget and a restricted midpoint and topology model.
+
+The scene index retains stable face IDs and updates the bins of modified faces on acceptance.
+Each accepted patch advances the version of every pixel with an old or new triangle intersection
+at any of its taps anywhere on the path. These versions account for hidden geometry, which can
+become visible when another candidate is evaluated. Matching the current front surface alone
+would miss that dependency. If a candidate's incident triangle connectivity and projected
+vertex positions still match its saved patch, this patch retains its support. Each pixel in
+that support whose version did not advance can reuse its predicted envelope and loss, even
+if other pixels of the same candidate must be recomputed. The sum of updated pixel losses
+incorporates the current global objective. The retained candidate cache is bounded by the pool
+size and temporary overlap between the old and new pool during a step.
+
+In the initial whole-candidate cache experiment, three runs took eight steps each. All 24 decisions
+matched the fresh spatial baseline, and all 21 consecutive pairs edited at least one common
+face. In 14 of those pairs, the chosen edges shared a vertex. The whole-candidate cache had zero
+hits. The four-tap Rounded Cube 45° run reduced tap rebuilds from 1,545 with intersection-only
+updates to 1,354 with depth dominance. The one-tap Material Sphere 90° run reduced them from
+522 to 432. Accepted-state visibility matched fresh scene reconstruction at every step.
+
+The partial-pixel follow-up completed on Rounded Cube at 90°. Each step scored 12 candidates.
+It performed a separate full tile and triangle index rebuild for all 96 candidate proposals.
+The three methods chose the same edge at every step as that full reference. Maximum candidate
+loss difference against the full reference was `6.94e-18`. The accepted tile and the fresh
+accepted-state tile agreed at every step. The run reduced the mesh from 1,200 to 1,184 faces.
+
+| Rounded Cube, 90° | Exact tap rebuilds | Candidate pixels reused across steps | Scoring time |
+|---|---:|---:|---:|
+| Intersection updates | 642 | 0 | 1.134 s |
+| Depth dominance | 557 | 0 | 1.064 s |
+| Depth dominance and partial pixel reuse | 497 | 74 | 0.939 s |
+
+Times are from one run and exclude candidate generation, accepted-state updates, and reference
+rebuilds. The follow-up jobs on the other two cases did not run after available system memory
+fell below 850 MiB. The partial update has one verified workload. It still needs wider paths,
+larger candidate budgets, production edge legality, and comparison of complete meshes against
+geometric and appearance-driven baselines.
+
+```powershell
+$data = "out/pathloss-captures"
+python tools/mmgeo/probe_dynamic_path_simplification.py "$data/rounded_cube.json" --seed 72 --edits 8 --pool 12 --audit-all-candidates --out "$data/dynamic-rounded-pan90.json"
+```
+
 ## Decision and remaining gate
 
 The exact lower-bound mechanism now runs online in the Python research probe and shows a modest
