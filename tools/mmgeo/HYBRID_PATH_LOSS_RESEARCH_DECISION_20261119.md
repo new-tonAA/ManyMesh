@@ -197,6 +197,65 @@ python tools/mmgeo/audit_path_loss_position_prior.py `
     --pair "$data/torus-cell-pan45.json" "$data/torus-cell-pan90.json"
 ```
 
+## Incremental visibility across accepted edits
+
+The [sequential replay](probe_incremental_path_visibility.py) caches the front depth envelope
+at each subpixel tap and accumulates the filtered squared coverage and depth difference from the
+original mesh. It applies six captured edge collapses in sequence. The edited vertex sets are
+disjoint so that a collapse from the initial capture can still be applied to its original local
+geometry after earlier edits. Selection uses projected proximity to a fixed seed, with a
+fixed 32x16 evaluation tile. The replay therefore isolates the evaluation update from changing
+candidate queues and geometric legality checks.
+
+For an old envelope interval, a surviving front primitive is still the upper bound of all
+surviving primitives. Only new lines can change that front. An affine depth gap that is positive
+at both ends of an overlap stays positive through the overlap. The dominance policy uses this
+criterion to reuse an entire tap when all its old winners survive and every new line is strictly
+behind. Otherwise the interval policy retains this survivor reasoning individually and consults
+the full current line set only for intervals whose old winner was edited. At such intervals,
+removal may expose an arbitrarily far surface. Repair therefore searches the original scene bins
+and the accepted patches before clipping the surviving lines to the invalid interval.
+
+| Case | Tap rebuilds, intersection → dominance | Full-scene interval length, dominance → interval repair | Core update times, intersection / dominance / interval |
+|---|---:|---:|---:|
+| Rounded Cube, 90°, one tap per pixel | 104 → 82 | 164.0 → 21.3 | 48.7 / 44.7 / 47.1 ms |
+| Rounded Cube, 45°, four taps per pixel | 378 → 305 | 610.0 → 90.5 | 195.4 / 191.3 / 195.9 ms |
+| Material Sphere, 90°, one tap per pixel | 25 → 23 | 46.0 → 13.8 | 172.8 / 140.6 / 145.7 ms |
+
+Durations sum over all taps and six updates, with each complete path spanning two time units.
+Each policy shares the initial source index and cache (99, 289, and 468 ms in the table order).
+Update timings are single sequential runs. Initial setup, result snapshots, and audits are
+excluded from the per-policy update times. Full rebuilds from the current mesh provide a
+fresh geometry and visibility baseline at every step. On the union of the compared event
+partitions, the largest total visibility disagreement at any tap in any step was
+`5.33e-15` path time units, around floating-point event boundaries. The maximum absolute
+per-pixel objective difference was `3.86e-32`. The interval policy reduced full-scene line
+inputs by 18–43% against dominance. Its interval clipping and assembly increased update time
+in all three cases. Use dominance as the simpler runtime candidate for this data.
+
+The replay uses floating-point event construction, an opaque depth model, fixed box filter taps,
+and orthographic translations. It keeps audit snapshots in memory. Peak working set, rendered
+material error, overlapping edits, candidate decisions, and full simplification quality remain
+unmeasured. In these captures every tap that lost its dominance check also had an edited old
+winner, so insertion-only repair has no measured benefit here.
+
+Lindstrom and Turk update raster images locally after collapses at discrete views.
+Gribel et al. compute analytical per-pixel visibility intervals for motion blur.
+Popescu et al. compute continuous visibility from a camera segment. The working question is
+whether retaining a bounded cache of continuous visibility across overlapping edits can improve
+the cost of actual simplification decisions and retain the same loss.
+[Image-Driven Simplification](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf) ·
+[Analytical Motion Blur Rasterization with Compression](https://diglib.eg.org/bitstreams/f47ec493-1364-493c-a32b-c4e6ea94ec0c/download) ·
+[Continuous from-Segment Visibility](https://www.cs.purdue.edu/cgvlab/www/resources/papers/Popescu-TVCG-2025-1DVisibility.pdf)
+
+```powershell
+$data = "out/pathloss-captures"
+$probe = "tools/mmgeo/probe_incremental_path_visibility.py"
+python $probe "$data/rounded_cube.json" --seed 72 --count 6 --out "$data/incremental-rounded-pan90.json"
+python $probe "$data/rounded_cube.json" --seed 72 --count 6 --pan-angle 45 --scale 2 --out "$data/incremental-rounded-pan45-scale2.json"
+python $probe "$data/material_sphere.json" --seed 16518 --count 6 --out "$data/incremental-sphere-pan90.json"
+```
+
 ## Decision and remaining gate
 
 The exact lower-bound mechanism now runs online in the Python research probe and shows a modest
