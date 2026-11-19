@@ -376,6 +376,72 @@ python $probe "$data/material_sphere.json" --seed 16518 --edits 20 --pool 12 --c
 [Surface Simplification Using Quadric Error Metrics](https://www.cs.cmu.edu/afs/cs.cmu.edu/user/garland/www/quadrics/index.html) ·
 [Image-Driven Simplification](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf)
 
+## Multiple optimization paths and a view-level lower bound
+
+The [multi-view probe](probe_multiview_path_simplification.py) keeps the same shortlist and
+midpoint placement rules as the single-path and QEM runs. It sums coverage, depth, and
+weighted flat-normal loss over three equal-weight orthographic camera paths at azimuths
+0°, +120°, and −120° relative to the primary view. The paths share pan direction, radius,
+and tap count. Each view lazily indexes affected pixels and shares immutable face coefficients
+with its original mesh. The per-view candidate cache remains bounded by the live shortlist.
+
+A candidate's lower bound is the sum of its completed view losses plus the current losses
+outside its swept support in the remaining views. Those pixels cannot be changed by the
+candidate, and every omitted pixel loss is nonnegative. A candidate can be dropped when that
+bound exceeds the best completed score and its tie tolerance. The probe uses double-precision
+sums and a numerical margin. An audit completes the skipped scores and verifies each chosen
+edge and every observed bound against those completed scores.
+
+| Mesh | View evaluations out of 720 | Pruned candidates with completed-score audits | Chosen-edge disagreements |
+|---|---:|---:|---:|
+| Rounded Cube, 20 edits | 415 | 153 | 0 |
+| Material Sphere, 20 edits | 524 | 162 | 0 |
+| Torus, 20 edits | 644 | 53 | 0 |
+
+Rounded Cube produced the same geometry as the single-path normal-aware run. On Material
+Sphere the three-path objective reduced the changed-view depth MSE from 7.63e-7 to 1.53e-7
+and flat-normal error from 1.42e-4 to 7.08e-5 versus one-path ranking. Its depth and flat-normal
+errors still exceeded QEM on all three held-out raster paths. The same-view new pan regressed
+in all channels versus one-path ranking, while the opposite view traded lower normal error
+for higher coverage and depth error. The mean flat-normal squared distance across the three
+paths fell by 20% versus one path and remained about 55% above midpoint QEM.
+
+Torus was evaluated next with the same preset camera offsets and normal weight. All methods
+removed 40 faces, leaving 1,112. Its average held-out combined raster error fell from 6.61e-4
+with one path to 5.04e-4 with three paths. QEM was lower at 4.61e-4. The three-view selection
+improved the opposite-view normal error against both controls, while increasing the normal
+errors for the other two views. For Material Sphere the corresponding combined errors are
+9.57e-5, 9.56e-5, and 4.97e-5, respectively. Each mean weights the three test paths equally
+and uses the same 0.25 flat-normal weight as the continuous objective.
+
+An independent no-audit scoring run on Rounded Cube selected exactly the same 20 edges as a
+separate exhaustive run. The candidate stage took 2.16 s with the support bound and 2.74 s
+without pruning, including shortlist generation and excluding setup. These single runs used
+the same cached solvers. Removing the unchanged-pixel term yielded the same 415 view
+evaluations and took 2.20 s, so the extra term had no count benefit on this case.
+Torus used 662 evaluations with the partial-only bound and 644 with the support bound.
+Its chosen edges and placements matched exactly. The extra term therefore accounted for
+18 of the 76 skipped evaluations on Torus. The two Torus runs differed in audit mode, so
+their timings do not isolate the term's cost.
+
+Image-driven simplification with multiple views and appearance-driven mesh optimization both
+have established precedents. The experiment distinguishes the exact preview objective and
+the work saved by its lower bound from the separate question of held-out fidelity.
+[Image-Driven Simplification](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf) ·
+[Appearance-Driven Automatic 3D Model Simplification](https://users.aalto.fi/~laines9/publications/hasselgren2021egsr_paper.pdf)
+
+```powershell
+$data = "out/pathloss-captures"
+$probe = "tools/mmgeo/probe_multiview_path_simplification.py"
+python $probe "$data/material_sphere.json" --control "$data/quality-sphere-normal-pan90.json" --audit-pruning --out "$data/multiview-sphere-normal-pan90.json"
+python $probe "$data/rounded_cube.json" --control "$data/quality-rounded-normal-pan90.json" --audit-pruning --out "$data/multiview-rounded-normal-pan90.json"
+python tools/mmgeo/probe_dynamic_path_simplification.py out/filter-real-candidates/torus.json --seed 2500 --edits 20 --pool 12 --compare-qem --normal-weight 0.25 --out "$data/quality-torus-normal-pan90.json"
+python $probe out/filter-real-candidates/torus.json --control "$data/quality-torus-normal-pan90.json" --audit-pruning --out "$data/multiview-torus-normal-pan90.json"
+```
+
+For the same-state sequence comparison, add `--score-only` and run separately with no other
+option, `--partial-only-bound`, and `--exhaustive`.
+
 ## Decision and remaining gate
 
 The exact lower-bound mechanism now runs online in the Python research probe and shows a modest

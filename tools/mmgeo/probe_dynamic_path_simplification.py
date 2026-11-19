@@ -469,12 +469,12 @@ def flat_world_normals(positions, faces):
     return normals
 
 
-def heldout_raster_quality(unit, path_steps, qem_steps, args):
-    count = min(len(path_steps), len(qem_steps))
+def heldout_raster_quality(unit, path_steps, qem_steps, args, extra_steps=None):
+    policies = {"path": path_steps, "qem": qem_steps, **(extra_steps or {})}
+    count = min(map(len, policies.values()))
     meshes = {"original": replay_geometry(unit, []),
-              "path": replay_geometry(unit, path_steps[:count]),
-              "qem": replay_geometry(unit, qem_steps[:count])}
-    if len(meshes["path"][1]) != len(meshes["qem"][1]):
+              **{name: replay_geometry(unit, steps[:count]) for name, steps in policies.items()}}
+    if len({len(meshes[name][1]) for name in policies}) != 1:
         raise ValueError("the final meshes must use the same face budget")
     size = args.quality_size
     # Avoid revisiting the optimization segment. The last two paths also change azimuth.
@@ -490,7 +490,7 @@ def heldout_raster_quality(unit, path_steps, qem_steps, args):
         transform = camera(meshes["original"][0], azimuth, size)
         direction = np.asarray([math.cos(math.radians(pan)), math.sin(math.radians(pan))])
         projected = {name: project(mesh[0], transform) for name, mesh in meshes.items()}
-        totals = {name: np.zeros(3) for name in ("path", "qem")}
+        totals = {name: np.zeros(3) for name in policies}
         for t in times:
             displacement = direction * t
             source, source_normals = raster_attributes(projected["original"],
