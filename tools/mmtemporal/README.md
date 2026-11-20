@@ -126,3 +126,48 @@ That metric is the frame-to-frame change of output minus reference at the same s
 coordinate. The small and inconsistent quality difference gives no reason to pay for a
 second depth raster in this test. Validation of a GPU reconstruction pass requires a
 native frame-time comparison with the full-detail raster at matched output resolution.
+
+## Headroom for selecting history locally
+
+`bench_history_confidence.py` compares the 0.5 history blend with two causal gates.
+The support gate tapers that blend from zero at 50% valid bilinear support to 0.5
+at full support. The color gate drops history when the largest RGB channel difference
+exceeds 12 of 255 code values. Each temporal policy keeps its own recursive color history and
+use the same per-tap depth test. Color validation is a conventional temporal AA
+control. [Yang et al., A Survey of Temporal Antialiasing Techniques](https://research.nvidia.com/labs/rtr/publication/yang2020survey/)
+
+For each tile the offline comparison can use the high-resolution target to choose the
+lower-error output of current-frame bicubic or the fixed 0.5 blend after bicubic.
+Choices are made separately on each frame and leave both histories untouched. This
+bounds the gain from selecting between these two output images at each tested tile size.
+It does not bound gains from another reconstruction filter or from accumulating on a
+higher-resolution sample grid.
+
+| Capture | Fixed blend | Support gate | Color gate | Both gates | Best 8×8 tile | Best 1×1 tile |
+|---|---:|---:|---:|---:|---:|---:|
+| run0 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
+| run1 | -0.032 | -0.033 | -0.009 | -0.007 | +0.176 | +0.280 |
+| run12 | -0.312 | -0.292 | -0.006 | -0.006 | +0.147 | +0.264 |
+| run26 | +0.032 | +0.031 | +0.001 | +0.002 | +0.182 | +0.320 |
+
+The gains are `10 log10(mean current MSE / mean candidate MSE)` in dB on the 28
+frames with history per run. The tile dimensions refer to input raster pixels. Color
+validation removed nearly all of the fixed blend loss on the fastest path and left
+its frame-to-frame residual change within 0.2% of the single-frame result.
+
+The matched paths in run1 and run26 have byte-identical cameras and target PNGs.
+At the same 160×90 raster size, bicubic on the 7,074-triangle input gained 0.370 dB
+over bicubic on the 4,162-triangle input. It still led the smaller mesh with hindsight
+selection by 0.188 dB at 8×8 tiles and 0.050 dB at 1×1 tiles. Triangle counts are
+from the depth capture logs. These results motivate spending geometry where the
+low-resolution raster loses coverage instead of funding additional history gates
+for this filter. The next comparison needs more assets, matched GPU frame times,
+and a spatial upscaler as a control.
+
+```powershell
+$env:OPENBLAS_NUM_THREADS = '1'
+$env:OMP_NUM_THREADS = '1'
+foreach ($meshRun in 0,1,12,26) {
+    python tools/mmtemporal/bench_history_confidence.py "out/parallax/run$meshRun" --out "out/temporal-check/confidence-run$meshRun.json"
+}
+```
