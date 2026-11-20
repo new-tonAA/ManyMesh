@@ -52,13 +52,20 @@ def vertex_normals(vertices, faces):
     return smooth
 
 
-def collapse_witnesses(vertices, faces, trace):
-    replay_vertices, _, maps = fast_simplification.replay_simplification(
+def collapse_mapping(vertices, faces, trace, actual_faces):
+    _, replay_faces, maps = fast_simplification.replay_simplification(
         vertices, faces, trace)
+    if not np.array_equal(replay_faces, actual_faces):
+        raise ValueError("Collapse replay changed the triangle indexing")
+    return maps
+
+
+def collapse_witnesses(vertices, faces, trace, coarse_vertices, coarse_faces):
+    maps = collapse_mapping(vertices, faces, trace, coarse_faces)
     normals = vertex_normals(vertices, faces)
-    valid = maps >= 0
+    valid = (maps >= 0) & (maps < len(coarse_vertices))
     points = vertices[valid]
-    displacement = points - replay_vertices[maps[valid]]
+    displacement = points - coarse_vertices[maps[valid]]
     offset = np.abs(np.sum(displacement * normals[valid], axis=1))
     cell = np.clip(((points + 1.0) * 4).astype(np.int32), 0, 7)
     key = cell @ np.array([64, 8, 1])
@@ -123,7 +130,7 @@ def make_pairs(asset_path, views, size):
         if ratio == 0.20:
             pos, indices, trace = fast_simplification.simplify(
                 vertices, faces, target_reduction=1-ratio, return_collapses=True)
-            witnesses = collapse_witnesses(vertices, faces, trace)
+            witnesses = collapse_witnesses(vertices, faces, trace, pos, indices)
         elif ratio < 1.0:
             pos, indices = fast_simplification.simplify(vertices, faces, target_reduction=1-ratio)
         pos = np.asarray(pos, dtype=np.float32)

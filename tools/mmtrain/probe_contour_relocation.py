@@ -125,15 +125,19 @@ def targets(source, size, views, phases):
     return references
 
 
+def auxiliary_errors(low, depth, coverage, thin, native):
+    mask = np.isfinite(depth)
+    expanded = np.repeat(np.repeat(mask, 2, axis=0), 2, axis=1)
+    return [np.mean((expanded - coverage) ** 2), np.mean(thin * ~expanded),
+            np.mean((low - native) ** 2)]
+
+
 def measure(mesh, size, references):
     cubic = FILTERS["bicubic"][0]
     sums = np.zeros(len(METRICS))
     for basis, phase, color, coverage, thin, native in references:
         low, depth = render(mesh, basis, size, phase, 1)
-        mask = np.isfinite(depth)
-        expanded = np.repeat(np.repeat(mask, 2, axis=0), 2, axis=1)
-        sums += [loss(low, color, cubic), np.mean((expanded - coverage) ** 2),
-                 np.mean(thin * ~expanded), np.mean((low - native) ** 2)]
+        sums += [loss(low, color, cubic), *auxiliary_errors(low, depth, coverage, thin, native)]
     return sums / len(references)
 
 

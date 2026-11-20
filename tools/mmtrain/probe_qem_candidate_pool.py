@@ -24,11 +24,12 @@ POOL = (
 )
 
 
-def qem(vertices, faces, target, aggressiveness, stretch):
+def qem(vertices, faces, target, aggressiveness, stretch, return_trace=False):
     metric = np.asarray(stretch)
-    scaled, triangles = fast_simplification.simplify(
-        vertices * metric, faces, target_count=target, agg=aggressiveness)
-    return scaled / metric, triangles
+    scaled, triangles, *trace = fast_simplification.simplify(
+        vertices * metric, faces, target_count=target, agg=aggressiveness,
+        return_collapses=return_trace)
+    return (scaled / metric, triangles, *trace)
 
 
 def experiment(path, size):

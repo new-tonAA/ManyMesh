@@ -496,8 +496,9 @@ with the number of selected tiles limited per view. Runtime evaluation needs a l
 and matched triangle and frame-time budgets.
 
 The MLP maps seven coarse raster statistics through 12 ReLU units to one score. The second
-version adds a mesh-side signal. During QEM, replay the collapse trace and compute the normal
-component of the displacement to each source vertex's surviving representative. Store at most
+version adds a mesh-side signal. Replay the collapse trace to recover vertex indices and
+verify its final triangle indices against the actual QEM result. Compute the normal component
+of displacement using the actual QEM coordinates of each surviving representative. Store at most
 128 object-space points with absolute offset, one per occupied spatial cell with the greatest
 offsets first. That is at most 2 KiB per asset in float32. At scoring time, project these points,
 discard those behind the coarse depth beyond the tolerance, and use the largest remaining offset
@@ -512,9 +513,9 @@ row ranks using the target and shows the headroom under this replacement experim
 | Ranker | 10% tile capacity | 25% tile capacity |
 |---|---:|---:|
 | Coarse brightness contrast | 14.80% | 26.95% |
-| Collapse cue alone | 17.91% | 22.32% |
+| Collapse cue alone | 17.92% | 22.33% |
 | Raster-only MLP, 109 weights and biases | 10.45% | 25.46% |
-| Raster + collapse MLP, 121 weights and biases | 17.93% | 27.73% |
+| Raster + collapse MLP, 121 weights and biases | 17.93% | 27.74% |
 | Raster + collapse ridge regression | 19.65% | 28.18% |
 | Hindsight | 30.87% | 33.99% |
 
@@ -523,6 +524,8 @@ coarse brightness contrast on three of eight assets at 10%, and two of eight at 
 mean improved while the gains were concentrated. Deeper learning has not earned a runtime
 place on these data. The comparison uses one dataset, orthographic cameras, a single light
 and fixed LOD pairs. Texture, perspective, and motion remain outside the experiment.
+The table was recomputed after switching from replayed coordinates to the actual simplifier
+output. The eight assets' baseline raster errors matched their previous values.
 
 The laptop generated the pairs in 5.9 s with about 285 MiB peak working set including Numba
 and the simplifier. A separate NumPy process ran both model ablations, 8-fold held-out
@@ -667,6 +670,56 @@ Image-driven silhouette and mesh optimization already have published methods.
 $pilotRoot = 'out/geometry-refinement-pilot'
 python tools/mmtrain/probe_contour_relocation.py "$pilotRoot/assets" "$pilotRoot/holdout-assets" --out "$pilotRoot/contour-96.json"
 python tools/mmtrain/probe_qem_candidate_pool.py "$pilotRoot/assets" "$pilotRoot/holdout-assets" --out "$pilotRoot/qem-pool-control-96.json"
+```
+
+## Equal-count candidates within separate components
+
+The component experiment starts from the whole-mesh QEM result and uses its collapse
+index mapping to recover source ownership for output triangles. It keeps their actual
+output coordinates and verifies that each output vertex has a single source component.
+Up to four large components with enough surviving faces receive the same QEM recipe
+alternatives as the whole-mesh pool. Each alternative must match the component's exact
+face count. With `--anchor selected`, the component counts and starting geometry come
+from the fit-selected whole mesh. With `--anchor qem`, they come from default QEM.
+Unselected parts retain their anchor geometry. The baseline color and depth, after
+splitting and recomposing the parts, match the original anchor on every fitting image.
+
+Two sweeps try one component replacement at a time. Cached per-component color and
+depth allow every alternative at that step to share the same composited background.
+A move must lower fitting bicubic MSE and meet the anchor's coverage and boundary
+miss guards. For bicubic scoring, expand the changed native color rectangle by two
+pixels to bound the output change, then add two more pixels of input context for
+filtering. The change in squared residual inside that support gives the full-image
+score. The audit compares each such calculation with full bicubic on the same view.
+The final assembled mesh is re-rasterized on the fitting and held-out views, at
+exactly the selected whole-mesh budget.
+
+Keeping the default QEM allocation worsened average held-out bicubic MSE against
+the fit-selected whole mesh by 6.70% at 96 and 9.05% at 128 across all 13 models.
+Among the five extension assets the same method improved by 1.53% and 0.72% on
+average. This shows how strongly the local candidate search depends on the starting
+triangle allocation.
+
+Starting from the fit-selected whole mesh improved mean held-out color MSE by 2.08%
+at 96 and 2.20% at 128 across all 13 assets. Eight improved and one regressed at
+each size. For the five extension assets, the mean reductions were 4.57% and 4.61%.
+GlassVaseFlowers improved by 8.08% and 8.56%, and StainedGlassLamp by 12.81% and
+12.86%. Both also improved on the two held-out coverage metrics. FlightHelmet
+improved color at both sizes and had a small coverage regression at 128.
+
+For the selected-anchor run, the 6,714 audited alternative scores agreed with
+full-image filtering within `3.5e-18` MSE. Crops covered 8.1% of the possible input
+pixels in aggregate and took 40% of the summed full-image color scoring time.
+This timing covers the color-loss query, including support
+detection, and excludes the shared raster setup and other metrics. Median offline
+fit time per mesh was 3.0 s before held-out rendering. The complete serial
+audit peaked at 329 MiB. Native frame-time and intersection checks remain separate
+evaluation tasks.
+
+```powershell
+$pilotRoot = 'out/geometry-refinement-pilot'
+python tools/mmtrain/probe_component_candidates.py "$pilotRoot/assets" "$pilotRoot/holdout-assets" --whole-reference "$pilotRoot/qem-pool-control-96.json" --anchor qem --audit --out "$pilotRoot/components-96.json"
+python tools/mmtrain/probe_component_candidates.py "$pilotRoot/assets" "$pilotRoot/holdout-assets" --whole-reference "$pilotRoot/qem-pool-control-96.json" --anchor selected --audit --out "$pilotRoot/components-selected-96.json"
 ```
 
 ## Fairness note
