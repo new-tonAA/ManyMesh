@@ -552,6 +552,64 @@ The raster generator also uses Pillow and Numba from the local Python environmen
 pipeline emits asset-level error statistics, two weight files per held-out asset, and warm
 CPU timings. Omit `--fused-features` to time the NumPy implementation.
 
+## Budgeted mesh cuts under a reconstruction filter
+
+The cut probe selects one QEM version per disconnected mesh component, up to six refinable
+components. Each component contributes its actual triangle count to the budget. The components
+share no input vertices after welding and are rendered in a fixed order. For two configurations
+per view, rasterizing the assembled triangles gives bit-identical color and depth to independently
+rasterizing the parts and compositing them by depth. The reference uses the 4x source raster
+box-filtered to the final 2x size. Nearest upsampling is the input-resolution MSE control because
+its output MSE differs from comparison to the 2x2 block means of the target by a cut-independent
+constant.
+
+The grouped solver first marks changed samples for each component. A sample can be ignored if
+another component is strictly nearer in every allowed state. A conservative blocker depth is
+the minimum over other parts of the farther of their two depth samples. For each filter, expand
+the remaining changing samples by its support radius and join components whose expanded supports
+overlap. Fixed local filtering makes the output support of separate groups disjoint, so whole-cut
+MSE equals the baseline plus one loss delta per group. Enumerate affordable states within each
+group, then merge the integer triangle and loss frontiers, dropping dominated combinations.
+Image evaluation stays within one group at a time. The probe separately exhausts the full
+cut space as a verification control.
+
+We tested the original eight assets and five fresh models. Four fresh models had at least two
+refinable components. SheenCloth was excluded by that criterion. Across 144 views at each raster
+size, grouped loss agreed with exhaustive scoring within `9e-18`. Every selected cut met its
+triangle cap and matched the exhaustive minimum in all four filters and at all three caps.
+
+| Input | Exhaustive filter calls | Grouped filter calls | Median exhaustive scoring | Median grouped scoring and search |
+|---|---:|---:|---:|---:|
+| 96×96 | 20,544 | 8,717 | 50.1 ms | 18.6 ms |
+| 128×128 | 20,544 | 9,223 | 85.7 ms | 31.6 ms |
+
+These wall times exclude the shared component raster passes and include compositing and resizing.
+Across all views the summed scoring speedups were 1.88x and 1.76x. The serial experiment
+including assets, compilation, rasterization and verification peaked at 268 MiB.
+
+Under the same triangle cap, average bilinear, bicubic, and Lanczos MSE reductions against the
+nearest-selected cut on the four fresh assets were 0.103%, 0.033%, and 0.017% at 96×96, and
+0.117%, 0.032%, and 0.016% at 128×128. Under the same exact triangle count as the nearest-selected
+cut, average reductions across the fresh views and budgets were below 0.01% for each filter at
+both sizes. This rules out a large average quality win from reordering these candidate cuts
+using these filters. The probe uses grayscale orthographic rasterization and an offline
+supersampled target. Runtime frame time, textured perspective views and temporal reconstruction
+remain outside these measurements. Image-space simplification is established prior art.
+[Lindstrom and Turk, Image-Driven Simplification](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf)
+[Hasselgren et al., Appearance-Driven Automatic 3D Model Simplification](https://arxiv.org/abs/2104.03989)
+
+```powershell
+python tools/mmtrain/fetch_refinement_assets.py --asset-set holdout --out out/geometry-refinement-pilot/holdout-assets
+foreach ($meshSize in 96,128) {
+    python tools/mmtrain/probe_filter_aware_cuts.py out/geometry-refinement-pilot/assets out/geometry-refinement-pilot/holdout-assets --size $meshSize --out "out/geometry-refinement-pilot/filter-frontier-$meshSize.json"
+}
+```
+
+The fresh [Iridescence Lamp](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/f0920f5b32d172a30efe3f9257e965918831e6ea/Models/IridescenceLamp)
+and [Stained Glass Lamp](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/f0920f5b32d172a30efe3f9257e965918831e6ea/Models/StainedGlassLamp)
+are by Wayfair, licensed CC BY 4.0 and used here as untextured geometry. The other three fresh
+assets are CC0. The pinned manifest records source URLs, geometry hashes and license identifiers.
+
 ## Fairness note
 
 `espcn` and `fsrcnn` scoring below bicubic here says nothing about those architectures. Their

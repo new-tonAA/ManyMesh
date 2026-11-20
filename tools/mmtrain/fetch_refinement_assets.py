@@ -20,6 +20,13 @@ ASSETS = {
     "ToyCar": "CC0-1.0",
     "WaterBottle": "CC0-1.0",
 }
+HOLDOUT_ASSETS = {
+    "FlightHelmet": "CC0-1.0",
+    "GlassVaseFlowers": "CC0-1.0",
+    "IridescenceLamp": "CC-BY-4.0",
+    "SheenCloth": "CC0-1.0",
+    "StainedGlassLamp": "CC-BY-4.0",
+}
 MAX_BYTES = 10 * 1024 * 1024
 
 
@@ -35,9 +42,11 @@ def fetch(url, path, maximum):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--asset-set", choices=("pilot", "holdout"), default="pilot")
     args = parser.parse_args()
     sources = []
-    for name, license_id in ASSETS.items():
+    assets = ASSETS if args.asset_set == "pilot" else HOLDOUT_ASSETS
+    for name, license_id in assets.items():
         directory = args.out / name
         directory.mkdir(parents=True, exist_ok=True)
         source = f"{BASE}/{name}"

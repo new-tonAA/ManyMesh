@@ -91,7 +91,7 @@ def bicubic(color, size):
                       dtype=np.float32) / 255
 
 
-def make_pairs(asset_path, views, size):
+def load_geometry(asset_path):
     mesh = trimesh.load_scene(asset_path, skip_materials=True).to_geometry()
     mesh.merge_vertices(merge_tex=True, merge_norm=True)
     mesh.update_faces(mesh.nondegenerate_faces())
@@ -102,6 +102,20 @@ def make_pairs(asset_path, views, size):
         raise ValueError(f"Outside pilot triangle range: {asset_path}: {len(faces)}")
     vertices -= (vertices.min(axis=0) + vertices.max(axis=0)) * 0.5
     vertices /= np.linalg.norm(vertices, axis=1).max()
+    return vertices, faces
+
+
+def verify_asset(root, source):
+    path = root / source["mesh"]
+    for name, expected in source["buffers"].items():
+        fingerprint = hashlib.sha256(path.with_name(name).read_bytes()).hexdigest()
+        if fingerprint != expected:
+            raise ValueError(f"Asset buffer hash mismatch: {path}: {name}")
+    return path
+
+
+def make_pairs(asset_path, views, size):
+    vertices, faces = load_geometry(asset_path)
     meshes = []
     light_direction = np.array((0.36, 0.80, 0.48), np.float32)
     for ratio in (1.0, 0.20, 0.45):
@@ -146,11 +160,7 @@ def main():
     assets = json.loads((args.assets / "sources.json").read_text(encoding="utf-8"))
     args.out.mkdir(parents=True, exist_ok=True)
     for source in assets:
-        asset_path = args.assets / source["mesh"]
-        for name, expected in source["buffers"].items():
-            fingerprint = hashlib.sha256(asset_path.with_name(name).read_bytes()).hexdigest()
-            if fingerprint != expected:
-                raise ValueError(f"Asset buffer hash mismatch: {asset_path}: {name}")
+        asset_path = verify_asset(args.assets, source)
         pairs = make_pairs(asset_path, args.views, args.size)
         np.savez_compressed(args.out / f"{source['name']}.npz", **pairs)
         print(source["name"], pairs["triangles"].tolist(), flush=True)
