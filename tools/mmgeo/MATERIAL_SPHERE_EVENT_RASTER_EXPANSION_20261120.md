@@ -55,6 +55,20 @@ events can sometimes evaluate the continuous-path objective faster than dense sa
 not show a better collapse sequence, a quality gain at fixed face count, or a robust speedup over
 the cheaper 64-sample raster baseline. This is not a SIGGRAPH contribution.
 
+I then moved to a second Material Sphere neighborhood. The 16x8 tile at seed 4942 again produced
+38 candidates, with 34 nonzero exact losses. Exact events cost 1.06 s versus 1.88 s for 64-step
+raster and 7.40 s for 256-step raster. The exact winner was again third in each raster ordering;
+the raster winner's exact loss exceeded the minimum by only 7.35e-14. Widening this same tile to
+32x16 pixels gave 512 samples, 2.55 s exact-event cost, and 3.15 s at 64 raster steps. The raster
+winner remained effectively tied, while its summed absolute score error was 18.4% and maximum
+relative error 39.4%. Thus tile enlargement did not turn the speed result into a meaningful output
+gain in this neighborhood.
+
+A third Material Sphere seed (9000) yielded 39 candidates with effectively zero exact loss on its
+128-pixel tile. It took 1.39 s for events versus 2.70 s for 64-step raster, but supplies no useful
+ranking signal. This adds evidence that active and inactive local regions coexist and that event
+runtime alone does not establish better simplification.
+
 Reproduce the additional controls with:
 
 ```powershell
@@ -64,7 +78,11 @@ python tools/mmgeo/probe_shared_envelope_raster_tile.py --capture out/filter-rea
 
 ```powershell
 python tools/mmgeo/probe_shared_envelope_raster_tile.py --capture out/pathloss-captures/material_sphere.json --seed-candidate 16518 --candidate-limit 48 --angle 2.3 --pan-angle 45 --size 64 --scale 1 --tile-width 16 --tile-height 8 --steps 64 256 --out out/pathloss-captures/material-sphere-16518-pan45-tile16x8-n48.json
+python tools/mmgeo/probe_shared_envelope_raster_tile.py --capture out/pathloss-captures/material_sphere.json --seed-candidate 4942 --candidate-limit 48 --angle 2.3 --pan-angle 45 --size 64 --scale 1 --tile-width 16 --tile-height 8 --steps 64 256 --out out/pathloss-captures/material-sphere-4942-pan45-tile16x8-n48.json
+python tools/mmgeo/probe_shared_envelope_raster_tile.py --capture out/pathloss-captures/material_sphere.json --seed-candidate 4942 --candidate-limit 48 --angle 2.3 --pan-angle 45 --size 64 --scale 1 --tile-width 32 --tile-height 16 --steps 64 --out out/pathloss-captures/material-sphere-4942-pan45-tile32x16-n48.json
+python tools/mmgeo/probe_shared_envelope_raster_tile.py --capture out/pathloss-captures/material_sphere.json --seed-candidate 9000 --candidate-limit 48 --angle 2.3 --pan-angle 45 --size 64 --scale 1 --tile-width 16 --tile-height 8 --steps 64 256 --out out/pathloss-captures/material-sphere-9000-pan45-tile16x8-n48.json
 ```
 
-The probe result is ignored under `out/pathloss-captures/`. The post-run system memory counter
-reported about 213 MiB available. No further process-heavy work was started.
+The probe results are ignored under `out/pathloss-captures/`. Available memory temporarily fell to
+about 213 MiB during the sequence of runs, then recovered to about 2.89 GiB after the processes
+exited. All runs were serial; no build or renderer was started.
