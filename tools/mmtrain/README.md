@@ -906,14 +906,14 @@ reported degeneracies, duplicates or self-intersections, and balances four face-
 manifest records both the original source URL and the dataset-hosted individual-file URL, plus the
 license needed for attribution. Mesh files are not included in the repository.
 
-The metadata CSVs are small and live in ignored `out/thingi10k-metadata/`. The original per-model
-URLs return HTTP 403 in this environment. The dataset repository exposes a 38.8-GB `raw_meshes`
-tree, so the manifest points at its individual-file mirror pinned to commit
-`1e52df627995ba43b7b91143af4bed86f570037a`. The runner could not connect to Hugging Face from
-the shell, so the selected mesh files still need to be fetched when that endpoint is reachable.
-Record their hashes and license attribution, then run the same simplification and filtered-raster
-pipeline used for existing captures. No mesh geometry has been downloaded and no model has been
-trained on this corpus yet.
+The metadata CSVs and downloaded geometry live in ignored `out/thingi10k-metadata/`. The original
+per-model URLs return HTTP 403 in this environment. The dataset repository exposes a 38.8-GB
+`raw_meshes` tree, so the manifest points at its individual-file mirror pinned to commit
+`1e52df627995ba43b7b91143af4bed86f570037a`. We fetched only the 32 selected files: 43.38 MiB
+total, with hashes and license attribution recorded in the ignored download manifest. An STL audit
+matched every face count and all published edge-boundary counts, found no degenerate facets or
+non-manifold edges, and confirmed consistent winding on interior edges. No model has been trained
+on this corpus yet. See [the data audit and limitations](THINGI10K_PILOT_DATA_20261120.md).
 
 Download the small, pinned metadata files and recreate the manifest with:
 
@@ -929,6 +929,12 @@ python tools/mmtrain/curate_thingi10k_subset.py `
   out/thingi10k-metadata/geometry_data.csv `
   out/thingi10k-metadata/input_summary.csv `
   --out out/thingi10k-metadata/selected-32.json
+python tools/mmtrain/download_thingi10k_subset.py `
+  out/thingi10k-metadata/selected-32.json `
+  out/thingi10k-metadata/meshes `
+  --split all `
+  --max-file-mib 24 `
+  --max-total-mib 160
 ```
 
 Dataset sources: [Thingi10K dataset repository](https://github.com/Thingi10K/Thingi10K),
