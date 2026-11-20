@@ -721,6 +721,70 @@ Lazy edge costs and partial image updates are established ideas in
 The tested additional invariant concerns how unfinished per-pixel work and its lower bound
 survive accepted topology changes across multiple continuous views.
 
+## Joint edge and placement selection
+
+The full-unit probe can rerank the legal placements on each of the same four shortlisted edges.
+The queue already generates the two endpoints, midpoint, and quadric minimizer when the solve is
+well conditioned. The new arm deduplicates equal points and checks each alternative with the
+same link, boundary, flip, and triangle quality rules. The existing path score then chooses an
+edge and placement jointly. Cache and pruning records distinguish the placements. The queue
+regenerates edges and placements after each accepted edit.
+
+The comparison uses the same approximately 20% face removal, three optimization paths, and six
+independent evaluation paths as the full-unit reference above. Each trajectory regenerates its
+own shortlist, so differences can include both changed placements and later edge choices. The
+experiment measures the value of adding placement choices to this online policy.
+
+| Mesh | Final faces | Accepted alternative placements | Held-out QEM | Held-out edge only | Held-out edge and placement | Edge only / joint CPU seconds |
+|---|---:|---:|---:|---:|---:|---:|
+| Rounded Cube | 960 | 73 / 120 | 3.86e-6 | 4.35e-6 | 6.22e-6 | 2.72 / 10.61 |
+| Torus | 922 | 7 / 115 | 1.46e-4 | 1.27e-4 | 1.45e-4 | 7.09 / 23.75 |
+| Pirate unit 5 | 2,426 | 151 / 303 | 6.47e-6 | 5.22e-6 | 1.78e-5 | 7.72 / 25.41 |
+| Material Sphere | 7,542 | 579 / 943 | 2.35e-5 | 2.30e-5 | 1.96e-5 | 57.47 / 335.13 |
+
+The combined score at the three fitting paths fell by 66.8%, 0.9%, 78.4%, and 50.1% respectively.
+The held-out score increased by 42.9%, 14.2%, and 240.8% on the first three meshes, where coverage,
+depth, and flat-normal errors each increased on average. Material Sphere reduced mean held-out
+error by 14.7%, winning on four of six paths, at 5.8 times the edge-only CPU time. This leaves
+evidence of placement headroom on one mesh and poor generalization on the other three.
+Rounded Cube CPU timings include independent pruning audits for both policy arms. The final-view
+rebuild and holdout render are outside these timings. Both controls reproduced the archived
+edge and target sequences and all recorded scoring-path losses across 1,481 edits per control.
+
+The Rounded Cube pruning audit independently completed 732 rejected edge/placement proposals.
+Rebuilding the three final scoring views independently gave a maximum per-pixel absolute loss
+difference of 3.70e-14. The topology guards are local and the experiment uses flat normals,
+coverage, and depth. Textured appearance and global self-intersections are outside this screen.
+
+To separate camera choice from sampling density, I independently rendered the same three
+Rounded Cube output meshes at the three fitted azimuths and the original 90-degree pan.
+The replay used a 64x64 viewport, the original half-length of one pixel, and 16 uniformly
+spaced midpoint poses per path. At one sample per pixel, the edge-only and joint scores were
+1.89e-5 and 3.04e-6. At four taps per pixel with box filtering, they were 1.25e-6 and 3.04e-6.
+The ranking reverses with the camera and mesh held fixed. This isolates sensitivity to the
+sampling and reconstruction setting on one mesh. A new camera direction is unnecessary to
+produce this failure. The saved replay is `out/pathloss-captures/placement-rounded-phase-audit.json`.
+
+A robust placement objective must address this sampling sensitivity before more legal
+placements are offered to the optimizer. The measured joint rule is not a general quality or
+runtime improvement.
+
+Continuous path scoring of these discrete placements is the specific intervention. Prior work
+already optimizes mesh coordinates against rendered references in
+[Image-Driven Mesh Optimization](https://repository.gatech.edu/server/api/core/bitstreams/86062420-b350-49d7-b2b1-1d56c387e2bc/content)
+and jointly optimizes geometry and shading in
+[Appearance-Driven Automatic 3D Model Simplification](https://research.nvidia.com/labs/rtr/publication/hasselgren2021diffmodeling/).
+
+```powershell
+$env:OPENBLAS_NUM_THREADS = '1'
+$probe = 'tools/mmgeo/probe_global_path_qem.py'
+$data = 'out/pathloss-captures'
+python $probe "$data/rounded_cube.json" --remove-fraction .2 --compare-placements --audit-pruning --audit-final-views --out "$data/placement-rounded.json"
+python $probe out/filter-real-candidates/torus.json --remove-fraction .2 --compare-placements --out "$data/placement-torus.json"
+python $probe out/filter-real-candidates/pirate.json --unit-index 5 --remove-fraction .2 --compare-placements --out "$data/placement-pirate.json"
+python $probe "$data/material_sphere.json" --remove-fraction .2 --compare-placements --out "$data/placement-sphere.json"
+```
+
 ## Decision and remaining gate
 
 The exact lower-bound mechanism now runs online in the Python research probe and shows a modest

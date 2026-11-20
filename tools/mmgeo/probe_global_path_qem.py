@@ -19,7 +19,7 @@ from probe_multiview_path_simplification import View, select_path_edge
 from progressive_geometry_baseline import ProgressiveQEM
 
 
-def proposal_for_entry(queue, entry, faces):
+def proposal_for_entry(queue, entry, faces, placement_rank=None):
     _, keep, remove, _, _, _, point = entry
     target = np.asarray(point)
     incident = sorted(queue.inc[keep] | queue.inc[remove])
@@ -30,8 +30,8 @@ def proposal_for_entry(queue, entry, faces):
         patch[face_id] = triangle if len(set(triangle)) == 3 else None
     signature = (tuple((i, faces[i]) for i in incident), queue.p[vertices].tobytes(),
                  target.tobytes())
-    # There is no preprojected midpoint. Each view projects the actual optimal placement.
-    return Candidate((keep, remove), target, None, patch, (), signature)
+    # Each view projects the proposed placement.
+    return Candidate((keep, remove), target, None, patch, (), signature, placement_rank)
 
 
 def audit_final_views(views, positions, faces, source_normals, args):
@@ -60,8 +60,8 @@ def audit_final_views(views, positions, faces, source_normals, args):
     return reports
 
 
-def run(unit, args, target_faces, rerank):
-    name = "path" if rerank else "qem"
+def run(unit, args, target_faces, rerank, compare_placements=False):
+    name = "pathPlacements" if compare_placements else "path" if rerank else "qem"
     started = time.perf_counter()
     started_cpu = time.process_time()
     queue = ProgressiveQEM(unit["positions"], unit["triangles"])
@@ -85,11 +85,19 @@ def run(unit, args, target_faces, rerank):
             break
         row = {}
         if rerank:
-            candidates = [proposal_for_entry(queue, entry, faces) for entry in options]
+            entries = {}
+            candidates = []
+            for edge_rank, entry in enumerate(options, 1):
+                placements = queue.legal_placements(entry) if compare_placements else (entry,)
+                for placement_rank, placement in enumerate(placements):
+                    candidate = proposal_for_entry(
+                        queue, placement, faces, placement_rank if compare_placements else None)
+                    candidates.append(candidate)
+                    entries[candidate.key] = edge_rank, placement_rank, placement
             epoch = len(rows) + 1
             choice, (projections, patches, normals, values), stats = select_path_edge(
                 views, candidates, faces, queue.p, source_normals, current_normals, epoch, args)
-            rank = next(i for i, candidate in enumerate(candidates) if candidate.edge == choice)
+            rank, placement_rank, accepted = entries[choice]
             for view, proposal, patch in zip(views, projections, patches, strict=True):
                 view.apply(proposal, patch, epoch)
             for face_id, face in projections[0].faces.items():
@@ -98,10 +106,12 @@ def run(unit, args, target_faces, rerank):
                     del current_normals[face_id]
             if normals is not None:
                 current_normals.update(normals[1].maps[0])
-            row.update(stats, qemRank=rank + 1, perViewScore=values)
+            row.update(stats, qemRank=rank, perViewScore=values)
+            if compare_placements:
+                row.update(placementRank=placement_rank, placementOptions=len(candidates))
         else:
-            rank = 0
-        queue.accept(options[rank])
+            accepted = options[0]
+        queue.accept(accepted)
         if rerank:
             for i, f in projections[0].faces.items():
                 current = tuple(queue.f[i]) if queue.alive[i] else None
@@ -131,6 +141,8 @@ def main():
     parser.add_argument("--unit-index", type=int, default=0)
     parser.add_argument("--remove-fraction", type=float, default=0.05)
     parser.add_argument("--pool", type=int, default=4)
+    parser.add_argument("--compare-placements", action="store_true",
+                        help="also rerank all legal QEM placements of each shortlisted edge")
     parser.add_argument("--size", type=int, default=64)
     parser.add_argument("--scale", type=int, default=1)
     parser.add_argument("--angle", type=float, default=2.3)
@@ -185,13 +197,18 @@ def main():
               "optimization": {"size": args.size, "scale": args.scale, "angle": args.angle,
                                "panAngle": args.pan_angle, "radius": args.radius},
               "qem": qem, "path": path}
+    extra_steps = None
+    if args.compare_placements:
+        placements = run(unit, args, target_faces, True, compare_placements=True)
+        result["pathPlacements"] = placements
+        extra_steps = {"pathPlacements": placements["steps"]}
     if not args.score_only:
         # More azimuths than the local pilot, with four midpoint times on each path.
         validation = [(f"orbit{i}", args.angle + math.radians(a), args.pan_angle + p)
                       for i, (a, p) in enumerate(
                           ((24, 37), (75, -29), (155, 15), (190, 47), (275, -43), (330, 21)), 1)]
         result["heldoutRasterQuality"] = heldout_raster_quality(
-            unit, path["steps"], qem["steps"], args, views=validation)
+            unit, path["steps"], qem["steps"], args, extra_steps=extra_steps, views=validation)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     print(f"wrote {args.out}", flush=True)

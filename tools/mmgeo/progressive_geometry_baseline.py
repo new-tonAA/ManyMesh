@@ -87,23 +87,36 @@ class ProgressiveQEM:
     def neighbors(self,v):
         return set(int(i) for fi in self.inc[v] for i in self.f[fi])-{v}
 
+    def placement_costs(self, u, v):
+        quadric = self.q[u] + self.q[v]
+        points = [self.p[u], self.p[v], (self.p[u] + self.p[v]) * .5]
+        linear = quadric[:3, :3]
+        if np.linalg.cond(linear) < 1e10:
+            target = np.linalg.solve(linear, -quadric[:3, 3])
+            if np.isfinite(target).all():
+                points.append(target)
+        for index, point in enumerate(points):
+            h = np.r_[point, 1.]
+            yield max(0.0, float(h @ quadric @ h)), index, tuple(point)
+
     def push(self,u,v):
         u,v=sorted((int(u),int(v)))
         if u in self.locked or v in self.locked or not self.inc[u] or not self.inc[v]:return
-        Q=self.q[u]+self.q[v]
-        points=[self.p[u].copy(),self.p[v].copy(),(self.p[u]+self.p[v])*.5]
-        A=Q[:3,:3]
-        if np.linalg.cond(A)<1e10:
-            target=np.linalg.solve(A,-Q[:3,3])
-            if np.isfinite(target).all():points.append(target)
-        scored=[]
-        for index,point in enumerate(points):
-            h=np.r_[point,1.];scored.append((max(0.,float(h@Q@h)),index,point))
         # Each placement has its own queue entry. If the optimal placement fails a gate,
         # its next alternative competes at its own QEM cost rather than being hidden.
-        for cost,index,point in scored:
+        for cost,index,point in self.placement_costs(u, v):
             heapq.heappush(self.heap,(cost,u,v,int(self.versions[u]),int(self.versions[v]),
-                                      index,tuple(point)))
+                                      index,point))
+
+    def legal_placements(self, entry):
+        """Enumerate distinct legal placements for an edge from the current shortlist."""
+        _, u, v, vu, vv, _, first = entry
+        yield entry
+        seen = {first}
+        for cost, index, point in sorted(self.placement_costs(u, v)):
+            if point not in seen and self.legal(u, v, np.asarray(point)):
+                yield cost, u, v, vu, vv, index, point
+                seen.add(point)
 
     def legal(self,u,v,target):
         shared=self.inc[u]&self.inc[v]

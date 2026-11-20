@@ -70,6 +70,11 @@ class Candidate:
     faces: dict
     support: tuple
     signature: tuple
+    placement_rank: int | None = None
+
+    @property
+    def key(self):
+        return self.edge if self.placement_rank is None else (*self.edge, self.placement_rank)
 
 
 @dataclass

@@ -118,7 +118,7 @@ class View:
         self.front[i] = self.original[i]
 
     def resume(self, proposal):
-        previous = self.cache.get(proposal.edge)
+        previous = self.cache.get(proposal.key)
         if previous is None or proposal.signature != previous[0]:
             return None, None
         patch = previous[2]
@@ -151,12 +151,12 @@ class View:
             visits = result.pixel_visits
             if result.partial_loss is not None:
                 if result.pending_pixels is not None:
-                    self.cache[proposal.edge] = (proposal.signature, epoch - 1, result)
+                    self.cache[proposal.key] = (proposal.signature, epoch - 1, result)
                     self.partial_patch_saves += 1
                 lower = math.nextafter(outside_loss + result.partial_loss, -math.inf)
                 return lower, None, rebuilt, visits
         if reuse:
-            self.cache[proposal.edge] = (proposal.signature, epoch - 1, result)
+            self.cache[proposal.key] = (proposal.signature, epoch - 1, result)
         pixel_losses = (result.pixels[i][1] if i in result.pixels else self.losses.get(i, 0.0)
                         for i in proposal.support)
         score = math.fsum((outside_loss, math.fsum(pixel_losses)))
@@ -208,9 +208,9 @@ class CollapseDisplacementBudget:
 def select_path_edge(views, candidates, faces, world, source_normals, current_normals, epoch,
                      args):
     started = time.perf_counter()
-    edges = {candidate.edge for candidate in candidates}
+    keys = {candidate.key for candidate in candidates}
     for view in views:
-        view.cache = {edge: value for edge, value in view.cache.items() if edge in edges}
+        view.cache = {key: value for key, value in view.cache.items() if key in keys}
     scores, complete, pending = {}, {}, {}
     counts = [0] * len(views)
     rebuilt = [0] * len(views)
@@ -225,7 +225,7 @@ def select_path_edge(views, candidates, faces, world, source_normals, current_no
     known_before = sum(view.resumed_known_pixels for view in views)
     best = math.inf
     for candidate in candidates:
-        edge = candidate.edge
+        key = candidate.key
         projections = [view.proposal(candidate, faces) for view in views]
         outside = [view.outside_loss(proposal) for view, proposal in zip(views, projections)]
         bounds = outside
@@ -250,7 +250,7 @@ def select_path_edge(views, candidates, faces, world, source_normals, current_no
                 if bounds is not outside and math.fsum((*values, *outside[i:])) <= best + 2e-12:
                     cached_view_prunes += 1
                 if args.audit_pruning:
-                    pending[edge] = projections, outside, normals, values, lower
+                    pending[key] = projections, outside, normals, values, lower
                 break
             cap = None
             if args.pixel_order != "off" and not args.exhaustive and math.isfinite(best):
@@ -264,14 +264,14 @@ def select_path_edge(views, candidates, faces, world, source_normals, current_no
             if patch is None:
                 pixel_stops += 1
                 if args.audit_pruning:
-                    pending[edge] = projections, outside, normals, values, math.fsum((prefix, value))
+                    pending[key] = projections, outside, normals, values, math.fsum((prefix, value))
                 break
             values.append(value)
             patches.append(patch)
         else:
             score = math.fsum(values)
-            scores[edge] = score
-            complete[edge] = projections, patches, normals, values
+            scores[key] = score
+            complete[key] = projections, patches, normals, values
             best = min(best, score)
     choice = winner(scores)
     elapsed = time.perf_counter() - started
@@ -283,12 +283,12 @@ def select_path_edge(views, candidates, faces, world, source_normals, current_no
     resumed_pixels = sum(view.resumed_known_pixels for view in views) - known_before
     if args.audit_pruning:
         full = scores.copy()
-        for edge, (projections, outside, normals, values, lower) in pending.items():
+        for key, (projections, outside, normals, values, lower) in pending.items():
             first = len(values)
             more = [view.score(projections[i], outside[i], faces, normals, epoch, False)[0]
                     for i, view in enumerate(views[first:], first)]
-            full[edge] = math.fsum((*values, *more))
-            if lower > full[edge] + 1e-11:
+            full[key] = math.fsum((*values, *more))
+            if lower > full[key] + 1e-11:
                 raise ValueError("partial loss exceeded its completed candidate score")
         if winner(full) != choice:
             raise ValueError(f"early stopping changed the chosen edge at step {epoch}")
