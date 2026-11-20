@@ -610,6 +610,65 @@ and [Stained Glass Lamp](https://github.com/KhronosGroup/glTF-Sample-Assets/tree
 are by Wayfair, licensed CC BY 4.0 and used here as untextured geometry. The other three fresh
 assets are CC0. The pinned manifest records source URLs, geometry hashes and license identifiers.
 
+## New geometry candidates at exactly the same triangle count
+
+The preceding cut study spent geometry on a fixed pool. This experiment constructs two new
+candidate families starting from the same 20% QEM baseline. It uses six fitting views and
+six interleaved test views. Three raster phases are scored per view. The test changes the
+nonzero phases and repeats at both 96-by-96 and 128-by-128 native rendering resolutions.
+Reference color and coverage are box-filtered from a 4x raster to the 2x output grid. The
+boundary miss metric measures source foreground within one native pixel of the background
+that falls outside the reconstructed silhouette.
+
+The contour relocation first samples projected front/back transitions and open edges where
+the coarse raster supports a foreground-to-background boundary. An image-space signed-distance
+field from the full-detail raster supplies a target and direction for each sample. A sparse
+damped fit determines one bounded offset along each coarse vertex normal. The trial scales
+are 0.25, 0.5, and 1. A face guard preserves the orientation and at least 20% of the baseline
+oriented area. Fitting selects the lowest bicubic MSE among candidates that also improve or
+preserve coverage MSE and boundary misses.
+
+At least one displacement scale passed the face guard on four of 13 assets. The fitting
+selector moved vertices on two assets. Avocado's test color MSE improved by 2.62% at 96 and
+2.15% at 128, with coverage getting worse at 128. WaterBottle's test color MSE increased
+by 12.68% and 13.92%. Neither asset provides a robust quality improvement across the three
+metrics. The face guard covers per-face orientation and area, and self-intersection remains
+outside the test. The full serial run peaked at 317 MiB.
+
+The QEM candidate pool varies aggressiveness (4 or 9 versus the baseline of 7) and stretches
+one input axis at a time by 2x before decimation, undoing the stretch on the output. Each
+alternative must reach the baseline's exact triangle count. Of 65 alternatives, 34 met the
+count. The fit-only chooser uses the same coverage and boundary guard as the relocation
+experiment. The held-out oracle applies the guard and chooses using the test images.
+
+| Equal-count QEM choice | All 13, 96 | All 13, 128 | Five fresh assets, 96 | Five fresh assets, 128 |
+|---|---:|---:|---:|---:|
+| Fit-only bicubic chooser | 9.49% | 11.44% | 3.24% | 3.81% |
+| Fit-only native-resolution chooser | 9.49% | 11.44% | 3.24% | 3.81% |
+| Held-out guarded oracle | 10.03% | 13.24% | 6.05% | 8.49% |
+
+Entries are mean per-asset reductions in held-out bicubic color MSE over default QEM. The
+native-resolution chooser uses the same guards and compares native color against the 2x2
+block average of the output reference. It selects the same mesh on all 13 assets, so this
+experiment attributes the improvement to the candidate pool. Seven
+assets improved at both tested sizes, including one of the five fresh assets. On that fresh
+asset (GlassVaseFlowers), the fitted choice retained exactly 2,806 triangles and reduced
+color MSE by 16.20% and 19.04%. The fixed aggressiveness-4 preset, chosen by mean fitting
+error on the original eight assets, improved the five fresh assets by 0.37% and 1.44% on
+average and worsened their mean coverage error. Future comparisons should include the
+tuned QEM pool. The serial pool experiment peaked at 306 MiB. These data
+cover an orthographic software renderer and a fixed gray material. A native GPU performance
+comparison and topology checks beyond exact face counts still remain.
+Image-driven silhouette and mesh optimization already have published methods.
+[Lindstrom and Turk, Image-Driven Simplification](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf)
+[Williams et al., Perceptually Guided Simplification of Lit, Textured Meshes](https://pages.jh.edu/dighamm/version2/research/2003_02_perceptually_guided_simplification_of_lit_textured_meshes.pdf)
+
+```powershell
+$pilotRoot = 'out/geometry-refinement-pilot'
+python tools/mmtrain/probe_contour_relocation.py "$pilotRoot/assets" "$pilotRoot/holdout-assets" --out "$pilotRoot/contour-96.json"
+python tools/mmtrain/probe_qem_candidate_pool.py "$pilotRoot/assets" "$pilotRoot/holdout-assets" --out "$pilotRoot/qem-pool-control-96.json"
+```
+
 ## Fairness note
 
 `espcn` and `fsrcnn` scoring below bicubic here says nothing about those architectures. Their
