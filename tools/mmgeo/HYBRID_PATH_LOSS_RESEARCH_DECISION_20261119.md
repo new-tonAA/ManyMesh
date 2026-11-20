@@ -785,6 +785,73 @@ python $probe out/filter-real-candidates/pirate.json --unit-index 5 --remove-fra
 python $probe "$data/material_sphere.json" --remove-fraction .2 --compare-placements --out "$data/placement-sphere.json"
 ```
 
+## Sharing visibility among box filter samples
+
+An orthographic pan along a pixel axis gives several taps the same projected line. If a tap
+starts at `p + d * offset`, its ray at path time `t` is the ray from `p` at time
+`t + offset`. Along each row or column of taps, solve one envelope over the interval
+that spans all shifted paths. Shift its event times by `-offset`, transform the affine depth
+intercept by `slope * offset`, and clip to the original time window. The filter still combines
+all taps before squaring and integrating coverage, depth and flat-normal residuals.
+
+With a regular N-by-N box grid, the maximum number of independent visibility solves per
+pixel drops from N squared to N. Geometry changes still invalidate cached pixel entries
+when they intersect the shared interval. Dominance is tested over that interval, so it
+can be more conservative than separate tap tests. The expanded anchor interval stays
+inside the swept coordinate range of the whole pixel used by the existing support bound.
+
+Use `--share-collinear-taps` with `--scale 2` and a multiple of 90 degrees for the pan angle.
+`perViewTapRebuilds` counts actual front-envelope construction calls in both modes. In sharing
+mode a call may serve several taps. The independent final-view audit always solves the
+original per-tap problem, then compares reconstructed pixel losses.
+
+The 5% Rounded Cube audit independently completed 46 pruned edge proposals and 257 pruned
+edge and placement proposals. The final pixel loss differed from independent per-tap
+reconstruction by at most 6.09e-15 across these policies.
+An additional 12-edit Rounded Cube check used a negative horizontal pan, radius 0.1, and a
+3-by-3 tap grid. This creates gaps between the shifted path windows. The shared interval
+conservatively spans the gaps, while each reconstructed tap clips them away. With partial
+pixel caching, cached-view pruning, and the line cache enabled, the two policies independently
+completed 164 pruned proposals and resumed 20 partial patches. The maximum final pixel loss
+difference against independent per-tap reconstruction was 2.23e-16.
+
+At about 20% face removal, the reference and sharing modes used the same 2-by-2 filter,
+three vertical pans, and six held-out paths. All 470 selected edges and placements agreed
+across the four pairs. The largest absolute per-view score difference was 7.64e-14.
+Independent held-out raster reports matched exactly. Timings are single serial Python runs
+with one BLAS thread. CPU time includes queue and view setup and excludes held-out renders.
+
+| Mesh and policy | Front solves, independent / shared | CPU seconds, independent / shared |
+|---|---:|---:|
+| Rounded Cube, edge only | 2,978 / 1,853 | 6.30 / 5.02 |
+| Rounded Cube, joint | 10,475 / 6,464 | 26.89 / 13.97 |
+| Torus, edge only | 39,376 / 22,459 | 29.45 / 20.98 |
+| Torus, joint | 137,152 / 78,255 | 95.42 / 66.22 |
+
+The four-tap edge-only objective lowered Rounded Cube held-out error from 4.35e-6
+at a single tap to 2.49e-6, against 3.86e-6 for pure QEM. Torus improved from 1.27e-4
+to 1.26e-4, against 1.46e-4 for QEM. At four taps joint selection still regressed relative
+to edge-only selection on both meshes, yielding 8.12e-6 and 1.40e-4 respectively. Faster
+evaluation makes the filtered objective cheaper but leaves the placement quality problem open.
+
+Reproduce the two paired runs with the following inputs. Use a separate output file and
+append `--share-collinear-taps` to each command for the sharing arm.
+
+```powershell
+$env:OPENBLAS_NUM_THREADS = '1'
+$probe = 'tools/mmgeo/probe_global_path_qem.py'
+python $probe out/pathloss-captures/rounded_cube.json --remove-fraction .20 --scale 2 --compare-placements --out out/pathloss-captures/tap-pair-rounded-False.json
+python $probe out/filter-real-candidates/torus.json --remove-fraction .20 --scale 2 --compare-placements --out out/pathloss-captures/tap-pair-torus-False.json
+python $probe out/pathloss-captures/rounded_cube.json --remove-fraction .02 --scale 3 --pan-angle 180 --radius .1 --share-collinear-taps --compare-placements --pixel-order loss --cached-view-bound --retain-partial --ray-cache-lines 2048 --audit-pruning --audit-final-views --score-only --out out/pathloss-captures/shared-taps-rounded-horizontal-audit.json
+```
+
+Continuous visibility along projected motion is closely related to
+[Continuous from-Segment Visibility](https://www.cs.purdue.edu/cgvlab/www/resources/papers/Popescu-TVCG-2025-1DVisibility.pdf)
+and the shared line visibility in
+[High-Quality Spatio-Temporal Rendering using Semi-Analytical Visibility](https://fileadmin.cs.lth.se/graphics/research/papers/2011/spatiotemp/).
+The experiment measures the savings from reparameterizing these intervals inside a
+dynamic simplification scorer.
+
 ## Decision and remaining gate
 
 The exact lower-bound mechanism now runs online in the Python research probe and shows a modest

@@ -145,6 +145,8 @@ def main():
                         help="also rerank all legal QEM placements of each shortlisted edge")
     parser.add_argument("--size", type=int, default=64)
     parser.add_argument("--scale", type=int, default=1)
+    parser.add_argument("--share-collinear-taps", action="store_true",
+                        help="share visibility envelopes along each row or column of box taps")
     parser.add_argument("--angle", type=float, default=2.3)
     parser.add_argument("--pan-angle", type=float, default=90.0)
     parser.add_argument("--radius", type=float, default=1.0)
@@ -175,6 +177,8 @@ def main():
         parser.error("invalid face budget, sampling, or loss settings")
     if args.retain_partial and args.pixel_order == "off":
         parser.error("retaining partial patches requires pixel pruning")
+    if args.share_collinear_taps and (args.scale < 2 or args.pan_angle % 90.0 != 0.0):
+        parser.error("collinear tap sharing needs scale >= 2 and a multiple of 90 degree pan")
     args.exhaustive = args.partial_only_bound = False
     capture = args.capture.read_bytes()
     digest = hashlib.sha256(capture).hexdigest()
@@ -191,6 +195,7 @@ def main():
     result = {"captureSha256": digest, "unitIndex": args.unit_index, "targetFaces": target_faces,
               "pool": args.pool, "normalWeight": args.normal_weight, "auditedPruning": args.audit_pruning,
               "pixelOrder": args.pixel_order,
+              "shareCollinearTaps": args.share_collinear_taps,
               "retainPartial": args.retain_partial,
               "cachedViewBound": args.cached_view_bound,
               "reuseFaceRecords": args.reuse_face_records, "rayCacheLines": args.ray_cache_lines,

@@ -193,7 +193,8 @@ def candidates_for_tile(world, projected, faces, rect, center, direction, path, 
 
 def evaluate(candidate, projected, faces, scene, original, current, points, direction, path,
              use_dominance, cached_patch=None, invalid_pixels=None, normal_data=None,
-             pixel_budget=None, prepare_pixel=None, reuse_face_records=False, scene_lines=None):
+             pixel_budget=None, prepare_pixel=None, reuse_face_records=False, scene_lines=None,
+             collinear_taps=None):
     keep, _remove = candidate.edge
     ids = candidate.faces.keys()
     if cached_patch is None:
@@ -256,7 +257,8 @@ def evaluate(candidate, projected, faces, scene, original, current, points, dire
                 envelopes.append(front_envelope(combined, path))
                 rebuilt += 1
         if any(a is not b for a, b in zip(envelopes, current[i], strict=True)):
-            changed_pixels[i] = envelopes, filtered_pixel_loss(original[i], envelopes, normal_data)
+            taps = collinear_taps.expand(envelopes) if collinear_taps is not None else envelopes
+            changed_pixels[i] = envelopes, filtered_pixel_loss(original[i], taps, normal_data)
         if pixel_budget is not None:
             loss = changed_pixels[i][1] if i in changed_pixels else losses.get(i, 0.0)
             # Round down at each addition so an accumulated rounding error cannot prune a tie.

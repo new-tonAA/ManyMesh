@@ -39,6 +39,45 @@ def front_envelope(lines, path):
     return result
 
 
+def shift_envelope(front, shift, path):
+    """Restrict an envelope at p + direction * t to the tap at p + direction * shift."""
+    result = []
+    for lo, hi, line in front:
+        start = max(path[0], lo - shift)
+        end = min(path[1], hi - shift)
+        if start < end:
+            if line is not None:
+                line = dict(line, lo=line["lo"] - shift, hi=line["hi"] - shift,
+                            intercept=line["intercept"] + line["slope"] * shift)
+            result.append((start, end, line))
+    # In exact arithmetic the expanded path includes both ends of every tap path.
+    # Restore the ends explicitly after subtracting the offset in floating point.
+    first, last = result[0], result[-1]
+    result[0] = (path[0], first[1], first[2])
+    result[-1] = (result[-1][0], path[1], last[2])
+    return result
+
+
+class CollinearTaps:
+    """Share front-envelope work among regular box taps along an axis-aligned path."""
+
+    def __init__(self, scale, direction, path):
+        self.path = path
+        offsets = [(i + 0.5) / scale for i in range(scale)]
+        horizontal = direction[1] == 0.0
+        sign = direction[0] if horizontal else direction[1]
+        self.anchors = ([(0.5, y) for y in offsets] if horizontal
+                        else [(x, 0.5) for x in offsets])
+        self.taps = [(iy if horizontal else ix, sign * (offsets[ix if horizontal else iy] - 0.5))
+                     for iy in range(scale) for ix in range(scale)]
+        margin = max(abs(shift) for _, shift in self.taps)
+        self.expanded_path = (math.nextafter(path[0] - margin, -math.inf),
+                              math.nextafter(path[1] + margin, math.inf))
+
+    def expand(self, fronts):
+        return [shift_envelope(fronts[index], shift, self.path) for index, shift in self.taps]
+
+
 def position_in_bounds(x, y, bounds):
     return bounds[0] <= x <= bounds[2] and bounds[1] <= y <= bounds[3]
 

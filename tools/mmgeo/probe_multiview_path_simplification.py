@@ -29,7 +29,7 @@ from probe_dynamic_path_simplification import (
     source_quadrics,
     winner,
 )
-from probe_incremental_path_visibility import front_envelope
+from probe_incremental_path_visibility import CollinearTaps, front_envelope
 
 
 class View:
@@ -47,6 +47,13 @@ class View:
         radians = math.radians(args.pan_angle)
         self.direction = math.cos(radians), math.sin(radians)
         self.path = (-args.radius, args.radius)
+        self.collinear_taps = None
+        if getattr(args, "share_collinear_taps", False):
+            axis = round(args.pan_angle / 90.0) % 4
+            self.direction = ((1., 0.), (0., 1.), (-1., 0.), (0., -1.))[axis]
+            self.collinear_taps = CollinearTaps(self.scale, self.direction, self.path)
+        self.line_path = (self.path if self.collinear_taps is None
+                          else self.collinear_taps.expanded_path)
         delta = np.asarray(self.path)[:, None] * np.asarray(self.direction)
         self.shift_min = delta.min(axis=0)
         self.shift_max = delta.max(axis=0)
@@ -110,12 +117,16 @@ class View:
 
     def prepare_pixel(self, i):
         y, x = divmod(i, self.size)
-        points = [(x + (sx + 0.5) / self.scale, y + (sy + 0.5) / self.scale)
-                  for sy in range(self.scale) for sx in range(self.scale)]
+        offsets = (self.collinear_taps.anchors if self.collinear_taps is not None else
+                   [((sx + 0.5) / self.scale, (sy + 0.5) / self.scale)
+                    for sy in range(self.scale) for sx in range(self.scale)])
+        points = [(x + sx, y + sy) for sx, sy in offsets]
         self.points[i] = points
-        self.original[i] = [front_envelope(self.original_scene.lines(
-            tx, ty, self.direction, self.path), self.path) for tx, ty in points]
-        self.front[i] = self.original[i]
+        fronts = [front_envelope(self.original_scene.lines(
+            tx, ty, self.direction, self.line_path), self.line_path) for tx, ty in points]
+        self.front[i] = fronts
+        self.original[i] = (self.collinear_taps.expand(fronts)
+                            if self.collinear_taps is not None else fronts)
 
     def resume(self, proposal):
         previous = self.cache.get(proposal.key)
@@ -143,10 +154,11 @@ class View:
                                   self.losses, pixel_order, reuse and self.retain_partial)
                       if cap is not None else None)
             result = evaluate(proposal, self.projected, faces, self.scene, self.original,
-                              self.front, self.points, self.direction, self.path, True,
+                              self.front, self.points, self.direction, self.line_path, True,
                               patch, invalid, normal_data, budget, self.prepare_pixel,
                               self.reuse_face_records,
-                              self.cached_lines if self.ray_cache_limit else None)
+                              self.cached_lines if self.ray_cache_limit else None,
+                              self.collinear_taps)
             rebuilt = result.tap_rebuilds
             visits = result.pixel_visits
             if result.partial_loss is not None:
