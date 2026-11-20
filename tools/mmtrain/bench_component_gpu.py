@@ -130,8 +130,8 @@ def load_export(path, expected):
     return vertices, indices
 
 
-def projection_matrix(width, height):
-    eye = np.array([1.3, 0.55, 2.8])
+def projection_matrix(width, height, eye=(1.3, 0.55, 2.8)):
+    eye = np.asarray(eye)
     forward = -eye / np.linalg.norm(eye)
     right = np.cross(forward, (0, 1, 0))
     right /= np.linalg.norm(right)

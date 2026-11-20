@@ -822,6 +822,72 @@ foreach ($meshGrid in 1,4) {
 }
 ```
 
+## Dynamic LOD on Iris Xe at a fixed triangle budget
+
+`bench_dynamic_lod.py` keeps both the full source mesh and the selected component mesh
+resident. Sixteen instances occupy isolated screen cells. Their object-space views and
+apparent scales change each frame. Each frame gives four instances the source mesh and
+twelve the component mesh. All policies therefore submit the same triangle count and
+issue two indexed instanced draws. The runtime reorders and uploads 1,280 bytes of
+instance transforms and cell identifiers each frame. Shader clipping keeps each instance
+inside its cell and allows exact validation against the corresponding isolated pixels.
+
+The area control ranks instances by squared apparent radius. The directional profile
+measures the low-versus-source color error per projected area over a 24-frame turntable.
+The richer profile bins by three apparent radii as well as twelve azimuths and shrinks its
+estimates toward the directional profile. Four contiguous splits of the turntable choose
+between the three rankers. The calibration gate switches from area only when the fitted
+ranker reduces cross-validation error by at least 0.3%. Runtime rankers interpolate the
+profiles without reading the framebuffer.
+
+The fixed hysteresis control adds a constant retention bonus per frame, scaled by the
+median priority. The residual switch cost instead uses each instance's predicted
+current low-detail error for a demotion and its previous predicted error for a
+promotion. The experiment sweeps both types of penalty. The per-frame oracle ranks
+using actual GPU images and bounds the possible spatial improvement under the same
+four-instance quota. Per-object budgeted LOD and temporal coherence are established
+prior art. [Funkhouser and Séquin, Adaptive Display Algorithm](https://gfx.cs.princeton.edu/pubs/Funkhouser_1993_ADA/index.php)
+
+For each holdout frame the source-only and component-only renders give the per-cell
+color SSE. A mixed draw is checked against that composition at the middle of each path
+for every default policy and the oracle. The switch SSE sums the actual source-versus-low
+error on changed cells at the current pose. A second mixed draw with the previous choices
+at that same pose verifies the sum and isolates the visual change caused by LOD
+switches from the camera motion. CPU selection, transform upload and
+submission are timed in the live draw loop, with the input poses precomputed. GPU
+timestamps measure the render pass. Presentation, frame pacing, streaming, and
+multi-object occlusion remain outside this test.
+
+The final 1080p test uses two held-out paths of 48 frames per asset, with three timing
+repetitions per path and eight warmup frames per policy. Policy order rotates between
+repetitions and paths. The following compares calibration-selected priorities with the
+same fixed hysteresis applied to area priorities.
+
+| Asset | Ranker chosen in calibration | Color SSE reduction | Switch-count reduction | Switch SSE reduction | Calibrated GPU p95 |
+|---|---|---:|---:|---:|---:|
+| ToyCar | Area | 0.00% | 0.00% | 0.00% | 1.596 ms |
+| GlassVaseFlowers | Size and direction | 1.29% | 3.33% | 5.68% | 0.391 ms |
+| StainedGlassLamp | Direction | 3.58% | 20.00% | 26.35% | 0.635 ms |
+
+Against area without hysteresis, the calibrated lamp policy reduces switch SSE by
+31.90% and color SSE by 2.62%. The pure spatial oracle reduces color SSE by 0.58%
+on ToyCar, 3.69% on GlassVaseFlowers, and 3.78% on StainedGlassLamp. This quantifies
+the small spatial headroom for the ToyCar policy. The directional residual switch
+cost at strength 0.35 reduces switch SSE by 41–53% versus area alone, with increases
+in color SSE of 2–9%. The sweep retains that trade-off and the area-only controls.
+
+For the calibrated policy, selection alone took 0.234–0.271 ms p95 and CPU selection,
+upload and submission took 1.255–2.010 ms p95. The complete serial audit took 27.1 s
+with a 313 MiB host process peak. Rerunning the experiment reproduced the quality
+curves exactly. The measurements establish resident-mesh switching and quality
+trade-offs for the isolated-cell workload.
+
+```powershell
+$pilotRoot = 'out/geometry-refinement-pilot'
+$env:PYTHONPATH = (Resolve-Path "$pilotRoot/gpu-deps").Path
+python tools/mmtrain/bench_dynamic_lod.py "$pilotRoot/motion-meshes" --motion-reference "$pilotRoot/motion-96.json" --asset ToyCar GlassVaseFlowers StainedGlassLamp --size 1920x1080 --frames 48 --test-pair alternate --timing-repeats 3 --out "$pilotRoot/dynamic-repeat-1080.json"
+```
+
 ## Fairness note
 
 `espcn` and `fsrcnn` scoring below bicubic here says nothing about those architectures. Their
