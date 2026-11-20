@@ -35,6 +35,33 @@ justified by this screen.
 
 ## Reproduction
 
+## Cross-mesh controls
+
+I reused the frozen Torus and Pirate captures with the same image size, tile size, pan direction,
+candidate limit, and raster budgets. These are separate candidate pools and no new mesh builds.
+
+| Mesh / unit / seed | Legal candidates | Nonzero exact losses | Event total | Dense 64 | Dense 256 | Winner agreement |
+|---|---:|---:|---:|---:|---:|---|
+| Material Sphere / 0 / 16518 | 38 | 34 | 1.619 s | 3.331 s | 11.834 s | exact winner ranks 3rd in both raster lists; raster winner is effectively tied |
+| Torus / 0 / 2500 | 38 | 38 | 2.284 s | 2.214 s | 9.689 s | both raster lists select the exact winner |
+| Pirate / 5 / 3000 | 42 | 42 | 1.404 s | 2.867 s | 11.564 s | both raster lists select the exact winner |
+
+The 64-sample Torus raster's summed absolute error was 0.099% of total exact energy and its
+maximum relative error was 0.73%; the exact method was about 3% slower there. Pirate's 64-sample
+errors were 0.052% of total exact energy and 0.41% maximum relative, while its exact method was
+about 2.0x faster. At 256 samples, both meshes paid substantially more for a score that did not
+change the selected collapse. These three local pools support a narrow observation that exact
+events can sometimes evaluate the continuous-path objective faster than dense sampling. They do
+not show a better collapse sequence, a quality gain at fixed face count, or a robust speedup over
+the cheaper 64-sample raster baseline. This is not a SIGGRAPH contribution.
+
+Reproduce the additional controls with:
+
+```powershell
+python tools/mmgeo/probe_shared_envelope_raster_tile.py --capture out/filter-real-candidates/torus.json --seed-candidate 2500 --candidate-limit 48 --angle 2.3 --pan-angle 45 --size 64 --scale 1 --tile-width 16 --tile-height 8 --steps 64 256 --out out/pathloss-captures/torus-2500-pan45-tile16x8-n48.json
+python tools/mmgeo/probe_shared_envelope_raster_tile.py --capture out/filter-real-candidates/pirate.json --unit-index 5 --seed-candidate 3000 --candidate-limit 48 --angle 2.3 --pan-angle 45 --size 64 --scale 1 --tile-width 16 --tile-height 8 --steps 64 256 --out out/pathloss-captures/pirate-unit5-3000-pan45-tile16x8-n48.json
+```
+
 ```powershell
 python tools/mmgeo/probe_shared_envelope_raster_tile.py --capture out/pathloss-captures/material_sphere.json --seed-candidate 16518 --candidate-limit 48 --angle 2.3 --pan-angle 45 --size 64 --scale 1 --tile-width 16 --tile-height 8 --steps 64 256 --out out/pathloss-captures/material-sphere-16518-pan45-tile16x8-n48.json
 ```
