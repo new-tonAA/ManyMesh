@@ -933,3 +933,13 @@ python tools/mmtrain/curate_thingi10k_subset.py `
 
 Dataset sources: [Thingi10K dataset repository](https://github.com/Thingi10K/Thingi10K),
 [individual raw-mesh mirror](https://huggingface.co/datasets/Thingi10K/Thingi10K/tree/main/raw_meshes).
+
+## High-resolution path-loss check
+
+A 96-by-96 Pirate holdout reduces 3,032 to 2,426 faces and tests six unseen orbit views with 3x
+sampling. Path-ranked edge selection ties QEM on coverage, changes mean depth by only `-5.3e-6%`,
+and raises flat-normal error by `1.57%`, while taking `16.2x` the CPU time. Reranking placements
+raises held-out coverage, depth and normal error by `15.8%`, `30.1%` and `47.5%`, respectively,
+at `49.3x` QEM time. This is a negative high-resolution result for this asset and closes any claim
+that the current path ranking configuration improves Pirate over QEM. Full hashes, per-view data,
+and reproduction are in [the audit note](../mmgeo/PIRATE_HIRES_PATH_LOSS_AUDIT_20261120.md).
