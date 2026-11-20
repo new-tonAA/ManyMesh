@@ -80,6 +80,7 @@ class PatchResult:
     tap_rebuilds: int
     pixel_visits: int
     partial_loss: float | None = None
+    pending_pixels: set | None = None
 
 
 @dataclass
@@ -87,6 +88,12 @@ class PixelBudget:
     limit: float
     current_losses: dict
     order: str
+    retain_partial: bool = False
+
+
+def known_support_loss(support, updates, invalid, current_losses):
+    return math.fsum(updates[i][1] if i in updates else current_losses.get(i, 0.0)
+                     for i in support if i not in invalid)
 
 
 def link_cycle(vertex, incident, faces):
@@ -184,12 +191,35 @@ def evaluate(candidate, projected, faces, scene, original, current, points, dire
              pixel_budget=None, prepare_pixel=None, reuse_face_records=False, scene_lines=None):
     keep, _remove = candidate.edge
     ids = candidate.faces.keys()
+    if cached_patch is None:
+        changed_pixels = {}
+        intersected = set()
+        pixels = candidate.support
+    else:
+        changed_pixels = {i: update for i, update in cached_patch.pixels.items()
+                          if i not in invalid_pixels}
+        intersected = (cached_patch.intersected.copy() if cached_patch.pending_pixels is not None
+                       else cached_patch.intersected)
+        pixels = sorted(invalid_pixels)
+    can_discover_intersections = cached_patch is None or cached_patch.pending_pixels is not None
+    lower = 0.0
+    if pixel_budget is not None:
+        losses = pixel_budget.current_losses
+        if cached_patch is not None:
+            lower = math.nextafter(known_support_loss(candidate.support, changed_pixels,
+                                                      invalid_pixels, losses), -math.inf)
+        if lower > pixel_budget.limit:
+            records = cached_patch.records if cached_patch is not None else []
+            pending = set(pixels) if pixel_budget.retain_partial else None
+            return PatchResult(records, changed_pixels, intersected, 0, 0, lower, pending)
+        if pixel_budget.order == "loss":
+            pixels = sorted(pixels, key=lambda i: (-losses.get(i, 0.0), i))
     if reuse_face_records:
         old_records = [scene.records[i] for i in ids if i in scene.records]
         old_bins = build_path_triangle_grid(old_records)
     else:
         old_records, old_bins = make_grid(projected, faces, ids)
-    if reuse_face_records and cached_patch is not None:
+    if reuse_face_records and cached_patch is not None and cached_patch.records:
         records = cached_patch.records
         bins = build_path_triangle_grid(records)
     else:
@@ -198,26 +228,6 @@ def evaluate(candidate, projected, faces, scene, original, current, points, dire
         replacement_positions[keep] = candidate.projected_target
         records, bins = make_grid(replacement_positions, candidate.faces, ids)
     lines_at = scene.lines if scene_lines is None else scene_lines
-    if cached_patch is None:
-        changed_pixels = {}
-        intersected = set()
-        pixels = candidate.support
-    else:
-        changed_pixels = {i: update for i, update in cached_patch.pixels.items()
-                          if i not in invalid_pixels}
-        intersected = cached_patch.intersected
-        pixels = sorted(invalid_pixels)
-    lower = 0.0
-    if pixel_budget is not None:
-        losses = pixel_budget.current_losses
-        if cached_patch is not None:
-            lower = math.nextafter(math.fsum(
-                changed_pixels[i][1] if i in changed_pixels else losses.get(i, 0.0)
-                for i in candidate.support if i not in invalid_pixels), -math.inf)
-        if lower > pixel_budget.limit:
-            return PatchResult(records, changed_pixels, intersected, 0, 0, lower)
-        if pixel_budget.order == "loss":
-            pixels = sorted(pixels, key=lambda i: (-losses.get(i, 0.0), i))
     rebuilt = 0
     visits = 0
     for visits, i in enumerate(pixels, 1):
@@ -228,7 +238,7 @@ def evaluate(candidate, projected, faces, scene, original, current, points, dire
             old_lines = instantiate_path_lines(old_records, x, y, direction, path, old_bins)[0]
             new_lines = instantiate_path_lines(records, x, y, direction, path, bins)[0]
             reusable = not (old_lines or new_lines)
-            if not reusable and cached_patch is None:
+            if not reusable and can_discover_intersections:
                 intersected.add(i)
             if use_dominance and not reusable:
                 reusable = unchanged_reason(cached, ids, old_lines, new_lines) == "occludedEdit"
@@ -247,7 +257,9 @@ def evaluate(candidate, projected, faces, scene, original, current, points, dire
             # Round down at each addition so an accumulated rounding error cannot prune a tie.
             lower = math.nextafter(lower + loss, -math.inf)
             if lower > pixel_budget.limit:
-                return PatchResult(records, changed_pixels, intersected, rebuilt, visits, lower)
+                pending = set(pixels[visits:]) if pixel_budget.retain_partial else None
+                return PatchResult(records, changed_pixels, intersected, rebuilt, visits, lower,
+                                   pending)
     return PatchResult(records, changed_pixels, intersected, rebuilt, visits)
 
 

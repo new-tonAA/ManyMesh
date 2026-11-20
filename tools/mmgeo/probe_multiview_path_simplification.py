@@ -22,6 +22,7 @@ from probe_dynamic_path_simplification import (
     evaluate,
     heldout_raster_quality,
     indexed_normals,
+    known_support_loss,
     placement_normals,
     quadric_cost,
     replay_geometry,
@@ -55,6 +56,7 @@ class View:
         self.losses = {}
         self.stamps = {}
         self.cache = {}
+        self.retain_partial = args.retain_partial
         self.reuse_face_records = args.reuse_face_records
         self.ray_cache_limit = args.ray_cache_lines
         self.ray_cache = OrderedDict()
@@ -63,6 +65,9 @@ class View:
         self.ray_hits = 0
         self.ray_misses = 0
         self.full_patch_hits = 0
+        self.partial_patch_saves = 0
+        self.resumed_partials = 0
+        self.resumed_known_pixels = 0
 
     def cached_lines(self, x, y, direction, path):
         key = (x, y)
@@ -112,20 +117,30 @@ class View:
             tx, ty, self.direction, self.path), self.path) for tx, ty in points]
         self.front[i] = self.original[i]
 
+    def resume(self, proposal):
+        previous = self.cache.get(proposal.edge)
+        if previous is None or proposal.signature != previous[0]:
+            return None, None
+        patch = previous[2]
+        invalid = {i for i in patch.intersected if self.stamps.get(i, 0) > previous[1]}
+        if patch.pending_pixels is not None:
+            invalid.update(patch.pending_pixels)
+        return patch, invalid
+
     def score(self, proposal, outside_loss, faces, normal_data, epoch, reuse,
-              cap=None, pixel_order="scan"):
-        previous = self.cache.get(proposal.edge) if reuse else None
-        patch, invalid = None, None
-        if previous is not None and proposal.signature == previous[0]:
-            patch = previous[2]
-            invalid = {i for i in patch.intersected if self.stamps.get(i, 0) > previous[1]}
-        if patch is not None and not invalid:
+              cap=None, pixel_order="scan", resume_state=None):
+        patch, invalid = (resume_state if resume_state is not None else
+                          self.resume(proposal) if reuse else (None, None))
+        if patch is not None and patch.pending_pixels is not None:
+            self.resumed_partials += 1
+            self.resumed_known_pixels += len(proposal.support) - len(invalid)
+        if patch is not None and patch.pending_pixels is None and not invalid:
             result = patch
             rebuilt = visits = 0
             self.full_patch_hits += 1
         else:
             budget = (PixelBudget(math.nextafter(cap - outside_loss, math.inf),
-                                  self.losses, pixel_order)
+                                  self.losses, pixel_order, reuse and self.retain_partial)
                       if cap is not None else None)
             result = evaluate(proposal, self.projected, faces, self.scene, self.original,
                               self.front, self.points, self.direction, self.path, True,
@@ -135,6 +150,9 @@ class View:
             rebuilt = result.tap_rebuilds
             visits = result.pixel_visits
             if result.partial_loss is not None:
+                if result.pending_pixels is not None:
+                    self.cache[proposal.edge] = (proposal.signature, epoch - 1, result)
+                    self.partial_patch_saves += 1
                 lower = math.nextafter(outside_loss + result.partial_loss, -math.inf)
                 return lower, None, rebuilt, visits
         if reuse:
@@ -198,31 +216,48 @@ def select_path_edge(views, candidates, faces, world, source_normals, current_no
     rebuilt = [0] * len(views)
     visits = [0] * len(views)
     pixel_stops = 0
+    cached_view_prunes = 0
     hits_before = [view.ray_hits for view in views]
     misses_before = [view.ray_misses for view in views]
     patches_before = [view.full_patch_hits for view in views]
+    saved_before = sum(view.partial_patch_saves for view in views)
+    resumed_before = sum(view.resumed_partials for view in views)
+    known_before = sum(view.resumed_known_pixels for view in views)
     best = math.inf
     for candidate in candidates:
         edge = candidate.edge
         projections = [view.proposal(candidate, faces) for view in views]
         outside = [view.outside_loss(proposal) for view, proposal in zip(views, projections)]
+        bounds = outside
+        resume = [None] * len(views)
+        if args.cached_view_bound and not args.exhaustive and math.isfinite(best):
+            bounds = outside.copy()
+            for i, (view, proposal) in enumerate(zip(views, projections)):
+                resume[i] = view.resume(proposal)
+                patch, invalid = resume[i]
+                if patch is not None:
+                    known = math.nextafter(known_support_loss(
+                        proposal.support, patch.pixels, invalid, view.losses), -math.inf)
+                    bounds[i] = math.nextafter(outside[i] + max(0.0, known), -math.inf)
         normals = ((source_normals, ChainMap(placement_normals(world, candidate), current_normals),
                     args.normal_weight) if current_normals is not None else None)
         values, patches = [], []
         for i, view in enumerate(views):
             lower = (math.fsum(values) if args.partial_only_bound
-                     else math.fsum((*values, *outside[i:])))
+                     else math.fsum((*values, *bounds[i:])))
             # Allow all candidates in the same numerical tie class as the incumbent.
             if not args.exhaustive and lower > best + 2e-12:
+                if bounds is not outside and math.fsum((*values, *outside[i:])) <= best + 2e-12:
+                    cached_view_prunes += 1
                 if args.audit_pruning:
                     pending[edge] = projections, outside, normals, values, lower
                 break
             cap = None
             if args.pixel_order != "off" and not args.exhaustive and math.isfinite(best):
-                prefix = math.fsum(values if args.partial_only_bound else (*values, *outside[i + 1:]))
+                prefix = math.fsum(values if args.partial_only_bound else (*values, *bounds[i + 1:]))
                 cap = math.nextafter((best + 2e-12) - prefix, math.inf)
             value, patch, taps, pixels = view.score(projections[i], outside[i], faces, normals,
-                                                     epoch, True, cap, args.pixel_order)
+                                                     epoch, True, cap, args.pixel_order, resume[i])
             counts[i] += 1
             rebuilt[i] += taps
             visits[i] += pixels
@@ -243,6 +278,9 @@ def select_path_edge(views, candidates, faces, world, source_normals, current_no
     hits = [view.ray_hits - before for view, before in zip(views, hits_before)]
     misses = [view.ray_misses - before for view, before in zip(views, misses_before)]
     full_patch_hits = [view.full_patch_hits - before for view, before in zip(views, patches_before)]
+    partial_saves = sum(view.partial_patch_saves for view in views) - saved_before
+    resumed = sum(view.resumed_partials for view in views) - resumed_before
+    resumed_pixels = sum(view.resumed_known_pixels for view in views) - known_before
     if args.audit_pruning:
         full = scores.copy()
         for edge, (projections, outside, normals, values, lower) in pending.items():
@@ -260,6 +298,9 @@ def select_path_edge(views, candidates, faces, world, source_normals, current_no
         "perViewPixelVisits": visits, "pixelStops": pixel_stops,
         "perViewRayCacheHits": hits, "perViewRayCacheMisses": misses,
         "perViewFullPatchHits": full_patch_hits,
+        "partialPatchSaves": partial_saves, "resumedPartials": resumed,
+        "resumedKnownPixels": resumed_pixels,
+        "cachedViewPrunes": cached_view_prunes,
         "auditedPrunedCandidates": len(pending),
     }
 
@@ -355,6 +396,8 @@ def run(unit, control, args):
               "displacementCap": budget.cap if budget is not None else None,
               "displacementRetryPool": args.displacement_retry_pool,
               "pixelOrder": args.pixel_order,
+              "retainPartial": args.retain_partial,
+              "cachedViewBound": args.cached_view_bound,
               "reuseFaceRecords": args.reuse_face_records, "rayCacheLines": args.ray_cache_lines,
               "stopReason": stop_reason}
     if budget is not None:
@@ -382,6 +425,10 @@ def main():
                         help="ablate the unchanged-pixel contribution of unscored views")
     parser.add_argument("--pixel-order", choices=("off", "scan", "loss"), default="off",
                         help="optionally prune within views in scan or descending current-loss order")
+    parser.add_argument("--retain-partial", action="store_true",
+                        help="retain processed pixels after a pixel-bound stop")
+    parser.add_argument("--cached-view-bound", action="store_true",
+                        help="include valid cached pixels in unscored view bounds")
     parser.add_argument("--reuse-face-records", action="store_true")
     parser.add_argument("--ray-cache-lines", type=int, default=0,
                         help="limit cached current-scene line records per view, zero disables it")
@@ -401,6 +448,10 @@ def main():
         parser.error("QEM shortlist size must be positive")
     if args.ray_cache_lines < 0:
         parser.error("ray cache size must be nonnegative")
+    if args.retain_partial and args.pixel_order == "off":
+        parser.error("retaining partial patches requires pixel pruning")
+    if args.cached_view_bound and args.partial_only_bound:
+        parser.error("the cached view bound requires the baseline outside-support bound")
     control_bytes = args.control.read_bytes()
     control = json.loads(control_bytes)
     capture = args.capture.read_bytes()

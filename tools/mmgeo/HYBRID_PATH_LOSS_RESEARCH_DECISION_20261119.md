@@ -656,6 +656,71 @@ python $probe "$data/material_sphere.json" --remove-fraction .20 --score-only --
 python $probe "$data/material_sphere.json" --remove-fraction .20 --reuse-face-records --ray-cache-lines 8192 --score-only --out "$data/face-ray-sphere-reuse.json"
 ```
 
+## Resuming interrupted candidate scores
+
+With `--retain-partial`, an interrupted view stores its evaluated pixels and records the pending
+pixel addresses. The entry stays within the live edge shortlist. A later evaluation requires the
+same geometry and placement signature. It joins the pending pixels with the evaluated,
+intersecting pixels whose scene stamps have advanced. The remaining cached candidate losses
+can be reused. An early stop stores that state without submitting a partial patch as a
+collapsible candidate. All evaluation views still complete before committing a winner.
+
+The optional `--cached-view-bound` includes the known interior terms in the lower bound of each
+unscored view. These terms occupy pixels disjoint from the unchanged exterior. Both groups
+use evaluated losses in the current scene or losses certified by the signature and stamps.
+Omitted contributions are nonnegative. A fully scored view replaces its entire lower bound,
+which prevents counting any cached term twice. The same mechanism works with full cache entries
+when pixel stopping is disabled.
+
+| Mesh, 20% removed | Tap rebuilds, view only / discard / retain | CPU seconds, discard / retain | Resumed entries / covered pixels |
+|---|---:|---:|---:|
+| Rounded Cube | 843 / 953 / 826 | 2.20 / 2.05 | 89 / 148 |
+| Torus | 9,959 / 11,890 / 9,807 | 7.69 / 6.77 | 136 / 3,792 |
+| Pirate unit 5 | 998 / 1,381 / 986 | 7.72 / 6.70 | 270 / 592 |
+| Material Sphere | 12,873 / 15,389 / 12,668 | 55.13 / 46.72 | 995 / 4,382 |
+
+All three arms selected exactly the same edges, placements, and per-view scores over 1,481
+collapses. Retention cuts 13–29% of the tap rebuilds of pixel pruning with discarded state. The
+retained variant also rebuilds 1–2% fewer taps than the view-only reference. The discard and
+retain CPU times are single matched pairs. A separate Rounded Cube run completed all 109
+interrupted candidate scores and independently rebuilt the final views. Its maximum
+pixel loss difference was 3.97e-14. The method preserves the existing comparison's held-out
+quality by reproducing the same geometry.
+
+| Mesh | View evaluations, view only / retain plus cached bound | Tap rebuilds | CPU seconds |
+|---|---:|---:|---:|
+| Rounded Cube | 1,321 / 1,223 | 843 / 826 | 2.09 / 2.05 |
+| Torus | 1,357 / 1,101 | 9,959 / 9,805 | 6.69 / 6.64 |
+| Pirate unit 5 | 3,455 / 2,949 | 998 / 986 | 6.44 / 6.97 |
+| Material Sphere | 11,137 / 8,652 | 12,873 / 12,641 | 50.59 / 45.11 |
+
+The combined policy reproduced all decisions and per-view scores. It reduces view evaluation
+calls by 7–22%, with a 1–2% reduction in actual envelope reconstructions. Some of the skipped
+calls would have been complete-cache hits. Material Sphere used 11% less CPU time and Pirate
+used 8% more. These are single paired runs. Keep the view-only strategy as the baseline until
+an exact policy gives a larger reduction in geometry work across cases.
+
+Two additional checks isolate the bound and audit the combined pruning path. On Torus, the
+cached-view-bound-only run reproduced all 115 edge, placement, and per-view-score records from
+the view-only run. On Rounded Cube, the retain-plus-bound run independently completed all 109
+pruned candidate scores and rebuilt the final views; the maximum pixel difference was
+3.97e-14. The extra audit used the same geometry trajectory, so it checks score reconstruction
+without changing the winner sequence.
+
+```powershell
+$env:OPENBLAS_NUM_THREADS = "1"
+$probe = "tools/mmgeo/probe_global_path_qem.py"
+$data = "out/pathloss-captures"
+python $probe "$data/rounded_cube.json" --remove-fraction .20 --pixel-order loss --retain-partial --audit-pruning --audit-final-views --score-only --out "$data/partial-rounded-audit.json"
+python $probe "$data/material_sphere.json" --remove-fraction .20 --score-only --out "$data/resume-sphere-view.json"
+python $probe "$data/material_sphere.json" --remove-fraction .20 --pixel-order loss --retain-partial --cached-view-bound --score-only --out "$data/resume-sphere-memo.json"
+```
+
+Lazy edge costs and partial image updates are established ideas in
+[Image-Driven Simplification](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf).
+The tested additional invariant concerns how unfinished per-pixel work and its lower bound
+survive accepted topology changes across multiple continuous views.
+
 ## Decision and remaining gate
 
 The exact lower-bound mechanism now runs online in the Python research probe and shows a modest

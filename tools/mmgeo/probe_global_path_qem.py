@@ -143,6 +143,10 @@ def main():
     parser.add_argument("--audit-pruning", action="store_true")
     parser.add_argument("--pixel-order", choices=("off", "scan", "loss"), default="off",
                         help="optionally prune within views in scan or descending current-loss order")
+    parser.add_argument("--retain-partial", action="store_true",
+                        help="retain processed pixels after a pixel-bound stop")
+    parser.add_argument("--cached-view-bound", action="store_true",
+                        help="include valid cached pixels in unscored view bounds")
     parser.add_argument("--reuse-face-records", action="store_true")
     parser.add_argument("--ray-cache-lines", type=int, default=0,
                         help="limit cached current-scene line records per view, zero disables it")
@@ -157,6 +161,8 @@ def main():
                        (args.angle, args.pan_angle, args.radius, args.normal_weight))
             or args.radius <= 0.0 or args.normal_weight < 0.0 or args.ray_cache_lines < 0):
         parser.error("invalid face budget, sampling, or loss settings")
+    if args.retain_partial and args.pixel_order == "off":
+        parser.error("retaining partial patches requires pixel pruning")
     args.exhaustive = args.partial_only_bound = False
     capture = args.capture.read_bytes()
     digest = hashlib.sha256(capture).hexdigest()
@@ -173,6 +179,8 @@ def main():
     result = {"captureSha256": digest, "unitIndex": args.unit_index, "targetFaces": target_faces,
               "pool": args.pool, "normalWeight": args.normal_weight, "auditedPruning": args.audit_pruning,
               "pixelOrder": args.pixel_order,
+              "retainPartial": args.retain_partial,
+              "cachedViewBound": args.cached_view_bound,
               "reuseFaceRecords": args.reuse_face_records, "rayCacheLines": args.ray_cache_lines,
               "optimization": {"size": args.size, "scale": args.scale, "angle": args.angle,
                                "panAngle": args.pan_angle, "radius": args.radius},
