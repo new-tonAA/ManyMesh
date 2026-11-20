@@ -894,3 +894,42 @@ python tools/mmtrain/bench_dynamic_lod.py "$pilotRoot/motion-meshes" --motion-re
 papers train for a hundred thousand iterations on tens of thousands of images; this runs 1500
 iterations on twelve. Treat those rows as "at an equal, very small budget", which is the point
 of the comparison — not as a verdict on the methods.
+
+## External mesh corpus pilot
+
+The repository's Khronos sample meshes are too few and too clean to support a held-out learned
+simplification study. `curate_thingi10k_subset.py` turns the Thingi10K v1.5.0 geometry and input
+summary CSVs into a deterministic pilot manifest. It selects one file per Thing, excludes
+non-commercial and no-derivative licenses, requires a single oriented manifold component with no
+reported degeneracies, duplicates or self-intersections, and balances four face-count bands. The
+32 selected Things are split by a stable hash into 16 train, 8 validation and 8 test assets. The
+manifest records both the original source URL and the dataset-hosted individual-file URL, plus the
+license needed for attribution. Mesh files are not included in the repository.
+
+The metadata CSVs are small and live in ignored `out/thingi10k-metadata/`. The original per-model
+URLs return HTTP 403 in this environment. The dataset repository exposes a 38.8-GB `raw_meshes`
+tree, so the manifest points at its individual-file mirror pinned to commit
+`1e52df627995ba43b7b91143af4bed86f570037a`. The runner could not connect to Hugging Face from
+the shell, so the selected mesh files still need to be fetched when that endpoint is reachable.
+Record their hashes and license attribution, then run the same simplification and filtered-raster
+pipeline used for existing captures. No mesh geometry has been downloaded and no model has been
+trained on this corpus yet.
+
+Download the small, pinned metadata files and recreate the manifest with:
+
+```powershell
+New-Item -ItemType Directory -Force out/thingi10k-metadata | Out-Null
+Invoke-WebRequest `
+  https://huggingface.co/datasets/Thingi10K/Thingi10K/resolve/v1.5.0/metadata/geometry_data.csv `
+  -OutFile out/thingi10k-metadata/geometry_data.csv
+Invoke-WebRequest `
+  https://huggingface.co/datasets/Thingi10K/Thingi10K/resolve/v1.5.0/metadata/input_summary.csv `
+  -OutFile out/thingi10k-metadata/input_summary.csv
+python tools/mmtrain/curate_thingi10k_subset.py `
+  out/thingi10k-metadata/geometry_data.csv `
+  out/thingi10k-metadata/input_summary.csv `
+  --out out/thingi10k-metadata/selected-32.json
+```
+
+Dataset sources: [Thingi10K dataset repository](https://github.com/Thingi10K/Thingi10K),
+[individual raw-mesh mirror](https://huggingface.co/datasets/Thingi10K/Thingi10K/tree/main/raw_meshes).
