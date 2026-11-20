@@ -427,6 +427,58 @@ triangles) it scores **28.07 dB** against **28.69 dB** for bicubic: the cheap pa
 quality gain. The same-resolution `tiny` is the one that gains +1.25 to +1.94 dB, and it needs
 the full-resolution grid to do so. See section 7.12 of `MANYMESH.md` for the end-to-end numbers.
 
+## Reuse reconstruction outside a changed image region
+
+Tiny has four 3-by-3 convolutions and an input skip, with a four-pixel receptive radius.
+Compare two inputs on the network's own grid. Outside the changed input bounds expanded
+by four pixels, the baseline network output remains valid. Run the network on the affected
+output bounds with another four pixels of input context, then copy back only the affected
+outputs. At the true image boundary the crop keeps the original zero padding. With a flat
+background, the baseline can be computed on a template that accounts for distance to the
+frame edges. For TinyUpsample this applies to the low-resolution residual network before
+pixel shuffle. Its bicubic pass still covers the full image.
+
+The single-thread CPU benchmark used six native 320-by-180 inputs and 640-by-360 references
+from `out/m3t2`, with one input frame per view. These are archived checkpoints, and the
+screen does not establish cross-asset generalization. The times are medians of per-view
+medians from three warm repeats. Tiny's external bicubic rescale adds about 4.6 ms. The
+TinyUpsample times include bicubic and pixel shuffle. Both exclude I/O and GPU rasterization.
+
+| Frozen model | Full inference | Cropped inference | Median PSNR | Bicubic PSNR |
+|---|---:|---:|---:|---:|
+| Tiny | 133.5 ms | 59.1 ms | 29.66 dB | 30.57 dB |
+| TinyUpsample | 45.9 ms | 32.6 ms | 30.11 dB | 30.57 dB |
+
+The largest absolute pixel difference between full and cropped inference was 6.76e-9.
+These checkpoints miss both the bicubic quality and a 16.7 ms frame budget in this run.
+The laptop path needs the full cost of rendering, reconstruction and transfer measured
+together. Use the engine's spatial or temporal upscale as a lightweight control.
+The Iris Xe smoke run reached Vulkan device selection and camera export. It stopped
+before producing a frame or GPU time sample, so there is no new whole-frame result.
+
+Candidate scoring is a different workload. Rerunning the same checkpoint on
+`out/lod-oracle-pilot` reused the reconstructed base cut outside each swap's affected pixels.
+All 136 alternate cuts agreed with full network inference within 7.46e-8, and every view
+retained the same raw and reconstructed winners as the saved full-frame run. The median
+crop covered 0.17% of the frame, and candidate inference including input comparison and
+output assembly took 4.78 ms median in the local run. This is a same-resolution capture.
+Ranking after the network gave 0.00013 dB over the raw oracle in one view and zero in the
+other eleven. For the coupled mesh and upscaling experiment, capture distinct legal mesh
+cuts rendered natively at several resolutions. Compare at the same final resolution and
+frame budget against native QEM and QEM with the same upscaler. Require improvements in
+image quality and motion stability across held-out assets and view sequences.
+
+Adaptive compute for upscalers has prior art in
+[Exploring Sparsity in Image Super-Resolution](https://openaccess.thecvf.com/content/CVPR2021/html/Wang_Exploring_Sparsity_in_Image_Super-Resolution_for_Efficient_Inference_CVPR_2021_paper.html).
+The local execution here is an exact receptive-field reuse control for an existing network.
+
+```powershell
+$env:OMP_NUM_THREADS = '1'
+python tools/mmtrain/bench_local_reconstruction.py --capture out/m3t2 --checkpoint out/m3/models/tiny_no.pt --out out/temporal-check/tiny-local-native-lowres.json
+python tools/mmtrain/bench_local_reconstruction.py --capture out/m3t2 --model tiny_up --checkpoint out/m4-dragon/cross/cross2_tiny_up.pt --out out/temporal-check/tiny-up-local-native-lowres.json
+python tools/mmtrain/lod_oracle.py score --capture out/lod-oracle-pilot --checkpoint out/m3/models/tiny_s1_no.pt --threads 1 --local-reconstruction --audit-local-reconstruction --out out/lod-oracle-pilot/local-score.json
+```
+
 ## Fairness note
 
 `espcn` and `fsrcnn` scoring below bicubic here says nothing about those architectures. Their

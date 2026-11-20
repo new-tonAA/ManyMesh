@@ -23,6 +23,7 @@ import json
 import math
 from pathlib import Path
 import subprocess
+import time
 
 
 def digest(path):
@@ -156,17 +157,16 @@ def score(args):
 
     if args.checkpoint:
         import torch
+        from local_reconstruction import infer, local_prediction
         from train import Tiny
 
-        torch.set_num_threads(2)
+        torch.set_num_threads(args.threads)
         model = Tiny(3)
         model.load_state_dict(torch.load(args.checkpoint, map_location="cpu", weights_only=True))
         model.eval()
 
-        @torch.inference_mode()
         def reconstruct(image):
-            tensor = torch.from_numpy(image).permute(2, 0, 1).unsqueeze(0)
-            return model(tensor)[0].permute(1, 2, 0).numpy()
+            return infer(model, image)
     else:
         def reconstruct(image):
             return image
@@ -198,13 +198,27 @@ def score(args):
             raise ValueError(f"Reference is empty or fully covers the viewport: {path}")
         with (path / "oracle.csv").open(newline="") as stream:
             rows = list(csv.DictReader(stream))[1:]
-        for row in rows:
+        for i, row in enumerate(rows):
             image = load(path / f"{row['stem']}.png")
             if image.shape != reference.shape:
                 raise ValueError(f"Size mismatch in {path}: {row['stem']}")
             mask = np.any(image != background, axis=2)
             union = mask | ref_mask
-            prediction = reconstruct(image)
+            started = time.perf_counter()
+            if args.local_reconstruction and i:
+                prediction, area = local_prediction(model, image, baseline_input, baseline_output)
+            else:
+                prediction, area = reconstruct(image), image.shape[0] * image.shape[1]
+            row["reconstructionMs"] = 1000 * (time.perf_counter() - started)
+            if args.local_reconstruction:
+                row["convolutionPixels"] = int(area)
+                if i == 0:
+                    baseline_input, baseline_output = image, prediction
+                elif args.audit_local_reconstruction:
+                    difference = float(np.max(np.abs(prediction - reconstruct(image))))
+                    if difference > 1e-5:
+                        raise ValueError(f"Local reconstruction error for {row['stem']}: {difference}")
+                    row["maxReconstructionDifference"] = difference
             rebuilt_image = np.clip(prediction, 0, 1)
             row["raw_mse"] = mse(image, reference)
             row["reconstructed_mse"] = mse(rebuilt_image, reference)
@@ -264,6 +278,11 @@ def main():
     evaluate.add_argument("--capture", type=Path, required=True)
     evaluate.add_argument("--out", type=Path, required=True)
     evaluate.add_argument("--checkpoint", type=Path, help="Frozen RGB Tiny scale=1 weights")
+    evaluate.add_argument("--threads", type=int, default=2)
+    evaluate.add_argument("--local-reconstruction", action="store_true",
+                          help="reuse the baseline outside the changed region's receptive field")
+    evaluate.add_argument("--audit-local-reconstruction", action="store_true",
+                          help="compare local results to full inference")
     evaluate.add_argument("--strengths", nargs="+", type=float, default=[],
                           help="Evaluate these reconstruction residual strengths as well")
     args = parser.parse_args()
@@ -279,6 +298,10 @@ def main():
     elif args.command == "render":
         render_capture(args.capture, args.mm_bench)
     else:
+        if (args.threads < 1 or (args.local_reconstruction and not args.checkpoint)
+                or (args.audit_local_reconstruction and not args.local_reconstruction)):
+            parser.error("local reconstruction requires a checkpoint and a positive thread count; "
+                         "the local audit also requires --local-reconstruction")
         if args.strengths and (not args.checkpoint
                 or any(not math.isfinite(s) or s < 0 for s in args.strengths)):
             parser.error("--strengths requires a checkpoint and finite nonnegative values")
