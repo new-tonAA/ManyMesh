@@ -2,6 +2,8 @@
 """Compare full-unit QEM with continuous path reranking of the same legal queue."""
 
 import argparse
+from collections import ChainMap
+from copy import copy
 import hashlib
 import json
 import math
@@ -12,7 +14,7 @@ import numpy as np
 
 from depth_candidate_pilot import project
 from probe_dynamic_path_simplification import (
-    Candidate, SceneIndex, heldout_raster_quality, indexed_normals,
+    Candidate, SceneIndex, heldout_raster_quality, indexed_normals, placement_normals,
 )
 from probe_incremental_path_visibility import filtered_pixel_loss, front_envelope
 from probe_multiview_path_simplification import View, select_path_edge
@@ -65,8 +67,86 @@ def audit_final_views(views, positions, faces, source_normals, args):
     return reports
 
 
-def run(unit, args, target_faces, rerank, compare_placements=False):
-    name = "pathPlacements" if compare_placements else "path" if rerank else "qem"
+def score_placement(views, candidate, faces, normals, epoch, args, stats,
+                    limit=math.inf, reuse=True):
+    projections = [view.proposal(candidate, faces) for view in views]
+    outside = [view.outside_loss(proposal) for view, proposal in zip(views, projections)]
+    patches, values = [], []
+    for i, view in enumerate(views):
+        if math.fsum((*values, *outside[i:])) > limit + 1e-12:
+            return None
+        cap = None
+        if args.pixel_order != "off" and math.isfinite(limit):
+            prefix = math.fsum((*values, *outside[i + 1:]))
+            cap = math.nextafter(limit + 1e-12 - prefix, math.inf)
+        value, patch, rebuilds, pixels = view.score(
+            projections[i], outside[i], faces, normals, epoch, reuse, cap, args.pixel_order)
+        stats["views"] += 1
+        stats["frontRebuilds"] += rebuilds
+        stats["pixels"] += pixels
+        if patch is None:
+            return None
+        patches.append(patch)
+        values.append(value)
+    return projections, patches, values
+
+
+def refine_placement(queue, faces, entry, payload, views, secondary, source_normals,
+                     current_normals, epoch, args):
+    projections, patches, normals, values = payload
+    primary_limit = math.fsum(values)
+    first = proposal_for_entry(queue, entry, faces)
+    stats = {"views": 0, "frontRebuilds": 0, "pixels": 0, "eligible": 0,
+             "alternatives": 0, "primaryPass": 0, "auditedPrunes": 0}
+    for view in secondary:
+        view.cache = {key: v for key, v in view.cache.items() if key[:2] == first.edge}
+    second = score_placement(secondary, first, faces, normals, epoch, args, stats)
+    secondary_limit = math.fsum(second[2])
+    best = math.fsum((*values, *second[2]))
+    stats["primaryReferenceLoss"] = primary_limit
+    stats["secondaryReferenceLoss"] = secondary_limit if secondary else None
+    result = projections + second[0], patches + second[1], normals, values + second[2]
+    chosen, accepted = 0, entry
+    audit_stats = dict.fromkeys(("views", "frontRebuilds", "pixels"), 0)
+    for rank, placement in enumerate(queue.legal_placements(entry)):
+        if rank == 0:
+            continue
+        stats["alternatives"] += 1
+        proposal = proposal_for_entry(queue, placement, faces, rank)
+        replacement_normals = None
+        if current_normals is not None:
+            replacement_normals = (source_normals,
+                                   ChainMap(placement_normals(queue.p, proposal), current_normals),
+                                   args.normal_weight)
+        scored = []
+        for group, limit in ((views, primary_limit), (secondary, secondary_limit)):
+            score = score_placement(group, proposal, faces, replacement_normals, epoch, args,
+                                    stats, limit)
+            if score is None and args.audit_pruning:
+                fresh = score_placement(group, proposal, faces, replacement_normals, epoch,
+                                        args, audit_stats, reuse=False)
+                if math.fsum(fresh[2]) < limit - 1e-12:
+                    raise ValueError("pruning rejected an improving placement")
+                stats["auditedPrunes"] += 1
+            if score is None or (group and math.fsum(score[2]) >= limit - 1e-12):
+                break
+            scored.append(score)
+            if group is views:
+                stats["primaryPass"] += 1
+        if len(scored) < 2:
+            continue
+        stats["eligible"] += 1
+        a, b = scored
+        score = math.fsum((*a[2], *b[2]))
+        if score < best - 1e-12:
+            best, chosen, accepted = score, rank, placement
+            result = a[0] + b[0], a[1] + b[1], replacement_normals, a[2] + b[2]
+    return chosen, accepted, result, stats
+
+
+def run(unit, args, target_faces, rerank, compare_placements=False, refine=None):
+    name = ("pathGuarded" if refine == "orthogonal" else "pathRefined" if refine else
+            "pathPlacements" if compare_placements else "path" if rerank else "qem")
     started = time.perf_counter()
     started_cpu = time.process_time()
     queue = ProgressiveQEM(unit["positions"], unit["triangles"])
@@ -77,6 +157,12 @@ def run(unit, args, target_faces, rerank, compare_placements=False):
         start_views = time.perf_counter()
         views = [View(queue.p, faces, args.angle + offset, args)
                  for offset in (0.0, 2 * math.pi / 3, -2 * math.pi / 3)]
+        secondary = []
+        if refine == "orthogonal":
+            orthogonal = copy(args)
+            orthogonal.pan_angle = (args.pan_angle + 90.0) % 360.0
+            secondary = [View(queue.p, faces, args.angle + offset, orthogonal)
+                         for offset in (0.0, 2 * math.pi / 3, -2 * math.pi / 3)]
         source_normals = indexed_normals(queue.p, faces) if args.normal_weight else None
         current_normals = source_normals.copy() if source_normals is not None else None
         view_setup_seconds = time.perf_counter() - start_views
@@ -100,10 +186,16 @@ def run(unit, args, target_faces, rerank, compare_placements=False):
                     candidates.append(candidate)
                     entries[candidate.key] = edge_rank, placement_rank, placement
             epoch = len(rows) + 1
-            choice, (projections, patches, normals, values), stats = select_path_edge(
+            choice, payload, stats = select_path_edge(
                 views, candidates, faces, queue.p, source_normals, current_normals, epoch, args)
             rank, placement_rank, accepted = entries[choice]
-            for view, proposal, patch in zip(views, projections, patches, strict=True):
+            if refine:
+                placement_rank, accepted, payload, refinement = refine_placement(
+                    queue, faces, accepted, payload, views, secondary, source_normals,
+                    current_normals, epoch, args)
+                row.update(placementRank=placement_rank, refinement=refinement)
+            projections, patches, normals, values = payload
+            for view, proposal, patch in zip(views + secondary, projections, patches, strict=True):
                 view.apply(proposal, patch, epoch)
             for face_id, face in projections[0].faces.items():
                 faces[face_id] = face
@@ -133,9 +225,10 @@ def run(unit, args, target_faces, rerank, compare_placements=False):
               "runSeconds": time.perf_counter() - started,
               "runCpuSeconds": time.process_time() - started_cpu}
     if rerank and args.audit_final_views:
-        result["finalViewAudit"] = audit_final_views(views, queue.p, faces, source_normals, args)
+        result["finalViewAudit"] = audit_final_views(
+            views + secondary, queue.p, faces, source_normals, args)
     if rerank:
-        result["perViewRayCachePeak"] = [view.ray_cache_peak for view in views]
+        result["perViewRayCachePeak"] = [view.ray_cache_peak for view in views + secondary]
     return result
 
 
@@ -148,6 +241,8 @@ def main():
     parser.add_argument("--pool", type=int, default=4)
     parser.add_argument("--compare-placements", action="store_true",
                         help="also rerank all legal QEM placements of each shortlisted edge")
+    parser.add_argument("--refine-placements", choices=("primary", "orthogonal", "both"),
+                        help="reconsider the winning edge's placement after path reranking")
     parser.add_argument("--size", type=int, default=64)
     parser.add_argument("--scale", type=int, default=1)
     parser.add_argument("--share-collinear-taps", action="store_true",
@@ -214,11 +309,15 @@ def main():
               "optimization": {"size": args.size, "scale": args.scale, "angle": args.angle,
                                "panAngle": args.pan_angle, "radius": args.radius},
               "qem": qem, "path": path}
-    extra_steps = None
+    extra_steps = {}
     if args.compare_placements:
         placements = run(unit, args, target_faces, True, compare_placements=True)
         result["pathPlacements"] = placements
-        extra_steps = {"pathPlacements": placements["steps"]}
+        extra_steps["pathPlacements"] = placements["steps"]
+    for refine, name in (("primary", "pathRefined"), ("orthogonal", "pathGuarded")):
+        if args.refine_placements in (refine, "both"):
+            result[name] = run(unit, args, target_faces, True, refine=refine)
+            extra_steps[name] = result[name]["steps"]
     if not args.score_only:
         # More azimuths than the local pilot, with four midpoint times on each path.
         validation = [(f"orbit{i}", args.angle + math.radians(a), args.pan_angle + p)

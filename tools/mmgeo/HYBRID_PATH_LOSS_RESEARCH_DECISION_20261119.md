@@ -917,6 +917,67 @@ and [Analytic Rasterization of Curves with Polynomial Filters](https://people.en
 The experiment tests whether the combination of continuous path loss, local collapse updates,
 and a continuous spatial filter generalizes better than discrete taps for placement decisions.
 
+## Placement refinement with orthogonal camera paths
+
+Refinement first selects an edge using the original shortlist and each edge's best legal
+QEM placement. The selected edge keeps its QEM placement as a reference. The algorithm
+compares its other legal placements to that reference on the current mesh. The primary
+variant accepts only a decrease in the sum over the three fitting paths. The orthogonal
+variant also requires a decrease over the same three azimuths with the pan rotated by 90
+degrees. Among eligible alternatives it chooses the lowest sum, with a fixed numerical
+tie tolerance of 1e-12. If none qualifies, the QEM placement stays.
+
+At each candidate, the completed view losses plus unchanged exterior loss in later views
+lower-bound the score for the direction. The algorithm stops when that bound rules out an
+improvement. With pixel pruning enabled, the same reference also limits the partial score
+within a view. The second direction runs only for primary survivors. Each trajectory then
+applies its chosen edit to its own mesh and regenerates the next shortlist. This is a local
+comparison to the QEM placement at each current state.
+
+| Mesh | Final faces | QEM | Edge only | Joint | Primary refinement | Orthogonal refinement |
+|---|---:|---:|---:|---:|---:|---:|
+| Rounded Cube | 960 | 3.86e-6 | 3.55e-6 | 3.04e-6 | 3.50e-6 | 1.66e-6 |
+| Torus | 922 | 1.46e-4 | 1.27e-4 | 1.35e-4 | 1.45e-4 | 1.34e-4 |
+| Pirate unit 5 | 2,426 | 6.47e-6 | 7.12e-6 | 7.02e-6 | 7.06e-6 | 7.13e-6 |
+
+All rows use the established six holdout paths at 80 by 80 pixels with four taps in evaluation
+and the continuous one-axis filter during construction. Joint selection is the archived control.
+The QEM and edge-only runs reproduced its edge, placement and fitted-score records exactly.
+Orthogonal refinement beat primary refinement on Rounded Cube and Torus, and regressed by
+about 1% on Pirate. It accepted alternative placements on 21/120, 4/115 and 43/303 edits.
+Rounded Cube beat the best previous candidate from this study at this evaluation setting
+(2.49e-6 for four-tap edge-only). Torus and Pirate still favored edge-only and QEM, respectively.
+Within each new run, orthogonal refinement took roughly 3.6 to 4.4 times the edge-only CPU time.
+
+The small Rounded Cube run with the pixel bound enabled audited 111 rejected refinement
+proposals across primary and orthogonal variants. The separately rebuilt final scoring views
+agreed with cached pixel loss to within 1.28e-17 across all three scoring policies. Every alternate
+accepted on the three full trajectories passed the logged local loss checks for its policy.
+
+On the same Rounded Cube meshes at 96 by 96 pixels and nine taps, orthogonal refinement scored
+2.55e-6 and primary refinement 2.38e-6. Pure QEM scored 1.91e-6. The original low-resolution
+ranking therefore reverses with the camera poses and meshes fixed. This reinforces the earlier
+resolution finding and fails the robustness gate for this refinement rule.
+
+```powershell
+$env:OPENBLAS_NUM_THREADS = '1'
+$probe = 'tools/mmgeo/probe_global_path_qem.py'
+python $probe out/pathloss-captures/rounded_cube.json --remove-fraction .20 --scale 2 --refine-placements both --integrate-along-pan --out out/pathloss-captures/orthogonal-placement-rounded.json
+python $probe out/filter-real-candidates/torus.json --remove-fraction .20 --scale 2 --refine-placements both --integrate-along-pan --out out/pathloss-captures/orthogonal-placement-torus.json
+python $probe out/filter-real-candidates/pirate.json --unit-index 5 --remove-fraction .20 --scale 2 --refine-placements both --integrate-along-pan --out out/pathloss-captures/orthogonal-placement-pirate.json
+python $probe out/pathloss-captures/rounded_cube.json --remove-fraction .04 --scale 2 --refine-placements both --integrate-along-pan --pixel-order loss --retain-partial --cached-view-bound --audit-pruning --audit-final-views --score-only --out out/pathloss-captures/orthogonal-placement-audit.json
+```
+
+The higher-density evaluation replays those Rounded Cube trajectories through
+`heldout_raster_quality` with `quality_size=96` and `quality_scale=3`, otherwise retaining
+the same holdout parameters. The result is saved in
+`out/pathloss-captures/orthogonal-placement-rounded-heldout-96px.json`.
+
+Image-driven vertex optimization has established precedent in
+[Image-Driven Mesh Optimization](https://repository.gatech.edu/bitstreams/86062420-b350-49d7-b2b1-1d56c387e2bc/download).
+This screen isolates the value of a second pan axis and limits the extra placement search
+to the already-selected legal edge.
+
 ## Decision and remaining gate
 
 The exact lower-bound mechanism now runs online in the Python research probe and shows a modest
