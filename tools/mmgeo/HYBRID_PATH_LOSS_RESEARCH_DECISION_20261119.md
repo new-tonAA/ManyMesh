@@ -978,6 +978,64 @@ Image-driven vertex optimization has established precedent in
 This screen isolates the value of a second pan axis and limits the extra placement search
 to the already-selected legal edge.
 
+## Sharing envelopes across neighboring pixels
+
+The collinear tap method can also reuse visibility across pixels on the same projected
+line. A proposal partitions the viewport into short strips aligned with its pan direction.
+For each strip and transverse sample, it instantiates the old and replacement triangle
+intervals over the union of the pixel time windows. Each pixel still clips both lists to
+its own window and applies the existing dominance check. The first pixel that needs a
+new front triggers a combined solve for the strip. Later pixels use shifted, clipped
+subintervals of that solution. They reconstruct and square their own filtered residuals.
+The method leaves the conservative support rectangle and scene stamps unchanged.
+
+These shared intervals live only for one proposal. Near strip boundaries a candidate can
+bring additional faces into the combined envelope, so fewer envelope solves need not
+translate directly into equal CPU savings. The clip is exact in real arithmetic for
+cardinal orthographic pans. Floating-point score differences are measured separately.
+Earlier [Continuous from-Segment Visibility](https://www.cs.purdue.edu/cgvlab/www/resources/papers/Popescu-TVCG-2025-1DVisibility.pdf)
+composites depth intervals at pixel centers along a camera segment. The experiment measures
+the value of sharing translated windows inside a live simplification scorer.
+
+On a 12-edit Rounded Cube run with a reversed horizontal pan, strip width four matched
+the separate-window edge and placement choices. The scorer independently completed
+114 pruned candidates with separate windows, and a fresh rebuild of every final scoring
+pixel agreed to within 8.36e-19. That run used pixel pruning and partial patch reuse.
+
+| Mesh and fitting viewport | Policy | Front solves, per pixel / shared | CPU seconds, per pixel / shared |
+|---|---|---:|---:|
+| Rounded Cube, 64 | Edge only | 2,025 / 954 | 4.34 / 3.95 |
+| Rounded Cube, 64 | Joint | 7,091 / 3,403 | 12.83 / 10.84 |
+| Torus, 64 | Edge only | 25,144 / 10,616 | 21.77 / 19.20 |
+| Torus, 64 | Joint | 83,828 / 35,541 | 67.77 / 54.39 |
+| Rounded Cube, 96 | Edge only | 4,817 / 2,037 | 6.70 / 6.80 |
+| Rounded Cube, 96 | Joint | 15,826 / 6,679 | 20.13 / 16.31 |
+
+All 710 matched edits selected the same edges and placements. The largest fitted-view score
+difference was 1.48e-15, and the entire held-out reports matched exactly between sharing and
+per-pixel evaluation. Each pair is a single serial run at about 20% face removal with one
+BLAS thread, two transverse samples, continuous integration along the pan, and three fitting
+views. Envelope calls fell by 52% to 58%. CPU savings were 9% to 20% in five pairs, with a
+1.4% increase in the remaining pair. The six validation paths are reproduced after scoring
+and excluded from the timing.
+
+The 96-pixel fitting experiment preserves the 64-pixel experiment's physical camera
+translation by scaling the projected path radius from 1.0 to 1.5 pixels. At the same 960
+faces and on the same 96-by-96 nine-tap holdout evaluation, edge-only loss dropped from
+2.75e-6 to 2.28e-6 and joint loss from 2.58e-6 to 2.41e-6 when fitting at higher resolution.
+The pure QEM control was lower at 1.91e-6. The high-density replay is
+`out/pathloss-captures/proposal-strip-rounded-hires-eval.json`.
+
+Use `--strip-width 1` for separate pixel windows and `--strip-width 4` for sharing.
+
+```powershell
+$env:OPENBLAS_NUM_THREADS = '1'
+$probe = 'tools/mmgeo/probe_global_path_qem.py'
+python $probe out/pathloss-captures/rounded_cube.json --size 64 --radius 1 --remove-fraction .20 --scale 2 --compare-placements --integrate-along-pan --strip-width 4 --out out/pathloss-captures/proposal-strip-rounded-4.json
+python $probe out/filter-real-candidates/torus.json --size 64 --radius 1 --remove-fraction .20 --scale 2 --compare-placements --integrate-along-pan --strip-width 4 --out out/pathloss-captures/proposal-strip-torus-4.json
+python $probe out/pathloss-captures/rounded_cube.json --size 96 --radius 1.5 --remove-fraction .20 --scale 2 --compare-placements --integrate-along-pan --strip-width 4 --out out/pathloss-captures/proposal-strip-dense-4.json
+```
+
 ## Decision and remaining gate
 
 The exact lower-bound mechanism now runs online in the Python research probe and shows a modest

@@ -66,6 +66,7 @@ class View:
         self.cache = {}
         self.retain_partial = args.retain_partial
         self.reuse_face_records = args.reuse_face_records
+        self.strip_width = getattr(args, "strip_width", 1)
         self.ray_cache_limit = args.ray_cache_lines
         self.ray_cache = OrderedDict()
         self.ray_cache_size = 0
@@ -159,7 +160,7 @@ class View:
                               patch, invalid, normal_data, budget, self.prepare_pixel,
                               self.reuse_face_records,
                               self.cached_lines if self.ray_cache_limit else None,
-                              self.collinear_taps)
+                              self.collinear_taps, self.strip_width if reuse else 1)
             rebuilt = result.tap_rebuilds
             visits = result.pixel_visits
             if result.partial_loss is not None:

@@ -18,6 +18,7 @@ from probe_incremental_path_visibility import (
     filtered_pixel_loss,
     front_envelope,
     make_grid,
+    shift_envelope,
     unchanged_reason,
 )
 from probe_shared_envelope_raster_tile import (
@@ -191,10 +192,61 @@ def candidates_for_tile(world, projected, faces, rect, center, direction, path, 
                 return
 
 
+class ProposalStrips:
+    """Share projected line queries across a bounded run of adjacent pixels."""
+
+    def __init__(self, width, direction, path, edited, old_at, new_at, scene):
+        self.width = width
+        self.axis = 0 if direction[0] else 1
+        self.direction = direction
+        self.sign = direction[self.axis]
+        extent = self.sign * (width - 1)
+        self.path = path
+        self.strip_path = (math.nextafter(path[0] + min(0, extent), -math.inf),
+                           math.nextafter(path[1] + max(0, extent), math.inf))
+        self.edited = edited
+        self.old_at = old_at
+        self.new_at = new_at
+        self.scene = scene
+        self.patches = {}
+        self.fronts = {}
+
+    def patch_at(self, x, y):
+        point = (x, y)
+        coordinate = point[self.axis]
+        start = math.floor(coordinate / self.width) * self.width + 0.5
+        anchor = (start, y) if self.axis == 0 else (x, start)
+        shift = self.sign * (coordinate - start)
+        if anchor not in self.patches:
+            self.patches[anchor] = (self.old_at(*anchor, self.direction, self.strip_path),
+                                    self.new_at(*anchor, self.direction, self.strip_path))
+        old, new = self.patches[anchor]
+        return anchor, shift, self.clip_lines(old, shift), self.clip_lines(new, shift)
+
+    def clip_lines(self, lines, shift):
+        clipped = []
+        for line in lines:
+            lo = max(self.path[0], line["lo"] - shift)
+            hi = min(self.path[1], line["hi"] - shift)
+            if lo < hi:
+                clipped.append(dict(line, lo=lo, hi=hi,
+                                    intercept=line["intercept"] + line["slope"] * shift))
+        return clipped
+
+    def front_at(self, anchor, shift):
+        rebuilt = anchor not in self.fronts
+        if rebuilt:
+            combined = [line for line in self.scene.lines(*anchor, self.direction, self.strip_path)
+                        if line["face"] not in self.edited]
+            combined.extend(self.patches[anchor][1])
+            self.fronts[anchor] = front_envelope(combined, self.strip_path)
+        return shift_envelope(self.fronts[anchor], shift, self.path), int(rebuilt)
+
+
 def evaluate(candidate, projected, faces, scene, original, current, points, direction, path,
              use_dominance, cached_patch=None, invalid_pixels=None, normal_data=None,
              pixel_budget=None, prepare_pixel=None, reuse_face_records=False, scene_lines=None,
-             collinear_taps=None):
+             collinear_taps=None, strip_width=1):
     keep, _remove = candidate.edge
     ids = candidate.faces.keys()
     if cached_patch is None:
@@ -234,6 +286,15 @@ def evaluate(candidate, projected, faces, scene, original, current, points, dire
         replacement_positions[keep] = candidate.projected_target
         records, bins = make_grid(replacement_positions, candidate.faces, ids)
     lines_at = scene.lines if scene_lines is None else scene_lines
+    strips = None
+    if strip_width > 1:
+        def old_at(x, y, direction, path):
+            return instantiate_path_lines(old_records, x, y, direction, path, old_bins)[0]
+
+        def new_at(x, y, direction, path):
+            return instantiate_path_lines(records, x, y, direction, path, bins)[0]
+
+        strips = ProposalStrips(strip_width, direction, path, ids, old_at, new_at, scene)
     rebuilt = 0
     visits = 0
     for visits, i in enumerate(pixels, 1):
@@ -241,8 +302,11 @@ def evaluate(candidate, projected, faces, scene, original, current, points, dire
             prepare_pixel(i)
         envelopes = []
         for (x, y), cached in zip(points[i], current[i], strict=True):
-            old_lines = instantiate_path_lines(old_records, x, y, direction, path, old_bins)[0]
-            new_lines = instantiate_path_lines(records, x, y, direction, path, bins)[0]
+            if strips is None:
+                old_lines = instantiate_path_lines(old_records, x, y, direction, path, old_bins)[0]
+                new_lines = instantiate_path_lines(records, x, y, direction, path, bins)[0]
+            else:
+                anchor, shift, old_lines, new_lines = strips.patch_at(x, y)
             reusable = not (old_lines or new_lines)
             if not reusable and can_discover_intersections:
                 intersected.add(i)
@@ -250,6 +314,10 @@ def evaluate(candidate, projected, faces, scene, original, current, points, dire
                 reusable = unchanged_reason(cached, ids, old_lines, new_lines) == "occludedEdit"
             if reusable:
                 envelopes.append(cached)
+            elif strips is not None:
+                front, solves = strips.front_at(anchor, shift)
+                envelopes.append(front)
+                rebuilt += solves
             else:
                 combined = [line for line in lines_at(x, y, direction, path)
                             if line["face"] not in ids]

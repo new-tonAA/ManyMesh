@@ -249,6 +249,8 @@ def main():
                         help="share visibility envelopes along each row or column of box taps")
     parser.add_argument("--integrate-along-pan", action="store_true",
                         help="integrate a continuous box filter along the pan axis")
+    parser.add_argument("--strip-width", type=int, default=1,
+                        help="share each proposal's envelopes across this many adjacent pixels")
     parser.add_argument("--angle", type=float, default=2.3)
     parser.add_argument("--pan-angle", type=float, default=90.0)
     parser.add_argument("--radius", type=float, default=1.0)
@@ -285,6 +287,10 @@ def main():
         parser.error("tap sharing needs a multiple of 90 degree pan")
     if args.share_collinear_taps and not args.integrate_along_pan and args.scale < 2:
         parser.error("discrete tap sharing needs at least two taps per axis")
+    if not 1 <= args.strip_width <= 16:
+        parser.error("strip width must be between 1 and 16 pixels")
+    if args.strip_width > 1 and (not args.share_collinear_taps or args.ray_cache_lines):
+        parser.error("strip sharing requires collinear taps and the per-tap line cache disabled")
     args.exhaustive = args.partial_only_bound = False
     capture = args.capture.read_bytes()
     digest = hashlib.sha256(capture).hexdigest()
@@ -303,6 +309,7 @@ def main():
               "pixelOrder": args.pixel_order,
               "shareCollinearTaps": args.share_collinear_taps,
               "integrateAlongPan": args.integrate_along_pan,
+              "stripWidth": args.strip_width,
               "retainPartial": args.retain_partial,
               "cachedViewBound": args.cached_view_bound,
               "reuseFaceRecords": args.reuse_face_records, "rayCacheLines": args.ray_cache_lines,
