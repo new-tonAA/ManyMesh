@@ -772,6 +772,56 @@ python tools/mmtrain/probe_component_motion.py "$pilotRoot/assets" "$pilotRoot/h
 python tools/mmtrain/probe_component_motion.py "$pilotRoot/holdout-assets" --whole-reference "$pilotRoot/qem-pool-control-96.json" --component-reference "$pilotRoot/components-selected-96.json" --size 128 --out "$pilotRoot/motion-extension-128.json"
 ```
 
+## Iris Xe offscreen raster and reconstruction timing
+
+`bench_component_gpu.py` draws the exported PLY meshes on a named hardware adapter.
+The hardware run used Intel Iris Xe, driver 31.0.101.4502, and D3D12 through wgpu-native.
+GPU queries surround rasterization and, when enabled, a 2x reconstruction pass. The queue
+reports a timestamp period of 52.083 ns. The program converts the raw ticks and checks
+the batch interval against a synchronized host wait.
+[wgpu timestamp query documentation](https://wgpu.rs/doc/wgpu_examples/timestamp_queries/index.html)
+
+Each mode has three batches of 48 samples after eight warmup draws per batch, with a
+rotated mode order. One fixed perspective camera is used throughout. The four geometry
+variants use a grayscale directional light, depth and indexed triangles. The 16-instance
+experiment puts copies of the same mesh into a 4×4 grid in one instanced draw. Direct
+raster uses 1920×1080. The upscaling modes rasterize at 960×540 and resolve to the same
+1920×1080 output. Quality is measured against the full mesh rasterized directly at the
+output resolution. The texture readback for quality runs outside the GPU timer.
+
+| Asset | Instances | Full mesh direct p95 | Parts direct p95 | Parts bilinear 2x p95 | Parts cubic 2x p95 |
+|---|---:|---:|---:|---:|---:|
+| StainedGlassLamp | 1 | 0.283 ms | 0.211 ms | 0.263 ms | 0.441 ms |
+| GlassVaseFlowers | 1 | 0.109 ms | 0.091 ms | 0.234 ms | 0.554 ms |
+| ToyCar | 1 | 0.247 ms | 0.101 ms | 0.250 ms | 0.453 ms |
+| StainedGlassLamp | 16 | 1.338 ms | 0.370 ms | 0.370 ms | 0.573 ms |
+| GlassVaseFlowers | 16 | 0.275 ms | 0.190 ms | 0.367 ms | 0.443 ms |
+| ToyCar | 16 | 5.765 ms | 0.608 ms | 1.077 ms | 1.253 ms |
+
+Direct raster on the selected component mesh had the lowest median GPU duration among
+its three resolution/filter modes in all six cases. At equal triangle counts and with
+direct raster, component selection reduced MSE versus the selected whole mesh by 5.05%,
+11.95%, and 0.07% in the three single-object runs, respectively. The largest timing
+difference uses 1,742,976 input triangles versus 348,592 component-mesh triangles across
+16 ToyCar copies.
+
+The cubic shader specializes Catmull–Rom for the two fixed 2x phases and combines the
+central positive weights with hardware linear sampling. In all six cases it agrees with
+the direct 16-sample shader within one 8-bit code value. Median reconstruction-pass time
+was 0.302–0.337 ms for the nine-sample shader and 0.504–0.572 ms for the direct shader.
+The two runs peaked at about 396 MiB host process working set. These measurements cover
+an offscreen raster and reconstruction workload with fixed lighting. Presentation,
+Filament material and scene costs, and a live LOD update still need separate timing.
+
+```powershell
+$pilotRoot = 'out/geometry-refinement-pilot'
+python -m pip install --no-deps --target "$pilotRoot/gpu-deps" wgpu==0.32.0 rendercanvas==2.6.3
+$env:PYTHONPATH = (Resolve-Path "$pilotRoot/gpu-deps").Path
+foreach ($meshGrid in 1,4) {
+    python tools/mmtrain/bench_component_gpu.py "$pilotRoot/motion-meshes" --motion-reference "$pilotRoot/motion-96.json" --asset StainedGlassLamp GlassVaseFlowers ToyCar --size 1920x1080 --frames 48 --repeats 3 --grid $meshGrid --audit-filter --out "$pilotRoot/wgpu-fast-1080-grid$meshGrid.json"
+}
+```
+
 ## Fairness note
 
 `espcn` and `fsrcnn` scoring below bicubic here says nothing about those architectures. Their
