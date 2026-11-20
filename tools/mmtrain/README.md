@@ -479,6 +479,79 @@ python tools/mmtrain/bench_local_reconstruction.py --capture out/m3t2 --model ti
 python tools/mmtrain/lod_oracle.py score --capture out/lod-oracle-pilot --checkpoint out/m3/models/tiny_s1_no.pt --threads 1 --local-reconstruction --audit-local-reconstruction --out out/lod-oracle-pilot/local-score.json
 ```
 
+## Learn where to keep geometry
+
+The pilot uses eight public [Khronos glTF sample assets](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/f0920f5b32d172a30efe3f9257e965918831e6ea/Models).
+The downloader pins the revision and retrieves 6.3 MB of geometry buffers plus source and
+license metadata. Seven assets are CC0. [Cesium Milk Truck](https://github.com/KhronosGroup/glTF-Sample-Assets/blob/f0920f5b32d172a30efe3f9257e965918831e6ea/Models/CesiumMilkTruck/README.md)
+is © 2017 Cesium under CC BY 4.0, rendered here without the material and logo textures.
+Assets, generated pairs, and fold weights go under `out/`.
+
+For each of 12 views per asset, a software z-buffer draws a 96-by-96 grayscale image of each
+of two QEM simplifications. The requested retained ratios are 20% and 45%. The full-detail
+reference renders at 384-by-384 and is box-filtered to 192-by-192. Both LOD outputs use the same
+2x bicubic filter. The label for each 8-by-8 input tile is the difference between its coarse
+and finer output MSE. Quality scores measure replacement from the pre-rendered finer image,
+with the number of selected tiles limited per view. Runtime evaluation needs a legal mixed cut
+and matched triangle and frame-time budgets.
+
+The MLP maps seven coarse raster statistics through 12 ReLU units to one score. The second
+version adds a mesh-side signal. During QEM, replay the collapse trace and compute the normal
+component of the displacement to each source vertex's surviving representative. Store at most
+128 object-space points with absolute offset, one per occupied spatial cell with the greatest
+offsets first. That is at most 2 KiB per asset in float32. At scoring time, project these points,
+discard those behind the coarse depth beyond the tolerance, and use the largest remaining offset
+in each tile. Conventional view-dependent geometry selection already uses geometric deviation
+along the surface normal. The question here is whether a compact cue improves decisions about
+error after the chosen upscale filter. [Hoppe, View-Dependent Refinement of Progressive Meshes](https://hhoppe.com/vdrpm.pdf)
+
+One entire asset is held out per fold. The table gives average per-asset MSE reduction from
+the coarse-only result. At 10%, the ranker selects 14 of 144 tiles per view. The hindsight
+row ranks using the target and shows the headroom under this replacement experiment.
+
+| Ranker | 10% tile capacity | 25% tile capacity |
+|---|---:|---:|
+| Coarse brightness contrast | 14.80% | 26.95% |
+| Collapse cue alone | 17.91% | 22.32% |
+| Raster-only MLP, 109 weights and biases | 10.45% | 25.46% |
+| Raster + collapse MLP, 121 weights and biases | 17.93% | 27.73% |
+| Raster + collapse ridge regression | 19.65% | 28.18% |
+| Hindsight | 30.87% | 33.99% |
+
+The mesh cue added the most at 10% for Cesium Milk Truck and Lantern. The ridge model beat
+coarse brightness contrast on three of eight assets at 10%, and two of eight at 25%. The
+mean improved while the gains were concentrated. Deeper learning has not earned a runtime
+place on these data. The comparison uses one dataset, orthographic cameras, a single light
+and fixed LOD pairs. Texture, perspective, and motion remain outside the experiment.
+
+The laptop generated the pairs in 5.9 s with about 285 MiB peak working set including Numba
+and the simplifier. A separate NumPy process ran both model ablations, 8-fold held-out
+scoring, and the original array timing benchmarks in 4.4 s with 58 MiB peak working set.
+On preloaded data, the geometry-aware MLP forward pass took 0.33 ms p95 for 8,160 tiles
+at a 960-by-544 input size. Feature extraction dominates the array implementation. In a
+same-process, single-thread comparison, fusing the per-tile reductions into a Numba kernel
+reduced feature extraction, point projection, inference and ranking together from 35.0 to
+4.1 ms p95 at 960-by-544 and from 4.4 to 0.75 ms p95 at 320-by-184. In a separate CLI run the
+fused path took 5.2 ms p95 at 960-by-544. Each timing uses 30 warm measurements on a resized
+replay frame. The feature check matches eight native input frames within 1e-6, and the
+comparison process peaked at 149 MiB. Full rendering, data transfers, extra geometry draws
+and upscaling remain to be timed together on Iris Xe.
+
+```powershell
+python tools/mmtrain/fetch_refinement_assets.py --out out/geometry-refinement-pilot/assets
+python -m pip install --no-deps --target out/geometry-refinement-pilot/deps numpy==2.2.6 trimesh==5.2.1 fast-simplification==0.2.0
+$env:PYTHONPATH = (Resolve-Path out/geometry-refinement-pilot/deps).Path
+$env:OPENBLAS_NUM_THREADS = '1'
+$env:OMP_NUM_THREADS = '1'
+$env:NUMBA_NUM_THREADS = '1'
+python tools/mmtrain/make_refinement_pairs.py out/geometry-refinement-pilot/assets --out out/geometry-refinement-pilot/pairs-with-witness
+python tools/mmtrain/tile_refinement.py out/geometry-refinement-pilot/pairs-with-witness --out out/geometry-refinement-pilot/study-fused --fused-features
+```
+
+The raster generator also uses Pillow and Numba from the local Python environment. The
+pipeline emits asset-level error statistics, two weight files per held-out asset, and warm
+CPU timings. Omit `--fused-features` to time the NumPy implementation.
+
 ## Fairness note
 
 `espcn` and `fsrcnn` scoring below bicubic here says nothing about those architectures. Their
