@@ -61,10 +61,68 @@ python tools/mmtemporal/temporal.py --data out/parallax \
     --cameras out/parallax/cameras.txt --depth-dir out/parallax/depth --blend 0.5
 ```
 
-`temporal.py` uses the current frame's depth to reconstruct each pixel's world position, projects
-it through the previous camera, and rejects history whose previous-frame depth disagrees with
-that position. That depth test is the disocclusion mask that a pure rotation could not test.
+`temporal.py` maps each current sample directly into the previous camera using relative pose,
+view-space depth, and the two vertical fields of view in degrees. It avoids allocating a
+world-space position image. The default gate checks interpolated depth. With
+`--history-depth-mode taps`, each of the four bilinear taps has its own depth check. Accepted
+taps are renormalized, and at least half of the original bilinear weight must survive.
 `--no-reproject` remains the negative control.
 
 `tools/mmtemporal/run_parallax.py` runs the whole pipeline (both renders, depth, reprojection,
 export, and the learned single-frame versus stacked comparison) in one command.
+
+## Replay with native low-resolution input
+
+The archived Monkey captures have four eight-frame paths per run. The low-resolution raster
+is 160×90 and the full-detail reference is 640×360. Median PSNR over all 32 frames with a
+history blend of 0.5 was:
+
+| Capture | Camera translation | Current frame | Mean-depth gate | Per-tap gate |
+|---|---:|---:|---:|---:|
+| run0 | 0 | 34.38 | 34.38 | 34.38 |
+| run1 | 0.6 | 34.51 | 34.36 | 34.38 |
+| run12 | 1.2 | 34.13 | 33.57 | 33.57 |
+| run26 | 0.6 | 33.96 | 33.98 | 33.99 |
+
+Reproduce either history gate by passing `mean` or `taps`:
+
+```shell
+python tools/mmtemporal/temporal.py --data out/parallax/run1 \
+    --cameras out/parallax/run1/cameras.txt --depth-dir out/parallax/run1/depth \
+    --history-depth-mode taps --blend 0.5 --report out/parallax/run1-temporal.json
+```
+
+On the laptop, single-thread NumPy/Pillow replay took a p95 of 20.0–28.2 ms across
+these runs and methods, measured on the 28 history frames in each run. This is the sum of
+history update and bicubic conversion/resize, excluding raster, file I/O, scoring, and
+device transfers. It already exceeds the 16.67 ms whole-frame budget for 60 FPS.
+This replay measures the quality trade-off and supplies CPU reference timings.
+
+## Changing the mesh cut during a path
+
+`bench_lod_history.py` alternates two native low-resolution captures. Their camera lists
+and every full-detail reference PNG must match byte for byte. The policies all use the
+same current raster. They use current-frame bicubic, keep depth-gated history, drop the
+full history on a cut switch, or drop it only where depth or coverage changes at the
+switch. The last policy checks both LODs' depth at the current pose and dilates the mask
+by one low-resolution pixel. The extra depth comes from the paired archive and this
+policy is an offline diagnostic.
+
+```shell
+python tools/mmtemporal/bench_lod_history.py out/parallax/run1 out/parallax/run26 \
+    --switch-every 2 --out out/parallax/lod-history-switch-2.json
+python tools/mmtemporal/bench_lod_history.py out/parallax/run1 out/parallax/run26 \
+    --switch-every 4 --out out/parallax/lod-history-switch-4.json
+```
+
+| Frames per cut | Switch frames | Masked pixels | Current only / full reset | Keep history | Depth mask |
+|---|---:|---:|---:|---:|---:|
+| 2 | 12 | 8.63% | 33.958 dB | 34.192 dB | 34.113 dB |
+| 4 | 4 | 8.55% | 34.067 dB | 34.149 dB | 34.183 dB |
+
+The table reports switch-frame median PSNR. The depth mask increased mean squared
+screen-space residual change by 0.4% and 1.8% compared with keeping history, respectively.
+That metric is the frame-to-frame change of output minus reference at the same screen
+coordinate. The small and inconsistent quality difference gives no reason to pay for a
+second depth raster in this test. Validation of a GPU reconstruction pass requires a
+native frame-time comparison with the full-detail raster at matched output resolution.

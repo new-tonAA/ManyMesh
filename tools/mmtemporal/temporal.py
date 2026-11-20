@@ -37,8 +37,11 @@ trained temporal model learns to do.
 
 import argparse
 import glob
+import json
 import math
 import os
+from pathlib import Path
+import time
 
 import numpy as np
 from PIL import Image
@@ -136,8 +139,54 @@ def bilinear(image, x, y, inside):
             + (image[y0c + 1, x0c + 1] * fx[..., None] * fy[..., None]))
 
 
+def project_history(depth_now, camera_prev, camera_now):
+    """Project current samples through the previous camera without a world-space image."""
+    height, width = depth_now.shape
+    right_n, up_n, forward_n = camera_basis(camera_now["eye"], camera_now["target"])
+    right_p, up_p, forward_p = camera_basis(camera_prev["eye"], camera_prev["target"])
+    current = np.stack((right_n, up_n, forward_n))
+    previous = np.stack((right_p, up_p, forward_p))
+    rotation = previous @ current.T
+    translation = previous @ (camera_now["eye"] - camera_prev["eye"])
+    focal_now = (height * 0.5) / math.tan(math.radians(camera_now["fov"]) * 0.5)
+    focal_prev = (height * 0.5) / math.tan(math.radians(camera_prev["fov"]) * 0.5)
+    u = (np.arange(width) + 0.5 - width * 0.5) / focal_now
+    v = (height * 0.5 - np.arange(height) - 0.5) / focal_now
+
+    def component(index):
+        row = rotation[index]
+        ray = row[0] * u[None, :] + row[1] * v[:, None] + row[2]
+        return depth_now * ray + translation[index]
+
+    z_prev = component(2)
+    safe_z = np.where(z_prev > 1e-4, z_prev, 1.0)
+    x_prev = component(0) * focal_prev / safe_z + width * 0.5 - 0.5
+    y_prev = height * 0.5 - component(1) * focal_prev / safe_z - 0.5
+    return x_prev, y_prev, z_prev
+
+
+def sample_valid_history(history, depth, x, y, z, tolerance):
+    """Bilinear history sampling with a depth check at each contributing tap."""
+    height, width = depth.shape
+    ix, iy = np.floor(x).astype(np.int32), np.floor(y).astype(np.int32)
+    fx, fy = x - ix, y - iy
+    ix, iy = np.clip(ix, 0, width - 2), np.clip(iy, 0, height - 2)
+    support = np.zeros_like(depth)
+    color = np.zeros_like(history)
+    limit = tolerance * np.maximum(np.abs(z), 1e-4)
+    for dy, wy in ((0, 1.0 - fy), (1, fy)):
+        for dx, wx in ((0, 1.0 - fx), (1, fx)):
+            tap = depth[iy + dy, ix + dx]
+            valid = (tap > 0.0) & (np.abs(tap - z) <= limit)
+            weight = wx * wy * valid
+            support += weight
+            color += weight[..., None] * history[iy + dy, ix + dx]
+    np.divide(color, support[..., None], out=color, where=support[..., None] > 0.0)
+    return color, support
+
+
 def reproject_with_depth(history, depth_prev, depth_now, camera_prev, camera_now,
-        tolerance):
+        tolerance, depth_mode="mean"):
     """Warps history into the current view using the current frame's depth.
 
     With translation there is no depth-independent homography: a pixel's previous location is
@@ -148,35 +197,21 @@ def reproject_with_depth(history, depth_prev, depth_now, camera_prev, camera_now
     """
     width = depth_now.shape[1]
     height = depth_now.shape[0]
-    right_n, up_n, forward_n = camera_basis(camera_now["eye"], camera_now["target"])
-    right_p, up_p, forward_p = camera_basis(camera_prev["eye"], camera_prev["target"])
-
-    f = (height * 0.5) / math.tan(0.5 * camera_now["fov"])
-    xs = (np.arange(width) + 0.5 - width * 0.5) / f
-    ys = (height * 0.5 - np.arange(height) - 0.5) / f
-    u, v = np.meshgrid(xs, ys)
-
-    direction = (forward_n[None, None, :] + u[..., None] * right_n[None, None, :]
-                 + v[..., None] * up_n[None, None, :])
-    world = camera_now["eye"][None, None, :] + direction * depth_now[..., None]
-
-    delta = world - camera_prev["eye"][None, None, :]
-    z_prev = delta @ forward_p
+    x_prev, y_prev, z_prev = project_history(depth_now, camera_prev, camera_now)
     valid = (depth_now > 0.0) & (z_prev > 1e-4)
-    safe_z = np.where(z_prev > 1e-4, z_prev, 1.0)
-    u_prev = (delta @ right_p) / safe_z
-    v_prev = (delta @ up_p) / safe_z
-    x_prev = u_prev * f + width * 0.5 - 0.5
-    y_prev = height * 0.5 - v_prev * f - 0.5
-
     inside = (valid & (x_prev >= 0) & (y_prev >= 0)
               & (x_prev < width - 1) & (y_prev < height - 1))
+    if depth_mode == "taps":
+        sampled, support = sample_valid_history(history, depth_prev, x_prev, y_prev,
+                                                z_prev, tolerance)
+        return sampled, inside & (support >= 0.5), z_prev
     sampled = bilinear(history, x_prev, y_prev, inside)
     sampled_depth = bilinear(depth_prev, x_prev, y_prev, inside)
 
     # A depth mismatch means the history pixel belongs to a surface the previous camera saw in
     # front of (or behind) the point we are reconstructing: an occlusion boundary, not noise.
-    depth_ok = np.abs(sampled_depth - z_prev) <= tolerance * np.maximum(np.abs(z_prev), 1e-4)
+    depth_ok = ((sampled_depth > 0.0)
+                & (np.abs(sampled_depth - z_prev) <= tolerance * np.maximum(np.abs(z_prev), 1e-4)))
     accept = inside & depth_ok
     return sampled, accept, z_prev
 
@@ -271,10 +306,14 @@ def main():
                  "rejection")
     parser.add_argument("--depth-tolerance", type=float, default=0.05,
             help="relative depth mismatch at which history is rejected as disoccluded")
+    parser.add_argument("--history-depth-mode", choices=("mean", "taps"), default="mean",
+            help="check interpolated depth or separately validate history taps")
     parser.add_argument("--no-reproject", action="store_true",
             help="blend history without alignment; the negative control that shows ghosting")
     parser.add_argument("--export", default="",
             help="also write (current, reprojected history, target) as a training set")
+    parser.add_argument("--report", type=Path,
+            help="write per-frame reconstruction metrics and CPU wall times as JSON")
     args = parser.parse_args()
 
     eye = [float(v) for v in args.eye.split(",")]
@@ -303,6 +342,8 @@ def main():
     history = None
     basis_prev = None
     single_all, blend_all = [], []
+    frame_reports = []
+    previous_residuals = None
     exported = 0
     if args.export:
         os.makedirs(args.export, exist_ok=True)
@@ -361,10 +402,12 @@ def main():
             history = None
             depth_prev = None
             camera_prev = None
+            previous_residuals = None
 
         accumulated = lr
         warped = None
         inside = None
+        started = time.perf_counter()
         if history is not None and args.no_reproject:
             warped = history
             accept = np.ones(lr.shape[:2], dtype=bool)
@@ -373,7 +416,7 @@ def main():
         elif history is not None:
             if depth_now is not None and depth_prev is not None and camera_prev is not None:
                 warped, accept, _ = reproject_with_depth(history, depth_prev, depth_now,
-                        camera_prev, camera_now, args.depth_tolerance)
+                        camera_prev, camera_now, args.depth_tolerance, args.history_depth_mode)
             else:
                 if camera_list is not None and np.linalg.norm(view_eye - camera_prev["eye"]) > 1e-6:
                     raise SystemExit("camera translation needs --depth-dir; a rotation-only "
@@ -395,8 +438,27 @@ def main():
                     else np.ones(accept.shape, dtype=bool)
             rejected_fraction = 1.0 - float(accept[covered].mean()) if covered.any() else 0.0
 
-        single_all.append(psnr(hr, upscale(lr, target_size)))
-        blend_all.append(psnr(hr, upscale(accumulated, target_size)))
+        history_ms = 1000 * (time.perf_counter() - started)
+        started = time.perf_counter()
+        reconstructed = upscale(accumulated, target_size)
+        upscale_ms = 1000 * (time.perf_counter() - started)
+        single = upscale(lr, target_size) if warped is not None else reconstructed
+        single_all.append(psnr(hr, single))
+        blend_all.append(psnr(hr, reconstructed))
+        if args.report:
+            residuals = single - hr, reconstructed - hr
+            deltas = (None if previous_residuals is None else
+                      [float(np.mean((now - prev) ** 2))
+                       for now, prev in zip(residuals, previous_residuals, strict=True)])
+            previous_residuals = residuals
+            frame_reports.append({
+                "frame": index, "usesHistory": warped is not None,
+                "singlePsnr": single_all[-1], "accumulatedPsnr": blend_all[-1],
+                "historyMs": history_ms, "upscaleMs": upscale_ms,
+                "foregroundRejectedFraction": rejected_fraction if warped is not None else None,
+                "singleResidualChangeMse": deltas[0] if deltas else None,
+                "accumulatedResidualChangeMse": deltas[1] if deltas else None,
+            })
         print(f"  frame {index:2d}  coarse {single_all[-1]:6.2f} dB   "
               f"accumulated {blend_all[-1]:6.2f} dB")
 
@@ -428,6 +490,13 @@ def main():
     print(f"median over {len(single_all)} frames: coarse {np.median(single_all):.2f} dB   "
           f"accumulated {np.median(blend_all):.2f} dB   "
           f"gain {np.median(blend_all) - np.median(single_all):+.2f} dB")
+    if args.report:
+        args.report.parent.mkdir(parents=True, exist_ok=True)
+        result = {"data": args.data, "cameraList": args.cameras, "depthDir": args.depth_dir,
+                  "mode": args.history_depth_mode, "blend": args.blend,
+                  "depthTolerance": args.depth_tolerance, "noReproject": args.no_reproject,
+                  "frames": frame_reports}
+        args.report.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     return 0
 
 
