@@ -722,6 +722,56 @@ python tools/mmtrain/probe_component_candidates.py "$pilotRoot/assets" "$pilotRo
 python tools/mmtrain/probe_component_candidates.py "$pilotRoot/assets" "$pilotRoot/holdout-assets" --whole-reference "$pilotRoot/qem-pool-control-96.json" --anchor selected --audit --out "$pilotRoot/components-selected-96.json"
 ```
 
+## Frozen meshes under perspective camera motion
+
+`probe_component_motion.py` rebuilds the default QEM, selected whole-mesh and selected
+component meshes from the same inputs, checks their fitting scores and exact face counts,
+then tests them on three previously unused perspective paths. The paths translate and
+rotate the camera and vary elevation. Geometry stays frozen. The raster interpolates
+reciprocal view depth and perspective-correct vertex light. Each 96×96 native input uses
+the same bicubic output, and the reference is the full source mesh at 384×384 with a
+2×2 output box filter. The optional PLY export includes mesh normals and records content
+hashes and face counts.
+
+For the motion-compensated measure, the high-resolution source depth gives the warp.
+Only pixels whose four source samples are covered and within 1% in depth are eligible.
+Reprojection checks depth at each prior bilinear tap. The same accepted surface pixels
+are used for every candidate. A separate screen-space coverage residual difference
+tracks changes around boundaries. These measures report changes in errors relative to
+the full-detail reference. A perceptual video comparison would require additional
+validation. [Jindal et al., Computer Graphics Video Quality Metric and Dataset](https://arxiv.org/abs/2506.11546)
+
+| Mean relative reduction vs selected whole mesh | 13 assets | Five extension assets |
+|---|---:|---:|
+| Color MSE | 1.303% | 2.659% |
+| Coverage MSE | 0.441% | 0.443% |
+| Motion-compensated color residual change | 0.352% | 0.773% |
+| Screen-space coverage residual change | 0.268% | 0.373% |
+
+The experiment evaluates 468 frames. Reprojection accepts 96.45% of the eligible
+surface pixels. Color MSE improves on seven assets and worsens on two. The temporal
+color metric improves on six and worsens on three. GlassVaseFlowers gains 6.88% in
+color MSE and regresses 0.46% in the temporal color measure. StainedGlassLamp gains
+4.78% and 1.36%, respectively. The result supports a modest perspective image-quality
+gain and leaves temporal improvement weak. The serial CPU replay including mesh
+export took 36.4 s and peaked at 314 MiB.
+At 128×128 input the five extension assets were replayed for another 180 frames
+on the same paths. Mean reductions were 2.747% for color MSE, 0.513% for coverage
+MSE, 0.971% for motion-compensated color residual change and 0.502% for
+screen-space coverage residual change.
+
+The release `mm_bench` headless smoke used the exported StainedGlassLamp component
+mesh at 160×90, feature level 1, and shadows off. Vulkan and OpenGL both identified
+Intel Iris Xe and wrote the camera description. Each run was stopped after 18 seconds
+with the first image and timing samples still missing. The quality results above
+come from the CPU rasterizer. The native smoke leaves GPU frame cost unmeasured.
+
+```powershell
+$pilotRoot = 'out/geometry-refinement-pilot'
+python tools/mmtrain/probe_component_motion.py "$pilotRoot/assets" "$pilotRoot/holdout-assets" --whole-reference "$pilotRoot/qem-pool-control-96.json" --component-reference "$pilotRoot/components-selected-96.json" --mesh-out "$pilotRoot/motion-meshes" --out "$pilotRoot/motion-96.json"
+python tools/mmtrain/probe_component_motion.py "$pilotRoot/holdout-assets" --whole-reference "$pilotRoot/qem-pool-control-96.json" --component-reference "$pilotRoot/components-selected-96.json" --size 128 --out "$pilotRoot/motion-extension-128.json"
+```
+
 ## Fairness note
 
 `espcn` and `fsrcnn` scoring below bicubic here says nothing about those architectures. Their

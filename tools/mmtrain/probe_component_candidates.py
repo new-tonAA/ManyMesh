@@ -176,10 +176,7 @@ def score_options(packets, selected, index, names, audit):
     return score, (count, area, total, crop_time, direct_time, maximum_error)
 
 
-def experiment(asset, size, whole_row, audit, anchor_on_selected):
-    start = time.perf_counter()
-    vertices, faces = load_geometry(asset)
-    source = shaded(vertices, faces)
+def prepare_anchors(vertices, faces, whole_row, anchor_on_selected):
     target = max(8, round(len(faces) * 0.2))
     positions, faces_qem, trace = fast_simplification.simplify(
         vertices, faces, target_count=target, return_collapses=True)
@@ -202,6 +199,17 @@ def experiment(asset, size, whole_row, audit, anchor_on_selected):
         map_vertices = vertices
     mapping = collapse_mapping(map_vertices, faces, trace, anchor[1])
     fixed_mesh, options = build_options(vertices, faces, anchor, mapping)
+    return base, whole, anchor, fixed_mesh, options
+
+
+def experiment(asset, size, whole_row, audit, anchor_on_selected):
+    start = time.perf_counter()
+    vertices, faces = load_geometry(asset)
+    source = shaded(vertices, faces)
+    base, whole, anchor, fixed_mesh, options = prepare_anchors(
+        vertices, faces, whole_row, anchor_on_selected)
+    budget = len(base[1])
+    whole_recipe = whole_row["selected"]
     fit = targets(source, size, FIT_VIEWS, FIT_PHASES)
     original = measure(base, size, fit)
     whole_fit = measure(whole, size, fit)

@@ -16,7 +16,7 @@ from tile_refinement import TILE_SIZE, tile_mean, tile_features, witness_tiles
 
 
 @njit
-def raster(vertices, triangles, light, size):
+def raster(vertices, triangles, light, size, perspective=False):
     depth = np.full((size, size), np.inf, np.float32)
     color = np.zeros((size, size), np.float32)
     for a, b, c in triangles:
@@ -35,8 +35,15 @@ def raster(vertices, triangles, light, size):
                 u = ((by - cy) * dx + (cx - bx) * dy) / denominator
                 v = ((cy - ay) * dx + (ax - cx) * dy) / denominator
                 w = 1.0 - u - v
-                z = u * az + v * bz + w * cz
-                if min(u, v, w) >= -1e-7 and z < depth[y, x]:
+                if min(u, v, w) < -1e-7:
+                    continue
+                if perspective:
+                    u, v, w = u / az, v / bz, w / cz
+                    z = 1.0 / (u + v + w)
+                    u, v, w = u * z, v * z, w * z
+                else:
+                    z = u * az + v * bz + w * cz
+                if z < depth[y, x]:
                     depth[y, x] = z
                     color[y, x] = u * light[a] + v * light[b] + w * light[c]
     return color, depth
