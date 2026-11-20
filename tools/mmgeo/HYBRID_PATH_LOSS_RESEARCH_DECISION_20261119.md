@@ -852,6 +852,71 @@ and the shared line visibility in
 The experiment measures the savings from reparameterizing these intervals inside a
 dynamic simplification scorer.
 
+## Continuous box filter along the pan axis
+
+The same shared visibility lines can evaluate a different objective. At path time `t`,
+integrate each line's coverage, depth, and normal over the full spatial pixel interval
+`[t - 0.5, t + 0.5]` along the pan axis. Average over the transverse sample positions before
+squaring the source versus current residual. This replaces discrete phases on only one
+axis. The camera is orthographic and the filter support is one pixel wide.
+
+Each visibility line has piecewise constant coverage and normals and piecewise affine depth.
+A prefix primitive on its intervals gives the box integral by subtracting evaluations at the
+two window endpoints. A shifted visibility breakpoint occurs when either endpoint crosses a
+line event. Between these shifted events the filtered residual has degree at most two.
+Three-point Gauss–Legendre quadrature integrates its squared norm exactly in exact arithmetic.
+The conservative pixel support and cache invalidation still cover the swept pixel rectangle.
+The score remains a sum of nonnegative pixel terms for early stopping.
+
+An isolated step occlusion with a known energy of 5/6 matched within 1e-14. Twelve synthetic
+mixtures of affine depth and visibility changes, with two transverse positions and a normal
+channel, agreed within 5.10e-9 with 20,000 time midpoints and separate direct clipping of each
+spatial interval. On Rounded Cube, an 18-edit run independently completed 189 pruned
+proposals across both policies. A full scoring-view rebuild differed from cached per-pixel
+loss by at most 8.06e-18.
+
+The 20% face removal comparison uses two transverse positions in both modes. The control
+adds two discrete positions along the pan, giving four box taps per pixel. The new mode
+integrates that axis continuously. The queue, candidates, six holdout paths, 80-by-80
+evaluation raster, and four evaluation taps per pixel follow the earlier protocol.
+
+| Mesh | Final faces | QEM loss | Edge only, four taps / continuous | Joint, four taps / continuous | Joint CPU seconds, four taps / continuous |
+|---|---:|---:|---:|---:|---:|
+| Rounded Cube | 960 | 3.86e-6 | 2.49e-6 / 3.55e-6 | 8.12e-6 / 3.04e-6 | 13.97 / 11.94 |
+| Torus | 922 | 1.46e-4 | 1.26e-4 / 1.27e-4 | 1.40e-4 / 1.35e-4 | 66.22 / 67.70 |
+| Pirate unit 5 | 2,426 | 6.47e-6 | 7.13e-6 / 7.12e-6 | 9.05e-6 / 7.02e-6 | 46.58 / 44.16 |
+
+For joint selection, continuous filtering reduced the mean held-out loss on each mesh
+by 62.5%, 3.3%, and 22.4%, respectively, and improved five of six paths on each.
+The lowest measured error still comes from four-tap edge-only for Rounded Cube and
+Torus, and QEM for Pirate. The timings are single CPU runs. Rounded Cube and Torus
+use the earlier archived four-tap control, so timing differences are descriptive.
+
+A second evaluation on the saved Rounded Cube meshes kept the same camera poses and
+physical pan length and raised the viewport to 96 by 96 with nine taps per pixel. Mean
+loss was 3.02e-6 for the four-tap joint mesh and 2.58e-6 for the continuous joint mesh,
+a 14.7% improvement on four of six paths. The four-tap edge-only mesh obtained 2.57e-6,
+and pure QEM obtained 1.91e-6. This resolution sensitivity affects the inferred gain
+and also which policy is best. The replay is
+`out/pathloss-captures/continuous-box-rounded-heldout-96px.json`.
+
+Reproduce with the following commands. Use a separate output path and replace
+`--integrate-along-pan` with `--share-collinear-taps` for the four-tap control.
+
+```powershell
+$env:OPENBLAS_NUM_THREADS = '1'
+$probe = 'tools/mmgeo/probe_global_path_qem.py'
+python $probe out/pathloss-captures/rounded_cube.json --remove-fraction .20 --scale 2 --compare-placements --integrate-along-pan --out out/pathloss-captures/continuous-box-rounded.json
+python $probe out/filter-real-candidates/torus.json --remove-fraction .20 --scale 2 --compare-placements --integrate-along-pan --out out/pathloss-captures/continuous-box-torus.json
+python $probe out/filter-real-candidates/pirate.json --unit-index 5 --remove-fraction .20 --scale 2 --compare-placements --integrate-along-pan --out out/pathloss-captures/continuous-box-pirate.json
+```
+
+Analytic spatial filtering has direct precedents in
+[Analytic Visibility on the GPU](https://www.cg.tuwien.ac.at/research/publications/2013/Auzinger_2013_AnaVis/)
+and [Analytic Rasterization of Curves with Polynomial Filters](https://people.engr.tamu.edu/schaefer/research/scanline.pdf).
+The experiment tests whether the combination of continuous path loss, local collapse updates,
+and a continuous spatial filter generalizes better than discrete taps for placement decisions.
+
 ## Decision and remaining gate
 
 The exact lower-bound mechanism now runs online in the Python research probe and shows a modest

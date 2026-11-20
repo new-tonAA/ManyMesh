@@ -40,17 +40,22 @@ def audit_final_views(views, positions, faces, source_normals, args):
     reports = []
     for view in views:
         final_scene = SceneIndex(project(positions, view.transform), faces)
+        layout = view.collinear_taps if args.integrate_along_pan else None
+        offsets = (layout.anchors if layout is not None else
+                   [((sx + 0.5) / view.scale, (sy + 0.5) / view.scale)
+                    for sy in range(view.scale) for sx in range(view.scale)])
+        path = view.line_path if layout is not None else view.path
         losses = []
         maximum = 0.0
         for y in range(view.size):
             for x in range(view.size):
-                points = [(x + (sx + 0.5) / view.scale, y + (sy + 0.5) / view.scale)
-                          for sy in range(view.scale) for sx in range(view.scale)]
+                points = [(x + sx, y + sy) for sx, sy in offsets]
                 source = [front_envelope(view.original_scene.lines(
-                    tx, ty, view.direction, view.path), view.path) for tx, ty in points]
+                    tx, ty, view.direction, path), path) for tx, ty in points]
                 final = [front_envelope(final_scene.lines(
-                    tx, ty, view.direction, view.path), view.path) for tx, ty in points]
-                loss = filtered_pixel_loss(source, final, normal_data)
+                    tx, ty, view.direction, path), path) for tx, ty in points]
+                loss = (layout.loss(source, final, normal_data) if layout is not None else
+                        filtered_pixel_loss(source, final, normal_data))
                 maximum = max(maximum, abs(loss - view.losses.get(y * view.size + x, 0.0)))
                 losses.append(loss)
         exact, cached = math.fsum(losses), math.fsum(view.losses.values())
@@ -147,6 +152,8 @@ def main():
     parser.add_argument("--scale", type=int, default=1)
     parser.add_argument("--share-collinear-taps", action="store_true",
                         help="share visibility envelopes along each row or column of box taps")
+    parser.add_argument("--integrate-along-pan", action="store_true",
+                        help="integrate a continuous box filter along the pan axis")
     parser.add_argument("--angle", type=float, default=2.3)
     parser.add_argument("--pan-angle", type=float, default=90.0)
     parser.add_argument("--radius", type=float, default=1.0)
@@ -177,8 +184,12 @@ def main():
         parser.error("invalid face budget, sampling, or loss settings")
     if args.retain_partial and args.pixel_order == "off":
         parser.error("retaining partial patches requires pixel pruning")
-    if args.share_collinear_taps and (args.scale < 2 or args.pan_angle % 90.0 != 0.0):
-        parser.error("collinear tap sharing needs scale >= 2 and a multiple of 90 degree pan")
+    if args.integrate_along_pan:
+        args.share_collinear_taps = True
+    if args.share_collinear_taps and args.pan_angle % 90.0 != 0.0:
+        parser.error("tap sharing needs a multiple of 90 degree pan")
+    if args.share_collinear_taps and not args.integrate_along_pan and args.scale < 2:
+        parser.error("discrete tap sharing needs at least two taps per axis")
     args.exhaustive = args.partial_only_bound = False
     capture = args.capture.read_bytes()
     digest = hashlib.sha256(capture).hexdigest()
@@ -196,6 +207,7 @@ def main():
               "pool": args.pool, "normalWeight": args.normal_weight, "auditedPruning": args.audit_pruning,
               "pixelOrder": args.pixel_order,
               "shareCollinearTaps": args.share_collinear_taps,
+              "integrateAlongPan": args.integrate_along_pan,
               "retainPartial": args.retain_partial,
               "cachedViewBound": args.cached_view_bound,
               "reuseFaceRecords": args.reuse_face_records, "rayCacheLines": args.ray_cache_lines,

@@ -61,8 +61,9 @@ def shift_envelope(front, shift, path):
 class CollinearTaps:
     """Share front-envelope work among regular box taps along an axis-aligned path."""
 
-    def __init__(self, scale, direction, path):
+    def __init__(self, scale, direction, path, continuous_box=False):
         self.path = path
+        self.continuous_box = continuous_box
         offsets = [(i + 0.5) / scale for i in range(scale)]
         horizontal = direction[1] == 0.0
         sign = direction[0] if horizontal else direction[1]
@@ -70,12 +71,67 @@ class CollinearTaps:
                         else [(x, 0.5) for x in offsets])
         self.taps = [(iy if horizontal else ix, sign * (offsets[ix if horizontal else iy] - 0.5))
                      for iy in range(scale) for ix in range(scale)]
-        margin = max(abs(shift) for _, shift in self.taps)
+        margin = 0.5 if continuous_box else max(abs(shift) for _, shift in self.taps)
         self.expanded_path = (math.nextafter(path[0] - margin, -math.inf),
                               math.nextafter(path[1] + margin, math.inf))
 
     def expand(self, fronts):
         return [shift_envelope(fronts[index], shift, self.path) for index, shift in self.taps]
+
+    def reference(self, fronts):
+        return fronts if self.continuous_box else self.expand(fronts)
+
+    def loss(self, original, current, normal_data):
+        if self.continuous_box:
+            return continuous_box_loss(original, current, self.path, normal_data)
+        return filtered_pixel_loss(original, self.expand(current), normal_data)
+
+
+def integrated_front(front, queries, normals):
+    """Integrate coverage, depth and optionally normals from the first endpoint."""
+    edges = np.asarray([front[0][0], *(hi for _, hi, _ in front)])
+    duration = np.diff(edges)
+    values = np.zeros((len(front), 2 if normals is None else 5))
+    slopes = np.zeros(len(front))
+    for i, (lo, _, line) in enumerate(front):
+        if line is not None:
+            slopes[i] = line["slope"]
+            values[i, :2] = 1., line["intercept"] + lo * slopes[i]
+            if normals is not None:
+                values[i, 2:] = normals[line["face"]]
+    areas = duration[:, None] * values
+    areas[:, 1] += 0.5 * slopes * duration ** 2
+    prefix = np.vstack((np.zeros(values.shape[1]), np.cumsum(areas, axis=0)))
+    indices = np.clip(np.searchsorted(edges, queries, side="right") - 1, 0, len(front) - 1)
+    width = (queries - edges[indices]).clip(0.0, duration[indices])
+    result = prefix[indices] + width[:, None] * values[indices]
+    result[:, 1] += 0.5 * slopes[indices] * width ** 2
+    return result
+
+
+def continuous_box_loss(original, current, path, normal_data=None):
+    """Integrate squared residuals after a unit box filter along the pan direction."""
+    boundaries = {t for front in (*original, *current) for lo, hi, _ in front for t in (lo, hi)}
+    edges = {t + offset for t in boundaries for offset in (-0.5, 0.5)}
+    edges = np.asarray([path[0], *sorted(t for t in edges if path[0] < t < path[1]), path[1]])
+    widths = np.diff(edges)
+    midpoint = edges[:-1] + widths * 0.5
+    # Window integrals are quadratic between shifted events. Three Gauss points
+    # integrate their squared norm (degree four) exactly on each interval.
+    nodes = np.asarray((-math.sqrt(3.0 / 5.0), 0., math.sqrt(3.0 / 5.0)))
+    weights = np.asarray((5. / 18., 4. / 9., 5. / 18.))
+    times = (midpoint[:, None] + 0.5 * widths[:, None] * nodes).ravel()
+    queries = np.r_[times - 0.5, times + 0.5]
+    residual = np.zeros((len(times), 2 if normal_data is None else 5))
+    for i, fronts in enumerate((original, current)):
+        for front in fronts:
+            prefix = integrated_front(front, queries, None if normal_data is None else normal_data[i])
+            residual += (1 if i == 0 else -1) * (prefix[len(times):] - prefix[:len(times)])
+    residual /= len(original)
+    squared = np.square(residual)
+    if normal_data is not None:
+        squared[:, 2:] *= normal_data[2]
+    return float(widths @ (squared.sum(axis=1).reshape(-1, 3) @ weights))
 
 
 def position_in_bounds(x, y, bounds):

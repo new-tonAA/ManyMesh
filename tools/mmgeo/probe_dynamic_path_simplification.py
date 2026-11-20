@@ -257,8 +257,10 @@ def evaluate(candidate, projected, faces, scene, original, current, points, dire
                 envelopes.append(front_envelope(combined, path))
                 rebuilt += 1
         if any(a is not b for a, b in zip(envelopes, current[i], strict=True)):
-            taps = collinear_taps.expand(envelopes) if collinear_taps is not None else envelopes
-            changed_pixels[i] = envelopes, filtered_pixel_loss(original[i], taps, normal_data)
+            loss = (filtered_pixel_loss(original[i], envelopes, normal_data)
+                    if collinear_taps is None else
+                    collinear_taps.loss(original[i], envelopes, normal_data))
+            changed_pixels[i] = envelopes, loss
         if pixel_budget is not None:
             loss = changed_pixels[i][1] if i in changed_pixels else losses.get(i, 0.0)
             # Round down at each addition so an accumulated rounding error cannot prune a tie.

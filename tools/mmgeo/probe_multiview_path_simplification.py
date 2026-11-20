@@ -51,7 +51,8 @@ class View:
         if getattr(args, "share_collinear_taps", False):
             axis = round(args.pan_angle / 90.0) % 4
             self.direction = ((1., 0.), (0., 1.), (-1., 0.), (0., -1.))[axis]
-            self.collinear_taps = CollinearTaps(self.scale, self.direction, self.path)
+            self.collinear_taps = CollinearTaps(
+                self.scale, self.direction, self.path, getattr(args, "integrate_along_pan", False))
         self.line_path = (self.path if self.collinear_taps is None
                           else self.collinear_taps.expanded_path)
         delta = np.asarray(self.path)[:, None] * np.asarray(self.direction)
@@ -125,7 +126,7 @@ class View:
         fronts = [front_envelope(self.original_scene.lines(
             tx, ty, self.direction, self.line_path), self.line_path) for tx, ty in points]
         self.front[i] = fronts
-        self.original[i] = (self.collinear_taps.expand(fronts)
+        self.original[i] = (self.collinear_taps.reference(fronts)
                             if self.collinear_taps is not None else fronts)
 
     def resume(self, proposal):
