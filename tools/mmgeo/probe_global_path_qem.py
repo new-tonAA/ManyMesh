@@ -21,6 +21,16 @@ from probe_multiview_path_simplification import View, select_path_edge
 from progressive_geometry_baseline import ProgressiveQEM
 
 
+def fitting_view_offsets(count):
+    if count == 1:
+        return (0.0,)
+    if count == 2:
+        return (0.0, math.pi)
+    if count == 3:
+        return (0.0, 2 * math.pi / 3, -2 * math.pi / 3)
+    raise ValueError("fitting view count must be 1, 2, or 3")
+
+
 def proposal_for_entry(queue, entry, faces, placement_rank=None):
     _, keep, remove, _, _, _, point = entry
     target = np.asarray(point)
@@ -156,13 +166,13 @@ def run(unit, args, target_faces, rerank, compare_placements=False, refine=None)
         faces = [tuple(f) for f in unit["triangles"]]
         start_views = time.perf_counter()
         views = [View(queue.p, faces, args.angle + offset, args)
-                 for offset in (0.0, 2 * math.pi / 3, -2 * math.pi / 3)]
+                 for offset in fitting_view_offsets(args.fit_view_count)]
         secondary = []
         if refine == "orthogonal":
             orthogonal = copy(args)
             orthogonal.pan_angle = (args.pan_angle + 90.0) % 360.0
             secondary = [View(queue.p, faces, args.angle + offset, orthogonal)
-                         for offset in (0.0, 2 * math.pi / 3, -2 * math.pi / 3)]
+                         for offset in fitting_view_offsets(args.fit_view_count)]
         source_normals = indexed_normals(queue.p, faces) if args.normal_weight else None
         current_normals = source_normals.copy() if source_normals is not None else None
         view_setup_seconds = time.perf_counter() - start_views
@@ -239,6 +249,8 @@ def main():
     parser.add_argument("--unit-index", type=int, default=0)
     parser.add_argument("--remove-fraction", type=float, default=0.05)
     parser.add_argument("--pool", type=int, default=4)
+    parser.add_argument("--fit-view-count", type=int, choices=(1, 2, 3), default=3,
+                        help="number of evenly spaced camera paths used to rank edits")
     parser.add_argument("--compare-placements", action="store_true",
                         help="also rerank all legal QEM placements of each shortlisted edge")
     parser.add_argument("--refine-placements", choices=("primary", "orthogonal", "both"),
@@ -305,7 +317,8 @@ def main():
     qem = run(unit, args, target_faces, False)
     path = run(unit, args, target_faces, True)
     result = {"captureSha256": digest, "unitIndex": args.unit_index, "targetFaces": target_faces,
-              "pool": args.pool, "normalWeight": args.normal_weight, "auditedPruning": args.audit_pruning,
+              "pool": args.pool, "fitViewCount": args.fit_view_count,
+              "normalWeight": args.normal_weight, "auditedPruning": args.audit_pruning,
               "pixelOrder": args.pixel_order,
               "shareCollinearTaps": args.share_collinear_taps,
               "integrateAlongPan": args.integrate_along_pan,

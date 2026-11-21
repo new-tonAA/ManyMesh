@@ -34,9 +34,25 @@ On Torus at pool 2, enabling per-pixel loss ordering, cached view bounds, and pa
 
 A profile of a 4% Torus run attributed about 5.2 seconds of cumulative time to per-triangle `instantiate_path_lines`, 2.6 seconds to continuous box-loss integration, and 1.8 seconds to front-envelope construction. A NumPy vectorization trial produced exactly the same 23 edit choices and scores as the scalar version but was 8.2% slower. An optional Numba trial could not run because the installed Numba requires NumPy 2.3 or older while this environment has NumPy 2.5. The experimental code was removed; the production research scripts remain unchanged.
 
+I compiled a standalone C++ path-line clipping kernel and first called it once per ray through `ctypes`. The 4% Torus path retained exact scores and choices, but took 17.28 CPU seconds versus 6.66 seconds for the scalar reference. At the full 20% Torus target, the C++-per-ray run retained all 115 edge/placement choices and every per-view score exactly, but took 66.69 CPU seconds versus 22.23 seconds for Python. Its peak working set was 133.9 MiB. This rejects the single-ray FFI integration; its repeated array handling and call overhead outweigh the compiled arithmetic.
+
+A second native function that batches multiple ray queries compiled successfully. Windows Application Control blocked loading the generated DLL with WinError 4551, so the batch function received no runtime validation or performance result. I did not rename the binary or try another execution environment. The unverified native source and DLL were removed, leaving the Python reference unchanged. A batched kernel is still a possible route, but it needs an approved execution path before it can be evaluated.
+
+Re-enabling `--reuse-face-records` on the full Torus pool-2 run preserved all 115 choices and scores but increased path CPU from 22.23 to 37.33 seconds; peak working set stayed about 134 MiB. This cache is not a useful speed setting for this configuration.
+
+I added `--fit-view-count` to measure a view-budget ablation. It selects one centered camera path, two opposite paths, or the existing three paths. On Torus, all runs used the same pool, face target, fitting resolution, and six held-out paths:
+
+| Fitting paths | Path CPU s | Peak WS MiB | Coverage delta vs QEM | Depth delta vs QEM | Flat-normal delta vs QEM | Held-out wins (coverage/depth/normal) |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 18.83 | 77.7 | -1.28% | -1.57% | +0.21% | 2/6, 2/6, 1/6 |
+| 2 | 42.33 | 105.8 | -7.47% | -15.14% | -3.23% | 4/6, 4/6, 6/6 |
+| 3 | 22.23 | 133.8 | -9.65% | -18.60% | -3.81% | 3/6, 5/6, 6/6 |
+
+The one-view run was about 15% faster than the three-view run, but it gave up most of the quality gain and slightly worsened flat-normal error. Two paths were slower than three; they chose a different sequence with larger downstream supports. Therefore runtime is not monotonic in the number of fitted views, and no useful adaptive view-budget policy is established by this ablation.
+
 ## Decision
 
-The exact path-loss direction now has a promising **three-asset quality signal at pool 2**, under a shallow memory footprint (64–134 MiB peak working set), but it remains much slower than QEM. Exact lower-bound pruning and simple vectorization did not close that gap. The next practical step is a native batched path-event and filter kernel with an unchanged scalar reference, then rerun the same fixed protocol and require score/sequence parity before evaluating speed. If a native kernel cannot approach QEM while preserving the measured quality gains, retire this method as a practical simplifier.
+The exact path-loss direction still shows a **three-asset quality signal at pool 2**, under a shallow memory footprint (64–134 MiB peak working set), but it remains much slower than QEM. Exact lower-bound pruning, face-record reuse, simple vectorization, and a native per-ray kernel did not close that gap. Reducing fitted views also lacks a useful tradeoff so far. The next algorithmic gate is candidate-specific view allocation: a cheap decision must predict when omitted paths can change the winner, retain held-out quality, and lower total scoring time. Any such rule needs a held-out path/mesh evaluation. The native batch route cannot be evaluated while Windows Application Control blocks its DLL; no code relying on that route remains in the worktree. If neither this route nor a pure-Python query-reduction method can approach QEM while preserving the measured quality gains, retire the method as a practical simplifier.
 
 The quality evidence is still limited to a geometry/flat-normal CPU proxy, six held-out paths, and three authored assets. A submission claim additionally needs more independent meshes, perspective or rotating paths, shaded RGB/material evaluation, randomized repetitions, and a focused comparison with viewcell, analytic rasterization, and kinetic-visibility prior work.
 
