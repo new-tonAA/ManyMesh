@@ -145,12 +145,15 @@ def make_pairs(asset_path, views, size):
         meshes.append((pos, indices, light))
     reference_mesh, coarse, fine = meshes
     samples, coarse_error, fine_error = [], [], []
+    low_images, high_images = [], []
     for index in range(views):
         basis = view_basis(index, views)
         reference, _ = capture(reference_mesh, basis, 4 * size)
         reference = reference.reshape(size * 2, 2, size * 2, 2).mean(axis=(1, 3))
         color, depth = capture(coarse, basis, size)
         refined, _ = capture(fine, basis, size)
+        low_images.append(np.rint(np.clip(color, 0, 1) * 255).astype(np.uint8))
+        high_images.append(np.rint(np.clip(reference, 0, 1) * 255).astype(np.uint8))
         features = tile_features(color, depth)
         samples.append(np.column_stack((features, witness_tiles(witnesses, basis, depth))))
         coarse_error.append(tile_mean((bicubic(color, 2 * size) - reference) ** 2, TILE_SIZE * 2))
@@ -159,6 +162,7 @@ def make_pairs(asset_path, views, size):
             example = {"color": color, "depth": depth, "basis": basis, "witnesses": witnesses}
     return {"features": np.stack(samples), "coarse": np.stack(coarse_error),
             "fine": np.stack(fine_error), "triangles": np.array([len(m[1]) for m in meshes]),
+            "lowImages": np.stack(low_images), "highImages": np.stack(high_images),
             **example}
 
 

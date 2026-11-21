@@ -912,8 +912,9 @@ per-model URLs return HTTP 403 in this environment. The dataset repository expos
 `1e52df627995ba43b7b91143af4bed86f570037a`. We fetched only the 32 selected files: 43.38 MiB
 total, with hashes and license attribution recorded in the ignored download manifest. An STL audit
 matched every face count and all published edge-boundary counts, found no degenerate facets or
-non-manifold edges, and confirmed consistent winding on interior edges. No model has been trained
-on this corpus yet. See [the data audit and limitations](THINGI10K_PILOT_DATA_20261120.md).
+non-manifold edges, and confirmed consistent winding on interior edges. We used this corpus for
+split-safe mesh tile-ranking and image-super-resolution screens; both current learned variants
+lost to their deterministic baselines. See [the data audit and limitations](THINGI10K_PILOT_DATA_20261120.md).
 
 Download the small, pinned metadata files and recreate the manifest with:
 
@@ -939,6 +940,23 @@ python tools/mmtrain/download_thingi10k_subset.py `
 
 Dataset sources: [Thingi10K dataset repository](https://github.com/Thingi10K/Thingi10K),
 [individual raw-mesh mirror](https://huggingface.co/datasets/Thingi10K/Thingi10K/tree/main/raw_meshes).
+
+The first strict train/validation/test screen generated twelve orthographic grayscale views per
+mesh, learned tile priorities only on the 16 train Things, selected rankers on 8 validation Things,
+and evaluated once on 8 test Things. At both 10% and 25% finer-LOD tile budgets, validation chose
+plain image contrast over the 97-parameter MLP and 121-parameter geometry-witness MLP. On test,
+the witness MLP reduced the tile MSE by 7.01% and 16.01%, versus 9.45% and 18.82% for contrast;
+it lost on all eight test Things at both budgets. This closes the current learned ranker as a
+cross-asset gain on this proxy. It does not close other learning objectives or establish an
+end-to-end renderer result. See [the split-safe screen and reproduction hashes](THINGI10K_TILE_RANKING_SCREEN_20261121.md).
+
+The same asset split also tested image super-resolution: a 22,860-parameter `TinyUpsample` CNN
+trained on 192 views and selected by 96 validation views. Its held-out PSNR/SSIM was 27.89 dB /
+0.9439 versus bicubic's 29.19 dB / 0.9530. On a single CPU thread, 2x inference took 43.05 ms
+p95 54.12 ms at 640x360, about 4.1x the 10.55 ms bicubic median. This recipe therefore loses both
+quality and CPU time on the test meshes. Full setup, results, and hashes are in
+[the Thingi10K super-resolution screen](THINGI10K_SUPERRES_SCREEN_20261121.md); timings are
+reproduced by `bench_thingi_sr_inference.py`.
 
 ## High-resolution path-loss check
 
