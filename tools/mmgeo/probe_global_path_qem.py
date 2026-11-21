@@ -245,6 +245,10 @@ def run(unit, args, target_faces, rerank, compare_placements=False, refine=None)
         result["perViewAxisRowCachePeakLines"] = [
             [view.original_scene.row_cache_peak_lines, view.scene.row_cache_peak_lines]
             for view in views + secondary]
+        result["perViewAxisRowCacheStats"] = [
+            {"source": view.original_scene.row_cache_stats(),
+             "current": view.scene.row_cache_stats()}
+            for view in views + secondary]
     return result
 
 

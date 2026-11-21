@@ -44,6 +44,16 @@ class SceneIndex:
         self.row_cache_peak_lines = 0
         self.row_cache_hits = 0
         self.row_cache_misses = 0
+        self.row_cache_build_seconds = 0.0
+        self.row_cache_shift_seconds = 0.0
+        self.row_cache_fallback_seconds = 0.0
+        self.row_cache_fallbacks = 0
+        self.row_cache_update_calls = 0
+        self.row_cache_invalidated_rows = 0
+        self.row_cache_invalidated_lines = 0
+        self.row_cache_evictions = 0
+        self.row_cache_evicted_lines = 0
+        self.row_cache_oversize_rows = 0
         self.update(range(len(faces)), triangle_path_coefficients(positions, faces, range(len(faces))))
 
     def cells(self, record):
@@ -60,10 +70,14 @@ class SceneIndex:
             yield cell
 
     def update(self, edited_ids, replacements):
+        changed_bounds = [[], []] if self.axis_row_cache else None
         for face in edited_ids:
             old = self.records.pop(face, None)
             if old is None:
                 continue
+            if self.axis_row_cache:
+                changed_bounds[0].append((old[3][1], old[3][3]))
+                changed_bounds[1].append((old[3][0], old[3][2]))
             for cell in self.cells(old):
                 members = self.bins[cell]
                 members.remove(face)
@@ -78,6 +92,9 @@ class SceneIndex:
                             del self.axis_bins[axis][cell]
         for record in replacements:
             face = record[0]
+            if self.axis_row_cache:
+                changed_bounds[0].append((record[3][1], record[3][3]))
+                changed_bounds[1].append((record[3][0], record[3][2]))
             self.records[face] = record
             for cell in self.cells(record):
                 self.bins[cell].add(face)
@@ -86,8 +103,18 @@ class SceneIndex:
                     for cell in self.axis_cells(record, axis):
                         self.axis_bins[axis][cell].add(face)
         if self.axis_row_cache:
-            self.row_cache.clear()
-            self.row_cache_lines = 0
+            self.row_cache_update_calls += 1
+            invalid = []
+            for key in self.row_cache:
+                moving_axis, coordinate = key
+                if any(low - 1e-12 <= coordinate <= high + 1e-12
+                       for low, high in changed_bounds[moving_axis]):
+                    invalid.append(key)
+            for key in invalid:
+                records = self.row_cache.pop(key)
+                self.row_cache_lines -= len(records)
+                self.row_cache_invalidated_rows += 1
+                self.row_cache_invalidated_lines += len(records)
 
     def scanline_records(self, coordinate, moving_axis):
         key = moving_axis, coordinate
@@ -96,6 +123,15 @@ class SceneIndex:
             self.row_cache.move_to_end(key)
             return self.row_cache[key]
         self.row_cache_misses += 1
+        started = time.perf_counter()
+        records = self._build_scanline_records(coordinate, moving_axis)
+        self.row_cache_build_seconds += time.perf_counter() - started
+        if records is None:
+            self.row_cache_fallbacks += 1
+        return records
+
+    def _build_scanline_records(self, coordinate, moving_axis):
+        key = moving_axis, coordinate
         fixed_axis = 1 - moving_axis
         cell = math.floor(coordinate / self.cell_size)
         records = []
@@ -141,10 +177,35 @@ class SceneIndex:
                     len(self.row_cache) >= self.axis_row_cache_row_limit)):
                 _, evicted = self.row_cache.popitem(last=False)
                 self.row_cache_lines -= len(evicted)
+                self.row_cache_evictions += 1
+                self.row_cache_evicted_lines += len(evicted)
             self.row_cache[key] = records
             self.row_cache_lines += weight
             self.row_cache_peak_lines = max(self.row_cache_peak_lines, self.row_cache_lines)
+        else:
+            self.row_cache_oversize_rows += 1
         return records
+
+    def row_cache_stats(self):
+        return {
+            "hits": self.row_cache_hits,
+            "misses": self.row_cache_misses,
+            "hitRate": (self.row_cache_hits / (self.row_cache_hits + self.row_cache_misses)
+                        if self.row_cache_hits + self.row_cache_misses else 0.0),
+            "buildSeconds": self.row_cache_build_seconds,
+            "shiftSeconds": self.row_cache_shift_seconds,
+            "fallbackSeconds": self.row_cache_fallback_seconds,
+            "fallbacks": self.row_cache_fallbacks,
+            "updateCalls": self.row_cache_update_calls,
+            "invalidatedRows": self.row_cache_invalidated_rows,
+            "invalidatedLines": self.row_cache_invalidated_lines,
+            "evictions": self.row_cache_evictions,
+            "evictedLines": self.row_cache_evicted_lines,
+            "oversizeRows": self.row_cache_oversize_rows,
+            "peakLines": self.row_cache_peak_lines,
+            "residentRows": len(self.row_cache),
+            "residentLines": self.row_cache_lines,
+        }
 
     def axis_lines(self, x, y, direction, path):
         moving_axis = 0 if direction[1] == 0.0 else 1
@@ -154,8 +215,12 @@ class SceneIndex:
         lines = []
         records = self.scanline_records(fixed_coordinate, moving_axis)
         if records is None:
-            return instantiate_path_lines(
+            started = time.perf_counter()
+            lines = instantiate_path_lines(
                 self.records, x, y, direction, path, self.bins, self.cell_size)[0]
+            self.row_cache_fallback_seconds += time.perf_counter() - started
+            return lines
+        started = time.perf_counter()
         for face, low, high, depth_slope, base_intercept in records:
             if sign > 0.0:
                 lo = max(float(path[0]), low - position)
@@ -167,6 +232,7 @@ class SceneIndex:
                 lines.append({"face": face, "lo": lo, "hi": hi,
                               "slope": depth_slope * sign,
                               "intercept": depth_slope * position + base_intercept})
+        self.row_cache_shift_seconds += time.perf_counter() - started
         return lines
 
     def lines(self, x, y, direction, path):

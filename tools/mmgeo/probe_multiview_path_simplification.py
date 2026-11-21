@@ -55,6 +55,16 @@ class View:
         self.scene.row_cache_peak_lines = 0
         self.scene.row_cache_hits = 0
         self.scene.row_cache_misses = 0
+        self.scene.row_cache_build_seconds = 0.0
+        self.scene.row_cache_shift_seconds = 0.0
+        self.scene.row_cache_fallback_seconds = 0.0
+        self.scene.row_cache_fallbacks = 0
+        self.scene.row_cache_update_calls = 0
+        self.scene.row_cache_invalidated_rows = 0
+        self.scene.row_cache_invalidated_lines = 0
+        self.scene.row_cache_evictions = 0
+        self.scene.row_cache_evicted_lines = 0
+        self.scene.row_cache_oversize_rows = 0
         self.size = args.size
         self.scale = args.scale
         radians = math.radians(args.pan_angle)
