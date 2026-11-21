@@ -40,6 +40,10 @@ A second native function that batches multiple ray queries compiled successfully
 
 Re-enabling `--reuse-face-records` on the full Torus pool-2 run preserved all 115 choices and scores but increased path CPU from 22.23 to 37.33 seconds; peak working set stayed about 134 MiB. This cache is not a useful speed setting for this configuration.
 
+I also varied the order in which exact candidate scores are completed. Reversing the QEM shortlist on the 20% Pirate run preserved all 303 choices and per-view scores, but increased path CPU from 15.34 to 49.30 seconds. It pruned 26 more candidate completions (599 to 573), so pruning count alone does not predict runtime.
+
+The `first-view` order pre-scores every candidate on the first camera path, then sorts by that exact contribution plus the remaining views' nonnegative outside-support losses. On a 4% Torus prefix, it preserved all 23 choices, placements, and per-view scores; the pruning audit passed, and path CPU fell from 19.23 to 7.91 seconds (peak working set about 100 MiB). On the full 20% Torus run, it again preserved all 115 choices, scores, and held-out results, and reduced later-view evaluations from 456 to 422 and completed candidates from 226 to 206. However, path CPU rose from 22.23 to 53.98 seconds (peak working set 134.3 MiB). The short-prefix speedup does not survive the full run; this ordering is rejected as a general acceleration. It demonstrates that exact admissible bounds can preserve the answer while a poorly amortized scoring schedule still makes the algorithm slower.
+
 I added `--fit-view-count` to measure a view-budget ablation. It selects one centered camera path, two opposite paths, or the existing three paths. On Torus, all runs used the same pool, face target, fitting resolution, and six held-out paths:
 
 | Fitting paths | Path CPU s | Peak WS MiB | Coverage delta vs QEM | Depth delta vs QEM | Flat-normal delta vs QEM | Held-out wins (coverage/depth/normal) |
@@ -58,7 +62,7 @@ The quality evidence is still limited to a geometry/flat-normal CPU proxy, six h
 
 ## Reproduction and provenance
 
-Python driver SHA-256: `4177be64fab00d2f40d76e1a08268db07a440ff0fb014c119801fa064e82c525`.
+Python driver SHA-256: `a6869b654f91bf8625f42c1a5e1ed6d4b667ab19f6d979b8c1e9f5ef7e6226c5`.
 
 | Capture | SHA-256 |
 |---|---|

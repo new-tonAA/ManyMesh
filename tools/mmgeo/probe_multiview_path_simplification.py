@@ -238,10 +238,38 @@ def select_path_edge(views, candidates, faces, world, source_normals, current_no
     resumed_before = sum(view.resumed_partials for view in views)
     known_before = sum(view.resumed_known_pixels for view in views)
     best = math.inf
+    staged = {}
+    candidate_order = getattr(args, "candidate_order", "qem")
+    if candidate_order == "first-view" and len(views) > 1:
+        # Score the cheapest-to-estimate path contribution for every candidate,
+        # then prioritize candidates by an admissible total-loss lower bound.
+        # The first-view patches are kept in the normal view cache and reused
+        # by the full evaluation below.
+        for candidate in candidates:
+            key = candidate.key
+            projections = [view.proposal(candidate, faces) for view in views]
+            outside = [view.outside_loss(proposal) for view, proposal in zip(views, projections)]
+            normals = ((source_normals, ChainMap(placement_normals(world, candidate), current_normals),
+                        args.normal_weight) if current_normals is not None else None)
+            value, patch, taps, pixels = views[0].score(
+                projections[0], outside[0], faces, normals, epoch, True)
+            counts[0] += 1
+            rebuilt[0] += taps
+            visits[0] += pixels
+            staged[key] = (projections, outside, normals, value, patch)
+        candidates = sorted(candidates, key=lambda c: (
+            math.fsum((staged[c.key][3], *staged[c.key][1][1:])), c.key))
+
     for candidate in candidates:
         key = candidate.key
-        projections = [view.proposal(candidate, faces) for view in views]
-        outside = [view.outside_loss(proposal) for view, proposal in zip(views, projections)]
+        if key in staged:
+            projections, outside, normals, first_value, first_patch = staged[key]
+        else:
+            projections = [view.proposal(candidate, faces) for view in views]
+            outside = [view.outside_loss(proposal) for view, proposal in zip(views, projections)]
+            normals = ((source_normals, ChainMap(placement_normals(world, candidate), current_normals),
+                        args.normal_weight) if current_normals is not None else None)
+            first_value = first_patch = None
         bounds = outside
         resume = [None] * len(views)
         if args.cached_view_bound and not args.exhaustive and math.isfinite(best):
@@ -253,10 +281,11 @@ def select_path_edge(views, candidates, faces, world, source_normals, current_no
                     known = math.nextafter(known_support_loss(
                         proposal.support, patch.pixels, invalid, view.losses), -math.inf)
                     bounds[i] = math.nextafter(outside[i] + max(0.0, known), -math.inf)
-        normals = ((source_normals, ChainMap(placement_normals(world, candidate), current_normals),
-                    args.normal_weight) if current_normals is not None else None)
-        values, patches = [], []
-        for i, view in enumerate(views):
+        values = [first_value] if first_value is not None else []
+        patches = [first_patch] if first_patch is not None else []
+        start_view = len(values)
+        for i in range(start_view, len(views)):
+            view = views[i]
             lower = (math.fsum(values) if args.partial_only_bound
                      else math.fsum((*values, *bounds[i:])))
             # Allow all candidates in the same numerical tie class as the incumbent.

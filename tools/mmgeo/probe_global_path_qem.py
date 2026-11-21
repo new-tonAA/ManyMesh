@@ -184,11 +184,14 @@ def run(unit, args, target_faces, rerank, compare_placements=False, refine=None)
         options = queue.shortlist(args.pool if rerank else 1)
         if not options:
             break
+        ranked_options = list(enumerate(options, 1))
+        if rerank and args.candidate_order == "reverse-qem":
+            ranked_options.reverse()
         row = {}
         if rerank:
             entries = {}
             candidates = []
-            for edge_rank, entry in enumerate(options, 1):
+            for edge_rank, entry in ranked_options:
                 placements = queue.legal_placements(entry) if compare_placements else (entry,)
                 for placement_rank, placement in enumerate(placements):
                     candidate = proposal_for_entry(
@@ -249,6 +252,8 @@ def main():
     parser.add_argument("--unit-index", type=int, default=0)
     parser.add_argument("--remove-fraction", type=float, default=0.05)
     parser.add_argument("--pool", type=int, default=4)
+    parser.add_argument("--candidate-order", choices=("qem", "reverse-qem", "first-view"), default="qem",
+                        help="order exact path scoring of the QEM shortlist")
     parser.add_argument("--fit-view-count", type=int, choices=(1, 2, 3), default=3,
                         help="number of evenly spaced camera paths used to rank edits")
     parser.add_argument("--compare-placements", action="store_true",
