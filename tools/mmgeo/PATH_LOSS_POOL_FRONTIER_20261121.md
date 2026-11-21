@@ -50,6 +50,10 @@ Restricting exact path scoring to the coarse raster's top K is a measurable spee
 
 Finally, a 4% pool-4 Torus run with a 50,000-line per-view current-scene ray cache, using strip width 1 because the cache cannot be combined with strip width 4, preserved all 23 edits and reduced CPU from 28.97 to 24.59 seconds. The peak process working set changed from 98.0 to 99.2 MiB; cache peaks were 5,903–6,603 lines per view, with 327 hits and 9,251 misses. The faster matched strip-width-4 baseline took 18.88 seconds, so this cache configuration does not improve the best measured setup and is not retained as an acceleration claim.
 
+I temporarily routed strip-anchor common-scene queries through the same ray cache and invalidated anchors touched by accepted edits. The 4% pool-4 audit preserved all choices and scores; the independent full-frame path rebuild differed by at most `2.24e-16` per pixel. Runtime rose from 18.88 to 26.23 CPU seconds at 107.8 MiB peak working set, with only 166 hits versus 3,593 misses. I removed this integration because it is slower and adds bookkeeping; the parser continues to reject this combination.
+
+A second exact-kernel trial memoized the source-side piecewise-polynomial integral prefixes used by the continuous box filter, since those source fronts are unchanged across collapse candidates. On the 4% Torus/pool-4 audit, it retained the same 23 choices and per-view scores, and the final full-frame rebuild differed by at most `2.24e-16` per pixel. The scorer itself slowed from 16.96 to 19.66 CPU seconds (+15.9%), and peak working set rose from 104.4 to 119.9 MiB. Most source fronts were not reused enough to amortize the extra tables. I removed this optimization; the exact reference implementation remains unchanged.
+
 I added `--fit-view-count` to measure a view-budget ablation. It selects one centered camera path, two opposite paths, or the existing three paths. On Torus, all runs used the same pool, face target, fitting resolution, and six held-out paths:
 
 | Fitting paths | Path CPU s | Peak WS MiB | Coverage delta vs QEM | Depth delta vs QEM | Flat-normal delta vs QEM | Held-out wins (coverage/depth/normal) |
