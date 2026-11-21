@@ -39,12 +39,22 @@ class View:
         self.source_projected = self.projected.copy()
         self.source_faces = tuple(faces)
         self.coarse_reference = None
-        self.original_scene = SceneIndex(self.projected, faces)
+        self.original_scene = SceneIndex(
+            self.projected, faces, getattr(args, "axis_row_cache", False))
         # The unchanged face records are immutable. Only the face map and bins are copied.
         self.scene = copy(self.original_scene)
         self.scene.records = self.original_scene.records.copy()
         self.scene.bins = defaultdict(set, ((cell, ids.copy())
                                             for cell, ids in self.original_scene.bins.items()))
+        self.scene.axis_bins = (
+            [defaultdict(set, ((cell, ids.copy()) for cell, ids in bins.items()))
+             for bins in self.original_scene.axis_bins]
+            if self.original_scene.axis_bins is not None else None)
+        self.scene.row_cache = OrderedDict()
+        self.scene.row_cache_lines = 0
+        self.scene.row_cache_peak_lines = 0
+        self.scene.row_cache_hits = 0
+        self.scene.row_cache_misses = 0
         self.size = args.size
         self.scale = args.scale
         radians = math.radians(args.pan_angle)

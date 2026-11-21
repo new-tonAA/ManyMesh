@@ -2,7 +2,7 @@
 """Compare cached and fresh path-loss decisions in a dynamic local simplifier."""
 
 import argparse
-from collections import ChainMap, Counter, defaultdict
+from collections import ChainMap, Counter, OrderedDict, defaultdict
 from dataclasses import dataclass
 import hashlib
 import json
@@ -30,10 +30,20 @@ class SceneIndex:
     """Index the current triangle records by stable face ID."""
 
     cell_size = 8.0
+    axis_row_cache_line_limit = 20000
+    axis_row_cache_row_limit = 512
 
-    def __init__(self, positions, faces):
+    def __init__(self, positions, faces, axis_row_cache=False):
         self.records = {}
         self.bins = defaultdict(set)
+        self.axis_row_cache = axis_row_cache
+        self.axis_bins = ([defaultdict(set), defaultdict(set)]
+                          if self.axis_row_cache else None)
+        self.row_cache = OrderedDict()
+        self.row_cache_lines = 0
+        self.row_cache_peak_lines = 0
+        self.row_cache_hits = 0
+        self.row_cache_misses = 0
         self.update(range(len(faces)), triangle_path_coefficients(positions, faces, range(len(faces))))
 
     def cells(self, record):
@@ -41,6 +51,13 @@ class SceneIndex:
         for x in range(math.floor(x0 / self.cell_size), math.floor(x1 / self.cell_size) + 1):
             for y in range(math.floor(y0 / self.cell_size), math.floor(y1 / self.cell_size) + 1):
                 yield x, y
+
+    def axis_cells(self, record, fixed_axis):
+        low = record[3][fixed_axis]
+        high = record[3][fixed_axis + 2]
+        for cell in range(math.floor(low / self.cell_size),
+                          math.floor(high / self.cell_size) + 1):
+            yield cell
 
     def update(self, edited_ids, replacements):
         for face in edited_ids:
@@ -52,13 +69,111 @@ class SceneIndex:
                 members.remove(face)
                 if not members:
                     del self.bins[cell]
+            if self.axis_row_cache:
+                for axis in (0, 1):
+                    for cell in self.axis_cells(old, axis):
+                        members = self.axis_bins[axis][cell]
+                        members.remove(face)
+                        if not members:
+                            del self.axis_bins[axis][cell]
         for record in replacements:
             face = record[0]
             self.records[face] = record
             for cell in self.cells(record):
                 self.bins[cell].add(face)
+            if self.axis_row_cache:
+                for axis in (0, 1):
+                    for cell in self.axis_cells(record, axis):
+                        self.axis_bins[axis][cell].add(face)
+        if self.axis_row_cache:
+            self.row_cache.clear()
+            self.row_cache_lines = 0
+
+    def scanline_records(self, coordinate, moving_axis):
+        key = moving_axis, coordinate
+        if key in self.row_cache:
+            self.row_cache_hits += 1
+            self.row_cache.move_to_end(key)
+            return self.row_cache[key]
+        self.row_cache_misses += 1
+        fixed_axis = 1 - moving_axis
+        cell = math.floor(coordinate / self.cell_size)
+        records = []
+        for face in sorted(self.axis_bins[fixed_axis].get(cell, ())):
+            record = self.records.get(face)
+            if record is None:
+                continue
+            face_id, barycentric, depth_plane, bounds = record
+            if coordinate < bounds[fixed_axis] - 1e-12 or coordinate > bounds[fixed_axis + 2] + 1e-12:
+                continue
+            low, high = -math.inf, math.inf
+            valid = True
+            crossings = []
+            for affine in barycentric:
+                slope = float(affine[moving_axis])
+                value = float(affine[fixed_axis] * coordinate + affine[2])
+                if abs(slope) < 1e-14:
+                    if abs(value) <= 1e-12:
+                        return None
+                    if value < -1e-12:
+                        valid = False
+                        break
+                    continue
+                crossing = -value / slope
+                crossings.append(crossing)
+                if slope > 0.0:
+                    low = max(low, crossing)
+                else:
+                    high = min(high, crossing)
+                if low >= high:
+                    valid = False
+                    break
+            if any(abs(a - b) <= 1e-12 * (1.0 + max(abs(a), abs(b)))
+                   for i, a in enumerate(crossings) for b in crossings[i + 1:]):
+                return None
+            if valid and low < high:
+                records.append((face_id, low, high, float(depth_plane[moving_axis]),
+                                float(depth_plane[fixed_axis] * coordinate + depth_plane[2])))
+        weight = len(records)
+        if weight <= self.axis_row_cache_line_limit:
+            while (self.row_cache and
+                   (self.row_cache_lines + weight > self.axis_row_cache_line_limit or
+                    len(self.row_cache) >= self.axis_row_cache_row_limit)):
+                _, evicted = self.row_cache.popitem(last=False)
+                self.row_cache_lines -= len(evicted)
+            self.row_cache[key] = records
+            self.row_cache_lines += weight
+            self.row_cache_peak_lines = max(self.row_cache_peak_lines, self.row_cache_lines)
+        return records
+
+    def axis_lines(self, x, y, direction, path):
+        moving_axis = 0 if direction[1] == 0.0 else 1
+        sign = direction[moving_axis]
+        fixed_coordinate = y if moving_axis == 0 else x
+        position = x if moving_axis == 0 else y
+        lines = []
+        records = self.scanline_records(fixed_coordinate, moving_axis)
+        if records is None:
+            return instantiate_path_lines(
+                self.records, x, y, direction, path, self.bins, self.cell_size)[0]
+        for face, low, high, depth_slope, base_intercept in records:
+            if sign > 0.0:
+                lo = max(float(path[0]), low - position)
+                hi = min(float(path[1]), high - position)
+            else:
+                lo = max(float(path[0]), position - high)
+                hi = min(float(path[1]), position - low)
+            if lo < hi:
+                lines.append({"face": face, "lo": lo, "hi": hi,
+                              "slope": depth_slope * sign,
+                              "intercept": depth_slope * position + base_intercept})
+        return lines
 
     def lines(self, x, y, direction, path):
+        if (self.axis_row_cache and
+                ((direction[1] == 0.0 and abs(direction[0]) == 1.0) or
+                 (direction[0] == 0.0 and abs(direction[1]) == 1.0))):
+            return self.axis_lines(x, y, direction, path)
         return instantiate_path_lines(
             self.records, x, y, direction, path, self.bins, self.cell_size)[0]
 

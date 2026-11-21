@@ -242,6 +242,9 @@ def run(unit, args, target_faces, rerank, compare_placements=False, refine=None)
             views + secondary, queue.p, faces, source_normals, args)
     if rerank:
         result["perViewRayCachePeak"] = [view.ray_cache_peak for view in views + secondary]
+        result["perViewAxisRowCachePeakLines"] = [
+            [view.original_scene.row_cache_peak_lines, view.scene.row_cache_peak_lines]
+            for view in views + secondary]
     return result
 
 
@@ -260,6 +263,8 @@ def main():
                         help="exactly score only the best K coarse-raster candidates (0 scores all)")
     parser.add_argument("--fit-view-count", type=int, choices=(1, 2, 3), default=3,
                         help="number of evenly spaced camera paths used to rank edits")
+    parser.add_argument("--axis-row-cache", action="store_true",
+                        help="cache exact triangle/pan intervals per scanline with a bounded line budget")
     parser.add_argument("--compare-placements", action="store_true",
                         help="also rerank all legal QEM placements of each shortlisted edge")
     parser.add_argument("--refine-placements", choices=("primary", "orthogonal", "both"),
@@ -329,6 +334,7 @@ def main():
     path = run(unit, args, target_faces, True)
     result = {"captureSha256": digest, "unitIndex": args.unit_index, "targetFaces": target_faces,
               "pool": args.pool, "fitViewCount": args.fit_view_count,
+              "axisRowCache": args.axis_row_cache,
               "normalWeight": args.normal_weight, "auditedPruning": args.audit_pruning,
               "pixelOrder": args.pixel_order,
               "shareCollinearTaps": args.share_collinear_taps,
