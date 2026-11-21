@@ -956,7 +956,8 @@ trained on 192 views and selected by 96 validation views. Its held-out PSNR/SSIM
 p95 54.12 ms at 640x360, about 4.1x the 10.55 ms bicubic median. This recipe therefore loses both
 quality and CPU time on the test meshes. Full setup, results, and hashes are in
 [the Thingi10K super-resolution screen](THINGI10K_SUPERRES_SCREEN_20261121.md); timings are
-reproduced by `bench_thingi_sr_inference.py`.
+reproduced by `bench_thingi_sr_inference.py`. A lower-learning-rate/no-edge-loss follow-up also
+stayed below bicubic on validation (26.61 vs. 26.96 dB) and was not evaluated on test.
 
 ## High-resolution path-loss check
 

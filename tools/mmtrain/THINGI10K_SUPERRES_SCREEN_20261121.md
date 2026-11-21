@@ -19,6 +19,11 @@ weight 0.1. The trainer retains the checkpoint with the best validation PSNR; th
 iteration 300. Bicubic uses the same low raster and target. No test view was used for training or
 validation selection.
 
+A validation-only follow-up lowered the learning rate to 3e-4 and removed the edge-gradient term,
+with the same 1,500-iteration cap. Its best validation PSNR was 26.61 dB at iteration 300, still
+below bicubic at 26.96 dB; SSIM was 0.9321 versus 0.9391. This checkpoint was not evaluated on the
+test set and was not selected for the reported held-out result.
+
 ## Quality result
 
 | Split | Bicubic PSNR / SSIM | TinyUpsample PSNR / SSIM | Difference |
@@ -81,6 +86,12 @@ python tools/mmtrain/train.py `
 python tools/mmtrain/train.py `
   --data out/thingi10k-metadata/sr-pairs/train `
   --val-data out/thingi10k-metadata/sr-pairs/validation `
+  --model tiny_up --scale 2 --iterations 1500 --patch 64 --batch 8 `
+  --channels 32 --lr 0.0003 --gradient-weight 0 --no-error-map --seed 2027 `
+  --out out/thingi10k-metadata/sr-results/thingi-tiny-up-lr3e4-nograd
+python tools/mmtrain/train.py `
+  --data out/thingi10k-metadata/sr-pairs/train `
+  --val-data out/thingi10k-metadata/sr-pairs/validation `
   --model bicubic --scale 2 --no-error-map `
   --out out/thingi10k-metadata/sr-results/bicubic-val.json
 python tools/mmtrain/train.py `
@@ -106,3 +117,4 @@ Reproduction hashes:
 - Model checkpoint: `49d9747f127be857029ba73ea6cd01ba3f3614179fb7b50c803dcb3e3833460f`
 - Held-out test metrics: `244e22f4dfd71646e802c20dca7c7e0f327b5200629fe9c2ede83cebd54424a0`
 - Runtime capture: `6ec9b1fdd32b63c438f0a901483998a8aa587d6f97b386adefa65e323db67d30`
+- Validation-only lower-learning-rate run: `aca7db798de891103569843e70d2872969b92136a9b7c1995469ba78a17dbb6f`
