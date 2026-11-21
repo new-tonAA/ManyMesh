@@ -27,7 +27,7 @@ def fitting_view_offsets(count):
     if count == 2:
         return (0.0, math.pi)
     if count == 3:
-        return (0.0, 2 * math.pi / 3, -2 * math.pi / 3)
+        return (0.0, -2 * math.pi / 3, 2 * math.pi / 3)
     raise ValueError("fitting view count must be 1, 2, or 3")
 
 
