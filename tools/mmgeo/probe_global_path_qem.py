@@ -252,8 +252,12 @@ def main():
     parser.add_argument("--unit-index", type=int, default=0)
     parser.add_argument("--remove-fraction", type=float, default=0.05)
     parser.add_argument("--pool", type=int, default=4)
-    parser.add_argument("--candidate-order", choices=("qem", "reverse-qem", "first-view"), default="qem",
+    parser.add_argument("--candidate-order",
+                        choices=("qem", "reverse-qem", "first-view", "coarse-raster"),
+                        default="qem",
                         help="order exact path scoring of the QEM shortlist")
+    parser.add_argument("--coarse-exact-top-k", type=int, default=0,
+                        help="exactly score only the best K coarse-raster candidates (0 scores all)")
     parser.add_argument("--fit-view-count", type=int, choices=(1, 2, 3), default=3,
                         help="number of evenly spaced camera paths used to rank edits")
     parser.add_argument("--compare-placements", action="store_true",
@@ -294,7 +298,9 @@ def main():
                    args.quality_steps) < 1
             or not all(math.isfinite(v) for v in
                        (args.angle, args.pan_angle, args.radius, args.normal_weight))
-            or args.radius <= 0.0 or args.normal_weight < 0.0 or args.ray_cache_lines < 0):
+            or args.radius <= 0.0 or args.normal_weight < 0.0 or args.ray_cache_lines < 0
+            or args.coarse_exact_top_k < 0
+            or (args.coarse_exact_top_k and args.candidate_order != "coarse-raster")):
         parser.error("invalid face budget, sampling, or loss settings")
     if args.retain_partial and args.pixel_order == "off":
         parser.error("retaining partial patches requires pixel pruning")

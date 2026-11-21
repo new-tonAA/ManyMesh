@@ -44,6 +44,12 @@ I also varied the order in which exact candidate scores are completed. Reversing
 
 The `first-view` order pre-scores every candidate on the first camera path, then sorts by that exact contribution plus the remaining views' nonnegative outside-support losses. On a 4% Torus prefix, it preserved all 23 choices, placements, and per-view scores; the pruning audit passed, and path CPU fell from 19.23 to 7.91 seconds (peak working set about 100 MiB). On the full 20% Torus run, it again preserved all 115 choices, scores, and held-out results, and reduced later-view evaluations from 456 to 422 and completed candidates from 226 to 206. However, path CPU rose from 22.23 to 53.98 seconds (peak working set 134.3 MiB). The short-prefix speedup does not survive the full run; this ordering is rejected as a general acceleration. It demonstrates that exact admissible bounds can preserve the answer while a poorly amortized scoring schedule still makes the algorithm slower.
 
+I screened a cheaper single-frame raster order on the same 1,152-face Torus. At pool 4 and a 4% target, exact evaluation of the full pool selected the same 23 edits and held-out scores as QEM ordering; CPU was 8.09 versus 18.88 seconds. That short-prefix timing did not generalize. At the full 20% target, raster ordering still selected the same exact pool-4 sequence and held-out scores, but CPU rose from 83.59 to 106.73 seconds; its one-frame proxy cost 12.95 seconds and it did not reduce exact view calls. The proxy's QEM-rank winner distribution was 1:7, 2:14, 3:17, 4:77, so it often promoted high-rank edges without helping exact pruning.
+
+Restricting exact path scoring to the coarse raster's top K is a measurable speed/quality tradeoff, but it did not produce a better Torus frontier. Top-2 took 22.92 seconds versus 83.59 seconds for exact pool 4, at 133.3 MiB peak working set, but diverged from its sequence after 12 of 115 edits and raised held-out coverage, depth, and flat-normal error by 8.4%, 10.7%, and 8.6%. It was also slightly slower and worse on all three metrics than exact QEM pool 2 (22.23 seconds). Top-3 took 100.34 seconds at 134.8 MiB; versus pool 4 its coverage and flat-normal errors were 1.1% and 6.1% higher, while depth error was 4.1% lower. It is not a useful Pareto point on this mesh. Do not describe coarse-to-exact shortlisting as a quality/performance win from these results.
+
+Finally, a 4% pool-4 Torus run with a 50,000-line per-view current-scene ray cache, using strip width 1 because the cache cannot be combined with strip width 4, preserved all 23 edits and reduced CPU from 28.97 to 24.59 seconds. The peak process working set changed from 98.0 to 99.2 MiB; cache peaks were 5,903–6,603 lines per view, with 327 hits and 9,251 misses. The faster matched strip-width-4 baseline took 18.88 seconds, so this cache configuration does not improve the best measured setup and is not retained as an acceleration claim.
+
 I added `--fit-view-count` to measure a view-budget ablation. It selects one centered camera path, two opposite paths, or the existing three paths. On Torus, all runs used the same pool, face target, fitting resolution, and six held-out paths:
 
 | Fitting paths | Path CPU s | Peak WS MiB | Coverage delta vs QEM | Depth delta vs QEM | Flat-normal delta vs QEM | Held-out wins (coverage/depth/normal) |
@@ -62,7 +68,7 @@ The quality evidence is still limited to a geometry/flat-normal CPU proxy, six h
 
 ## Reproduction and provenance
 
-Python driver SHA-256: `a6869b654f91bf8625f42c1a5e1ed6d4b667ab19f6d979b8c1e9f5ef7e6226c5`.
+Python driver SHA-256: `1c6e63e0e687f028f95ab459a0df45840dec24178c9a86d6a03877ea1e31ab38`.
 
 | Capture | SHA-256 |
 |---|---|

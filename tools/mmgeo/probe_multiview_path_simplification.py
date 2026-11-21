@@ -13,7 +13,7 @@ import time
 
 import numpy as np
 
-from depth_candidate_pilot import camera, project
+from depth_candidate_pilot import camera, project, raster
 from probe_dynamic_path_simplification import (
     PixelBudget,
     SceneIndex,
@@ -36,6 +36,9 @@ class View:
     def __init__(self, world, faces, azimuth, args):
         self.transform = camera(world, azimuth, args.size)
         self.projected = project(world, self.transform)
+        self.source_projected = self.projected.copy()
+        self.source_faces = tuple(faces)
+        self.coarse_reference = None
         self.original_scene = SceneIndex(self.projected, faces)
         # The unchanged face records are immutable. Only the face map and bins are copied.
         self.scene = copy(self.original_scene)
@@ -219,6 +222,56 @@ class CollapseDisplacementBudget:
         self.members[remove] = []
 
 
+def _raster_face_arrays(faces):
+    triangles = np.zeros((len(faces), 3), dtype=np.int64)
+    valid = np.zeros(len(faces), dtype=bool)
+    for face_id, face in enumerate(faces):
+        if face is not None:
+            triangles[face_id] = face
+            valid[face_id] = True
+    return triangles, valid
+
+
+def coarse_raster_scores(view, candidates, faces, proposals, scale=1):
+    """Rank candidates with one spatially sampled static frame before exact scoring."""
+    started = time.perf_counter()
+    support = [pixel for proposal in proposals for pixel in proposal.support]
+    if not support:
+        return [0.0] * len(candidates), time.perf_counter() - started
+    x0 = min(pixel % view.size for pixel in support)
+    x1 = max(pixel % view.size for pixel in support) + 1
+    y0 = min(pixel // view.size for pixel in support)
+    y1 = max(pixel // view.size for pixel in support) + 1
+    rect = (x0, y0, x1, y1)
+    if view.coarse_reference is None:
+        source_triangles, source_valid = _raster_face_arrays(view.source_faces)
+        view.coarse_reference = raster(view.source_projected, source_triangles,
+                                       source_valid, (0, 0, view.size, view.size), scale)[0]
+    reference = view.coarse_reference[y0 * scale:y1 * scale, x0 * scale:x1 * scale]
+
+    changed_ids = set().union(*(proposal.faces.keys() for proposal in proposals))
+    common_faces = [face if face_id not in changed_ids else None
+                    for face_id, face in enumerate(faces)]
+    common_triangles, common_valid = _raster_face_arrays(common_faces)
+    common = raster(view.projected, common_triangles, common_valid, rect, scale)[0]
+    common_depth = np.where(common[..., 0] > 0.0, common[..., 1], -np.inf)
+
+    scores = []
+    for candidate, proposal in zip(candidates, proposals, strict=True):
+        candidate_positions = view.projected.copy()
+        candidate_positions[candidate.edge[0]] = proposal.projected_target
+        local_faces = [proposal.faces.get(face_id) for face_id in sorted(proposal.faces)]
+        local_triangles, local_valid = _raster_face_arrays(local_faces)
+        local = raster(candidate_positions, local_triangles, local_valid, rect, scale)[0]
+        local_depth = np.where(local[..., 0] > 0.0, local[..., 1], -np.inf)
+        depth = np.maximum(common_depth, local_depth)
+        coverage = np.isfinite(depth)
+        image = np.stack((coverage.astype(float), np.where(coverage, depth, 0.0)), axis=-1)
+        delta = image - reference
+        scores.append(float(np.square(delta).sum()))
+    return scores, time.perf_counter() - started
+
+
 def select_path_edge(views, candidates, faces, world, source_normals, current_normals, epoch,
                      args):
     started = time.perf_counter()
@@ -239,7 +292,18 @@ def select_path_edge(views, candidates, faces, world, source_normals, current_no
     known_before = sum(view.resumed_known_pixels for view in views)
     best = math.inf
     staged = {}
+    coarse_raster_seconds = 0.0
+    coarse_candidate_count = 0
     candidate_order = getattr(args, "candidate_order", "qem")
+    if candidate_order == "coarse-raster" and candidates:
+        proposals = [views[0].proposal(candidate, faces) for candidate in candidates]
+        proxy_scores, coarse_raster_seconds = coarse_raster_scores(
+            views[0], candidates, faces, proposals)
+        coarse_ranked = [candidate for _, candidate in sorted(
+            zip(proxy_scores, candidates, strict=True), key=lambda item: (item[0], item[1].key))]
+        coarse_candidate_count = len(coarse_ranked)
+        exact_top_k = getattr(args, "coarse_exact_top_k", 0)
+        candidates = coarse_ranked[:exact_top_k] if exact_top_k else coarse_ranked
     if candidate_order == "first-view" and len(views) > 1:
         # Score the cheapest-to-estimate path contribution for every candidate,
         # then prioritize candidates by an admissible total-loss lower bound.
@@ -344,6 +408,11 @@ def select_path_edge(views, candidates, faces, world, source_normals, current_no
         "partialPatchSaves": partial_saves, "resumedPartials": resumed,
         "resumedKnownPixels": resumed_pixels,
         "cachedViewPrunes": cached_view_prunes,
+        "coarseRasterSeconds": coarse_raster_seconds,
+        "coarseCandidateCount": coarse_candidate_count,
+        "exactCandidateCount": (coarse_candidate_count and
+                                 min(coarse_candidate_count,
+                                     getattr(args, "coarse_exact_top_k", 0) or coarse_candidate_count)),
         "auditedPrunedCandidates": len(pending),
     }
 
