@@ -29,10 +29,9 @@ def dominates(control, candidate):
     cq = control["quality"]
     q = candidate["quality"]
     return (
-        cq["flip"] <= q["flip"]
-        and cq["psnr_db"] >= q["psnr_db"]
-        and cq["ssim"] >= q["ssim"]
-        and any((cq[k] != q[k]) for k in METRICS)
+        cq["flip"] < q["flip"]
+        and cq["psnr_db"] > q["psnr_db"]
+        and cq["ssim"] > q["ssim"]
     )
 
 
@@ -82,8 +81,8 @@ def main():
                    if mode.endswith("msaa4") and row in eligible):
                 msaa_dominated += 1
         print(f"{candidate_name}: strict wins vs every eligible control = {wins}/13")
-        print(f"{candidate_name}: dominated by >=1 eligible control on all 3 metrics = {dominated}/13")
-        print(f"{candidate_name}: dominated by an eligible MSAA mode on all 3 metrics = {msaa_dominated}/13")
+        print(f"{candidate_name}: strictly beaten by >=1 eligible control on all 3 metrics = {dominated}/13")
+        print(f"{candidate_name}: strictly beaten by an eligible MSAA mode on all 3 metrics = {msaa_dominated}/13")
         assert wins == 0
         assert dominated == 13
         assert msaa_dominated == 13
