@@ -135,7 +135,6 @@ input manifest. The original receipt records a different benchmark digest,
 not match the current source. The current repeat receipt SHA-256 is
 `cacd6468ab1a35f5b706a583998f8c54ab628db022f4b40b3d7d18d666f458d8`; the
 CPU-only verifier SHA-256 is
-`aecea9b5adea23475e586b7d66a71f0f77cad881be8ea88962253ff75276d1f6`. Prepared meshes and frame
-captures remain under ignored local `out/` and are not included in this bundle.
-The run is therefore auditable from its hashes but not standalone reproducible
-from this repository snapshot alone.
+`aecea9b5adea23475e586b7d66a71f0f77cad881be8ea88962253ff75276d1f6`. The exact
+benchmark source and receipt bytes are preserved in published snapshot commit
+[a04390740fe3516844f44f94079ec0f563432715](https://github.com/new-tonAA/ManyMesh/commit/a04390740fe3516844f44f94079ec0f563432715). The run itself was captured before that publication commit; it packages the exact measured source snapshot, not a claim that the benchmark ran from a clean checkout. Prepared meshes and frame captures remain under ignored local `out/` and are not included in this bundle. The run is therefore auditable from its hashes but not standalone reproducible from this repository snapshot alone.
