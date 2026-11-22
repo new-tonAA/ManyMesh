@@ -161,10 +161,13 @@ rasterization tie-breaking at shared edges, not from a different cut. The CPU re
 built with `compactSourceVertices = true` to compare against the GPU's cut-local vertex buffer;
 the dense id order itself is not part of the contract.
 
-This is a real Vulkan prototype, not a Filament application integration. Filament's backend
-already implements `dispatchCompute` (Vulkan, OpenGL, WebGPU and Noop) and `compute_test --api
-vulkan` passes 5/5 on Intel Iris Xe, including a regression that uploads the flattened
-`GpuLodNode` table and index buffer as SSBOs and checks every field from compute. What is missing
+This is a real Vulkan prototype, not a Filament application integration. Filament's backend already implements `dispatchCompute` (Vulkan, OpenGL, WebGPU and Noop).
+The previously recorded `compute_test --api vulkan` result of 5/5 belongs to a
+five-case test inventory on Intel Iris Xe, including a regression that uploads the
+flattened `GpuLodNode` table and index buffer as SSBOs and checks every field from
+compute. A separate expanded seven-case snapshot records Vulkan 7/7 and OpenGL
+6 passed / 1 skipped; those counts are different inventories, not competing
+results from one run. This documentation update did not rerun either C++ suite. What is missing
 is the public application surface for persistent storage buffers, compute programs and dispatch,
 plus Android GPU validation. Cut selection, index/draw compaction and vertex compaction no longer
 need a CPU round trip on this path.
