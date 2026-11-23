@@ -33,6 +33,10 @@ hypothesis with close prior art, not a novelty claim.
   object classes, including many disconnected components and a low-detail
   window case. The pool is unfrozen and is not held out. [Expanded screen](docs/manymesh/khronos-expanded-candidate-screen-20261123.md) and
   [earlier screens](docs/manymesh/khronos-followup-candidates-20261123.md)
+- CommercialRefrigerator and ScatterPlant supplied zero complete sets of legal
+  meshes near 30% retention for the appearance fitting baseline. The preflight
+  caught boundary, topology, and face count failures before scoring images.
+  [Report and receipts](tools/mmtrain/APPEARANCE_INPUT_PREFLIGHT_20261123.md)
 
 The evidence is fixed-view or small desktop development data. There is no
 physical-phone performance, power, thermal, user-preference, or independent

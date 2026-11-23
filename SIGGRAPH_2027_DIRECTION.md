@@ -107,10 +107,11 @@ For that asset, the border-preserving fast-simplification QEM control returned
 eligible wins are meshoptimizer-only; the QEM scores are not equal-face results.
 This result does not test differentiable fitting or post-upscaler quality.
 
-1. Secure two hash-pinned, redistribution-cleared assets and a CUDA-capable
-   system. The current checkout has a local Monkey development mesh but no
-   provenance record for it, no local Dragon mesh, and no CUDA build or GPU, so
-   the proposed replication cannot be claimed as run.
+1. Select two source meshes with pinned provenance that supply legal matched
+   geometry near 30% retention. CommercialRefrigerator and ScatterPlant failed
+   this input gate. The current host has a CPU build of PyTorch. The baseline
+   requires a CUDA workstation and a frozen camera split.
+   [Input preflight](tools/mmtrain/APPEARANCE_INPUT_PREFLIGHT_20261123.md)
 2. Compare nvdiffmodeling/Hasselgren placement against QEM, current ManyMesh
    placement, and meshoptimizer at identical face counts. Freeze training and
    held-out views before scoring; include no-AA and equal 4x MSAA arms.
@@ -120,7 +121,10 @@ This result does not test differentiable fitting or post-upscaler quality.
 4. Report LDR-FLIP, PSNR, SSIM, silhouette/coverage error, sampled surface and
    normal deviation, topology/boundary failures, and camera-motion transitions.
    Treat objective metrics as complementary; a “perceptual” claim needs ratings
-   or a predictor validated against ratings on held-out assets.
+   or a predictor validated against ratings on held-out assets. The paper
+   protocol calls for at least 20 newly cleared models across five or more
+   predeclared shape categories, with uncertainty estimated across assets.
+   Keep all views and paths for each source model in the same asset split.
 5. Report quality first at matched face count, then at matched complete frame
    time. Also report an equal-quality cost point when interpolation is
    supported. Include offline time, asset bytes, load/decode time, memory, CPU

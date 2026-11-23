@@ -1,0 +1,96 @@
+{
+  "khronos_source_revision": "e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea",
+  "local_pytorch": {
+    "version": "2.7.1+cpu",
+    "cuda_build": null,
+    "cuda_available": false
+  },
+  "assets": {
+    "CommercialRefrigerator": {
+      "raw_ply_sha256": "03d20128cf6c928e28af9ae8916bffef114d8779870ab06a55daccfa6f6af72d",
+      "source_sha256": "b0974c47abf35cc83cb4044791616755cf7309428230bd88389ff4d8368eb786",
+      "source_faces": 208679,
+      "source_boundary_edges": 6625,
+      "candidate_sha256": "de223c727b065f1cc93be9ead4082e868bd1cf28b9ccb4e71163714366d22e42",
+      "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+      "script_sha256": "b1ccb91fc0273774a72f8f5ee2d1757bfd8ed60f69084880a136f911bc8743e9",
+      "source_revision": "9591ccc90cdacbc9cdb2c9ce8b86254a071f317b",
+      "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+      "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+      "numpy_version": "2.3.4",
+      "scipy_version": "1.15.3",
+      "fast_simplification_version": "0.2.0",
+      "target_ratio": 0.3,
+      "ratio_tolerance": 0.01,
+      "normalized_boundary_tolerance": 1.1920928955078125e-07,
+      "candidate_ratio": 0.29999664556567746,
+      "candidate_in_band": true,
+      "manymesh": {
+        "faces": 62603,
+        "topology_error": null,
+        "boundary_edges": 6623,
+        "boundary_preserved": false
+      },
+      "control_target_faces": 62603,
+      "controls": {
+        "qem_preserve_border": {
+          "faces": 62603,
+          "topology_error": null,
+          "boundary_edges": 6625,
+          "boundary_preserved": true,
+          "eligible": true
+        },
+        "meshoptimizer_lock_border": {
+          "faces": 62603,
+          "topology_error": "Duplicate geometric triangle",
+          "boundary_preserved": false,
+          "eligible": false
+        }
+      },
+      "matched_inputs_ready": false
+    },
+    "ScatterPlant": {
+      "raw_ply_sha256": "48e92fdcc9869df4fc20790e2ee082284f6f510998d8a0b068e42695d94211ce",
+      "source_sha256": "76594afc7125bf2eaaf05a75ad15954521cb05a5558b9557704ffd021d23fc35",
+      "source_faces": 54491,
+      "source_boundary_edges": 14829,
+      "candidate_sha256": "b2a631094dc556e16e150f84c9ba9a48c10970abc6bfebc149d5d7a12e8d3a67",
+      "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+      "script_sha256": "b1ccb91fc0273774a72f8f5ee2d1757bfd8ed60f69084880a136f911bc8743e9",
+      "source_revision": "9591ccc90cdacbc9cdb2c9ce8b86254a071f317b",
+      "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+      "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+      "numpy_version": "2.3.4",
+      "scipy_version": "1.15.3",
+      "fast_simplification_version": "0.2.0",
+      "target_ratio": 0.3,
+      "ratio_tolerance": 0.01,
+      "normalized_boundary_tolerance": 1.1920928955078125e-07,
+      "candidate_ratio": 0.3631975922629425,
+      "candidate_in_band": false,
+      "manymesh": {
+        "faces": 19791,
+        "topology_error": "Nonmanifold or inconsistently oriented edge",
+        "boundary_preserved": false
+      },
+      "control_target_faces": 16347,
+      "controls": {
+        "qem_preserve_border": {
+          "faces": 51007,
+          "topology_error": null,
+          "boundary_edges": 14829,
+          "boundary_preserved": true,
+          "eligible": false
+        },
+        "meshoptimizer_lock_border": {
+          "faces": 50773,
+          "topology_error": null,
+          "boundary_edges": 14829,
+          "boundary_preserved": true,
+          "eligible": false
+        }
+      },
+      "matched_inputs_ready": false
+    }
+  }
+}
