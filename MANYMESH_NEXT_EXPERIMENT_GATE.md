@@ -70,10 +70,12 @@ BarramundiFish and Corset are frozen for input feasibility at the 50% request,
 with 1,932 and 9,162 triangles per comparison arm. All three controls and the
 full-source references have audited OBJ exports. The 30% grid supplied no
 qualifying sets. [Matched inputs](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md)
-The reserved-view scorer has been exercised on a separate development asset
-with both native sampling and hardware 4× MSAA. The baseline still needs the
-frozen training schedule and a CUDA-capable host. These two assets are a
-falsification pair. The separate category-balanced confirmation set is pending.
+The reserved-view scorer passed an identity check on a separate development
+asset in native sampling and hardware 4× MSAA. The training inputs and camera
+schedule are frozen for the [placement-only CUDA control](tools/mmtrain/appearance_cuda_protocol_20261124.json).
+Both inputs passed CPU preparation. The NVIDIA extension and full fit still
+need a CUDA-capable host. These two assets are a falsification pair. The
+separate category-balanced confirmation set is pending.
 
 Stop if the matched-face baseline loses, if a result depends on tuned views or
 assets, if the surrogate fails to rank real-pipeline results, if boundary or

@@ -58,9 +58,9 @@ read as general claims.
 
 1. Do not promote the tested decoder, silhouette-fusion, or moving-allocation
    variants as contributions.
-2. Run the matched-face differentiable simplification baseline on legally
-   cleared assets with CUDA. Freeze views, metrics, topology rules, and QEM /
-   meshoptimizer controls before scoring.
+2. Run the frozen placement-only control on CUDA, then score the reserved
+   views against ManyMesh, QEM, and meshoptimizer at equal faces.
+   [Training protocol](tools/mmtrain/appearance_cuda_protocol_20261124.json)
 3. Continue only if the baseline shows repeatable held-out improvement. Then
    test cluster-DAG constraints and compare actual AA/upscalers at equal full
    frame cost. Mobile or preference claims require device measurements or a

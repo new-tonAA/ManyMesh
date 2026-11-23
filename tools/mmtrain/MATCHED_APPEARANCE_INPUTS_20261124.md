@@ -18,9 +18,10 @@ Use BarramundiFish and Corset for the first CUDA baseline. This pair covers
 distinct object classes and takes the largest source in each of the closed
 and open boundary classes. Avocado and WaterBottle remain additional
 development cases. The asset and face-count choices are frozen in the
-[receipts](matched_appearance_inputs_20261124.json). The experiment still
-needs a fixed optimizer protocol and a separate confirmation cohort. The
-assets come from the [geometry-only CC0 screen](KHRONOS_SEPARATE_BUFFER_PREFLIGHT_20261124.md).
+[receipts](matched_appearance_inputs_20261124.json). The optimizer and training
+cameras are pinned in the [CUDA protocol](appearance_cuda_protocol_20261124.json).
+The separate confirmation cohort remains pending. The assets come from the
+[geometry-only CC0 screen](KHRONOS_SEPARATE_BUFFER_PREFLIGHT_20261124.md).
 
 ## Reproduce the inputs
 
@@ -72,10 +73,10 @@ python tools/mmtrain/bench_appearance_controls.py `
   --fitted "$runDir/fitted.obj" --out "$runDir/quality.json"
 ```
 
-Pin the training camera schedule before fitting and keep the scoring
-cameras reserved. The scorer audits the candidate against the unchanged
-meshoptimizer topology and locked boundary before rendering. Record
-training wall time and memory on the CUDA host separately.
+Keep the scoring cameras reserved during fitting. The scorer audits the
+candidate against unchanged meshoptimizer topology and the locked boundary
+before rendering. Record training wall time and memory on the CUDA host
+separately.
 
 The identity check used Avocado on Intel Iris Xe with D3D12 and wgpu 0.33.0.
 It passed all 48 view and AA comparisons by supplying the unchanged
@@ -86,16 +87,53 @@ The raw JSON remained local, with SHA-256
 `6efe7777ef8ef8aa24f50b2f20065c79436bf8147aeaf29a9f1ee6ae5da43231`.
 The CUDA pair was left unscored.
 
-## CUDA experiment boundary
+## CUDA placement-only control
 
-The exports match the file fields used by NVIDIA's
-[OBJ loader](https://github.com/NVlabs/nvdiffmodeling/blob/main/src/obj.py).
-They describe geometry under a neutral material. The shared UV coordinates
-serve as placeholders for the geometry comparison. The upstream
-[training script](https://github.com/NVlabs/nvdiffmodeling/blob/main/train.py)
-optimizes both positions and material maps by default and aligns the base
-mesh to the reference. For a placement-only comparison, the harness still
-needs to hold materials fixed, preserve the common source frame, and enforce
-boundary constraints. Record such adaptations separately from any run of
-the upstream joint optimization. CUDA loading and optimization have yet to
-run on these assets.
+[fit_appearance_cuda.py](fit_appearance_cuda.py) calls the pinned NVIDIA OBJ
+loader, mesh operations, and renderer from an external source checkout. It
+holds materials fixed and uses the audited source frame. It welds exactly
+coincident positions for the differentiable rasterizer, then expands the
+fitted positions back to the original indices. This keeps UV seam replicas
+together without breaking the topology audit. Open boundary positions are
+fixed. The optimizer caps displacement at 0.012 normalized units and
+backtracks steps that move a triangle's unnormalized normal below the
+recorded dot-product threshold.
+
+Training uses 32 fixed cameras, 128 × 128 images with 2× linear supersampling,
+the same diffuse material and camera light on both meshes, and Adam for 128
+minibatches. The loss is linear RGB MSE plus a displacement penalty. The
+closest training and reserved camera directions differ by 16.8 degrees.
+The [protocol receipt](appearance_cuda_protocol_20261124.json) pins camera
+vectors, the optimizer settings, both asset hashes, and the scorer. The
+[upstream training example](https://github.com/NVlabs/nvdiffmodeling/blob/9b2ba2eff83c7d90127f78c20773b06ddc3ae1db/train.py)
+also fits material maps and independently aligns the base mesh. A result
+from this placement-only adapter covers the geometry comparison.
+
+Use a CUDA development environment with CUDA-enabled PyTorch, a compiler,
+`ninja`, `imageio`, and the research Python dependencies above. Fetch the
+[nvdiffmodeling source archive](https://codeload.github.com/NVlabs/nvdiffmodeling/zip/9b2ba2eff83c7d90127f78c20773b06ddc3ae1db)
+and set `$upstream` to the extracted directory containing `src/`. Install
+[nvdiffrast 0.4.0](https://github.com/NVlabs/nvdiffrast/tree/253ac4fcea7de5f396371124af597e6cc957bfae)
+from its pinned revision. NVIDIA's source remains an external dependency
+for noncommercial research under its [license](https://github.com/NVlabs/nvdiffmodeling/blob/9b2ba2eff83c7d90127f78c20773b06ddc3ae1db/LICENSE.txt).
+
+```powershell
+python -m pip install --no-build-isolation `
+  'git+https://github.com/NVlabs/nvdiffrast.git@253ac4fcea7de5f396371124af597e6cc957bfae'
+python tools/mmtrain/fit_appearance_cuda.py `
+  --manifest tools/mmtrain/matched_appearance_inputs_20261124.json `
+  --asset BarramundiFish --geometry-dir "$runDir/exports" `
+  --upstream $upstream --out "$runDir"
+```
+
+Append `--prepare-only` to check input and upstream hashes and emit the
+protocol without CUDA. The full command writes `fitted.obj` and a training
+receipt with gradient norm, losses, elapsed time after setup, and PyTorch
+CUDA allocator peaks. CUDA allocations outside PyTorch are outside those
+memory counters. Pass `fitted.obj` to the reserved-view scorer above.
+
+Preparation passed for both assets. CPU-side tests exercised the upstream
+OBJ reader and tangent gradients with tensor allocation redirected to CPU,
+and checked camera separation, displacement limits, and step rejection.
+The CUDA run stopped at the device check on this host. Compiling the
+upstream CUDA extension, rendering, and fitting still require a CUDA run.

@@ -76,9 +76,9 @@ development assets and worsened mean LDR-FLIP on reserved views of both.
 Four licensed assets now have legal equal-face ManyMesh, QEM, and
 meshoptimizer inputs near 50% retention. The 30% preflight found no complete
 set. [Matched input receipts](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md)
-The reserved-view scorer is ready. The NVIDIA appearance baseline still
-needs a fixed training schedule and CUDA compute. Advance only if the
-differentiable baseline produces a repeatable held-out gain, then
+The training protocol is frozen and the reserved-view scorer has run on
+Iris Xe. The NVIDIA placement-only control still needs CUDA compute.
+Advance only if the differentiable baseline produces a repeatable held-out gain, then
 test the DAG constraints with real antialiasing and upscalers. See the
 [research status](MANYMESH.md) and
 [next-experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md). Mobile or preference
