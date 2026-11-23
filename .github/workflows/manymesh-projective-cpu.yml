@@ -59,6 +59,12 @@ jobs:
       - name: Fit and score the fixed topology
         run: |
           run="$RUNNER_TEMP/mesh"
-          "$RUNNER_TEMP/mm-projective/bin/python" tools/mmtrain/fit_projective_silhouettes.py \
-            --source "$run/geometry.obj" --sha256 "$OBJ_SHA256" --out "$run/result.json"
+          if ! "$RUNNER_TEMP/mm-projective/bin/python" tools/mmtrain/fit_projective_silhouettes.py \
+               --source "$run/geometry.obj" --sha256 "$OBJ_SHA256" --out "$run/result.json" \
+               >"$run/fit.log" 2>&1; then
+            message=$(python3 -c 'import sys; s=open(sys.argv[1], encoding="utf-8").read()[-2800:]; print(s.replace("%","%25").replace("\r","%0D").replace("\n","%0A"))' "$run/fit.log")
+            printf '::error file=tools/mmtrain/fit_projective_silhouettes.py,line=1,title=Projective fit failed::%s\n' "$message"
+            exit 1
+          fi
+          cat "$run/fit.log"
           cat "$run/result.json"
