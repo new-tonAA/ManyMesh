@@ -17,11 +17,18 @@ hypothesis with close prior art, not a novelty claim.
   allocation used more faces and was slower on GPU. A face-budget-matched
   offline oracle improved the temporal metric in one scene only and incurred
   CPU selection cost. [Report](tools/mmtrain/DYNAMIC_INSTANCE_LOD_MOVING_20261123.md)
-- Khronos geometry preflight now has nine provisional candidates across
-  several object classes, including several assets with many disconnected
-  components and a low-detail window case. The candidate pool is unfrozen and
-  no image-quality comparison has been run; it is not held-out evidence.
-  [Expanded screen](docs/manymesh/khronos-expanded-candidate-screen-20261123.md) and
+- A seven-asset Khronos screen compares current cuts with the original source
+  meshes. Under a retrospective one-float32-ULP boundary rule, 15 of 21 cuts
+  were eligible. Across 18 exact-face pairs, ManyMesh lost all five image
+  metrics in 15, won all five in two meshoptimizer comparisons on the 987-face
+  GlassBrokenWindow, and had one mixed result; it did not beat any eligible QEM
+  pair. The boundary rule was chosen after an initial run, and these reused
+  assets are development data, not held-out confirmation. No timing, phone, or
+  upscaler result was measured. [Report](tools/mmtrain/KHRONOS_EQUAL_FACE_QUALITY_SCREEN_20261123.md) ·
+  [metrics and hashes](tools/mmtrain/khronos_equal_face_quality_screen_20261123.json)
+- Khronos geometry preflight has nine provisional candidates across several
+  object classes, including many disconnected components and a low-detail
+  window case. The pool is unfrozen and is not held out. [Expanded screen](docs/manymesh/khronos-expanded-candidate-screen-20261123.md) and
   [earlier screens](docs/manymesh/khronos-followup-candidates-20261123.md)
 
 The evidence is fixed-view or small desktop development data. There is no

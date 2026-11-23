@@ -96,6 +96,14 @@ ManyMesh result or mobile measurement.
 
 ## Cheapest falsification and pass criteria
 
+The latest seven-asset source-reference screen is only development evidence. It
+found two all-metric wins over meshoptimizer on a 987-face GlassBrokenWindow,
+no win over eligible QEM pairs, and losses on most eligible comparisons. Its
+one-float32-ULP boundary rule was chosen retrospectively. See the
+[screen report](tools/mmtrain/KHRONOS_EQUAL_FACE_QUALITY_SCREEN_20261123.md)
+and its [metrics and hashes](tools/mmtrain/khronos_equal_face_quality_screen_20261123.json).
+This result does not test differentiable fitting or post-upscaler quality.
+
 1. Choose two hash-pinned assets from the current nine-model Khronos
    geometry-candidate pool and freeze their source credits, views, and exclusions.
    The [expanded asset screen](docs/manymesh/khronos-expanded-candidate-screen-20261123.md)

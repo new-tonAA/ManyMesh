@@ -1,0 +1,1655 @@
+{
+  "label": "exploratory development-pool screen; not held-out confirmation",
+  "source_revision": "2d417cacdeb545a13e6bfb7192310191e60670d6",
+  "summary_script_sha256": "6f33fac06264de52eaca9a92f37ced98035793af01a52c0e827e19ee437f6c9c",
+  "python_version": "3.12.3",
+  "scoring_environment": {
+    "python_version": "3.12.3",
+    "numpy_version": "2.3.4",
+    "fast_simplification_version": "0.2.0",
+    "scikit_image_version": "0.25.2",
+    "node_version": "v22.16.0"
+  },
+  "strict_protocol_sha256": "780d988e8334f4ba88c9682945eaef9ddaa89c21d6fc09895df7820f699d1ee2",
+  "adapter_script_sha256": "5daf92d65fc93b834e350474dbc4a30b5e5ea4d71343f2a9a9ae6529477fe4ef",
+  "environment_receipt": {
+    "path": "tools/mmtrain/khronos_quality_screen_environment_20261123.json",
+    "sha256": "9367f80f8bb89013094f52137251ced0244cd694205cf606c42a9fc94c69b848"
+  },
+  "mmgeo_source_patch": {
+    "patch_path": "tools/mmtrain/current_mmgeo_source_patch_20261123.diff",
+    "patch_sha256": "e22a1a9724dd2c69c7d1baefd4248b36f067aad4f1f4e1f396c9c075b5259ac1",
+    "archive_path": "tools/mmtrain/current_mmgeo_source_patch_20261123.zip",
+    "archive_sha256": "60eace026d30a9615b5016a607ede5bef6d09f365c0bf9c789f6e06f323c1948"
+  },
+  "support_files": [
+    {
+      "path": "tools/mmgeo/audit_target_budget_visibility.py",
+      "sha256": "a8ed446bc573b79f93e5565d9e50eb037264a3c43484c76d3219c31f25d05cdd"
+    },
+    {
+      "path": "tools/mmtrain/audit_cut_boundary_geometry.py",
+      "sha256": "1cdbe8d0bd848ed2baa18c4eabc413ed8e4efc0048e7ab3bf0676d8b110c1e44"
+    },
+    {
+      "path": "tools/mmtrain/bench_upstream_clusterlod.py",
+      "sha256": "40fdc8b4a7cc2bca2fa8518a9e8a745985dcf493560665dc521bc98227d88c68"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder.py",
+      "sha256": "46e66127d31083a9e9d81cf4fd7e9dc767676554e2a3dde849c47b25169e2425"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_meshopt_baseline.py",
+      "sha256": "621ba01107f3acfcd5aa01882dc0373e1d3f4ce69eca0045ad3f7a56271837f2"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_pilot.py",
+      "sha256": "8db32f1897388c06212ecb385daa0c0eb27e83257c7ff9fd8ed3637933782318"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_quality.py",
+      "sha256": "c64cf7c5a4dc75351c3182ac92adca61a91816b500ec12934e45453f99756b0a"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_surface_quality.py",
+      "sha256": "08d80488efa4e4d3d2b45166f11d76ca230e3127c94f2a4580181f18bda6ea2c"
+    },
+    {
+      "path": "tools/mmtrain/compare_qem_meshopt_validation_70pct.py",
+      "sha256": "67c2d5a5b9d69f16203c796586492843ee24c0be07f93cd15750c34febe2e7ec"
+    },
+    {
+      "path": "tools/mmtrain/direct_cluster_control.py",
+      "sha256": "1767b4d7c78f59209f14db9b9de6b1b9d3d0df7bbd78a89b436257ddbc6f5a8a"
+    },
+    {
+      "path": "tools/mmtrain/fit_cluster_decoder.py",
+      "sha256": "508305687745b556f5f3c88f3b15b5e2ca6e839c93f09e0e300bd77a62a09205"
+    },
+    {
+      "path": "tools/mmtrain/fused_tile_features.py",
+      "sha256": "4173dc0739d5c84913e066a3c931cb5bbaff3dba88414c45720e3e42d577743f"
+    },
+    {
+      "path": "tools/mmtrain/make_refinement_pairs.py",
+      "sha256": "f23cee47bae436740c14fbd3e5745e4212498712434e480ffd04ff73a51ee534"
+    },
+    {
+      "path": "tools/mmtrain/score_mmgeo_obj_diagnostic_controls.py",
+      "sha256": "53b09e44b0c03f1b9b59bbd670d39f2f1614163b931479d49400510f0794dc03"
+    },
+    {
+      "path": "tools/mmtrain/tile_refinement.py",
+      "sha256": "50266fe3b44658f1a1a7714339d211c1c7c4bd832259037fa607e24777c47bb1"
+    },
+    {
+      "path": "tools/mmtrain/extract_static_gltf_geometry.py",
+      "sha256": "1b304e26b07e78564108c3e7d57c26ced82667fe6887706645664420699fc280"
+    },
+    {
+      "path": "tools/mmtrain/adapt_position_ply.py",
+      "sha256": "5daf92d65fc93b834e350474dbc4a30b5e5ea4d71343f2a9a9ae6529477fe4ef"
+    },
+    {
+      "path": "tools/mmtrain/KHRONOS_QUALITY_SCREEN_PROTOCOL_20261123.md",
+      "sha256": "8dcc8a19ca895c7343e6be179dbc267394aa22ff0ab2b1c71951fc7b826c690d"
+    },
+    {
+      "path": "tools/mmtrain/khronos_quality_screen_protocol_20261123.json",
+      "sha256": "780d988e8334f4ba88c9682945eaef9ddaa89c21d6fc09895df7820f699d1ee2"
+    },
+    {
+      "path": "tools/mmtrain/khronos_quality_screen_environment_20261123.json",
+      "sha256": "9367f80f8bb89013094f52137251ced0244cd694205cf606c42a9fc94c69b848"
+    },
+    {
+      "path": "tools/mmtrain/current_mmgeo_source_patch_20261123.zip",
+      "sha256": "60eace026d30a9615b5016a607ede5bef6d09f365c0bf9c789f6e06f323c1948"
+    },
+    {
+      "path": "third_party/meshoptimizer/js/meshopt_simplifier.js",
+      "sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c"
+    }
+  ],
+  "run_provenance": {
+    "parent_revision": "2d417cacdeb545a13e6bfb7192310191e60670d6",
+    "python_version": "3.12.3",
+    "numpy_version": "2.3.4",
+    "fast_simplification_version": "0.2.0",
+    "scikit_image_version": "0.25.2",
+    "node_version": "v22.16.0",
+    "mmgeo_binary_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+    "mmgeo_main_sha256": "c044d8d026b32ccb335e99a8c9b0ef4e2ffc766e51455647f29f75bdcf6edea4",
+    "strict_scoring_script_sha256": "84a6ac7545301e4461d43248a17ad3bc09982f910705cb6afccb5054b19e155a",
+    "one_ulp_scoring_script_sha256": "53b09e44b0c03f1b9b59bbd670d39f2f1614163b931479d49400510f0794dc03"
+  },
+  "candidate_eligibility_rule": {
+    "initial": "manifold/orientation pass and exact directed boundary edge set",
+    "follow_up": "manifold/orientation pass and one-to-one oriented boundary-vertex mapping within 1 float32 epsilon after normalized-coordinate conversion",
+    "follow_up_status": "chosen retrospectively after inspecting the separate Monkey export-precision diagnostic; not preregistered"
+  },
+  "comparison_protocol": {
+    "reference": "original full-resolution static geometry extracted from source GLB/OBJ",
+    "views": 8,
+    "resolution": "192x192",
+    "sampling": "4 CPU software samples per pixel; not hardware MSAA",
+    "metrics": [
+      "LDR-FLIP",
+      "PSNR",
+      "SSIM",
+      "silhouette XOR",
+      "coverage MAE",
+      "sampled Chamfer",
+      "sampled p95 distance",
+      "sampled normal consistency"
+    ],
+    "controls": [
+      "fast-simplification QEM",
+      "meshoptimizer whole-mesh LockBorder"
+    ],
+    "target_face_ratios": [
+      0.3,
+      0.5,
+      0.7
+    ]
+  },
+  "raw_receipts": [
+    {
+      "path": "out\\khronos-quality-screen-20261123\\AnisotropyBarnLamp\\scored-v1\\receipt.json",
+      "sha256": "5f249565daa57cc1338867613ebe871e48fbcdde44bf20a77bb6655cabf2fc57",
+      "rule": "exact directed edge set"
+    },
+    {
+      "path": "out\\khronos-quality-screen-20261123\\AnisotropyBarnLamp\\scored-one-ulp-diagnostic\\receipt.json",
+      "sha256": "e0f0e2f0a667e9a44fe9b2f5ff60aee5f52a10bf2f132ae7deababff256e15ac",
+      "rule": "retrospective one-float32-ULP curve match"
+    },
+    {
+      "path": "out\\khronos-quality-screen-20261123\\DiffuseTransmissionTeacup\\scored-v1\\receipt.json",
+      "sha256": "dc8269e719e1abe247b7f225d112003c8d44b1fb9c5c3ec31f9440fe127d0dd2",
+      "rule": "exact directed edge set"
+    },
+    {
+      "path": "out\\khronos-quality-screen-20261123\\DiffuseTransmissionTeacup\\scored-one-ulp-diagnostic\\receipt.json",
+      "sha256": "7de28257cff24d76f13e2bae5039ed189520ed2963acdf0dec4468c4814e641d",
+      "rule": "retrospective one-float32-ULP curve match"
+    },
+    {
+      "path": "out\\khronos-quality-screen-20261123\\GlassBrokenWindow\\scored-v1\\receipt.json",
+      "sha256": "e6fe2fc2a919651629461fc9fb5612f1777829f1c1073f90f92a85a7a127bd25",
+      "rule": "exact directed edge set"
+    },
+    {
+      "path": "out\\khronos-quality-screen-20261123\\GlassBrokenWindow\\scored-one-ulp-diagnostic\\receipt.json",
+      "sha256": "a5009ea360fbbb4cb8c67f2dd272a669434fea87866292336f51c6e1ec8b258c",
+      "rule": "retrospective one-float32-ULP curve match"
+    },
+    {
+      "path": "out\\khronos-quality-screen-20261123\\GlassHurricaneCandleHolder\\scored-v1\\receipt.json",
+      "sha256": "9702570f0bd9ebaaeb4d6b8dfa2dc233f31d73694350053b114b302337602dcb",
+      "rule": "exact directed edge set"
+    },
+    {
+      "path": "out\\khronos-quality-screen-20261123\\GlassHurricaneCandleHolder\\scored-one-ulp-diagnostic\\receipt.json",
+      "sha256": "be8b6e6919bafe2374fde4a8935e77360d989e1612dc893b8ed2b1dc53b08121",
+      "rule": "retrospective one-float32-ULP curve match"
+    },
+    {
+      "path": "out\\khronos-quality-screen-20261123\\MaterialsVariantsShoe\\scored-v1\\receipt.json",
+      "sha256": "0c7ad3f2d75c608d77b458a50ee9201c199491810354f8c0200fa4621eb0ca67",
+      "rule": "exact directed edge set"
+    },
+    {
+      "path": "out\\khronos-quality-screen-20261123\\MaterialsVariantsShoe\\scored-one-ulp-diagnostic\\receipt.json",
+      "sha256": "73bc06b2d8211e2ddc21511c325e728fcc1aca68366ad51d96c286ba72bdb0d5",
+      "rule": "retrospective one-float32-ULP curve match"
+    },
+    {
+      "path": "out\\khronos-quality-screen-20261123\\PotOfCoals\\scored-v1\\receipt.json",
+      "sha256": "768c29e38fa65abd7de9bf2d0914bca3ec67016c10bc20919614cf3a60b83ce8",
+      "rule": "exact directed edge set"
+    },
+    {
+      "path": "out\\khronos-quality-screen-20261123\\PotOfCoals\\scored-one-ulp-diagnostic\\receipt.json",
+      "sha256": "40236bbe4942a6f5a535019b5b96180dd519b5b7c8f1c22dd69888f68273df32",
+      "rule": "retrospective one-float32-ULP curve match"
+    },
+    {
+      "path": "out\\khronos-quality-screen-20261123\\SpecularSilkPouf\\scored-v1\\receipt.json",
+      "sha256": "fb4d3afa234bdf09c2ce399b4467bd9d758741d1d266569698c28c63bcfe5dcc",
+      "rule": "exact directed edge set"
+    },
+    {
+      "path": "out\\khronos-quality-screen-20261123\\SpecularSilkPouf\\scored-one-ulp-diagnostic\\receipt.json",
+      "sha256": "a5c7b041d1e3169d959766bb7990fd96c986c31ed04921c013f69df8b41cdd33",
+      "rule": "retrospective one-float32-ULP curve match"
+    }
+  ],
+  "cuts": [
+    {
+      "asset": "AnisotropyBarnLamp",
+      "source_sha256": "3faefd435788d84dc3f7139c265c5fbbe8609b6b95f97b38ed8576e24b537455",
+      "requested_ratio": 0.3,
+      "actual_faces": 3061,
+      "actual_ratio": 0.3000098010389101,
+      "eligible_exact_edges": false,
+      "eligible_one_ulp": false,
+      "topology_error": "Nonmanifold or inconsistently oriented edge",
+      "candidate_metrics": {
+        "mse": 0.001610218963759932,
+        "ssim": 0.9724005148433394,
+        "flip": 0.019627593690529466,
+        "silhouette_xor_fraction": 0.001468234592013889,
+        "coverage_mae": 0.001391940646701389,
+        "psnr_db": 27.93115062920506,
+        "silhouette_xor_mse_share": 0.08650782493561392
+      },
+      "boundary_audit": {
+        "error": "Nonmanifold or inconsistently oriented edge"
+      },
+      "controls": {}
+    },
+    {
+      "asset": "AnisotropyBarnLamp",
+      "source_sha256": "3faefd435788d84dc3f7139c265c5fbbe8609b6b95f97b38ed8576e24b537455",
+      "requested_ratio": 0.5,
+      "actual_faces": 5101,
+      "actual_ratio": 0.49995099480544936,
+      "eligible_exact_edges": false,
+      "eligible_one_ulp": false,
+      "topology_error": "Nonmanifold or inconsistently oriented edge",
+      "candidate_metrics": {
+        "mse": 0.0005544104130622837,
+        "ssim": 0.986086792212653,
+        "flip": 0.010479347925866023,
+        "silhouette_xor_fraction": 0.0009629991319444444,
+        "coverage_mae": 0.0009613037109375,
+        "psnr_db": 32.561686213020586,
+        "silhouette_xor_mse_share": 0.2321715897194113
+      },
+      "boundary_audit": {
+        "error": "Nonmanifold or inconsistently oriented edge"
+      },
+      "controls": {}
+    },
+    {
+      "asset": "AnisotropyBarnLamp",
+      "source_sha256": "3faefd435788d84dc3f7139c265c5fbbe8609b6b95f97b38ed8576e24b537455",
+      "requested_ratio": 0.7,
+      "actual_faces": 7143,
+      "actual_ratio": 0.7000882093501911,
+      "eligible_exact_edges": false,
+      "eligible_one_ulp": false,
+      "topology_error": "Nonmanifold or inconsistently oriented edge",
+      "candidate_metrics": {
+        "mse": 2.641482876511171e-05,
+        "ssim": 0.9982997622357863,
+        "flip": 0.001647625926125329,
+        "silhouette_xor_fraction": 0.00010172526041666666,
+        "coverage_mae": 9.663899739583333e-05,
+        "psnr_db": 45.781522002944044,
+        "silhouette_xor_mse_share": 0.25896913202400285
+      },
+      "boundary_audit": {
+        "error": "Nonmanifold or inconsistently oriented edge"
+      },
+      "controls": {}
+    },
+    {
+      "asset": "DiffuseTransmissionTeacup",
+      "source_sha256": "5966f7f722a8f50d1e34fb713b52589b62f25362efb9998979e9359c4a3b1882",
+      "requested_ratio": 0.3,
+      "actual_faces": 8456,
+      "actual_ratio": 0.3000283848992336,
+      "eligible_exact_edges": false,
+      "eligible_one_ulp": false,
+      "topology_error": null,
+      "candidate_metrics": {
+        "mse": 0.0003872691484511833,
+        "ssim": 0.9776672272004441,
+        "flip": 0.017001250060275197,
+        "silhouette_xor_fraction": 0.001034206814236111,
+        "coverage_mae": 0.0010206434461805555,
+        "psnr_db": 34.119870994277896,
+        "silhouette_xor_mse_share": 0.29632578826303924
+      },
+      "boundary_audit": {
+        "reference_edge_count": 52,
+        "candidate_edge_count": 56,
+        "reference_unique_boundary_vertices": 50,
+        "candidate_unique_boundary_vertices": 55,
+        "exact_shared_boundary_vertices": 20,
+        "nearest_vertex_map_is_one_to_one": false,
+        "max_nearest_boundary_vertex_distance": 0.1209888943181785,
+        "approximate_directed_edge_matches": null,
+        "approximate_reversed_edge_matches": null,
+        "reference_total_length": 3.147445560213133,
+        "candidate_total_length": 3.389571267414939,
+        "relative_length_error": 0.07692768709410508,
+        "reference_to_candidate": {
+          "mean": 0.004654481748622213,
+          "p95": 0.04231419482964137,
+          "max_sampled": 0.1209888943181785
+        },
+        "candidate_to_reference": {
+          "mean": 0.04303368872781418,
+          "p95": 0.3190780682518742,
+          "max_sampled": 0.36091460979431667
+        },
+        "symmetric_hausdorff_sampled": 0.36091460979431667,
+        "sample_spacing": 0.0002808480512057873
+      },
+      "controls": {}
+    },
+    {
+      "asset": "DiffuseTransmissionTeacup",
+      "source_sha256": "5966f7f722a8f50d1e34fb713b52589b62f25362efb9998979e9359c4a3b1882",
+      "requested_ratio": 0.5,
+      "actual_faces": 14092,
+      "actual_ratio": 0.5,
+      "eligible_exact_edges": false,
+      "eligible_one_ulp": false,
+      "topology_error": null,
+      "candidate_metrics": {
+        "mse": 0.00016460161389583066,
+        "ssim": 0.9883864525705894,
+        "flip": 0.009962104260921478,
+        "silhouette_xor_fraction": 0.0004306369357638889,
+        "coverage_mae": 0.00046624077690972225,
+        "psnr_db": 37.83565910906146,
+        "silhouette_xor_mse_share": 0.2524336554972936
+      },
+      "boundary_audit": {
+        "reference_edge_count": 52,
+        "candidate_edge_count": 56,
+        "reference_unique_boundary_vertices": 50,
+        "candidate_unique_boundary_vertices": 55,
+        "exact_shared_boundary_vertices": 20,
+        "nearest_vertex_map_is_one_to_one": false,
+        "max_nearest_boundary_vertex_distance": 0.1209888943181785,
+        "approximate_directed_edge_matches": null,
+        "approximate_reversed_edge_matches": null,
+        "reference_total_length": 3.147445560213133,
+        "candidate_total_length": 3.389571267414939,
+        "relative_length_error": 0.07692768709410508,
+        "reference_to_candidate": {
+          "mean": 0.004654481748622213,
+          "p95": 0.04231419482964137,
+          "max_sampled": 0.1209888943181785
+        },
+        "candidate_to_reference": {
+          "mean": 0.04303368872781418,
+          "p95": 0.3190780682518742,
+          "max_sampled": 0.36091460979431667
+        },
+        "symmetric_hausdorff_sampled": 0.36091460979431667,
+        "sample_spacing": 0.0002808480512057873
+      },
+      "controls": {}
+    },
+    {
+      "asset": "DiffuseTransmissionTeacup",
+      "source_sha256": "5966f7f722a8f50d1e34fb713b52589b62f25362efb9998979e9359c4a3b1882",
+      "requested_ratio": 0.7,
+      "actual_faces": 19728,
+      "actual_ratio": 0.6999716151007664,
+      "eligible_exact_edges": false,
+      "eligible_one_ulp": false,
+      "topology_error": null,
+      "candidate_metrics": {
+        "mse": 3.993215124591503e-05,
+        "ssim": 0.9962049008220146,
+        "flip": 0.004274126811651513,
+        "silhouette_xor_fraction": 0.0001186794704861111,
+        "coverage_mae": 0.00013393825954861112,
+        "psnr_db": 43.986772926340166,
+        "silhouette_xor_mse_share": 0.10486137167073618
+      },
+      "boundary_audit": {
+        "reference_edge_count": 52,
+        "candidate_edge_count": 56,
+        "reference_unique_boundary_vertices": 50,
+        "candidate_unique_boundary_vertices": 55,
+        "exact_shared_boundary_vertices": 20,
+        "nearest_vertex_map_is_one_to_one": false,
+        "max_nearest_boundary_vertex_distance": 0.1209888943181785,
+        "approximate_directed_edge_matches": null,
+        "approximate_reversed_edge_matches": null,
+        "reference_total_length": 3.147445560213133,
+        "candidate_total_length": 3.389571267414939,
+        "relative_length_error": 0.07692768709410508,
+        "reference_to_candidate": {
+          "mean": 0.004654481748622213,
+          "p95": 0.04231419482964137,
+          "max_sampled": 0.1209888943181785
+        },
+        "candidate_to_reference": {
+          "mean": 0.04303368872781418,
+          "p95": 0.3190780682518742,
+          "max_sampled": 0.36091460979431667
+        },
+        "symmetric_hausdorff_sampled": 0.36091460979431667,
+        "sample_spacing": 0.0002808480512057873
+      },
+      "controls": {}
+    },
+    {
+      "asset": "GlassBrokenWindow",
+      "source_sha256": "0e89c18f6c9c760c3ab8f7ad7487b912c253c4b2ad415ea1b0475fa1e54f7101",
+      "requested_ratio": 0.3,
+      "actual_faces": 381,
+      "actual_ratio": 0.3860182370820669,
+      "eligible_exact_edges": false,
+      "eligible_one_ulp": true,
+      "topology_error": null,
+      "candidate_metrics": {
+        "mse": 0.0003764751896639647,
+        "ssim": 0.9806315609779324,
+        "flip": 0.011828261776827276,
+        "silhouette_xor_fraction": 0.0006612141927083333,
+        "coverage_mae": 0.0007010565863715278,
+        "psnr_db": 34.242636392430185,
+        "silhouette_xor_mse_share": 0.09201873783771417
+      },
+      "boundary_audit": {
+        "reference_edge_count": 53,
+        "candidate_edge_count": 53,
+        "reference_unique_boundary_vertices": 53,
+        "candidate_unique_boundary_vertices": 53,
+        "exact_shared_boundary_vertices": 46,
+        "nearest_vertex_map_is_one_to_one": true,
+        "max_nearest_boundary_vertex_distance": 3.725290298461914e-09,
+        "approximate_directed_edge_matches": 53,
+        "approximate_reversed_edge_matches": 0,
+        "reference_total_length": 5.600092515791209,
+        "candidate_total_length": 5.600092514238465,
+        "relative_length_error": 2.772710820415168e-10,
+        "reference_to_candidate": {
+          "mean": 4.637665224116277e-12,
+          "p95": 9.094947085491918e-13,
+          "max_sampled": 3.245199498327149e-09
+        },
+        "candidate_to_reference": {
+          "mean": 4.4631855208084605e-12,
+          "p95": 9.094947085491918e-13,
+          "max_sampled": 3.1250079862970107e-09
+        },
+        "symmetric_hausdorff_sampled": 3.245199498327149e-09,
+        "sample_spacing": 0.0002021290210402208
+      },
+      "controls": {
+        "meshoptimizer": {
+          "eligible": false,
+          "faces": 463,
+          "metrics": {
+            "mse": 0.0007331438988142916,
+            "ssim": 0.9732998064851609,
+            "flip": 0.01520436507416889,
+            "silhouette_xor_fraction": 0.0023871527777777775,
+            "coverage_mae": 0.001937018500434028,
+            "psnr_db": 31.348107752531348,
+            "silhouette_xor_mse_share": 0.41666529615798
+          },
+          "candidate_minus_control": null
+        },
+        "qem": {
+          "eligible": false,
+          "faces": 859,
+          "metrics": {
+            "mse": 0.00023944428925573493,
+            "ssim": 0.9924607698896982,
+            "flip": 0.00599963974673301,
+            "silhouette_xor_fraction": 0.0007798936631944445,
+            "coverage_mae": 0.001235114203559028,
+            "psnr_db": 36.20795516417562,
+            "silhouette_xor_mse_share": 0.352176219122706
+          },
+          "candidate_minus_control": null
+        }
+      }
+    },
+    {
+      "asset": "GlassBrokenWindow",
+      "source_sha256": "0e89c18f6c9c760c3ab8f7ad7487b912c253c4b2ad415ea1b0475fa1e54f7101",
+      "requested_ratio": 0.5,
+      "actual_faces": 491,
+      "actual_ratio": 0.49746707193515705,
+      "eligible_exact_edges": false,
+      "eligible_one_ulp": true,
+      "topology_error": null,
+      "candidate_metrics": {
+        "mse": 0.0003653819085674847,
+        "ssim": 0.9808628150990418,
+        "flip": 0.011642116704024374,
+        "silhouette_xor_fraction": 0.0006306966145833334,
+        "coverage_mae": 0.0006612141927083334,
+        "psnr_db": 34.37252960004343,
+        "silhouette_xor_mse_share": 0.08753820342880907
+      },
+      "boundary_audit": {
+        "reference_edge_count": 53,
+        "candidate_edge_count": 53,
+        "reference_unique_boundary_vertices": 53,
+        "candidate_unique_boundary_vertices": 53,
+        "exact_shared_boundary_vertices": 46,
+        "nearest_vertex_map_is_one_to_one": true,
+        "max_nearest_boundary_vertex_distance": 3.725290298461914e-09,
+        "approximate_directed_edge_matches": 53,
+        "approximate_reversed_edge_matches": 0,
+        "reference_total_length": 5.600092515791209,
+        "candidate_total_length": 5.600092514238465,
+        "relative_length_error": 2.772710820415168e-10,
+        "reference_to_candidate": {
+          "mean": 4.637665224116277e-12,
+          "p95": 9.094947085491918e-13,
+          "max_sampled": 3.245199498327149e-09
+        },
+        "candidate_to_reference": {
+          "mean": 4.4631855208084605e-12,
+          "p95": 9.094947085491918e-13,
+          "max_sampled": 3.1250079862970107e-09
+        },
+        "symmetric_hausdorff_sampled": 3.245199498327149e-09,
+        "sample_spacing": 0.0002021290210402208
+      },
+      "controls": {
+        "meshoptimizer": {
+          "eligible": true,
+          "faces": 491,
+          "metrics": {
+            "mse": 0.0006786410608633432,
+            "ssim": 0.9736030311230884,
+            "flip": 0.014326016826089472,
+            "silhouette_xor_fraction": 0.002200656467013889,
+            "coverage_mae": 0.0017191569010416665,
+            "psnr_db": 31.68359867109281,
+            "silhouette_xor_mse_share": 0.37941240004539883
+          },
+          "candidate_minus_control": {
+            "flip": -0.002683900122065097,
+            "psnr_db": 2.6889309289506187,
+            "ssim": 0.007259783975953393,
+            "silhouette_xor_fraction": -0.0015699598524305555,
+            "coverage_mae": -0.001057942708333333
+          }
+        },
+        "qem": {
+          "eligible": false,
+          "faces": 859,
+          "metrics": {
+            "mse": 0.00023944428925573493,
+            "ssim": 0.9924607698896982,
+            "flip": 0.00599963974673301,
+            "silhouette_xor_fraction": 0.0007798936631944445,
+            "coverage_mae": 0.001235114203559028,
+            "psnr_db": 36.20795516417562,
+            "silhouette_xor_mse_share": 0.352176219122706
+          },
+          "candidate_minus_control": null
+        }
+      }
+    },
+    {
+      "asset": "GlassBrokenWindow",
+      "source_sha256": "0e89c18f6c9c760c3ab8f7ad7487b912c253c4b2ad415ea1b0475fa1e54f7101",
+      "requested_ratio": 0.7,
+      "actual_faces": 569,
+      "actual_ratio": 0.5764944275582573,
+      "eligible_exact_edges": false,
+      "eligible_one_ulp": true,
+      "topology_error": null,
+      "candidate_metrics": {
+        "mse": 0.00036376097918402106,
+        "ssim": 0.9809026076774929,
+        "flip": 0.011582163686398417,
+        "silhouette_xor_fraction": 0.0006273057725694445,
+        "coverage_mae": 0.0006578233506944445,
+        "psnr_db": 34.39183889752903,
+        "silhouette_xor_mse_share": 0.086150264891592
+      },
+      "boundary_audit": {
+        "reference_edge_count": 53,
+        "candidate_edge_count": 53,
+        "reference_unique_boundary_vertices": 53,
+        "candidate_unique_boundary_vertices": 53,
+        "exact_shared_boundary_vertices": 46,
+        "nearest_vertex_map_is_one_to_one": true,
+        "max_nearest_boundary_vertex_distance": 3.725290298461914e-09,
+        "approximate_directed_edge_matches": 53,
+        "approximate_reversed_edge_matches": 0,
+        "reference_total_length": 5.600092515791209,
+        "candidate_total_length": 5.600092514238465,
+        "relative_length_error": 2.772710820415168e-10,
+        "reference_to_candidate": {
+          "mean": 4.637665224116277e-12,
+          "p95": 9.094947085491918e-13,
+          "max_sampled": 3.245199498327149e-09
+        },
+        "candidate_to_reference": {
+          "mean": 4.4631855208084605e-12,
+          "p95": 9.094947085491918e-13,
+          "max_sampled": 3.1250079862970107e-09
+        },
+        "symmetric_hausdorff_sampled": 3.245199498327149e-09,
+        "sample_spacing": 0.0002021290210402208
+      },
+      "controls": {
+        "meshoptimizer": {
+          "eligible": true,
+          "faces": 569,
+          "metrics": {
+            "mse": 0.0005969317022833098,
+            "ssim": 0.9803314088071624,
+            "flip": 0.012328918150160462,
+            "silhouette_xor_fraction": 0.001990424262152778,
+            "coverage_mae": 0.0015216403537326388,
+            "psnr_db": 32.24075355668395,
+            "silhouette_xor_mse_share": 0.4216593249335382
+          },
+          "candidate_minus_control": {
+            "flip": -0.0007467544637620449,
+            "psnr_db": 2.1510853408450785,
+            "ssim": 0.0005711988703305249,
+            "silhouette_xor_fraction": -0.0013631184895833335,
+            "coverage_mae": -0.0008638170030381943
+          }
+        },
+        "qem": {
+          "eligible": false,
+          "faces": 859,
+          "metrics": {
+            "mse": 0.00023944428925573493,
+            "ssim": 0.9924607698896982,
+            "flip": 0.00599963974673301,
+            "silhouette_xor_fraction": 0.0007798936631944445,
+            "coverage_mae": 0.001235114203559028,
+            "psnr_db": 36.20795516417562,
+            "silhouette_xor_mse_share": 0.352176219122706
+          },
+          "candidate_minus_control": null
+        }
+      }
+    },
+    {
+      "asset": "GlassHurricaneCandleHolder",
+      "source_sha256": "e6f986bd960e31bbc7a0b1d957f0fdf1be25b22de547fd2a3761615d521eb041",
+      "requested_ratio": 0.3,
+      "actual_faces": 1234,
+      "actual_ratio": 0.2990790111488124,
+      "eligible_exact_edges": true,
+      "eligible_one_ulp": true,
+      "topology_error": null,
+      "candidate_metrics": {
+        "mse": 0.0034575603830090725,
+        "ssim": 0.8800180025438704,
+        "flip": 0.05735930521041155,
+        "silhouette_xor_fraction": 0.004950629340277778,
+        "coverage_mae": 0.005173577202690972,
+        "psnr_db": 24.612302266116668,
+        "silhouette_xor_mse_share": 0.19670093598649868
+      },
+      "boundary_audit": {
+        "reference_edge_count": 4,
+        "candidate_edge_count": 4,
+        "reference_unique_boundary_vertices": 4,
+        "candidate_unique_boundary_vertices": 4,
+        "exact_shared_boundary_vertices": 4,
+        "nearest_vertex_map_is_one_to_one": true,
+        "max_nearest_boundary_vertex_distance": 0.0,
+        "approximate_directed_edge_matches": 4,
+        "approximate_reversed_edge_matches": 0,
+        "reference_total_length": 0.01959883987341697,
+        "candidate_total_length": 0.01959883987341697,
+        "relative_length_error": 0.0,
+        "reference_to_candidate": {
+          "mean": 1.5415971253153184e-19,
+          "p95": 4.84869951806108e-19,
+          "max_sampled": 9.69739903612216e-19
+        },
+        "candidate_to_reference": {
+          "mean": 1.5415971253153184e-19,
+          "p95": 4.84869951806108e-19,
+          "max_sampled": 9.69739903612216e-19
+        },
+        "symmetric_hausdorff_sampled": 9.69739903612216e-19,
+        "sample_spacing": 0.00022738988064247928
+      },
+      "controls": {
+        "meshoptimizer": {
+          "eligible": true,
+          "faces": 1234,
+          "metrics": {
+            "mse": 0.0018054066244553376,
+            "ssim": 0.9177767187131967,
+            "flip": 0.041076540015637875,
+            "silhouette_xor_fraction": 0.003055148654513889,
+            "coverage_mae": 0.003231472439236111,
+            "psnr_db": 27.434249683462433,
+            "silhouette_xor_mse_share": 0.19733319511381567
+          },
+          "candidate_minus_control": {
+            "flip": 0.016282765194773674,
+            "psnr_db": -2.821947417345765,
+            "ssim": -0.037758716169326245,
+            "silhouette_xor_fraction": 0.001895480685763889,
+            "coverage_mae": 0.001942104763454861
+          }
+        },
+        "qem": {
+          "eligible": false,
+          "faces": null,
+          "metrics": null,
+          "candidate_minus_control": null
+        }
+      }
+    },
+    {
+      "asset": "GlassHurricaneCandleHolder",
+      "source_sha256": "e6f986bd960e31bbc7a0b1d957f0fdf1be25b22de547fd2a3761615d521eb041",
+      "requested_ratio": 0.5,
+      "actual_faces": 2062,
+      "actual_ratio": 0.4997576345128454,
+      "eligible_exact_edges": true,
+      "eligible_one_ulp": true,
+      "topology_error": null,
+      "candidate_metrics": {
+        "mse": 0.0016055534988879813,
+        "ssim": 0.9377908236661563,
+        "flip": 0.032019979786127806,
+        "silhouette_xor_fraction": 0.003333197699652778,
+        "coverage_mae": 0.003495110405815972,
+        "psnr_db": 27.943752186650666,
+        "silhouette_xor_mse_share": 0.24306299387934793
+      },
+      "boundary_audit": {
+        "reference_edge_count": 4,
+        "candidate_edge_count": 4,
+        "reference_unique_boundary_vertices": 4,
+        "candidate_unique_boundary_vertices": 4,
+        "exact_shared_boundary_vertices": 4,
+        "nearest_vertex_map_is_one_to_one": true,
+        "max_nearest_boundary_vertex_distance": 0.0,
+        "approximate_directed_edge_matches": 4,
+        "approximate_reversed_edge_matches": 0,
+        "reference_total_length": 0.01959883987341697,
+        "candidate_total_length": 0.01959883987341697,
+        "relative_length_error": 0.0,
+        "reference_to_candidate": {
+          "mean": 1.5415971253153184e-19,
+          "p95": 4.84869951806108e-19,
+          "max_sampled": 9.69739903612216e-19
+        },
+        "candidate_to_reference": {
+          "mean": 1.5415971253153184e-19,
+          "p95": 4.84869951806108e-19,
+          "max_sampled": 9.69739903612216e-19
+        },
+        "symmetric_hausdorff_sampled": 9.69739903612216e-19,
+        "sample_spacing": 0.00022738988064247928
+      },
+      "controls": {
+        "meshoptimizer": {
+          "eligible": true,
+          "faces": 2062,
+          "metrics": {
+            "mse": 0.000216107787069076,
+            "ssim": 0.9887035349663675,
+            "flip": 0.012937245366629213,
+            "silhouette_xor_fraction": 0.000579833984375,
+            "coverage_mae": 0.0005340576171875,
+            "psnr_db": 36.65329583786823,
+            "silhouette_xor_mse_share": 0.18583713589329698
+          },
+          "candidate_minus_control": {
+            "flip": 0.019082734419498593,
+            "psnr_db": -8.709543651217562,
+            "ssim": -0.050912711300211244,
+            "silhouette_xor_fraction": 0.002753363715277778,
+            "coverage_mae": 0.002961052788628472
+          }
+        },
+        "qem": {
+          "eligible": true,
+          "faces": 2062,
+          "metrics": {
+            "mse": 0.0002614396814860203,
+            "ssim": 0.9753929796793599,
+            "flip": 0.015792372229043394,
+            "silhouette_xor_fraction": 0.0008816189236111111,
+            "coverage_mae": 0.0008519490559895833,
+            "psnr_db": 35.82628494251672,
+            "silhouette_xor_mse_share": 0.17955558425496929
+          },
+          "candidate_minus_control": {
+            "flip": 0.01622760755708441,
+            "psnr_db": -7.882532755866055,
+            "ssim": -0.0376021560132036,
+            "silhouette_xor_fraction": 0.002451578776041667,
+            "coverage_mae": 0.002643161349826389
+          }
+        }
+      }
+    },
+    {
+      "asset": "GlassHurricaneCandleHolder",
+      "source_sha256": "e6f986bd960e31bbc7a0b1d957f0fdf1be25b22de547fd2a3761615d521eb041",
+      "requested_ratio": 0.7,
+      "actual_faces": 2888,
+      "actual_ratio": 0.6999515269025691,
+      "eligible_exact_edges": true,
+      "eligible_one_ulp": true,
+      "topology_error": null,
+      "candidate_metrics": {
+        "mse": 0.0008239863423923491,
+        "ssim": 0.9615471086695225,
+        "flip": 0.02006611053366214,
+        "silhouette_xor_fraction": 0.001651340060763889,
+        "coverage_mae": 0.0017835828993055555,
+        "psnr_db": 30.84079986692199,
+        "silhouette_xor_mse_share": 0.22110585006155445
+      },
+      "boundary_audit": {
+        "reference_edge_count": 4,
+        "candidate_edge_count": 4,
+        "reference_unique_boundary_vertices": 4,
+        "candidate_unique_boundary_vertices": 4,
+        "exact_shared_boundary_vertices": 4,
+        "nearest_vertex_map_is_one_to_one": true,
+        "max_nearest_boundary_vertex_distance": 0.0,
+        "approximate_directed_edge_matches": 4,
+        "approximate_reversed_edge_matches": 0,
+        "reference_total_length": 0.01959883987341697,
+        "candidate_total_length": 0.01959883987341697,
+        "relative_length_error": 0.0,
+        "reference_to_candidate": {
+          "mean": 1.5415971253153184e-19,
+          "p95": 4.84869951806108e-19,
+          "max_sampled": 9.69739903612216e-19
+        },
+        "candidate_to_reference": {
+          "mean": 1.5415971253153184e-19,
+          "p95": 4.84869951806108e-19,
+          "max_sampled": 9.69739903612216e-19
+        },
+        "symmetric_hausdorff_sampled": 9.69739903612216e-19,
+        "sample_spacing": 0.00022738988064247928
+      },
+      "controls": {
+        "meshoptimizer": {
+          "eligible": true,
+          "faces": 2888,
+          "metrics": {
+            "mse": 5.9393837489720835e-05,
+            "ssim": 0.9967256387213008,
+            "flip": 0.00542530175880529,
+            "silhouette_xor_fraction": 0.00023735894097222222,
+            "coverage_mae": 0.00022803412543402775,
+            "psnr_db": 42.26258613655986,
+            "silhouette_xor_mse_share": 0.23887725567485915
+          },
+          "candidate_minus_control": {
+            "flip": 0.01464080877485685,
+            "psnr_db": -11.42178626963787,
+            "ssim": -0.03517853005177829,
+            "silhouette_xor_fraction": 0.0014139811197916667,
+            "coverage_mae": 0.0015555487738715278
+          }
+        },
+        "qem": {
+          "eligible": true,
+          "faces": 2888,
+          "metrics": {
+            "mse": 9.985825054933465e-05,
+            "ssim": 0.9881012371591905,
+            "flip": 0.00914565270068124,
+            "silhouette_xor_fraction": 0.0002848307291666667,
+            "coverage_mae": 0.00027720133463541663,
+            "psnr_db": 40.00616046767046,
+            "silhouette_xor_mse_share": 0.19255127022018503
+          },
+          "candidate_minus_control": {
+            "flip": 0.010920457832980901,
+            "psnr_db": -9.165360600748471,
+            "ssim": -0.026554128489667983,
+            "silhouette_xor_fraction": 0.0013665093315972222,
+            "coverage_mae": 0.001506381564670139
+          }
+        }
+      }
+    },
+    {
+      "asset": "MaterialsVariantsShoe",
+      "source_sha256": "8bd3e8f5ae3dfffe0e7ccbc89f3941aa7c1122a7e8756ddac4c7293df7608c09",
+      "requested_ratio": 0.3,
+      "actual_faces": 6810,
+      "actual_ratio": 0.3,
+      "eligible_exact_edges": false,
+      "eligible_one_ulp": true,
+      "topology_error": null,
+      "candidate_metrics": {
+        "mse": 0.0004942707728431106,
+        "ssim": 0.97174944323502,
+        "flip": 0.01401785050984472,
+        "silhouette_xor_fraction": 0.0016072591145833333,
+        "coverage_mae": 0.0016165839301215278,
+        "psnr_db": 33.06035069426412,
+        "silhouette_xor_mse_share": 0.33769607740030283
+      },
+      "boundary_audit": {
+        "reference_edge_count": 1156,
+        "candidate_edge_count": 1156,
+        "reference_unique_boundary_vertices": 1154,
+        "candidate_unique_boundary_vertices": 1154,
+        "exact_shared_boundary_vertices": 178,
+        "nearest_vertex_map_is_one_to_one": true,
+        "max_nearest_boundary_vertex_distance": 6.828569911354542e-08,
+        "approximate_directed_edge_matches": 1156,
+        "approximate_reversed_edge_matches": 0,
+        "reference_total_length": 19.85786252263404,
+        "candidate_total_length": 19.85786271242939,
+        "relative_length_error": 9.55769286723246e-09,
+        "reference_to_candidate": {
+          "mean": 1.233294635992878e-08,
+          "p95": 2.8983436194417708e-08,
+          "max_sampled": 6.664001874625056e-08
+        },
+        "candidate_to_reference": {
+          "mean": 1.2335125804195006e-08,
+          "p95": 2.9009343373795142e-08,
+          "max_sampled": 6.66398849836731e-08
+        },
+        "symmetric_hausdorff_sampled": 6.664001874625056e-08,
+        "sample_spacing": 0.0002160114586033949
+      },
+      "controls": {
+        "meshoptimizer": {
+          "eligible": true,
+          "faces": 6810,
+          "metrics": {
+            "mse": 0.00011823601457705904,
+            "ssim": 0.9899216284358996,
+            "flip": 0.006763025943655521,
+            "silhouette_xor_fraction": 0.000396728515625,
+            "coverage_mae": 0.00037129720052083337,
+            "psnr_db": 39.2725021761943,
+            "silhouette_xor_mse_share": 0.2433648253764527
+          },
+          "candidate_minus_control": {
+            "flip": 0.0072548245661892,
+            "psnr_db": -6.212151481930178,
+            "ssim": -0.018172185200879598,
+            "silhouette_xor_fraction": 0.0012105305989583333,
+            "coverage_mae": 0.0012452867296006945
+          }
+        },
+        "qem": {
+          "eligible": true,
+          "faces": 6810,
+          "metrics": {
+            "mse": 0.0003572799732808428,
+            "ssim": 0.9754566504557737,
+            "flip": 0.012668641633354127,
+            "silhouette_xor_fraction": 0.0008138020833333334,
+            "coverage_mae": 0.00080108642578125,
+            "psnr_db": 34.46991326751318,
+            "silhouette_xor_mse_share": 0.23632829652352452
+          },
+          "candidate_minus_control": {
+            "flip": 0.001349208876490593,
+            "psnr_db": -1.4095625732490547,
+            "ssim": -0.0037072072207536833,
+            "silhouette_xor_fraction": 0.0007934570312499999,
+            "coverage_mae": 0.0008154975043402778
+          }
+        }
+      }
+    },
+    {
+      "asset": "MaterialsVariantsShoe",
+      "source_sha256": "8bd3e8f5ae3dfffe0e7ccbc89f3941aa7c1122a7e8756ddac4c7293df7608c09",
+      "requested_ratio": 0.5,
+      "actual_faces": 11350,
+      "actual_ratio": 0.5,
+      "eligible_exact_edges": false,
+      "eligible_one_ulp": true,
+      "topology_error": null,
+      "candidate_metrics": {
+        "mse": 0.0001613112586571938,
+        "ssim": 0.9867302447136317,
+        "flip": 0.007565214793430641,
+        "silhouette_xor_fraction": 0.0004747178819444445,
+        "coverage_mae": 0.00048828125,
+        "psnr_db": 37.9233532013704,
+        "silhouette_xor_mse_share": 0.2318291696206612
+      },
+      "boundary_audit": {
+        "reference_edge_count": 1156,
+        "candidate_edge_count": 1156,
+        "reference_unique_boundary_vertices": 1154,
+        "candidate_unique_boundary_vertices": 1154,
+        "exact_shared_boundary_vertices": 178,
+        "nearest_vertex_map_is_one_to_one": true,
+        "max_nearest_boundary_vertex_distance": 6.828569911354542e-08,
+        "approximate_directed_edge_matches": 1156,
+        "approximate_reversed_edge_matches": 0,
+        "reference_total_length": 19.85786252263404,
+        "candidate_total_length": 19.85786271242939,
+        "relative_length_error": 9.55769286723246e-09,
+        "reference_to_candidate": {
+          "mean": 1.233294635992878e-08,
+          "p95": 2.8983436194417708e-08,
+          "max_sampled": 6.664001874625056e-08
+        },
+        "candidate_to_reference": {
+          "mean": 1.2335125804195006e-08,
+          "p95": 2.9009343373795142e-08,
+          "max_sampled": 6.66398849836731e-08
+        },
+        "symmetric_hausdorff_sampled": 6.664001874625056e-08,
+        "sample_spacing": 0.0002160114586033949
+      },
+      "controls": {
+        "meshoptimizer": {
+          "eligible": true,
+          "faces": 11350,
+          "metrics": {
+            "mse": 2.4998940378166514e-05,
+            "ssim": 0.9970730096895385,
+            "flip": 0.002568267926108092,
+            "silhouette_xor_fraction": 6.781684027777778e-05,
+            "coverage_mae": 6.696912977430555e-05,
+            "psnr_db": 46.020783992346814,
+            "silhouette_xor_mse_share": 0.15922419349225442
+          },
+          "candidate_minus_control": {
+            "flip": 0.004996946867322549,
+            "psnr_db": -8.097430790976418,
+            "ssim": -0.010342764975906804,
+            "silhouette_xor_fraction": 0.00040690104166666674,
+            "coverage_mae": 0.00042131212022569444
+          }
+        },
+        "qem": {
+          "eligible": true,
+          "faces": 11350,
+          "metrics": {
+            "mse": 9.696530564499765e-05,
+            "ssim": 0.9916467132423015,
+            "flip": 0.005635569046717137,
+            "silhouette_xor_fraction": 0.00023057725694444444,
+            "coverage_mae": 0.00022210015190972222,
+            "psnr_db": 40.13383629261695,
+            "silhouette_xor_mse_share": 0.21841682886222127
+          },
+          "candidate_minus_control": {
+            "flip": 0.0019296457467135042,
+            "psnr_db": -2.2104830912465516,
+            "ssim": -0.004916468528669782,
+            "silhouette_xor_fraction": 0.00024414062500000005,
+            "coverage_mae": 0.00026618109809027775
+          }
+        }
+      }
+    },
+    {
+      "asset": "MaterialsVariantsShoe",
+      "source_sha256": "8bd3e8f5ae3dfffe0e7ccbc89f3941aa7c1122a7e8756ddac4c7293df7608c09",
+      "requested_ratio": 0.7,
+      "actual_faces": 15890,
+      "actual_ratio": 0.7,
+      "eligible_exact_edges": false,
+      "eligible_one_ulp": true,
+      "topology_error": null,
+      "candidate_metrics": {
+        "mse": 3.106053002117241e-05,
+        "ssim": 0.9971646455247919,
+        "flip": 0.0023784221993992105,
+        "silhouette_xor_fraction": 6.442599826388889e-05,
+        "coverage_mae": 8.816189236111111e-05,
+        "psnr_db": 45.07791137683233,
+        "silhouette_xor_mse_share": 0.1314896988773961
+      },
+      "boundary_audit": {
+        "reference_edge_count": 1156,
+        "candidate_edge_count": 1156,
+        "reference_unique_boundary_vertices": 1154,
+        "candidate_unique_boundary_vertices": 1154,
+        "exact_shared_boundary_vertices": 178,
+        "nearest_vertex_map_is_one_to_one": true,
+        "max_nearest_boundary_vertex_distance": 6.828569911354542e-08,
+        "approximate_directed_edge_matches": 1156,
+        "approximate_reversed_edge_matches": 0,
+        "reference_total_length": 19.85786252263404,
+        "candidate_total_length": 19.85786271242939,
+        "relative_length_error": 9.55769286723246e-09,
+        "reference_to_candidate": {
+          "mean": 1.233294635992878e-08,
+          "p95": 2.8983436194417708e-08,
+          "max_sampled": 6.664001874625056e-08
+        },
+        "candidate_to_reference": {
+          "mean": 1.2335125804195006e-08,
+          "p95": 2.9009343373795142e-08,
+          "max_sampled": 6.66398849836731e-08
+        },
+        "symmetric_hausdorff_sampled": 6.664001874625056e-08,
+        "sample_spacing": 0.0002160114586033949
+      },
+      "controls": {
+        "meshoptimizer": {
+          "eligible": true,
+          "faces": 15890,
+          "metrics": {
+            "mse": 6.023783253769917e-06,
+            "ssim": 0.999254970653471,
+            "flip": 0.0009699529327917844,
+            "silhouette_xor_fraction": 2.712673611111111e-05,
+            "coverage_mae": 1.3563368055555555e-05,
+            "psnr_db": 52.2013066319932,
+            "silhouette_xor_mse_share": 0.2308873225932389
+          },
+          "candidate_minus_control": {
+            "flip": 0.001408469266607426,
+            "psnr_db": -7.123395255160865,
+            "ssim": -0.002090325128679127,
+            "silhouette_xor_fraction": 3.729926215277778e-05,
+            "coverage_mae": 7.459852430555556e-05
+          }
+        },
+        "qem": {
+          "eligible": true,
+          "faces": 15890,
+          "metrics": {
+            "mse": 2.6091258219995514e-05,
+            "ssim": 0.9980576663728562,
+            "flip": 0.002266957308165729,
+            "silhouette_xor_fraction": 9.1552734375e-05,
+            "coverage_mae": 6.442599826388889e-05,
+            "psnr_db": 45.835049770582614,
+            "silhouette_xor_mse_share": 0.28283014720724764
+          },
+          "candidate_minus_control": {
+            "flip": 0.00011146489123348147,
+            "psnr_db": -0.7571383937502816,
+            "ssim": -0.0008930208480643076,
+            "silhouette_xor_fraction": -2.712673611111111e-05,
+            "coverage_mae": 2.373589409722222e-05
+          }
+        }
+      }
+    },
+    {
+      "asset": "PotOfCoals",
+      "source_sha256": "3dd1e986cb8e49e383766eb5fd2a6d0efbd89425053d08c6a9efe53eafc293c4",
+      "requested_ratio": 0.3,
+      "actual_faces": 5467,
+      "actual_ratio": 0.3000054875706525,
+      "eligible_exact_edges": false,
+      "eligible_one_ulp": true,
+      "topology_error": null,
+      "candidate_metrics": {
+        "mse": 0.0010853874874347208,
+        "ssim": 0.9414474886319852,
+        "flip": 0.03212942625395954,
+        "silhouette_xor_fraction": 0.0026855468750000004,
+        "coverage_mae": 0.002560933430989583,
+        "psnr_db": 29.644151893618293,
+        "silhouette_xor_mse_share": 0.33682720109868713
+      },
+      "boundary_audit": {
+        "reference_edge_count": 361,
+        "candidate_edge_count": 361,
+        "reference_unique_boundary_vertices": 350,
+        "candidate_unique_boundary_vertices": 350,
+        "exact_shared_boundary_vertices": 117,
+        "nearest_vertex_map_is_one_to_one": true,
+        "max_nearest_boundary_vertex_distance": 6.664001874625056e-08,
+        "approximate_directed_edge_matches": 361,
+        "approximate_reversed_edge_matches": 0,
+        "reference_total_length": 12.960426010569236,
+        "candidate_total_length": 12.960425991774171,
+        "relative_length_error": 1.4501888321058963e-09,
+        "reference_to_candidate": {
+          "mean": 1.2284048361487907e-08,
+          "p95": 2.9802322387695312e-08,
+          "max_sampled": 6.393768730378446e-08
+        },
+        "candidate_to_reference": {
+          "mean": 1.2285041603175737e-08,
+          "p95": 2.9802322387695312e-08,
+          "max_sampled": 6.387757545700603e-08
+        },
+        "symmetric_hausdorff_sampled": 6.393768730378446e-08,
+        "sample_spacing": 0.00030023640801496145
+      },
+      "controls": {
+        "meshoptimizer": {
+          "eligible": false,
+          "faces": 18223,
+          "metrics": {
+            "mse": 0.0,
+            "ssim": 1.0,
+            "flip": 0.0,
+            "silhouette_xor_fraction": 0.0,
+            "coverage_mae": 0.0,
+            "psnr_db": null,
+            "silhouette_xor_mse_share": null
+          },
+          "candidate_minus_control": null
+        },
+        "qem": {
+          "eligible": false,
+          "faces": 18223,
+          "metrics": {
+            "mse": 0.0,
+            "ssim": 1.0,
+            "flip": 0.0,
+            "silhouette_xor_fraction": 0.0,
+            "coverage_mae": 0.0,
+            "psnr_db": null,
+            "silhouette_xor_mse_share": null
+          },
+          "candidate_minus_control": null
+        }
+      }
+    },
+    {
+      "asset": "PotOfCoals",
+      "source_sha256": "3dd1e986cb8e49e383766eb5fd2a6d0efbd89425053d08c6a9efe53eafc293c4",
+      "requested_ratio": 0.5,
+      "actual_faces": 9111,
+      "actual_ratio": 0.49997256214673763,
+      "eligible_exact_edges": false,
+      "eligible_one_ulp": true,
+      "topology_error": null,
+      "candidate_metrics": {
+        "mse": 0.0009909560963631777,
+        "ssim": 0.9418971855032303,
+        "flip": 0.03308733366429806,
+        "silhouette_xor_fraction": 0.002716064453125,
+        "coverage_mae": 0.002625359429253472,
+        "psnr_db": 30.03945586210566,
+        "silhouette_xor_mse_share": 0.34908762263621873
+      },
+      "boundary_audit": {
+        "reference_edge_count": 361,
+        "candidate_edge_count": 361,
+        "reference_unique_boundary_vertices": 350,
+        "candidate_unique_boundary_vertices": 350,
+        "exact_shared_boundary_vertices": 117,
+        "nearest_vertex_map_is_one_to_one": true,
+        "max_nearest_boundary_vertex_distance": 6.664001874625056e-08,
+        "approximate_directed_edge_matches": 361,
+        "approximate_reversed_edge_matches": 0,
+        "reference_total_length": 12.960426010569236,
+        "candidate_total_length": 12.960425991774171,
+        "relative_length_error": 1.4501888321058963e-09,
+        "reference_to_candidate": {
+          "mean": 1.2284048361487907e-08,
+          "p95": 2.9802322387695312e-08,
+          "max_sampled": 6.393768730378446e-08
+        },
+        "candidate_to_reference": {
+          "mean": 1.2285041603175737e-08,
+          "p95": 2.9802322387695312e-08,
+          "max_sampled": 6.387757545700603e-08
+        },
+        "symmetric_hausdorff_sampled": 6.393768730378446e-08,
+        "sample_spacing": 0.00030023640801496145
+      },
+      "controls": {
+        "meshoptimizer": {
+          "eligible": false,
+          "faces": 18223,
+          "metrics": {
+            "mse": 0.0,
+            "ssim": 1.0,
+            "flip": 0.0,
+            "silhouette_xor_fraction": 0.0,
+            "coverage_mae": 0.0,
+            "psnr_db": null,
+            "silhouette_xor_mse_share": null
+          },
+          "candidate_minus_control": null
+        },
+        "qem": {
+          "eligible": false,
+          "faces": 18223,
+          "metrics": {
+            "mse": 0.0,
+            "ssim": 1.0,
+            "flip": 0.0,
+            "silhouette_xor_fraction": 0.0,
+            "coverage_mae": 0.0,
+            "psnr_db": null,
+            "silhouette_xor_mse_share": null
+          },
+          "candidate_minus_control": null
+        }
+      }
+    },
+    {
+      "asset": "PotOfCoals",
+      "source_sha256": "3dd1e986cb8e49e383766eb5fd2a6d0efbd89425053d08c6a9efe53eafc293c4",
+      "requested_ratio": 0.7,
+      "actual_faces": 12757,
+      "actual_ratio": 0.7000493881358723,
+      "eligible_exact_edges": false,
+      "eligible_one_ulp": true,
+      "topology_error": null,
+      "candidate_metrics": {
+        "mse": 0.0001845712094239929,
+        "ssim": 0.9868807407631832,
+        "flip": 0.011103226686827838,
+        "silhouette_xor_fraction": 0.0008104112413194445,
+        "coverage_mae": 0.0007815890842013889,
+        "psnr_db": 37.33836042006933,
+        "silhouette_xor_mse_share": 0.2997227590702525
+      },
+      "boundary_audit": {
+        "reference_edge_count": 361,
+        "candidate_edge_count": 361,
+        "reference_unique_boundary_vertices": 350,
+        "candidate_unique_boundary_vertices": 350,
+        "exact_shared_boundary_vertices": 117,
+        "nearest_vertex_map_is_one_to_one": true,
+        "max_nearest_boundary_vertex_distance": 6.664001874625056e-08,
+        "approximate_directed_edge_matches": 361,
+        "approximate_reversed_edge_matches": 0,
+        "reference_total_length": 12.960426010569236,
+        "candidate_total_length": 12.960425991774171,
+        "relative_length_error": 1.4501888321058963e-09,
+        "reference_to_candidate": {
+          "mean": 1.2284048361487907e-08,
+          "p95": 2.9802322387695312e-08,
+          "max_sampled": 6.393768730378446e-08
+        },
+        "candidate_to_reference": {
+          "mean": 1.2285041603175737e-08,
+          "p95": 2.9802322387695312e-08,
+          "max_sampled": 6.387757545700603e-08
+        },
+        "symmetric_hausdorff_sampled": 6.393768730378446e-08,
+        "sample_spacing": 0.00030023640801496145
+      },
+      "controls": {
+        "meshoptimizer": {
+          "eligible": false,
+          "faces": 18223,
+          "metrics": {
+            "mse": 0.0,
+            "ssim": 1.0,
+            "flip": 0.0,
+            "silhouette_xor_fraction": 0.0,
+            "coverage_mae": 0.0,
+            "psnr_db": null,
+            "silhouette_xor_mse_share": null
+          },
+          "candidate_minus_control": null
+        },
+        "qem": {
+          "eligible": false,
+          "faces": 18223,
+          "metrics": {
+            "mse": 0.0,
+            "ssim": 1.0,
+            "flip": 0.0,
+            "silhouette_xor_fraction": 0.0,
+            "coverage_mae": 0.0,
+            "psnr_db": null,
+            "silhouette_xor_mse_share": null
+          },
+          "candidate_minus_control": null
+        }
+      }
+    },
+    {
+      "asset": "SpecularSilkPouf",
+      "source_sha256": "dcda8f0bbead5bb961374c8417fbc4ced9aebee065fba576429de9e365628a61",
+      "requested_ratio": 0.3,
+      "actual_faces": 24374,
+      "actual_ratio": 0.299876968503937,
+      "eligible_exact_edges": false,
+      "eligible_one_ulp": true,
+      "topology_error": null,
+      "candidate_metrics": {
+        "mse": 0.001628500934219344,
+        "ssim": 0.8879588858901597,
+        "flip": 0.04029438504949212,
+        "silhouette_xor_fraction": 0.0028754340277777775,
+        "coverage_mae": 0.0027906629774305555,
+        "psnr_db": 27.882119879580642,
+        "silhouette_xor_mse_share": 0.18054176646737494
+      },
+      "boundary_audit": {
+        "reference_edge_count": 1000,
+        "candidate_edge_count": 1000,
+        "reference_unique_boundary_vertices": 1000,
+        "candidate_unique_boundary_vertices": 1000,
+        "exact_shared_boundary_vertices": 127,
+        "nearest_vertex_map_is_one_to_one": true,
+        "max_nearest_boundary_vertex_distance": 6.664001874625056e-08,
+        "approximate_directed_edge_matches": 1000,
+        "approximate_reversed_edge_matches": 0,
+        "reference_total_length": 9.474976448273377,
+        "candidate_total_length": 9.474976623224102,
+        "relative_length_error": 1.8464502269223738e-08,
+        "reference_to_candidate": {
+          "mean": 7.165086310942926e-09,
+          "p95": 2.961660343004859e-08,
+          "max_sampled": 5.993323964646389e-08
+        },
+        "candidate_to_reference": {
+          "mean": 7.16896553050865e-09,
+          "p95": 2.9568174396851522e-08,
+          "max_sampled": 6.01017383124053e-08
+        },
+        "symmetric_hausdorff_sampled": 6.01017383124053e-08,
+        "sample_spacing": 0.00028752713157581593
+      },
+      "controls": {
+        "meshoptimizer": {
+          "eligible": true,
+          "faces": 24374,
+          "metrics": {
+            "mse": 0.000240247088376132,
+            "ssim": 0.9761095027467668,
+            "flip": 0.014326751057524234,
+            "silhouette_xor_fraction": 0.00048828125,
+            "coverage_mae": 0.00043402777777777775,
+            "psnr_db": 36.19341866967811,
+            "silhouette_xor_mse_share": 0.12312655079218068
+          },
+          "candidate_minus_control": {
+            "flip": 0.025967633991967887,
+            "psnr_db": -8.311298790097467,
+            "ssim": -0.08815061685660708,
+            "silhouette_xor_fraction": 0.0023871527777777775,
+            "coverage_mae": 0.002356635199652778
+          }
+        },
+        "qem": {
+          "eligible": false,
+          "faces": null,
+          "metrics": null,
+          "candidate_minus_control": null
+        }
+      }
+    },
+    {
+      "asset": "SpecularSilkPouf",
+      "source_sha256": "dcda8f0bbead5bb961374c8417fbc4ced9aebee065fba576429de9e365628a61",
+      "requested_ratio": 0.5,
+      "actual_faces": 40640,
+      "actual_ratio": 0.5,
+      "eligible_exact_edges": false,
+      "eligible_one_ulp": true,
+      "topology_error": null,
+      "candidate_metrics": {
+        "mse": 0.0006635831671312315,
+        "ssim": 0.9452757259006281,
+        "flip": 0.02360844553913921,
+        "silhouette_xor_fraction": 0.0015428331163194445,
+        "coverage_mae": 0.0014292399088541665,
+        "psnr_db": 31.781046390954472,
+        "silhouette_xor_mse_share": 0.16359651723461116
+      },
+      "boundary_audit": {
+        "reference_edge_count": 1000,
+        "candidate_edge_count": 1000,
+        "reference_unique_boundary_vertices": 1000,
+        "candidate_unique_boundary_vertices": 1000,
+        "exact_shared_boundary_vertices": 127,
+        "nearest_vertex_map_is_one_to_one": true,
+        "max_nearest_boundary_vertex_distance": 6.664001874625056e-08,
+        "approximate_directed_edge_matches": 1000,
+        "approximate_reversed_edge_matches": 0,
+        "reference_total_length": 9.474976448273377,
+        "candidate_total_length": 9.474976623224102,
+        "relative_length_error": 1.8464502269223738e-08,
+        "reference_to_candidate": {
+          "mean": 7.165086310942926e-09,
+          "p95": 2.961660343004859e-08,
+          "max_sampled": 5.993323964646389e-08
+        },
+        "candidate_to_reference": {
+          "mean": 7.16896553050865e-09,
+          "p95": 2.9568174396851522e-08,
+          "max_sampled": 6.01017383124053e-08
+        },
+        "symmetric_hausdorff_sampled": 6.01017383124053e-08,
+        "sample_spacing": 0.00028752713157581593
+      },
+      "controls": {
+        "meshoptimizer": {
+          "eligible": true,
+          "faces": 40640,
+          "metrics": {
+            "mse": 8.712641446999551e-05,
+            "ssim": 0.9906092586849771,
+            "flip": 0.008197814866434783,
+            "silhouette_xor_fraction": 0.00017293294270833332,
+            "coverage_mae": 0.00015682644314236112,
+            "psnr_db": 40.598501582020845,
+            "silhouette_xor_mse_share": 0.11650513473000182
+          },
+          "candidate_minus_control": {
+            "flip": 0.015410630672704428,
+            "psnr_db": -8.817455191066372,
+            "ssim": -0.04533353278434893,
+            "silhouette_xor_fraction": 0.0013699001736111112,
+            "coverage_mae": 0.0012724134657118055
+          }
+        },
+        "qem": {
+          "eligible": true,
+          "faces": 40640,
+          "metrics": {
+            "mse": 0.0001411474686552181,
+            "ssim": 0.9852299581989098,
+            "flip": 0.009583714010659605,
+            "silhouette_xor_fraction": 0.00026109483506944444,
+            "coverage_mae": 0.00025346544053819444,
+            "psnr_db": 38.503269061031645,
+            "silhouette_xor_mse_share": 0.12481392718590859
+          },
+          "candidate_minus_control": {
+            "flip": 0.014024731528479606,
+            "psnr_db": -6.722222670077173,
+            "ssim": -0.039954232298281656,
+            "silhouette_xor_fraction": 0.00128173828125,
+            "coverage_mae": 0.001175774468315972
+          }
+        }
+      }
+    },
+    {
+      "asset": "SpecularSilkPouf",
+      "source_sha256": "dcda8f0bbead5bb961374c8417fbc4ced9aebee065fba576429de9e365628a61",
+      "requested_ratio": 0.7,
+      "actual_faces": 56896,
+      "actual_ratio": 0.7,
+      "eligible_exact_edges": false,
+      "eligible_one_ulp": true,
+      "topology_error": null,
+      "candidate_metrics": {
+        "mse": 0.00036431373466802293,
+        "ssim": 0.9671703478407522,
+        "flip": 0.016147406422533095,
+        "silhouette_xor_fraction": 0.0009189181857638889,
+        "coverage_mae": 0.0008443196614583333,
+        "psnr_db": 34.385244554995246,
+        "silhouette_xor_mse_share": 0.1471809633203363
+      },
+      "boundary_audit": {
+        "reference_edge_count": 1000,
+        "candidate_edge_count": 1000,
+        "reference_unique_boundary_vertices": 1000,
+        "candidate_unique_boundary_vertices": 1000,
+        "exact_shared_boundary_vertices": 127,
+        "nearest_vertex_map_is_one_to_one": true,
+        "max_nearest_boundary_vertex_distance": 6.664001874625056e-08,
+        "approximate_directed_edge_matches": 1000,
+        "approximate_reversed_edge_matches": 0,
+        "reference_total_length": 9.474976448273377,
+        "candidate_total_length": 9.474976623224102,
+        "relative_length_error": 1.8464502269223738e-08,
+        "reference_to_candidate": {
+          "mean": 7.165086310942926e-09,
+          "p95": 2.961660343004859e-08,
+          "max_sampled": 5.993323964646389e-08
+        },
+        "candidate_to_reference": {
+          "mean": 7.16896553050865e-09,
+          "p95": 2.9568174396851522e-08,
+          "max_sampled": 6.01017383124053e-08
+        },
+        "symmetric_hausdorff_sampled": 6.01017383124053e-08,
+        "sample_spacing": 0.00028752713157581593
+      },
+      "controls": {
+        "meshoptimizer": {
+          "eligible": true,
+          "faces": 56896,
+          "metrics": {
+            "mse": 2.7464594864021316e-05,
+            "ssim": 0.9966256865923189,
+            "flip": 0.004262090646079741,
+            "silhouette_xor_fraction": 2.0345052083333332e-05,
+            "coverage_mae": 3.306070963541667e-05,
+            "psnr_db": 45.612268029640376,
+            "silhouette_xor_mse_share": 0.012563033448959923
+          },
+          "candidate_minus_control": {
+            "flip": 0.011885315776453353,
+            "psnr_db": -11.22702347464513,
+            "ssim": -0.029455338751566695,
+            "silhouette_xor_fraction": 0.0008985731336805555,
+            "coverage_mae": 0.0008112589518229166
+          }
+        },
+        "qem": {
+          "eligible": true,
+          "faces": 56896,
+          "metrics": {
+            "mse": 2.7267428025812718e-05,
+            "ssim": 0.9970007175248117,
+            "flip": 0.003974362043663859,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "coverage_mae": 4.153781467013889e-05,
+            "psnr_db": 45.64355824540041,
+            "silhouette_xor_mse_share": 0.093864413611087
+          },
+          "candidate_minus_control": {
+            "flip": 0.012173044378869236,
+            "psnr_db": -11.258313690405167,
+            "ssim": -0.0298303696840595,
+            "silhouette_xor_fraction": 0.0008884006076388889,
+            "coverage_mae": 0.0008027818467881944
+          }
+        }
+      }
+    }
+  ]
+}

@@ -44,10 +44,19 @@ physical-phone or user-preference result is available.
   48-frame screen, per-instance allocation used more faces and ran slower on
   GPU. A face-budget-matched offline oracle improved the temporal metric in one
   scene only and added CPU selection cost. [Report](tools/mmtrain/DYNAMIC_INSTANCE_LOD_MOVING_20261123.md)
+- **One seven-asset source-reference screen found a narrow exception.** Under a
+  retrospective one-float32-ULP boundary rule, 15 of 21 cuts were eligible.
+  Across 18 exact-face comparisons, ManyMesh lost all five image metrics in 15,
+  won all five in two meshoptimizer comparisons on the 987-face
+  GlassBrokenWindow, and had one mixed result. It did not beat an eligible QEM
+  pair. This is reused development data, the boundary rule was chosen after an
+  initial run, and the broken-window hierarchy missed the requested 30% and 70%
+  cuts. [Full report](tools/mmtrain/KHRONOS_EQUAL_FACE_QUALITY_SCREEN_20261123.md) ·
+  [metrics and hashes](tools/mmtrain/khronos_equal_face_quality_screen_20261123.json)
 - **No independent confirmation set exists yet.** Geometry preflight now has
   nine provisional candidates across several object classes; the pool is
-  unfrozen and includes low-detail models and assets with excluded marks. No
-  image-quality comparison was run. [Expanded candidate screen](docs/manymesh/khronos-expanded-candidate-screen-20261123.md) and
+  unfrozen and includes low-detail models and assets with excluded marks.
+  [Expanded candidate screen](docs/manymesh/khronos-expanded-candidate-screen-20261123.md) and
   [earlier source screens](docs/manymesh/khronos-followup-candidates-20261123.md)
 
 | Works in the measured scope | Does not pass | Not measured |
