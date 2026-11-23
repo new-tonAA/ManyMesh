@@ -1,6 +1,6 @@
 # ManyMesh research status
 
-Updated 2026-11-23. **No SIGGRAPH-ready contribution is established.** The
+Updated 2026-11-24. **No SIGGRAPH-ready contribution is established.** The
 current candidate is offline appearance optimization for a constrained cluster
 LOD hierarchy, evaluated after antialiasing or upscaling, with separate
 matched-face and matched-complete-frame-time comparisons. It remains a
@@ -44,6 +44,8 @@ hypothesis with close prior art, not a novelty claim.
 - On Iris Xe, the same seven mesh pairs showed no consistent FLIP gain
   with hardware MSAA, SMAA, or bicubic upscaling. Native FLIP worsened
   on all seven. [Desktop AA follow-up](tools/mmtrain/CONTOUR_PRIORITY_AA_20261123.md)
+- A fixed topology silhouette fit improved training coverage on three
+  assets. Reserved-view FLIP improved slightly on one. [Fitting report](tools/mmtrain/VISIBLE_CONTOUR_FIT_20261124.md)
 
 The evidence is fixed-view or small desktop development data. There is no
 physical-phone performance, power, thermal, user-preference, or independent
