@@ -38,3 +38,6 @@ read as general claims.
 
 See the [next-experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md) and the
 [public project homepage](README.md).
+
+The [SIGGRAPH 2027 direction](SIGGRAPH_2027_DIRECTION.md) records the candidate
+thesis, closest prior art, source-access limits, and stop criteria.
