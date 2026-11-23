@@ -37,8 +37,9 @@ cluster DAG's legal-cut and boundary constraints. That claim is still much
 narrower than “LOD for upscalers”: classic silhouette-aware simplification,
 silhouette clipping, budgeted/predictive LOD selection, perceptual silhouette
 and transition models, and neural prediction of image error for shading-rate
-control all predate this project. The local prior-art review tracks which papers
-were read and which remain only partially accessible.
+control have direct precedents. The [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md)
+records the initial sources, what was checked, and what still requires full-paper
+review; it is not an exhaustive literature search.
 
 | Priority | Direction | Current disposition |
 |---|---|---|

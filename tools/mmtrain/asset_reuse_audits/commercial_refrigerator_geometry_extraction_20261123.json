@@ -1,0 +1,13 @@
+{
+  "input_path": "out\\khronos-confirmation-assets\\Models\\CommercialRefrigerator\\glTF-Binary\\CommercialRefrigerator.glb",
+  "input_sha256": "ef8da8b144e650c277ac953e6d9e50ac1689ff1ee88c2c5bd9551ae8bccb6065",
+  "extractor_sha256": "1b304e26b07e78564108c3e7d57c26ced82667fe6887706645664420699fc280",
+  "output_path": "out\\khronos-confirmation-assets\\extracted\\commercial_refrigerator.obj",
+  "output_sha256": "b0974c47abf35cc83cb4044791616755cf7309428230bd88389ff4d8368eb786",
+  "vertices": 116820,
+  "triangles": 208679,
+  "mesh_instances": 6,
+  "triangle_primitives": 8,
+  "animation_count_ignored": 1,
+  "geometry_scope": "all default-scene static mesh instances at default node transforms; animation channels ignored; no skinning, materials, or texture data"
+}

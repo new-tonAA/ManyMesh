@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "upstream_repository": "https://github.com/KhronosGroup/glTF-Sample-Assets",
+  "upstream_commit": "e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea",
+  "status": "source and geometry preflight only; no confirmation set is frozen",
+  "binary_assets_redistributed": false,
+  "assets": [
+    {
+      "name": "CarConcept",
+      "source_path": "Models/CarConcept/glTF-Binary/CarConcept.glb",
+      "sha256": "c272098089d78c5cd9fd9f24ff50ee8acf8d932c55f2d55fc10adb6c8998966b",
+      "readme_path": "Models/CarConcept/README.md",
+      "readme_sha256": "af5f76ead54a5039288924f37081d6e1fcd5ccc5b2628faedb926325a73099cd",
+      "license_path": "Models/CarConcept/LICENSE.md",
+      "license_sha256": "e11477f29eab33d1a5c9fc8534f931556faeb2e11a7fee9e4723d917fcfaee50",
+      "metadata_path": "Models/CarConcept/metadata.json",
+      "metadata_sha256": "89555a6cb9dc0a4f300abe3cc6476c2d8d77c6f3f2cbde9bf790c1bd320027ed",
+      "license": "CC-BY-4.0 for model files, with separate Khronos and 3D Commerce trademark/logo notices",
+      "attribution": [
+        "Eric Chadwick",
+        "Darmstadt Graphics Group GmbH",
+        "Khronos Group (marks only)"
+      ],
+      "screen_status": "excluded: duplicate geometric faces, nonmanifold edges, inconsistent edge orientation, and legal marks requiring separate review"
+    },
+    {
+      "name": "CommercialRefrigerator",
+      "source_path": "Models/CommercialRefrigerator/glTF-Binary/CommercialRefrigerator.glb",
+      "sha256": "ef8da8b144e650c277ac953e6d9e50ac1689ff1ee88c2c5bd9551ae8bccb6065",
+      "readme_path": "Models/CommercialRefrigerator/README.md",
+      "readme_sha256": "d4ea5fa49f6cfabe1bed7a00cf2594573cd04e3eb739abe474f2900dee4baaaf",
+      "license_path": "Models/CommercialRefrigerator/LICENSE.md",
+      "license_sha256": "79a3524e3822b613af53e7800eed7389653607228238fd54cf2018173bc97f97",
+      "metadata_path": "Models/CommercialRefrigerator/metadata.json",
+      "metadata_sha256": "09c60e7c97284196e8ff2e78074b6f9a456f836bb0f916bbd3b51cee24931a57",
+      "license": "CC-BY-4.0",
+      "attribution": [
+        "Eric Chadwick",
+        "Darmstadt Graphics Group GmbH",
+        "Sean Thomas (source model creator)"
+      ],
+      "screen_status": "provisional static-geometry topology pass; one default-scene node animation is ignored; not selected as confirmation data"
+    }
+  ]
+}

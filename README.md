@@ -44,6 +44,9 @@ physical-phone or user-preference result is available.
   48-frame screen, per-instance allocation used more faces and ran slower on
   GPU. A face-budget-matched offline oracle improved the temporal metric in one
   scene only and added CPU selection cost. [Report](tools/mmtrain/DYNAMIC_INSTANCE_LOD_MOVING_20261123.md)
+- **No independent confirmation set exists yet.** A pinned Khronos source
+  screen found one provisional topology-pass asset; the second candidate failed
+  topology and licensing-mark review. [Asset screen](docs/manymesh/confirmation-asset-screen-20261123.md)
 
 | Works in the measured scope | Does not pass | Not measured |
 |---|---|---|

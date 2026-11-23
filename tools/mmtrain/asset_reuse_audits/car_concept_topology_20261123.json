@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "input_path": "out\\khronos-confirmation-assets\\extracted\\car_concept.obj",
+  "input_sha256": "087dc7109fee8a10b42a9239bb865d6a94cc6969cad82734177bbedce268bd9a",
+  "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+  "exported_vertices": 162766,
+  "used_vertices": 162766,
+  "unused_exported_vertices": 0,
+  "welded_vertices": 112937,
+  "triangles": 213347,
+  "connected_components_by_exact_welded_vertex": 325,
+  "boundary_edges": 12531,
+  "duplicate_geometric_triangles": 4,
+  "degenerate_triangles": 0,
+  "nonmanifold_edges": 146,
+  "inconsistently_oriented_edges": 22,
+  "minimum_double_area": 2.942839957129946e-12,
+  "edge_incidence_histogram": {
+    "2": 313524,
+    "1": 12531,
+    "4": 24,
+    "3": 122
+  },
+  "topology_status": "fail",
+  "topology_errors": [
+    "4 duplicate geometric faces",
+    "146 nonmanifold edges",
+    "22 inconsistently oriented edges"
+  ],
+  "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+}
