@@ -99,7 +99,8 @@ ManyMesh result or mobile measurement.
 1. Secure two hash-pinned, redistribution-cleared assets and a CUDA-capable
    system. The current checkout has a local Monkey development mesh but no
    provenance record for it, no local Dragon mesh, and no CUDA build or GPU, so
-   the proposed replication cannot be claimed as run.
+   the proposed replication cannot be claimed as run. Two assets are only a
+   cheap falsification screen, not paper-level evidence.
 2. Compare nvdiffmodeling/Hasselgren placement against QEM, current ManyMesh
    placement, and meshoptimizer at identical face counts. Freeze training and
    held-out views before scoring; include no-AA and equal 4x MSAA arms.
@@ -109,7 +110,11 @@ ManyMesh result or mobile measurement.
 4. Report LDR-FLIP, PSNR, SSIM, silhouette/coverage error, sampled surface and
    normal deviation, topology/boundary failures, and camera-motion transitions.
    Treat objective metrics as complementary; a “perceptual” claim needs ratings
-   or a predictor validated against ratings on held-out assets.
+   or a predictor validated against ratings on held-out assets. A paper-level
+   cross-asset result requires at least 20 newly cleared models across five or
+   more predeclared shape categories, split by source asset, with multiple
+   held-out views and asset-level uncertainty. Keep all views and camera paths
+   from one model within a single data split.
 5. Report quality first at matched face count, then at matched complete frame
    time. Also report an equal-quality cost point when interpolation is
    supported. Include offline time, asset bytes, load/decode time, memory, CPU
