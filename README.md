@@ -67,6 +67,10 @@ physical-phone or user-preference result is available.
 
 ## Next gate
 
+The source contour priority improved mean PSNR at equal face counts on
+seven development assets. FLIP was mixed, and plain QEM matched its one
+all-metric win over meshoptimizer. [Contour priority report](tools/mmtrain/CONTOUR_IMPORTANCE_QEM_20261123.md)
+
 The first two preflight assets failed to supply a full set of legal meshes
 near 30% retention. [Input preflight](tools/mmtrain/APPEARANCE_INPUT_PREFLIGHT_20261123.md)
 The next experiment needs cleared assets with matching face counts, frozen

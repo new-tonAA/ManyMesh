@@ -37,6 +37,10 @@ hypothesis with close prior art, not a novelty claim.
   meshes near 30% retention for the appearance fitting baseline. The preflight
   caught boundary, topology, and face count failures before scoring images.
   [Report and receipts](tools/mmtrain/APPEARANCE_INPUT_PREFLIGHT_20261123.md)
+- A 64-view source contour priority raised mean PSNR by 0.167 dB over the
+  same unweighted QEM on seven development assets at equal faces. FLIP
+  was mixed, and the only all-metric win over meshoptimizer also occurred
+  with plain QEM. [Contour priority report](tools/mmtrain/CONTOUR_IMPORTANCE_QEM_20261123.md)
 
 The evidence is fixed-view or small desktop development data. There is no
 physical-phone performance, power, thermal, user-preference, or independent
