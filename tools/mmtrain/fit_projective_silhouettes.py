@@ -88,7 +88,7 @@ def fit(mi, dr, source, initial, faces):
             params.update()
             image = mi.render(scene, params if with_gradient else None, sensor=sensor,
                               seed=i + 20261124)
-            loss = dr.mean(dr.square(image - target_img))
+            loss = dr.mean(dr.square(image.array - target_img.array))
             losses.append(float(loss[0]))
             if with_gradient:
                 dr.backward(loss)
