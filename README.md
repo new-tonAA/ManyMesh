@@ -24,6 +24,13 @@ et al.](https://diglib.eg.org/items/82ec8df1-d62a-40f0-a007-90374b5140dc),
 [Sander et al.](https://hhoppe.com/silclip.pdf)). No distinction or benefit has
 been established.
 
+Evaluation is two-stage: compare image quality at matched final face counts,
+then compare complete frame time at matched conditions. Report LDR-FLIP, PSNR,
+SSIM, silhouette/coverage error, and temporal quality on frozen camera paths;
+include QEM, meshoptimizer, MSAA, SMAA, and available upscalers where applicable.
+The final-image reconstruction interaction is an untested hypothesis. No
+physical-phone or user-preference result is available.
+
 ## What the current screens show
 
 - **The 13-asset fusion screen is 0/13 under its stated joint criterion.**
