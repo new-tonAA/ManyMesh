@@ -80,6 +80,8 @@ def main():
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--sha256", required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--geometry", type=Path,
+                        help="Save the audited meshes for a renderer comparison")
     args = parser.parse_args()
     if digest(args.source) != args.sha256:
         parser.error("Input OBJ SHA-256 differs from the frozen source")
@@ -118,6 +120,15 @@ def main():
     if all(row["faces"] == target and row["boundary_preserved"]
            for row in result["arms"].values()):
         result["views"] = compare_images((points, faces), variants)
+        if args.geometry is not None:
+            args.geometry.parent.mkdir(parents=True, exist_ok=True)
+            arrays = {}
+            for name, (vertices, triangles) in {"source": (points, faces), **variants}.items():
+                arrays[f"{name}_vertices"] = vertices
+                arrays[f"{name}_triangles"] = triangles
+            with args.geometry.open("wb") as stream:
+                np.savez_compressed(stream, **arrays)
+            result["geometry_sha256"] = digest(args.geometry)
     else:
         result["views"] = []
     args.output.parent.mkdir(parents=True, exist_ok=True)

@@ -26,8 +26,8 @@ direct precedents. [Earlier contour plane comparison](../mmgeo/CONTOUR_VISIBILIT
 ## Comparison
 
 Use the seven pinned Khronos assets from the earlier development screen.
-Each arm targets the face count nearest to half the source, while removing
-removing pairs of faces. Only score cuts with the requested counts, the
+Each arm targets the face count nearest to half the source while removing
+pairs of faces. Only score cuts with the requested counts, the
 original directed boundary, and valid edge topology. Exact position welding
 occurs in the shared normalized float32 frame. The image reference has all
 source faces and uses those same normalized positions.

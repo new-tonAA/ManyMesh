@@ -41,6 +41,9 @@ hypothesis with close prior art, not a novelty claim.
   same unweighted QEM on seven development assets at equal faces. FLIP
   was mixed, and the only all-metric win over meshoptimizer also occurred
   with plain QEM. [Contour priority report](tools/mmtrain/CONTOUR_IMPORTANCE_QEM_20261123.md)
+- On Iris Xe, the same seven mesh pairs showed no consistent FLIP gain
+  with hardware MSAA, SMAA, or bicubic upscaling. Native FLIP worsened
+  on all seven. [Desktop AA follow-up](tools/mmtrain/CONTOUR_PRIORITY_AA_20261123.md)
 
 The evidence is fixed-view or small desktop development data. There is no
 physical-phone performance, power, thermal, user-preference, or independent
