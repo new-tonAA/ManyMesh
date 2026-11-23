@@ -1,0 +1,64 @@
+name: ManyMesh projective CPU baseline
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/manymesh-projective-cpu.yml
+      - tools/mmtrain/fit_projective_silhouettes.py
+
+permissions:
+  contents: read
+
+jobs:
+  projective:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - asset: GlassHurricaneCandleHolder
+            glb_sha256: add23791ee6f5f550b94a21232a323720c92c20d280f4f7d19cf954234f0b7b8
+            obj_sha256: e6f986bd960e31bbc7a0b1d957f0fdf1be25b22de547fd2a3761615d521eb041
+          - asset: MaterialsVariantsShoe
+            glb_sha256: e1d7cb190382111e5a5b37b51e9a7f007f7eb2ab1b6185e0188e8d0a0d1265a7
+            obj_sha256: 8bd3e8f5ae3dfffe0e7ccbc89f3941aa7c1122a7e8756ddac4c7293df7608c09
+    env:
+      ASSET: ${{ matrix.asset }}
+      GLB_SHA256: ${{ matrix.glb_sha256 }}
+      OBJ_SHA256: ${{ matrix.obj_sha256 }}
+      KHRONOS_REVISION: e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            tools/mmtrain
+            tools/mmgeo
+            tools/mmmetrics
+            third_party/meshoptimizer/js
+      - name: Install the pinned CPU renderer
+        run: |
+          python3 -m venv "$RUNNER_TEMP/mm-projective"
+          "$RUNNER_TEMP/mm-projective/bin/python" -m pip install --only-binary=:all: \
+            mitsuba==3.9.0 drjit==1.4.0 numpy==2.3.4 scipy==1.15.3 scikit-image==0.25.2 \
+            fast-simplification==0.2.0 flip-evaluator==1.7 numba==0.62.1 trimesh==4.5.3 pillow==12.1.1
+      - name: Validate the frozen GLB and extract geometry
+        run: |
+          run="$RUNNER_TEMP/mesh"
+          mkdir -p "$run"
+          glb="$run/asset.glb"
+          curl --fail --silent --show-error --location --retry 3 --max-time 90 \
+            --output "$glb" \
+            "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/$KHRONOS_REVISION/Models/$ASSET/glTF-Binary/$ASSET.glb"
+          printf '%s  %s\n' "$GLB_SHA256" "$glb" | sha256sum --check
+          "$RUNNER_TEMP/mm-projective/bin/python" tools/mmtrain/extract_static_gltf_geometry.py \
+            --input "$glb" --output "$run/geometry.obj" --receipt "$run/extraction.json"
+      - name: Fit and score the fixed topology
+        run: |
+          run="$RUNNER_TEMP/mesh"
+          "$RUNNER_TEMP/mm-projective/bin/python" tools/mmtrain/fit_projective_silhouettes.py \
+            --source "$run/geometry.obj" --sha256 "$OBJ_SHA256" --out "$run/result.json"
+          cat "$run/result.json"
