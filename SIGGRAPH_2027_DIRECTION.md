@@ -49,8 +49,9 @@ review; it is not an exhaustive literature search.
 
 Silhouette-aware LOD and clipping have direct precedents in
 [Luebke–Erikson (1997)](https://techreports.cs.unc.edu/papers/97-005/97-005.pdf)
-and [Sander et al. (2000)](https://hhoppe.com/silclip.pdf). Budgeted and
-predictive LOD selection also predates this project: see
+and [Sander et al. (2000)](https://hhoppe.com/silclip.pdf). Image-driven
+simplification also predates this project ([Lindstrom–Turk (2000)](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf)).
+Budgeted and predictive LOD selection also predates this project: see
 [Funkhouser–Séquin (1993)](https://www.cs.princeton.edu/courses/archive/spr01/cs598b/papers/funkhouser93.pdf)
 and [Mason–Blake (1997)](https://doi.org/10.1111/1467-8659.16.3conferenceissue.21).
 Learned perceptual-error prediction exists for shading-rate selection, not mesh
@@ -89,7 +90,9 @@ triangle-mesh cluster DAG optimized for actual post-AA/upscaler quality. The
 HLoD record exposes the paper and supplement, but their full contents were not
 available in this review. For user-preference claims, perceptual
 silhouette and transition modeling has also been tested against observers in
-[Gaze-Contingent Perceptual LoD Prediction (EGSR 2023)](https://doi.org/10.2312/sr.20231130).
+[Gaze-Contingent Perceptual LoD Prediction (EGSR 2023)](https://doi.org/10.2312/sr.20231130),
+which also reports a desktop Nanite comparison. This is prior art, not a
+ManyMesh result or mobile measurement.
 
 ## Cheapest falsification and pass criteria
 

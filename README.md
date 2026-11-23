@@ -66,6 +66,7 @@ claims need separate device measurements or a user study.
 
 - [Concise research status](MANYMESH.md)
 - [SIGGRAPH 2027 direction, prior art, and stop criteria](SIGGRAPH_2027_DIRECTION.md)
+- [Prior-art screen with full-text access status](docs/manymesh/siggraph-prior-art-screen-20261123.md)
 - [Research continuation prompt and evidence protocol](MANYMESH_RESEARCH_LOOP.md)
 - [Next-experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md)
 - [Moving-camera per-instance LOD screen](tools/mmtrain/DYNAMIC_INSTANCE_LOD_MOVING_20261123.md)
