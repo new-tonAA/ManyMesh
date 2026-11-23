@@ -1,0 +1,13 @@
+{
+  "input_path": "out\\khronos-curated-screen-20261123\\DiffuseTransmissionTeacup\\DiffuseTransmissionTeacup.glb",
+  "input_sha256": "d4f567186fea262819aac6664cb9d7cef7f4600406038046771a69e10363935b",
+  "extractor_sha256": "1b304e26b07e78564108c3e7d57c26ced82667fe6887706645664420699fc280",
+  "output_path": "out\\khronos-curated-screen-20261123\\DiffuseTransmissionTeacup\\geometry.obj",
+  "output_sha256": "5966f7f722a8f50d1e34fb713b52589b62f25362efb9998979e9359c4a3b1882",
+  "vertices": 84552,
+  "triangles": 28184,
+  "mesh_instances": 2,
+  "triangle_primitives": 2,
+  "animation_count_ignored": 0,
+  "geometry_scope": "all default-scene static mesh instances at default node transforms; animation channels ignored; no skinning, materials, or texture data"
+}

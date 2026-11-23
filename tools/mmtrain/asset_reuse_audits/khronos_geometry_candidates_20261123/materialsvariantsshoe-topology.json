@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "input_path": "out\\khronos-curated-screen-20261123\\MaterialsVariantsShoe\\geometry.obj",
+  "input_sha256": "8bd3e8f5ae3dfffe0e7ccbc89f3941aa7c1122a7e8756ddac4c7293df7608c09",
+  "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+  "exported_vertices": 13540,
+  "used_vertices": 13540,
+  "unused_exported_vertices": 0,
+  "welded_vertices": 11932,
+  "triangles": 22700,
+  "connected_components_by_exact_welded_vertex": 25,
+  "boundary_edges": 1156,
+  "duplicate_geometric_triangles": 0,
+  "degenerate_triangles": 0,
+  "nonmanifold_edges": 0,
+  "inconsistently_oriented_edges": 0,
+  "minimum_double_area": 1.5616115508313753e-07,
+  "edge_incidence_histogram": {
+    "2": 33472,
+    "1": 1156
+  },
+  "topology_status": "pass",
+  "topology_errors": [],
+  "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+}

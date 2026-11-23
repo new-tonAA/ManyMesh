@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "input_path": "out\\khronos-curated-screen-20261123\\GlassBrokenWindow\\geometry.obj",
+  "input_sha256": "0e89c18f6c9c760c3ab8f7ad7487b912c253c4b2ad415ea1b0475fa1e54f7101",
+  "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+  "exported_vertices": 984,
+  "used_vertices": 984,
+  "unused_exported_vertices": 0,
+  "welded_vertices": 524,
+  "triangles": 987,
+  "connected_components_by_exact_welded_vertex": 5,
+  "boundary_edges": 53,
+  "duplicate_geometric_triangles": 0,
+  "degenerate_triangles": 0,
+  "nonmanifold_edges": 0,
+  "inconsistently_oriented_edges": 0,
+  "minimum_double_area": 2.2758242059234827e-07,
+  "edge_incidence_histogram": {
+    "2": 1454,
+    "1": 53
+  },
+  "topology_status": "pass",
+  "topology_errors": [],
+  "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+}

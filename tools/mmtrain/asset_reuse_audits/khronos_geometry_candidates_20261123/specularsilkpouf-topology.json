@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "input_path": "out\\khronos-curated-screen-20261123\\SpecularSilkPouf\\geometry.obj",
+  "input_sha256": "dcda8f0bbead5bb961374c8417fbc4ced9aebee065fba576429de9e365628a61",
+  "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+  "exported_vertices": 41832,
+  "used_vertices": 41832,
+  "unused_exported_vertices": 0,
+  "welded_vertices": 41143,
+  "triangles": 81280,
+  "connected_components_by_exact_welded_vertex": 2,
+  "boundary_edges": 1000,
+  "duplicate_geometric_triangles": 0,
+  "degenerate_triangles": 0,
+  "nonmanifold_edges": 0,
+  "inconsistently_oriented_edges": 0,
+  "minimum_double_area": 1.1360609822288641e-07,
+  "edge_incidence_histogram": {
+    "2": 121420,
+    "1": 1000
+  },
+  "topology_status": "pass",
+  "topology_errors": [],
+  "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+}

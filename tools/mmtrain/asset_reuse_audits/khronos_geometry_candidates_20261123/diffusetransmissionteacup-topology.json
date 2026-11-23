@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "input_path": "out\\khronos-curated-screen-20261123\\DiffuseTransmissionTeacup\\geometry.obj",
+  "input_sha256": "5966f7f722a8f50d1e34fb713b52589b62f25362efb9998979e9359c4a3b1882",
+  "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+  "exported_vertices": 84552,
+  "used_vertices": 84552,
+  "unused_exported_vertices": 0,
+  "welded_vertices": 14109,
+  "triangles": 28184,
+  "connected_components_by_exact_welded_vertex": 2,
+  "boundary_edges": 60,
+  "duplicate_geometric_triangles": 0,
+  "degenerate_triangles": 0,
+  "nonmanifold_edges": 0,
+  "inconsistently_oriented_edges": 0,
+  "minimum_double_area": 6.998809143751867e-08,
+  "edge_incidence_histogram": {
+    "2": 42246,
+    "1": 60
+  },
+  "topology_status": "pass",
+  "topology_errors": [],
+  "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+}

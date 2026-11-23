@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "input_path": "out\\khronos-curated-screen-20261123\\AnisotropyBarnLamp\\geometry.obj",
+  "input_sha256": "3faefd435788d84dc3f7139c265c5fbbe8609b6b95f97b38ed8576e24b537455",
+  "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+  "exported_vertices": 7712,
+  "used_vertices": 7712,
+  "unused_exported_vertices": 0,
+  "welded_vertices": 5200,
+  "triangles": 10203,
+  "connected_components_by_exact_welded_vertex": 26,
+  "boundary_edges": 113,
+  "duplicate_geometric_triangles": 0,
+  "degenerate_triangles": 0,
+  "nonmanifold_edges": 0,
+  "inconsistently_oriented_edges": 0,
+  "minimum_double_area": 5.5226000968607445e-09,
+  "edge_incidence_histogram": {
+    "2": 15248,
+    "1": 113
+  },
+  "topology_status": "pass",
+  "topology_errors": [],
+  "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+}

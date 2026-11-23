@@ -1,0 +1,13 @@
+{
+  "input_path": "out\\khronos-curated-screen-20261123\\GlassHurricaneCandleHolder\\GlassHurricaneCandleHolder.glb",
+  "input_sha256": "add23791ee6f5f550b94a21232a323720c92c20d280f4f7d19cf954234f0b7b8",
+  "extractor_sha256": "1b304e26b07e78564108c3e7d57c26ced82667fe6887706645664420699fc280",
+  "output_path": "out\\khronos-curated-screen-20261123\\GlassHurricaneCandleHolder\\geometry.obj",
+  "output_sha256": "e6f986bd960e31bbc7a0b1d957f0fdf1be25b22de547fd2a3761615d521eb041",
+  "vertices": 2386,
+  "triangles": 4126,
+  "mesh_instances": 2,
+  "triangle_primitives": 2,
+  "animation_count_ignored": 0,
+  "geometry_scope": "all default-scene static mesh instances at default node transforms; animation channels ignored; no skinning, materials, or texture data"
+}

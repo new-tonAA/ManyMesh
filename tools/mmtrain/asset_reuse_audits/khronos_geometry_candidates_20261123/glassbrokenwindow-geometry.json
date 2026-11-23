@@ -1,0 +1,13 @@
+{
+  "input_path": "out\\khronos-curated-screen-20261123\\GlassBrokenWindow\\GlassBrokenWindow.glb",
+  "input_sha256": "66c4261fc0f5fe77f11a4f457b61774e5c7f43f9a382b49720cef0e128738416",
+  "extractor_sha256": "1b304e26b07e78564108c3e7d57c26ced82667fe6887706645664420699fc280",
+  "output_path": "out\\khronos-curated-screen-20261123\\GlassBrokenWindow\\geometry.obj",
+  "output_sha256": "0e89c18f6c9c760c3ab8f7ad7487b912c253c4b2ad415ea1b0475fa1e54f7101",
+  "vertices": 984,
+  "triangles": 987,
+  "mesh_instances": 3,
+  "triangle_primitives": 3,
+  "animation_count_ignored": 0,
+  "geometry_scope": "all default-scene static mesh instances at default node transforms; animation channels ignored; no skinning, materials, or texture data"
+}

@@ -96,11 +96,14 @@ ManyMesh result or mobile measurement.
 
 ## Cheapest falsification and pass criteria
 
-1. Secure two hash-pinned, redistribution-cleared assets and a CUDA-capable
-   system. The current checkout has a local Monkey development mesh but no
-   provenance record for it, no local Dragon mesh, and no CUDA build or GPU, so
-   the proposed replication cannot be claimed as run. Two assets are only a
-   cheap falsification screen, not paper-level evidence.
+1. Choose two hash-pinned assets from the current nine-model Khronos
+   geometry-candidate pool and freeze their source credits, views, and exclusions.
+   The [expanded asset screen](docs/manymesh/khronos-expanded-candidate-screen-20261123.md)
+   records seven new topology passes and one failure; this is source feasibility,
+   not a held-out set. The local Monkey mesh still lacks a provenance record and
+   no Dragon input is present. This host has no CUDA build or GPU, so the
+   differentiable falsification cannot run here. Two assets are only a cheap
+   screen, not paper-level evidence.
 2. Compare nvdiffmodeling/Hasselgren placement against QEM, current ManyMesh
    placement, and meshoptimizer at identical face counts. Freeze training and
    held-out views before scoring; include no-AA and equal 4x MSAA arms.

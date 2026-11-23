@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "input_path": "out\\khronos-curated-screen-20261123\\ABeautifulGame\\geometry.obj",
+  "input_sha256": "da3c4766d8e041436c05d19309272e474db7dae5d07634e622dfede0c4b1a98a",
+  "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+  "exported_vertices": 944100,
+  "used_vertices": 944100,
+  "unused_exported_vertices": 0,
+  "welded_vertices": 749180,
+  "triangles": 1499072,
+  "connected_components_by_exact_welded_vertex": 111,
+  "boundary_edges": 0,
+  "duplicate_geometric_triangles": 1108,
+  "degenerate_triangles": 0,
+  "nonmanifold_edges": 1664,
+  "inconsistently_oriented_edges": 596,
+  "minimum_double_area": 1.672003683935166e-15,
+  "edge_incidence_histogram": {
+    "2": 2245280,
+    "4": 1664
+  },
+  "topology_status": "fail",
+  "topology_errors": [
+    "1108 duplicate geometric faces",
+    "1664 nonmanifold edges",
+    "596 inconsistently oriented edges"
+  ],
+  "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+}

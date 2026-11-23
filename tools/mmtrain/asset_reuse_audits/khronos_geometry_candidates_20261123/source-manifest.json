@@ -1,0 +1,221 @@
+{
+  "schema": "manymesh-khronos-geometry-prefilter-v1",
+  "repository": "KhronosGroup/glTF-Sample-Assets",
+  "commit": "e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea",
+  "model_index_sha256": "4295e836357c2234155ccbb4f0d71327abdbe44b9d34f0a34c8f03af0fc21683",
+  "assets": [
+    {
+      "model": "ABeautifulGame",
+      "tags": [
+        "showcase",
+        "video",
+        "extension"
+      ],
+      "source_directory": "https://github.com/KhronosGroup/glTF-Sample-Assets/tree/e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea/Models/ABeautifulGame",
+      "downloaded_files": [
+        {
+          "source_path": "Models/ABeautifulGame/glTF-Binary/ABeautifulGame.glb",
+          "bytes": 42977928,
+          "sha256": "bd7133b4b322aae97c589b8839dae8155ad2546acb35ae32a127e722a959d007"
+        },
+        {
+          "source_path": "Models/ABeautifulGame/metadata.json",
+          "bytes": 1065,
+          "sha256": "80070530e19cba44b46bc0655ec94a2c67683d773697c9f17e3e5f5faffc4a91"
+        },
+        {
+          "source_path": "Models/ABeautifulGame/README.md",
+          "bytes": 3783,
+          "sha256": "35b650cc930a9c86de184f28e973e5122e26a0c20b88175e7c362e1faf97596b"
+        }
+      ],
+      "missing_local_metadata_files": [
+        "LICENSE.md"
+      ]
+    },
+    {
+      "model": "AnisotropyBarnLamp",
+      "tags": [
+        "showcase",
+        "extension"
+      ],
+      "source_directory": "https://github.com/KhronosGroup/glTF-Sample-Assets/tree/e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea/Models/AnisotropyBarnLamp",
+      "downloaded_files": [
+        {
+          "source_path": "Models/AnisotropyBarnLamp/glTF-Binary/AnisotropyBarnLamp.glb",
+          "bytes": 7833440,
+          "sha256": "0e728826c30bd6f3a18a0911db9f5f9ddc2dafa8e20bf9c3312c9625d1e32a24"
+        },
+        {
+          "source_path": "Models/AnisotropyBarnLamp/LICENSE.md",
+          "bytes": 788,
+          "sha256": "94c499e10f0efaace94370f6430c743cd2f0a0c46b0997bd2d82755e222ea201"
+        },
+        {
+          "source_path": "Models/AnisotropyBarnLamp/README.md",
+          "bytes": 11113,
+          "sha256": "ade4de1d07abaf9ae489c4ce36d11b68216993128a4054c3485c8adb880306e8"
+        }
+      ],
+      "missing_local_metadata_files": [
+        "metadata.json"
+      ]
+    },
+    {
+      "model": "DiffuseTransmissionTeacup",
+      "tags": [
+        "showcase",
+        "extension"
+      ],
+      "source_directory": "https://github.com/KhronosGroup/glTF-Sample-Assets/tree/e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea/Models/DiffuseTransmissionTeacup",
+      "downloaded_files": [
+        {
+          "source_path": "Models/DiffuseTransmissionTeacup/glTF-Binary/DiffuseTransmissionTeacup.glb",
+          "bytes": 4795028,
+          "sha256": "d4f567186fea262819aac6664cb9d7cef7f4600406038046771a69e10363935b"
+        },
+        {
+          "source_path": "Models/DiffuseTransmissionTeacup/metadata.json",
+          "bytes": 738,
+          "sha256": "52c17438560674bdbf2ce1b88f708d2ec76c560c451208a9c380c7f270efca77"
+        }
+      ],
+      "missing_local_metadata_files": [
+        "README.md",
+        "LICENSE.md"
+      ]
+    },
+    {
+      "model": "GlassBrokenWindow",
+      "tags": [
+        "video",
+        "extension"
+      ],
+      "source_directory": "https://github.com/KhronosGroup/glTF-Sample-Assets/tree/e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea/Models/GlassBrokenWindow",
+      "downloaded_files": [
+        {
+          "source_path": "Models/GlassBrokenWindow/glTF-Binary/GlassBrokenWindow.glb",
+          "bytes": 1076624,
+          "sha256": "66c4261fc0f5fe77f11a4f457b61774e5c7f43f9a382b49720cef0e128738416"
+        },
+        {
+          "source_path": "Models/GlassBrokenWindow/metadata.json",
+          "bytes": 787,
+          "sha256": "b456442f0d0d93fe08afa12575dcce95d1be6295fa57cdf5894a480d418ef21f"
+        },
+        {
+          "source_path": "Models/GlassBrokenWindow/README.md",
+          "bytes": 2314,
+          "sha256": "bc26eabf0a7c7e1f081d0397861c80281c7d1df2c60bd4c2f0ae96ef664a288a"
+        }
+      ],
+      "missing_local_metadata_files": [
+        "LICENSE.md"
+      ]
+    },
+    {
+      "model": "GlassHurricaneCandleHolder",
+      "tags": [
+        "video",
+        "written",
+        "showcase",
+        "extension"
+      ],
+      "source_directory": "https://github.com/KhronosGroup/glTF-Sample-Assets/tree/e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea/Models/GlassHurricaneCandleHolder",
+      "downloaded_files": [
+        {
+          "source_path": "Models/GlassHurricaneCandleHolder/glTF-Binary/GlassHurricaneCandleHolder.glb",
+          "bytes": 2705400,
+          "sha256": "add23791ee6f5f550b94a21232a323720c92c20d280f4f7d19cf954234f0b7b8"
+        },
+        {
+          "source_path": "Models/GlassHurricaneCandleHolder/LICENSE.md",
+          "bytes": 961,
+          "sha256": "d50585e467a3910d95e9b0a08347d476ec2204d4e0966b95beee61832041ecf9"
+        }
+      ],
+      "missing_local_metadata_files": [
+        "README.md",
+        "metadata.json"
+      ]
+    },
+    {
+      "model": "MaterialsVariantsShoe",
+      "tags": [
+        "extension",
+        "showcase",
+        "written"
+      ],
+      "source_directory": "https://github.com/KhronosGroup/glTF-Sample-Assets/tree/e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea/Models/MaterialsVariantsShoe",
+      "downloaded_files": [
+        {
+          "source_path": "Models/MaterialsVariantsShoe/LICENSE.md",
+          "bytes": 791,
+          "sha256": "13838c77e995859dd2fafa5989e4bb06cc7afc3b6be4b666f645661d00b603c6"
+        },
+        {
+          "source_path": "Models/MaterialsVariantsShoe/glTF-Binary/MaterialsVariantsShoe.glb",
+          "bytes": 7833592,
+          "sha256": "e1d7cb190382111e5a5b37b51e9a7f007f7eb2ab1b6185e0188e8d0a0d1265a7"
+        },
+        {
+          "source_path": "Models/MaterialsVariantsShoe/README.md",
+          "bytes": 1470,
+          "sha256": "a5eb163b7f8736fea910c4e41a25a01c034d4ce4f29dec7ac1394260952aa144"
+        }
+      ],
+      "missing_local_metadata_files": [
+        "metadata.json"
+      ]
+    },
+    {
+      "model": "PotOfCoals",
+      "tags": [
+        "showcase",
+        "extension"
+      ],
+      "source_directory": "https://github.com/KhronosGroup/glTF-Sample-Assets/tree/e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea/Models/PotOfCoals",
+      "downloaded_files": [
+        {
+          "source_path": "Models/PotOfCoals/glTF-Binary/PotOfCoals.glb",
+          "bytes": 4696240,
+          "sha256": "fac3323e77309413e96285e3ee86dd92ef5e797325e173aa180ba6472aba58ed"
+        },
+        {
+          "source_path": "Models/PotOfCoals/README.md",
+          "bytes": 2028,
+          "sha256": "7d555a12d5450ba457fb5aca5ef7cfc4c1dcb3b2acbdcc88a8f880104c1932e7"
+        }
+      ],
+      "missing_local_metadata_files": [
+        "LICENSE.md",
+        "metadata.json"
+      ]
+    },
+    {
+      "model": "SpecularSilkPouf",
+      "tags": [
+        "showcase",
+        "extension"
+      ],
+      "source_directory": "https://github.com/KhronosGroup/glTF-Sample-Assets/tree/e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea/Models/SpecularSilkPouf",
+      "downloaded_files": [
+        {
+          "source_path": "Models/SpecularSilkPouf/LICENSE.md",
+          "bytes": 786,
+          "sha256": "8ac6f8b603941489e8effe67cdac4eb0181f24316f55de3f110616c1435445a5"
+        },
+        {
+          "source_path": "Models/SpecularSilkPouf/glTF-Binary/SpecularSilkPouf.glb",
+          "bytes": 4632512,
+          "sha256": "a028bc6a7ac8981044fba414c1de633ac775b53602ad386f8ece74aec81d1006"
+        }
+      ],
+      "missing_local_metadata_files": [
+        "README.md",
+        "metadata.json"
+      ]
+    }
+  ],
+  "scope": "Geometry-only preflight. GLBs and extracted OBJ files are not committed. Missing local README/LICENSE/metadata files are identified; use the pinned upstream model directory and Models.md for source terms and credits."
+}

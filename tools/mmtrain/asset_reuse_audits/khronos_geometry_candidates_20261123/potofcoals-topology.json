@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "input_path": "out\\khronos-curated-screen-20261123\\PotOfCoals\\geometry.obj",
+  "input_sha256": "3dd1e986cb8e49e383766eb5fd2a6d0efbd89425053d08c6a9efe53eafc293c4",
+  "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+  "exported_vertices": 54669,
+  "used_vertices": 54669,
+  "unused_exported_vertices": 0,
+  "welded_vertices": 9282,
+  "triangles": 18223,
+  "connected_components_by_exact_welded_vertex": 2,
+  "boundary_edges": 361,
+  "duplicate_geometric_triangles": 0,
+  "degenerate_triangles": 0,
+  "nonmanifold_edges": 0,
+  "inconsistently_oriented_edges": 0,
+  "minimum_double_area": 1.9609405601731472e-08,
+  "edge_incidence_histogram": {
+    "2": 27154,
+    "1": 361
+  },
+  "topology_status": "pass",
+  "topology_errors": [],
+  "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+}

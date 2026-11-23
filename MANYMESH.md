@@ -17,12 +17,12 @@ hypothesis with close prior art, not a novelty claim.
   allocation used more faces and was slower on GPU. A face-budget-matched
   offline oracle improved the temporal metric in one scene only and incurred
   CPU selection cost. [Report](tools/mmtrain/DYNAMIC_INSTANCE_LOD_MOVING_20261123.md)
-- The pinned Khronos screen now has two provisional geometry-pass assets
-  (CommercialRefrigerator and ScatterPlant), both still source-feasibility
-  candidates rather than held-out data. Three follow-up models failed the
-  geometry gate; ToyCar has unresolved prior-use matches. No frozen confirmation
-  set exists. [Follow-up results](docs/manymesh/khronos-followup-candidates-20261123.md) and
-  [Earlier source screen](docs/manymesh/confirmation-asset-screen-20261123.md)
+- Khronos geometry preflight now has nine provisional candidates across
+  several object classes, including several assets with many disconnected
+  components and a low-detail window case. The candidate pool is unfrozen and
+  no image-quality comparison has been run; it is not held-out evidence.
+  [Expanded screen](docs/manymesh/khronos-expanded-candidate-screen-20261123.md) and
+  [earlier screens](docs/manymesh/khronos-followup-candidates-20261123.md)
 
 The evidence is fixed-view or small desktop development data. There is no
 physical-phone performance, power, thermal, user-preference, or independent

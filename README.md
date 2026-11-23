@@ -44,11 +44,11 @@ physical-phone or user-preference result is available.
   48-frame screen, per-instance allocation used more faces and ran slower on
   GPU. A face-budget-matched offline oracle improved the temporal metric in one
   scene only and added CPU selection cost. [Report](tools/mmtrain/DYNAMIC_INSTANCE_LOD_MOVING_20261123.md)
-- **No independent confirmation set exists yet.** Follow-up screening found a
-  second provisional geometry-pass candidate (ScatterPlant), but three models
-  failed the geometry gate and ToyCar has unresolved prior-use matches. The two
-  passing candidates are not a frozen test set. [Candidate results](docs/manymesh/khronos-followup-candidates-20261123.md) and
-  [Earlier source screen](docs/manymesh/confirmation-asset-screen-20261123.md)
+- **No independent confirmation set exists yet.** Geometry preflight now has
+  nine provisional candidates across several object classes; the pool is
+  unfrozen and includes low-detail models and assets with excluded marks. No
+  image-quality comparison was run. [Expanded candidate screen](docs/manymesh/khronos-expanded-candidate-screen-20261123.md) and
+  [earlier source screens](docs/manymesh/khronos-followup-candidates-20261123.md)
 
 | Works in the measured scope | Does not pass | Not measured |
 |---|---|---|

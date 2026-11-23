@@ -1,0 +1,13 @@
+{
+  "input_path": "out\\khronos-curated-screen-20261123\\SpecularSilkPouf\\SpecularSilkPouf.glb",
+  "input_sha256": "a028bc6a7ac8981044fba414c1de633ac775b53602ad386f8ece74aec81d1006",
+  "extractor_sha256": "1b304e26b07e78564108c3e7d57c26ced82667fe6887706645664420699fc280",
+  "output_path": "out\\khronos-curated-screen-20261123\\SpecularSilkPouf\\geometry.obj",
+  "output_sha256": "dcda8f0bbead5bb961374c8417fbc4ced9aebee065fba576429de9e365628a61",
+  "vertices": 41832,
+  "triangles": 81280,
+  "mesh_instances": 1,
+  "triangle_primitives": 1,
+  "animation_count_ignored": 0,
+  "geometry_scope": "all default-scene static mesh instances at default node transforms; animation channels ignored; no skinning, materials, or texture data"
+}

@@ -1,0 +1,13 @@
+{
+  "input_path": "out\\khronos-curated-screen-20261123\\AnisotropyBarnLamp\\AnisotropyBarnLamp.glb",
+  "input_sha256": "0e728826c30bd6f3a18a0911db9f5f9ddc2dafa8e20bf9c3312c9625d1e32a24",
+  "extractor_sha256": "1b304e26b07e78564108c3e7d57c26ced82667fe6887706645664420699fc280",
+  "output_path": "out\\khronos-curated-screen-20261123\\AnisotropyBarnLamp\\geometry.obj",
+  "output_sha256": "3faefd435788d84dc3f7139c265c5fbbe8609b6b95f97b38ed8576e24b537455",
+  "vertices": 7712,
+  "triangles": 10203,
+  "mesh_instances": 3,
+  "triangle_primitives": 3,
+  "animation_count_ignored": 0,
+  "geometry_scope": "all default-scene static mesh instances at default node transforms; animation channels ignored; no skinning, materials, or texture data"
+}

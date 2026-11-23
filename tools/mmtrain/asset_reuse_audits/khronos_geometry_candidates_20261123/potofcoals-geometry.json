@@ -1,0 +1,13 @@
+{
+  "input_path": "out\\khronos-curated-screen-20261123\\PotOfCoals\\PotOfCoals.glb",
+  "input_sha256": "fac3323e77309413e96285e3ee86dd92ef5e797325e173aa180ba6472aba58ed",
+  "extractor_sha256": "1b304e26b07e78564108c3e7d57c26ced82667fe6887706645664420699fc280",
+  "output_path": "out\\khronos-curated-screen-20261123\\PotOfCoals\\geometry.obj",
+  "output_sha256": "3dd1e986cb8e49e383766eb5fd2a6d0efbd89425053d08c6a9efe53eafc293c4",
+  "vertices": 54669,
+  "triangles": 18223,
+  "mesh_instances": 2,
+  "triangle_primitives": 2,
+  "animation_count_ignored": 0,
+  "geometry_scope": "all default-scene static mesh instances at default node transforms; animation channels ignored; no skinning, materials, or texture data"
+}

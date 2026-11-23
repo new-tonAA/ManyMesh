@@ -66,10 +66,13 @@ assets, not frames. A development win is not held-out evidence.
 
 ## Current blockers and stop conditions
 
-The baseline requires CUDA-capable compute and two clean licensed inputs. No
-qualifying baseline result is available. Do not substitute an unlicensed Monkey
-or an absent Dragon while describing the run as the requested asset test. Until
-the prerequisites are met, keep the custom optimizer and mobile claims closed.
+The source screen now lists nine provisional geometry candidates, but this is
+not a frozen or category-balanced test set; complete the exact per-asset source
+records and freeze a two-asset falsification pair first. See the [expanded
+Khronos candidate screen](docs/manymesh/khronos-expanded-candidate-screen-20261123.md).
+The baseline still requires CUDA-capable compute, which is absent here. The local
+Monkey has no provenance receipt and no Dragon input is present. No qualifying
+baseline result is available; keep the custom optimizer and mobile claims closed.
 
 Stop if the matched-face baseline loses, if a result depends on tuned views or
 assets, if the surrogate fails to rank real-pipeline results, if boundary or
