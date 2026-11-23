@@ -56,6 +56,8 @@ def main():
     parser.add_argument("--candidate", type=Path, required=True,
                         help="PLY prepared by adapt_position_ply.py")
     parser.add_argument("--mmgeo", type=Path, required=True)
+    parser.add_argument("--weld-controls", action="store_true",
+                        help="Give both controls exact-position welded source indices")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     if digest(args.source) != args.source_sha256:
@@ -72,16 +74,21 @@ def main():
     in_band = abs(actual_ratio - TARGET) <= RATIO_TOLERANCE
     target_faces = len(candidate_faces) if in_band else round(TARGET * len(faces))
 
+    control_points, control_faces = points, faces
+    if args.weld_controls:
+        control_points, indices = np.unique(points, axis=0, return_inverse=True)
+        control_faces = indices[faces]
+
     args.output.parent.mkdir(parents=True, exist_ok=True)
     controls = {}
     for name in ("qem_preserve_border", "meshoptimizer_lock_border"):
         try:
             if name == "qem_preserve_border":
-                mesh = qem_simplify(points, faces, target_faces)
+                mesh = qem_simplify(control_points, control_faces, target_faces)
                 control = audit(reference_edges, mesh.positions, mesh.triangles)
             else:
                 vertices, triangles, _ = meshopt_simplify_raw(
-                    points, faces, target_faces, args.output.parent)
+                    control_points, control_faces, target_faces, args.output.parent)
                 control = audit(reference_edges, vertices, triangles)
         except (ValueError, subprocess.TimeoutExpired) as error:
             control = {"error": str(error)}
@@ -108,6 +115,8 @@ def main():
         "normalized_boundary_tolerance": BOUNDARY_TOLERANCE,
         "candidate_ratio": actual_ratio, "candidate_in_band": in_band,
         "manymesh": candidate, "control_target_faces": target_faces,
+        "control_indexing": "welded" if args.weld_controls else "original",
+        "control_input_vertices": len(control_points),
         "controls": controls,
         "matched_inputs_ready": in_band and candidate["boundary_preserved"]
         and all(row["eligible"] for row in controls.values()),
