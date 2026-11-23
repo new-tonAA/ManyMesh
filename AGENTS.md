@@ -4,6 +4,11 @@ This document defines machine-readable instructions and technical guardrails for
 
 ---
 
+## ManyMesh Research Continuation
+
+For a ManyMesh research task or a request to continue one, read and follow
+[the research continuation prompt](MANYMESH_RESEARCH_LOOP.md).
+
 ## Core AI Skills & Guidelines
 
 AI agents **must** consult and strictly follow the corresponding skill files for each respective development and validation phase:

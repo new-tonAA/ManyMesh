@@ -1,6 +1,8 @@
 """Measure fixed-budget resident LOD switches on moving, non-overlapping instances."""
 
 import argparse
+import hashlib
+import importlib.metadata
 import json
 import math
 from pathlib import Path
@@ -9,6 +11,7 @@ import time
 import numpy as np
 import wgpu
 from wgpu.backends.wgpu_native import lib
+from skimage.metrics import structural_similarity
 
 from bench_component_gpu import load_export, projection_matrix, select_adapter
 
@@ -148,6 +151,53 @@ def cross_validated_ranker(poses, errors, keep):
     return chosen, scores
 
 
+def normalized_asset_error(errors):
+    mean_error = float(np.mean(errors.sum(axis=1)))
+    if not math.isfinite(mean_error) or mean_error <= 0:
+        raise ValueError("Asset training error must have a finite positive mean")
+    return errors / mean_error
+
+
+def profile_objective_errors(color_errors, silhouette_errors, objective):
+    if objective == "color-sse":
+        return color_errors
+    if objective == "silhouette-xor":
+        return silhouette_errors
+    if objective == "balanced-color-silhouette":
+        return 0.5 * (normalized_asset_error(color_errors) +
+                      normalized_asset_error(silhouette_errors))
+    raise ValueError(f"Unknown profile objective: {objective}")
+
+
+def shared_profile(poses, errors_by_asset, excluded_asset):
+    profile_poses, profile_errors = [], []
+    for name, errors in errors_by_asset.items():
+        if name == excluded_asset:
+            continue
+        profile_poses.extend(poses)
+        profile_errors.append(normalized_asset_error(errors))
+    if not profile_errors:
+        raise ValueError("A shared profile needs at least one training asset")
+    return calibrate(profile_poses, np.concatenate(profile_errors, axis=0))
+
+
+def cross_validated_ranker_by_asset(poses, errors_by_asset, keep):
+    """Choose one profile family using leave-one-asset-out training folds."""
+    rankers = ("area", "direction", "scale-direction")
+    scores = dict.fromkeys(rankers, 0.0)
+    for held_out, errors in errors_by_asset.items():
+        fit = shared_profile(poses, errors_by_asset, held_out)
+        errors = normalized_asset_error(errors)
+        for index, pose in enumerate(poses):
+            _, area, angle = pose
+            for name in rankers:
+                fine, _ = choose(name, area, angle, fit, keep, None, None)
+                scores[name] += float(errors[index][~fine].sum())
+    best = min(rankers, key=lambda name: scores[name])
+    chosen = best if scores[best] < .997 * scores["area"] else "area"
+    return chosen, scores
+
+
 class Scene:
     def __init__(self, device, width, height):
         self.device, self.queue = device, device.queue
@@ -249,11 +299,13 @@ class Scene:
         return {"gpuMs": raster.tolist(), "cpuMs": cpu, "selectorMs": selector}
 
 
-def error_table(scene, meshes, poses):
+def error_table(scene, meshes, poses, image_stride=None):
     errors = []
+    silhouette_errors = []
+    image_pairs = []
     all_low = np.zeros(COUNT, dtype=bool)
     all_high = np.ones(COUNT, dtype=bool)
-    for pose in poses:
+    for index, pose in enumerate(poses):
         lower = scene.capture(meshes, pose, all_low)
         upper = scene.capture(meshes, pose, all_high)
         if not np.any(upper):
@@ -262,7 +314,183 @@ def error_table(scene, meshes, poses):
                           dtype=np.float64).reshape(SIDE, scene.height // SIDE,
                                                     SIDE, scene.width // SIDE)
         errors.append(delta.sum(axis=(1, 3)).ravel())
-    return np.stack(errors)
+        coverage_xor = np.logical_xor(lower > 0, upper > 0).reshape(
+            SIDE, scene.height // SIDE, SIDE, scene.width // SIDE)
+        silhouette_errors.append(coverage_xor.sum(axis=(1, 3)).astype(np.float64).ravel())
+        if (image_stride is not None and
+                (index % image_stride == 0 or index == len(poses) - 1)):
+            image_pairs.append((index, lower, upper))
+    return (np.stack(errors), np.stack(silhouette_errors)), image_pairs
+
+
+def image_metrics(poses, errors, image_pairs, table, keep, chosen):
+    """Report exact per-frame PSNR and sampled SSIM/silhouette IoU."""
+    policies = tuple(dict.fromkeys(("area-hysteresis", f"{chosen}-hysteresis")))
+    report = {policy: {"frameMetrics": [], "sampledStructuralMetrics": []}
+              for policy in policies}
+    for policy in policies:
+        previous = old_benefit = None
+        selections = []
+        for index, pose in enumerate(poses):
+            selected, benefit = choose(policy, pose[1], pose[2], table, keep,
+                                       previous, old_benefit)
+            sse = float(errors[index][~selected].sum())
+            mse = sse / image_pairs[0][2].size
+            selections.append(selected)
+            report[policy]["frameMetrics"].append({
+                "frame": index,
+                "psnrDb": None if mse == 0 else float(-10 * math.log10(mse)),
+                "mse": mse,
+            })
+            previous, old_benefit = selected, benefit
+        sampled = set(np.linspace(0, len(poses) - 1, 4, dtype=int).tolist())
+        for index, lower, reference in image_pairs:
+            if index not in sampled:
+                continue
+            height, width = reference.shape
+            tile_h, tile_w = height // SIDE, width // SIDE
+            low_tiles = lower.reshape(SIDE, tile_h, SIDE, tile_w)
+            high_tiles = reference.reshape(SIDE, tile_h, SIDE, tile_w)
+            mask = selections[index].reshape(SIDE, SIDE)[:, None, :, None]
+            candidate = np.where(mask, high_tiles, low_tiles).reshape(height, width)
+            union = np.logical_or(reference > 0, candidate > 0).sum()
+            intersection = np.logical_and(reference > 0, candidate > 0).sum()
+            report[policy]["sampledStructuralMetrics"].append({
+                "frame": index,
+                "ssim": float(structural_similarity(
+                    reference, candidate, data_range=255, gaussian_weights=True,
+                    sigma=1.5, use_sample_covariance=False)),
+                "silhouetteIou": 1.0 if union == 0 else float(intersection / union),
+            })
+    report["calibrated-hysteresis"] = report[f"{chosen}-hysteresis"]
+    return report
+
+
+def write_lossless_rgb_video(path, frames, fps):
+    import cv2
+
+    height, width = frames[0].shape[:2]
+    writer = cv2.VideoWriter(str(path), cv2.VideoWriter_fourcc(*"FFV1"), fps,
+                             (width, height), True)
+    if not writer.isOpened():
+        raise RuntimeError("OpenCV FFmpeg cannot encode FFV1 video")
+    try:
+        for frame in frames:
+            rgb = np.repeat(frame[..., None], 3, axis=2) if frame.ndim == 2 else frame
+            writer.write(cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR))
+    finally:
+        writer.release()
+
+    capture = cv2.VideoCapture(str(path), cv2.CAP_FFMPEG)
+    if not capture.isOpened():
+        raise RuntimeError(f"Could not reopen captured sequence: {path}")
+    try:
+        if (int(capture.get(cv2.CAP_PROP_FRAME_WIDTH)) != width or
+                int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT)) != height or
+                int(capture.get(cv2.CAP_PROP_FRAME_COUNT)) != len(frames) or
+                not math.isclose(capture.get(cv2.CAP_PROP_FPS), fps, rel_tol=0, abs_tol=1e-6)):
+            raise RuntimeError(f"Captured sequence metadata mismatch: {path}")
+        for index, expected in enumerate(frames):
+            ok, bgr = capture.read()
+            if not ok:
+                raise RuntimeError(f"Could not decode frame {index} from {path}")
+            decoded = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
+            expected_rgb = (np.repeat(expected[..., None], 3, axis=2)
+                            if expected.ndim == 2 else expected)
+            if not np.array_equal(decoded, expected_rgb):
+                raise RuntimeError(f"Lossless sequence round-trip mismatch at frame {index}: {path}")
+    finally:
+        capture.release()
+    data = path.read_bytes()
+    return {"path": path.as_posix(), "sha256": hashlib.sha256(data).hexdigest(),
+            "bytes": len(data), "width": width, "height": height,
+            "frameCount": len(frames), "fps": fps, "codec": "FFV1"}
+
+
+def temporal_difference_metrics(poses, image_pairs, table, keep, chosen,
+                                sequence_dir=None, sequence_fps=30):
+    """Measure temporal image-derivative error; this is not a perceptual VQA score."""
+    by_frame = {index: (low, high) for index, low, high in image_pairs}
+    policies = tuple(dict.fromkeys(("area-hysteresis", f"{chosen}-hysteresis")))
+    report = {}
+    for policy in policies:
+        previous = old_benefit = None
+        candidates, references, selections = [], [], []
+        for index, pose in enumerate(poses):
+            selected, benefit = choose(policy, pose[1], pose[2], table, keep,
+                                       previous, old_benefit)
+            low, high = by_frame[index]
+            height, width = high.shape
+            tile_h, tile_w = height // SIDE, width // SIDE
+            low_tiles = low.reshape(SIDE, tile_h, SIDE, tile_w)
+            high_tiles = high.reshape(SIDE, tile_h, SIDE, tile_w)
+            mask = selected.reshape(SIDE, SIDE)[:, None, :, None]
+            candidate = np.where(mask, high_tiles, low_tiles).reshape(height, width)
+            candidates.append(candidate)
+            references.append(high)
+            selections.append(selected)
+            previous, old_benefit = selected, benefit
+
+        candidate_video = np.stack(candidates).astype(np.float32)
+        reference_video = np.stack(references).astype(np.float32)
+        sequence_files = None
+        if sequence_dir is not None:
+            sequence_dir.mkdir(parents=True, exist_ok=True)
+            reference_path = sequence_dir / "reference.mkv"
+            candidate_path = sequence_dir / f"{policy}.mkv"
+            if not reference_path.exists():
+                reference_file = write_lossless_rgb_video(
+                    reference_path, references, sequence_fps)
+            else:
+                reference_file = {"path": reference_path.as_posix(),
+                                  "sha256": hashlib.sha256(reference_path.read_bytes()).hexdigest(),
+                                  "bytes": reference_path.stat().st_size,
+                                  "width": references[0].shape[1],
+                                  "height": references[0].shape[0],
+                                  "frameCount": len(references), "fps": sequence_fps,
+                                  "codec": "FFV1"}
+            candidate_file = write_lossless_rgb_video(
+                candidate_path, candidates, sequence_fps)
+            sequence_files = {"candidate": candidate_file, "reference": reference_file}
+        temporal_residual = (candidate_video[1:] - candidate_video[:-1]) - (
+            reference_video[1:] - reference_video[:-1])
+        active = np.logical_or(candidate_video > 0, reference_video > 0)
+        active = np.logical_or(active[1:], active[:-1])
+        absolute = np.abs(temporal_residual)
+        squared = np.square(temporal_residual, dtype=np.float64)
+        support_mae = []
+        support_rmse = []
+        for frame in range(len(temporal_residual)):
+            mask = active[frame]
+            if np.any(mask):
+                values = absolute[frame][mask]
+                support_mae.append(float(values.mean() / 255.0))
+                support_rmse.append(float(np.sqrt(squared[frame][mask].mean()) / 255.0))
+            else:
+                support_mae.append(0.0)
+                support_rmse.append(0.0)
+        switch_counts = [int(np.count_nonzero(selections[i] ^ selections[i - 1]))
+                         for i in range(1, len(selections))]
+        switched = [i for i, count in enumerate(switch_counts) if count > 0]
+        stable = [i for i, count in enumerate(switch_counts) if count == 0]
+        report[policy] = {
+            "definition": "Adjacent-frame candidate-minus-reference image difference; normalized by 255",
+            "framePairs": len(temporal_residual),
+            "fullFrameMae": float(absolute.mean() / 255.0),
+            "fullFrameRmse": float(np.sqrt(squared.mean()) / 255.0),
+            "foregroundSupportMae": float(np.mean(support_mae)),
+            "foregroundSupportRmse": float(np.mean(support_rmse)),
+            "foregroundPairMaeP95": float(np.quantile(support_mae, 0.95)),
+            "lodSwitchTransitions": len(switched),
+            "meanForegroundPairMaeAtSwitch": (float(np.mean([support_mae[i] for i in switched]))
+                                                if switched else 0.0),
+            "meanForegroundPairMaeWithoutSwitch": (float(np.mean([support_mae[i] for i in stable]))
+                                                     if stable else 0.0),
+        }
+        if sequence_files is not None:
+            report[policy]["sequenceFiles"] = sequence_files
+    report["calibrated-hysteresis"] = report[f"{chosen}-hysteresis"]
+    return report
 
 
 def compare_policies(scene, meshes, poses, errors, table, keep, chosen):
@@ -309,7 +537,8 @@ def compare_policies(scene, meshes, poses, errors, table, keep, chosen):
 
 
 def benchmark_policies(scene, meshes, path, table, keep, chosen, repetitions, path_index):
-    pairs = (("area", "area"), ("direction-switch-cost", "direction-switch-cost"),
+    pairs = (("area-hysteresis", "area-hysteresis"),
+             ("direction-switch-cost", "direction-switch-cost"),
              ("scale-direction-switch-cost", "scale-direction-switch-cost"),
              ("calibrated-hysteresis", f"{chosen}-hysteresis"))
     output = {label: {"gpuMs": [], "cpuMs": [], "selectorMs": []} for label, _ in pairs}
@@ -332,7 +561,17 @@ def main():
     parser.add_argument("--keep", type=int, choices=(2, 4, 8), default=4)
     parser.add_argument("--test-pair", choices=("initial", "alternate"), default="initial")
     parser.add_argument("--timing-repeats", type=int, choices=(1, 3), default=3)
+    parser.add_argument("--sequence-dir", type=Path,
+                        help="Write validated lossless CGVQM-ready videos under this directory")
+    parser.add_argument("--sequence-fps", type=int, default=30)
+    parser.add_argument("--profile-scope", choices=("per-asset", "leave-one-asset-out"),
+                        default="per-asset")
+    parser.add_argument("--profile-objective",
+                        choices=("color-sse", "silhouette-xor", "balanced-color-silhouette"),
+                        default="color-sse")
     args = parser.parse_args()
+    if args.sequence_fps <= 0:
+        parser.error("--sequence-fps must be positive")
     width, height = (int(size) for size in args.size.split("x"))
     adapter = select_adapter("Iris(R) Xe", "D3D12")
     scene = Scene(adapter.request_device_sync(required_features=["timestamp-query"]), width, height)
@@ -341,7 +580,10 @@ def main():
     training = trajectory(width, height, 24, 0)
     path_indices = (1, 2) if args.test_pair == "initial" else (3, 4)
     testing = [trajectory(width, height, args.frames, path) for path in path_indices]
-    results = {}
+    asset_names = list(dict.fromkeys(args.asset))
+    if args.profile_scope == "leave-one-asset-out" and len(asset_names) < 3:
+        parser.error("Leave-one-asset-out profiling needs at least three distinct assets")
+    training_errors = {}
     for name in args.asset:
         exports = manifest["assets"][name]["exports"]
         meshes = []
@@ -350,13 +592,50 @@ def main():
             meshes.append((scene.device.create_buffer_with_data(data=vertices, usage=wgpu.BufferUsage.VERTEX),
                            scene.device.create_buffer_with_data(data=indices, usage=wgpu.BufferUsage.INDEX),
                            len(indices)))
-        train_error = error_table(scene, meshes, training)
-        table = calibrate(training, train_error)
-        chosen, calibration_scores = cross_validated_ranker(training, train_error, args.keep)
-        quality, runtime = [], []
+        (train_color_error, train_silhouette_error), _ = error_table(scene, meshes, training)
+        training_errors[name] = profile_objective_errors(
+            train_color_error, train_silhouette_error, args.profile_objective)
+        for v, i, _ in meshes:
+            v.destroy()
+            i.destroy()
+
+    if args.profile_scope == "leave-one-asset-out":
+        selected_rankers, validation_scores, tables = {}, {}, {}
+        for name in asset_names:
+            other_assets = {key: value for key, value in training_errors.items() if key != name}
+            selected_rankers[name], validation_scores[name] = cross_validated_ranker_by_asset(
+                training, other_assets, args.keep)
+            tables[name] = shared_profile(training, other_assets, name)
+    else:
+        selected_rankers, validation_scores, tables = {}, {}, {}
+        for name, train_error in training_errors.items():
+            tables[name] = calibrate(training, train_error)
+            selected_rankers[name], validation_scores[name] = cross_validated_ranker(
+                training, train_error, args.keep)
+
+    results = {}
+    for name in asset_names:
+        exports = manifest["assets"][name]["exports"]
+        meshes = []
+        for kind in ("parts", "source"):
+            vertices, indices = load_export(args.meshes / name / f"{kind}.ply", exports[kind])
+            meshes.append((scene.device.create_buffer_with_data(data=vertices, usage=wgpu.BufferUsage.VERTEX),
+                           scene.device.create_buffer_with_data(data=indices, usage=wgpu.BufferUsage.INDEX),
+                           len(indices)))
+        table = tables[name]
+        chosen = selected_rankers[name]
+        calibration_scores = validation_scores[name]
+        quality, image_quality, temporal_quality, runtime = [], [], [], []
         for path_index, path in enumerate(testing):
-            measured = error_table(scene, meshes, path)
-            quality.append(compare_policies(scene, meshes, path, measured, table, args.keep, chosen))
+            (color_errors, _), image_pairs = error_table(scene, meshes, path, image_stride=1)
+            quality.append(compare_policies(scene, meshes, path, color_errors, table, args.keep, chosen))
+            image_quality.append(image_metrics(path, color_errors, image_pairs,
+                                               table, args.keep, chosen))
+            sequence_dir = (args.sequence_dir / name / f"path-{path_indices[path_index]}"
+                            if args.sequence_dir is not None else None)
+            temporal_quality.append(temporal_difference_metrics(
+                path, image_pairs, table, args.keep, chosen, sequence_dir,
+                args.sequence_fps))
             runtime.append(benchmark_policies(scene, meshes, path, table, args.keep, chosen,
                                                args.timing_repeats, path_index))
         faces = args.keep * exports["source"]["faces"] + (COUNT - args.keep) * exports["parts"]["faces"]
@@ -364,12 +643,27 @@ def main():
                          "sizeDirectionalDensity": table[1].tolist(),
                          "apparentSizeBins": table[2].tolist(),
                          "calibratedRanker": chosen, "calibrationSse": calibration_scores,
-                         "quality": quality, "runtime": runtime}
+                         "quality": quality, "imageQuality": image_quality,
+                         "temporalDifferenceQuality": temporal_quality, "runtime": runtime}
         for v, i, _ in meshes:
             v.destroy()
             i.destroy()
         print(name, faces, "triangles per frame", flush=True)
-    report = {"adapter": dict(adapter.info), "size": [width, height], "framesPerPath": args.frames,
+    report = {"adapter": dict(adapter.info),
+              "wgpuVersion": importlib.metadata.version("wgpu"),
+              "profileScope": args.profile_scope,
+              "profileObjective": args.profile_objective,
+              "profileNormalization": ("per-asset mean training objective loss"
+                                       if args.profile_scope == "leave-one-asset-out" else None),
+              "profileTrainingAssetsPerFold": len(asset_names) - 1 if args.profile_scope == "leave-one-asset-out" else 1,
+              "inputHashes": {
+                  "motionReferenceSha256": hashlib.sha256(args.motion_reference.read_bytes()).hexdigest(),
+                  "meshes": {name: {kind: manifest["assets"][name]["exports"][kind]["sha256"]
+                                    for kind in ("source", "parts")}
+                             for name in asset_names},
+              },
+              "size": [width, height], "framesPerPath": args.frames,
+              "sequenceFps": args.sequence_fps if args.sequence_dir is not None else None,
               "fineInstances": args.keep, "timestampPeriodNs": scene.period,
               "timingRepeats": args.timing_repeats, "warmupFrames": 8,
               "testPaths": path_indices, "assets": results}

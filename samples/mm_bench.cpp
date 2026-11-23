@@ -306,6 +306,8 @@ bool g_autoFrame = false;
 bool g_compactVertices = false;
 int g_msaaSamples = 0;
 bool g_taa = false;
+float g_taaUpscaling = 1.0f;
+float g_fsr1Scale = 1.0f;
 //! Distance-aware selection keeps the hierarchy's finest clusters near the camera and promotes
 //! a cluster only when its accumulated geometric error is small enough on screen.
 bool g_distanceLod = false;
@@ -2861,13 +2863,22 @@ void setupLodViewer(Engine* engine, View* view, Scene* scene) {
             .build(*engine, g_lightEntity);
     scene->addEntity(g_lightEntity);
 
-    view->setPostProcessingEnabled(false);
-    if (g_taa) {
+    view->setPostProcessingEnabled(g_taa || g_taaUpscaling > 1.0f || g_fsr1Scale < 1.0f);
+    if (g_taa || g_taaUpscaling > 1.0f) {
         view->setPostProcessingEnabled(true);
         View::TemporalAntiAliasingOptions options;
         options.enabled = true;
         options.feedback = 0.1f;
+        options.upscaling = g_taaUpscaling;
         view->setTemporalAntiAliasingOptions(options);
+    }
+    if (g_fsr1Scale < 1.0f) {
+        View::DynamicResolutionOptions options;
+        options.enabled = true;
+        options.minScale = float2{ g_fsr1Scale };
+        options.maxScale = float2{ g_fsr1Scale };
+        options.quality = View::QualityLevel::ULTRA;
+        view->setDynamicResolutionOptions(options);
     }
     applyMultiSampleAntiAliasing(view);
     applyScreenSpaceAmbientOcclusion(view);
@@ -3932,6 +3943,12 @@ samples::SampleParameters createAppParameters() {
                 "MSAA sample count for edge A/B (0 disables, 4 is typical)", 0, 0, 8, 1),
         samples::Parameter::makeBool("taa", '\0',
                 "Enable Filament temporal anti-aliasing (implies post-processing)", false),
+        samples::Parameter::makeFloat("taa-upscale", '\0',
+                "Filament TAA upscaling factor; >1 renders internally at a lower resolution",
+                1.0f, 1.0f, 2.0f),
+        samples::Parameter::makeFloat("fsr1-scale", '\0',
+                "Fixed internal resolution scale for FidelityFX FSR1 ULTRA; 1 disables it",
+                1.0f, 0.25f, 1.0f),
         samples::Parameter::makeBool("ssao", '\0',
                 "Enable GTAO screen-space ambient occlusion on the current cut", false),
         samples::Parameter::makeFloat("ssao-radius", '\0',
@@ -4030,6 +4047,8 @@ std::unique_ptr<FilamentApp2> createSampleApp(SampleConfig config, DisplayManage
     g_compactVertices = config.getBool("compact-vertices");
     g_msaaSamples = std::max(0, config.getInt("msaa", 0));
     g_taa = config.getBool("taa");
+    g_taaUpscaling = std::clamp(config.getFloat("taa-upscale", 1.0f), 1.0f, 2.0f);
+    g_fsr1Scale = std::clamp(config.getFloat("fsr1-scale", 1.0f), 0.25f, 1.0f);
     g_ssao = config.getBool("ssao");
     g_ssaoRadius = std::max(0.0f, config.getFloat("ssao-radius", 0.0f));
     g_ssaoIntensity = std::max(0.0f, config.getFloat("ssao-intensity", 1.0f));
@@ -4158,6 +4177,18 @@ int main(int argc, char* argv[]) {
     config.title = "ManyMesh Render Harness";
     config.headless = true;
     samples::handleCommandLineArguments(argc, argv, &config, spec);
+    float const fsr1Scale = config.getFloat("fsr1-scale", 1.0f);
+    float const taaUpscaling = config.getFloat("taa-upscale", 1.0f);
+    if (fsr1Scale < 1.0f && taaUpscaling > 1.0f) {
+        std::cerr << "--fsr1-scale and --taa-upscale are separate upscaling paths; choose one."
+                  << std::endl;
+        return 2;
+    }
+    if (fsr1Scale < 1.0f && !config.getBool("taa") && config.getInt("msaa", 0) < 2) {
+        std::cerr << "FSR1 should be paired with --taa or --msaa 2/4/8."
+                  << std::endl;
+        return 2;
+    }
 
     g_ui = config.getBool("ui");
     g_dag = config.getBool("dag");

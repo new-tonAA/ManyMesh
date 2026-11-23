@@ -2,10 +2,17 @@
 
 The offline half of ManyMesh's **geometry optimization layer**. It clusters a mesh, builds a
 per-cluster LOD chain, and reports the geometric error each level introduces — both in world
-units and projected into screen space. The result is the *Geometry Error Map* that the neural
-reconstruction stage is meant to consume.
+units and projected into screen space. The error maps also support offline image-quality studies;
+the repository's tested reconstruction models have not shown reliable held-out gains.
 
 See [`MANYMESH.md`](../../MANYMESH.md) for how this fits into the wider project.
+The continuous-pan path-loss experiment is a separate prototype, not a production mode;
+its [four-asset rendered-quality audit](PATH_LOSS_RENDER_QUALITY_20261122.md) found no
+repeatable improvement over same-face QEM at the measured build cost.
+
+The [complete cut topology audit](HISTORICAL_CUT_TOPOLOGY_AUDIT_20261122.md)
+traces nonmanifold edges to the saved node geometry and tests which graphs
+can supply a valid selection under the upstream face cap.
 
 ## What it does
 

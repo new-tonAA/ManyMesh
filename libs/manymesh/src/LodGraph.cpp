@@ -215,16 +215,6 @@ Sphere mergeSpheres(Sphere const& a, Sphere const& b) {
     return result;
 }
 
-Cone mergeCones(Cone const& a, Cone const& b) {
-    Cone result;
-    result.apex = (a.apex + b.apex) * 0.5f;
-    math::float3 const axis = a.axis + b.axis;
-    float const axisLength = length(axis);
-    result.axis = axisLength > 1e-6f ? axis / axisLength : a.axis;
-    result.cutoff = std::min(a.cutoff, b.cutoff);
-    return result;
-}
-
 std::vector<std::vector<uint32_t>> groupNodes(LodGraph const& graph,
         std::vector<uint32_t> const& current, uint32_t clustersPerNode, size_t vertexCount,
         std::vector<uint32_t> const* positionIds, std::vector<int32_t>* lastOwner,
@@ -1009,7 +999,7 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
             parent.simplified = true;
             for (size_t i = 1; i < members.size(); ++i) {
                 parent.bounds = mergeSpheres(parent.bounds, graph.nodes[members[i]].bounds);
-                parent.cone = mergeCones(parent.cone, graph.nodes[members[i]].cone);
+                parent.cone = mergeNormalCones(parent.cone, graph.nodes[members[i]].cone);
             }
             for (uint32_t member: members) {
                 parent.baseTriangles += graph.nodes[member].baseTriangles;

@@ -1,35 +1,41 @@
-# TODO — M3 收尾
+# M3 completion checklist (historical)
 
-目标：把 M3 的时域部分做到与 NSS / Mob-FGSR 的结构对齐。
-每一条都要有可复现的测量，并把结论写回 `MANYMESH.md`。
+The original goal was to align temporal M3 experiments with the structure of
+NSS / Mob-FGSR, using reproducible measurements. Completed boxes preserve the
+historical record. Current research gates are in [MANYMESH.md](MANYMESH.md);
+sections 8.7 and 8.8 now live in [the history](MANYMESH_HISTORY.md).
 
-## 1. 学习式时域模型
+## Learned temporal model
 
-- [x] `tools/mmtemporal/temporal.py` 增加 `--export <dir>`：把每帧导出成训练用的三元组
-      （当前粗帧、重投影历史、全细节目标），布局与 `tools/mmtrain` 兼容
-- [x] 训练 `stack=1`（无历史）vs `stack=2`（当前 + 重投影历史）
-- [x] 判据达成：30.18 vs 29.56 / 28.93
-- [x] 结论写进 `MANYMESH.md`（§8.7）
+- [x] Add `--export <dir>` to `tools/mmtemporal/temporal.py`: export current coarse
+  frame, reprojected history, and full-detail target in a layout compatible with mmtrain.
+- [x] Train `stack=1` without history versus `stack=2` with current frame and history.
+- [x] Record the comparison: 30.18 versus 29.56 / 28.93.
+- [x] Record the conclusion in historical section 8.7.
 
-## 2. 历史拒绝（rejection）
+## History rejection
 
-- [x] 在 `temporal.py` 加入两类拒绝：
-      - **有效性**：重投影采样落到画面外的像素不用历史
-      - **颜色裁剪**：历史与当前帧差异过大的像素不用历史（遮挡/着色变化的代理）
-- [x] 对比完成：颜色裁剪**有害**（+0.65 → +0.02/+0.07/+0.21）
-- [x] 说明局限：纯旋转 pan **没有真正的遮挡**（无视差），所以这里只能验证有效性与裁剪，
-      真正的 disocclusion 需要相机平移 + 深度缓冲，属于后续工作
-- [x] 结论写进 `MANYMESH.md`（§8.7）
+- [x] Reject reprojected history samples outside the image.
+- [x] Add color clipping when current and historical colors differ substantially,
+  as a proxy for visibility or shading changes.
+- [x] Record that color clipping harmed this experiment: +0.65 became
+  +0.02 / +0.07 / +0.21.
+- [x] State that pure rotational pan has no parallax or true disocclusion test.
+  Translating cameras and depth buffers are needed to test disocclusion.
+- [x] Record the conclusion in historical section 8.7.
 
-## 3. 更多训练数据
+## Additional training data
 
-- [x] `mm_bench` 支持「每个视角一段 pan 序列」（`--views V --jitter N --pan D`）（当前 `--pan` 是整段序列一段 pan）
-- [x] 生成多段序列：**4 段 × 8 帧**（受渲染吞吐限制，未达 6×12）
-- [x] 重跑：学习 0.70 / 时域 0.95 / 合计 **1.52 dB**，结论复现（差值从 +1.25 收敛到 +0.57）
-- [x] 结论写进 `MANYMESH.md`（§8.8）
+- [x] Support a pan sequence per view in `mm_bench`
+  (`--views V --jitter N --pan D`); previously one pan covered the entire sequence.
+- [x] Generate four sequences of eight frames, below the planned 6x12 because of
+  rendering throughput limits.
+- [x] Reproduce learning +0.70 dB, temporal +0.95 dB, combined +1.52 dB;
+  the reported difference narrowed from +1.25 to +0.57.
+- [x] Record the conclusion in historical section 8.8.
 
-## 已知局限（写进文档，不要藏）
+## Known limits
 
-- 训练/验证视角极少（目前 4/2），单一随机种子
-- 纯旋转 pan 无遮挡、无视差，时域难度低于真实游戏相机运动
-- 桌面核显、与其它任务共享，绝对毫秒数不可信
+- Only four training and two validation views, with one random seed.
+- Rotational pan is easier than game cameras with parallax and occlusion.
+- The desktop integrated GPU was shared with other tasks; absolute timings are unreliable.

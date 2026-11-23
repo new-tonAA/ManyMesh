@@ -50,6 +50,98 @@ The current-build evidence lowers priority for this candidate. Generic “retry 
 
 No production C++ changed and no software tests were run. This candidate remains an unproven, low-priority research question; it is neither a novelty claim nor a SIGGRAPH-level result.
 
+## Cloth diagnostic extension (2026-11-18)
+
+Ran one additional asset with the same strict-gate regroup screen: Cloth, DAG mode, 5 levels, ratio
+0.7, group size 8, corner seam enabled, quality gate enabled, one build thread, and a 200,000
+input-triangle trial budget. The input OBJ has 41,643 polygon records and Assimp loads it as 74,976
+triangles. The run built 2,054 nodes / 10 levels in 112.09 seconds; 278 baseline groups included 150
+rejections. The diagnostic considered 75 local alternatives spanning baseline regions of 818 to
+5,572 triangles, consumed 197,588 input triangles and 32.54 trial seconds, and found **zero** that
+simultaneously preserved the exact boundary, avoided non-manifold edges, did not increase maximum
+accumulated error, and reduced triangle count. This is a real negative screen with eligible trials,
+unlike the zero-trial Sphere and Monkey outcomes; it further weakens the witness-partition hypothesis
+outside Shapes. It still does not evaluate the complete-cut frontier or prove that no alternative
+split policy can help.
+
+The ledger's failure counters also show why a gate-name-only split rule is not yet justified. Across
+the 278 baseline groups, topology was rejected in 230 groups and attributes in 227; locked rejection
+occurred in 79 and geometry rejection in 7. These categories overlap, and the summed per-attempt
+counts (935 topology, 1,332 attributes, 92 locked, 7 geometry) are not independent causes or local
+elements to split on. The diagnostic therefore does not tell us which child patch or boundary
+conflict a new partition should separate.
+
+An additional `--quality-debug 1` pass does expose the exact failed gate mask and worst sampled
+normal/UV vertex/triangle for each rejected simplifier candidate. The matched ledger separates
+2,366 rejected attempts in production groups from 1,214 in the diagnostic trial groups (the latter
+spent 32.67 seconds, close to the non-debug run's 32.54 seconds). Production-group masks were:
+attribute-only 1,315; topology-only 556; topology+geometry 320; locked-only 92; and other combined
+masks 83. Trial-group masks were: attribute-only 625; topology-only 278; topology+geometry 213;
+topology+boundary 52; locked-only 46. These sums reconcile to 3,580 parent-group rejects; the full
+debug log has 4,076 rejected-candidate records because it also includes 496 cluster-stage rejects.
+This sharpens gate attribution, but the log still omits parent/group and child-region identifiers, and
+its worst-attribute indices are candidate-local. It cannot yet tell which spatial split separates
+the failed witness. The UTF-16 PowerShell capture is ignored under `out/` at
+`out/quality-witness-current/cloth-regroup-pilot-200k-debug/quality-debug.log`; the corresponding
+ledger is `diagnostics.json`. No production code was modified.
+
+Tried a read-only join by dropping the 496 cluster-stage records, then consuming each group's
+expected rejection-mask histogram from the remaining debug records in ledger array order. Only
+65/428 observations matched their complete mask histogram. Although the total number of records
+reconciles, the ordering assumption is false (or the logs aggregate candidates differently), so this
+does not provide a safe group join. A trustworthy attribution needs an explicit group/region ID
+carried through the simplifier call and written beside each rejection record.
+
+Reproduction command:
+
+```powershell
+$env:MANYMESH_BUILD_THREADS='1'
+& out/cmake-vulkan/tools/mmgeo/Release/mmgeo.exe --mode dag --levels 5 --ratio 0.7 --dag-group 8 --corner-seam 1 --quality-gate 1 --dump-obj 0 --write-dag 0 --out out/quality-witness-current/cloth-regroup-pilot-200k --dag-diagnostics out/quality-witness-current/cloth-regroup-pilot-200k/diagnostics.json --dag-diagnostic-work 200000 assets/models/cloth/cloth.obj
+```
+
+The ledger is `out/quality-witness-current/cloth-regroup-pilot-200k/diagnostics.json` (SHA256
+`5f0d31c64f1cbb400a93d404d89cc7664dd7a9e30162c9063fe9c820ebfa3326`); input OBJ SHA256 is
+`3dbcb96aaf5142ee16922c6138e23fa8dd8471e847c58978fd09df596168c24f`, and executable SHA256 is
+`46b5ab1fe0cbf2ab9c2e1eb900fd94dfb7df08665eddce955118849e96774900`. Workspace HEAD at capture
+was `422c7e50c4c802f88788dbf27e6d01273dc343ec`; no C++ source changed and no software tests were
+run. The existing in-process working set was about 54 MiB and system available memory stayed near
+5.9 GiB; no build was started.
+
+**Decision update:** close the current fixed adjacent-group move/swap witness screen as a candidate
+generator: Shapes has seven non-composable local wins, while Cloth has zero across 75 trials and
+Material Sphere / Monkey had no eligible trials. Reopening requires a different, explicitly
+specified split-generation mechanism and a complete strict-gate-valid cut comparison at matched
+work; merely collecting more local counters is not enough. SIGGRAPH contribution remains
+unestablished.
+
+## Group-bound rejection record instrumentation (2026-11-18)
+
+Added diagnostic-only `SimplifyRejectObservation` records. The simplifier captures source/target/
+candidate index counts, retry number, five-bit rejection mask, worst normal/UV vertex and triangle
+indices, and maximum normal/UV errors for each rejected *simplified* candidate. The record vector is
+merged through the existing per-worker profile reduction, then serialized as `rejectionDetails`
+nested in the same group object that carries the child node IDs and level. The vector is populated
+only when the existing DAG diagnostic mask histogram is enabled, so ordinary simplification does
+not allocate per-rejection records or change acceptance decisions. Diagnostics JSON schema is now 2.
+
+The `mmgeo` Release target compiled successfully from current source in `out/cmake-vulkan` (0
+errors; 2 existing MSVC warnings for ignored `-fno-rtti` and `-Wl,--gc-sections`; build about 6 s).
+Executable SHA256: `b70ef5872f5bee1c303fd47d16394507e5998799fff5606eecd3adb6ad95ffc6`. Available RAM
+was about 5.4 GiB after compilation. Runtime validation could not run: Windows Application Control
+blocked the newly linked `mmgeo.exe` before process start, so no schema-2 ledger was emitted. No
+software test suite was run. This is compile-verified instrumentation, **not yet runtime-verified**;
+the next evidence gate is executing it in an allowed environment and checking that each group's
+rejection-detail count equals its mask histogram and that the saved vertex IDs occur in the group's
+children/input index set. No witness-guided partition result or SIGGRAPH contribution is established.
+
+The execution-policy failure was confirmed from the local Code Integrity event log: event IDs 3033
+and 3077 report that the image did not meet the enterprise signing-level policy, and
+`Get-AuthenticodeSignature` reports `NotSigned` for this locally linked executable. WSL fallback
+also failed before launch: both `wsl --list --verbose` and the `ubuntu-bmc` probe returned
+`Wsl/Service/E_ACCESSDENIED`. No policy, signing, or execution-control changes were attempted. The
+instrumentation therefore remains compile-verified only until an administrator-approved signed or
+otherwise allowed build environment is available.
+
 ## Matched cross-asset regroup screen (2026-11-17)
 
 To check whether the local headroom repeats, I matched the graph and gate parameters used by `regroup_diagnostics.py` on Shapes, Material Sphere, and Monkey, with one build thread and a 200,000 input-triangle diagnostic budget (the helper's default budget is 50,000; 200,000 matches the preceding Shapes screen): DAG mode, 5 levels, ratio 0.7, group size 8, corner seam simplification and the strict quality gate enabled. The current `mmgeo.exe` hash is recorded above. This is a read-only diagnostic; no trial parent is committed to the hierarchy.

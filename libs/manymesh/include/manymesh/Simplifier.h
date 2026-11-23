@@ -80,6 +80,22 @@ struct LodLevel {
     size_t triangleCount() const noexcept { return indices.size() / 3; }
 };
 
+//! One rejected simplified candidate. Vertex and triangle indices refer to the mesh passed to
+//! the simplifier; a DAG caller stores these records beside the parent group's child IDs.
+struct SimplifyRejectObservation {
+    size_t sourceIndexCount = 0;
+    size_t targetIndexCount = 0;
+    size_t candidateIndexCount = 0;
+    uint32_t attempt = 0;
+    uint32_t rejectMask = 0;
+    uint32_t worstNormalVertex = UINT32_MAX;
+    uint32_t worstNormalTriangle = UINT32_MAX;
+    uint32_t worstUvVertex = UINT32_MAX;
+    uint32_t worstUvTriangle = UINT32_MAX;
+    float maxNormalErrorRadians = 0.0f;
+    float maxUvError = 0.0f;
+};
+
 /**
  * Optional diagnostics for one or more simplification runs. All fields accumulate, so a caller
  * can reuse one profile for a whole DAG build. This is deliberately separate from the LOD data:
@@ -127,6 +143,8 @@ struct SimplifyProfile {
     //! Optional exact five-bit rejection-mask histogram, enabled only for DAG diagnostics.
     //! Bits 0..4 mean topology, geometry, attributes, boundary, and locked-mask failure.
     std::shared_ptr<std::array<uint64_t, 32>> rejectedMaskCounts;
+    //! Candidate details are populated only when the caller enabled the DAG diagnostic ledger.
+    std::vector<SimplifyRejectObservation> rejectionDetails;
     uint64_t extendedMeshCopies = 0;
 };
 

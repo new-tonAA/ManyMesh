@@ -2,14 +2,18 @@
 
 import argparse
 import hashlib
+import importlib.metadata
 import json
 import math
 from pathlib import Path
+import platform
+import sys
 import time
 
 import numpy as np
 import wgpu
 from wgpu.backends.wgpu_native import lib
+from skimage.metrics import structural_similarity
 
 
 RASTER_SHADER = """
@@ -100,6 +104,10 @@ MODES = (
     ("qem", None),
     ("whole", None),
     ("parts", None),
+    ("source", "msaa4"),
+    ("qem", "msaa4"),
+    ("whole", "msaa4"),
+    ("parts", "msaa4"),
     ("source", "linear"),
     ("qem", "linear"),
     ("whole", "linear"),
@@ -146,6 +154,13 @@ def projection_matrix(width, height, eye=(1.3, 0.55, 2.8)):
     return np.ascontiguousarray((transform @ camera).T, dtype=np.float32)
 
 
+def linear_gray_to_srgb(image):
+    linear = image.astype(np.float64) / 255.0
+    srgb = np.where(linear <= 0.0031308, 12.92 * linear,
+                    1.055 * np.power(linear, 1.0 / 2.4) - 0.055)
+    return np.clip(np.rint(srgb * 255.0), 0, 255).astype(np.uint8)
+
+
 def select_adapter(device_name, backend):
     adapters = list(wgpu.gpu.enumerate_adapters_sync())
     for adapter in adapters:
@@ -171,13 +186,36 @@ class Offscreen:
         self.output = device.create_texture(size=(width, height, 1), format="rgba8unorm",
                                             usage=color_usage | wgpu.TextureUsage.COPY_SRC)
         self.output_view = self.output.create_view()
+        self.output_msaa = device.create_texture(
+            size=(width, height, 1), sample_count=4, format="rgba8unorm",
+            usage=color_usage)
+        self.output_msaa_view = self.output_msaa.create_view()
         self.low = device.create_texture(size=(width // 2, height // 2, 1), format="rgba8unorm",
                                          usage=color_usage | wgpu.TextureUsage.TEXTURE_BINDING)
         self.low_view = self.low.create_view()
         self.depth = device.create_texture(size=(width, height, 1), format="depth32float",
                                            usage=color_usage).create_view()
+        self.depth_msaa = device.create_texture(
+            size=(width, height, 1), sample_count=4, format="depth32float",
+            usage=color_usage).create_view()
         self.low_depth = device.create_texture(size=(width // 2, height // 2, 1),
                                                format="depth32float", usage=color_usage).create_view()
+        self.configure_raster(columns)
+        module = device.create_shader_module(code=UPSCALE_SHADER)
+        sampler = device.create_sampler(mag_filter="linear", min_filter="linear")
+        self.upscale = {}
+        for mode in (("linear", "cubic", "cubic16") if audit else ("linear", "cubic")):
+            pipeline = device.create_render_pipeline(
+                layout="auto", vertex={"module": module, "entry_point": "full_screen"},
+                fragment={"module": module, "entry_point": mode,
+                          "targets": [{"format": self.output.format}]})
+            binding = device.create_bind_group(layout=pipeline.get_bind_group_layout(0), entries=[
+                {"binding": 0, "resource": self.low_view}, {"binding": 1, "resource": sampler}])
+            self.upscale[mode] = (pipeline, binding)
+
+    def configure_raster(self, columns):
+        device = self.device
+        width, height = self.width, self.height
         module = device.create_shader_module(code=RASTER_SHADER)
         self.raster = device.create_render_pipeline(
             layout="auto",
@@ -191,41 +229,55 @@ class Offscreen:
             depth_stencil={"format": "depth32float", "depth_write_enabled": True,
                            "depth_compare": "less"},
             primitive={"topology": "triangle-list", "cull_mode": "none"})
+        self.raster_msaa = device.create_render_pipeline(
+            layout="auto",
+            vertex={"module": module, "entry_point": "vertex_main",
+                    "constants": {"columns": columns}, "buffers": [{
+                "array_stride": 24, "attributes": [
+                    {"format": "float32x3", "offset": 0, "shader_location": 0},
+                    {"format": "float32x3", "offset": 12, "shader_location": 1}]}]},
+            fragment={"module": module, "entry_point": "fragment_main",
+                      "targets": [{"format": self.output.format}]},
+            depth_stencil={"format": "depth32float", "depth_write_enabled": True,
+                           "depth_compare": "less"},
+            primitive={"topology": "triangle-list", "cull_mode": "none"},
+            multisample={"count": 4})
         uniform = device.create_buffer_with_data(data=projection_matrix(width, height),
                                                 usage=wgpu.BufferUsage.UNIFORM)
         self.camera = device.create_bind_group(layout=self.raster.get_bind_group_layout(0),
                                                entries=[{"binding": 0, "resource": {"buffer": uniform}}])
-        module = device.create_shader_module(code=UPSCALE_SHADER)
-        sampler = device.create_sampler(mag_filter="linear", min_filter="linear")
-        self.upscale = {}
-        for mode in (("linear", "cubic", "cubic16") if audit else ("linear", "cubic")):
-            pipeline = device.create_render_pipeline(
-                layout="auto", vertex={"module": module, "entry_point": "full_screen"},
-                fragment={"module": module, "entry_point": mode,
-                          "targets": [{"format": self.output.format}]})
-            binding = device.create_bind_group(layout=pipeline.get_bind_group_layout(0), entries=[
-                {"binding": 0, "resource": self.low_view}, {"binding": 1, "resource": sampler}])
-            self.upscale[mode] = (pipeline, binding)
+        self.camera_msaa = device.create_bind_group(
+            layout=self.raster_msaa.get_bind_group_layout(0),
+            entries=[{"binding": 0, "resource": {"buffer": uniform}}])
 
-    def encode(self, encoder, mesh, mode, queries=None, index=0):
+    def draw_geometry(self, rendering, mesh, msaa):
         positions, indices, count = mesh
-        first = self.low_view if mode else self.output_view
-        depth = self.low_depth if mode else self.depth
-        stamps = ({"query_set": queries, "beginning_of_pass_write_index": index,
-                   "end_of_pass_write_index": index+1} if queries is not None else None)
-        rendering = encoder.begin_render_pass(
-            color_attachments=[{"view": first, "load_op": "clear", "store_op": "store",
-                                "clear_value": (0, 0, 0, 1)}],
-            depth_stencil_attachment={"view": depth, "depth_load_op": "clear",
-                                      "depth_store_op": "discard", "depth_clear_value": 1.0},
-            timestamp_writes=stamps)
-        rendering.set_pipeline(self.raster)
-        rendering.set_bind_group(0, self.camera)
+        rendering.set_pipeline(self.raster_msaa if msaa else self.raster)
+        rendering.set_bind_group(0, self.camera_msaa if msaa else self.camera)
         rendering.set_vertex_buffer(0, positions)
         rendering.set_index_buffer(indices, "uint32")
         rendering.draw_indexed(count, self.instances)
+
+    def encode(self, encoder, mesh, mode, queries=None, index=0):
+        upscaling = mode in self.upscale
+        msaa = mode == "msaa4"
+        first = (self.low_view if upscaling else
+                 self.output_msaa_view if msaa else self.output_view)
+        depth = self.low_depth if upscaling else self.depth_msaa if msaa else self.depth
+        stamps = ({"query_set": queries, "beginning_of_pass_write_index": index,
+                   "end_of_pass_write_index": index+1} if queries is not None else None)
+        color_attachment = {"view": first, "load_op": "clear", "store_op": "store",
+                            "clear_value": (0, 0, 0, 1)}
+        if msaa:
+            color_attachment["resolve_target"] = self.output_view
+        rendering = encoder.begin_render_pass(
+            color_attachments=[color_attachment],
+            depth_stencil_attachment={"view": depth, "depth_load_op": "clear",
+                                      "depth_store_op": "discard", "depth_clear_value": 1.0},
+            timestamp_writes=stamps)
+        self.draw_geometry(rendering, mesh, msaa)
         rendering.end()
-        if mode:
+        if upscaling:
             if stamps is not None:
                 stamps = {"query_set": queries, "beginning_of_pass_write_index": index+2,
                           "end_of_pass_write_index": index+3}
@@ -239,7 +291,8 @@ class Offscreen:
             up.end()
 
     def run(self, mesh, mode, frames, capture):
-        stride = 4 if mode else 2
+        upscaling = mode in self.upscale
+        stride = 4 if upscaling else 2
         count = stride * frames
         queries = self.device.create_query_set(type="timestamp", count=count)
         result = self.device.create_buffer(size=count*8,
@@ -264,7 +317,7 @@ class Offscreen:
             raise RuntimeError("GPU interval exceeds synchronized wall time")
         timing = {"rasterMs": ((ticks[:, 1] - ticks[:, 0]) * ms_per_tick).tolist(),
                   "gpuMs": duration.tolist(), "submitAndWaitMs": wall_ms}
-        if mode:
+        if upscaling:
             if np.any(ticks[:, 2] > ticks[:, 3]):
                 raise RuntimeError("Invalid reconstruction timestamp ordering")
             timing["upscaleMs"] = ((ticks[:, 3] - ticks[:, 2]) * ms_per_tick).tolist()
@@ -315,6 +368,8 @@ def main():
             gpu_indices = gpu.device.create_buffer_with_data(data=indices, usage=wgpu.BufferUsage.INDEX)
             meshes[kind] = (gpu_vertices, gpu_indices, len(indices))
         modes = {}
+        captures = {}
+        raw_captures = {}
         mode_list = (*MODES, ("parts", "cubic16")) if args.audit_filter else MODES
         for repetition in range(args.repeats):
             offset = (repetition * max(1, len(mode_list) // args.repeats)) % len(mode_list)
@@ -326,9 +381,17 @@ def main():
                 for metric, samples in timing.items():
                     row.setdefault(metric, []).extend(samples)
                 if image is not None:
+                    raw_captures[label] = image
+                    srgb_image = linear_gray_to_srgb(image)
+                    captures[label] = srgb_image
                     if label == "source-native":
-                        native = image
-                    delta = (image.astype(np.float32) - native) / 255.0
+                        references = {"native": srgb_image}
+                    if label == "source-msaa4":
+                        references["msaa4"] = srgb_image
+                    reference_key = "msaa4" if mode == "msaa4" else "native"
+                    if reference_key not in references:
+                        raise ValueError(f"Missing {reference_key} source reference before {label}")
+                    delta = (srgb_image.astype(np.float32) - references[reference_key]) / 255.0
                     row["mse"] = float(np.mean(np.square(delta, dtype=np.float64)))
                     if label == "parts-cubic":
                         combined_cubic = image
@@ -337,6 +400,17 @@ def main():
                         if gap > 2:
                             raise ValueError(f"Nine-tap bicubic and direct kernel differ by {gap}")
                         row["maxDifferenceCodeValues"] = gap
+        high_quality_reference = captures["source-msaa4"]
+        for label, image in captures.items():
+            delta = (image.astype(np.float32) - high_quality_reference) / 255.0
+            mse = float(np.mean(np.square(delta, dtype=np.float64)))
+            modes[label]["mse_vs_source_msaa4"] = mse
+            modes[label]["psnr_db_vs_source_msaa4"] = (
+                None if mse == 0 else float(-10.0 * math.log10(mse)))
+            modes[label]["ssim_vs_source_msaa4"] = float(structural_similarity(
+                high_quality_reference, image, data_range=255))
+            modes[label]["capture_sha256"] = hashlib.sha256(
+                raw_captures[label].tobytes()).hexdigest()
         for label, row in modes.items():
             print(name, label, "p50/p95 ms",
                   np.round(np.percentile(row["gpuMs"], [50, 95]), 3).tolist(), flush=True)
@@ -347,7 +421,27 @@ def main():
     document = {"adapter": dict(adapter.info), "timestampPeriodNs": gpu.timestamp_ns,
                 "size": [width, height], "instances": gpu.instances,
                 "framesPerBatch": args.frames, "batchesPerMode": args.repeats,
-                "warmupFramesPerBatch": 8, "assets": results}
+                "warmupFramesPerBatch": 8,
+                "qualityReference": "full source mesh, same camera and 4x MSAA",
+                "captureEncoding": "linear-light rgba8unorm capture; PSNR/SSIM convert grayscale to 8-bit sRGB using the IEC 61966-2-1 transfer",
+                "mseField": "mse_vs_source_msaa4 is total sRGB image error vs shared high-quality reference; mse is error vs same-AA full source",
+                "environment": {
+                    "python": sys.version,
+                    "platform": platform.platform(),
+                    "wgpu": importlib.metadata.version("wgpu"),
+                    "numpy": importlib.metadata.version("numpy"),
+                    "scikit_image": importlib.metadata.version("scikit-image"),
+                },
+                "code_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                "motion_reference_sha256": hashlib.sha256(
+                    args.motion_reference.read_bytes()).hexdigest(),
+                "input_mesh_sha256": {
+                    asset: {kind: metadata["exports"][kind]["sha256"]
+                            for kind in ("source", "qem", "whole", "parts")}
+                    for asset, metadata in manifest["assets"].items()
+                    if asset in results
+                },
+                "assets": results}
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
 

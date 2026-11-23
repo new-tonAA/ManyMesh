@@ -93,3 +93,18 @@ Existing executables and data may be from earlier source versions. Final experim
 Lindstrom–Turk 2000 already used image-error edge-collapse ranking, local redraw, dirty marking and lazy updates. DiffVG discusses prefiltering and conflation of nearby boundaries. Gaussian filtering and the Gram expansion are not inventions here. No evidence currently establishes novelty or a publishable advantage.
 
 Required next evidence: regenerated legal candidate sequences at a meaningful reduction, compared against a fair local-render baseline, with visible quality and bounded total update cost on general meshes. The 2026-11-16 frozen-pool follow-up exhaustively compared independent versus pairwise-interaction selection at 2/4 collapses and extended both to greedy 8/12-collapse schedules across six Torus views. All selectors chose identical sets, with 0% actual SSE change; 12 collapses removed only 2.08% of faces. The result closes interaction-aware ranking for this initial candidate pool, not regenerated sequences or other assets. Dynamic execution, real-mesh production validation and prior-art full-text comparison remain open. Do not enable the method by default or claim SIGGRAPH readiness. Details: [multi-collapse interaction audit](MULTI_COLLAPSE_INTERACTION_AUDIT_20261116.md) and [machine records](../../out/multi-collapse-interactions-20261116/torus.json).
+
+## Prior-art update (2026-11-22)
+
+The remaining mechanism is more constrained than generic image-driven optimization,
+but its components have close neighbors. [EdgeGrad (ECCV 2024)](https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/11059.pdf)
+provides image-loss gradients at rasterized mesh visibility edges and intersections.
+[DiffSoup (CVPR 2026)](https://openaccess.thecvf.com/content/CVPR2026/papers/Tojo_DiffSoup_Direct_Differentiable_Rasterization_of_Triangle_Soup_for_Extreme_Radiance_CVPR_2026_paper.pdf)
+reconstructs a triangle-budgeted rasterizable representation from multiview images.
+Neither directly establishes a legal, attribute-preserving collapse sequence for
+an authored connected mesh. Consequently, boundary gradients, antialiasing-aware
+loss, and image-driven triangle budgets are not sufficient novelty claims. Any
+further screen must compare legal collapse selection against EdgeGrad-based
+ranking, exact local redraw, and current topology/attribute-aware simplifiers at
+matched complete cost. The existing strip and frozen-pool results do not pass
+that gate.

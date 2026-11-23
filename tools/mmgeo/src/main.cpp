@@ -82,6 +82,10 @@ struct Options {
     //! Extra uniform-ratio cuts exported from the same DAG build, to match the triangle count
     //! of a screen-error cut without rebuilding.
     std::vector<float> targetRatioCuts;
+    //! Research-only contour-risk cuts. Each target ratio is paired with every interior scale.
+    std::vector<float> contourRatioCuts;
+    std::vector<float> contourInteriorMultipliers{ 3.0f, 4.0f, 5.0f };
+    float contourMarginDegrees = 5.0f;
     uint32_t oracleSwaps = 0;
     uint32_t oracleComposites = 0;
     bool writeDag = true;
@@ -170,6 +174,9 @@ Options:
                        exported as selected_px_<P>.ply from the same DAG build
   --target-ratio-cut R Comma separated uniform ratios; each one is exported as
                        selected_ratio_<R>.ply from the same DAG build
+  --contour-ratio-cut R Comma separated research budgets matched to uniform-ratio cuts
+  --contour-interior F Comma separated interior threshold multipliers (default: 3,4,5)
+  --contour-margin D   cone-angle margin in degrees (default: 5; clamped to [0, 90])
   --oracle-swaps N     export up to N equal-triangle split/merge candidates for the selected cut
                        (DAG mode; 0 disables, maximum 256)
   --oracle-composites N export up to N equal-triangle candidates with up to two
@@ -1560,6 +1567,150 @@ ViewCamera makeCamera(Options const& options, Mesh const& mesh) {
     return camera;
 }
 
+struct CutCameraBasis {
+    math::float3 forward{};
+    math::float3 right{};
+    math::float3 up{};
+    float tanHalfFovY = 1.0f;
+    float aspect = 1.0f;
+    bool valid = false;
+};
+
+CutCameraBasis makeCutCameraBasis(ViewCamera const& camera) {
+    CutCameraBasis basis;
+    math::float3 const forward = camera.target - camera.eye;
+    float const forwardLength = length(forward);
+    if (!(forwardLength > 1e-6f)) {
+        return basis;
+    }
+    basis.forward = forward / forwardLength;
+    math::float3 const right = cross(basis.forward, camera.up);
+    float const rightLength = length(right);
+    if (!(rightLength > 1e-6f)) {
+        return basis;
+    }
+    basis.right = right / rightLength;
+    basis.up = cross(basis.right, basis.forward);
+    basis.tanHalfFovY = std::max(std::tan(camera.fovY * 0.5f), 1e-4f);
+    basis.aspect = float(camera.screenWidth) / float(std::max(camera.screenHeight, 1u));
+    basis.valid = true;
+    return basis;
+}
+
+bool cutSphereOutsideFrustum(Sphere const& sphere, ViewCamera const& camera,
+        CutCameraBasis const& basis) {
+    math::float3 const d = sphere.center - camera.eye;
+    float const depth = dot(d, basis.forward);
+    if (depth + sphere.radius < camera.near || depth - sphere.radius > camera.far) {
+        return true;
+    }
+    float const tanX = basis.tanHalfFovY * basis.aspect;
+    float const tanY = basis.tanHalfFovY;
+    return std::abs(dot(d, basis.right)) - depth * tanX >
+                   sphere.radius * std::sqrt(1.0f + tanX * tanX) ||
+           std::abs(dot(d, basis.up)) - depth * tanY >
+                   sphere.radius * std::sqrt(1.0f + tanY * tanY);
+}
+
+bool nodeMayContainContour(LodGraphNode const& node, ViewCamera const& camera,
+        float marginRadians) {
+    if (!(node.cone.cutoff > -1.0f)) {
+        return true;
+    }
+    float const axisLength = length(node.cone.axis);
+    math::float3 const viewVector = camera.eye - node.bounds.center;
+    float const viewLength = length(viewVector);
+    if (!(axisLength > 1e-6f) || !(viewLength > 1e-6f)) {
+        return true;
+    }
+    math::float3 const axis = node.cone.axis / axisLength;
+    math::float3 const view = viewVector / viewLength;
+    float const halfAngle = std::acos(std::clamp(node.cone.cutoff, -1.0f, 1.0f));
+    float const effectiveAngle = std::min(halfAngle + marginRadians, 1.57079632679f);
+    return std::abs(dot(axis, view)) <= std::sin(effectiveAngle);
+}
+
+struct ContourCutDraft {
+    std::vector<uint32_t> nodes;
+    uint64_t triangles = 0;
+    uint64_t culledTriangles = 0;
+};
+
+void collectContourCut(LodGraph const& graph, ViewCamera const& camera,
+        CutCameraBasis const& basis, ScreenErrorProjection const& projection,
+        float scale, float interiorMultiplier, float marginRadians, uint32_t nodeId,
+        ContourCutDraft* cut) {
+    LodGraphNode const& node = graph.nodes[nodeId];
+    if (basis.valid && cutSphereOutsideFrustum(node.bounds, camera, basis)) {
+        cut->culledTriangles += node.baseTriangles;
+        return;
+    }
+
+    float const error = screenSpaceErrorForSphere(node.accumulatedError, node.bounds, projection);
+    bool const contourProne = nodeMayContainContour(node, camera, marginRadians);
+    float const threshold = scale * (contourProne ? 1.0f : interiorMultiplier);
+    if (!node.children.empty() && error > threshold) {
+        for (uint32_t child: node.children) {
+            collectContourCut(graph, camera, basis, projection, scale, interiorMultiplier,
+                    marginRadians, child, cut);
+        }
+        return;
+    }
+    cut->nodes.push_back(nodeId);
+    cut->triangles += node.triangleCount();
+}
+
+ContourCutDraft makeContourCutDraft(LodGraph const& graph, ViewCamera const& camera,
+        float scale, float interiorMultiplier, float marginRadians) {
+    ContourCutDraft cut;
+    CutCameraBasis const basis = makeCutCameraBasis(camera);
+    ScreenErrorProjection const projection = makeScreenErrorProjection(camera);
+    for (uint32_t root: graph.roots) {
+        collectContourCut(graph, camera, basis, projection, scale, interiorMultiplier,
+                marginRadians, root, &cut);
+    }
+    return cut;
+}
+
+LodGraphSelection selectContourCutAtBudget(LodGraph const& graph, ViewCamera const& camera,
+        uint64_t targetTriangles, float interiorMultiplier, float marginRadians,
+        float* selectedScale) {
+    ScreenErrorProjection const projection = makeScreenErrorProjection(camera);
+    float maxScale = 1e-6f;
+    for (LodGraphNode const& node: graph.nodes) {
+        maxScale = std::max(maxScale,
+                screenSpaceErrorForSphere(node.accumulatedError, node.bounds, projection));
+    }
+
+    float low = 0.0f;
+    float high = maxScale;
+    float bestScale = high;
+    uint64_t bestDelta = std::numeric_limits<uint64_t>::max();
+    for (uint32_t iteration = 0; iteration < 40; ++iteration) {
+        float const scale = low + (high - low) * 0.5f;
+        ContourCutDraft const draft = makeContourCutDraft(graph, camera, scale,
+                interiorMultiplier, marginRadians);
+        uint64_t const delta = draft.triangles > targetTriangles
+                ? draft.triangles - targetTriangles : targetTriangles - draft.triangles;
+        if (delta < bestDelta) {
+            bestDelta = delta;
+            bestScale = scale;
+        }
+        if (draft.triangles > targetTriangles) {
+            low = scale;
+        } else {
+            high = scale;
+        }
+    }
+
+    ContourCutDraft const draft = makeContourCutDraft(graph, camera, bestScale,
+            interiorMultiplier, marginRadians);
+    if (selectedScale != nullptr) {
+        *selectedScale = bestScale;
+    }
+    return assembleLodSelection(graph, camera, draft.nodes, draft.culledTriangles);
+}
+
 //! Does the option named by this argument require a value?
 bool optionRequiresValue(char const* arg, utils::getopt::option const* table) {
     if (arg[0] != '-' || arg[1] == '\0') {
@@ -1631,6 +1782,9 @@ int handleArguments(int argc, char* argv[], Options* options) {
         { "target-ratio", utils::getopt::required_argument, 0, 'R' },
         { "screen-error-cut", utils::getopt::required_argument, 0, 'i' },
         { "target-ratio-cut", utils::getopt::required_argument, 0, 'k' },
+        { "contour-ratio-cut", utils::getopt::required_argument, 0, 260 },
+        { "contour-interior", utils::getopt::required_argument, 0, 261 },
+        { "contour-margin", utils::getopt::required_argument, 0, 262 },
         { "oracle-swaps", utils::getopt::required_argument, 0, 256 },
         { "oracle-composites", utils::getopt::required_argument, 0, 257 },
         { "write-dag", utils::getopt::required_argument, 0, 'J' },
@@ -1749,6 +1903,58 @@ int handleArguments(int argc, char* argv[], Options* options) {
                 unsigned long long const work = std::strtoull(arg, &end, 10);
                 if (*arg == '-' || end == arg || *end != '\0') return -1;
                 options->dagDiagnosticWork = work;
+                break;
+            }
+            case 260: {
+                char const* cursor = arg;
+                while (*cursor != '\0') {
+                    char* end = nullptr;
+                    float const value = std::strtof(cursor, &end);
+                    if (end == cursor || !std::isfinite(value)) {
+                        std::cerr << "--contour-ratio-cut expects comma-separated ratios"
+                                  << std::endl;
+                        return -1;
+                    }
+                    options->contourRatioCuts.push_back(std::clamp(value, 0.0f, 1.0f));
+                    if (*end == '\0') break;
+                    if (*end != ',') {
+                        std::cerr << "--contour-ratio-cut expects comma-separated ratios"
+                                  << std::endl;
+                        return -1;
+                    }
+                    cursor = end + 1;
+                }
+                break;
+            }
+            case 261: {
+                options->contourInteriorMultipliers.clear();
+                char const* cursor = arg;
+                while (*cursor != '\0') {
+                    char* end = nullptr;
+                    float const value = std::strtof(cursor, &end);
+                    if (end == cursor || !std::isfinite(value) || value < 1.0f) {
+                        std::cerr << "--contour-interior expects positive comma-separated values"
+                                  << std::endl;
+                        return -1;
+                    }
+                    options->contourInteriorMultipliers.push_back(value);
+                    if (*end == '\0') break;
+                    if (*end != ',') {
+                        std::cerr << "--contour-interior expects comma-separated values"
+                                  << std::endl;
+                        return -1;
+                    }
+                    cursor = end + 1;
+                }
+                break;
+            }
+            case 262: {
+                float const value = float(std::atof(arg));
+                if (!std::isfinite(value) || value < 0.0f || value > 90.0f) {
+                    std::cerr << "--contour-margin must be in [0, 90] degrees" << std::endl;
+                    return -1;
+                }
+                options->contourMarginDegrees = value;
                 break;
             }
             case 'T':
@@ -1912,6 +2118,10 @@ int main(int argc, char* argv[]) {
         std::cerr << "oracle candidates require --mode dag" << std::endl;
         return 1;
     }
+    if (!options.contourRatioCuts.empty() && !options.dagMode) {
+        std::cerr << "contour-risk cuts require --mode dag" << std::endl;
+        return 1;
+    }
     if (!options.dagDiagnostics.empty() && (!options.dagMode || !options.qualityGate)) {
         std::cerr << "DAG diagnostics require --mode dag and --quality-gate 1" << std::endl;
         return 1;
@@ -2056,7 +2266,7 @@ int main(int argc, char* argv[]) {
                 file << ']';
             };
             file.precision(9);
-            file << "{\"schema\":1,\"qualityGate\":" << options.qualityGate
+            file << "{\"schema\":2,\"qualityGate\":" << options.qualityGate
                  << ",\"trialInputTriangles\":" << diagnostics.trialInputTriangles
                  << ",\"trialSeconds\":" << diagnostics.trialSeconds << ",\"groups\":[";
             for (size_t i = 0; i < diagnostics.groups.size(); ++i) {
@@ -2083,6 +2293,22 @@ int main(int argc, char* argv[]) {
                 for (size_t mask = 0; mask < p.rejectedMaskCounts->size(); ++mask) {
                     if (mask) file << ',';
                     file << (*p.rejectedMaskCounts)[mask];
+                }
+                file << "],\"rejectionDetails\":[";
+                for (size_t j = 0; j < p.rejectionDetails.size(); ++j) {
+                    auto const& r = p.rejectionDetails[j];
+                    if (j) file << ',';
+                    file << "{\"sourceIndexCount\":" << r.sourceIndexCount
+                         << ",\"targetIndexCount\":" << r.targetIndexCount
+                         << ",\"candidateIndexCount\":" << r.candidateIndexCount
+                         << ",\"attempt\":" << r.attempt
+                         << ",\"rejectMask\":" << r.rejectMask
+                         << ",\"worstNormalVertex\":" << r.worstNormalVertex
+                         << ",\"worstNormalTriangle\":" << r.worstNormalTriangle
+                         << ",\"worstUvVertex\":" << r.worstUvVertex
+                         << ",\"worstUvTriangle\":" << r.worstUvTriangle
+                         << ",\"maxNormalErrorRadians\":" << r.maxNormalErrorRadians
+                         << ",\"maxUvError\":" << r.maxUvError << '}';
                 }
                 file << "]}";
             }
@@ -2325,6 +2551,34 @@ int main(int argc, char* argv[]) {
                             ? 100.0 * double(cut.selectedTriangles) / double(graph.baseTriangles)
                             : 0.0,
                     cutPath.c_str());
+        }
+
+        for (float const ratio: options.contourRatioCuts) {
+            LodGraphSelection const uniform = selectLodGraphAtRatio(graph, camera, ratio,
+                    std::numeric_limits<float>::infinity());
+            for (float const multiplier: options.contourInteriorMultipliers) {
+                float scale = 0.0f;
+                LodGraphSelection const contour = selectContourCutAtBudget(graph, camera,
+                        uniform.selectedTriangles, multiplier,
+                        options.contourMarginDegrees * 3.14159265358979323846f / 180.0f,
+                        &scale);
+                GeometryOutput const cutGeometry = outputFromDagSelection(contour);
+                char name[96];
+                std::snprintf(name, sizeof(name),
+                        options.dumpPly ? "selected_contour_r%g_k%g_m%g.ply"
+                                        : "selected_contour_r%g_k%g_m%g.obj",
+                        double(ratio), double(multiplier), double(options.contourMarginDegrees));
+                std::string const cutPath = join(options.outDir, name);
+                writeGeometry(dagMesh, cutGeometry, cutPath.c_str(), options, nullptr, nullptr);
+                int64_t const faceDelta = int64_t(contour.selectedTriangles) -
+                                          int64_t(uniform.selectedTriangles);
+                printf("  contour cut ratio %.4g, k %.3g, margin %.3g deg: "
+                       "%llu vs uniform %llu triangles (delta %+lld), scale %.6g px, wrote %s\n",
+                        double(ratio), double(multiplier), double(options.contourMarginDegrees),
+                        (unsigned long long) contour.selectedTriangles,
+                        (unsigned long long) uniform.selectedTriangles,
+                        (long long) faceDelta, double(scale), cutPath.c_str());
+            }
         }
 
         std::vector<uint8_t> const blob = serializeLodGraph(graph);

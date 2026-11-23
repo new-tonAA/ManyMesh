@@ -175,3 +175,48 @@ filtered image loss over a camera path* beat a well-sampled multi-view baseline 
 and total cost? Any such work must include exact raster/filter event costs, compare against the
 existing image-driven simplification baseline, and stop if ranking or benefit does not generalize
 across assets, paths, phase, and resolution.
+
+## Multi-asset finite-orbit subset regret screen (2026-11-18)
+
+Extended the frozen 48-candidate pool to 16 uniformly spaced angles for Pirate and Monkey, retaining
+the existing 32-angle Torus report. For each report, scored candidate means on systematic phase
+offsets and 500 deterministic random angle subsets, selected the subset-mean winner, and measured
+its regret against the winner over that report's full sampled orbit. Regret is normalized by the
+median candidate's full-orbit mean loss. This is a finite-orbit diagnostic: Pirate and Monkey have
+16 oracle angles (not a dense or continuous integral), candidates are independent single collapses,
+and subset construction / rendering cost is not measured as a speedup.
+
+| Asset | Orbit samples | Full-orbit winner | Zero candidate-view scores | Samples at first tested >=90% winner match | Worst normalized regret at that sample count |
+|---|---:|---:|---:|---:|---:|
+| Torus | 32 | 2275 | 0% | 4/32 (96.9%) | 0.712x at 4 views; 0 at 8 views |
+| Pirate | 16 | 2588 | 5.1% | 12/16 (95.0%) | 39.62x |
+| Monkey | 16 | 42909 | 7.0% | 12/16 (93.6%) | 194.4x |
+
+At half the orbit, Pirate and Monkey winner-match rates were 73.9% and 73.5%; their p95 normalized
+regrets were 39.62x and 194.4x. Winner identity is tie-sensitive when some candidates have zero
+loss, so report both winner-match and full-orbit regret. The results reject a cheap, generic sparse
+view approximation for this frozen pool: Torus is unusually easy, while Pirate and Monkey require
+most of the sampled orbit to control tail regret. They do not test an event-integrated algorithm,
+which remains unsupported and is not promoted to an active candidate.
+
+Reproduction:
+
+```powershell
+python -I tools/mmgeo/audit_camera_rank_stability.py out/filter-real-candidates/pirate.json out/fragment-transactions-cost-audit/pirate.json --frames 16 --out out/camera-rank-stability/pirate-pool0-16.json
+python -I tools/mmgeo/audit_camera_rank_stability.py out/filter-real-candidates/monkey.json out/fragment-transactions-cost-audit/monkey.json --frames 16 --out out/camera-rank-stability/monkey-pool0-16.json
+python -I tools/mmgeo/summarize_camera_orbit_sampling.py out/camera-rank-stability/torus-pool0-32.json out/camera-rank-stability/pirate-pool0-16.json out/camera-rank-stability/monkey-pool0-16.json --out out/camera-rank-stability/subset-regret-20261118.json
+```
+
+The analysis uses NumPy `default_rng(9173 + k)` and 500 random subsets per subset size, in addition
+to all systematic offsets when the view count is divisible by `k`. Analysis script SHA256 is
+`944e2fe57c963365a0d88abf876e3c474d98c016596a40c52033fee675e03c48`. Frozen report SHA256 values:
+Torus `ec089179fe7c7cd7e73a8c8c4145755af42d2e0e28099d470dd41a2134d8c9ae`, Pirate
+`4cf62dbcf9c28197bac0a5cc8e5e2ba080c6c5a350515b107c98a82d7e90d2ef`, Monkey
+`13f3a3cf37dd3e5c94611b25a983e12e42c0d681f69cafcbea406e9c5a17f81e`; aggregate JSON hash
+`3751d8039237a9fe2e78e9934ac6eba6271b0d4f804a03419c1eb1a975bf0c10`.
+
+**Decision:** do not pursue generic sparse-view selection or event-driven caching based on these
+results. Reopen only with an event method that has a clear cost model and demonstrably lower total
+work than dense image-driven scoring on held-out assets, paths, phases, and resolutions. Neither this
+screen nor the two-candidate orbit preflight establishes a new algorithm, a quality gain, or SIGGRAPH
+readiness.

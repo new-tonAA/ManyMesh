@@ -19,6 +19,7 @@
 #include <meshoptimizer.h>
 
 #include <algorithm>
+#include <cmath>
 #include <functional>
 #include <unordered_map>
 #include <utility>
@@ -26,6 +27,75 @@
 
 namespace filament {
 namespace manymesh {
+
+Cone mergeNormalCones(Cone const& a, Cone const& b) noexcept {
+    constexpr float kAxisEpsilon = 1e-6f;
+    constexpr float kAngleEpsilon = 1e-4f;
+    constexpr float kPi = 3.14159265358979323846f;
+
+    Cone result;
+    result.apex = (a.apex + b.apex) * 0.5f;
+
+    auto const fullSphere = [&result]() {
+        result.axis = { 0.0f, 0.0f, 1.0f };
+        result.cutoff = -1.0f;
+        return result;
+    };
+    auto const finiteVector = [](math::float3 v) {
+        return std::isfinite(v.x) && std::isfinite(v.y) && std::isfinite(v.z);
+    };
+
+    if (!finiteVector(a.axis) || !finiteVector(b.axis) || !std::isfinite(a.cutoff) ||
+            !std::isfinite(b.cutoff)) {
+        return fullSphere();
+    }
+
+    float const axisLengthA = length(a.axis);
+    float const axisLengthB = length(b.axis);
+    if (!(axisLengthA > kAxisEpsilon) || !(axisLengthB > kAxisEpsilon)) {
+        return fullSphere();
+    }
+
+    math::float3 const axisA = a.axis / axisLengthA;
+    math::float3 const axisB = b.axis / axisLengthB;
+    float const angleA = std::acos(std::clamp(a.cutoff, -1.0f, 1.0f));
+    float const angleB = std::acos(std::clamp(b.cutoff, -1.0f, 1.0f));
+    float const cosine = std::clamp(dot(axisA, axisB), -1.0f, 1.0f);
+    float const centerAngle = std::acos(cosine);
+
+    math::float3 axis;
+    float angle = 0.0f;
+    if (angleA >= centerAngle + angleB) {
+        axis = axisA;
+        angle = angleA;
+    } else if (angleB >= centerAngle + angleA) {
+        axis = axisB;
+        angle = angleB;
+    } else if (centerAngle <= kAxisEpsilon) {
+        axis = axisA;
+        angle = std::max(angleA, centerAngle + angleB);
+    } else if (kPi - centerAngle <= kAngleEpsilon) {
+        // The shortest great-circle arc is ambiguous for antipodal axes. A full sphere is a
+        // conservative fallback and avoids choosing a numerically unstable separating plane.
+        return fullSphere();
+    } else {
+        angle = 0.5f * (centerAngle + angleA + angleB);
+        float const moveFromA = 0.5f * (centerAngle + angleB - angleA);
+        float const denominator = std::sin(centerAngle);
+        axis = axisA * (std::sin(centerAngle - moveFromA) / denominator) +
+               axisB * (std::sin(moveFromA) / denominator);
+        float const axisLength = length(axis);
+        if (!(axisLength > kAxisEpsilon) || !finiteVector(axis)) {
+            return fullSphere();
+        }
+        axis = axis / axisLength;
+    }
+
+    angle = std::min(kPi, angle + kAngleEpsilon);
+    result.axis = axis;
+    result.cutoff = angle >= kPi ? -1.0f : std::cos(angle);
+    return result;
+}
 
 namespace {
 

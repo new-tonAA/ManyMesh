@@ -46,18 +46,6 @@ Sphere mergeSpheres(Sphere const& a, Sphere const& b) {
     return result;
 }
 
-//! Cone that contains both inputs: the widest of the two, which is the smallest cutoff.
-Cone mergeCones(Cone const& a, Cone const& b) {
-    math::float3 const axis = a.axis + b.axis;
-    float const axisLength = length(axis);
-
-    Cone result;
-    result.apex = a.apex;
-    result.axis = axisLength > 0.0f ? axis / axisLength : a.axis;
-    result.cutoff = std::min(a.cutoff, b.cutoff);
-    return result;
-}
-
 } // anonymous namespace
 
 ClusterSet groupClusters(ClusterSet const& clusters, GroupOptions const& options) {
@@ -174,7 +162,7 @@ ClusterSet groupClusters(ClusterSet const& clusters, GroupOptions const& options
         for (size_t i = 1; i < members.size(); ++i) {
             Cluster const& member = clusters.clusters[members[i]];
             group.bounds = mergeSpheres(group.bounds, member.bounds);
-            group.cone = mergeCones(group.cone, member.cone);
+            group.cone = mergeNormalCones(group.cone, member.cone);
             group.indices.insert(group.indices.end(),
                     member.indices.begin(), member.indices.end());
         }

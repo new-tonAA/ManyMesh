@@ -1461,6 +1461,23 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
 
         for (Candidate const& candidate: candidates) {
             LodLevel const& level = candidate.level;
+            if (profile != nullptr && profile->rejectedMaskCounts != nullptr &&
+                    level.simplified && !candidate.acceptable) {
+                SimplifyRejectObservation const observation {
+                    source.size(),
+                    attemptTarget,
+                    level.indices.size(),
+                    attempt + 1,
+                    candidate.rejectMask,
+                    level.attributes.worstNormalVertex,
+                    level.attributes.worstNormalTriangle,
+                    level.attributes.worstUvVertex,
+                    level.attributes.worstUvTriangle,
+                    level.attributes.maxNormalErrorRadians,
+                    level.attributes.maxUvError,
+                };
+                profile->rejectionDetails.push_back(observation);
+            }
             if (options.verbose && level.simplified && !candidate.acceptable) {
                 std::fprintf(stderr,
                         "quality reject: source=%zu target=%zu got=%zu attempt=%u "
@@ -1771,6 +1788,8 @@ std::vector<ClusterLods> simplifyClusters(Mesh const& mesh, ClusterSet const& cl
             profile->cornerCandidates += local.cornerCandidates;
             profile->meshoptCandidates += local.meshoptCandidates;
             profile->accepted += local.accepted;
+            profile->rejectionDetails.insert(profile->rejectionDetails.end(),
+                    local.rejectionDetails.begin(), local.rejectionDetails.end());
             if (local.rejectedMaskCounts) {
                 if (!profile->rejectedMaskCounts) {
                     profile->rejectedMaskCounts =

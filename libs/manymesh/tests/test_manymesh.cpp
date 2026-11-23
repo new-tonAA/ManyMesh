@@ -2834,6 +2834,46 @@ TEST(ManyMesh, SelectedCutDropsFacesDuplicatedAtWeldedPositions) {
     EXPECT_EQ(selection.indices.size(), 3u);
 }
 
+TEST(ManyMesh, MergeNormalConesConservativelyContainsBothInputs) {
+    constexpr float pi = 3.14159265358979323846f;
+    constexpr float degreesToRadians = pi / 180.0f;
+    auto const unit = [](math::float3 value) { return value / length(value); };
+    auto const angle = [&unit](math::float3 a, math::float3 b) {
+        return std::acos(std::clamp(dot(unit(a), unit(b)), -1.0f, 1.0f));
+    };
+    auto const contains = [&angle](Cone const& outer, Cone const& inner) {
+        float const outerAngle = std::acos(std::clamp(outer.cutoff, -1.0f, 1.0f));
+        float const innerAngle = std::acos(std::clamp(inner.cutoff, -1.0f, 1.0f));
+        return angle(outer.axis, inner.axis) + innerAngle <= outerAngle + 5e-4f;
+    };
+
+    Cone const a{ {}, { 0.0f, 0.0f, 1.0f }, std::cos(20.0f * degreesToRadians) };
+    Cone const b{ {}, { 1.0f, 0.0f, 0.0f }, std::cos(10.0f * degreesToRadians) };
+    Cone const merged = mergeNormalCones(a, b);
+    EXPECT_TRUE(contains(merged, a));
+    EXPECT_TRUE(contains(merged, b));
+}
+
+TEST(ManyMesh, MergeNormalConesHandlesContainmentAndAntipodalAxes) {
+    constexpr float pi = 3.14159265358979323846f;
+    Cone const broad{ {}, { 0.0f, 0.0f, 1.0f }, std::cos(60.0f * pi / 180.0f) };
+    Cone const narrow{ {}, { 0.0f, 0.0f, 1.0f }, std::cos(10.0f * pi / 180.0f) };
+    Cone const contained = mergeNormalCones(broad, narrow);
+    EXPECT_NEAR(contained.cutoff, broad.cutoff, 2e-4f);
+
+    Cone const opposite{ {}, { 0.0f, 0.0f, -1.0f }, 1.0f };
+    Cone const antipodal = mergeNormalCones(narrow, opposite);
+    EXPECT_EQ(antipodal.cutoff, -1.0f);
+}
+
+TEST(ManyMesh, MergeNormalConesInvalidInputFailsOpen) {
+    Cone const valid{ {}, { 0.0f, 0.0f, 1.0f }, 0.9f };
+    Cone invalid = valid;
+    invalid.axis = {};
+    Cone const merged = mergeNormalCones(valid, invalid);
+    EXPECT_EQ(merged.cutoff, -1.0f);
+}
+
 namespace {
 
 Mesh makeBakeQuad(math::float3 normal) {

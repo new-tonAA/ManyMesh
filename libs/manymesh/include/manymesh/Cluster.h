@@ -44,6 +44,10 @@ struct Cone {
     float cutoff = 0.0f;  //!< cos(half angle) within which the cone is guaranteed to contain the normals
 };
 
+//! Returns a cone whose angular cap contains the normal directions in both inputs.
+//! Invalid input conservatively produces a full-sphere normal cone (cutoff = -1).
+Cone mergeNormalCones(Cone const& a, Cone const& b) noexcept;
+
 /**
  * One group of triangles that is simplified, selected and (eventually) culled as a unit.
  *

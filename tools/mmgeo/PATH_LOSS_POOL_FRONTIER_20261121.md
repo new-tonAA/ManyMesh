@@ -115,7 +115,48 @@ Remove `--axis-row-cache` for the matched baseline. Raw runs are ignored under `
 
 ## Decision
 
-The exact path-loss direction still shows a **three-asset quality signal at pool 2**, under a shallow measured memory footprint, but remains much slower than QEM. The bounded axis-scanline cache passed exactness checks and sped up two 4% runs; it was 2.47x slower on the full 20% Torus target even after selective row invalidation. Exact lower-bound pruning, face-record reuse, simple vectorization, and a native per-ray kernel did not close the gap. Candidate-specific view ordering did not give a consistent win; a fixed secondary-view reorder was a small improvement in two full runs. Treat path loss as a research quality objective, not a practical simplifier at this implementation speed. The next step is to pivot to a structural algorithmic hypothesis with a credible end-to-end complexity advantage, while retaining exact path loss as an evaluator or quality guard where useful. The native batch route cannot be evaluated while Windows Application Control blocks its DLL; no code relying on that route remains in the worktree.
+### 4% Monkey cache replication (2026-11-22)
+
+I checked whether the bounded row cache's two-asset 4% speed result extends to
+Monkey. The same pool-4 path run reduced 15,744 to 15,114 triangles. Cached and
+uncached runs selected the same 315 edges and placements; the maximum per-view
+fit-score difference was `3.93e-16`, and the independent fit-view audit differed
+by at most `1.40e-16` per pixel. These confirm that the cache preserves this
+selected sequence within floating-point noise.
+
+In this single serial timing pair, path-scoring CPU fell from 35.69 s to 14.50 s.
+Including queue and view setup, path construction fell from 38.67 s to 17.54 s;
+the matched QEM construction took 4.59 s. Thus the cache makes this path run 2.20x
+faster than its uncached implementation, but the cached path is still 3.82x slower
+than QEM. The 20,000-line source-cache cap evicted over 2.2 million lines per view
+and produced only a 4.6-7.3% source-line hit rate. Current-scene cache hit rates
+were about 80-82%.
+
+The six held-out geometry-proxy views showed identical coverage MSE, mean depth-MSE
+change `-4.77e-14`, and mean flat-normal squared-distance change `-3.58e-8` versus
+QEM: effectively no quality difference. The path mesh's max displacement bound
+was also slightly higher (`0.05572` versus `0.05370`). This 4% result therefore
+adds an exactness/runtime replication, not a quality win. It does not overturn the
+20% three-asset quality signal or make path scoring competitive with QEM.
+
+The [paired audit receipt](PATH_LOSS_CACHE_MONKEY_4PCT_20261122.json) records input,
+code, and run hashes. The ignored raw reports are
+`out/pathloss-captures/monkey-96px-pool4-no-cache-4pct.json` and
+`out/pathloss-captures/monkey-96px-pool4-axis-row-cache-4pct.json`; recreate the
+paired held-out audit with:
+
+```powershell
+python tools/mmgeo/audit_path_loss_cache_pair.py `
+  --capture out/filter-real-candidates/monkey.json `
+  --baseline out/pathloss-captures/monkey-96px-pool4-no-cache-4pct.json `
+  --cached out/pathloss-captures/monkey-96px-pool4-axis-row-cache-4pct.json `
+  --out out/pathloss-captures/monkey-96px-pool4-axis-row-cache-4pct-heldout.json
+```
+
+The cache does not clear a quality-cost gate. Exact path loss remains an evaluator
+or possible quality guard, not a practical simplifier at the measured cost. The
+native batch route cannot be evaluated while Windows Application Control blocks
+its DLL; no code relying on that route remains in the worktree.
 
 The quality evidence is still limited to a geometry/flat-normal CPU proxy, six held-out paths, and three authored assets. A submission claim additionally needs more independent meshes, perspective or rotating paths, shaded RGB/material evaluation, randomized repetitions, and a focused comparison with viewcell, analytic rasterization, and kinetic-visibility prior work.
 

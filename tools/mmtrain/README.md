@@ -1,5 +1,126 @@
 # mmtrain
 
+## Decoder image-quality evaluation
+
+[The multi-asset quality screen](CLUSTER_DECODER_QUALITY_20261121.md) compares
+PSNR, canonical SSIM, official LDR-FLIP, LPIPS-SqueezeNet, silhouette XOR, and coverage
+error over 12 identical views per asset. It includes preparation/decoder failures,
+asset-paired uncertainty, all-model panels, and FLIP error maps. A rank-8 linear
+control worsens validation quality; residual-label fitting is not visual improvement.
+The [sampled surface screen](CLUSTER_DECODER_SURFACE_QUALITY_20261121.md) adds
+bidirectional Chamfer estimates and normal consistency for the same frozen model
+and paired assets. Both notes state sampling conventions, failures, dependencies,
+and reproduction commands.
+
+## Cluster decoder quality screens
+
+The [meshoptimizer comparison](CLUSTER_DECODER_MESHOPT_20261122.md) reports image and
+sampled surface metrics at matched face counts. It closes the tested rank-8
+fixed-displacement and local-refinement configurations: the former makes no visible
+change on the meshoptimizer base, and the latter loses to direct meshoptimizer
+simplification at equal final face count. Results are development-only; the test split
+was not evaluated. Machine-readable paired values and failure records are in
+[the same-face receipt](cluster_decoder_meshopt_screen_20261122.json) and
+[the refinement receipt](cluster_decoder_refine_budget_20261122.json).
+
+The [rank 8/16/30 capacity screen](CLUSTER_DECODER_RANK_SWEEP_20261122.md)
+compares the frozen polynomial linear-subspace control on the same train/validation
+assets. Higher ranks increase model and sidecar bytes but do not improve paired
+validation image metrics; the [receipt](cluster_decoder_rank_sweep_20261122.json)
+records hashes, decode failures, storage, and asset-level intervals.
+
+The [latent-scale probe](CLUSTER_DECODER_SCALE_PROBE_20261122.md) multiplies
+the frozen rank-8 validation latents by five scales. All nonzero scales worsen
+PSNR, SSIM, FLIP, and LPIPS on four paired assets; the fifth rejects each
+nonzero decode. The per-asset optimum is explicitly an oracle. Raw per-view
+metrics and the reproducible [summary receipt](cluster_decoder_scale_oracle_20261122.json)
+are linked from the report.
+
+The [70%-retention QEM/meshoptimizer sweep](CLUSTER_DECODER_BASELINE_70PCT_VALIDATION_20261122.md)
+extends the baseline quality comparison to all eight validation assets. It reports
+per-asset PSNR, SSIM, LDR-FLIP, silhouette, sampled surface distances, bootstrap
+intervals, and topology failures. One meshoptimizer output fails strict topology;
+LPIPS is not included in this supplemental screen. The full per-view data is in
+[the machine-readable receipt](cluster_decoder_qem_meshopt_validation_70pct_20261122.json).
+
+The [upstream cluster LOD baseline](UPSTREAM_CLUSTERLOD_SCREEN_20261122.md)
+tests the stock meshoptimizer v1.2 hierarchy on eight validation meshes. The
+comparison includes exact-face whole-mesh QEM pairs and a ManyMesh face-cap
+and complete-cut topology audit. The report identifies both native binaries.
+
+The [geometry codec screen](GEOMETRY_CODEC_RATE_DISTORTION_20261122.md) sweeps
+position precision for Draco and the meshoptimizer codecs on the eight
+validation assets. It reports complete geometry payload bytes, decoded render
+quality, warm CPU decode time, and topology failures for full and simplified meshes.
+
+The [grid origin experiment](QUANTIZATION_GRID_ORIGIN_20261122.md) tests whether
+changing the origin of a uniform Draco position grid preserves admissible
+geometry at a coarser precision. On validation, the two substantial byte savings
+both worsen LDR-FLIP. The tested search is closed as a contribution candidate.
+
+The [SMAA and silhouette-band screen](GPU_SMAA_SILHOUETTE_BAND_SCREEN_20261122.md)
+extends the 13-asset desktop benchmark with the Bevy port of SMAA and a shared
+supersampled reference. It records GPU samples, LDR-FLIP, PSNR, SSIM, and how much
+squared error can be removed inside a band around the coarse silhouette.
+The [renderable half-resolution guide follow-up](SILHOUETTE_GUIDE_FUSION_20261122.md)
+includes the extra raster and fusion costs. Both variants lose to a faster
+control across all three image metrics on each of the 13 assets.
+The [native-resolution sparse guide](SPARSE_SILHOUETTE_GUIDE_SCREEN_20261122.md)
+uses fixed-view triangle selection and reproduces the full guide inside the
+coarse outline band. It improves FLIP within its GPU budget on 2/13 assets.
+The [million-triangle mixed-scene benchmark](MIXED_SCENE_BASELINES_20261122.md)
+adds a shared depth buffer, eleven measured modes, and two stock
+meshoptimizer cluster cuts across three arrangements and nine views.
+The [layout control](MIXED_SCENE_LAYOUT_CONTROL_20261122.md) applies a common
+cache and vertex-fetch policy. It reverses the supplied-layout depth 2 speed
+ranking while retaining its image-quality advantage.
+The [face-budget control](MIXED_SCENE_FACE_BUDGETS_20261122.md) compares
+exact and near-exact QEM targets and remeasures all AA modes with optimized
+buffers. It also separates source normals from stock geometry.
+The [whole-asset LOD allocation screen](MIXED_SCENE_LOD_ALLOCATION_20261122.md)
+compares area, leave-one-view-out FLIP fitting, and an exhaustive per-view
+oracle for 384 stock-depth assignments with the incidence screen enabled.
+The [per-instance screen](MIXED_SCENE_INSTANCE_LOD_20261122.md) adds actual
+split draws, a cheap bounds-based policy, and two visibility diagnostics.
+
+The matching [training-split screen](CLUSTER_DECODER_BASELINE_70PCT_TRAIN_20261122.md)
+adds 16 development assets under the same protocol. One QEM output is rejected;
+only 10 of 15 paired meshoptimizer outputs pass strict topology and boundary checks.
+These training results are kept separate from validation intervals and are not
+generalization evidence. See the
+[training receipt](cluster_decoder_qem_meshopt_train_70pct_20261122.json).
+
+The [50%-retention screen](SILHOUETTE_ERROR_ATTRIBUTION_20261122.md) extends the
+same paired geometry comparison and attributes image error to pixels whose
+binary coverage differs. In the tested train and validation screens this share
+is 27%-37% on average, so the historical 68.3% Monkey view is not a universal
+error profile. Its per-view receipts include all standard image and sampled
+surface metrics plus simplifier/topology failures.
+
+## Cluster decoder mechanical prototype
+
+`cluster_decoder.py` is an untrained polynomial control for per-cluster float32
+sidecars. It runs on CPU, fixes interface/source-boundary positions, and optionally
+splits a face into three without changing shared edges. Mesh/model hashes bind the
+sidecar to its inputs. No production MMB or renderer API changes are involved.
+
+Run the invariant tests and training-only geometry smoke check separately:
+
+```powershell
+python -m unittest discover -s tools/mmtrain -p test_cluster_decoder.py -v
+python tools/mmtrain/cluster_decoder_pilot.py `
+  out/thingi10k-metadata/meshes/download_manifest.json `
+  --out out/cluster-decoder-train-smoke --limit 16
+```
+
+The smoke runner reads only `train` entries and emits base/model NPZ files,
+fixed/refined sidecars, decoded meshes, and report.json under the output directory.
+Default refinement adds 16 triangles (eight centroid splits). Identity output
+tests mechanics, not quality. Byte counts include container overhead; peak memory
+is cumulative process working set/RSS, not an isolated decoder allocation peak.
+Local audits do not establish global intersection freedom, vertex-link manifoldness,
+or authored-attribute correctness. Full protocol: [decoder study](../../MANYMESH_CLUSTER_DECODER_STUDY.md).
+
 ## Equal-triangle LOD experiment
 
 `lod_oracle.py` measures whether an image reconstruction model changes which parts of a mesh
@@ -813,6 +934,19 @@ The two runs peaked at about 396 MiB host process working set. These measurement
 an offscreen raster and reconstruction workload with fixed lighting. Presentation,
 Filament material and scene costs, and a live LOD update still need separate timing.
 
+The [1080p MSAA and upscale screen](CLUSTER_DECODER_GPU_MSAA_1080_BASELINE_20261122.md)
+extends this harness with native-resolution 4x MSAA and compares sRGB-encoded
+PSNR/SSIM against a shared full-source MSAA reference. It tests three 16-instance scenes on Iris Xe.
+Results vary by asset; they are offscreen desktop evidence only. The complete
+measurements and source hashes are in the [1080p receipt](cluster_decoder_gpu_msaa_1080_20261122.json).
+A 1280x720 repeat is available in the [supplementary report](CLUSTER_DECODER_GPU_MSAA_BASELINE_20261122.md)
+and [receipt](cluster_decoder_gpu_msaa_20261122.json).
+
+The expanded [13-asset 720p quality and cost screen](CLUSTER_DECODER_GPU_MSAA_13ASSET_SCREEN_20261122.md)
+compares a frozen per-asset component cut plus 4x MSAA against full-source
+linear reconstruction. It reports sRGB PSNR/SSIM, paired asset bootstrap
+intervals, per-asset GPU p50/p95, and the raw [receipt](cluster_decoder_gpu_msaa_720_13assets_20261122.json).
+
 ```powershell
 $pilotRoot = 'out/geometry-refinement-pilot'
 python -m pip install --no-deps --target "$pilotRoot/gpu-deps" wgpu==0.32.0 rendercanvas==2.6.3
@@ -886,6 +1020,74 @@ trade-offs for the isolated-cell workload.
 $pilotRoot = 'out/geometry-refinement-pilot'
 $env:PYTHONPATH = (Resolve-Path "$pilotRoot/gpu-deps").Path
 python tools/mmtrain/bench_dynamic_lod.py "$pilotRoot/motion-meshes" --motion-reference "$pilotRoot/motion-96.json" --asset ToyCar GlassVaseFlowers StainedGlassLamp --size 1920x1080 --frames 48 --test-pair alternate --timing-repeats 3 --out "$pilotRoot/dynamic-repeat-1080.json"
+```
+
+### Expanded held-out screen: 13 assets
+
+The earlier three-asset screen was extended to every available Khronos asset with the same
+frozen source/component pairs. The 24-frame turntable (path 0) is the only calibration input;
+paths 1 through 4 are four distinct held-out 48-frame trajectories. Each frame retains the
+same sixteen instances, four-source/twelve-component allocation, triangle quota, and two
+instanced draws. This is a per-asset calibrated policy, not a shared cross-asset predictor.
+
+The primary comparison is the selected ranker with fixed hysteresis versus area ranking with
+the same hysteresis. PSNR is exact over all 192 held-out frames per asset. Gaussian-window
+SSIM and thresholded silhouette IoU are measured on four fixed frames per path (frames 0, 16,
+32, and 47). The render is an 8-bit grayscale, flat-shaded diagnostic with isolated screen
+cells. It does not include authored materials, occlusion, FLIP/LPIPS, user preference, power,
+or presentation. Asset-level paired bootstrap intervals do not count frames as independent.
+The thirteen assets and source/component pairs are reused development data; the component
+meshes were selected by earlier fitting-view experiments. These results hold out motion paths,
+not assets, and per-asset profile fitting time is excluded from runtime.
+
+Across the 13 models, mean PSNR changes by +0.258 dB (95% asset-bootstrap CI [+0.128,
++0.403]); SSIM changes by +0.000112 [-0.000041, +0.000319] and silhouette IoU by +0.000010
+[-0.000211, +0.000236]. The selected ranker improves PSNR on 11/13 assets, SSIM on 6/13,
+and silhouette IoU on 6/13. Median per-asset p95 CPU selection/upload/submission rises from
+0.664 ms for area hysteresis to 0.649 ms for the selected policy. Median asset p95 raster-
+pass GPU timestamps are 0.560 ms for area and 0.272 ms for the selected policy, but do not
+include presentation or frame pacing. Selector-only p95 is 0.072 ms and 0.110 ms, respectively.
+The screen demonstrates a limited ranking
+feasibility result, not a SIGGRAPH contribution or mobile result. Benefit/cost LOD allocation
+and hysteresis have direct precedent in [Funkhouser and Sequin's Adaptive Display Algorithm
+(1993)](https://gfx.cs.princeton.edu/gfx/pubs/Funkhouser_1993_ADA/index.php). A distinct
+method and a real-scene, full-cost result would be required to reopen this branch.
+
+The raw receipts and asset-level summary are kept under the ignored `out/` directory. The
+compact report is [DYNAMIC_LOD_13ASSET_20261122.md](DYNAMIC_LOD_13ASSET_20261122.md).
+
+```powershell
+$pilotRoot = 'out/geometry-refinement-pilot'
+$env:PYTHONPATH = (Resolve-Path "$pilotRoot/gpu-deps").Path
+$assetNames = @(Get-ChildItem "$pilotRoot/motion-meshes" -Directory | Select-Object -ExpandProperty Name)
+python tools/mmtrain/bench_dynamic_lod.py "$pilotRoot/motion-meshes" --motion-reference "$pilotRoot/motion-96.json" --asset $assetNames --size 1920x1080 --frames 48 --test-pair initial --timing-repeats 3 --out "$pilotRoot/dynamic-13asset-1080-initial-quality-20261122.json"
+python tools/mmtrain/bench_dynamic_lod.py "$pilotRoot/motion-meshes" --motion-reference "$pilotRoot/motion-96.json" --asset $assetNames --size 1920x1080 --frames 48 --test-pair alternate --timing-repeats 3 --out "$pilotRoot/dynamic-13asset-1080-alternate-quality-20261122.json"
+python tools/mmtrain/summarize_dynamic_lod.py --initial "$pilotRoot/dynamic-13asset-1080-initial-quality-20261122.json" --alternate "$pilotRoot/dynamic-13asset-1080-alternate-quality-20261122.json" --out-json "$pilotRoot/dynamic-13asset-quality-summary-20261122.json" --out-markdown tools/mmtrain/DYNAMIC_LOD_13ASSET_20261122.md
+```
+
+### Shared profile: leave one asset out
+
+Per-asset calibration can use each model's own turntable images. To test transfer, a second
+screen fits each held-out asset's direction/scale profile from the other twelve models.
+Training errors are normalized to unit mean SSE per asset. Cross-validation chooses the
+profile family by leaving each training asset out in turn. The held-out asset contributes no
+image or profile data to its outer fold. This is asset-fold evaluation on the same reused
+development corpus; it is not a fresh confirmation set.
+
+The shared profile does not pass the quality gate: mean PSNR change is +0.083 dB (95%
+asset-bootstrap CI [-0.019, +0.190]), SSIM is inconclusive, and silhouette IoU declines by
+0.000205 (95% CI [-0.000351, -0.000085]). Per-asset calibrated rankings had a larger PSNR
+change, but that gain does not transfer reliably. Close this profile formulation. Its
+isolated-cell renderer and the known benefit/cost LOD and hysteresis precedents do not support
+a new contribution claim. See [DYNAMIC_LOD_LOAO_13ASSET_20261122.md](DYNAMIC_LOD_LOAO_13ASSET_20261122.md).
+
+```powershell
+$pilotRoot = 'out/geometry-refinement-pilot'
+$env:PYTHONPATH = (Resolve-Path "$pilotRoot/gpu-deps").Path
+$assetNames = @(Get-ChildItem "$pilotRoot/motion-meshes" -Directory | Select-Object -ExpandProperty Name)
+python tools/mmtrain/bench_dynamic_lod.py "$pilotRoot/motion-meshes" --motion-reference "$pilotRoot/motion-96.json" --asset $assetNames --size 1920x1080 --frames 48 --test-pair initial --timing-repeats 3 --profile-scope leave-one-asset-out --out "$pilotRoot/dynamic-13asset-1080-initial-loao-20261122.json"
+python tools/mmtrain/bench_dynamic_lod.py "$pilotRoot/motion-meshes" --motion-reference "$pilotRoot/motion-96.json" --asset $assetNames --size 1920x1080 --frames 48 --test-pair alternate --timing-repeats 3 --profile-scope leave-one-asset-out --out "$pilotRoot/dynamic-13asset-1080-alternate-loao-20261122.json"
+python tools/mmtrain/summarize_dynamic_lod.py --initial "$pilotRoot/dynamic-13asset-1080-initial-loao-20261122.json" --alternate "$pilotRoot/dynamic-13asset-1080-alternate-loao-20261122.json" --out-json "$pilotRoot/dynamic-13asset-loao-summary-20261122.json" --out-markdown tools/mmtrain/DYNAMIC_LOD_LOAO_13ASSET_20261122.md
 ```
 
 ## Fairness note

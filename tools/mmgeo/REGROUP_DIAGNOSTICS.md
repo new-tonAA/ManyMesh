@@ -1,92 +1,104 @@
-# 约束驱动重分组：第一阶段诊断交付
+# Constraint-driven regrouping: first diagnostic delivery
 
-当前结论：**研究假设尚未获得验证，保持诊断阶段，不启用生产重分组。**
-拒绝计数不能证明边界阻断；本次实现提供可复查的候选记录和局部筛查，
-没有产生跨资产收益或论文贡献的结论。
+The hypothesis remains unvalidated. Keep regrouping in the diagnostic phase.
+Rejection counts alone do not establish that boundaries block simplification.
+The tools provide inspectable candidates and local screens; they establish neither
+cross-asset improvements nor a paper contribution.
 
-## 已实现
+## Implementation
 
-- `LodGraphOptions::diagnostics` 默认关闭；开启后记录每个分组合并父节点构建以及
-  原流程的所有空间二分重试，包括失败的重试。记录成员、完整输入三角形、
-  显式锁掩码、输入/实际输出面数、累计误差和各质量门的拒绝次数。
-  `lockedVertices` 不包含简化器根据 `lockBorder` 隐式推导的全部锁。
-- 仅在共享精确焊接边的相邻组中筛查，至少一组原构建失败，材质与子网格一致。
-  区域不超过 16 个前沿节点，每组每层最多参与一个区域；每区域至多 16 个迁移/
-  交换方案。顺序固定。全构建的额外输入三角形工作量受显式预算限制。
-- 所有试算调用原简化器及质量门，生成顶点和索引保存在局部对象中，绝不提交。
-  基线保留现有成功父节点、空间二分结果和剩余节点。候选失败时保留其原节点。
-- 独立解析每个试算的生成顶点，以精确位置去重后统计面数；只有区域边界边集合
-  相同、没有非流形边、最大累计误差不增且面数严格下降，才标记 `improves`。
-  同面数保留基线。这个标记是**局部筛查结果**，不是整树收益或因果归因。
-- 详细记录不进入序列化；运行时选择器、单父节点结构和默认构建行为不变。
+- `LodGraphOptions::diagnostics` is disabled by default. When enabled it records
+  each merged-parent build and every existing spatial bisection retry, including
+  failures: members, complete input triangles, explicit lock masks, input/actual
+  output face counts, accumulated error, and rejection counts per quality gate.
+  `lockedVertices` excludes locks inferred implicitly by `lockBorder`.
+- Screen adjacent groups sharing an exact welded edge, with matching material
+  and submesh and at least one failed original build. Regions have at most 16 frontier
+  nodes. Each group enters at most one region per level; each region has at most 16
+  moves/swaps in fixed order. An input-triangle budget limits extra build work.
+- Trials use existing simplifiers and gates; generated vertices/indices stay local
+  and are never committed. The baseline retains successful parents, spatial retries,
+  and remaining nodes; failed candidates retain their original nodes.
+- Resolve generated vertices independently and deduplicate exact positions before
+  counting faces. Mark `improves` only when regional boundary edges match, no edge
+  is non-manifold, maximum accumulated error does not increase, and face count
+  strictly decreases. Ties retain baseline. This is a local screen, not a whole-tree
+  gain or a causal explanation.
+- Detailed records are not serialized. Runtime selection, single-parent structure,
+  and default build behavior remain unchanged.
 
-## 重现实验
+## Reproduction
 
-使用新编译的 `mmgeo`：
+Use a freshly compiled mmgeo:
 
 ```powershell
 python tools/mmgeo/regroup_diagnostics.py --mmgeo out/cmake-vulkan/tools/mmgeo/Release/mmgeo.exe
 ```
 
-脚本生成平滑曲面、薄片、折痕和 UV 接缝四类控制案例，再使用已有 Pirate、Monkey、
-Torus 开发资产。冻结设置为五层、比例 0.7、每组八节点、开启 corner simplifier 和
-质量门，其余参数沿用工具默认值；每资产额外工作上限 50,000 输入三角形。
-每个案例分别使用一线程和四线程，逐项比较账本与试算结果（时间字段除外）。
-输出位于 `out/regroup-diagnostics/`：每次运行的完整 JSON、日志和 `summary.json`。
-本脚本的三个真实资产都是开发资产，不能作为未见测试集。
+The script generates smooth-surface, thin-sheet, crease, and UV-seam controls, then
+uses existing Pirate, Monkey, and Torus development assets. Settings are five
+levels, ratio 0.7, eight nodes per group, Corner simplification and quality gates
+enabled, otherwise tool defaults. Extra work is capped at 50,000 input triangles
+per asset. One-thread and four-thread runs compare every ledger/trial field except
+timings. Full JSON, logs, and `summary.json` go to `out/regroup-diagnostics/`.
+These real assets are development data, not an unseen test set.
 
-也可单独记录账本，不执行反事实候选：
+Record a ledger without counterfactual trials with:
 
 ```powershell
 mmgeo --mode dag --dag-diagnostics ledger.json --dag-diagnostic-work 0 model.obj
 ```
 
-预算统计每个候选两组输入三角形之和；不含内部 backoff 重复处理，
-因此还须同时报告记录中的 `attempts` 和实测时间。当前预算不保证两倍时间上限。
+Budget counts both groups' input triangles per candidate, excluding internal
+backoff retries. Report `attempts` and measured time as well. The budget does not
+guarantee a factor-of-two wall-time cap.
 
-## 验证记录
+## Historical verification
 
-- 按仓库要求执行头文件整理；`mmgeo` 被整理工具的既有 namespace 安全检查跳过。
-- Visual Studio Release 构建 `test_manymesh`、`mmgeo`、`test_utils` 成功。
-  配置仍有既有的 `-fno-rtti` 和 `/Wl,--gc-sections` 不识别警告。
-- 新增隔离/预算/重复性测试初次在 Windows 通过；加强非空试算断言后，
-  Windows 系统应用控制阻止重新生成的测试程序和 mmgeo 执行，沙箱外 utils 同样被阻止。
-- 在 WSL 中通过独立 CMake 入口复用仓库的 math、meshoptimizer、gtest、manymesh
-  目标（未启用 CivetWeb），完整 ManyMesh 测试：82 通过，1 HTTP 后端测试跳过。
-  包含新增测试以及原有串行/并行确定性、组装与拓扑测试。
-- 要求的 `./build.sh -ip desktop debug` 已尝试；当前 WSL 只有 GNU 编译器，
-  仓库默认配置拒绝该编译器，完整桌面 Debug 构建未通过。utils 测试未运行成功。
-- Python 实验脚本通过语法检查，但 Windows 策略阻止其启动 mmgeo，
-  **控制案例和真实资产实验尚未取得结果**。
+- Header formatting ran; its existing namespace safety check skipped mmgeo.
+- Visual Studio Release built `test_manymesh`, `mmgeo`, and `test_utils`, with
+  existing unsupported `-fno-rtti` and `/Wl,--gc-sections` warnings.
+- New isolation, budget, and repeatability tests initially passed on Windows.
+  After stronger nonempty-trial assertions, Windows application control blocked
+  rebuilt tests and mmgeo; utils was also blocked outside the sandbox.
+- An independent WSL CMake entry reused math, meshoptimizer, gtest, and manymesh
+  without CivetWeb: 82 ManyMesh tests passed, one HTTP test skipped. This included
+  new tests and serial/parallel determinism, assembly, and topology tests.
+- `./build.sh -ip desktop debug` was attempted. WSL had only GNU compilers, which
+  default configuration rejected. Full desktop Debug and utils execution did not pass.
+- Python syntax checks passed. At this stage Windows policy prevented mmgeo runs,
+  so control and real-asset experiment results were unavailable.
 
-## 因果链中仍缺少的证据
+## Missing causal evidence
 
-1. 当前拒绝记录来自单位级质量门，没有逐边 collapse 拒绝及其因果证据。
-   单簇简化链仍使用原有聚合 profile。不能把 topology、locked 或 boundary 拒绝
-   直接命名为分组阻断。
-2. 试算沿用现有锁计算，输出边界集合相等只是筛查；尚未审计前沿节点与原叶节点
-   使用计数的口径，以及新生成位置的锁定覆盖。必须先排除这些实现因素。
-3. 尚未实现小层次的合法切分穷举与组装后全局最优比较；不能排除选择器因素。
-4. 尚无三个开发资产、两类结构上的已验证可修复机会。没有通过算法阶段入口条件。
+1. Unit-level gates do not identify individual rejected collapses or their causes.
+   Single-cluster chains retain aggregate profiles. Topology, lock, and boundary
+   rejections cannot simply be labeled grouping blockage.
+2. Trials reuse current locks. Equal output boundaries are only a screen; frontier
+   versus original-leaf usage counts and generated-position lock coverage need audit.
+3. Initially no exhaustive legal-cut or globally optimal assembled-cut comparison
+   existed, so selector effects could not be excluded.
+4. No verified repair opportunity on three development assets and two structure
+   types had passed the algorithm entry gate.
 
-因此这里交付的是第一阶段诊断工具与验证记录，因果归因报告仍不完整。
-暂停扩展生产算法，保留所有未决项。下一步必须先完成上述诊断，才能决定是否实现
-提交胜出分组的原型。等工作量随机/边界启发式对照、三档质量、至少十二个未见资产、
-百万面案例及多光照视觉检查均属于入口条件通过后的实验，当前没有相关收益数据。
+Finish diagnostics before submitting winning groups. Equal-work random/boundary
+heuristics, three quality levels, at least twelve unseen assets, a million-face
+case, and multiple-light visual checks belong after that gate; no such gains exist.
 
-## 后续复核：缓存一致性与切分审计
+## Subsequent cache and cut audit
 
-- 在启用 corner simplifier 的多层确定性测试中发现，组构建会在层与层之间向
-  `graphMesh` 追加顶点属性，而质量门的扩展网格快照按 `meshCacheEpoch` 缓存。
-  旧代码在所有层共用 epoch，会让后续层沿用旧快照。现在每层换一个 epoch；测试
-  明确断言至少有两次快照复制，并保留串行/并行逐项一致性比较。
-- 修复后重新运行七个案例（四种程序控制网格、Pirate、Monkey、Torus）的单线程和
-  四线程账本，候选与统计逐项一致。Pirate 有 48 个局部试算，0 个通过改进判定；
-  其候选面数均高于基线。Monkey 仅一组失败，没有形成候选；薄片控制网格没有失败组。
-  因此这次缓存修复是正确性/一致性修复，但没有证明它能改善分组结果。
-- 新增 `audit_lod_cuts.py`，直接读取 MMLG v7 文件，计算合法切分数量（超限时报告
-  下界），并在切分数不超过上限时穷举每种切分的组装去重面数。800 面平滑控制网格
-  共 974 种合法切分，最低组装面数与当前根切分相同。Pirate 的切分数超过 10,000，
-  本次仅得到下界，未穷举，因此对 Pirate 不能下全局最优结论。
-- 以上都没有给出可复现的候选改进，也没有推进生产重分组。小网格审计器是诊断工具，
-  不会改变构建或运行时行为。
+- Multilevel Corner determinism tests exposed stale quality-gate mesh snapshots:
+  group builds append attributes to `graphMesh` between levels while snapshots
+  used one shared `meshCacheEpoch`. Each level now uses a new epoch. Tests assert
+  at least two snapshot copies and retain serial/parallel field comparisons.
+- After the fix, all seven cases (four procedural controls, Pirate, Monkey, Torus)
+  produced identical single/four-thread candidates and statistics. Pirate had 48
+  local trials and zero improvements; candidates had more faces than baseline.
+  Monkey had one failed group and no candidate; the sheet had no failed groups.
+  This correction establishes consistency, not improved grouping.
+- `audit_lod_cuts.py` reads MMLG v7, counts legal cuts (a lower bound above the cap),
+  and exhaustively counts deduplicated assembled faces when feasible. The 800-face
+  smooth control had 974 cuts; its minimum matched the root cut. Pirate exceeded
+  10,000 cuts and was not exhausted, so global optimality remains unknown.
+- These audits produced no reproducible candidate gain and did not enable production
+  regrouping. The small-mesh auditor changes neither building nor runtime behavior.
