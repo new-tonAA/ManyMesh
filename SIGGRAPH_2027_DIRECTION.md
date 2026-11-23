@@ -64,10 +64,18 @@ deferred for presentation at SIGGRAPH 2027. [HLoD (Eurographics 2026)](https://d
 jointly optimizes a hierarchy for 3D Gaussian Splatting, and
 [T²-Splat](https://arxiv.org/html/2611.06974) combines adaptive triangle topology,
 image supervision, and scale-aware residual filtering for scene reconstruction.
-These methods use different representations or tasks, but prevent claims that
-hierarchy optimization, learned refinement, or scale-aware image fitting alone
-are new. The HLoD record exposes the paper and supplement, but their full contents
-were not available in this review. For user-preference claims, perceptual
+Neural level-of-detail and progressive geometry compression are also established:
+[N-GLOD (CVPR 2021)](https://research.nvidia.com/labs/toronto-ai/nglod/) uses
+an octree feature volume with multilevel SDF interpolation, and
+[Neural Progressive Meshes (SIGGRAPH 2023)](https://vovakim.com/papers_small/23_SIGGRAPHConference_NPM.pdf)
+transmits per-face features and progressive residuals to trade bandwidth for
+reconstruction quality. Together, these methods use different representations
+and tasks, but rule out broad “neural LOD,” “latent mesh compression,” “learned
+residual geometry,” hierarchy optimization, learned refinement, or scale-aware
+image-fitting novelty claims. They do not establish a result for a constrained
+triangle-mesh cluster DAG optimized for actual post-AA/upscaler quality. The
+HLoD record exposes the paper and supplement, but their full contents were not
+available in this review. For user-preference claims, perceptual
 silhouette and transition modeling has also been tested against observers in
 [Gaze-Contingent Perceptual LoD Prediction (EGSR 2023)](https://doi.org/10.2312/sr.20231130).
 
