@@ -73,12 +73,12 @@ A separate CPU projective silhouette fit reduced training error on two
 development assets and worsened mean LDR-FLIP on reserved views of both.
 [Projective fit](tools/mmtrain/PROJECTIVE_SILHOUETTE_CPU_20261124.md)
 
-Two preflights on six cleared assets found no complete set of legal meshes
-at matching face counts near 30% retention.
-[Input preflight](tools/mmtrain/KHRONOS_SEPARATE_BUFFER_PREFLIGHT_20261124.md)
-The NVIDIA appearance baseline still needs cleared matching inputs, frozen
-views, QEM and meshoptimizer controls, and a CUDA workstation. Advance only
-if the differentiable baseline produces a repeatable held-out gain, then
+Four licensed assets now have legal equal-face ManyMesh, QEM, and
+meshoptimizer inputs near 50% retention. The 30% preflight found no complete
+set. [Matched input receipts](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md)
+The reserved-view scorer is ready. The NVIDIA appearance baseline still
+needs a fixed training schedule and CUDA compute. Advance only if the
+differentiable baseline produces a repeatable held-out gain, then
 test the DAG constraints with real antialiasing and upscalers. See the
 [research status](MANYMESH.md) and
 [next-experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md). Mobile or preference

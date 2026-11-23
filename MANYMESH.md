@@ -33,10 +33,9 @@ hypothesis with close prior art, not a novelty claim.
   object classes, including many disconnected components and a low-detail
   window case. The pool is unfrozen and is not held out. [Expanded screen](docs/manymesh/khronos-expanded-candidate-screen-20261123.md) and
   [earlier screens](docs/manymesh/khronos-followup-candidates-20261123.md)
-- Six source meshes across two preflights supplied zero complete sets of
-  legal, exact-face ManyMesh, QEM, and meshoptimizer meshes near 30% retention.
-  [Two-asset screen](tools/mmtrain/APPEARANCE_INPUT_PREFLIGHT_20261123.md) and
-  [four-asset screen](tools/mmtrain/KHRONOS_SEPARATE_BUFFER_PREFLIGHT_20261124.md)
+- Four assets now supply boundary-preserving exact-face inputs around 50%
+  retention. The 30% preflights found no complete set. BarramundiFish and
+  Corset are the first CUDA pair. [Geometry receipts](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md)
 - A 64-view source contour priority raised mean PSNR by 0.167 dB over the
   same unweighted QEM on seven development assets at equal faces. FLIP
   was mixed, and the only all-metric win over meshoptimizer also occurred

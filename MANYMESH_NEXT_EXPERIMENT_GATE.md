@@ -66,13 +66,14 @@ assets, not frames. A development win is not held-out evidence.
 
 ## Current blockers and stop conditions
 
-The source screen now lists nine provisional geometry candidates, but this is
-not a frozen or category-balanced test set; complete the exact per-asset source
-records and freeze a two-asset falsification pair first. See the [expanded
-Khronos candidate screen](docs/manymesh/khronos-expanded-candidate-screen-20261123.md).
-The baseline still requires CUDA-capable compute, which is absent here. The local
-Monkey has no provenance receipt and no Dragon input is present. No qualifying
-baseline result is available; keep the custom optimizer and mobile claims closed.
+BarramundiFish and Corset are frozen for input feasibility at the 50% request,
+with 1,932 and 9,162 triangles per comparison arm. All three controls and the
+full-source references have audited OBJ exports. The 30% grid supplied no
+qualifying sets. [Matched inputs](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md)
+The reserved-view scorer has been exercised on a separate development asset
+with both native sampling and hardware 4× MSAA. The baseline still needs the
+frozen training schedule and a CUDA-capable host. These two assets are a
+falsification pair. The separate category-balanced confirmation set is pending.
 
 Stop if the matched-face baseline loses, if a result depends on tuned views or
 assets, if the surrogate fails to rank real-pipeline results, if boundary or

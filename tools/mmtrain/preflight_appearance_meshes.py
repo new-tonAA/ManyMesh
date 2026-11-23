@@ -49,6 +49,29 @@ def audit(reference_edges, positions, triangles):
     }
 
 
+def export_appearance_objs(directory, geometries):
+    """Write neutral-material OBJ inputs in the shared source frame."""
+    directory.mkdir(parents=True, exist_ok=True)
+    material = directory / "neutral.mtl"
+    material.write_text("newmtl neutral\nKd 0.5 0.5 0.5\nKs 0 0.5 0\n",
+                        encoding="ascii", newline="\n")
+    receipts = {material.name: digest(material)}
+    for name, (positions, triangles) in geometries.items():
+        path = directory / f"{name}.obj"
+        a, b, c = positions[triangles].astype(np.float64).transpose(1, 0, 2)
+        normals = np.cross(b - a, c - a)
+        normals /= np.linalg.norm(normals, axis=1, keepdims=True)
+        with path.open("w", encoding="ascii", newline="\n") as obj:
+            obj.write("mtllib neutral.mtl\nvt 0 0\nvt 1 0\nvt 0 1\n")
+            np.savetxt(obj, positions, fmt="v %.17g %.17g %.17g")
+            np.savetxt(obj, normals, fmt="vn %.9g %.9g %.9g")
+            obj.write("usemtl neutral\n")
+            for index, (a, b, c) in enumerate(triangles + 1, 1):
+                obj.write(f"f {a}/1/{index} {b}/2/{index} {c}/3/{index}\n")
+        receipts[path.name] = digest(path)
+    return receipts
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, required=True)
@@ -56,23 +79,31 @@ def main():
     parser.add_argument("--candidate", type=Path, required=True,
                         help="PLY prepared by adapt_position_ply.py")
     parser.add_argument("--mmgeo", type=Path, required=True)
+    parser.add_argument("--target-ratio", type=float, default=TARGET,
+                        help="Center of the one-percentage-point retention band")
     parser.add_argument("--weld-controls", action="store_true",
                         help="Give both controls exact-position welded source indices")
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--export-obj-dir", type=Path,
+                        help="Export all four audited meshes when the exact-face gate passes")
     args = parser.parse_args()
+    if not RATIO_TOLERANCE < args.target_ratio <= 1:
+        parser.error("Target ratio must be greater than the band tolerance and at most 1")
     if digest(args.source) != args.source_sha256:
         parser.error("Source OBJ does not match the expected SHA-256")
 
     positions, faces = load_obj(args.source)
     center, radius = source_frame(positions)
     points = normalize(positions, center, radius)
-    reference_edges = boundary(*compact(points, faces))
+    source = compact(points, faces)
+    reference_edges = boundary(*source)
     candidate_points, candidate_faces = load_binary_ply(args.candidate)
-    candidate = audit(reference_edges, normalize(candidate_points, center, radius),
-                      candidate_faces)
+    manymesh = (normalize(candidate_points, center, radius), candidate_faces)
+    candidate = audit(reference_edges, *manymesh)
     actual_ratio = len(candidate_faces) / len(faces)
-    in_band = abs(actual_ratio - TARGET) <= RATIO_TOLERANCE
-    target_faces = len(candidate_faces) if in_band else round(TARGET * len(faces))
+    in_band = (args.target_ratio - RATIO_TOLERANCE <= actual_ratio
+               <= args.target_ratio + RATIO_TOLERANCE)
+    target_faces = len(candidate_faces) if in_band else round(args.target_ratio * len(faces))
 
     control_points, control_faces = points, faces
     if args.weld_controls:
@@ -81,15 +112,18 @@ def main():
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     controls = {}
+    geometries = {"reference": source, "manymesh": manymesh}
     for name in ("qem_preserve_border", "meshoptimizer_lock_border"):
         try:
             if name == "qem_preserve_border":
                 mesh = qem_simplify(control_points, control_faces, target_faces)
-                control = audit(reference_edges, mesh.positions, mesh.triangles)
+                geometry = mesh.positions, mesh.triangles
             else:
                 vertices, triangles, _ = meshopt_simplify_raw(
                     control_points, control_faces, target_faces, args.output.parent)
-                control = audit(reference_edges, vertices, triangles)
+                geometry = vertices, triangles
+            control = audit(reference_edges, *geometry)
+            geometries[name] = geometry
         except (ValueError, subprocess.TimeoutExpired) as error:
             control = {"error": str(error)}
         control["eligible"] = (control.get("faces") == target_faces
@@ -111,7 +145,7 @@ def main():
         "numpy_version": np.__version__,
         "scipy_version": importlib.metadata.version("scipy"),
         "fast_simplification_version": importlib.metadata.version("fast-simplification"),
-        "target_ratio": TARGET, "ratio_tolerance": RATIO_TOLERANCE,
+        "target_ratio": args.target_ratio, "ratio_tolerance": RATIO_TOLERANCE,
         "normalized_boundary_tolerance": BOUNDARY_TOLERANCE,
         "candidate_ratio": actual_ratio, "candidate_in_band": in_band,
         "manymesh": candidate, "control_target_faces": target_faces,
@@ -121,6 +155,9 @@ def main():
         "matched_inputs_ready": in_band and candidate["boundary_preserved"]
         and all(row["eligible"] for row in controls.values()),
     }
+    if args.export_obj_dir is not None and report["matched_inputs_ready"]:
+        report["source_frame"] = {"center": center.tolist(), "radius": float(radius)}
+        report["obj_exports_sha256"] = export_appearance_objs(args.export_obj_dir, geometries)
     args.output.write_text(json.dumps(report, indent=2) + "\n",
                            encoding="utf-8", newline="\n")
 
