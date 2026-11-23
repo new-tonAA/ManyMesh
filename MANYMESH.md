@@ -44,8 +44,10 @@ hypothesis with close prior art, not a novelty claim.
 - On Iris Xe, the same seven mesh pairs showed no consistent FLIP gain
   with hardware MSAA, SMAA, or bicubic upscaling. Native FLIP worsened
   on all seven. [Desktop AA follow-up](tools/mmtrain/CONTOUR_PRIORITY_AA_20261123.md)
-- A fixed topology silhouette fit improved training coverage on three
-  assets. Reserved-view FLIP improved slightly on one. [Fitting report](tools/mmtrain/VISIBLE_CONTOUR_FIT_20261124.md)
+- Fixed topology silhouette fitting improved training coverage, but the
+  separate Mitsuba projective fit worsened reserved-view FLIP and SSIM on
+  both development assets. [Projective fit](tools/mmtrain/PROJECTIVE_SILHOUETTE_CPU_20261124.md) and
+  [local fit](tools/mmtrain/VISIBLE_CONTOUR_FIT_20261124.md)
 
 The evidence is fixed-view or small desktop development data. There is no
 physical-phone performance, power, thermal, user-preference, or independent

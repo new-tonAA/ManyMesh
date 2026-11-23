@@ -20,6 +20,13 @@ screen used the original input indices and the same boundary tolerance and
 `mmgeo` executable as the [two-asset preflight](APPEARANCE_INPUT_PREFLIGHT_20261123.md).
 The results apply to this one operating point and these control settings.
 
+An exact-position-welded control input diagnostic used the same cuts and
+targets for BarramundiFish and Corset. Neither produced an eligible set.
+Both meshoptimizer results contained invalid triangles. QEM failed on an
+edge orientation or incidence check for the fish and duplicate triangles
+for the corset. Reproduce these two rows with `--weld-controls` in a separate
+output directory.
+
 ## Source and reproduction
 
 The [pinned Khronos revision](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea/Models)

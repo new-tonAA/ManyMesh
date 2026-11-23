@@ -69,6 +69,9 @@ physical-phone or user-preference result is available.
 The source contour priority improved mean PSNR in a CPU screen of seven
 development assets. The Iris Xe follow-up showed mixed FLIP under MSAA,
 SMAA, and bicubic upscaling. [Desktop AA follow-up](tools/mmtrain/CONTOUR_PRIORITY_AA_20261123.md)
+A separate CPU projective silhouette fit reduced training error on two
+development assets and worsened mean LDR-FLIP on reserved views of both.
+[Projective fit](tools/mmtrain/PROJECTIVE_SILHOUETTE_CPU_20261124.md)
 
 Two preflights on six cleared assets found no complete set of legal meshes
 at matching face counts near 30% retention.

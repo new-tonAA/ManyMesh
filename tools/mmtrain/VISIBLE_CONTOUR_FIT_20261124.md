@@ -93,8 +93,9 @@ python tools/mmtrain/fit_visible_contours.py `
 Repeat for the shoe and pouf. The fit uses the existing CPU rasterizer.
 The separate Mitsuba 3.9.0 / Dr.Jit 1.4.0 LLVM probe stopped during
 import when Windows Application Control blocked the Dr.Jit extension.
-The referenced Projective Sampling integrator and the CUDA Hasselgren
-baseline still need independent runs. Prior silhouette gradient and
+The [Linux CPU follow-up](PROJECTIVE_SILHOUETTE_CPU_20261124.md) ran the
+Projective Sampling integrator on two of these assets. The CUDA Hasselgren
+baseline remains pending. Prior silhouette gradient and
 appearance fitting methods include [OpenDR](https://is.mpg.de/ps/publications/loper-eccv-2014),
 [Rasterized Edge Gradients](https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/11059.pdf),
 and [Mitsuba shape optimization](https://mitsuba.readthedocs.io/en/stable/src/inverse_rendering/shape_optimization.html).

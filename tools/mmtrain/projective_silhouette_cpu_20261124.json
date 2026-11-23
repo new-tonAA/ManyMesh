@@ -1,0 +1,95 @@
+{
+  "cases": {
+    "GlassHurricaneCandleHolder": {
+      "conclusion": "success",
+      "job": 137841047669,
+      "result": {
+        "accepted_steps": 16,
+        "drjit": "1.4.0",
+        "first_training_mse": 5.912128835916519e-05,
+        "fitted": {
+          "boundary_edges": 4,
+          "boundary_preserved": true,
+          "faces": 2062,
+          "topology_error": null
+        },
+        "gradient_norm": 0.0036877575842127475,
+        "initial": {
+          "boundary_edges": 4,
+          "boundary_preserved": true,
+          "faces": 2062,
+          "topology_error": null
+        },
+        "last_training_mse": 2.511497586965561e-05,
+        "means": {
+          "fitted": {
+            "flip": 0.008840028618578799,
+            "mse": 0.0001323473406161893,
+            "silhouette_xor_fraction": 0.00025657371238425923,
+            "ssim": 0.9928193431661242
+          },
+          "meshoptimizer": {
+            "flip": 0.008631569983360047,
+            "mse": 0.0001336620817024613,
+            "silhouette_xor_fraction": 0.00029613353587962964,
+            "ssim": 0.9929291776603225
+          }
+        },
+        "mitsuba": "3.9.0",
+        "receipt_sha256": "f2066b1b0d0e59d951070d2bdb26210e3a8bb372da0b11f76748969cc028e888",
+        "reference_faces": 4126,
+        "script_sha256": "c134ff4f5a78d9391eceae9c06e64ec9858feace9712c0a3701dd341297a01e7",
+        "source_sha256": "e6f986bd960e31bbc7a0b1d957f0fdf1be25b22de547fd2a3761615d521eb041",
+        "variant": "llvm_ad_rgb"
+      },
+      "status": "completed"
+    },
+    "MaterialsVariantsShoe": {
+      "conclusion": "success",
+      "job": 137841048511,
+      "result": {
+        "accepted_steps": 6,
+        "drjit": "1.4.0",
+        "first_training_mse": 1.369975507259369e-06,
+        "fitted": {
+          "boundary_edges": 1156,
+          "boundary_preserved": true,
+          "faces": 11350,
+          "topology_error": null
+        },
+        "gradient_norm": 0.00030317890777975965,
+        "initial": {
+          "boundary_edges": 1156,
+          "boundary_preserved": true,
+          "faces": 11350,
+          "topology_error": null
+        },
+        "last_training_mse": 6.295740604400635e-07,
+        "means": {
+          "fitted": {
+            "flip": 0.0017049774372329314,
+            "mse": 1.517774433155161e-05,
+            "silhouette_xor_fraction": 2.486617476851852e-05,
+            "ssim": 0.9982354217544579
+          },
+          "meshoptimizer": {
+            "flip": 0.0016680188588604021,
+            "mse": 1.4859666576779587e-05,
+            "silhouette_xor_fraction": 2.2605613425925928e-05,
+            "ssim": 0.9982370243965469
+          }
+        },
+        "mitsuba": "3.9.0",
+        "receipt_sha256": "8188d3d2b6d60e988d8cbc5805e62cd3bc54a9c1b69b8a11c6c55c387e4fd846",
+        "reference_faces": 22700,
+        "script_sha256": "c134ff4f5a78d9391eceae9c06e64ec9858feace9712c0a3701dd341297a01e7",
+        "source_sha256": "8bd3e8f5ae3dfffe0e7ccbc89f3941aa7c1122a7e8756ddac4c7293df7608c09",
+        "variant": "llvm_ad_rgb"
+      },
+      "status": "completed"
+    }
+  },
+  "conclusion": "success",
+  "revision": "8a284aa3bc63d81362670ce8958cb902fe056333",
+  "workflow_run": 45217088176
+}
