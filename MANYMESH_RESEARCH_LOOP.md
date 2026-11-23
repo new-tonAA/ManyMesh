@@ -40,7 +40,8 @@ possible.
 ## Recover the objective
 
 1. Read the latest user instructions, [research status](MANYMESH.md),
-   [SIGGRAPH direction and evidence gate](SIGGRAPH_2027_DIRECTION.md), and the last
+   [SIGGRAPH direction and evidence gate](SIGGRAPH_2027_DIRECTION.md), the
+   [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md), and the last
    relevant experiment receipt. If the user provided a reviewer note or
    attachment, read it before continuing when it is available.
 2. Identify the smallest open question whose answer could change a research

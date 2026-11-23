@@ -2,8 +2,8 @@
 
 Updated 2026-11-23. This is a bounded lead list, not a systematic review,
 novelty opinion, or legal assessment. Sources were checked at their publisher,
-author, or project pages; only entries marked **paper text inspected** were
-checked beyond an abstract or project summary. Read the full closest papers,
+author, project, or explicitly identified preview pages; only entries marked
+**paper text inspected** were checked beyond an abstract or summary. Read the full closest papers,
 their references, and citing work before making a novelty claim. Failure to find
 a paper is not evidence that none exists.
 
@@ -11,15 +11,15 @@ a paper is not evidence that none exists.
 
 | Work | What the primary source establishes | Review status and consequence |
 |---|---|---|
-| Hasselgren et al., [Appearance-Driven Automatic 3D Model Simplification](https://diglib.eg.org/items/82ec8df1-d62a-40f0-a007-90374b5140dc), EGSR 2021 | Differentiable image-space optimization jointly fits triangle meshes and shading models; listed uses include mesh decimation and LOD generation. | **Paper text inspected, not line-by-line.** This is the closest prior work to offline render-matched LOD placement. A cluster hierarchy or scale-matched loss alone is not a contribution. Reproduce it at matched face counts before adding ManyMesh-specific constraints. |
+| Hasselgren et al., [Appearance-Driven Automatic 3D Model Simplification](https://diglib.eg.org/items/82ec8df1-d62a-40f0-a007-90374b5140dc), EGSR 2021 | Differentiable image-space optimization jointly fits mesh vertex positions and materials; uses include appearance-preserving decimation and LOD. It fits a fixed initial topology, samples randomized views and lights, and uses MSAA during training to improve silhouette visibility gradients; final 1-spp results are un-antialiased unless stated otherwise. | **Full paper text inspected.** This is the closest prior work to render-matched mesh placement and scale-aware prefiltering. It does not build/optimize a cluster DAG, alter topology during fitting, or train through a temporal upscaler. Those differences define a comparison, not novelty. The paper reports 2048², batch 8, 10k steps, about 30 minutes on an A6000 for final results; the local CPU-only host cannot reproduce that setup. |
 | Luebke and Erikson, [View-Dependent Simplification of Arbitrary Polygonal Environments](https://techreports.cs.unc.edu/papers/97-005/97-005.pdf), SIGGRAPH 1997 | View-dependent simplification explicitly treats silhouette quality. | **Primary paper link identified; full paper not reviewed in this pass.** Silhouette-aware refinement is established prior art. |
-| Sander et al., [Silhouette Clipping](https://hhoppe.com/silclip.pdf), SIGGRAPH 2000 | The method clips coarse rendering against a representation of the original silhouette. | **Primary paper link identified; full paper not reviewed in this pass.** Generic silhouette correction is not a safe novelty claim. |
+| Sander et al., [Silhouette Clipping](https://hhoppe.com/silclip.pdf), SIGGRAPH 2000 | Uses nested progressive hulls, a hierarchical anchored-cone silhouette search, and stencil/alpha clipping to restore the original exterior silhouette over coarse geometry. | **Full paper text inspected.** Its limits include static closed oriented manifolds, exterior viewpoints, and polygonal internal silhouettes. Generic silhouette correction is not a safe novelty claim. |
 | Funkhouser and Séquin, [Adaptive Display Algorithm for Interactive Frame Rates During Visualization of Complex Virtual Environments](https://www.cs.princeton.edu/courses/archive/spr01/cs598b/papers/funkhouser93.pdf), SIGGRAPH 1993 | Chooses object representations under a frame-rate constraint. | **Primary paper link identified; full paper not reviewed in this pass.** Budgeted LOD selection is established. |
 | Mason and Blake, [Automatic Hierarchical Level of Detail Optimization in Computer Animation](https://doi.org/10.1111/1467-8659.16.3conferenceissue.21), Eurographics 1997 | Predictive optimization of hierarchical LOD is used for real-time rendering. | **Bibliographic record identified; full text not reviewed.** Do not claim predictive or budgeted selection as new. |
 | Yoon et al., [Quick-VDR: Interactive View-Dependent Rendering of Massive Models](https://diglib.eg.org/server/api/core/bitstreams/c7622379-a7d8-4af9-ae6e-977df7a26ea3/content), 2004 | Uses a clustered hierarchy of progressive meshes, cluster selection, local refinement, and dependency constraints for crack-free refinement. | **Paper text inspected.** Clustered view-dependent refinement and crack-free dependency mechanisms are established. |
-| Knodt and Gao, [Construction of Clustered HLOD with As-Simplified-As-Possible Boundaries](https://doi.org/10.1111/cgf.70380), CGF 2026 | The record describes clustered HLOD construction with simplified, crack-free neighboring boundaries. | **Record and abstract checked; full text not reviewed.** This narrows boundary-simplification claims; compare the full method and results. |
+| Ladeuil et al., [Construction of Clustered HLOD with As-Simplified-As-Possible Boundaries](https://doi.org/10.1111/cgf.70380), CGF 2026 | Builds a binary hierarchy of progressive meshes with separate progressive interior and neighbor-paired boundary portions. The goal is to simplify interfaces while retaining consistent, crack-free mixed cuts and reducing boundary-driven popping. | **Publisher record, abstract, and first-page preview hosted on ResearchGate checked; full methods and quantitative results remain unavailable.** Boundary simplification and crack-free neighboring cuts are direct prior art. Do not treat the remainder as an established distinction until the full paper is compared. |
 | Potamias et al., [Neural Mesh Simplification](https://openaccess.thecvf.com/content/CVPR2022/html/Potamias_Neural_Mesh_Simplification_CVPR_2022_paper.html), CVPR 2022 | Uses learned methods for mesh simplification. | **Publisher page checked; full paper not reviewed here.** Learned topology reduction is established; a task distinction needs algorithmic evidence. |
-| Zhan et al., [Learned Localized Mesh Refinement](https://arxiv.org/abs/2609.31946), 2026 preprint | A learned autoregressive method adds detail selectively to mesh regions and describes view-dependent refinement. | **Abstract checked; full paper not reviewed.** Local learned refinement and view-dependent allocation are occupied neighboring directions. Verify publication status and method details against the proceedings. |
+| Zhan et al., [Learned Localized Mesh Refinement](https://arxiv.org/html/2609.31946), SIGGRAPH Asia 2026 | Builds a progressive vertex-split forest and trains a locally conditioned autoregressive model for adaptive upsampling. It demonstrates view-dependent refinement with a face-count budget; the paper reports training on eight B200 GPUs. | **Full arXiv HTML paper inspected.** This is learned refinement of coarse inputs toward higher-detail shapes, not simplification of a fixed authored asset to preserve its rendered appearance. It occupies local learned refinement and view-dependent allocation; the task difference alone does not establish novelty. |
 | Dou et al., [Differentiable Micro-Mesh Construction](https://openaccess.thecvf.com/content/CVPR2024/html/Dou_Differentiable_Micro-Mesh_Construction_CVPR_2024_paper.html), CVPR 2024 | Image-guided differentiable mesh subdivision with watertightness constraints. | **Publisher page checked; full paper not reviewed here.** Differentiable topology creation and watertightness are not broad novelty claims. |
 
 ## Adjacent methods that constrain broader claims
@@ -43,10 +43,10 @@ stability” are not novelty claims by themselves.
 
 Before investing in a custom method:
 
-1. Read Hasselgren et al. in full and reproduce its mesh-placement baseline
-   against QEM, ManyMesh placement, and meshoptimizer at identical face counts.
-2. Verify the full methods in Sander et al., Quick-VDR, HLOD ASAP, Neural Mesh
-   Simplification, and Learned Localized Mesh Refinement; inspect references and
+1. Reproduce Hasselgren et al.'s fixed-topology mesh-placement baseline against
+   QEM, ManyMesh placement, and meshoptimizer at identical face counts.
+2. Verify the full methods in Luebke–Erikson, Funkhouser–Séquin, Mason–Blake,
+   Quick-VDR, HLOD ASAP, and Neural Mesh Simplification; inspect references and
    citing work for additional mesh-level predecessors.
 3. If the matched-face baseline has a held-out signal, test whether the
    cluster-DAG constraints add a repeatable benefit after actual MSAA or an

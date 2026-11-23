@@ -70,7 +70,9 @@ image-guided adaptive subdivision with watertightness constraints by
 [Differentiable Micro-Mesh Construction (CVPR 2024)](https://openaccess.thecvf.com/content/CVPR2024/papers/Dou_Differentiable_Micro-Mesh_Construction_CVPR_2024_paper.pdf);
 and local learned topology refinement by
 [Learned Localized Mesh Refinement](https://arxiv.org/html/2609.31946), a SIGGRAPH Asia 2026 paper
-deferred for presentation at SIGGRAPH 2027. [HLoD (Eurographics 2026)](https://diglib.eg.org/items/429b6aa4-7897-4217-b297-272992d745ae)
+on adaptive learned upsampling of coarse input meshes. It is close prior art for
+view-dependent local refinement, but its task is not render-matched simplification
+of an authored asset. [HLoD (Eurographics 2026)](https://diglib.eg.org/items/429b6aa4-7897-4217-b297-272992d745ae)
 jointly optimizes a hierarchy for 3D Gaussian Splatting, and
 [T²-Splat](https://arxiv.org/html/2611.06974) combines adaptive triangle topology,
 image supervision, and scale-aware residual filtering for scene reconstruction.
