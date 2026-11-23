@@ -24,7 +24,10 @@ hypothesis with close prior art, not a novelty claim.
   GlassBrokenWindow, and had one mixed result; it did not beat any eligible QEM
   pair. The boundary rule was chosen after an initial run, and these reused
   assets are development data, not held-out confirmation. No timing, phone, or
-  upscaler result was measured. [Report](tools/mmtrain/KHRONOS_EQUAL_FACE_QUALITY_SCREEN_20261123.md) ·
+  upscaler result was measured. The two GlassBrokenWindow wins are against
+  meshoptimizer only: border-preserving QEM returned 859 faces at all requested
+  targets (381, 491, and 569), so it supplied no eligible exact-face pair.
+  [Report](tools/mmtrain/KHRONOS_EQUAL_FACE_QUALITY_SCREEN_20261123.md) ·
   [metrics and hashes](tools/mmtrain/khronos_equal_face_quality_screen_20261123.json)
 - Khronos geometry preflight has nine provisional candidates across several
   object classes, including many disconnected components and a low-detail

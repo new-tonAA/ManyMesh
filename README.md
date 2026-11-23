@@ -51,7 +51,9 @@ physical-phone or user-preference result is available.
   GlassBrokenWindow, and had one mixed result. It did not beat an eligible QEM
   pair. This is reused development data, the boundary rule was chosen after an
   initial run, and the broken-window hierarchy missed the requested 30% and 70%
-  cuts. [Full report](tools/mmtrain/KHRONOS_EQUAL_FACE_QUALITY_SCREEN_20261123.md) ·
+  cuts. The two wins are meshoptimizer-only: border-preserving QEM returned 859
+  faces for requested cuts of 381, 491, and 569 faces, so no QEM pair passed the
+  exact-face gate. [Full report](tools/mmtrain/KHRONOS_EQUAL_FACE_QUALITY_SCREEN_20261123.md) ·
   [metrics and hashes](tools/mmtrain/khronos_equal_face_quality_screen_20261123.json)
 - **No independent confirmation set exists yet.** Geometry preflight now has
   nine provisional candidates across several object classes; the pool is

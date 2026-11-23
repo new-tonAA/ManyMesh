@@ -54,6 +54,13 @@ gate. It is a narrow development-pool exception, not evidence of generalization
 or a competitive method. The other eligible comparisons did not show a broad
 quality advantage over the controls.
 
+The QEM exclusion on GlassBrokenWindow is specific and reproducible: the
+`fast-simplification` QEM control was asked for each candidate's exact face
+count with `preserve_border=True`, but returned 859 faces for all three cuts
+(381, 491, and 569 faces). Those rows are therefore not equal-face comparisons;
+the recorded QEM image scores are diagnostic only and were not counted as wins
+or losses. The two eligible wins above are against meshoptimizer only.
+
 The initial exact-edge rule accepted only three of the 21 cuts, all from
 GlassHurricaneCandleHolder. The retrospective one-ULP rule accepted 15 of 21.
 AnisotropyBarnLamp still fails the manifold/orientation check at every cut;

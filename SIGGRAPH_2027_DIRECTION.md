@@ -51,9 +51,9 @@ Silhouette-aware LOD and clipping have direct precedents in
 [Luebke–Erikson (1997)](https://techreports.cs.unc.edu/papers/97-005/97-005.pdf)
 and [Sander et al. (2000)](https://hhoppe.com/silclip.pdf). Image-driven
 simplification also predates this project ([Lindstrom–Turk (2000)](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf)).
-Budgeted and hierarchical LOD optimization also predate this project: see
+Budgeted and predictive LOD selection also predates this project: see
 [Funkhouser–Séquin (1993)](https://www.cs.princeton.edu/courses/archive/spr01/cs598b/papers/funkhouser93.pdf)
-and [Mason–Blake (1997)](https://doi.org/10.1111/1467-8659.00156).
+and [Mason–Blake (1997)](https://doi.org/10.1111/1467-8659.16.3conferenceissue.21).
 Learned perceptual-error prediction exists for shading-rate selection, not mesh
 topology ([Cardoso et al.](https://doi.org/10.1145/3522625)). Arm documents
 Neural Super Sampling for the Mali G2-Ultra NX
@@ -102,16 +102,15 @@ no win over eligible QEM pairs, and losses on most eligible comparisons. Its
 one-float32-ULP boundary rule was chosen retrospectively. See the
 [screen report](tools/mmtrain/KHRONOS_EQUAL_FACE_QUALITY_SCREEN_20261123.md)
 and its [metrics and hashes](tools/mmtrain/khronos_equal_face_quality_screen_20261123.json).
+For that asset, the border-preserving fast-simplification QEM control returned
+859 faces at all three requested cut targets (381, 491, and 569), so the two
+eligible wins are meshoptimizer-only; the QEM scores are not equal-face results.
 This result does not test differentiable fitting or post-upscaler quality.
 
-1. Choose two hash-pinned assets from the current nine-model Khronos
-   geometry-candidate pool and freeze their source credits, views, and exclusions.
-   The [expanded asset screen](docs/manymesh/khronos-expanded-candidate-screen-20261123.md)
-   records seven new topology passes and one failure; this is source feasibility,
-   not a held-out set. The local Monkey mesh still lacks a provenance record and
-   no Dragon input is present. This host has no CUDA build or GPU, so the
-   differentiable falsification cannot run here. Two assets are only a cheap
-   screen, not paper-level evidence.
+1. Secure two hash-pinned, redistribution-cleared assets and a CUDA-capable
+   system. The current checkout has a local Monkey development mesh but no
+   provenance record for it, no local Dragon mesh, and no CUDA build or GPU, so
+   the proposed replication cannot be claimed as run.
 2. Compare nvdiffmodeling/Hasselgren placement against QEM, current ManyMesh
    placement, and meshoptimizer at identical face counts. Freeze training and
    held-out views before scoring; include no-AA and equal 4x MSAA arms.
@@ -121,11 +120,7 @@ This result does not test differentiable fitting or post-upscaler quality.
 4. Report LDR-FLIP, PSNR, SSIM, silhouette/coverage error, sampled surface and
    normal deviation, topology/boundary failures, and camera-motion transitions.
    Treat objective metrics as complementary; a “perceptual” claim needs ratings
-   or a predictor validated against ratings on held-out assets. A paper-level
-   cross-asset result requires at least 20 newly cleared models across five or
-   more predeclared shape categories, split by source asset, with multiple
-   held-out views and asset-level uncertainty. Keep all views and camera paths
-   from one model within a single data split.
+   or a predictor validated against ratings on held-out assets.
 5. Report quality first at matched face count, then at matched complete frame
    time. Also report an equal-quality cost point when interpolation is
    supported. Include offline time, asset bytes, load/decode time, memory, CPU
