@@ -47,7 +47,23 @@
           "eligible": false
         }
       },
-      "matched_inputs_ready": false
+      "matched_inputs_ready": false,
+      "full_detail_diagnostic": {
+        "faces": 208679,
+        "topology_error": null,
+        "boundary_edges": 6623,
+        "boundary_preserved": false,
+        "same_face_count_as_source": true,
+        "candidate_sha256": "9423ed76c3ca271e54c31239103849d0044f0ca8575649c654115d9f0c7325d2",
+        "raw_ply_sha256": "d638066c6431546d1d50db2df0510481bda6e26eeb80a1b68ab92d20a2601b0a"
+      },
+      "float32_source_diagnostic": {
+        "boundary_edges": 6623,
+        "full_detail_oriented_boundary_match": true,
+        "coarse_cut_oriented_boundary_match": true,
+        "full_detail_exact_edge_set_match": false,
+        "coarse_cut_exact_edge_set_match": false
+      }
     },
     "ScatterPlant": {
       "raw_ply_sha256": "48e92fdcc9869df4fc20790e2ee082284f6f510998d8a0b068e42695d94211ce",
@@ -90,7 +106,16 @@
           "eligible": false
         }
       },
-      "matched_inputs_ready": false
+      "matched_inputs_ready": false,
+      "full_detail_diagnostic": {
+        "faces": 54491,
+        "topology_error": null,
+        "boundary_edges": 14829,
+        "boundary_preserved": true,
+        "same_face_count_as_source": true,
+        "candidate_sha256": "06a01cb7d4c19e08faeb36f33759ee3703ba3e8d238d84c0925b44de5438b73f",
+        "raw_ply_sha256": "a7b617c2a86f0e74ee14991580eb7cb09d36752eef702d7f06ceb5dde12df666"
+      }
     }
   }
 }

@@ -67,11 +67,13 @@ physical-phone or user-preference result is available.
 
 ## Next gate
 
-Do not start a custom cluster-DAG optimizer yet. First run a matched-face
-differentiable simplification baseline on legally cleared assets with CUDA,
-held-out views, QEM, and meshoptimizer controls. Advance only if it produces a
-repeatable held-out gain; then test the DAG-specific constraints and real
-antialiasing/upscalers. See the [research status](MANYMESH.md) and
+The first two preflight assets failed to supply a full set of legal meshes
+near 30% retention. [Input preflight](tools/mmtrain/APPEARANCE_INPUT_PREFLIGHT_20261123.md)
+The next experiment needs cleared assets with matching face counts, frozen
+views, QEM and meshoptimizer controls, and a CUDA workstation. Advance only
+if the differentiable baseline produces a repeatable held-out gain, then
+test the DAG constraints with real antialiasing and upscalers. See the
+[research status](MANYMESH.md) and
 [next-experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md). Mobile or preference
 claims need separate device measurements or a user study.
 

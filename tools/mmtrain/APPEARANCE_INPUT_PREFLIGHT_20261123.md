@@ -16,6 +16,21 @@ ManyMesh cut missed the target band, so the controls were run independently
 at the nearest integer to 30% of the original face count. Control counts are
 outputs of these implementations under the recorded settings.
 
+## Full detail diagnostic
+
+The refrigerator cut at full detail contained all 208,679 source triangles
+and 6,623 boundary edges. Rounding the source OBJ coordinates to float32
+before applying the common normalization also produced 6,623 boundary
+edges. The full and 30% cuts both match the oriented boundary of this
+rounded source under the preflight tolerance. The recorded 30% screen still
+uses the original OBJ as its reference. The meshoptimizer duplicate triangle
+still excludes that control.
+
+The full detail ScatterPlant cut passed the original boundary and topology
+checks at 54,491 faces. Its failure appears in the coarse cut. The two cases
+therefore need different investigations: coordinate handling for
+CommercialRefrigerator and coarse cut topology for ScatterPlant.
+
 ## Protocol and reproduction
 
 The experiment used one setting per asset. The allowed band for the ManyMesh
@@ -56,6 +71,14 @@ python tools/mmtrain/preflight_appearance_meshes.py --source $sourceObj `
   --source-sha256 $sourceSha --candidate "$runDir/adapted.ply" `
   --mmgeo $mmgeo --output "$runDir/receipt.json"
 ```
+
+For the full detail diagnostic, export to a separate directory with both
+`--target-ratio` and `--target-ratio-cut` set to `1`. Adapt
+`selected_ratio_1.ply` using the same adapter. Compare its normalized
+positions and indices with the source's oriented boundary using the
+preflight script's `audit` function. For the additional refrigerator check,
+compute the source boundary with `normalize(source.astype(np.float32),
+center, radius)` using the center and radius from the original source.
 
 The mmgeo executable is the same research build used in the seven asset
 screen. Its binary hash, archived source delta and rebuild limitations are
