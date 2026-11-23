@@ -1,0 +1,91 @@
+{
+  "schema": "manymesh-new-candidate-quality-screen-v1",
+  "created_utc": "2026-11-23",
+  "source_revision": "2d417cacdeb545a13e6bfb7192310191e60670d6",
+  "source_worktree_dirty": true,
+  "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+  "mmgeo_source_sha256": "c044d8d026b32ccb335e99a8c9b0ef4e2ffc766e51455647f29f75bdcf6edea4",
+  "scoring_script_sha256": "84a6ac7545301e4461d43248a17ad3bc09982f910705cb6afccb5054b19e155a",
+  "models": [
+    {
+      "model": "AnisotropyBarnLamp",
+      "source_obj": "out\\khronos-curated-screen-20261123\\AnisotropyBarnLamp\\geometry.obj",
+      "source_obj_sha256": "3faefd435788d84dc3f7139c265c5fbbe8609b6b95f97b38ed8576e24b537455",
+      "triangles": 10203
+    },
+    {
+      "model": "DiffuseTransmissionTeacup",
+      "source_obj": "out\\khronos-curated-screen-20261123\\DiffuseTransmissionTeacup\\geometry.obj",
+      "source_obj_sha256": "5966f7f722a8f50d1e34fb713b52589b62f25362efb9998979e9359c4a3b1882",
+      "triangles": 28184
+    },
+    {
+      "model": "GlassBrokenWindow",
+      "source_obj": "out\\khronos-curated-screen-20261123\\GlassBrokenWindow\\geometry.obj",
+      "source_obj_sha256": "0e89c18f6c9c760c3ab8f7ad7487b912c253c4b2ad415ea1b0475fa1e54f7101",
+      "triangles": 987
+    },
+    {
+      "model": "GlassHurricaneCandleHolder",
+      "source_obj": "out\\khronos-curated-screen-20261123\\GlassHurricaneCandleHolder\\geometry.obj",
+      "source_obj_sha256": "e6f986bd960e31bbc7a0b1d957f0fdf1be25b22de547fd2a3761615d521eb041",
+      "triangles": 4126
+    },
+    {
+      "model": "MaterialsVariantsShoe",
+      "source_obj": "out\\khronos-curated-screen-20261123\\MaterialsVariantsShoe\\geometry.obj",
+      "source_obj_sha256": "8bd3e8f5ae3dfffe0e7ccbc89f3941aa7c1122a7e8756ddac4c7293df7608c09",
+      "triangles": 22700
+    },
+    {
+      "model": "PotOfCoals",
+      "source_obj": "out\\khronos-curated-screen-20261123\\PotOfCoals\\geometry.obj",
+      "source_obj_sha256": "3dd1e986cb8e49e383766eb5fd2a6d0efbd89425053d08c6a9efe53eafc293c4",
+      "triangles": 18223
+    },
+    {
+      "model": "SpecularSilkPouf",
+      "source_obj": "out\\khronos-curated-screen-20261123\\SpecularSilkPouf\\geometry.obj",
+      "source_obj_sha256": "dcda8f0bbead5bb961374c8417fbc4ced9aebee065fba576429de9e365628a61",
+      "triangles": 81280
+    }
+  ],
+  "methods": [
+    "ManyMesh DAG cuts from mmgeo quality-gate 1",
+    "fast-simplification QEM at exact candidate triangle count",
+    "vendored meshoptimizer LockBorder at exact candidate triangle count"
+  ],
+  "targets": [
+    0.3,
+    0.5,
+    0.7
+  ],
+  "protocol": {
+    "reference": "full extracted default-scene static geometry; OBJ materials and animation ignored",
+    "views": 8,
+    "resolution": 192,
+    "software_samples_per_pixel": 4,
+    "shading": "flat",
+    "metrics": [
+      "LDR-FLIP at 67 pixels per degree",
+      "PSNR",
+      "SSIM",
+      "silhouette XOR",
+      "coverage MAE",
+      "sampled Chamfer",
+      "sampled p95 distance",
+      "normal consistency"
+    ],
+    "surface_samples_per_direction": 10000,
+    "candidate_eligibility": "strict topology and directed source-boundary preservation",
+    "controls": "must pass the same checks and return exact face count",
+    "reporting": "per asset and actual face count; no view/frame pseudo-replication",
+    "scope": "exploratory development screen; no learned optimization, hardware AA, temporal, mobile, or held-out claim"
+  },
+  "ply_adapter": {
+    "path": "adapt_position_ply.py",
+    "sha256": "5daf92d65fc93b834e350474dbc4a30b5e5ea4d71343f2a9a9ae6529477fe4ef",
+    "operation": "copy positions and face records unchanged; append zero normals and UVs unused by the image scorer"
+  },
+  "runner_sha256": "e8444b3f20aea5d7a23fe66595e9384c2c22f5a0a755a51ce3d0702c66cbd57e"
+}

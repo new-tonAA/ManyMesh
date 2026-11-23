@@ -1,0 +1,92 @@
+{
+  "schema": "manymesh-qem-source-failure-audit-v1",
+  "scope": "Validation source-topology recheck; does not regenerate QEM outputs or quality metrics",
+  "downloads_manifest_sha256": "3a7cfbd6e652f5fbeade83110c5027e37d05629303580657d444a5bbcd645742",
+  "pairs_manifest_sha256": "4f86431e8db9403fedb6a5773cf250651cec695300e4127ec493214c7e31fe28",
+  "code_sha256": "01b33505a4d92810b56b0cfac37a978f90daa79a2a922b92b3c2ce590d2a8217",
+  "validation_assets": 8,
+  "source_topology_valid": 8,
+  "qem_pair_prepared": 5,
+  "records": [
+    {
+      "file_id": 90431,
+      "source_sha256": "b3e7526f62cd64b24cbe07ba1107053786564b655f360033d84981e457fad05c",
+      "source_faces": 736,
+      "source_topology": "valid",
+      "source_boundary_edges": 0,
+      "pair_status": "prepared",
+      "pair_failure_reason": null,
+      "failure_stage": null
+    },
+    {
+      "file_id": 263198,
+      "source_sha256": "8c58c38d8dda6750250670eb9f409b989efc460973641b9bea4add68a7fb8a4d",
+      "source_faces": 452,
+      "source_topology": "valid",
+      "source_boundary_edges": 0,
+      "pair_status": "prepared",
+      "pair_failure_reason": null,
+      "failure_stage": null
+    },
+    {
+      "file_id": 44710,
+      "source_sha256": "af0aa394903a6099da1a542ed6707aceb5130dea9726dc0ba0e7ff74147cbf58",
+      "source_faces": 3172,
+      "source_topology": "valid",
+      "source_boundary_edges": 0,
+      "pair_status": "prepared",
+      "pair_failure_reason": null,
+      "failure_stage": null
+    },
+    {
+      "file_id": 191968,
+      "source_sha256": "4384855f2f404959ae7516298cd5b8a620c4c29ef1e0a1af4329e47c598db784",
+      "source_faces": 1060,
+      "source_topology": "valid",
+      "source_boundary_edges": 0,
+      "pair_status": "rejected",
+      "pair_failure_reason": "Duplicate geometric triangle",
+      "failure_stage": "qem_coarse_output_validation"
+    },
+    {
+      "file_id": 383021,
+      "source_sha256": "0f6734eafb2eae7b152f05225423bebce9d467c1203fb6f9e5be758022fcb397",
+      "source_faces": 13788,
+      "source_topology": "valid",
+      "source_boundary_edges": 0,
+      "pair_status": "prepared",
+      "pair_failure_reason": null,
+      "failure_stage": null
+    },
+    {
+      "file_id": 100894,
+      "source_sha256": "0e6c0419f7b8a0994665315dcbbd9f04dae60df615fe4699c559fd46a3c39bb0",
+      "source_faces": 5820,
+      "source_topology": "valid",
+      "source_boundary_edges": 0,
+      "pair_status": "prepared",
+      "pair_failure_reason": null,
+      "failure_stage": null
+    },
+    {
+      "file_id": 257594,
+      "source_sha256": "7f97fe7ee1ba78f46b40413d2ff24cdd5d5edb6045dd94da368a02ccc15df388",
+      "source_faces": 34448,
+      "source_topology": "valid",
+      "source_boundary_edges": 0,
+      "pair_status": "rejected",
+      "pair_failure_reason": "Duplicate geometric triangle",
+      "failure_stage": "qem_coarse_output_validation"
+    },
+    {
+      "file_id": 94990,
+      "source_sha256": "c074ee56d1c6d5ea6c5601ae11057b4c43684e63d605d3216ce96366aafa7f4b",
+      "source_faces": 27200,
+      "source_topology": "valid",
+      "source_boundary_edges": 0,
+      "pair_status": "rejected",
+      "pair_failure_reason": "Degenerate triangle",
+      "failure_stage": "qem_coarse_output_validation"
+    }
+  ]
+}

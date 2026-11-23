@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "input_path": "out\\khronos-confirmation-assets\\extracted\\commercial_refrigerator.obj",
+  "input_sha256": "b0974c47abf35cc83cb4044791616755cf7309428230bd88389ff4d8368eb786",
+  "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+  "exported_vertices": 116820,
+  "used_vertices": 116820,
+  "unused_exported_vertices": 0,
+  "welded_vertices": 107996,
+  "triangles": 208679,
+  "connected_components_by_exact_welded_vertex": 377,
+  "boundary_edges": 6625,
+  "duplicate_geometric_triangles": 0,
+  "degenerate_triangles": 0,
+  "nonmanifold_edges": 0,
+  "inconsistently_oriented_edges": 0,
+  "minimum_double_area": 7.326958089376641e-07,
+  "edge_incidence_histogram": {
+    "2": 309706,
+    "1": 6625
+  },
+  "topology_status": "pass",
+  "topology_errors": [],
+  "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+}

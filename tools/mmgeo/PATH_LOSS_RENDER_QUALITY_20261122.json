@@ -1,0 +1,741 @@
+{
+  "scope": "four-asset development screen; matched faces; shared-default-material Filament renders",
+  "render_receipt_sha256": "8a9a2a82a074e8575ee47afbe4acd70d63461a051bbf880f92737a6be9525426",
+  "scorer_script_sha256": "b58afefaf37967f62b1493ad4d2f3c0f26662bdaf6e35ac03da6bea39abf8e81",
+  "metrics": {
+    "input": "8-bit sRGB, RGB in [0,1]",
+    "ssim": "Gaussian sigma=1.5, population covariance, K1=.01 K2=.03",
+    "flip": "official NVIDIA LDR-FLIP",
+    "flip_ppd": 67.0,
+    "lpips_squeeze": "not measured; pretrained SqueezeNet weights are not in the local writable cache",
+    "python": "3.12.12",
+    "packages": {
+      "numpy": "2.3.4",
+      "scipy": "1.16.3",
+      "flip-evaluator": "1.7",
+      "scikit-image": "0.25.2"
+    }
+  },
+  "aggregation": "PSNR from mean per-view MSE; other views averaged within asset; paired bootstrap over assets only",
+  "views_per_asset": 8,
+  "resolution": [
+    256,
+    256
+  ],
+  "asset_rows": [
+    {
+      "asset": "Pirate",
+      "source_faces": 3032,
+      "final_faces": 2426,
+      "per_view": {
+        "path": [
+          {
+            "mse": 6.955020094255538e-06,
+            "foreground_mse": 0.0005252376321403143,
+            "psnr_db": 51.57701610918277,
+            "foreground_psnr_db": 32.796441652074996,
+            "ssim": 0.9998235702514648,
+            "flip": 0.00046294365893118083,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 1.4021347257793022e-05,
+            "foreground_mse": 0.0006188459631783588,
+            "psnr_db": 48.53210254663655,
+            "foreground_psnr_db": 32.084174376788475,
+            "ssim": 0.9996824860572815,
+            "flip": 0.0007499408675357699,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 1.5389417065422486e-05,
+            "foreground_mse": 0.000556835316161114,
+            "psnr_db": 48.12777830465148,
+            "foreground_psnr_db": 32.542732282690736,
+            "ssim": 0.9996089935302734,
+            "flip": 0.0007239421247504652,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 2.3507492755607514e-06,
+            "foreground_mse": 0.00023875644029249914,
+            "psnr_db": 56.28793689057577,
+            "foreground_psnr_db": 36.22044904788109,
+            "ssim": 0.9998493194580078,
+            "flip": 0.00030062152654863894,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 6.611164655913892e-07,
+            "foreground_mse": 0.0001578167306986805,
+            "psnr_db": 61.7972202628113,
+            "foreground_psnr_db": 38.01846957622465,
+            "ssim": 0.9998089671134949,
+            "flip": 7.445289520546794e-05,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 8.655056341355784e-07,
+            "foreground_mse": 0.00016718893008644615,
+            "psnr_db": 60.62730100675903,
+            "foreground_psnr_db": 37.76792481451599,
+            "ssim": 0.9996384978294373,
+            "flip": 0.0001219441692228429,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 1.0710524575469764e-05,
+            "foreground_mse": 0.000961050906447057,
+            "psnr_db": 49.701892579587394,
+            "foreground_psnr_db": 30.17253607333011,
+            "ssim": 0.9994621872901917,
+            "flip": 0.0004360743041615933,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 1.4181307692588829e-05,
+            "foreground_mse": 0.0005464239919382332,
+            "psnr_db": 48.48283719964677,
+            "foreground_psnr_db": 32.62470240260575,
+            "ssim": 0.9996366500854492,
+            "flip": 0.0005754046142101288,
+            "lpips_squeeze": null
+          }
+        ],
+        "qem": [
+          {
+            "mse": 5.962876095775809e-06,
+            "foreground_mse": 0.00044929966045535854,
+            "psnr_db": 52.24544214883663,
+            "foreground_psnr_db": 33.47463909611782,
+            "ssim": 0.9998604655265808,
+            "flip": 0.0004456732131075114,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 1.4203287179210153e-05,
+            "foreground_mse": 0.0006575617411661613,
+            "psnr_db": 48.476111317733924,
+            "foreground_psnr_db": 31.820634632353155,
+            "ssim": 0.9996854662895203,
+            "flip": 0.0007386940415017307,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 1.5123703248505733e-05,
+            "foreground_mse": 0.0005407913010567612,
+            "psnr_db": 48.20341852785358,
+            "foreground_psnr_db": 32.669703028900734,
+            "ssim": 0.9996285438537598,
+            "flip": 0.0007190701435320079,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 2.2781609920815324e-06,
+            "foreground_mse": 0.0002309578407087383,
+            "psnr_db": 56.42415588640538,
+            "foreground_psnr_db": 36.36467289452342,
+            "ssim": 0.9998568892478943,
+            "flip": 0.0002853518817573786,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 7.620204027649312e-07,
+            "foreground_mse": 0.00019317951372865516,
+            "psnr_db": 61.18033400458822,
+            "foreground_psnr_db": 37.14038931473015,
+            "ssim": 0.9997985363006592,
+            "flip": 0.00012480784789659083,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 9.745444852540507e-07,
+            "foreground_mse": 0.0002062555235179627,
+            "psnr_db": 60.11198331754766,
+            "foreground_psnr_db": 36.85594412226516,
+            "ssim": 0.9995543360710144,
+            "flip": 0.00014395859034266323,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 6.747893222323884e-06,
+            "foreground_mse": 0.0003322494334209836,
+            "psnr_db": 51.708317982409476,
+            "foreground_psnr_db": 34.785357509792114,
+            "ssim": 0.9996016025543213,
+            "flip": 0.00036954868119210005,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 1.4837574460892708e-05,
+            "foreground_mse": 0.0006087983282167894,
+            "psnr_db": 48.28637088568192,
+            "foreground_psnr_db": 32.155265488249015,
+            "ssim": 0.9996244311332703,
+            "flip": 0.000596891506575048,
+            "lpips_squeeze": null
+          }
+        ]
+      },
+      "asset_mean": {
+        "path": {
+          "psnr_db": 50.89275649116668,
+          "foreground_psnr_db": 33.265003522737516,
+          "ssim": 0.9996888339519501,
+          "flip": 0.000430665520070761
+        },
+        "qem": {
+          "psnr_db": 51.185435843718665,
+          "foreground_psnr_db": 33.95356417126564,
+          "ssim": 0.9997012838721275,
+          "flip": 0.00042799948823812883
+        }
+      }
+    },
+    {
+      "asset": "RoundedCube",
+      "source_faces": 1200,
+      "final_faces": 960,
+      "per_view": {
+        "path": [
+          {
+            "mse": 3.9501158360512e-07,
+            "foreground_mse": 1.1242316576264077e-06,
+            "psnr_db": 64.03390168621587,
+            "foreground_psnr_db": 59.491441894230135,
+            "ssim": 0.9999563097953796,
+            "flip": 0.0003333128697704524,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 6.810625484027399e-07,
+            "foreground_mse": 1.8311886210279204e-06,
+            "psnr_db": 61.668130008937624,
+            "foreground_psnr_db": 57.37266919022973,
+            "ssim": 0.9998829960823059,
+            "flip": 0.0005159929278306663,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 3.0262578088380578e-06,
+            "foreground_mse": 8.817303491739815e-06,
+            "psnr_db": 55.190940769121596,
+            "foreground_psnr_db": 50.546642105268226,
+            "ssim": 0.9998491406440735,
+            "flip": 0.0006099989404901862,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 7.516952700580483e-07,
+            "foreground_mse": 4.062001548324893e-06,
+            "psnr_db": 61.2395818248525,
+            "foreground_psnr_db": 53.91259915389895,
+            "ssim": 0.9999561309814453,
+            "flip": 0.00039490603376179934,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 4.92872758549277e-06,
+            "foreground_mse": 0.0007425496345812739,
+            "psnr_db": 53.072651849669455,
+            "foreground_psnr_db": 31.292745112978835,
+            "ssim": 0.999897301197052,
+            "flip": 0.00025262791314162314,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 9.042244783607633e-07,
+            "foreground_mse": 0.00020132114943376798,
+            "psnr_db": 60.43723740308681,
+            "foreground_psnr_db": 36.96110598683612,
+            "ssim": 0.9998654723167419,
+            "flip": 0.00020087131997570395,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 2.8996198092577797e-07,
+            "foreground_mse": 3.2178450065793386e-05,
+            "psnr_db": 65.3765894195127,
+            "foreground_psnr_db": 44.924348783253734,
+            "ssim": 0.9999783635139465,
+            "flip": 0.00019343249732628465,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 6.198631719578158e-06,
+            "foreground_mse": 1.7113437100737746e-06,
+            "psnr_db": 52.07704165698151,
+            "foreground_psnr_db": 57.6666275702967,
+            "ssim": 0.999813973903656,
+            "flip": 0.000314947625156492,
+            "lpips_squeeze": null
+          }
+        ],
+        "qem": [
+          {
+            "mse": 2.355989981056294e-07,
+            "foreground_mse": 6.825611573250753e-07,
+            "psnr_db": 66.27826560736047,
+            "foreground_psnr_db": 61.658584298566204,
+            "ssim": 0.9999801516532898,
+            "flip": 0.00031654705526307225,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 4.5813525383428546e-07,
+            "foreground_mse": 1.2306161062793573e-06,
+            "psnr_db": 63.39006287668138,
+            "foreground_psnr_db": 59.098774051731695,
+            "ssim": 0.9999441504478455,
+            "flip": 0.00043321619159542024,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 2.8644986195168744e-06,
+            "foreground_mse": 8.354892609842563e-06,
+            "psnr_db": 55.42951382713146,
+            "foreground_psnr_db": 50.78059127967181,
+            "ssim": 0.999871551990509,
+            "flip": 0.0005093374056741595,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 2.733793053605697e-07,
+            "foreground_mse": 1.458328711426448e-06,
+            "psnr_db": 65.63234364339804,
+            "foreground_psnr_db": 58.36144573776305,
+            "ssim": 0.9999727606773376,
+            "flip": 0.00024870954803191125,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 7.541749257074604e-06,
+            "foreground_mse": 0.0011362208719807843,
+            "psnr_db": 51.22527910816518,
+            "foreground_psnr_db": 29.44537237147456,
+            "ssim": 0.9998323917388916,
+            "flip": 0.00029482098761945963,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 1.3444474433698826e-06,
+            "foreground_mse": 9.050133064345204e-05,
+            "psnr_db": 58.714561703842094,
+            "foreground_psnr_db": 40.43345035304629,
+            "ssim": 0.999641478061676,
+            "flip": 0.0001682794827502221,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 1.4597439216829944e-06,
+            "foreground_mse": 0.00016256612948949473,
+            "psnr_db": 58.35723324458268,
+            "foreground_psnr_db": 37.88969934191457,
+            "ssim": 0.9999480843544006,
+            "flip": 0.0002617058053147048,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 7.664476521214325e-06,
+            "foreground_mse": 9.463688598543748e-06,
+            "psnr_db": 51.15517501828727,
+            "foreground_psnr_db": 50.23939558549094,
+            "ssim": 0.9997947216033936,
+            "flip": 0.0004596652870532125,
+            "lpips_squeeze": null
+          }
+        ]
+      },
+      "asset_mean": {
+        "path": {
+          "psnr_db": 56.681787530016294,
+          "foreground_psnr_db": 39.05880457136887,
+          "ssim": 0.9998999610543251,
+          "flip": 0.000352011265931651
+        },
+        "qem": {
+          "psnr_db": 55.63797001237426,
+          "foreground_psnr_db": 37.53723541273237,
+          "ssim": 0.999873161315918,
+          "flip": 0.0003365352204127703
+        }
+      }
+    },
+    {
+      "asset": "Sphere",
+      "source_faces": 9428,
+      "final_faces": 7542,
+      "per_view": {
+        "path": [
+          {
+            "mse": 0.00010404644747549431,
+            "foreground_mse": 0.00042922972239666494,
+            "psnr_db": 39.82772743593906,
+            "foreground_psnr_db": 33.673102125543444,
+            "ssim": 0.9948418736457825,
+            "flip": 0.010284226387739182,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 4.278797152737888e-05,
+            "foreground_mse": 0.00016847577558681712,
+            "psnr_db": 43.68678301862589,
+            "foreground_psnr_db": 37.734625356548825,
+            "ssim": 0.9980528950691223,
+            "flip": 0.006260112393647432,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 2.2258083299115062e-05,
+            "foreground_mse": 9.992099343300051e-05,
+            "psnr_db": 46.5251223660766,
+            "foreground_psnr_db": 40.003432567763795,
+            "ssim": 0.9989722371101379,
+            "flip": 0.0031038105953484774,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 2.1149624769233907e-05,
+            "foreground_mse": 0.00016626716936724102,
+            "psnr_db": 46.74697333352615,
+            "foreground_psnr_db": 37.79193496843257,
+            "ssim": 0.9990687370300293,
+            "flip": 0.0027361367829144,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 5.322785055543892e-05,
+            "foreground_mse": 0.0009313871435231594,
+            "psnr_db": 42.73861071132522,
+            "foreground_psnr_db": 30.30869761180488,
+            "ssim": 0.9987642765045166,
+            "flip": 0.003357591573148966,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 7.580444451199315e-05,
+            "foreground_mse": 0.0017122995910133013,
+            "psnr_db": 41.20305330377888,
+            "foreground_psnr_db": 27.664202470532082,
+            "ssim": 0.9987862706184387,
+            "flip": 0.004731880035251379,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 3.564076162593294e-05,
+            "foreground_mse": 0.00042916780948682804,
+            "psnr_db": 44.480530238718146,
+            "foreground_psnr_db": 33.67372860533046,
+            "ssim": 0.9981575012207031,
+            "flip": 0.0033962451852858067,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 7.798944673461878e-05,
+            "foreground_mse": 0.00044187866323011323,
+            "psnr_db": 41.07964160578754,
+            "foreground_psnr_db": 33.54696968487813,
+            "ssim": 0.995473325252533,
+            "flip": 0.007530342787504196,
+            "lpips_squeeze": null
+          }
+        ],
+        "qem": [
+          {
+            "mse": 0.00010625280336191939,
+            "foreground_mse": 0.0004392046359353606,
+            "psnr_db": 39.7365960275011,
+            "foreground_psnr_db": 33.57333084426544,
+            "ssim": 0.9948369860649109,
+            "flip": 0.010423708707094193,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 4.760711421907441e-05,
+            "foreground_mse": 0.00018751183944330313,
+            "psnr_db": 43.22328143178208,
+            "foreground_psnr_db": 37.26971305842578,
+            "ssim": 0.9979473948478699,
+            "flip": 0.006521246861666441,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 2.4537339654227377e-05,
+            "foreground_mse": 0.00011112364792883752,
+            "psnr_db": 46.10172525395474,
+            "foreground_psnr_db": 39.54193510166767,
+            "ssim": 0.9989185333251953,
+            "flip": 0.003271629801020026,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 2.174503631436914e-05,
+            "foreground_mse": 0.0001713513080950387,
+            "psnr_db": 46.62639862723089,
+            "foreground_psnr_db": 37.661125758195325,
+            "ssim": 0.9990484118461609,
+            "flip": 0.002780265873298049,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 5.3826625481033215e-05,
+            "foreground_mse": 0.0009421499832170012,
+            "psnr_db": 42.690028462832224,
+            "foreground_psnr_db": 30.25879955276555,
+            "ssim": 0.9987316727638245,
+            "flip": 0.003407140029594302,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 7.997467217022519e-05,
+            "foreground_mse": 0.0018217619387881144,
+            "psnr_db": 40.97047531487107,
+            "foreground_psnr_db": 27.395083756756495,
+            "ssim": 0.9986920356750488,
+            "flip": 0.004919371567666531,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 3.7081497796042545e-05,
+            "foreground_mse": 0.00044706402830096287,
+            "psnr_db": 44.30842732148389,
+            "foreground_psnr_db": 33.49630272961048,
+            "ssim": 0.9981405138969421,
+            "flip": 0.003555616131052375,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 7.706707537042187e-05,
+            "foreground_mse": 0.0004364372616886596,
+            "psnr_db": 41.1313112180532,
+            "foreground_psnr_db": 33.600781777561444,
+            "ssim": 0.9955176711082458,
+            "flip": 0.0075556496158242226,
+            "lpips_squeeze": null
+          }
+        ]
+      },
+      "asset_mean": {
+        "path": {
+          "psnr_db": 42.666977557884,
+          "foreground_psnr_db": 32.617520493487895,
+          "ssim": 0.9977646395564079,
+          "flip": 0.00517504321760498
+        },
+        "qem": {
+          "psnr_db": 42.517226373698875,
+          "foreground_psnr_db": 32.44448638602519,
+          "ssim": 0.9977291524410248,
+          "flip": 0.005304328573402017
+        }
+      }
+    },
+    {
+      "asset": "Torus",
+      "source_faces": 1152,
+      "final_faces": 922,
+      "per_view": {
+        "path": [
+          {
+            "mse": 2.5154026365618707e-05,
+            "foreground_mse": 0.00019150907834833642,
+            "psnr_db": 45.99392488205957,
+            "foreground_psnr_db": 37.17810633793865,
+            "ssim": 0.9991524815559387,
+            "flip": 0.0012644954258576035,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 2.242343984690662e-05,
+            "foreground_mse": 0.00013585689771413204,
+            "psnr_db": 46.49297764089903,
+            "foreground_psnr_db": 38.66918306726129,
+            "ssim": 0.9991879463195801,
+            "flip": 0.001352784689515829,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 1.6130709255069924e-05,
+            "foreground_mse": 0.00010904122709587978,
+            "psnr_db": 47.923465365917444,
+            "foreground_psnr_db": 39.62409269811216,
+            "ssim": 0.9993731379508972,
+            "flip": 0.001301998971030116,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 2.950009148796563e-05,
+            "foreground_mse": 0.00036765809258752454,
+            "psnr_db": 45.30176637152107,
+            "foreground_psnr_db": 34.34555870254117,
+            "ssim": 0.9988552927970886,
+            "flip": 0.0019338129786774516,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 6.169940190208944e-05,
+            "foreground_mse": 0.0018910311065850397,
+            "psnr_db": 42.09719045883795,
+            "foreground_psnr_db": 27.2330132715331,
+            "ssim": 0.9981153607368469,
+            "flip": 0.0034273697528988123,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 0.00010783691132600467,
+            "foreground_mse": 0.0044472511460140396,
+            "psnr_db": 39.67232559730144,
+            "foreground_psnr_db": 23.51908344297806,
+            "ssim": 0.9977723956108093,
+            "flip": 0.004145948216319084,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 3.772180765440575e-05,
+            "foreground_mse": 0.0007885903620941911,
+            "psnr_db": 44.234075037522295,
+            "foreground_psnr_db": 31.031485350422628,
+            "ssim": 0.9986939430236816,
+            "flip": 0.0027563844341784716,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 2.6676658208883268e-05,
+            "foreground_mse": 0.0002923822238722231,
+            "psnr_db": 45.73868575517916,
+            "foreground_psnr_db": 35.34049034959318,
+            "ssim": 0.9988296627998352,
+            "flip": 0.0015637421747669578,
+            "lpips_squeeze": null
+          }
+        ],
+        "qem": [
+          {
+            "mse": 2.5292162918853543e-05,
+            "foreground_mse": 0.00016770678783786908,
+            "psnr_db": 45.97014029352445,
+            "foreground_psnr_db": 37.75449359213401,
+            "ssim": 0.9991593956947327,
+            "flip": 0.0012630894780158997,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 2.5455329815408013e-05,
+            "foreground_mse": 0.00015733156976960585,
+            "psnr_db": 45.94221271595262,
+            "foreground_psnr_db": 38.031841241594385,
+            "ssim": 0.9991218447685242,
+            "flip": 0.0013542650267481804,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 1.5711605709539097e-05,
+            "foreground_mse": 0.00010555697364415985,
+            "psnr_db": 48.03779428253668,
+            "foreground_psnr_db": 39.76513069650194,
+            "ssim": 0.9993866086006165,
+            "flip": 0.0012029981007799506,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 3.521446210220407e-05,
+            "foreground_mse": 0.00048572546963732594,
+            "psnr_db": 44.532789410308084,
+            "foreground_psnr_db": 33.13609123142294,
+            "ssim": 0.9986527562141418,
+            "flip": 0.0018603454809635878,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 4.4530869101961096e-05,
+            "foreground_mse": 0.0012524362093695928,
+            "psnr_db": 43.513388287290375,
+            "foreground_psnr_db": 29.022443849212326,
+            "ssim": 0.9986134171485901,
+            "flip": 0.003067703451961279,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 0.00010939779569742112,
+            "foreground_mse": 0.00402503860667091,
+            "psnr_db": 39.60991428698119,
+            "foreground_psnr_db": 23.95229949685248,
+            "ssim": 0.9977579116821289,
+            "flip": 0.004431193694472313,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 5.491857729700618e-05,
+            "foreground_mse": 0.001255530117044706,
+            "psnr_db": 42.60280721982674,
+            "foreground_psnr_db": 29.011728651816824,
+            "ssim": 0.9982855319976807,
+            "flip": 0.00323142996057868,
+            "lpips_squeeze": null
+          },
+          {
+            "mse": 1.6375303405369542e-05,
+            "foreground_mse": 0.00017946961939505814,
+            "psnr_db": 47.85810644554069,
+            "foreground_psnr_db": 37.46009058204162,
+            "ssim": 0.9993662238121033,
+            "flip": 0.0014476790092885494,
+            "lpips_squeeze": null
+          }
+        ]
+      },
+      "asset_mean": {
+        "path": {
+          "psnr_db": 43.88352293889085,
+          "foreground_psnr_db": 29.8804278929528,
+          "ssim": 0.9987475275993347,
+          "flip": 0.0022183170804055408
+        },
+        "qem": {
+          "psnr_db": 43.88680239651225,
+          "foreground_psnr_db": 30.20634022128629,
+          "ssim": 0.9987929612398148,
+          "flip": 0.002232338025351055
+        }
+      }
+    }
+  ],
+  "paired_path_minus_qem": {
+    "psnr_db": {
+      "path_minus_qem_mean": 0.22440247291344306,
+      "asset_bootstrap_95pct_ci": [
+        -0.1820717183677072,
+        0.782043273826174
+      ],
+      "assets": 4,
+      "positive_favors": "path"
+    },
+    "foreground_psnr_db": {
+      "path_minus_qem_mean": 0.17003257230939628,
+      "asset_bootstrap_95pct_ci": [
+        -0.5072364884308076,
+        1.0596987868939989
+      ],
+      "assets": 4,
+      "positive_favors": "path"
+    },
+    "ssim": {
+      "path_minus_qem_mean": 1.1008232831954956e-06,
+      "asset_bootstrap_95pct_ci": [
+        -2.894178032875061e-05,
+        3.11434268951416e-05
+      ],
+      "assets": 4,
+      "positive_favors": "path"
+    },
+    "flip": {
+      "path_minus_qem_mean": -3.129105584775971e-05,
+      "asset_bootstrap_95pct_ci": [
+        -9.629750888962008e-05,
+        9.071038675756427e-06
+      ],
+      "assets": 4,
+      "positive_favors": "qem"
+    }
+  }
+}

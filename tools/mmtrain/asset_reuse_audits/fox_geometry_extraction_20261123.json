@@ -1,0 +1,10 @@
+{
+  "input_path": "third_party\\models\\Fox\\Fox.glb",
+  "input_sha256": "d97044e701822bac5a62696459b27d7b375aada5de8574ed4362edbba94771f7",
+  "extractor_sha256": "ceb2adff35fd72080b33240ebf9eea9f84045e2a929643c61f9e5b4a361d3257",
+  "output_path": "out\\fox-geometry\\fox-static.obj",
+  "output_sha256": "fc4ddbd47021229a7f3588b3424135cea31ff4cdfbf6813867c654cbacb973bd",
+  "vertices": 1728,
+  "triangles": 576,
+  "geometry_scope": "default-scene static bind-pose base positions; no skinning, animation, materials, or texture data"
+}

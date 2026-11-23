@@ -1,0 +1,576 @@
+{
+  "scope": "Sampled surface-distance diagnostic for frozen rank-8 linear control; no final test assets",
+  "method": "Area-uniform triangle samples; symmetric nearest-point-cloud Chamfer estimates, not exact point-to-triangle distance",
+  "normal_convention": "Absolute dot of nearest sampled face normals; ignores winding sign",
+  "sample_count_per_direction": 20000,
+  "seed_policy": "Per asset, fixed seed from file_id; reference and candidate use separate deterministic streams",
+  "distance_units": "Source meshes normalized to unit bounding radius",
+  "runtime": {
+    "python": "3.12.3",
+    "numpy": "2.2.6",
+    "scipy": "1.15.3"
+  },
+  "script_sha256": "08d80488efa4e4d3d2b45166f11d76ca230e3127c94f2a4580181f18bda6ea2c",
+  "pair_manifest_sha256": {
+    "out\\cluster-decoder-pairs\\train-pruned\\manifest.json": "2bd0d3efd174cd301ca2f9805d7177a9f5fdd4c1c0682fa436c425505853afec",
+    "out\\cluster-decoder-pairs\\validation\\manifest.json": "4f86431e8db9403fedb6a5773cf250651cec695300e4127ec493214c7e31fe28"
+  },
+  "fit_report_sha256": "9487e0c14f245ad1dacdd30e48a49333bb818cb04f4762a7291679841709937c",
+  "fixed_model_sha256": "a1880ba383ae03ee21e6a6939f85d9560d5ae52cad1c8a8deb4b83452b746aab",
+  "input_quality_report_sha256": "e4485ca970de714864955292f916ae5eb0aca264903e3bfc79dd5edb09981444",
+  "records": [
+    {
+      "split": "train",
+      "file_id": 132057,
+      "source_sha256": "af347392d9380cc917d2cead4c44b9849cf46f466929f77447fdab67626024a5",
+      "preparation_status": "prepared",
+      "methods": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.006953871002495959,
+          "chamfer_l2_squared_mean": 6.036643691090367e-05,
+          "bidirectional_distance_p95": 0.013048474634050247,
+          "bidirectional_distance_max_sampled": 0.028023368823870274,
+          "normal_consistency_absdot": 0.9435663521420572
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.006960763652226255,
+          "chamfer_l2_squared_mean": 6.0480336562064734e-05,
+          "bidirectional_distance_p95": 0.013062033242059916,
+          "bidirectional_distance_max_sampled": 0.028154795616503067,
+          "normal_consistency_absdot": 0.9432856975142663
+        }
+      },
+      "decoder_status": "decoded"
+    },
+    {
+      "split": "train",
+      "file_id": 59494,
+      "source_sha256": "9c3be26665505629911145b446068f9e3de938b6d2dad4d7ca63b9854f7ec1b6",
+      "preparation_status": "rejected",
+      "methods": {},
+      "reason": "Duplicate geometric triangle"
+    },
+    {
+      "split": "train",
+      "file_id": 53581,
+      "source_sha256": "ef3c07a286e63867598a35237fe2663f679e8cd155de075a010b826636fb7ef7",
+      "preparation_status": "rejected",
+      "methods": {},
+      "reason": "Nonmanifold or inconsistently oriented edge"
+    },
+    {
+      "split": "train",
+      "file_id": 145328,
+      "source_sha256": "8bb9c166a14f7216ab069b877e4800f086a2094c21f883e5ac1d35b05d8a9388",
+      "preparation_status": "prepared",
+      "methods": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.053310731127639954,
+          "chamfer_l2_squared_mean": 0.012824910740839348,
+          "bidirectional_distance_p95": 0.32377374729171166,
+          "bidirectional_distance_max_sampled": 0.5246192887599327,
+          "normal_consistency_absdot": 0.85047300184826
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.053480865007110995,
+          "chamfer_l2_squared_mean": 0.01292368486125717,
+          "bidirectional_distance_p95": 0.32438243427576785,
+          "bidirectional_distance_max_sampled": 0.5271375733679647,
+          "normal_consistency_absdot": 0.8535800936257617
+        }
+      },
+      "decoder_status": "decoded"
+    },
+    {
+      "split": "train",
+      "file_id": 96074,
+      "source_sha256": "f7b74c91b0526fd437c17aebd7694a1cff6c08055668109b5f8f96e560088b99",
+      "preparation_status": "rejected",
+      "methods": {},
+      "reason": "Nonmanifold or inconsistently oriented edge"
+    },
+    {
+      "split": "train",
+      "file_id": 57809,
+      "source_sha256": "3b0fbe2a61dd2799ce7b52697500860c89a3ee14841d42c4f4531c17a205c3b8",
+      "preparation_status": "prepared",
+      "methods": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.012028860157468672,
+          "chamfer_l2_squared_mean": 0.00018169361979225538,
+          "bidirectional_distance_p95": 0.023257330206048345,
+          "bidirectional_distance_max_sampled": 0.0455121118348872,
+          "normal_consistency_absdot": 0.9733607568044718
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.012065863467884328,
+          "chamfer_l2_squared_mean": 0.0001824782243810277,
+          "bidirectional_distance_p95": 0.023233601587872153,
+          "bidirectional_distance_max_sampled": 0.045536847887492043,
+          "normal_consistency_absdot": 0.9730022755011576
+        }
+      },
+      "decoder_status": "decoded"
+    },
+    {
+      "split": "train",
+      "file_id": 84030,
+      "source_sha256": "98735ebb00fea705f77386b3672dfc1023beb49e7c19c233e73f6009af3c1ba6",
+      "preparation_status": "rejected",
+      "methods": {},
+      "reason": "Duplicate geometric triangle"
+    },
+    {
+      "split": "train",
+      "file_id": 148292,
+      "source_sha256": "38eeb83b26b3cdfe95c8ff9df9442fe8e3c1df3e5d762ea66bb2bc390f525471",
+      "preparation_status": "rejected",
+      "methods": {},
+      "reason": "Duplicate geometric triangle"
+    },
+    {
+      "split": "train",
+      "file_id": 84736,
+      "source_sha256": "4de846fb7c6ae5259655d89f2cf9c8ef021c234da02efd81df47efa0744a0da4",
+      "preparation_status": "prepared",
+      "methods": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.007633691870650834,
+          "chamfer_l2_squared_mean": 7.36614237700823e-05,
+          "bidirectional_distance_p95": 0.014707563445547807,
+          "bidirectional_distance_max_sampled": 0.028456983551484027,
+          "normal_consistency_absdot": 0.9373226913959667
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.007632783374941952,
+          "chamfer_l2_squared_mean": 7.362058789220394e-05,
+          "bidirectional_distance_p95": 0.014696444741206991,
+          "bidirectional_distance_max_sampled": 0.028468054564071917,
+          "normal_consistency_absdot": 0.9368938100811028
+        }
+      },
+      "decoder_status": "decoded"
+    },
+    {
+      "split": "train",
+      "file_id": 59301,
+      "source_sha256": "71db678a59bc1a4093eca62ae0236ce52725846f2e91b0ddfe9060ea7121a22c",
+      "preparation_status": "prepared",
+      "methods": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009726056545430477,
+          "chamfer_l2_squared_mean": 0.00012012504655335018,
+          "bidirectional_distance_p95": 0.01897844632305532,
+          "bidirectional_distance_max_sampled": 0.0363942308759644,
+          "normal_consistency_absdot": 0.9427482470907853
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009734035742819419,
+          "chamfer_l2_squared_mean": 0.00012036610906401831,
+          "bidirectional_distance_p95": 0.018994765350990366,
+          "bidirectional_distance_max_sampled": 0.036499125795377244,
+          "normal_consistency_absdot": 0.9423636785016795
+        }
+      },
+      "decoder_status": "decoded"
+    },
+    {
+      "split": "train",
+      "file_id": 84757,
+      "source_sha256": "a763dce4e69ceb68129abf8a02cc8f2045e53e2da83bf66857b7f4e9ea686ef7",
+      "preparation_status": "prepared",
+      "methods": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.013176737040412695,
+          "chamfer_l2_squared_mean": 0.0002206120645583196,
+          "bidirectional_distance_p95": 0.02562849932360201,
+          "bidirectional_distance_max_sampled": 0.053288933565990564,
+          "normal_consistency_absdot": 0.969632472527159
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.013213586044934389,
+          "chamfer_l2_squared_mean": 0.00022152064972022945,
+          "bidirectional_distance_p95": 0.025611440653506127,
+          "bidirectional_distance_max_sampled": 0.0513625349106065,
+          "normal_consistency_absdot": 0.9699659828159235
+        }
+      },
+      "decoder_status": "decoded"
+    },
+    {
+      "split": "train",
+      "file_id": 73858,
+      "source_sha256": "409da0134c25314942808b0048a2c94ab24c0ce1b01daae29522d50ee5bacf4b",
+      "preparation_status": "prepared",
+      "methods": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.01250092170045078,
+          "chamfer_l2_squared_mean": 0.00019768015048910717,
+          "bidirectional_distance_p95": 0.024182270194526966,
+          "bidirectional_distance_max_sampled": 0.044229330195448835,
+          "normal_consistency_absdot": 0.9241585453235932
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.012499339266403071,
+          "chamfer_l2_squared_mean": 0.0001976304219277968,
+          "bidirectional_distance_p95": 0.02417933636319574,
+          "bidirectional_distance_max_sampled": 0.04422989772938324,
+          "normal_consistency_absdot": 0.9240108841887107
+        }
+      },
+      "decoder_status": "decoded"
+    },
+    {
+      "split": "train",
+      "file_id": 97859,
+      "source_sha256": "b53d4bc507e41638e67cff2252ce74e6ed202f82e0cd93739147078581f69315",
+      "preparation_status": "rejected",
+      "methods": {},
+      "reason": "Nearest-surface radius-check cap exceeded: 80000000"
+    },
+    {
+      "split": "train",
+      "file_id": 741525,
+      "source_sha256": "b6a751d128a57778977bbc124f061d09c3162a1e21ad534ebec1251ed9845a4e",
+      "preparation_status": "rejected",
+      "methods": {},
+      "reason": "Nearest-surface radius-check cap exceeded: 80000000"
+    },
+    {
+      "split": "train",
+      "file_id": 104559,
+      "source_sha256": "bb821a80e919e004d3192bd1aab5796ffaa8255b9e1d2a4228cc3efe8da501f6",
+      "preparation_status": "prepared",
+      "methods": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008436102463198966,
+          "chamfer_l2_squared_mean": 8.91645063741858e-05,
+          "bidirectional_distance_p95": 0.016013823249174313,
+          "bidirectional_distance_max_sampled": 0.03224377585936102,
+          "normal_consistency_absdot": 0.7605731631729248
+        },
+        "rank8_fixed": null
+      },
+      "decoder_status": "rejected"
+    },
+    {
+      "split": "train",
+      "file_id": 32770,
+      "source_sha256": "05cadafafe14a6b6a5463a46b0fdf6d9bf706fa8d6e3358cff6e8096f7d82e7c",
+      "preparation_status": "prepared",
+      "methods": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.006676854865918129,
+          "chamfer_l2_squared_mean": 5.638992896920958e-05,
+          "bidirectional_distance_p95": 0.012886641979394101,
+          "bidirectional_distance_max_sampled": 0.02321995424611069,
+          "normal_consistency_absdot": 0.9493362265978592
+        },
+        "rank8_fixed": null
+      },
+      "decoder_status": "rejected"
+    },
+    {
+      "split": "validation",
+      "file_id": 90431,
+      "source_sha256": "b3e7526f62cd64b24cbe07ba1107053786564b655f360033d84981e457fad05c",
+      "preparation_status": "prepared",
+      "methods": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.02190296041612801,
+          "chamfer_l2_squared_mean": 0.0010915818556798567,
+          "bidirectional_distance_p95": 0.07274525740108108,
+          "bidirectional_distance_max_sampled": 0.24237307097390978,
+          "normal_consistency_absdot": 0.8735792301132483
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.022070868997540398,
+          "chamfer_l2_squared_mean": 0.0011009254718679449,
+          "bidirectional_distance_p95": 0.07308525262765612,
+          "bidirectional_distance_max_sampled": 0.2419521812745127,
+          "normal_consistency_absdot": 0.8736605973992646
+        }
+      },
+      "decoder_status": "decoded"
+    },
+    {
+      "split": "validation",
+      "file_id": 263198,
+      "source_sha256": "8c58c38d8dda6750250670eb9f409b989efc460973641b9bea4add68a7fb8a4d",
+      "preparation_status": "prepared",
+      "methods": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.0078676542442507,
+          "chamfer_l2_squared_mean": 0.00015263220629274795,
+          "bidirectional_distance_p95": 0.026714609428306394,
+          "bidirectional_distance_max_sampled": 0.07949518905364794,
+          "normal_consistency_absdot": 0.8938221302092257
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008003357253926497,
+          "chamfer_l2_squared_mean": 0.0001551080966602885,
+          "bidirectional_distance_p95": 0.026967117323067717,
+          "bidirectional_distance_max_sampled": 0.07945206229973394,
+          "normal_consistency_absdot": 0.8939741532555167
+        }
+      },
+      "decoder_status": "decoded"
+    },
+    {
+      "split": "validation",
+      "file_id": 44710,
+      "source_sha256": "af0aa394903a6099da1a542ed6707aceb5130dea9726dc0ba0e7ff74147cbf58",
+      "preparation_status": "prepared",
+      "methods": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009599859920524647,
+          "chamfer_l2_squared_mean": 0.00011473973203732603,
+          "bidirectional_distance_p95": 0.018183554879373065,
+          "bidirectional_distance_max_sampled": 0.034888730261953035,
+          "normal_consistency_absdot": 0.9683965403020826
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009702403862344826,
+          "chamfer_l2_squared_mean": 0.0001168138717597001,
+          "bidirectional_distance_p95": 0.01833599995108076,
+          "bidirectional_distance_max_sampled": 0.03472323883063098,
+          "normal_consistency_absdot": 0.9683797397212413
+        }
+      },
+      "decoder_status": "decoded"
+    },
+    {
+      "split": "validation",
+      "file_id": 191968,
+      "source_sha256": "4384855f2f404959ae7516298cd5b8a620c4c29ef1e0a1af4329e47c598db784",
+      "preparation_status": "rejected",
+      "methods": {},
+      "reason": "Duplicate geometric triangle"
+    },
+    {
+      "split": "validation",
+      "file_id": 383021,
+      "source_sha256": "0f6734eafb2eae7b152f05225423bebce9d467c1203fb6f9e5be758022fcb397",
+      "preparation_status": "prepared",
+      "methods": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008919204154708316,
+          "chamfer_l2_squared_mean": 0.00010067945195145729,
+          "bidirectional_distance_p95": 0.017300347087804827,
+          "bidirectional_distance_max_sampled": 0.032540388785991935,
+          "normal_consistency_absdot": 0.9609755458373067
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008921390724709276,
+          "chamfer_l2_squared_mean": 0.00010074963832319668,
+          "bidirectional_distance_p95": 0.01727580949743923,
+          "bidirectional_distance_max_sampled": 0.03361376588360037,
+          "normal_consistency_absdot": 0.9610024974070849
+        }
+      },
+      "decoder_status": "decoded"
+    },
+    {
+      "split": "validation",
+      "file_id": 100894,
+      "source_sha256": "0e6c0419f7b8a0994665315dcbbd9f04dae60df615fe4699c559fd46a3c39bb0",
+      "preparation_status": "prepared",
+      "methods": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.010134048373881464,
+          "chamfer_l2_squared_mean": 0.00014216423778074937,
+          "bidirectional_distance_p95": 0.019304259658108006,
+          "bidirectional_distance_max_sampled": 0.07112683041697257,
+          "normal_consistency_absdot": 0.9554808648379209
+        },
+        "rank8_fixed": null
+      },
+      "decoder_status": "Predicted displacement exceeds normalized offset cap"
+    },
+    {
+      "split": "validation",
+      "file_id": 257594,
+      "source_sha256": "7f97fe7ee1ba78f46b40413d2ff24cdd5d5edb6045dd94da368a02ccc15df388",
+      "preparation_status": "rejected",
+      "methods": {},
+      "reason": "Duplicate geometric triangle"
+    },
+    {
+      "split": "validation",
+      "file_id": 94990,
+      "source_sha256": "c074ee56d1c6d5ea6c5601ae11057b4c43684e63d605d3216ce96366aafa7f4b",
+      "preparation_status": "rejected",
+      "methods": {},
+      "reason": "Degenerate triangle"
+    }
+  ],
+  "paired_summary": {
+    "train": {
+      "paired_assets": 7,
+      "methods": {
+        "qem": {
+          "chamfer_l1_mean": 0.016475838492078478,
+          "chamfer_l2_squared_mean": 0.001954149926130481,
+          "bidirectional_distance_p95": 0.06336804734550605,
+          "bidirectional_distance_max_sampled": 0.10864632108679685,
+          "normal_consistency_absdot": 0.9344660095903274
+        },
+        "rank8_fixed": {
+          "chamfer_l1_mean": 0.01651246236518863,
+          "chamfer_l2_squared_mean": 0.00196854017011493,
+          "bidirectional_distance_p95": 0.06345143660208559,
+          "bidirectional_distance_max_sampled": 0.10876983283877124,
+          "normal_consistency_absdot": 0.9347289174612288
+        }
+      },
+      "rank8_minus_qem": {
+        "chamfer_l1_mean": {
+          "mean": 3.6623873110148184e-05,
+          "bootstrap_95_percentile_ci": [
+            5.992365664479897e-06,
+            8.435663011396321e-05
+          ],
+          "assets_with_positive_delta": 5,
+          "assets_with_negative_delta": 2,
+          "positive_is_better": false
+        },
+        "chamfer_l2_squared_mean": {
+          "mean": 1.4390243984449084e-05,
+          "bootstrap_95_percentile_ci": [
+            1.1875357324528841e-07,
+            4.258848139047565e-05
+          ],
+          "assets_with_positive_delta": 5,
+          "assets_with_negative_delta": 2,
+          "positive_is_better": false
+        },
+        "bidirectional_distance_p95": {
+          "mean": 8.338925657954178e-05,
+          "bootstrap_95_percentile_ci": [
+            -1.2062300683251298e-05,
+            0.0002611087448109428
+          ],
+          "assets_with_positive_delta": 3,
+          "assets_with_negative_delta": 4,
+          "positive_is_better": false
+        },
+        "bidirectional_distance_max_sampled": {
+          "mean": 0.0001235117519743947,
+          "bootstrap_95_percentile_ci": [
+            -0.0007844341134781936,
+            0.0011012871615727828
+          ],
+          "assets_with_positive_delta": 6,
+          "assets_with_negative_delta": 1,
+          "positive_is_better": false
+        },
+        "normal_consistency_absdot": {
+          "mean": 0.0002629078709012665,
+          "bootstrap_95_percentile_ci": [
+            -0.0003432818434399005,
+            0.0012456802668869996
+          ],
+          "assets_with_positive_delta": 2,
+          "assets_with_negative_delta": 5,
+          "positive_is_better": true
+        }
+      }
+    },
+    "validation": {
+      "paired_assets": 4,
+      "methods": {
+        "qem": {
+          "chamfer_l1_mean": 0.012072419683902918,
+          "chamfer_l2_squared_mean": 0.000364908311490347,
+          "bidirectional_distance_p95": 0.03373594219914134,
+          "bidirectional_distance_max_sampled": 0.09732434476887568,
+          "normal_consistency_absdot": 0.9241933616154658
+        },
+        "rank8_fixed": {
+          "chamfer_l1_mean": 0.01217450520963025,
+          "chamfer_l2_squared_mean": 0.0003683992696527825,
+          "bidirectional_distance_p95": 0.03391604484981096,
+          "bidirectional_distance_max_sampled": 0.0974353120721195,
+          "normal_consistency_absdot": 0.9242542469457768
+        }
+      },
+      "rank8_minus_qem": {
+        "chamfer_l1_mean": {
+          "mean": 0.00010208552572733148,
+          "bootstrap_95_percentile_ci": [
+            3.5565679919670034e-05,
+            0.00015180579554409292
+          ],
+          "assets_with_positive_delta": 4,
+          "assets_with_negative_delta": 0,
+          "positive_is_better": false
+        },
+        "chamfer_l2_squared_mean": {
+          "mean": 3.490958162435538e-06,
+          "bootstrap_95_percentile_ci": [
+            6.716123706896765e-07,
+            7.526247071659639e-06
+          ],
+          "assets_with_positive_delta": 4,
+          "assets_with_negative_delta": 0,
+          "positive_is_better": false
+        },
+        "bidirectional_distance_p95": {
+          "mean": 0.00018010265066961684,
+          "bootstrap_95_percentile_ci": [
+            4.472378091613209e-05,
+            0.0002962515606681846
+          ],
+          "assets_with_positive_delta": 3,
+          "assets_with_negative_delta": 1,
+          "positive_is_better": false
+        },
+        "bidirectional_distance_max_sampled": {
+          "mean": 0.00011096730324382416,
+          "bootstrap_95_percentile_ci": [
+            -0.000326448963026308,
+            0.0007636599653758121
+          ],
+          "assets_with_positive_delta": 1,
+          "assets_with_negative_delta": 3,
+          "positive_is_better": false
+        },
+        "normal_consistency_absdot": {
+          "mean": 6.088533031101129e-05,
+          "bootstrap_95_percentile_ci": [
+            5.075494468431696e-06,
+            0.0001207551771627291
+          ],
+          "assets_with_positive_delta": 3,
+          "assets_with_negative_delta": 1,
+          "positive_is_better": true
+        }
+      }
+    }
+  }
+}

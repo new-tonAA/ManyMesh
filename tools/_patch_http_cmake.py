@@ -1,0 +1,33 @@
+from pathlib import Path
+p = Path('libs/manymesh/CMakeLists.txt')
+s = p.read_text(encoding='utf-8')
+old = '''target_link_libraries(${TARGET} PUBLIC math)
+target_link_libraries(${TARGET} PRIVATE meshoptimizer)
+target_link_libraries(${TARGET} PRIVATE Threads::Threads)
+if (WIN32)
+    target_link_libraries(${TARGET} PUBLIC winhttp)
+endif()
+'''
+new = '''target_link_libraries(${TARGET} PUBLIC math)
+target_link_libraries(${TARGET} PRIVATE meshoptimizer)
+target_link_libraries(${TARGET} PRIVATE Threads::Threads)
+if (WIN32)
+    target_link_libraries(${TARGET} PUBLIC winhttp)
+    set(MANYMESH_HTTP_CIVETWEB_DEFAULT OFF)
+else()
+    set(MANYMESH_HTTP_CIVETWEB_DEFAULT ON)
+endif()
+option(MANYMESH_HTTP_CIVETWEB
+        "Use the vendored CivetWeb client for HTTP Range requests" ${MANYMESH_HTTP_CIVETWEB_DEFAULT})
+if (MANYMESH_HTTP_CIVETWEB)
+    if (NOT TARGET civetweb)
+        message(FATAL_ERROR "MANYMESH_HTTP_CIVETWEB requires the civetweb target")
+    endif()
+    target_compile_definitions(${TARGET} PRIVATE MANYMESH_HTTP_CIVETWEB=1)
+    target_link_libraries(${TARGET} PRIVATE civetweb)
+endif()
+'''
+assert old in s
+s = s.replace(old, new, 1)
+p.write_text(s, encoding='utf-8')
+print('cmake patched')

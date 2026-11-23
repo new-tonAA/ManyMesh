@@ -1,0 +1,1105 @@
+{
+  "schema": "manymesh-refine-budget-screen-v1",
+  "date": "2026-11-22",
+  "scope": "Development-only; local cluster refinement adds faces. Decoder refinement is compared with meshoptimizer simplified directly from the source to exactly the same final face count.",
+  "protocol": {
+    "image_protocol": {
+      "views": 12,
+      "size": 256,
+      "box_samples_per_pixel": 4,
+      "metrics": {
+        "input": "8-bit sRGB, RGB in [0,1]",
+        "ssim": "Gaussian sigma=1.5, population covariance, K1=.01 K2=.03",
+        "flip": "LDR-FLIP",
+        "flip_ppd": 67.0,
+        "lpips": "calibrated SqueezeNet, version 0.1, [-1,1] RGB",
+        "packages": {
+          "flip-evaluator": "1.7",
+          "lpips": "0.1.4",
+          "scikit-image": "0.25.2",
+          "torch": "2.7.1",
+          "torchvision": "0.22.1"
+        }
+      }
+    },
+    "surface_protocol": {
+      "samples_per_direction": 20000,
+      "method": "Area-uniform samples; nearest sampled-point-cloud distances"
+    },
+    "runtime": {
+      "python": "3.12.3",
+      "numpy": "2.2.6",
+      "scipy": "1.15.3",
+      "torch": "2.7.1+cpu"
+    }
+  },
+  "inputs": {
+    "meshoptimizer_base_pair_manifest_sha256": "02b48206e1f68f4d350d3b5cb2061262ab54389b87369e4e8c4fda7f3b8122e0",
+    "meshoptimizer_high_budget_manifest_sha256": "2e2f90380ea84f5649f16bacaa843bb085f90681962c0827e0d10cc798922cc0",
+    "refinement_target_map_sha256": "e770a8bb2557d4ab3e1c5279074f8ea515d4275fca0e92d337b88ea7f0c3c50c",
+    "fit_report_sha256": "9f92253cda36233d3374a7a7f9f91ab55aba38332798e6a7372cae0022555700",
+    "quality_report_sha256": "139ab79adf5fd2fc656cfd0467e8dc9cb621a587377b89b36e8a659a9d6445eb",
+    "full_refinement_quality_report_sha256": "30daf5cac40b7e84a99ed9ce16fa02f49a91597245be41b0e9f96c0cceff2933",
+    "code_sha256": {
+      "tools/mmtrain/cluster_decoder_meshopt_baseline.py": "621ba01107f3acfcd5aa01882dc0373e1d3f4ce69eca0045ad3f7a56271837f2",
+      "tools/mmtrain/meshopt_simplify.cjs": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+      "tools/mmtrain/cluster_decoder_refine_budget_quality.py": "c3497538c2e165cdce46e50346fb4f1ecba5457cbc53f3953f3c203057a84e74",
+      "tools/mmtrain/cluster_decoder_quality.py": "c64cf7c5a4dc75351c3182ac92adca61a91816b500ec12934e45453f99756b0a",
+      "tools/mmtrain/cluster_decoder_surface_quality.py": "08d80488efa4e4d3d2b45166f11d76ca230e3127c94f2a4580181f18bda6ea2c",
+      "tools/mmtrain/cluster_decoder.py": "46e66127d31083a9e9d81cf4fd7e9dc767676554e2a3dde849c47b25169e2425",
+      "tools/mmtrain/fit_cluster_decoder.py": "508305687745b556f5f3c88f3b15b5e2ca6e839c93f09e0e300bd77a62a09205",
+      "tools/mmtrain/cluster_decoder_pairs_meshopt.py": "bcd1c743057d52cf24a28f1861c769e95bf4885f6f64711c7b77b12bb06d4c45",
+      "tools/mmmetrics/perceptual.py": "ef389addc2c69d01babc9fb373f50cbac7b0c3d2e092d089a76b48afffc7cc6b"
+    }
+  },
+  "paired_summary": {
+    "train": {
+      "paired_assets": 5,
+      "deltas": {
+        "mse": {
+          "decoder_refine_minus_meshoptimizer": 2.5922541341521296e-05,
+          "bootstrap_95_percentile_ci": [
+            9.4541798764798e-06,
+            5.174070693400667e-05
+          ],
+          "assets_positive": 5,
+          "positive_delta_is_better": false
+        },
+        "ssim": {
+          "decoder_refine_minus_meshoptimizer": -0.0010760612674250325,
+          "bootstrap_95_percentile_ci": [
+            -0.0016446197397565587,
+            -0.0005342445725904588
+          ],
+          "assets_positive": 0,
+          "positive_delta_is_better": true
+        },
+        "flip": {
+          "decoder_refine_minus_meshoptimizer": 0.0011010526634890993,
+          "bootstrap_95_percentile_ci": [
+            0.0005638877458901941,
+            0.0016662539565307575
+          ],
+          "assets_positive": 5,
+          "positive_delta_is_better": false
+        },
+        "lpips_squeeze": {
+          "decoder_refine_minus_meshoptimizer": 0.0008582579424910364,
+          "bootstrap_95_percentile_ci": [
+            0.0005208957634143492,
+            0.0012702937928785697
+          ],
+          "assets_positive": 5,
+          "positive_delta_is_better": false
+        },
+        "silhouette_xor_fraction": {
+          "decoder_refine_minus_meshoptimizer": 9.918212890625e-05,
+          "bootstrap_95_percentile_ci": [
+            3.712972005208334e-05,
+            0.00018107096354166667
+          ],
+          "assets_positive": 5,
+          "positive_delta_is_better": false
+        },
+        "coverage_mae": {
+          "decoder_refine_minus_meshoptimizer": 0.0001019159952799479,
+          "bootstrap_95_percentile_ci": [
+            3.8846333821614584e-05,
+            0.00017881234486897768
+          ],
+          "assets_positive": 5,
+          "positive_delta_is_better": false
+        },
+        "psnr_db": {
+          "decoder_refine_minus_meshoptimizer": -2.27854192545486,
+          "bootstrap_95_percentile_ci": [
+            -3.660337585173818,
+            -1.2369992924218436
+          ],
+          "assets_positive": 0,
+          "positive_delta_is_better": true
+        },
+        "chamfer_l1_mean": {
+          "decoder_refine_minus_meshoptimizer": 6.39192524816817e-05,
+          "bootstrap_95_percentile_ci": [
+            -6.161765855909607e-06,
+            0.0001326587792688556
+          ],
+          "assets_positive": 4,
+          "positive_delta_is_better": false
+        },
+        "chamfer_l2_squared_mean": {
+          "decoder_refine_minus_meshoptimizer": 1.2891443551943258e-06,
+          "bootstrap_95_percentile_ci": [
+            -2.6718755898981817e-07,
+            2.695804928338054e-06
+          ],
+          "assets_positive": 4,
+          "positive_delta_is_better": false
+        },
+        "bidirectional_distance_p95": {
+          "decoder_refine_minus_meshoptimizer": 6.865222640820671e-05,
+          "bootstrap_95_percentile_ci": [
+            -3.289866523455351e-05,
+            0.00016140498517028742
+          ],
+          "assets_positive": 4,
+          "positive_delta_is_better": false
+        },
+        "bidirectional_distance_max_sampled": {
+          "decoder_refine_minus_meshoptimizer": 0.001486294968026046,
+          "bootstrap_95_percentile_ci": [
+            0.00047409733218745504,
+            0.0025404078596538205
+          ],
+          "assets_positive": 5,
+          "positive_delta_is_better": false
+        },
+        "normal_consistency_absdot": {
+          "decoder_refine_minus_meshoptimizer": -0.0010422308817858328,
+          "bootstrap_95_percentile_ci": [
+            -0.0023253102543790423,
+            0.00015146427213752478
+          ],
+          "assets_positive": 1,
+          "positive_delta_is_better": true
+        }
+      }
+    },
+    "validation": {
+      "paired_assets": 4,
+      "deltas": {
+        "mse": {
+          "decoder_refine_minus_meshoptimizer": 8.688825377283777e-05,
+          "bootstrap_95_percentile_ci": [
+            4.0586765616364503e-05,
+            0.00014076833249543943
+          ],
+          "assets_positive": 4,
+          "positive_delta_is_better": false
+        },
+        "ssim": {
+          "decoder_refine_minus_meshoptimizer": -0.004801166966143494,
+          "bootstrap_95_percentile_ci": [
+            -0.009906692646682813,
+            -0.001483670077527116
+          ],
+          "assets_positive": 0,
+          "positive_delta_is_better": true
+        },
+        "flip": {
+          "decoder_refine_minus_meshoptimizer": 0.0027775597791332984,
+          "bootstrap_95_percentile_ci": [
+            0.0011563179523363938,
+            0.0048900910417917975
+          ],
+          "assets_positive": 4,
+          "positive_delta_is_better": false
+        },
+        "lpips_squeeze": {
+          "decoder_refine_minus_meshoptimizer": 0.0022191306943568634,
+          "bootstrap_95_percentile_ci": [
+            0.0009945177534973482,
+            0.0034692802910285536
+          ],
+          "assets_positive": 4,
+          "positive_delta_is_better": false
+        },
+        "silhouette_xor_fraction": {
+          "decoder_refine_minus_meshoptimizer": 0.00036907196044921875,
+          "bootstrap_95_percentile_ci": [
+            0.00020503997802734375,
+            0.0006608963012695312
+          ],
+          "assets_positive": 4,
+          "positive_delta_is_better": false
+        },
+        "coverage_mae": {
+          "decoder_refine_minus_meshoptimizer": 0.00037829081217447913,
+          "bootstrap_95_percentile_ci": [
+            0.00019232432047526038,
+            0.0006912549336751301
+          ],
+          "assets_positive": 4,
+          "positive_delta_is_better": false
+        },
+        "psnr_db": {
+          "decoder_refine_minus_meshoptimizer": -2.0150182606043465,
+          "bootstrap_95_percentile_ci": [
+            -2.2464680777252752,
+            -1.7835684434834178
+          ],
+          "assets_positive": 0,
+          "positive_delta_is_better": true
+        },
+        "chamfer_l1_mean": {
+          "decoder_refine_minus_meshoptimizer": 5.719889302108964e-05,
+          "bootstrap_95_percentile_ci": [
+            1.1677212529740202e-05,
+            0.00010272057351243908
+          ],
+          "assets_positive": 4,
+          "positive_delta_is_better": false
+        },
+        "chamfer_l2_squared_mean": {
+          "decoder_refine_minus_meshoptimizer": 6.214300238216303e-07,
+          "bootstrap_95_percentile_ci": [
+            -9.555607634064605e-09,
+            1.2524156552773252e-06
+          ],
+          "assets_positive": 3,
+          "positive_delta_is_better": false
+        },
+        "bidirectional_distance_p95": {
+          "decoder_refine_minus_meshoptimizer": -1.0402145866979587e-05,
+          "bootstrap_95_percentile_ci": [
+            -7.550275540261185e-05,
+            0.00010635820328051566
+          ],
+          "assets_positive": 1,
+          "positive_delta_is_better": false
+        },
+        "bidirectional_distance_max_sampled": {
+          "decoder_refine_minus_meshoptimizer": 0.0006356472446914568,
+          "bootstrap_95_percentile_ci": [
+            -0.00048747967743881845,
+            0.002023372266522388
+          ],
+          "assets_positive": 3,
+          "positive_delta_is_better": false
+        },
+        "normal_consistency_absdot": {
+          "decoder_refine_minus_meshoptimizer": -0.0004978666660733766,
+          "bootstrap_95_percentile_ci": [
+            -0.0013900506798376344,
+            8.218735692339108e-05
+          ],
+          "assets_positive": 2,
+          "positive_delta_is_better": true
+        }
+      }
+    }
+  },
+  "asset_records": [
+    {
+      "split": "train",
+      "file_id": 132057,
+      "source_sha256": "af347392d9380cc917d2cead4c44b9849cf46f466929f77447fdab67626024a5",
+      "preparation_status": "prepared",
+      "decoder_refine_status": "decoded",
+      "meshoptimizer_budget_status": "usable",
+      "triangle_counts": {
+        "meshoptimizer_base": 158,
+        "decoder_refine": 188,
+        "meshoptimizer_budget": 188
+      },
+      "methods": {
+        "meshoptimizer_base": {
+          "mse": 0.0003461049456451545,
+          "ssim": 0.9911015151415548,
+          "flip": 0.007440896821208298,
+          "lpips_squeeze": 0.005064828723940688,
+          "silhouette_xor_fraction": 0.001468658447265625,
+          "coverage_mae": 0.0015246073404947917,
+          "psnr_db": 34.607921948374695,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.006276136759370839,
+          "chamfer_l2_squared_mean": 4.872679071228728e-05,
+          "bidirectional_distance_p95": 0.011748292101932442,
+          "bidirectional_distance_max_sampled": 0.021980931449201067,
+          "normal_consistency_absdot": 0.954779617041294
+        },
+        "decoder_refine": {
+          "mse": 0.00034474162769427625,
+          "ssim": 0.9911382925921101,
+          "flip": 0.007507508436447097,
+          "lpips_squeeze": 0.004875034171163861,
+          "silhouette_xor_fraction": 0.0014788309733072917,
+          "coverage_mae": 0.001544952392578125,
+          "psnr_db": 34.62506272187148,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.006272230723145412,
+          "chamfer_l2_squared_mean": 4.8645240951829635e-05,
+          "bidirectional_distance_p95": 0.011716407039014788,
+          "bidirectional_distance_max_sampled": 0.02319614479004277,
+          "normal_consistency_absdot": 0.9546188130208727
+        },
+        "meshoptimizer_budget": {
+          "mse": 0.0002689355021330938,
+          "ssim": 0.9930640185816492,
+          "flip": 0.006368685319709281,
+          "lpips_squeeze": 0.004243740035841863,
+          "silhouette_xor_fraction": 0.0012270609537760417,
+          "coverage_mae": 0.0012880961100260417,
+          "psnr_db": 35.70351862846372,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.006093650828315258,
+          "chamfer_l2_squared_mean": 4.6041670552526145e-05,
+          "bidirectional_distance_p95": 0.011510321751010218,
+          "bidirectional_distance_max_sampled": 0.020463044189131724,
+          "normal_consistency_absdot": 0.9578796105504438
+        }
+      },
+      "research_npz_bytes": {
+        "base_mesh": 6162,
+        "latent_sidecar": 1162,
+        "shared_model": 1488,
+        "decoder_total_uncompressed_npz_artifacts": 8812,
+        "meshoptimizer_high_budget_geometry": 7242
+      }
+    },
+    {
+      "split": "train",
+      "file_id": 59494,
+      "source_sha256": "9c3be26665505629911145b446068f9e3de938b6d2dad4d7ca63b9854f7ec1b6",
+      "preparation_status": "rejected",
+      "decoder_refine_status": null,
+      "meshoptimizer_budget_status": null,
+      "triangle_counts": {},
+      "methods": {},
+      "failure_reason": "Source pair preparation failed: Duplicate geometric triangle"
+    },
+    {
+      "split": "train",
+      "file_id": 53581,
+      "source_sha256": "ef3c07a286e63867598a35237fe2663f679e8cd155de075a010b826636fb7ef7",
+      "preparation_status": "rejected",
+      "decoder_refine_status": null,
+      "meshoptimizer_budget_status": null,
+      "triangle_counts": {},
+      "methods": {},
+      "failure_reason": "Source pair preparation failed: Nonmanifold or inconsistently oriented edge"
+    },
+    {
+      "split": "train",
+      "file_id": 145328,
+      "source_sha256": "8bb9c166a14f7216ab069b877e4800f086a2094c21f883e5ac1d35b05d8a9388",
+      "preparation_status": "prepared",
+      "decoder_refine_status": "rejected",
+      "meshoptimizer_budget_status": "target_missing",
+      "triangle_counts": {
+        "meshoptimizer_base": 108
+      },
+      "methods": {
+        "meshoptimizer_base": {
+          "mse": 0.0019076610439544485,
+          "ssim": 0.9687077286528921,
+          "flip": 0.019664852142644424,
+          "lpips_squeeze": 0.016932987608015537,
+          "silhouette_xor_fraction": 0.004046122233072917,
+          "coverage_mae": 0.003959337870279948,
+          "psnr_db": 27.194987888653475,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008475940284852861,
+          "chamfer_l2_squared_mean": 9.388758719717106e-05,
+          "bidirectional_distance_p95": 0.016931483834485835,
+          "bidirectional_distance_max_sampled": 0.03622763958534061,
+          "normal_consistency_absdot": 0.9428469819623191
+        }
+      },
+      "failure_reason": "No requested refinement budget"
+    },
+    {
+      "split": "train",
+      "file_id": 96074,
+      "source_sha256": "f7b74c91b0526fd437c17aebd7694a1cff6c08055668109b5f8f96e560088b99",
+      "preparation_status": "rejected",
+      "decoder_refine_status": null,
+      "meshoptimizer_budget_status": null,
+      "triangle_counts": {},
+      "methods": {},
+      "failure_reason": "Source pair preparation failed: Nonmanifold or inconsistently oriented edge"
+    },
+    {
+      "split": "train",
+      "file_id": 57809,
+      "source_sha256": "3b0fbe2a61dd2799ce7b52697500860c89a3ee14841d42c4f4531c17a205c3b8",
+      "preparation_status": "rejected",
+      "decoder_refine_status": null,
+      "meshoptimizer_budget_status": null,
+      "triangle_counts": {},
+      "methods": {},
+      "failure_reason": "Meshoptimizer baseline unavailable: Degenerate triangle"
+    },
+    {
+      "split": "train",
+      "file_id": 84030,
+      "source_sha256": "98735ebb00fea705f77386b3672dfc1023beb49e7c19c233e73f6009af3c1ba6",
+      "preparation_status": "rejected",
+      "decoder_refine_status": null,
+      "meshoptimizer_budget_status": null,
+      "triangle_counts": {},
+      "methods": {},
+      "failure_reason": "Source pair preparation failed: Duplicate geometric triangle"
+    },
+    {
+      "split": "train",
+      "file_id": 148292,
+      "source_sha256": "38eeb83b26b3cdfe95c8ff9df9442fe8e3c1df3e5d762ea66bb2bc390f525471",
+      "preparation_status": "rejected",
+      "decoder_refine_status": null,
+      "meshoptimizer_budget_status": null,
+      "triangle_counts": {},
+      "methods": {},
+      "failure_reason": "Source pair preparation failed: Duplicate geometric triangle"
+    },
+    {
+      "split": "train",
+      "file_id": 84736,
+      "source_sha256": "4de846fb7c6ae5259655d89f2cf9c8ef021c234da02efd81df47efa0744a0da4",
+      "preparation_status": "prepared",
+      "decoder_refine_status": "decoded",
+      "meshoptimizer_budget_status": "usable",
+      "triangle_counts": {
+        "meshoptimizer_base": 3174,
+        "decoder_refine": 3808,
+        "meshoptimizer_budget": 3808
+      },
+      "methods": {
+        "meshoptimizer_base": {
+          "mse": 1.634642021573233e-05,
+          "ssim": 0.9986005023092912,
+          "flip": 0.0014888082866188295,
+          "lpips_squeeze": 0.0018426848206824313,
+          "silhouette_xor_fraction": 9.1552734375e-05,
+          "coverage_mae": 9.632110595703125e-05,
+          "psnr_db": 47.865773409104264,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.007551084387631505,
+          "chamfer_l2_squared_mean": 7.265935988759029e-05,
+          "bidirectional_distance_p95": 0.014783831319025137,
+          "bidirectional_distance_max_sampled": 0.03003275766085161,
+          "normal_consistency_absdot": 0.9434355166838915
+        },
+        "decoder_refine": {
+          "mse": 1.4764750811987379e-05,
+          "ssim": 0.9986966459879206,
+          "flip": 0.0014686894634602747,
+          "lpips_squeeze": 0.001744152818597892,
+          "silhouette_xor_fraction": 7.756551106770833e-05,
+          "coverage_mae": 8.455912272135417e-05,
+          "psnr_db": 48.307738783224764,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.00756384396717116,
+          "chamfer_l2_squared_mean": 7.290261648862525e-05,
+          "bidirectional_distance_p95": 0.014802470497082429,
+          "bidirectional_distance_max_sampled": 0.029992165722148516,
+          "normal_consistency_absdot": 0.9431595172458204
+        },
+        "meshoptimizer_budget": {
+          "mse": 1.1271029790975828e-05,
+          "ssim": 0.998962818451524,
+          "flip": 0.0011472963972967893,
+          "lpips_squeeze": 0.001388854613045017,
+          "silhouette_xor_fraction": 5.9763590494791664e-05,
+          "coverage_mae": 6.29425048828125e-05,
+          "psnr_db": 49.48036402311771,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.0075387443283258075,
+          "chamfer_l2_squared_mean": 7.259587295915015e-05,
+          "bidirectional_distance_p95": 0.014740922129845577,
+          "bidirectional_distance_max_sampled": 0.028880344124075565,
+          "normal_consistency_absdot": 0.9449653198409323
+        }
+      },
+      "research_npz_bytes": {
+        "base_mesh": 114786,
+        "latent_sidecar": 4730,
+        "shared_model": 1488,
+        "decoder_total_uncompressed_npz_artifacts": 121004,
+        "meshoptimizer_high_budget_geometry": 137610
+      }
+    },
+    {
+      "split": "train",
+      "file_id": 59301,
+      "source_sha256": "71db678a59bc1a4093eca62ae0236ce52725846f2e91b0ddfe9060ea7121a22c",
+      "preparation_status": "prepared",
+      "decoder_refine_status": "decoded",
+      "meshoptimizer_budget_status": "usable",
+      "triangle_counts": {
+        "meshoptimizer_base": 3514,
+        "decoder_refine": 4216,
+        "meshoptimizer_budget": 4216
+      },
+      "methods": {
+        "meshoptimizer_base": {
+          "mse": 1.7466023841240948e-05,
+          "ssim": 0.998910824890034,
+          "flip": 0.0015445322569576092,
+          "lpips_squeeze": 0.0011319213760240625,
+          "silhouette_xor_fraction": 9.663899739583333e-05,
+          "coverage_mae": 8.710225423177083e-05,
+          "psnr_db": 47.57805951362229,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.00974442002823087,
+          "chamfer_l2_squared_mean": 0.00012006571748654515,
+          "bidirectional_distance_p95": 0.018906393767544705,
+          "bidirectional_distance_max_sampled": 0.03568270977462834,
+          "normal_consistency_absdot": 0.940311450871359
+        },
+        "decoder_refine": {
+          "mse": 2.2472502344100427e-05,
+          "ssim": 0.9987234805251787,
+          "flip": 0.0019802800816250965,
+          "lpips_squeeze": 0.0013372244672306504,
+          "silhouette_xor_fraction": 0.000141143798828125,
+          "coverage_mae": 0.00012302398681640625,
+          "psnr_db": 46.483485655992695,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009695905673309168,
+          "chamfer_l2_squared_mean": 0.00011904071255456507,
+          "bidirectional_distance_p95": 0.018825872092056675,
+          "bidirectional_distance_max_sampled": 0.03700828848595735,
+          "normal_consistency_absdot": 0.9413116844984003
+        },
+        "meshoptimizer_budget": {
+          "mse": 6.87388598911276e-06,
+          "ssim": 0.9994659676789959,
+          "flip": 0.0009420205612210945,
+          "lpips_squeeze": 0.0005315644111760776,
+          "silhouette_xor_fraction": 2.7974446614583332e-05,
+          "coverage_mae": 2.7974446614583332e-05,
+          "psnr_db": 51.62797675386141,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009749929718774615,
+          "chamfer_l2_squared_mean": 0.00012045612979580763,
+          "bidirectional_distance_p95": 0.018945932493542865,
+          "bidirectional_distance_max_sampled": 0.03394628023677032,
+          "normal_consistency_absdot": 0.9423159797985369
+        }
+      },
+      "research_npz_bytes": {
+        "base_mesh": 126882,
+        "latent_sidecar": 5290,
+        "shared_model": 1488,
+        "decoder_total_uncompressed_npz_artifacts": 133660,
+        "meshoptimizer_high_budget_geometry": 152154
+      }
+    },
+    {
+      "split": "train",
+      "file_id": 84757,
+      "source_sha256": "a763dce4e69ceb68129abf8a02cc8f2045e53e2da83bf66857b7f4e9ea686ef7",
+      "preparation_status": "prepared",
+      "decoder_refine_status": "decoded",
+      "meshoptimizer_budget_status": "usable",
+      "triangle_counts": {
+        "meshoptimizer_base": 3626,
+        "decoder_refine": 4350,
+        "meshoptimizer_budget": 4350
+      },
+      "methods": {
+        "meshoptimizer_base": {
+          "mse": 6.649177196345756e-05,
+          "ssim": 0.9950463884317792,
+          "flip": 0.0073165530726934476,
+          "lpips_squeeze": 0.0045754750608466566,
+          "silhouette_xor_fraction": 0.0003306070963541667,
+          "coverage_mae": 0.00030549367268880207,
+          "psnr_db": 41.772320932225064,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.013193880801562644,
+          "chamfer_l2_squared_mean": 0.0002213792861795295,
+          "bidirectional_distance_p95": 0.025657568024170192,
+          "bidirectional_distance_max_sampled": 0.048418039215510814,
+          "normal_consistency_absdot": 0.9714284823472495
+        },
+        "decoder_refine": {
+          "mse": 6.596673899211441e-05,
+          "ssim": 0.9950252800697462,
+          "flip": 0.007502637493113677,
+          "lpips_squeeze": 0.004721106980772068,
+          "silhouette_xor_fraction": 0.0003039042154947917,
+          "coverage_mae": 0.00026289621988932293,
+          "psnr_db": 41.80674984355727,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.013195808675414145,
+          "chamfer_l2_squared_mean": 0.0002211043295084079,
+          "bidirectional_distance_p95": 0.02560343823686428,
+          "bidirectional_distance_max_sampled": 0.04846698703710794,
+          "normal_consistency_absdot": 0.9706257379258489
+        },
+        "meshoptimizer_budget": {
+          "mse": 4.4775619027737724e-05,
+          "ssim": 0.9967730054089475,
+          "flip": 0.005212286293196182,
+          "lpips_squeeze": 0.0030833993029470244,
+          "silhouette_xor_fraction": 0.00026702880859375,
+          "coverage_mae": 0.0002346038818359375,
+          "psnr_db": 43.48958401269612,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.013089645007142704,
+          "chamfer_l2_squared_mean": 0.00021778327075376022,
+          "bidirectional_distance_p95": 0.025453203327402564,
+          "bidirectional_distance_max_sampled": 0.048418039215510814,
+          "normal_consistency_absdot": 0.9706598778109166
+        }
+      },
+      "research_npz_bytes": {
+        "base_mesh": 130818,
+        "latent_sidecar": 5410,
+        "shared_model": 1488,
+        "decoder_total_uncompressed_npz_artifacts": 137716,
+        "meshoptimizer_high_budget_geometry": 156882
+      }
+    },
+    {
+      "split": "train",
+      "file_id": 73858,
+      "source_sha256": "409da0134c25314942808b0048a2c94ab24c0ce1b01daae29522d50ee5bacf4b",
+      "preparation_status": "prepared",
+      "decoder_refine_status": "decoded",
+      "meshoptimizer_budget_status": "usable",
+      "triangle_counts": {
+        "meshoptimizer_base": 2624,
+        "decoder_refine": 3148,
+        "meshoptimizer_budget": 3148
+      },
+      "methods": {
+        "meshoptimizer_base": {
+          "mse": 3.139057328085953e-05,
+          "ssim": 0.9982697758880784,
+          "flip": 0.002254361432278529,
+          "lpips_squeeze": 0.0016157566909290229,
+          "silhouette_xor_fraction": 0.00017038981119791666,
+          "coverage_mae": 0.000164031982421875,
+          "psnr_db": 45.03200752779079,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.012521469476768344,
+          "chamfer_l2_squared_mean": 0.00019822552318601925,
+          "bidirectional_distance_p95": 0.024198709123000116,
+          "bidirectional_distance_max_sampled": 0.043454853699923135,
+          "normal_consistency_absdot": 0.9268039392288158
+        },
+        "decoder_refine": {
+          "mse": 3.2736311260743064e-05,
+          "ssim": 0.9981856579319895,
+          "flip": 0.0023738975626959777,
+          "lpips_squeeze": 0.0018750409944914281,
+          "silhouette_xor_fraction": 0.0001678466796875,
+          "coverage_mae": 0.00020853678385416666,
+          "psnr_db": 44.849702586246885,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.01251590775041567,
+          "chamfer_l2_squared_mean": 0.00019807509222409395,
+          "bidirectional_distance_p95": 0.024195852521156625,
+          "bidirectional_distance_max_sampled": 0.043454853699923135,
+          "normal_consistency_absdot": 0.9269582878460905
+        },
+        "meshoptimizer_budget": {
+          "mse": 1.9213187454694905e-05,
+          "ssim": 0.9988838533229537,
+          "flip": 0.0016574611484732789,
+          "lpips_squeeze": 0.0010137113567907363,
+          "silhouette_xor_fraction": 9.1552734375e-05,
+          "coverage_mae": 0.00010077158610026042,
+          "psnr_db": 47.164005800028434,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.012452130644488761,
+          "chamfer_l2_squared_mean": 0.00019644532589030604,
+          "bidirectional_distance_p95": 0.02415039955233254,
+          "bidirectional_distance_max_sampled": 0.042979257129561056,
+          "normal_consistency_absdot": 0.9260644069451324
+        }
+      },
+      "research_npz_bytes": {
+        "base_mesh": 94242,
+        "latent_sidecar": 4610,
+        "shared_model": 1488,
+        "decoder_total_uncompressed_npz_artifacts": 100340,
+        "meshoptimizer_high_budget_geometry": 113106
+      }
+    },
+    {
+      "split": "train",
+      "file_id": 97859,
+      "source_sha256": "b53d4bc507e41638e67cff2252ce74e6ed202f82e0cd93739147078581f69315",
+      "preparation_status": "rejected",
+      "decoder_refine_status": null,
+      "meshoptimizer_budget_status": null,
+      "triangle_counts": {},
+      "methods": {},
+      "failure_reason": "Source pair preparation failed: Nearest-surface radius-check cap exceeded: 80000000"
+    },
+    {
+      "split": "train",
+      "file_id": 741525,
+      "source_sha256": "b6a751d128a57778977bbc124f061d09c3162a1e21ad534ebec1251ed9845a4e",
+      "preparation_status": "rejected",
+      "decoder_refine_status": null,
+      "meshoptimizer_budget_status": null,
+      "triangle_counts": {},
+      "methods": {},
+      "failure_reason": "Source pair preparation failed: Nearest-surface radius-check cap exceeded: 80000000"
+    },
+    {
+      "split": "train",
+      "file_id": 104559,
+      "source_sha256": "bb821a80e919e004d3192bd1aab5796ffaa8255b9e1d2a4228cc3efe8da501f6",
+      "preparation_status": "rejected",
+      "decoder_refine_status": null,
+      "meshoptimizer_budget_status": null,
+      "triangle_counts": {},
+      "methods": {},
+      "failure_reason": "Meshoptimizer baseline unavailable: Duplicate geometric triangle"
+    },
+    {
+      "split": "train",
+      "file_id": 32770,
+      "source_sha256": "05cadafafe14a6b6a5463a46b0fdf6d9bf706fa8d6e3358cff6e8096f7d82e7c",
+      "preparation_status": "rejected",
+      "decoder_refine_status": null,
+      "meshoptimizer_budget_status": null,
+      "triangle_counts": {},
+      "methods": {},
+      "failure_reason": "Meshoptimizer baseline unavailable: Duplicate geometric triangle"
+    },
+    {
+      "split": "validation",
+      "file_id": 90431,
+      "source_sha256": "b3e7526f62cd64b24cbe07ba1107053786564b655f360033d84981e457fad05c",
+      "preparation_status": "prepared",
+      "decoder_refine_status": "decoded",
+      "meshoptimizer_budget_status": "usable",
+      "triangle_counts": {
+        "meshoptimizer_base": 466,
+        "decoder_refine": 558,
+        "meshoptimizer_budget": 558
+      },
+      "methods": {
+        "meshoptimizer_base": {
+          "mse": 0.00043237091928785397,
+          "ssim": 0.9706810522142444,
+          "flip": 0.016278054177140195,
+          "lpips_squeeze": 0.009475720561264703,
+          "silhouette_xor_fraction": 0.0014190673828125,
+          "coverage_mae": 0.0013872782389322917,
+          "psnr_db": 33.64143523824949,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009998791717818326,
+          "chamfer_l2_squared_mean": 0.0001251076185097349,
+          "bidirectional_distance_p95": 0.019119953770329292,
+          "bidirectional_distance_max_sampled": 0.03750941157112362,
+          "normal_consistency_absdot": 0.9685308967576353
+        },
+        "decoder_refine": {
+          "mse": 0.00042994918539694264,
+          "ssim": 0.9705082620012965,
+          "flip": 0.016740612375239532,
+          "lpips_squeeze": 0.009805057547055185,
+          "silhouette_xor_fraction": 0.001483917236328125,
+          "coverage_mae": 0.001465161641438802,
+          "psnr_db": 33.665828695501034,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.010002744046636767,
+          "chamfer_l2_squared_mean": 0.00012515028057202712,
+          "bidirectional_distance_p95": 0.019102887758756744,
+          "bidirectional_distance_max_sampled": 0.037576553202662816,
+          "normal_consistency_absdot": 0.968966609509068
+        },
+        "meshoptimizer_budget": {
+          "mse": 0.0002562777665766572,
+          "ssim": 0.982926566010271,
+          "flip": 0.010885392630977245,
+          "lpips_squeeze": 0.005798539243793736,
+          "silhouette_xor_fraction": 0.0006726582845052084,
+          "coverage_mae": 0.0006469090779622396,
+          "psnr_db": 35.912890694767285,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009918139762745217,
+          "chamfer_l2_squared_mean": 0.0001239692447248786,
+          "bidirectional_distance_p95": 0.019180552766699773,
+          "bidirectional_distance_max_sampled": 0.03488115898675771,
+          "normal_consistency_absdot": 0.9688556419770028
+        }
+      },
+      "research_npz_bytes": {
+        "base_mesh": 17154,
+        "latent_sidecar": 1506,
+        "shared_model": 1488,
+        "decoder_total_uncompressed_npz_artifacts": 20148,
+        "meshoptimizer_high_budget_geometry": 20466
+      }
+    },
+    {
+      "split": "validation",
+      "file_id": 263198,
+      "source_sha256": "8c58c38d8dda6750250670eb9f409b989efc460973641b9bea4add68a7fb8a4d",
+      "preparation_status": "prepared",
+      "decoder_refine_status": "decoded",
+      "meshoptimizer_budget_status": "usable",
+      "triangle_counts": {
+        "meshoptimizer_base": 154,
+        "decoder_refine": 184,
+        "meshoptimizer_budget": 184
+      },
+      "methods": {
+        "meshoptimizer_base": {
+          "mse": 0.00011943118535263877,
+          "ssim": 0.9959845358805293,
+          "flip": 0.00445496787627538,
+          "lpips_squeeze": 0.002191465978588288,
+          "silhouette_xor_fraction": 0.0005620320638020834,
+          "coverage_mae": 0.0005292892456054688,
+          "psnr_db": 39.228822573089374,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.004785832247565984,
+          "chamfer_l2_squared_mean": 2.8053083545082318e-05,
+          "bidirectional_distance_p95": 0.008858824776604384,
+          "bidirectional_distance_max_sampled": 0.017974527931306824,
+          "normal_consistency_absdot": 0.9779552084866792
+        },
+        "decoder_refine": {
+          "mse": 0.0001223005534104471,
+          "ssim": 0.9959532034223328,
+          "flip": 0.004532521255896427,
+          "lpips_squeeze": 0.00227438508591149,
+          "silhouette_xor_fraction": 0.0005709330240885416,
+          "coverage_mae": 0.0005451838175455729,
+          "psnr_db": 39.12571577775165,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.0047652146283037825,
+          "chamfer_l2_squared_mean": 2.789212985549062e-05,
+          "bidirectional_distance_p95": 0.008871369015548553,
+          "bidirectional_distance_max_sampled": 0.017912703660874985,
+          "normal_consistency_absdot": 0.9775056970203579
+        },
+        "meshoptimizer_budget": {
+          "mse": 8.318609569861949e-05,
+          "ssim": 0.9967132909294912,
+          "flip": 0.0038500425701689287,
+          "lpips_squeeze": 0.001791568688834862,
+          "silhouette_xor_fraction": 0.0003674825032552083,
+          "coverage_mae": 0.00036334991455078125,
+          "psnr_db": 40.79949258637157,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.004644377765170454,
+          "chamfer_l2_squared_mean": 2.656833439208449e-05,
+          "bidirectional_distance_p95": 0.0087051112435538,
+          "bidirectional_distance_max_sampled": 0.017177911789267628,
+          "normal_consistency_absdot": 0.9793769003207353
+        }
+      },
+      "research_npz_bytes": {
+        "base_mesh": 6114,
+        "latent_sidecar": 1162,
+        "shared_model": 1488,
+        "decoder_total_uncompressed_npz_artifacts": 8764,
+        "meshoptimizer_high_budget_geometry": 7194
+      }
+    },
+    {
+      "split": "validation",
+      "file_id": 44710,
+      "source_sha256": "af0aa394903a6099da1a542ed6707aceb5130dea9726dc0ba0e7ff74147cbf58",
+      "preparation_status": "prepared",
+      "decoder_refine_status": "decoded",
+      "meshoptimizer_budget_status": "usable",
+      "triangle_counts": {
+        "meshoptimizer_base": 950,
+        "decoder_refine": 1140,
+        "meshoptimizer_budget": 1140
+      },
+      "methods": {
+        "meshoptimizer_base": {
+          "mse": 0.00024067040912374447,
+          "ssim": 0.9892778950276778,
+          "flip": 0.009126121934968978,
+          "lpips_squeeze": 0.008932717590748021,
+          "silhouette_xor_fraction": 0.0010007222493489583,
+          "coverage_mae": 0.0009298324584960938,
+          "psnr_db": 36.18577303760188,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.00937974205013222,
+          "chamfer_l2_squared_mean": 0.00011093974728053325,
+          "bidirectional_distance_p95": 0.01810585713970466,
+          "bidirectional_distance_max_sampled": 0.03481853862439423,
+          "normal_consistency_absdot": 0.9704118321356864
+        },
+        "decoder_refine": {
+          "mse": 0.00022960515690204292,
+          "ssim": 0.9894155331653468,
+          "flip": 0.0091716368139411,
+          "lpips_squeeze": 0.009080671976941327,
+          "silhouette_xor_fraction": 0.0009524027506510416,
+          "coverage_mae": 0.0008875528971354166,
+          "psnr_db": 36.3901836196679,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009366836127966745,
+          "chamfer_l2_squared_mean": 0.00011060761121154102,
+          "bidirectional_distance_p95": 0.018051231293327516,
+          "bidirectional_distance_max_sampled": 0.03499478916992599,
+          "normal_consistency_absdot": 0.971012113333409
+        },
+        "meshoptimizer_budget": {
+          "mse": 0.00013689709186370629,
+          "ssim": 0.9930699509539801,
+          "flip": 0.006593801061778019,
+          "lpips_squeeze": 0.0065510501541818185,
+          "silhouette_xor_fraction": 0.0007006327311197916,
+          "coverage_mae": 0.0005772908528645834,
+          "psnr_db": 38.6360577758522,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.00934773304739266,
+          "chamfer_l2_squared_mean": 0.000110488456215057,
+          "bidirectional_distance_p95": 0.01812457179618971,
+          "bidirectional_distance_max_sampled": 0.035889692697046865,
+          "normal_consistency_absdot": 0.9712967514111719
+        }
+      },
+      "research_npz_bytes": {
+        "base_mesh": 34770,
+        "latent_sidecar": 2186,
+        "shared_model": 1488,
+        "decoder_total_uncompressed_npz_artifacts": 38444,
+        "meshoptimizer_high_budget_geometry": 41610
+      }
+    },
+    {
+      "split": "validation",
+      "file_id": 191968,
+      "source_sha256": "4384855f2f404959ae7516298cd5b8a620c4c29ef1e0a1af4329e47c598db784",
+      "preparation_status": "rejected",
+      "decoder_refine_status": null,
+      "meshoptimizer_budget_status": null,
+      "triangle_counts": {},
+      "methods": {},
+      "failure_reason": "Source pair preparation failed: Duplicate geometric triangle"
+    },
+    {
+      "split": "validation",
+      "file_id": 383021,
+      "source_sha256": "0f6734eafb2eae7b152f05225423bebce9d467c1203fb6f9e5be758022fcb397",
+      "preparation_status": "prepared",
+      "decoder_refine_status": "decoded",
+      "meshoptimizer_budget_status": "rejected",
+      "triangle_counts": {
+        "meshoptimizer_base": 4136,
+        "decoder_refine": 4962
+      },
+      "methods": {
+        "meshoptimizer_base": {
+          "mse": 3.7575574711349004e-06,
+          "ssim": 0.9992688963612889,
+          "flip": 0.0009302962231837834,
+          "lpips_squeeze": 0.00045129310395471595,
+          "silhouette_xor_fraction": 1.0172526041666666e-05,
+          "coverage_mae": 1.811981201171875e-05,
+          "psnr_db": 54.25094368237826,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008919922036917233,
+          "chamfer_l2_squared_mean": 0.00010104497653116968,
+          "bidirectional_distance_p95": 0.017282699807559327,
+          "bidirectional_distance_max_sampled": 0.03140390404327185,
+          "normal_consistency_absdot": 0.9612637263502972
+        },
+        "decoder_refine": {
+          "mse": 4.961091280747388e-06,
+          "ssim": 0.9992353421326113,
+          "flip": 0.0010199971535863976,
+          "lpips_squeeze": 0.0004793573292166305,
+          "silhouette_xor_fraction": 1.6530354817708332e-05,
+          "coverage_mae": 2.288818359375e-05,
+          "psnr_db": 53.04422782163534,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.0089116770686017,
+          "chamfer_l2_squared_mean": 0.00010081869418884133,
+          "bidirectional_distance_p95": 0.01728114104564288,
+          "bidirectional_distance_max_sampled": 0.03140260246511908,
+          "normal_consistency_absdot": 0.9612470232272197
+        }
+      },
+      "failure_reason": "Duplicate geometric triangle"
+    },
+    {
+      "split": "validation",
+      "file_id": 100894,
+      "source_sha256": "0e6c0419f7b8a0994665315dcbbd9f04dae60df615fe4699c559fd46a3c39bb0",
+      "preparation_status": "prepared",
+      "decoder_refine_status": "decoded",
+      "meshoptimizer_budget_status": "usable",
+      "triangle_counts": {
+        "meshoptimizer_base": 1746,
+        "decoder_refine": 2094,
+        "meshoptimizer_budget": 2094
+      },
+      "methods": {
+        "meshoptimizer_base": {
+          "mse": 0.00012152380810690802,
+          "ssim": 0.9890168966524836,
+          "flip": 0.007957536048100641,
+          "lpips_squeeze": 0.008019835009084394,
+          "silhouette_xor_fraction": 0.0004336039225260417,
+          "coverage_mae": 0.0004968643188476562,
+          "psnr_db": 39.15338629748432,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008721780604194885,
+          "chamfer_l2_squared_mean": 9.628755018005155e-05,
+          "bidirectional_distance_p95": 0.016925959285739204,
+          "bidirectional_distance_max_sampled": 0.030259028035732348,
+          "normal_consistency_absdot": 0.9716928713116574
+        },
+        "decoder_refine": {
+          "mse": 0.00011902684601976001,
+          "ssim": 0.9891336148827339,
+          "flip": 0.007882172455235073,
+          "lpips_squeeze": 0.008239021786721423,
+          "silhouette_xor_fraction": 0.000415802001953125,
+          "coverage_mae": 0.00045808156331380207,
+          "psnr_db": 39.24355074209863,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008684098279404176,
+          "chamfer_l2_squared_mean": 9.531066047718777e-05,
+          "bidirectional_distance_p95": 0.01683591613536727,
+          "bidirectional_distance_max_sampled": 0.03026633445410659,
+          "normal_consistency_absdot": 0.9723426501740021
+        },
+        "meshoptimizer_budget": {
+          "mse": 7.69677724988586e-05,
+          "ssim": 0.9915054734425417,
+          "flip": 0.005887467520854746,
+          "lpips_squeeze": 0.006381455532391556,
+          "silhouette_xor_fraction": 0.00020599365234375,
+          "coverage_mae": 0.00025526682535807293,
+          "psnr_db": 41.13691082044554,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008679846934918781,
+          "chamfer_l2_squared_mean": 9.544892668893992e-05,
+          "bidirectional_distance_p95": 0.016892776980024716,
+          "bidirectional_distance_max_sampled": 0.030259028035732348,
+          "normal_consistency_absdot": 0.9722892429922205
+        }
+      },
+      "research_npz_bytes": {
+        "base_mesh": 63426,
+        "latent_sidecar": 3106,
+        "shared_model": 1488,
+        "decoder_total_uncompressed_npz_artifacts": 68020,
+        "meshoptimizer_high_budget_geometry": 75954
+      }
+    },
+    {
+      "split": "validation",
+      "file_id": 257594,
+      "source_sha256": "7f97fe7ee1ba78f46b40413d2ff24cdd5d5edb6045dd94da368a02ccc15df388",
+      "preparation_status": "rejected",
+      "decoder_refine_status": null,
+      "meshoptimizer_budget_status": null,
+      "triangle_counts": {},
+      "methods": {},
+      "failure_reason": "Source pair preparation failed: Duplicate geometric triangle"
+    },
+    {
+      "split": "validation",
+      "file_id": 94990,
+      "source_sha256": "c074ee56d1c6d5ea6c5601ae11057b4c43684e63d605d3216ce96366aafa7f4b",
+      "preparation_status": "rejected",
+      "decoder_refine_status": null,
+      "meshoptimizer_budget_status": null,
+      "triangle_counts": {},
+      "methods": {},
+      "failure_reason": "Source pair preparation failed: Degenerate triangle"
+    }
+  ]
+}

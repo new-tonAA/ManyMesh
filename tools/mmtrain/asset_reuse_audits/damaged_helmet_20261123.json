@@ -1,0 +1,1898 @@
+{
+  "asset_path": "third_party/models/DamagedHelmet/DamagedHelmet.glb",
+  "asset_sha256": "a1e3b04de97b11de564ce6e53b95f02954a297f0008183ac63a4f5974f6b32d8",
+  "audit_script_sha256": "2debd27cf32591141364c14ddf9c945c1bac22e2f3015db97e4e7ce8621f11f1",
+  "git_state_at_audit_time": {
+    "head_commit": "2d417cacdeb545a13e6bfb7192310191e60670d6",
+    "worktree_dirty": true
+  },
+  "matches": [],
+  "schema": 1,
+  "scope_note": "A text-artifact scan only. Absence of a match does not prove that an asset was never used in unarchived or non-text runs.",
+  "search_manifest": [
+    {
+      "path": "tools/mmgeo/ADAPTIVE_CAMERA_PATH_RANKING_SCREEN_20261118.md",
+      "sha256": "aee4dd44438bd82b97c4b863e0f300dc2e1e29f35029979d5fb23112a9c190fc"
+    },
+    {
+      "path": "tools/mmgeo/ADJACENT_MERGE_COUNTERFACTUAL.md",
+      "sha256": "d08adf808bf1831c45d55b8145b41d5ec7f22e6bd2b2ec095d7e5d9f5f91aab2"
+    },
+    {
+      "path": "tools/mmgeo/analyze_asymmetric_patch_certificates.py",
+      "sha256": "e3eeb32661d45056e239bbef26e6de0ace1d293224c8e05ee2d4620fe7c01155"
+    },
+    {
+      "path": "tools/mmgeo/analyze_budget_oracle_screen.py",
+      "sha256": "0a4f3d768aa1d9eaf47268fdea63c154e80438a9c37c7fa3f735b58d683c4e52"
+    },
+    {
+      "path": "tools/mmgeo/analyze_restir_floor_contrast.py",
+      "sha256": "79c18dc43fb5892a86fd2c253ba530f7e11e9a26f5fb4ad82188aeaac64a21c6"
+    },
+    {
+      "path": "tools/mmgeo/analyze_restir_lod_contrast.py",
+      "sha256": "ef0a26b99a8f46e19cd072fed83a08f15995a8f237836cbbef80790f692d215e"
+    },
+    {
+      "path": "tools/mmgeo/analyze_targetbudget_config_oracle.py",
+      "sha256": "03d3b2dcda202edd0ef839690fdb5cec0f3376cfb46e8d9cdba1d6758f38e237"
+    },
+    {
+      "path": "tools/mmgeo/analyze_targetbudget_resource_oracle.py",
+      "sha256": "01a83961d32b4b15bd3745e42dffe85bd20edf473df57ea68ffbd269bbd5dd1a"
+    },
+    {
+      "path": "tools/mmgeo/analyze_tree_cut_optimum.py",
+      "sha256": "c3b3fdb78ba30b07b5315706a0039a36a84fe8d09c876f71f3e414c4801b5e36"
+    },
+    {
+      "path": "tools/mmgeo/appearance_compensation_probe.py",
+      "sha256": "32c01c08c57b39b66dd2cad3271bfacac00718ef9f321805d0433095879c3db5"
+    },
+    {
+      "path": "tools/mmgeo/appearance_compensation_probe_v2.py",
+      "sha256": "2166f33396e228bd3f7ed40e15c5c0feee580f9dae09d37bba19876a89239bb9"
+    },
+    {
+      "path": "tools/mmgeo/APPEARANCE_COMPENSATION_PROTOCOL.md",
+      "sha256": "a1e57a50a2750da6e16078cdaebdaafef274b3489e6c597de71cdcd4d89b478f"
+    },
+    {
+      "path": "tools/mmgeo/APPEARANCE_COMPENSATION_RESULTS.md",
+      "sha256": "fabb3d8ac075f83887e2154f94641eed10e50925fd4991d82a51e3a2cf331b92"
+    },
+    {
+      "path": "tools/mmgeo/APPEARANCE_COMPENSATION_V1_STOP.md",
+      "sha256": "3524d8cad8b7733e80e943758d8930ca095466d7d774fa2fd7dd5bc568d1b618"
+    },
+    {
+      "path": "tools/mmgeo/APPEARANCE_RECOVERABILITY_PREFLIGHT.md",
+      "sha256": "10187745cb39e3d251795b678a23f79db15891702391d86d05cb37c8d91b481b"
+    },
+    {
+      "path": "tools/mmgeo/ASYMMETRIC_PAID_QUERY_GATE.md",
+      "sha256": "c4690337f670d79ee367ef921fec6e115155b2624f473055e52ed9ec64dfe195"
+    },
+    {
+      "path": "tools/mmgeo/audit_adaptive_orbit_sampling.py",
+      "sha256": "103e08113209a0457ca022b0355cfce3a13bc4d0465591a1b068d5108ab0e549"
+    },
+    {
+      "path": "tools/mmgeo/audit_boundary_endpoint_actions.py",
+      "sha256": "a064fcfe24f43b6e7686ef929539a47de9cc79b99fdafcf6857e2071938e415d"
+    },
+    {
+      "path": "tools/mmgeo/audit_camera_rank_stability.py",
+      "sha256": "155ce00cd5671a0e526a9a5a8d9f39b7bbacf4697bd51f11d9e69eeab6866df5"
+    },
+    {
+      "path": "tools/mmgeo/audit_crossasset_visibility.py",
+      "sha256": "26ce6c34c4eb047216c9f2721203270d4d87f89aed0d8df16bee27bab5c502c6"
+    },
+    {
+      "path": "tools/mmgeo/audit_cut_edge_witnesses.py",
+      "sha256": "553bc592c9c6f80513e644c264fa44a9e81121a9c6ba4b98d7a99660ede6562b"
+    },
+    {
+      "path": "tools/mmgeo/audit_depth_failures.py",
+      "sha256": "96f9f390c56ba7cbcf622c3c88ea695bbb04dd20434f799f357aa15f1091bcb4"
+    },
+    {
+      "path": "tools/mmgeo/audit_direct_complementary.py",
+      "sha256": "2e852bd8868d159c8a84796d4a327c1f958a35e42caf7f01815bb943b0e88c1c"
+    },
+    {
+      "path": "tools/mmgeo/audit_dynamic_edge_frontier.py",
+      "sha256": "fa3d0e61b9f0869d5efdd15063ef3d940b518e6af0dd20b03b809d2af8b716e9"
+    },
+    {
+      "path": "tools/mmgeo/audit_dynamic_recapture.py",
+      "sha256": "bd3272dc836a250c790a40be298f6080c2201511fa844486a76efd2be1976809"
+    },
+    {
+      "path": "tools/mmgeo/audit_exact_cut_frontier_oracle.py",
+      "sha256": "d6fc09a2d9026a38bef5b5ec8427b373f330b492e2a65a7e98faffd4c77b2c52"
+    },
+    {
+      "path": "tools/mmgeo/audit_exact_loss_cell_pruning.py",
+      "sha256": "ca0c19cf1d29c08fd9bc74b6104c74b85802986a5e85497f94286329f16a9564"
+    },
+    {
+      "path": "tools/mmgeo/audit_fullmesh_residual_event_coverage.py",
+      "sha256": "7f6d5e4d55bfff6fd7dc2ca30d2f28226eed5da108463e9d3688c13f84324af1"
+    },
+    {
+      "path": "tools/mmgeo/audit_fused_query_timing.py",
+      "sha256": "fffa0b05f3a1ea0528ba92cf9daabc8cbc38904b0962c80496f50f3e98221cd5"
+    },
+    {
+      "path": "tools/mmgeo/audit_joint_collapse_raster.py",
+      "sha256": "1ba87dc6e84dfdd312f03a9ac8165bf7a1581b20d8cad369c4e8dae7eeca04ce"
+    },
+    {
+      "path": "tools/mmgeo/audit_lod_cuts.py",
+      "sha256": "cfdc922a9f71f929c589678574b946ce926efa4a8743b5299e869377001daab7"
+    },
+    {
+      "path": "tools/mmgeo/audit_manifold_cut_feasibility.py",
+      "sha256": "24f5350cbc04076ead2987cef513f47e99a6b62969b575350f6a852714604cc7"
+    },
+    {
+      "path": "tools/mmgeo/audit_mixed_group_cut_frontier.py",
+      "sha256": "3e517a485c923024abd66bc4ed8c3e551a7e93bd2d1f1b5f93c06b0c63cad9b3"
+    },
+    {
+      "path": "tools/mmgeo/audit_mixed_group_cut_geometry.py",
+      "sha256": "827a713b1192582fc53b3f1c5d6c3c0ed3b97af0be042340210496b147db2085"
+    },
+    {
+      "path": "tools/mmgeo/audit_multi_collapse_interactions.py",
+      "sha256": "03013475ad390dfa715b4a55a816b0a315c9db22d01c510cb21b586d737021ce"
+    },
+    {
+      "path": "tools/mmgeo/audit_multiview_placement.py",
+      "sha256": "34608cf933b8357e2a90281f8ab2b7a0ebdb03df44c420d1c053aa154e14d0b2"
+    },
+    {
+      "path": "tools/mmgeo/audit_normal_fit_stationarity.py",
+      "sha256": "db05fc14235083b4d4ebfbbf714872f06bc7f42bf4b0bdb95aa2185244bfb281"
+    },
+    {
+      "path": "tools/mmgeo/audit_obj_contract_floor.py",
+      "sha256": "02e40e9ee7ff8cf2d87d60f079e0c2ee452b97bf8568e5b37b9e556c5fdbec48"
+    },
+    {
+      "path": "tools/mmgeo/audit_pan_path_raster_ranking.py",
+      "sha256": "30f0138d64484689f7dac5b271f4fc3803f5f5c393f35a097770a0f220de8c8e"
+    },
+    {
+      "path": "tools/mmgeo/audit_partition_boundary_floor.py",
+      "sha256": "1250fb467a2a11c2f2f317db04b43d7c22eae9de2dbcb442fdf40ab90f3a5eb2"
+    },
+    {
+      "path": "tools/mmgeo/audit_path_loss_cache_pair.py",
+      "sha256": "23c30a306f8d237a1578c91e0c7378d13c8f4b7b3101bfc2c54862087c788e84"
+    },
+    {
+      "path": "tools/mmgeo/audit_path_loss_position_prior.py",
+      "sha256": "676c5f912851ad330e335d4660ffcfb4dea699a1dcb3b324779014806a851c74"
+    },
+    {
+      "path": "tools/mmgeo/audit_path_loss_qem_baseline.py",
+      "sha256": "cd379e327425ba8e0f38f44bf06a147461f22318f0fc7f662371a4324053a787"
+    },
+    {
+      "path": "tools/mmgeo/audit_path_loss_residual_hybrid.py",
+      "sha256": "23886f1de782b242b5fa7f34f96ea0609e953a4553a6f47d58bf8bc2176ebcfc"
+    },
+    {
+      "path": "tools/mmgeo/audit_projected_support_invalidation.py",
+      "sha256": "53aeee14a937d61cd77088db53a4a7f3a4ac6f00336ac1838088a5f90be6c410"
+    },
+    {
+      "path": "tools/mmgeo/audit_quality_reject_log_join.py",
+      "sha256": "eb8ae2227b6f786f0c6e8f802f2f51a5fedcccec3a102ca4e4d87c83e21f0d11"
+    },
+    {
+      "path": "tools/mmgeo/audit_real_candidate_interactions.py",
+      "sha256": "69bbbfba421e6170e108063f7a82e3f0d8205a6c23c93b625325bce41723fd1c"
+    },
+    {
+      "path": "tools/mmgeo/audit_restir_overlap_matching.py",
+      "sha256": "1df9662cd82b1aa9db29105a6eaff5ecfec89b7953453a61f64a3c229d392771"
+    },
+    {
+      "path": "tools/mmgeo/audit_restir_uv_overlap_capacity.py",
+      "sha256": "da755d8bf5dc802d68d653b84bf7e8b6ebf2787eef00d6a28bc0a1533e34ba05"
+    },
+    {
+      "path": "tools/mmgeo/audit_restir_visibility_matching.py",
+      "sha256": "d1a37de8775b65715eeb7173c96862484c35732bd4be89a710bf8dfa14ec43f6"
+    },
+    {
+      "path": "tools/mmgeo/audit_sampling_phase_visibility.py",
+      "sha256": "3f3a98371211ad71b0d036f911e71724b373aba4c183ba393330f393aa9b1f4c"
+    },
+    {
+      "path": "tools/mmgeo/audit_selected_batch_support.py",
+      "sha256": "15e2a7029b8c1c7a5d8c01af450364a07ee0f9ff6c7012752af4a853cb85ddf1"
+    },
+    {
+      "path": "tools/mmgeo/audit_shared_parent_candidate_reuse.py",
+      "sha256": "55d4048fef920b8af2af2e762a308dae8a3589925ed6109564adef23ccb4eabe"
+    },
+    {
+      "path": "tools/mmgeo/audit_shared_parent_cut_substitutions.py",
+      "sha256": "6a8626b11bae1332426d1030f6c4d6b4f903003a853ae298e4a8f490d58aa01c"
+    },
+    {
+      "path": "tools/mmgeo/audit_silhouette_bias.py",
+      "sha256": "351530eaedc09e8aae8f4492863fda489449eb567c5329fc44e47861e5867c1a"
+    },
+    {
+      "path": "tools/mmgeo/audit_spatial_retry_frontier.py",
+      "sha256": "239330b061d0ed8cfbf3f60b3156c90d478dbe8e1f4b0cf1fdaede64315821a2"
+    },
+    {
+      "path": "tools/mmgeo/audit_target_budget_visibility.py",
+      "sha256": "a8ed446bc573b79f93e5565d9e50eb037264a3c43484c76d3219c31f25d05cdd"
+    },
+    {
+      "path": "tools/mmgeo/audit_targetbudget_heldout.py",
+      "sha256": "5f0571f06d0b47c7a44bca9d349aabcb159cc17e2cefaa84e1ad2ce685eaddff"
+    },
+    {
+      "path": "tools/mmgeo/audit_uv_sample_coverage.py",
+      "sha256": "44690adabfdee7401dcdfbb1483b179371c8ce3c287376f4c87fd2e42abcbb82"
+    },
+    {
+      "path": "tools/mmgeo/bench_contour_budget.py",
+      "sha256": "85e30abf4920374d8ff278244c2ecd1952eff99afbc993f9de42e4a77f83b89f"
+    },
+    {
+      "path": "tools/mmgeo/bench_saved_cut_view_rerank.py",
+      "sha256": "452802875624ab11c53ac4f270cac9d5641f140a438dd342f358e2039c2ed4cc"
+    },
+    {
+      "path": "tools/mmgeo/benchmark_fragment_transactions.py",
+      "sha256": "87836769a22354e61773be76a4ad34625dff34ce58779f4413d97f640035fe68"
+    },
+    {
+      "path": "tools/mmgeo/benchmark_fused_patch_visibility.py",
+      "sha256": "6d85994b6c1ff6526cf55d1e504cbe05560e77c458a492d827f10dfa4f351ff7"
+    },
+    {
+      "path": "tools/mmgeo/benchmark_target_budget_builds.py",
+      "sha256": "c80a3e096a3c9a8dcee2f0b5a1219f91ed19901c118ef4f06abc7f0081b1074c"
+    },
+    {
+      "path": "tools/mmgeo/benchmark_target_budget_heldout.py",
+      "sha256": "66f974cd5a7b20a153f505fcd9fb76db0e45a4f02953ca8d12722e732fdbd85d"
+    },
+    {
+      "path": "tools/mmgeo/benchmark_visibility_query_bvh.py",
+      "sha256": "5025068ab3a789f8ff0cb50375b43ef48fc10f6037a043476fd269ad2ecc71ed"
+    },
+    {
+      "path": "tools/mmgeo/BOUNDARY_ENDPOINT_CONTROL_20261116.md",
+      "sha256": "ca73665655f27617b8d9cce551a86860881c6c2c04024dea079b7f2e14edbd51"
+    },
+    {
+      "path": "tools/mmgeo/bounded_candidate_error.py",
+      "sha256": "c5a1bfc9706e9a42d4aff8c8e64edfe778d0467cee0a4d876c6b7d6b5cad35a1"
+    },
+    {
+      "path": "tools/mmgeo/BOUNDED_COLLAPSE_PROTOCOL.md",
+      "sha256": "7141e0c073714db9892c10f8108aa8de801dde31efc0c7b4a0c8a3e90430107b"
+    },
+    {
+      "path": "tools/mmgeo/build_path_loss_feature_table.py",
+      "sha256": "d02b6614b1ddaf0d1041734cc6541019fc1966661c774300d8a803e5dc88f16b"
+    },
+    {
+      "path": "tools/mmgeo/CAMERA_EVENT_CERTIFICATE_PREFLIGHT.md",
+      "sha256": "9ea88190d2542e8ae9947ce2cefd46bc8d1c68d00f3d34186f5444047662d36f"
+    },
+    {
+      "path": "tools/mmgeo/CAMERA_PHASE_AVERAGE_20261117.csv",
+      "sha256": "bf941fedaa5ce71f15b5b034414a4af54f058034e61dfc23277f226230c125a2"
+    },
+    {
+      "path": "tools/mmgeo/capture_targetbudget_peak_memory.py",
+      "sha256": "f5f58feedd5823b6c50da08ba3f21c4ef6809c2bffa1a4b3ec9784d70fc6622e"
+    },
+    {
+      "path": "tools/mmgeo/CMakeLists.txt",
+      "sha256": "2cf06c074f705d66d3ce7dce0cd5a25e0ea999c5ba5d967a87f8b48f9d5279cc"
+    },
+    {
+      "path": "tools/mmgeo/collapse_normal_transfer.py",
+      "sha256": "b5fe2e3b8c0332628448b8959c01b18caff16c6b44ee7011b422edfd19e74062"
+    },
+    {
+      "path": "tools/mmgeo/compare_facing_continuity.py",
+      "sha256": "1a6503c41fcb9785c566276bcf6f2d765c601079d44fe52ac0ae3bc6b5aadb86"
+    },
+    {
+      "path": "tools/mmgeo/compare_progressive_baselines.py",
+      "sha256": "5a8ab3dc9f91e432472af2b867e4de8f16e2eda712a9ea16e7d9e1f73e83ce47"
+    },
+    {
+      "path": "tools/mmgeo/complementary_geometry.py",
+      "sha256": "4fdb2dac4c62f4fee321f48e793fe875fb445474721bc1f1163f8e4fd6a68d12"
+    },
+    {
+      "path": "tools/mmgeo/COMPLEMENTARY_GEOMETRY_PROTOCOL.md",
+      "sha256": "a33c690868af637199f5da9794e1e5679c7947d0d9536eaa7220ab34c6ce1a42"
+    },
+    {
+      "path": "tools/mmgeo/COMPLEMENTARY_GEOMETRY_RESULTS.md",
+      "sha256": "f9e0de75065a73034f5994a30e7f1b2cb912d9cb38ca0d1077635ae9ce776702"
+    },
+    {
+      "path": "tools/mmgeo/complete_compensation_probe.py",
+      "sha256": "b63809f58a0315a598c7fba31c894113f70d2d31d3374b0c40c0fbb622a94dfb"
+    },
+    {
+      "path": "tools/mmgeo/contour_budget_screen_20261123.json",
+      "sha256": "bbaf23fa1cbdf481bc9cbb1ed836f295947ae2a28393ec1cf616a8ac7df51d9e"
+    },
+    {
+      "path": "tools/mmgeo/CONTOUR_SELECTOR_BUDGET_SCREEN_20261123.md",
+      "sha256": "437d5c902f593774ed18cad842f2bd6939a70e67c5387ee3df46fc00c137737a"
+    },
+    {
+      "path": "tools/mmgeo/CONTOUR_VISIBILITY_ABLATION.md",
+      "sha256": "2d252419fb6244eaa1ec1d6d31902e920a51912f3214d6ed7d5c40d5cfb5bf26"
+    },
+    {
+      "path": "tools/mmgeo/depth_candidate_pilot.py",
+      "sha256": "fe5e66e4a57eb4752e89269e96c9275ab7c247d6b3afd0ace7cb9b7031a0b4ef"
+    },
+    {
+      "path": "tools/mmgeo/DEPTH_CANDIDATE_PROTOCOL.md",
+      "sha256": "2cc5d5a5cfc5145dbbef1abc3a7557e5ae0f1c00484ab1701b11aee39e74b4ed"
+    },
+    {
+      "path": "tools/mmgeo/DEPTH_CANDIDATE_RESULTS.md",
+      "sha256": "61d0d29abced1f297c25b08d6187dccb978def9dbf336c7b0d00559a4e61342b"
+    },
+    {
+      "path": "tools/mmgeo/direct_complementary.py",
+      "sha256": "673501532f34ec76d0cc7cd77917e49b2cc579b690f78c555de93c372e4c4c88"
+    },
+    {
+      "path": "tools/mmgeo/DIRECT_COMPLEMENTARY_PROTOCOL.md",
+      "sha256": "d7f73d63b2cd51a56f81663e678e8608181be37404d10fb0e25581d81b909102"
+    },
+    {
+      "path": "tools/mmgeo/DIRECT_COMPLEMENTARY_RESULTS.md",
+      "sha256": "022244b9a982257400ea8e160c654df0d0bd2b8427cbb8072aa87527240aacc5"
+    },
+    {
+      "path": "tools/mmgeo/DISCRETE_FILTER_ENERGY.md",
+      "sha256": "78dc358e84266161a07dc98b740852fba1c88bbb6ebe05df989cf56813cd1126"
+    },
+    {
+      "path": "tools/mmgeo/DYNAMIC_RECAPTURE_AUDIT_20261116.md",
+      "sha256": "6a3e90402d0f48202d4f1dd25054883aced80124a07a65c5fb358cf5476f681e"
+    },
+    {
+      "path": "tools/mmgeo/DYNAMIC_RECAPTURE_FULLPOOL_AUDIT_20261116.md",
+      "sha256": "af9bffaed18af1f9a6f521e7aab85d5d53fecd5175fd61bc88fd3ddd0ddd88bb"
+    },
+    {
+      "path": "tools/mmgeo/edit_visibility_support.py",
+      "sha256": "8fa99fe488f73395bc32f4176a649beb343baaf930f2f8996bb212551d6e9e57"
+    },
+    {
+      "path": "tools/mmgeo/EDIT_VISIBILITY_SUPPORT_PREFLIGHT.md",
+      "sha256": "53224656ef9c487a3b016bee49c27051e6eb036cf6364779a2d0a242b23624e6"
+    },
+    {
+      "path": "tools/mmgeo/evaluate_asymmetric_patch_queries.py",
+      "sha256": "5b217b3c0eb83075964faaab72f84b4d7389230e86a4b82bf481f14c5b741622"
+    },
+    {
+      "path": "tools/mmgeo/evaluate_boundary_candidates.py",
+      "sha256": "0ebd72314455f3401469a9767ec1b03c6f80bf7fb8dd36da820e2216857f42ab"
+    },
+    {
+      "path": "tools/mmgeo/evaluate_complementary_geometry.py",
+      "sha256": "c5ac21b51aa72bd90699252a2562c4ff38b8659dbb4853cf590e4c521d5400c1"
+    },
+    {
+      "path": "tools/mmgeo/evaluate_direct_complementary.py",
+      "sha256": "2d19ba4594c6d2e9ecfa375567c1b1b00841bb9c0ae79fb356ff1fb049cd0790"
+    },
+    {
+      "path": "tools/mmgeo/evaluate_multiview_placement.py",
+      "sha256": "b3e6f46db400a4a262c291901cfee4570d278c6363ba2667e75c74d7b89b7222"
+    },
+    {
+      "path": "tools/mmgeo/evaluate_normal_transfer.py",
+      "sha256": "68059ef751351690d22acd0e2be20eacaae2facda73ae0448255e1058604705d"
+    },
+    {
+      "path": "tools/mmgeo/evaluate_progressive_baseline.py",
+      "sha256": "9b9b2933bbb9cc8f3282fa40615847373a9cb19e963b0f161453bbba1f659e52"
+    },
+    {
+      "path": "tools/mmgeo/evaluate_raster_placement.py",
+      "sha256": "4d513faab77fdc9de1a462c5cb15adaa8649955f79f6897956daefde77db21f9"
+    },
+    {
+      "path": "tools/mmgeo/evaluate_sampling_phases.py",
+      "sha256": "8686bf5487ecdef6134197b2059f607d50795dcc45a88717fdf0798319284e4b"
+    },
+    {
+      "path": "tools/mmgeo/evaluate_shading_controls.py",
+      "sha256": "a33092fa030256cf2518c8a5668382dc2a534f83d11d3ad6d9095be8db96daae"
+    },
+    {
+      "path": "tools/mmgeo/EXACT_STRICT_CUT_FRONTIER_ORACLE_20261119.md",
+      "sha256": "3e9cd7a7a9f919873b87491f8ebfef11777a5b13360a2c0cedd37a0e50e9c449"
+    },
+    {
+      "path": "tools/mmgeo/export_raster_deltas.py",
+      "sha256": "99aec8377aabc792231bdb1dcbeb9de662c77b8aab5b94495cb932f053800dac"
+    },
+    {
+      "path": "tools/mmgeo/FILTERED_BOUNDARY_EXPERIMENT.md",
+      "sha256": "759931ce448f8c461948905dcd57483d0e6a2b4c47e483eafb980fbabc2ea8f6"
+    },
+    {
+      "path": "tools/mmgeo/FILTERED_DEPTH_ENVELOPE_EVENTS_20261119.md",
+      "sha256": "dee5176d09c686a957de5473b9921fc7edc91049576d521c792333bc87f27369"
+    },
+    {
+      "path": "tools/mmgeo/FIXED_BOUNDARY_QEM_CONTROL.md",
+      "sha256": "69830e05d5068b30e3b58500aadf24bc2f14daff706c4baf20e913e8dcdf76f3"
+    },
+    {
+      "path": "tools/mmgeo/fixed_boundary_qem_control.py",
+      "sha256": "42204f707c730c5466ff77a11794dab6b8f0423b75e6998c15314d9786f659df"
+    },
+    {
+      "path": "tools/mmgeo/FRAGMENT_TRANSACTION_RESULTS.md",
+      "sha256": "d3822e680a7770d5f3fa4181ea57d5b950ec82bd80241b57fa36b97d227df605"
+    },
+    {
+      "path": "tools/mmgeo/fused_patch_visibility.py",
+      "sha256": "ce0fe3185777111b9f3d50eddeb34aa70dca77484491671fe36f4b6ec1fcd16c"
+    },
+    {
+      "path": "tools/mmgeo/FUSED_PATCH_VISIBILITY_COST_GATE.md",
+      "sha256": "027bb91ca6aa231d04d793e8bf4399b204b58bbc67c9ad9f19f20b44d772b8c6"
+    },
+    {
+      "path": "tools/mmgeo/historical_cut_topology_audit_20261122.json",
+      "sha256": "bd5190afc8cb576639d32cc6d6756333a623dfe64661f31ec3926298f0e37064"
+    },
+    {
+      "path": "tools/mmgeo/HISTORICAL_CUT_TOPOLOGY_AUDIT_20261122.md",
+      "sha256": "215e1f327e40997e2f2bffe364091e5b254bb70f38cb1a86a1df9448c96233a0"
+    },
+    {
+      "path": "tools/mmgeo/HYBRID_LEARNED_PATH_LOSS_20261119.md",
+      "sha256": "857270713d9eb539c4d922e9f1769a645d0b3062b7f714527ebcf1939c02c602"
+    },
+    {
+      "path": "tools/mmgeo/HYBRID_PATH_LOSS_RESEARCH_DECISION_20261119.md",
+      "sha256": "15890fa73538834be3b64daa9be5a2982592963a48ca67d5dbd0d2ad2b037845"
+    },
+    {
+      "path": "tools/mmgeo/LEARNED_MEMORY_CAPPED_DAG_SYNTHESIS_20261119.md",
+      "sha256": "f30659696ec8f9d885990eb8c7bf521e503639b37d78ddd753a50fcc2ea53ebb"
+    },
+    {
+      "path": "tools/mmgeo/make_batch_support_schedule.py",
+      "sha256": "6613079da0d59063fdde05b665bedc7d079e3553996d64985b05bed1dece2ce6"
+    },
+    {
+      "path": "tools/mmgeo/MATERIAL_SPHERE_EVENT_RASTER_EXPANSION_20261120.md",
+      "sha256": "628da72010df19f737bc0d6d190c78d903854e76b619e872c780816b60a11c64"
+    },
+    {
+      "path": "tools/mmgeo/measure_lod_uv_transport.py",
+      "sha256": "c15b87a5d102da2c632d82eb60bb2e5ec88b589a96d24c7870ac33bab75e1d42"
+    },
+    {
+      "path": "tools/mmgeo/merge_shading_audits.py",
+      "sha256": "730775546580ee860daf34fbfd39659ba838f453e99c75a91a74c580324efc89"
+    },
+    {
+      "path": "tools/mmgeo/MIXED_GROUP_CUT_FRONTIER_20261117.md",
+      "sha256": "ff1dfab88698072a8aa8a7a9fbbc3ce59a88a2d45c4fb0895c54f5075cd9323c"
+    },
+    {
+      "path": "tools/mmgeo/MULTI_COLLAPSE_INTERACTION_AUDIT_20261116.md",
+      "sha256": "a977c6b0bcd235ed0a97b9504de876f556fe7367ee59a7222acd73313279a89b"
+    },
+    {
+      "path": "tools/mmgeo/MULTI_COLLAPSE_INTERACTION_CROSS_ASSET_20261116.md",
+      "sha256": "25d387f27096ad6c17ab28affaef30978322b92cdff8aeb1474c112fa84aef56"
+    },
+    {
+      "path": "tools/mmgeo/normal_fit_control.py",
+      "sha256": "792904099530c395d7771453df784c498912575a8b68edafe81a0eab53a791bf"
+    },
+    {
+      "path": "tools/mmgeo/normal_fit_control_v2.py",
+      "sha256": "e3496adcd351d06ff00c73c08437476f5e41a0062bcf2ac57b96383353b6bab4"
+    },
+    {
+      "path": "tools/mmgeo/normal_offset_control.py",
+      "sha256": "f1cf188cc8b65c6615775219ea2b845b30b6b98fa132a909505f9f6b100067d2"
+    },
+    {
+      "path": "tools/mmgeo/NORMAL_OFFSET_PROTOCOL.md",
+      "sha256": "f34e0aeb4ef07294db0df5b80da9f76d0eb5fd7c557eec087709d10b7a67567f"
+    },
+    {
+      "path": "tools/mmgeo/NORMAL_TRANSFER_ATTRIBUTION.md",
+      "sha256": "99b1319de86021afcccbf696cbf10191af8f0822eb53c07d07e76b1a59abde26"
+    },
+    {
+      "path": "tools/mmgeo/OBJ_CONTRACT_FLOOR_AUDIT.md",
+      "sha256": "192253374fb37b9f2cbb5e817fca9ab8848f4fa87c82b0b8a3f592e28bc2410a"
+    },
+    {
+      "path": "tools/mmgeo/ON_DEMAND_DAG_BUILD_MEMORY_SCREEN_20261118.md",
+      "sha256": "8bd831ce1c976f4ff0a805d731dac15e83a5af7d4f294d7ffd22e87dc3999a57"
+    },
+    {
+      "path": "tools/mmgeo/PARTITION_BOUNDARY_FLOOR_PREFLIGHT.md",
+      "sha256": "a75bf218babb45d3f5b53717970c997263b5922d9a0f8aee1f7ea73823b27fba"
+    },
+    {
+      "path": "tools/mmgeo/PARTITION_QEM_EXHAUSTION.md",
+      "sha256": "166a49cb8227caa794f27f257bc03be2bd02b2178ffe161cb433156d427a3d0a"
+    },
+    {
+      "path": "tools/mmgeo/PATH_LOSS_CACHE_MONKEY_4PCT_20261122.json",
+      "sha256": "fecf6d11553a25e710200925aa2c2a26d36160ec2cf901780291f1ddbb91a391"
+    },
+    {
+      "path": "tools/mmgeo/PATH_LOSS_POOL_FRONTIER_20261121.md",
+      "sha256": "3d903c95a91c6f490279ac7e101edb96275ae7267c8705e17134dc28df8aeb80"
+    },
+    {
+      "path": "tools/mmgeo/PATH_LOSS_RENDER_QUALITY_20261122.json",
+      "sha256": "876846be921092b1e959763880cc0cbc71087b1f3b9e667f52324173702cd963"
+    },
+    {
+      "path": "tools/mmgeo/PATH_LOSS_RENDER_QUALITY_20261122.md",
+      "sha256": "18253e211f85695892d2f9bad313aae187780f3bab851ab1dbc69a599c64a5d5"
+    },
+    {
+      "path": "tools/mmgeo/PATH_LOSS_RENDER_RECEIPT_20261122.json",
+      "sha256": "8a9a2a82a074e8575ee47afbe4acd70d63461a051bbf880f92737a6be9525426"
+    },
+    {
+      "path": "tools/mmgeo/PER_RAY_LOD_RESTIR_NOVELTY_SCREEN_20261117.md",
+      "sha256": "3622f4dc0cd42e18f25c886828c646a81742395b81debd319e6cb791aa9ef0b5"
+    },
+    {
+      "path": "tools/mmgeo/pilot_path_loss_ranker.py",
+      "sha256": "526568c19387ea1d48e2682ff9ba9c51b51efcaff0c3b4dcf76d5c49e0757659"
+    },
+    {
+      "path": "tools/mmgeo/PIRATE_HIRES_PATH_LOSS_AUDIT_20261120.md",
+      "sha256": "5c9b7e95ef4722b29b754a454f6cedffcbcdd0a0a272b8871cd5086d11d5581b"
+    },
+    {
+      "path": "tools/mmgeo/plot_edit_visibility_support.py",
+      "sha256": "a4396ccf1dbfd342da987c1f7429f443000f767687bdee5de6de3df2e70742fe"
+    },
+    {
+      "path": "tools/mmgeo/plot_progressive_baseline.py",
+      "sha256": "103c9e5eedc0df8005259dc33c50bac9053723a5e7cf76ac6f0569679ea138cd"
+    },
+    {
+      "path": "tools/mmgeo/probe_adaptive_winner_holdout.py",
+      "sha256": "2753b91fd4ff56e633b388f8425b1b2c6dee8f4eb477f3d633e826abf15bc2b5"
+    },
+    {
+      "path": "tools/mmgeo/probe_adjacent_partition_merges.py",
+      "sha256": "6a40da73358411ec4cdac0809d144d46116009dc5ffbbc1588f1ed33a07fa9b4"
+    },
+    {
+      "path": "tools/mmgeo/probe_batched_edge_event_roots.py",
+      "sha256": "5a6512042949a85101a32a8ab0d312102a54d5516da899315e4336899573845c"
+    },
+    {
+      "path": "tools/mmgeo/probe_boundary_endpoint_qem.py",
+      "sha256": "92592651ff839997d70ca69aaac9663bae0514f0d09c88c3a185c99fd539de4f"
+    },
+    {
+      "path": "tools/mmgeo/probe_boundary_endpoint_qem_shared.py",
+      "sha256": "14e86c850d1be4b01c6be39c32edc8376fcfeee18a1312253508dc0469e1b665"
+    },
+    {
+      "path": "tools/mmgeo/probe_camera_event_localization.py",
+      "sha256": "591b883158ec91ef364716311291358235585048ec241421c670bef08928fb3b"
+    },
+    {
+      "path": "tools/mmgeo/probe_dependency_aware_dag_scheduler.py",
+      "sha256": "6174fca60f66c0cd5ae9ac7e01d769d47b1f6fd1338eebc3db4c4545365bfc36"
+    },
+    {
+      "path": "tools/mmgeo/probe_dynamic_path_simplification.py",
+      "sha256": "ebe15c3558fdfc131bc57a53c684d09247ff9a8d024dc5b7856d0297cef1844a"
+    },
+    {
+      "path": "tools/mmgeo/probe_filtered_depth_envelope_events.py",
+      "sha256": "f5453f5cb020cec233bea585148010500ed0527e67a1f56e8d3a53c15a60d9c3"
+    },
+    {
+      "path": "tools/mmgeo/probe_fixed_boundary_qem.py",
+      "sha256": "ef2df3a51cfc19d2bac984a5591f06b8bf673edad60f88b8106ac21687e3ed42"
+    },
+    {
+      "path": "tools/mmgeo/probe_frozen_quality_aware_cross_asset.py",
+      "sha256": "144a01f6258e28ee030e7972f69cbbd84e63171fee0c46b938f8b84570a18dcd"
+    },
+    {
+      "path": "tools/mmgeo/probe_global_path_qem.py",
+      "sha256": "60d39beac4e14d9dcd12cd641b6a058b177e3d8898dc5ff09539bf07c73dc8a9"
+    },
+    {
+      "path": "tools/mmgeo/probe_incremental_filtered_coverage.py",
+      "sha256": "a0b57ad3802cbfa8017c48c3abf1eb21ac9a07b63d582b9592ea97cc806c866a"
+    },
+    {
+      "path": "tools/mmgeo/probe_incremental_path_visibility.py",
+      "sha256": "d2ab73916e955cf9554cdad6942a54655ac500959b9a71948f76d5e4db5722b1"
+    },
+    {
+      "path": "tools/mmgeo/probe_learned_candidate_shortlist.py",
+      "sha256": "65d26d0ddc2ed29e702d3c6d8218c8d634753f89d89a392404eeaa79b5076bd4"
+    },
+    {
+      "path": "tools/mmgeo/probe_learned_parent_admission.py",
+      "sha256": "2fb2417200d83422edec47109dad7d902366dd06a07d63534dfaf13ea39f1a31"
+    },
+    {
+      "path": "tools/mmgeo/probe_multiview_path_simplification.py",
+      "sha256": "17593f89edba2a14e0cfbafc139c4e0fbaec3dcd8a7f379e58f1be1382b99227"
+    },
+    {
+      "path": "tools/mmgeo/probe_oracle_guided_dag_scheduler.py",
+      "sha256": "cf4989fb8d6a8acec80c936bd480172de7028a6c2f56aed2c963e105891d21f1"
+    },
+    {
+      "path": "tools/mmgeo/probe_partition_qem_exhaustion.py",
+      "sha256": "215ad568393fa90cc3078c84df0b0f6b56ee2cd415d46d96139d7e9ccae9e5fa"
+    },
+    {
+      "path": "tools/mmgeo/probe_projected_edge_sample_events.py",
+      "sha256": "d01f978744d6808c60307640f14f8738f1712f55684510e7116e0d5022e84265"
+    },
+    {
+      "path": "tools/mmgeo/probe_real_collapse_depth_events.py",
+      "sha256": "985c7d792ad57e3e48c5a91e36a78313770cd9f06f6915e42914d124418ed45a"
+    },
+    {
+      "path": "tools/mmgeo/probe_seam_contract_merges.py",
+      "sha256": "edbcec32e1467b4543d4ffc00b2df2ed02794952daa93dd0d0a2fb5832e52ab6"
+    },
+    {
+      "path": "tools/mmgeo/probe_shared_depth_envelope_batch.py",
+      "sha256": "478679d39a8b289dfad98e2b23c6ad9cc09018fabc84c0f009eb132e5a05e8ab"
+    },
+    {
+      "path": "tools/mmgeo/probe_shared_envelope_2d_tile.py",
+      "sha256": "403ea3b11f42a7fc97b0d80c8ee7ce7ed8a71ffe28a66d5784410d5ff6fbd8d1"
+    },
+    {
+      "path": "tools/mmgeo/probe_shared_envelope_dense_redraw.py",
+      "sha256": "767b2d325838a9015a458e5f3d795feb61a226d7c49073d0816a7e08f53256cd"
+    },
+    {
+      "path": "tools/mmgeo/probe_shared_envelope_raster_tile.py",
+      "sha256": "36da21c43df12ca99a3db83bd50240494573ab798fa1d12b76387b247ba3a34d"
+    },
+    {
+      "path": "tools/mmgeo/probe_slack_aware_cut_scheduler.py",
+      "sha256": "debf0776d5c4b437238aef945749951a34b1799823ed651d78d3287eccb32fe1"
+    },
+    {
+      "path": "tools/mmgeo/probe_visible_residual_events.py",
+      "sha256": "68daeb7250568210e2bc01b12471dfed05dc86ca9e31f2faca7785b0627b666f"
+    },
+    {
+      "path": "tools/mmgeo/PROGRESSIVE_BASELINE.md",
+      "sha256": "fe32833db411d1a94a8330d6bebbf86a2d31df5d8db3da6f9386e9b8721f4eda"
+    },
+    {
+      "path": "tools/mmgeo/progressive_geometry_baseline.py",
+      "sha256": "160dc1baf79d3c88c3e521c9884ab64e21a0a8256ff7deb8aa60f61f78c18b61"
+    },
+    {
+      "path": "tools/mmgeo/progressive_image_baseline.py",
+      "sha256": "dc3392a86247ae1102a7eaa40284b4219ae98ef858eb31ec3a0014531a567d40"
+    },
+    {
+      "path": "tools/mmgeo/PROGRESSIVE_IMAGE_PROTOCOL.md",
+      "sha256": "5f826105a0b52f3b8631325d7cbea31c551134c46757656b4c91bc16bd2fae0a"
+    },
+    {
+      "path": "tools/mmgeo/PROXY_VISIBILITY_COST_GATE.md",
+      "sha256": "e23b274147679dcfa372656d6f04e11eeb14445508436342dc11ab034b03327b"
+    },
+    {
+      "path": "tools/mmgeo/proxy_visibility_cost_gate.py",
+      "sha256": "42f776340aa981a90b379c4e6a11f6206c9705820f5b91472a1450fbcfbd7da5"
+    },
+    {
+      "path": "tools/mmgeo/QUALITY_GATE_PARTITION_NOVELTY_SCREEN_20261117.md",
+      "sha256": "701adbd138eacdd5e62eeb9f428a03a22be166d9af3918096e5e5ab6e2cd7129"
+    },
+    {
+      "path": "tools/mmgeo/raster_placement_constraints.py",
+      "sha256": "2abcd0864cd7c8c86468237b75561e51b82aa835ef7e624accf26683d44510de"
+    },
+    {
+      "path": "tools/mmgeo/RASTER_PLACEMENT_PROTOCOL.md",
+      "sha256": "4332469fb5ab15b8fb4907042c792af7db0b9049868847103e03dfeb3e61e839"
+    },
+    {
+      "path": "tools/mmgeo/README.md",
+      "sha256": "885b57cd97ab6389dbc4b03cf57087cfc56e32ebcc932b8bc50045ef12fb6724"
+    },
+    {
+      "path": "tools/mmgeo/REAL_CANDIDATE_INTERACTIONS.md",
+      "sha256": "ae313256d378d6f1f66186c61089176308668df86139a1d93fa0887a6b1f8582"
+    },
+    {
+      "path": "tools/mmgeo/REAL_MESH_PILOT.md",
+      "sha256": "0d867e035e752f4d06f696a8bb8210cbc5aea7e2c6d073ee9cf7f92c24c0737d"
+    },
+    {
+      "path": "tools/mmgeo/refine_compensation_probe.py",
+      "sha256": "5e2b48f4bf98b9c4af23d776813bc6300520a3064c7dc8a28e58e2f9e45c1026"
+    },
+    {
+      "path": "tools/mmgeo/REGROUP_DIAGNOSTICS.md",
+      "sha256": "06c481348e98aef81981af5f3129ade81acb6785b61ffab836f432cccdc73986"
+    },
+    {
+      "path": "tools/mmgeo/regroup_diagnostics.py",
+      "sha256": "6e528f88baf4545c97d1099c61263fa70013a8fa925af1728ba8bfef0b1ec5cd"
+    },
+    {
+      "path": "tools/mmgeo/RELATED_WORK_DYNAMIC_GPU.md",
+      "sha256": "fed7564132dc81b5a73e5f0571929e9da3582f9665b6ced8603f93f08a6c64e9"
+    },
+    {
+      "path": "tools/mmgeo/render_path_loss_quality.py",
+      "sha256": "840574f37a6fc7b43cfa383c655cf472a7680f7bf638d67beeddcaabb341e06b"
+    },
+    {
+      "path": "tools/mmgeo/report_targetbudget_heldout.py",
+      "sha256": "3725e15d5eea1345b54ac909d682381180d9e10d8de8511625f063dab4c085db"
+    },
+    {
+      "path": "tools/mmgeo/RESEARCH_DECISION_20261117.md",
+      "sha256": "f65ae7c2dbd89d5738d6f3409fc2805d3b84df9258f40d1d94131174f87e7c7d"
+    },
+    {
+      "path": "tools/mmgeo/restir_cpu_direct_visibility_screen.py",
+      "sha256": "a53df25e8bbc01f0d8d955eed416f0cd46940a1be70787ba9fe9d5bcbd73b76d"
+    },
+    {
+      "path": "tools/mmgeo/RESTIR_CPU_DIRECT_VISIBILITY_SCREEN_20261117.md",
+      "sha256": "82da4c8b07f7c919a28459d7e0105b2e4bd6648d097de0145e604eb4bf8c5ac4"
+    },
+    {
+      "path": "tools/mmgeo/restir_cpu_weight_screen.py",
+      "sha256": "d34d54d9bfa72b8784f45a717c79dcac0efcdcb7a0cba6a4d2569302ca0f49fb"
+    },
+    {
+      "path": "tools/mmgeo/RESTIR_CPU_WEIGHT_SCREEN_20261117.md",
+      "sha256": "b2edf2605e45c0a28c969a1e9ceb8ff6576d8b571249a15a8c2d588c03eac2b6"
+    },
+    {
+      "path": "tools/mmgeo/restir_lod_measure_preflight.py",
+      "sha256": "3d415776472124705e8e1d65fe44c084e05e819078ba20cc0d42dcfe94cdca45"
+    },
+    {
+      "path": "tools/mmgeo/RESTIR_LOD_UV_TRANSPORT_PREFLIGHT_20261116.md",
+      "sha256": "1d36059d7dc2a49c2d3b96b0c453799f1e03eff5ea6467a2b6632d274ac40e98"
+    },
+    {
+      "path": "tools/mmgeo/RESTIR_MIXED_CUT_PRIOR_ART_CORRECTION_20261117.md",
+      "sha256": "20edc8c456f222d3fa9502af81b44e667293bcf1d15f9c0c7c1d0b0820682986"
+    },
+    {
+      "path": "tools/mmgeo/RESTIR_MIXED_LOD_MEASURE_SCREEN.md",
+      "sha256": "55ec6f103226d8e2f38ff8df01012f2448fcc3e64892c14fccc0a2f6a2726c91"
+    },
+    {
+      "path": "tools/mmgeo/RESTIR_NESTED_LOD_GEOMETRY_SCREEN_20261117.md",
+      "sha256": "8730cec51124f901ab014e384015af096f0b833717744ae84abb86bc5c4b18a0"
+    },
+    {
+      "path": "tools/mmgeo/RESTIR_OVERLAP_MATCHING_PREFLIGHT_20261117.md",
+      "sha256": "10acaf5b9b3fa529cd1d55c27ef0f766d1377e5c51930643f97fbd81e5aafc50"
+    },
+    {
+      "path": "tools/mmgeo/RESTIR_RESERVOIR_RISK_HOOK_AUDIT_20261117.md",
+      "sha256": "3dc790d4bb64493abe32f1183ceaeaf1f2314f6df8a3d3d208b6b8a796f0d1b4"
+    },
+    {
+      "path": "tools/mmgeo/RESTIR_REUSE_AWARE_LOD_HYPOTHESIS_20261116.md",
+      "sha256": "c3d01d41bd32885f569a6378a0ec15e901c38c245f205e36126f87209b605beb"
+    },
+    {
+      "path": "tools/mmgeo/RESTIR_TAIL_RISK_LOD_CANDIDATE_20261117.md",
+      "sha256": "41034d4a387b65b837c2c85d2c7098e79988719d70a2203fa66e1300d49bfe97"
+    },
+    {
+      "path": "tools/mmgeo/RESTIR_VISIBILITY_MATCHING_SCREEN_20261117.md",
+      "sha256": "bdbe02cdb84927d1c07acf64b6c9a77ea7dbd25ac5df4c4af81ed7e33a07c2ff"
+    },
+    {
+      "path": "tools/mmgeo/saved_cut_view_rerank_20261122.json",
+      "sha256": "c4ffc3c438f4a8610b5fc0e804862799c9351070e466351f810c2ba9f87f0a40"
+    },
+    {
+      "path": "tools/mmgeo/SAVED_CUT_VIEW_RERANK_20261122.md",
+      "sha256": "5ae5e2d72e6f645df6c39597b96038cffc598255ff4d246412a37379b3bb41d6"
+    },
+    {
+      "path": "tools/mmgeo/SCREEN_BATCH_SUPPORT_AUDIT_20261116.md",
+      "sha256": "3d7b5554b5824146fa9deff09bf2032c87c5dcfcfd7eb0b1bc499a00cd97a342"
+    },
+    {
+      "path": "tools/mmgeo/SEAM_CONTRACT_MERGE_CONTROL.md",
+      "sha256": "101c2e0d8ee35706dcc06c03b1a8b071ffda2f78eee82e38d6b4729913c8a4e2"
+    },
+    {
+      "path": "tools/mmgeo/seam_contract_qem_control.py",
+      "sha256": "f0ed8c16dd7deaf2be26a61f6b6140f9b71c37df8c1cdecd68833dfd5c565f5b"
+    },
+    {
+      "path": "tools/mmgeo/serial_refine_compensation_probe.py",
+      "sha256": "8f0ae72dff983a7e53e699b3614db986b31ad2e1108efb95f053b9323333bfa6"
+    },
+    {
+      "path": "tools/mmgeo/SHADING_CONTROLS.md",
+      "sha256": "2406386059c8e472ffe48accbd1498a381aea1cb931c1fee86574e9cf8fe5959"
+    },
+    {
+      "path": "tools/mmgeo/SHARED_PARENT_ALTERNATIVES_AUDIT_20261116.md",
+      "sha256": "d1a91d5f0731d1f23a67e591f525ca6e7e6894afa7081f2e651d75ea2494ebba"
+    },
+    {
+      "path": "tools/mmgeo/SIGGRAPH_2027_LITERATURE_DELTA_20261115.md",
+      "sha256": "8510704bf5d35284cc7c9ab2701aa3d60a291a3bf5a9b464986531cf7f6a662c"
+    },
+    {
+      "path": "tools/mmgeo/simplify_with_fragment_cache.py",
+      "sha256": "5d518c0b8ece873a14b8bb5f55e8a94dae92f2d59b195955c91eaec89f7754a7"
+    },
+    {
+      "path": "tools/mmgeo/simulate_projected_support_queue.py",
+      "sha256": "ab6b45da20ca40c8d116380f9c6087227754a58877abe8489baba2dfbb3c392b"
+    },
+    {
+      "path": "tools/mmgeo/SOURCE_CONTOUR_CONTROL.md",
+      "sha256": "56b3b09bbf3d2ead6d33676aff720b2825d4865416cf3ae306252b6381600836"
+    },
+    {
+      "path": "tools/mmgeo/source_contour_visibility.py",
+      "sha256": "fb3a9fc05fa26eb1799081469f61ff9a80e602a71851090f12a6d603487f7a13"
+    },
+    {
+      "path": "tools/mmgeo/SPATIAL_RETRY_LOCAL_FRONTIER_AUDIT_20261118.md",
+      "sha256": "ad1ccbf4a3375f3a4b4fab80bb9a397f46532b2cf6fbcbcd5db8218f993181ac"
+    },
+    {
+      "path": "tools/mmgeo/summarize_adjacent_partition_merges.py",
+      "sha256": "c90449c9960102527f48b74bc578b2daefddf78a87c36ee2678054d63ea2a883"
+    },
+    {
+      "path": "tools/mmgeo/summarize_batch_support_audit.py",
+      "sha256": "75b4119bfadf38ea13a64f225ec3b7dda21b88db2933a3368417cf471f2c27ee"
+    },
+    {
+      "path": "tools/mmgeo/summarize_camera_event_localization.py",
+      "sha256": "2b38baa2d693ae196f6b5e44758014415292ea5c0ce9cbb6468221b1677909be"
+    },
+    {
+      "path": "tools/mmgeo/summarize_camera_orbit_sampling.py",
+      "sha256": "944e2fe57c963365a0d88abf876e3c474d98c016596a40c52033fee675e03c48"
+    },
+    {
+      "path": "tools/mmgeo/summarize_camera_rank_stability.py",
+      "sha256": "7e553e9a78dafbba8b1c695f92a2aa62cac757c7099847e2093df19e2b03295a"
+    },
+    {
+      "path": "tools/mmgeo/summarize_compensation_probe.py",
+      "sha256": "09098b83c0efb9ad7c1964271d568e265e05a86d6579177ff3ce5fdd5a9584c4"
+    },
+    {
+      "path": "tools/mmgeo/summarize_contour_visibility.py",
+      "sha256": "b427301d3c94818abc4504dcbd85ab10a9fed9c309b214c836ea3fc61003d7ae"
+    },
+    {
+      "path": "tools/mmgeo/summarize_depth_pilot.py",
+      "sha256": "3260ed68145cd920ed0873f15cc21b463f3a829fc72d54dc925b558c7c4635f7"
+    },
+    {
+      "path": "tools/mmgeo/summarize_image_quality.py",
+      "sha256": "94f3f69974767f34dc330264d2f97b92b49d284dcaf5ac56b209789cac917d61"
+    },
+    {
+      "path": "tools/mmgeo/summarize_normal_offset.py",
+      "sha256": "f5968033b469d8456a0dcd481d2da02607005600b625de378a20eb9051de1165"
+    },
+    {
+      "path": "tools/mmgeo/summarize_normal_transfer.py",
+      "sha256": "aea3c87ddafc6292bf7758b54cd1dad078c35b37417a7f90c42768560ea42e5c"
+    },
+    {
+      "path": "tools/mmgeo/summarize_partition_qem_exhaustion.py",
+      "sha256": "6f212447dbaa0092a90a1e2e4309ffb7a29449647f887254bf05f8d07f63eaaf"
+    },
+    {
+      "path": "tools/mmgeo/summarize_path_loss_quality.py",
+      "sha256": "b58afefaf37967f62b1493ad4d2f3c0f26662bdaf6e35ac03da6bea39abf8e81"
+    },
+    {
+      "path": "tools/mmgeo/summarize_spatial_retry_budget_curves.py",
+      "sha256": "973a1dbaf991756423a5c6dea904530e926849981ceb59cda294f4f72c07b474"
+    },
+    {
+      "path": "tools/mmgeo/summarize_targetbudget_heldout.py",
+      "sha256": "c4a15e0c785a557d4f42bf3bc7958ba3e339840c1795c65f74f50934f3ee7e4d"
+    },
+    {
+      "path": "tools/mmgeo/summarize_targetbudget_repeats.py",
+      "sha256": "f50cd8af51f102f98d688bc188374f4822dd86b058609b11651b5b6b5485ae69"
+    },
+    {
+      "path": "tools/mmgeo/summarize_transactions.py",
+      "sha256": "b05020c0534209b44bc7ab1833ac60a545fea709b4d9fdf183582b55a193c6c1"
+    },
+    {
+      "path": "tools/mmgeo/TANGENT_FRAME_PBR_NOVELTY_AUDIT_20261116.md",
+      "sha256": "5e69d3a33ec44dc9040b8d54609672b89af94a56d0742dad7e41acd9bfb547e6"
+    },
+    {
+      "path": "tools/mmgeo/TARGET_BUDGET_CONFIG_ORACLE_20261116.md",
+      "sha256": "a090bc57d51607ddeb1e7f643d663579e156ece90c1a34ccfeb101df8fe35386"
+    },
+    {
+      "path": "tools/mmgeo/TARGET_BUDGET_FRONTIER_PILOT_20261116.md",
+      "sha256": "514d171a4d5df9efe08df3252f75b0bb079fea10c96fc972417dfc2ec3d58efa"
+    },
+    {
+      "path": "tools/mmgeo/TARGET_BUDGET_HELDOUT_FRONTIER_20261116.md",
+      "sha256": "459de7532c5212ecd9c57c38381117366b62ca6124979825c24966b1f616627e"
+    },
+    {
+      "path": "tools/mmgeo/TARGET_BUDGET_MULTI_ASSET_20261116.md",
+      "sha256": "7d3e7d332830a2ce1a35dc7d7e18ea74b0da04602627fd5409a37e5fb2e9a78d"
+    },
+    {
+      "path": "tools/mmgeo/TARGET_BUDGET_ORACLE_SCREEN_CONTROL_20261116.md",
+      "sha256": "f24bbdd576d323dd2c877bc96064d40dbbe368a79a102a5b11b7af2ca9ffd702"
+    },
+    {
+      "path": "tools/mmgeo/TARGET_BUDGET_RESOURCE_ORACLE_20261116.md",
+      "sha256": "b89e6ae3383dd10ec5a7dd17e59e3659c0c6423baae32c622e2607999fc82947"
+    },
+    {
+      "path": "tools/mmgeo/test_adjacent_partition_merges.py",
+      "sha256": "c4d08acd6d498cb231d162d83dc98aad13aaec451c44d82ec5325290a9205305"
+    },
+    {
+      "path": "tools/mmgeo/test_bounded_candidate_error.py",
+      "sha256": "130767cb6c50a77190a1c06eb49b64b546f6a462f4e21d7bf47af3ad5318815b"
+    },
+    {
+      "path": "tools/mmgeo/test_candidate_interactions.py",
+      "sha256": "424ab3f043f298d06173c1346de22080612e19d6fce8f20b87d2d97b18e0b6f0"
+    },
+    {
+      "path": "tools/mmgeo/test_compensation_refinement.py",
+      "sha256": "155849b081c3af9992ac54d552b68ce8000b5cdd69fdd1f567f70b5ae98657f3"
+    },
+    {
+      "path": "tools/mmgeo/test_complementary_geometry.py",
+      "sha256": "1521062b47fb9fb88cdc44f618a5703f3aff8c4584567f964971f718b4ef8b3f"
+    },
+    {
+      "path": "tools/mmgeo/test_contour_visibility.py",
+      "sha256": "aaac00ea29d6af4512bb1af13b218297121ff561080539de9f9a76e9cf0ddfd4"
+    },
+    {
+      "path": "tools/mmgeo/test_depth_candidate_pilot.py",
+      "sha256": "008ae6a3e9a970f7172f89b0affe7c85833f05b2f2a25e73d511209a96ef8854"
+    },
+    {
+      "path": "tools/mmgeo/test_direct_complementary.py",
+      "sha256": "70fa1368929dbf263fba3bc2795433c15149c1ae5929e61bc3387cd14cc58d59"
+    },
+    {
+      "path": "tools/mmgeo/test_edit_visibility_support.py",
+      "sha256": "db9e6a16dea40e8f5ea51aa1a70a350f274a1c216f42584a02a3bb08da5c85a2"
+    },
+    {
+      "path": "tools/mmgeo/test_fixed_boundary_qem_control.py",
+      "sha256": "a47e13251d34911a250c44e2d577af2ebcad585d5e192984ee8cb4ea66e9b144"
+    },
+    {
+      "path": "tools/mmgeo/test_fused_patch_visibility.py",
+      "sha256": "607bc31925391c8746c01108d83536637a06d61f79e6695d5cf4caa5ed12ac69"
+    },
+    {
+      "path": "tools/mmgeo/test_multiview_placement_audit.py",
+      "sha256": "70c8a2c7c0a094ef7b89cbdca4fa0c8470bd562cac52a751752e469bd0f584f2"
+    },
+    {
+      "path": "tools/mmgeo/test_normal_fit_control.py",
+      "sha256": "0b26851832eda661038734bdf4509a13d892b6989e5b1f4dcb1299cff7e7e847"
+    },
+    {
+      "path": "tools/mmgeo/test_normal_fit_v2.py",
+      "sha256": "73bfac0010f4b9e0f5ed1ac452a925775c1570900e08f68c95c9b7e6cfad05a2"
+    },
+    {
+      "path": "tools/mmgeo/test_normal_offset_control.py",
+      "sha256": "435f5121626f1ce15c077af2b6a0e16e3aa6425d5b2c0c16bf2ba493606ba01d"
+    },
+    {
+      "path": "tools/mmgeo/test_normal_transfer.py",
+      "sha256": "f2ce8c7b3deadde3d15d51b7437ffba6c7c47d49c59cd627dad986fa96d8d4ce"
+    },
+    {
+      "path": "tools/mmgeo/test_obj_contract_floor.py",
+      "sha256": "a1e79c2097245774002ba5e16d99d93ab94fe507344d9d15d89c0bd0b0cde8fd"
+    },
+    {
+      "path": "tools/mmgeo/test_partition_boundary_floor.py",
+      "sha256": "4a45128cb94a909cfae42a4fa81fde36031944ced746917a1efb8c31a6641762"
+    },
+    {
+      "path": "tools/mmgeo/test_partition_qem_exhaustion.py",
+      "sha256": "a02fa4e95c012a39d21a0fcb891ee5a4f78c9a382d26ab9e086b5ba43f81538d"
+    },
+    {
+      "path": "tools/mmgeo/test_progressive_geometry.py",
+      "sha256": "f1b97e3d1eb13f023ffb7ba4adce8f84a75d88a83b44237464e01456e843f7e2"
+    },
+    {
+      "path": "tools/mmgeo/test_progressive_image.py",
+      "sha256": "a2fcd01dfcc5687b098d840610338d712a33758a938d7025065c29b4417d3525"
+    },
+    {
+      "path": "tools/mmgeo/test_proxy_visibility_cost_gate.py",
+      "sha256": "b7b89bf3d96ea7e63e565b3652957d2525386b5c49011ff895233064518f4187"
+    },
+    {
+      "path": "tools/mmgeo/test_raster_placement_constraints.py",
+      "sha256": "b849372de22774289d8a0699b3ff503e1bd944aba14654bf46b7191ae2834e39"
+    },
+    {
+      "path": "tools/mmgeo/test_restir_lod_measure_preflight.py",
+      "sha256": "9c485098392c44563925b946fd9e1ac6cda701f4652049f6824a22fb7c651279"
+    },
+    {
+      "path": "tools/mmgeo/test_sampling_phases.py",
+      "sha256": "8ea66289c0bce3a1886935977d3733c4ce3da0822fd950ea6290897cb4559e66"
+    },
+    {
+      "path": "tools/mmgeo/test_seam_contract_qem_control.py",
+      "sha256": "dd6979a52f39b1318139ce55fd3b1a9a193c7b7778f916b3c73103d54ddf0aae"
+    },
+    {
+      "path": "tools/mmgeo/test_shading_controls.py",
+      "sha256": "f64132ca0c07702f21cbb8e2ac8f965feaa394ccb184da8b00d0acd8088555b2"
+    },
+    {
+      "path": "tools/mmgeo/test_transactional_raster.py",
+      "sha256": "c72fa843e32fa5da6372a84be38704954ef66bc1af6b32a8ff0e6291750a06fd"
+    },
+    {
+      "path": "tools/mmgeo/test_visibility_query_bvh.py",
+      "sha256": "786c89f8cc75d4b72640c79aeb0cabb026402a3e5d870736df0d9668b3ded43c"
+    },
+    {
+      "path": "tools/mmgeo/transactional_raster.py",
+      "sha256": "266cc100647e8743d10b5b852a077d1ec6938b6442e94706911bc7fd69cd966e"
+    },
+    {
+      "path": "tools/mmgeo/validate_edit_visibility_support.py",
+      "sha256": "c6c747a9d0533a5236a20b1fe2f1413f7502858ced64ee12d2e7bce65ce3884e"
+    },
+    {
+      "path": "tools/mmgeo/validate_fixed_boundary_qem.py",
+      "sha256": "0629c470a5e9552ed55772811c95c00451cc07f2bf5262415280833ca6e5b27d"
+    },
+    {
+      "path": "tools/mmgeo/validate_fused_patch_visibility.py",
+      "sha256": "61d7bebcca61f9209a31e041cd9fe445d68036236829675f9ffde9a0661fe370"
+    },
+    {
+      "path": "tools/mmgeo/validate_seam_contract_merges.py",
+      "sha256": "3f000b72bc9335bb934807796a36f6873f8f9934da124c0dc983bce8f33b9e25"
+    },
+    {
+      "path": "tools/mmgeo/validate_visibility_query_bvh.py",
+      "sha256": "1239c09f93646837573daccaea9f8085adddf5a63f67665a0187b7362c61950c"
+    },
+    {
+      "path": "tools/mmgeo/verify_batched_edge_event_roots.py",
+      "sha256": "2b13bde6e8852d541d3aea0a2e4fbe067fa4364fd2f190485a5dc2f3ec130628"
+    },
+    {
+      "path": "tools/mmgeo/visibility_query_bvh.py",
+      "sha256": "3d4b9c3465ac6ff6ff937f9c287b5e2b44a85136248a65f9bf33c9eaa5a44113"
+    },
+    {
+      "path": "tools/mmgeo/VISIBILITY_QUERY_BVH_COST_GATE.md",
+      "sha256": "6ef6eb86991029c3f8191fa9ce92fa4b8698a0ec549bacf533360d65cfebaf90"
+    },
+    {
+      "path": "tools/mmgeo/WITNESS_LOG_JOIN_SCREEN_20261119.md",
+      "sha256": "1680fd8007f293767485d10a25afb6ecee7d1a6cc6762560bbf7dbffe53fa61d"
+    },
+    {
+      "path": "tools/mmgpu/CMakeLists.txt",
+      "sha256": "dac21224f265ad123438b17ddfe2e95f4a93a5a9758b2d1a25c3fef9901f2141"
+    },
+    {
+      "path": "tools/mmgpu/README.md",
+      "sha256": "f5e3518c72ca73c0a00c1f53f5deb5c87a919e7766714dddecb544f0c05e0b85"
+    },
+    {
+      "path": "tools/mmmetrics/bench_cgvqm_dynamic.py",
+      "sha256": "368ef8f9816c77936c0429f1a126002166796d71e0ec6986780eee72f32bcd2b"
+    },
+    {
+      "path": "tools/mmmetrics/build_decoder_quality_gallery.py",
+      "sha256": "cfd7b42dc09ea57751458ec457459bbf9cea0be50c8bb77e10a96b78d6e496c7"
+    },
+    {
+      "path": "tools/mmmetrics/CGVQM_DYNAMIC_LOD_SCREEN_20261122.md",
+      "sha256": "a369bb553a0a25d2282b9b064f8d6d7ad4480f0ea720fc4d169e516fde9b9ed7"
+    },
+    {
+      "path": "tools/mmmetrics/compare.py",
+      "sha256": "c6ffd74bbfc3ee3dfa023276e3dbb55d4795abbfe4f8f325fea0e7ab0fb99bbc"
+    },
+    {
+      "path": "tools/mmmetrics/mixed_scene_dynamic_cgvqm_validated_20261123.json",
+      "sha256": "887f814f429bfb133bc6e41f2daef705182c2d4c8369679104f6a2ba481a481e"
+    },
+    {
+      "path": "tools/mmmetrics/perceptual.py",
+      "sha256": "ef389addc2c69d01babc9fb373f50cbac7b0c3d2e092d089a76b48afffc7cc6b"
+    },
+    {
+      "path": "tools/mmmetrics/README.md",
+      "sha256": "90ad5bfe78d52c1b0173b550a51a59aa0c88828d1958ff90669ec6b2c107751e"
+    },
+    {
+      "path": "tools/mmmetrics/run_cgvqm.py",
+      "sha256": "9c7d8ae14bc36d7de656643b90f829221fa7c5e244e55819c89b5c1592fac82d"
+    },
+    {
+      "path": "tools/mmmetrics/score_mixed_scene_cgvqm.py",
+      "sha256": "bd90047a390db472332c41d9b3a897651394853ab9bb2d2a17f3b9b3f06957f7"
+    },
+    {
+      "path": "tools/mmmetrics/summarize_cgvqm_paths.py",
+      "sha256": "595c24fdcd5666fdbf7570a73069e5c2f8d312d73838f3e0f486f416b6436c4a"
+    },
+    {
+      "path": "tools/mmmetrics/summarize_decoder_quality.py",
+      "sha256": "76571c81eff9cb97c6332bb95038012d1b9db58431ebf3d449d267a24265a70c"
+    },
+    {
+      "path": "tools/mmmetrics/TEMPORAL_QUALITY_PROTOCOL.md",
+      "sha256": "0ad51298fa0d4da39ceb02d253d491c49be5666c14da844ac727b3e6205b1a9f"
+    },
+    {
+      "path": "tools/mmmetrics/test_decoder_quality_summary.py",
+      "sha256": "a54d07944300ef307de73c5475db6a28dcc95f6528c9f397d490f2f31578c209"
+    },
+    {
+      "path": "tools/mmscene/make_scene.py",
+      "sha256": "b85dde22c6e144e64bc3d4d4f71fc407d10741192e343dac927e03a6bcec3dd0"
+    },
+    {
+      "path": "tools/mmscene/README.md",
+      "sha256": "78adc9665110cf1ae943d3ea84c522145f2845b7eb1b568f35212af047027116"
+    },
+    {
+      "path": "tools/mmtemporal/bench_history_confidence.py",
+      "sha256": "67a8aa77fdd00d520ccc99a7f4244ce17f218b44ca3d7bc36c02b1352d6e4dcb"
+    },
+    {
+      "path": "tools/mmtemporal/bench_lod_history.py",
+      "sha256": "f3333ab7bb1fe065d6704098fd1a69c3c5d4031c9e37db05fcb2fc646ae5e2ab"
+    },
+    {
+      "path": "tools/mmtemporal/README.md",
+      "sha256": "bd7022e76bd035399b2d7310e1c43c1aad915b7938d65b498cfda4284b5db380"
+    },
+    {
+      "path": "tools/mmtemporal/run_parallax.py",
+      "sha256": "38e071b80fa0676c055517caf4a04121c03761c5f78fd8b8056d30978c0b735d"
+    },
+    {
+      "path": "tools/mmtemporal/temporal.py",
+      "sha256": "a82dac33263f62bf24e7226cc9572fc49f5adde3072d0bac286a6e430e2a332d"
+    },
+    {
+      "path": "tools/mmtrain/audit_asset_reuse.py",
+      "sha256": "2debd27cf32591141364c14ddf9c945c1bac22e2f3015db97e4e7ce8621f11f1"
+    },
+    {
+      "path": "tools/mmtrain/audit_cluster_decoder_qem_failures.py",
+      "sha256": "01b33505a4d92810b56b0cfac37a978f90daa79a2a922b92b3c2ce590d2a8217"
+    },
+    {
+      "path": "tools/mmtrain/audit_silhouette_band_oracle.py",
+      "sha256": "32b80de1cec23b02652eab58b42c31d22028e5b53e78628a41745a5059d7b2e1"
+    },
+    {
+      "path": "tools/mmtrain/bench_bevy_smaa.py",
+      "sha256": "6e5b7fbccd135ac29cf87cd601fa24d891a9ae3981ddef575cd7280b8d8143a6"
+    },
+    {
+      "path": "tools/mmtrain/bench_component_gpu.py",
+      "sha256": "4dc3634e24429f408e4a22d0a0d4c87ca562ddbf6b5bf68423d512ddd829305e"
+    },
+    {
+      "path": "tools/mmtrain/bench_dynamic_lod.py",
+      "sha256": "3ea3dc79a560f7d07376ada234d030d3a72d0dda25985aa6af2fa239eb1aaf56"
+    },
+    {
+      "path": "tools/mmtrain/bench_geometry_codecs.py",
+      "sha256": "3d3d985abc3fc5b73b9c7db045b556b28a93d8f5398fb8b0784cd84810233872"
+    },
+    {
+      "path": "tools/mmtrain/bench_local_reconstruction.py",
+      "sha256": "5eee3cd643bb28c02b008efa746312ad0310ad1e78fc0d0d7b877f3e1dc344c4"
+    },
+    {
+      "path": "tools/mmtrain/bench_mixed_scene_dynamic_instance_lod.py",
+      "sha256": "e50be48bbcf9842f84b53cdcc79cb13e58395c38b97338476ca3d6e12e582e46"
+    },
+    {
+      "path": "tools/mmtrain/bench_mixed_scene_layout.py",
+      "sha256": "49f99a80d8cadbffa6d32ecff736140df8e1f873cc18c078d44d66e17eae5651"
+    },
+    {
+      "path": "tools/mmtrain/bench_mixed_scenes.py",
+      "sha256": "5b43dc011e6dbd4685fe5d643e1030e9d5b2fc19c4efc176c4cfbcf0831bc82f"
+    },
+    {
+      "path": "tools/mmtrain/bench_quantization_phases.py",
+      "sha256": "3ee7d78dce1289504ccbac9143ce87e2115651f50440998ab813d2a20a36024f"
+    },
+    {
+      "path": "tools/mmtrain/bench_scene_face_budgets.py",
+      "sha256": "d6984ee83c8a7844c8f1d6079424a15b6dd82488b02b54807f688d6a9f79e979"
+    },
+    {
+      "path": "tools/mmtrain/bench_scene_instance_lod.py",
+      "sha256": "eaf6451ac207225bb1a55f78a7cc93febecc3c0552c4a296efa75745ca963e78"
+    },
+    {
+      "path": "tools/mmtrain/bench_scene_lod_allocation.py",
+      "sha256": "762a1b5dbd97665c2dd4fdcca920fc3c32dfd8c86f8ea9fb837e1c246a623b85"
+    },
+    {
+      "path": "tools/mmtrain/bench_silhouette_guide_fusion.py",
+      "sha256": "be191a76e404959b1a5f585f6655e3940a2a008015aebd22c3f51f9844fc4b70"
+    },
+    {
+      "path": "tools/mmtrain/bench_sparse_silhouette_guide.py",
+      "sha256": "9ece2128102b855b2f341f5a13e6d500eabc0b1b1ced6a2d624d7a69b4633a3e"
+    },
+    {
+      "path": "tools/mmtrain/bench_thingi_sr_inference.py",
+      "sha256": "9ad5c373413c53fd26152cdddc50b9ccd741053f1dd5fc76c94347818931753d"
+    },
+    {
+      "path": "tools/mmtrain/bench_upstream_clusterlod.py",
+      "sha256": "40fdc8b4a7cc2bca2fa8518a9e8a745985dcf493560665dc521bc98227d88c68"
+    },
+    {
+      "path": "tools/mmtrain/bevy_smaa_720p_20261122.json",
+      "sha256": "65d9527c309c934ed04c561a86f73c7e82ac1662723be13f59715052d3c84b9e"
+    },
+    {
+      "path": "tools/mmtrain/build_suzanne_teaser.py",
+      "sha256": "37bc49f8853bba391e0adeb821ffcb253d720e817d839507f5b7e6c8f34b3d05"
+    },
+    {
+      "path": "tools/mmtrain/cluster_cut_parameter_score_20261123.json",
+      "sha256": "22cf5566170c4ae715a707f53115201799b7e3b5c1efae7c7b29e3b2cbc8d511"
+    },
+    {
+      "path": "tools/mmtrain/cluster_cut_parameter_sweep_20261123.json",
+      "sha256": "ac59226eee07a0591053c98da444360ca336050b4518510705aea0aa550d036e"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder.py",
+      "sha256": "46e66127d31083a9e9d81cf4fd7e9dc767676554e2a3dde849c47b25169e2425"
+    },
+    {
+      "path": "tools/mmtrain/CLUSTER_DECODER_BASELINE_70PCT_TRAIN_20261122.md",
+      "sha256": "8f43a590dff503534e331c015ed9daa2afa2759eec05ca977f3ecd4e05b05991"
+    },
+    {
+      "path": "tools/mmtrain/CLUSTER_DECODER_BASELINE_70PCT_VALIDATION_20261122.md",
+      "sha256": "c4c8de86c1ea7ce412bc8f9d264f67f5876010cefcb974eb0ad32d9c7e43175a"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_fit_20261121.json",
+      "sha256": "ce1dba8f3dcfd332a56f08a76c2d16a26c45ef4bebc92bbab153e25a9c0ef2cb"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_gpu_msaa_1080_20261122.json",
+      "sha256": "6d4f85b18aef1e99286d7a86e6d61b1d71446b285f33afff2ce86dc1be535002"
+    },
+    {
+      "path": "tools/mmtrain/CLUSTER_DECODER_GPU_MSAA_1080_BASELINE_20261122.md",
+      "sha256": "dcb3c0a5c89cd5c2a558bdcb29bbdfe078afbbfd7c4fe8eadc267da5f1ca4678"
+    },
+    {
+      "path": "tools/mmtrain/CLUSTER_DECODER_GPU_MSAA_13ASSET_SCREEN_20261122.md",
+      "sha256": "238e7cac45ffa4d85bbabc19191ae94984f16f9b7852d58e2f95054ec69b5f6f"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_gpu_msaa_20261122.json",
+      "sha256": "4bfe3110c3a0d320615b5b71b4b96c78e2a34e709a0ba4c8ba20c98b22c9e9cb"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_gpu_msaa_720_13assets_20261122.json",
+      "sha256": "0e83be99545aa7ba2a400afcf7f420f6e313003213691dced44adb70062669af"
+    },
+    {
+      "path": "tools/mmtrain/CLUSTER_DECODER_GPU_MSAA_BASELINE_20261122.md",
+      "sha256": "03db670d0db5bf58a514007531bc269f34de62e79f8236294d5d7d3bf348e9c8"
+    },
+    {
+      "path": "tools/mmtrain/CLUSTER_DECODER_MESHOPT_20261122.md",
+      "sha256": "99e433ebd0bf011683a17fae9266e45df2aec355d133134e7951bcc309cf8c00"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_meshopt_baseline.py",
+      "sha256": "621ba01107f3acfcd5aa01882dc0373e1d3f4ce69eca0045ad3f7a56271837f2"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_meshopt_quality.py",
+      "sha256": "23d51bf3d15ae7c96fa442d274f6eace62eb5cebd2258a06617cca4eeaa10651"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_meshopt_screen_20261122.json",
+      "sha256": "dc9cec46e49a67cedf2656dde52d5bafa6c0c87487e62555ed46f42f60bef783"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_pairs.py",
+      "sha256": "accb7b8e65f09ade43c9c20e71609087ac1c83fa7ebdf4b9d8f22c664eb7d8ff"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_pairs_meshopt.py",
+      "sha256": "bcd1c743057d52cf24a28f1861c769e95bf4885f6f64711c7b77b12bb06d4c45"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_pilot.py",
+      "sha256": "8db32f1897388c06212ecb385daa0c0eb27e83257c7ff9fd8ed3637933782318"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_qem_meshopt_train_50pct_20261122.json",
+      "sha256": "b27a89e3d012a818df75ae9b4c0465355a13256ee44095a02a29a54c3c1dedb0"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_qem_meshopt_train_70pct_20261122.json",
+      "sha256": "42e7b7242e5694ffb808a597c6b0f95232116280356d36d48e0e1fe703541b98"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_qem_meshopt_validation_50pct_20261122.json",
+      "sha256": "ca26fea267a12254a8137e7c09a71f29f14c73e0c6778a3bc2b0aa9cb34ef196"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_qem_meshopt_validation_70pct_20261122.json",
+      "sha256": "3d606eb7ddb115cc25798cc6c6a5fda063d5dea737f47b6adc292fe1ae0b31ef"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_quality.py",
+      "sha256": "c64cf7c5a4dc75351c3182ac92adca61a91816b500ec12934e45453f99756b0a"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_quality_20261121.json",
+      "sha256": "f86dbf018fb75e4f3640ade4d33d68200090b53b64d7c237d02afb4271dc1b17"
+    },
+    {
+      "path": "tools/mmtrain/CLUSTER_DECODER_QUALITY_20261121.md",
+      "sha256": "bfd8eb4b53d934a9445c7d194b1a803fba007d24506c8f9ff2d10d495c3577ec"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_rank_sweep_20261122.json",
+      "sha256": "b9bc1f5c3cfa4264fa629310ba5474c469318f8c3561e691c9d3ff8d284c223f"
+    },
+    {
+      "path": "tools/mmtrain/CLUSTER_DECODER_RANK_SWEEP_20261122.md",
+      "sha256": "a9262dbd6d15e1f39092d29ab938712d0e58a27519444492e057154d7ec82d39"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_refine_budget_20261122.json",
+      "sha256": "c3971d71920dc832f59114fd47e233ed33efc91331cfea024e38572a946437de"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_refine_budget_quality.py",
+      "sha256": "c3497538c2e165cdce46e50346fb4f1ecba5457cbc53f3953f3c203057a84e74"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_scale_oracle_20261122.json",
+      "sha256": "fe727ab296dfefc1e31e2548dfe62559ebd7b8211dd9ac72cf5b3554b9915ad4"
+    },
+    {
+      "path": "tools/mmtrain/CLUSTER_DECODER_SCALE_PROBE_20261122.md",
+      "sha256": "3e3e7c02951a9e02d209b4f9dbc88dc4e2b71e309609590166397ecba07e4c67"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_smoke_20261121.json",
+      "sha256": "5a27643b308a4d7ec001d5099e5a7411c44be438b2322d42cf5b0aae80e8d2bf"
+    },
+    {
+      "path": "tools/mmtrain/CLUSTER_DECODER_SMOKE_20261121.md",
+      "sha256": "b5b175dc0b8037efafe55d27950eb76ea234a24dd0d9386dce449139abfae69d"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_surface_quality.py",
+      "sha256": "08d80488efa4e4d3d2b45166f11d76ca230e3127c94f2a4580181f18bda6ea2c"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_surface_quality_20261121.json",
+      "sha256": "d4a2264b0870125a7ea4f2137d5b9a0165296d743ba0edd3455c265a8d8169d9"
+    },
+    {
+      "path": "tools/mmtrain/CLUSTER_DECODER_SURFACE_QUALITY_20261121.md",
+      "sha256": "61552664f94048f03212d283d88dba8fc4910c8d54bb418684ef476215f45fd8"
+    },
+    {
+      "path": "tools/mmtrain/cluster_decoder_validation_failure_audit_20261122.json",
+      "sha256": "e8d490a6ec2c701e4a86909bba7a4f3e3d738aaddd08107c0298069cd8fa528d"
+    },
+    {
+      "path": "tools/mmtrain/compare_manymesh_clusterlod.py",
+      "sha256": "bc0db94eff1dd2df2c98b9d6fed6b6f12a29abd88acdc1e61dda230cbf72cdf2"
+    },
+    {
+      "path": "tools/mmtrain/compare_qem_meshopt_validation_70pct.py",
+      "sha256": "67c2d5a5b9d69f16203c796586492843ee24c0be07f93cd15750c34febe2e7ec"
+    },
+    {
+      "path": "tools/mmtrain/curate_thingi10k_subset.py",
+      "sha256": "b44e67d3a974ab9c28a2b0a9cd49d692537896b79b7db6aff21f9637997269b1"
+    },
+    {
+      "path": "tools/mmtrain/current_mmgeo_source_provenance_20261123.json",
+      "sha256": "c614312504c5b6f4632e93045ebced276f20b1d4390dd5fe3856b3abd983b2ac"
+    },
+    {
+      "path": "tools/mmtrain/current_source_clusterlod_audit_20261123.json",
+      "sha256": "505b9004aa6ef0a62735aa0c92a68d19df30954a604158c524954d476bca512c"
+    },
+    {
+      "path": "tools/mmtrain/CURRENT_SOURCE_CLUSTERLOD_AUDIT_20261123.md",
+      "sha256": "811c59aaba89d7f2920a405c39b626e16ad3ef15a6c5b94f6bd31839a190f155"
+    },
+    {
+      "path": "tools/mmtrain/CURRENT_SOURCE_CLUSTERLOD_PARAMETER_SWEEP_20261123.md",
+      "sha256": "019eff0660dba17a8bc6562054660a0796169dfabee13a7bfe0e4000d9a4b36d"
+    },
+    {
+      "path": "tools/mmtrain/current_source_matched_face_controls_20261123.json",
+      "sha256": "4954c20c63a60ffa21fb7b23f4da210fd1c260791d7ebffbee8186768401c33d"
+    },
+    {
+      "path": "tools/mmtrain/CURRENT_SOURCE_MATCHED_FACE_CONTROLS_20261123.md",
+      "sha256": "6b9f1e975fa4b6daa05efe5ce3dd33b28f52d5d27ae0b097b5c700d3ee252072"
+    },
+    {
+      "path": "tools/mmtrain/CURRENT_SOURCE_MMGeo_PROVENANCE_20261123.md",
+      "sha256": "9b541c3fbcd129746353018dcb452c6f4848483fe15b02aa08c4bc08b0da6857"
+    },
+    {
+      "path": "tools/mmtrain/direct_cluster_control.py",
+      "sha256": "1767b4d7c78f59209f14db9b9de6b1b9d3d0df7bbd78a89b436257ddbc6f5a8a"
+    },
+    {
+      "path": "tools/mmtrain/download_thingi10k_subset.py",
+      "sha256": "1791d2699b709063a539f7971bd06f35da20393157fb0fa00ce8f76dadfcd71d"
+    },
+    {
+      "path": "tools/mmtrain/DYNAMIC_INSTANCE_LOD_MOVING_20261123.md",
+      "sha256": "e4092c8af87a879faa9cec28b02266f255b846c4b7b6835c6fa3ebe04841778c"
+    },
+    {
+      "path": "tools/mmtrain/DYNAMIC_LOD_13ASSET_20261122.md",
+      "sha256": "5fc517db6197bb6e5f1c936cad88c1bf77c72a4691aba7f690b3c9975afc4c4f"
+    },
+    {
+      "path": "tools/mmtrain/DYNAMIC_LOD_LOAO_13ASSET_20261122.md",
+      "sha256": "8722372941f3cc14f0516b711c7de84e01a5529b86e1ba3a943edb714b648662"
+    },
+    {
+      "path": "tools/mmtrain/DYNAMIC_LOD_SILHOUETTE_OBJECTIVE_20261122.md",
+      "sha256": "31889d6dc512740bd7fd1ca732124fde378e303383a50391c2f5b1f9fc2a1f90"
+    },
+    {
+      "path": "tools/mmtrain/DYNAMIC_LOD_SILHOUETTE_TEMPORAL_20261122.md",
+      "sha256": "02faf6728a8db62f12cb33a28586de47783aad2306cfbc65a8dfe06fbd560283"
+    },
+    {
+      "path": "tools/mmtrain/DYNAMIC_LOD_TEMPORAL_DIAGNOSTIC_20261122.md",
+      "sha256": "0a4e6c5830fe8b5e9454028810cfc904344a68ee2bf8311efecd5b3e30047baa"
+    },
+    {
+      "path": "tools/mmtrain/encode_quantization_phases.cjs",
+      "sha256": "78c51f37b9cb0309cd2d4d4eec3636c611d83ba740e42dc2b1e1a28208d4d88c"
+    },
+    {
+      "path": "tools/mmtrain/export_thingi_sr_pairs.py",
+      "sha256": "45189135e0f9f4c31a51635a547f00aa04b0f44452c486a2ba3062439b547fc3"
+    },
+    {
+      "path": "tools/mmtrain/extract_static_gltf_geometry.py",
+      "sha256": "ceb2adff35fd72080b33240ebf9eea9f84045e2a929643c61f9e5b4a361d3257"
+    },
+    {
+      "path": "tools/mmtrain/fetch_refinement_assets.py",
+      "sha256": "3080539eda8ad3862f1b883dc8cfaca556981c846c18ee9acb1d55fa702edc39"
+    },
+    {
+      "path": "tools/mmtrain/fit_cluster_decoder.py",
+      "sha256": "508305687745b556f5f3c88f3b15b5e2ca6e839c93f09e0e300bd77a62a09205"
+    },
+    {
+      "path": "tools/mmtrain/fused_tile_features.py",
+      "sha256": "4173dc0739d5c84913e066a3c931cb5bbaff3dba88414c45720e3e42d577743f"
+    },
+    {
+      "path": "tools/mmtrain/geometry_codec_baseline.cjs",
+      "sha256": "1c87d596d190f85e5ea35342b1c30d652c32ff01bc0e2fe1c2eb2e190eef9e0d"
+    },
+    {
+      "path": "tools/mmtrain/geometry_codec_rate_distortion_20261122.json",
+      "sha256": "1b261ec6cf4b539665e1d537b2368d03a96b453831e9d69031477d0e3589e049"
+    },
+    {
+      "path": "tools/mmtrain/GEOMETRY_CODEC_RATE_DISTORTION_20261122.md",
+      "sha256": "e850d4c9fc291f04a6f588467f358afed6effa32e5906ac6cbc6e44edb736cc0"
+    },
+    {
+      "path": "tools/mmtrain/GPU_SMAA_SILHOUETTE_BAND_SCREEN_20261122.md",
+      "sha256": "9fa3ca0b241a0279f80280e4088553cdb65299bf372338e03bbacc236022247c"
+    },
+    {
+      "path": "tools/mmtrain/gray_flip.py",
+      "sha256": "c1cad8ccdeb21bb21cbb4fbda92433c2a85f36b65f42b9cf5f9ef79abb2ee3c5"
+    },
+    {
+      "path": "tools/mmtrain/index_thingi10k_assets.py",
+      "sha256": "bf87c4bb05f00f5265026e80a84057dcc59a89b68d3472fe317f38f1ed5b414e"
+    },
+    {
+      "path": "tools/mmtrain/local_reconstruction.py",
+      "sha256": "8b6446647f1d8f42729becc8d44bbb74db6228d85c1da9e75a758f95bcaeb4eb"
+    },
+    {
+      "path": "tools/mmtrain/lod_audit.py",
+      "sha256": "e8d9769a8cd55128b3d4ef73e4595620aab7abb9d241a93dee9b13453d3154d6"
+    },
+    {
+      "path": "tools/mmtrain/lod_oracle.py",
+      "sha256": "e74503e679cfa648935cf0ffe1934b810f5cd81b91613d50afefb584aae739db"
+    },
+    {
+      "path": "tools/mmtrain/lod_predictor.py",
+      "sha256": "04dd289f6aac4e2990b53fc38b6a56387bace434c085c98593f3f869b1662ef9"
+    },
+    {
+      "path": "tools/mmtrain/lod_proxy.py",
+      "sha256": "a7e84437fafd1420b4f7ce7c0dd814052e92780114b3060480843ff15dd0f0ce"
+    },
+    {
+      "path": "tools/mmtrain/lod_proxy_benchmark.py",
+      "sha256": "d85fe5ed4b8882beaf0a9f2d911580431d4f8c7923028ebce60061188d2ead05"
+    },
+    {
+      "path": "tools/mmtrain/lod_screening.py",
+      "sha256": "eb5f3035e4be26f7a34b5ffc59d8c2297099b9a1539538c5fee8e6d85b19971f"
+    },
+    {
+      "path": "tools/mmtrain/lod_sequence.py",
+      "sha256": "d062ef457395490b37cd09f9ad8734887dba91db2f588fa2d7f46ca9468bad59"
+    },
+    {
+      "path": "tools/mmtrain/lod_visibility.py",
+      "sha256": "f128cab6a0853136859f602bc62efd52b71195b8a5975f0110894fc1c973debf"
+    },
+    {
+      "path": "tools/mmtrain/lucy_current_source_controls_20261123.json",
+      "sha256": "1d9f33b1f96e1eb4a5c274c36fbcdb87d536c151315251b1889c46a929d9ade9"
+    },
+    {
+      "path": "tools/mmtrain/LUCY_CURRENT_SOURCE_QUALITY_SCREEN_20261123.md",
+      "sha256": "9b1748be7ba04b727267b9a49d657f1edeff0f63c5e7a40d2ccc47ff9d36f90c"
+    },
+    {
+      "path": "tools/mmtrain/make_refinement_pairs.py",
+      "sha256": "f23cee47bae436740c14fbd3e5745e4212498712434e480ffd04ff73a51ee534"
+    },
+    {
+      "path": "tools/mmtrain/manymesh_clusterlod_control_20261122.json",
+      "sha256": "def38c504eee644d072e4b72de01ac22b89009813b062f9a9208ad82748df1e3"
+    },
+    {
+      "path": "tools/mmtrain/meshopt_simplify.cjs",
+      "sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136"
+    },
+    {
+      "path": "tools/mmtrain/MIXED_SCENE_BASELINES_20261122.md",
+      "sha256": "11697c32d83f22ca9609b5d1186b707f83d017e0c8336035d6068ac00b287555"
+    },
+    {
+      "path": "tools/mmtrain/mixed_scene_baselines_720p_20261122.json",
+      "sha256": "74625e69980a9c7749b361d64a2892aa8dbffacbc216401065fb64d359f834c2"
+    },
+    {
+      "path": "tools/mmtrain/mixed_scene_dynamic_instance_lod_720p_20261122.json",
+      "sha256": "b8bcd771ed2963ba492efeed10c86992d93fb4560d2e7aff09628f9d4987786b"
+    },
+    {
+      "path": "tools/mmtrain/mixed_scene_dynamic_instance_lod_matched_720p_20261122.json",
+      "sha256": "ce4a28e6f00a1799dbc399bc8e8ce012cc96cca792b325bf898d598eacea13a6"
+    },
+    {
+      "path": "tools/mmtrain/mixed_scene_dynamic_instance_lod_validated_720p_20261123.json",
+      "sha256": "e5d91a920e4ca5d25421e968dd8e92fafb15901e79fb0408f0515c37b829837f"
+    },
+    {
+      "path": "tools/mmtrain/MIXED_SCENE_FACE_BUDGETS_20261122.md",
+      "sha256": "0ed3e0c7eb0feef8c3e73141bfcb1f5529c378b8cbb68f8cf176f56e4c089ce4"
+    },
+    {
+      "path": "tools/mmtrain/mixed_scene_face_budgets_720p_20261122.json",
+      "sha256": "db50bc1dfc445521befd6ab8f856a1f2ef697afd89d7921c72ee2f116f14a07b"
+    },
+    {
+      "path": "tools/mmtrain/MIXED_SCENE_INSTANCE_LOD_20261122.md",
+      "sha256": "9672ed5c57b6bbfc340507e145fa12f519b7edebef0674bbffb3820725d4eddb"
+    },
+    {
+      "path": "tools/mmtrain/mixed_scene_instance_lod_720p_20261122.json",
+      "sha256": "75ee87e8c6a1a8841afb7c59ea92baae5afd5b393abd325c89176d3ba0ca6a58"
+    },
+    {
+      "path": "tools/mmtrain/mixed_scene_layout_720p_20261122.json",
+      "sha256": "424d1f894491166618635700aa98eb30ee2ec42da1a0d86c5a89139837e7e24b"
+    },
+    {
+      "path": "tools/mmtrain/MIXED_SCENE_LAYOUT_CONTROL_20261122.md",
+      "sha256": "61d8d65646d0def47713f6af860a6014ac61a3879da906eae5b9980e7c70e7a3"
+    },
+    {
+      "path": "tools/mmtrain/MIXED_SCENE_LOD_ALLOCATION_20261122.md",
+      "sha256": "eceab54e7961635d20898f2276992abd9c0c0848b88b26d5aae9e45dc75ed433"
+    },
+    {
+      "path": "tools/mmtrain/mixed_scene_lod_allocation_720p_20261122.json",
+      "sha256": "0b893bc8e34e9399ecda0a72e515c0257ef2dbdfb91fa9756a22e7e75bc1e099"
+    },
+    {
+      "path": "tools/mmtrain/prepare_scene_clusterlod.py",
+      "sha256": "5a66ff7bdda14c95f7ef91718a9d239994f044ca7adeb3efbf0a5d1f03d07996"
+    },
+    {
+      "path": "tools/mmtrain/probe_cluster_decoder_scale.py",
+      "sha256": "dec2e186e95e16f40f609665191291177eb3dfcef4fc14c626d53ab13cd6abd6"
+    },
+    {
+      "path": "tools/mmtrain/probe_component_candidates.py",
+      "sha256": "4f61892ccd233d1469e751059125afd2c11c6e7256079e10b9a03fa5dd13bc49"
+    },
+    {
+      "path": "tools/mmtrain/probe_component_motion.py",
+      "sha256": "80a252b430eae824b32e380dcfb31afed671f03c971b0689bd39ed8139a020e9"
+    },
+    {
+      "path": "tools/mmtrain/probe_contour_relocation.py",
+      "sha256": "c13418e027d69cec2fd7f39162db228b1998c104d8bed56d66492862260b05d8"
+    },
+    {
+      "path": "tools/mmtrain/probe_filter_aware_cuts.py",
+      "sha256": "d2987c5180be9f6e65b5914e39125feb05daaaf815cea8b45231a096665e1d9e"
+    },
+    {
+      "path": "tools/mmtrain/probe_qem_candidate_pool.py",
+      "sha256": "52e98ce411b263aa4d1f336557760674e29be6c15c43459494fd680a5f70e9c8"
+    },
+    {
+      "path": "tools/mmtrain/probe_thingi_refinement.py",
+      "sha256": "ecca931d013100589020f309cba2bd9ef74d7dcba0883064120b57a874d4d4fd"
+    },
+    {
+      "path": "tools/mmtrain/QUANTIZATION_GRID_ORIGIN_20261122.md",
+      "sha256": "ca18bdfbe7d6e756987648f70e5cd24ff746e53cee8518ccd4eb7e230aa28692"
+    },
+    {
+      "path": "tools/mmtrain/quantization_grid_origin_train_20261122.json",
+      "sha256": "8fad074fe239237206e02fdc7859aeafb5d8fb2a3ff1f9cd7ae859c8a0c3a73f"
+    },
+    {
+      "path": "tools/mmtrain/quantization_grid_origin_validation_20261122.json",
+      "sha256": "89a597be4890ff6615c8fc78e6fe0b83580a8fa7f004e06e8a0b375c8e7d3394"
+    },
+    {
+      "path": "tools/mmtrain/README.md",
+      "sha256": "b59a06e7787024f40526665a64ea7d13b4f895787cdf203a625dd68d1a6dbcf6"
+    },
+    {
+      "path": "tools/mmtrain/RENDER_HARNESS_BUILD_20261123.md",
+      "sha256": "758a26a860e98a2fae33791108cff8b7e600a8efed4c2f09df169b16a8a4136f"
+    },
+    {
+      "path": "tools/mmtrain/results/proxy-grid-20261113/frames.json",
+      "sha256": "3cf686738a45b320f2b9275c550ec6fde14f2d42397459c1366893801f2b7288"
+    },
+    {
+      "path": "tools/mmtrain/results/proxy-grid-20261113/paired.json",
+      "sha256": "7956dd478050da3aac8c88acb26c555f2202e0dbd2a4d443aa08c3373cdabdb9"
+    },
+    {
+      "path": "tools/mmtrain/results/proxy-grid-20261113/summary.json",
+      "sha256": "0bd8d086a352b93526f9a7d436a99451e0f4051c87420ff926c7dc64ddef4fcd"
+    },
+    {
+      "path": "tools/mmtrain/score_cluster_cut_eligibility_sweep.py",
+      "sha256": "6c6ed23fc04b4d765ec88828b50893238f0c7b8bff435641be4015ff4b6c3fad"
+    },
+    {
+      "path": "tools/mmtrain/score_mmgeo_obj_controls.py",
+      "sha256": "84a6ac7545301e4461d43248a17ad3bc09982f910705cb6afccb5054b19e155a"
+    },
+    {
+      "path": "tools/mmtrain/silhouette_band_oracle_720p_20261122.json",
+      "sha256": "88e44711c459940940527ac439d7771d8c8dbd7e2c53f61a8699fda685042d24"
+    },
+    {
+      "path": "tools/mmtrain/SILHOUETTE_ERROR_ATTRIBUTION_20261122.md",
+      "sha256": "064c3554563e66b54e37f0e425f19727ccc5be75d8eaf5de2316b125c91960b8"
+    },
+    {
+      "path": "tools/mmtrain/SILHOUETTE_GUIDE_FUSION_20261122.md",
+      "sha256": "0598211c12df12044edf093bef74c63f9653f1d2bfdee4697fe7d6b977d7a837"
+    },
+    {
+      "path": "tools/mmtrain/silhouette_guide_fusion_720p_20261122.json",
+      "sha256": "943592844eff302f28445a2973f613d2fcb99b86abe3270f54efbe92800fd3bd"
+    },
+    {
+      "path": "tools/mmtrain/silhouette_guide_fusion_720p_repeat_20261123.json",
+      "sha256": "cacd6468ab1a35f5b706a583998f8c54ab628db022f4b40b3d7d18d666f458d8"
+    },
+    {
+      "path": "tools/mmtrain/sparse_silhouette_guide_720p_20261122.json",
+      "sha256": "6d6b5a6c4a2795f45688657aaf0bc8c427907d883d41dfc0dfa3f73018c9f2a3"
+    },
+    {
+      "path": "tools/mmtrain/SPARSE_SILHOUETTE_GUIDE_SCREEN_20261122.md",
+      "sha256": "3438eb236d40396a3ec2b0104c853a273ee6a3831e89a3cbb764a147e12c4bb2"
+    },
+    {
+      "path": "tools/mmtrain/summarize_cluster_decoder_rank_sweep.py",
+      "sha256": "30bb81bcd7c8a0bfde8efb66111f74852c701e43c1e870208d48bc8e4e4e9fba"
+    },
+    {
+      "path": "tools/mmtrain/summarize_dynamic_lod.py",
+      "sha256": "519f890264c8b728a55f2d9ab5eec7524015f87ddde0f58650f836fd8561ea8b"
+    },
+    {
+      "path": "tools/mmtrain/summarize_dynamic_lod_temporal.py",
+      "sha256": "c4d81561fcd8b0b8bf7416fd686cd3b85308f23651bc0c21c6d0b7539a8a6c96"
+    },
+    {
+      "path": "tools/mmtrain/summarize_geometry_codecs.py",
+      "sha256": "424821464d25b0c0c01703266a9321b9820372bd7699b94532a292784d6aca75"
+    },
+    {
+      "path": "tools/mmtrain/summarize_gpu_msaa_screen.py",
+      "sha256": "e7b631047bd79b9ad1cd340227ec79db488bc9740f8c35d4c0dbed83cd559722"
+    },
+    {
+      "path": "tools/mmtrain/summarize_mixed_scenes.py",
+      "sha256": "608ad2cfdbe4174a4e5f826a225a4b6ff8c38714b9a76c7ac66b0c0a31d6f8b6"
+    },
+    {
+      "path": "tools/mmtrain/summarize_silhouette_attribution.py",
+      "sha256": "5d5c55aee05868c5230265d5661b42fe7a63ca9f030e03b426ac49d0126d0eb4"
+    },
+    {
+      "path": "tools/mmtrain/sweep_cluster_cut_eligibility.py",
+      "sha256": "e0d128970d37ece77d6c6366031829a230939bb62c54557216a8ec8584eeb37b"
+    },
+    {
+      "path": "tools/mmtrain/test_cluster_decoder.py",
+      "sha256": "c5a0fae061570a700adf313ec8ffcffaca9bacdf7534ae77fec6554736e1703b"
+    },
+    {
+      "path": "tools/mmtrain/test_cluster_decoder_pairs.py",
+      "sha256": "48b0b8b64f311f44738fde8be28c5c9ee214c9f33e9565131317e4465eba82a8"
+    },
+    {
+      "path": "tools/mmtrain/test_cluster_decoder_quality.py",
+      "sha256": "b30368f5c8190c1915fb7b1e1f444c56334fa7ae8c36d33f0c183d9164318755"
+    },
+    {
+      "path": "tools/mmtrain/test_cluster_decoder_surface_quality.py",
+      "sha256": "17a5b3ecae8785c2c4baf530cd3d9d4a807d78104492cd665aee9d56859b2b22"
+    },
+    {
+      "path": "tools/mmtrain/test_direct_cluster_control.py",
+      "sha256": "80c94c4cb459b58c4a3a01295bcaf09860705d5a5c30740b700ef8d8fae0a104"
+    },
+    {
+      "path": "tools/mmtrain/test_fit_cluster_decoder.py",
+      "sha256": "729a7f5bc7e79ba6c2590a018c6674a6e56b999ebfd06322f7998d631bcb5627"
+    },
+    {
+      "path": "tools/mmtrain/test_lod_proxy.py",
+      "sha256": "3b5ff00d7eaa0c6005196a967535bc57b97751181d7b25f9e55cc9aa6ea18bad"
+    },
+    {
+      "path": "tools/mmtrain/THINGI10K_PILOT_DATA_20261120.md",
+      "sha256": "cdc99486ee7062412e6aae82c413483f15d3c41a4d0d9d8e67827eea4a6c97ec"
+    },
+    {
+      "path": "tools/mmtrain/THINGI10K_SUPERRES_SCREEN_20261121.md",
+      "sha256": "b265c6d0d25bc3a6117aabb5e21a873834ed1478cc5f66831e680fd92158412a"
+    },
+    {
+      "path": "tools/mmtrain/THINGI10K_TILE_RANKING_SCREEN_20261121.md",
+      "sha256": "c058a129456bb6a9a67066cd42a6f05db1d9721b237105bead4081458494c6c2"
+    },
+    {
+      "path": "tools/mmtrain/tile_refinement.py",
+      "sha256": "50266fe3b44658f1a1a7714339d211c1c7c4bd832259037fa607e24777c47bb1"
+    },
+    {
+      "path": "tools/mmtrain/train.py",
+      "sha256": "cb8def748cb6b5a439e975be757e87f10e8b76372186417512daa515693f9be8"
+    },
+    {
+      "path": "tools/mmtrain/upstream_clusterlod_20261122.json",
+      "sha256": "a137ccd65357c087ac8f4e845fef1665a53c2c03e2c410f97babd92c166386dc"
+    },
+    {
+      "path": "tools/mmtrain/UPSTREAM_CLUSTERLOD_SCREEN_20261122.md",
+      "sha256": "b81d25537c862ea8dae770039933b709a700618459f37d28ac2ded4732085b05"
+    },
+    {
+      "path": "tools/mmtrain/verify_silhouette_guide_fusion.py",
+      "sha256": "d38e59d4b1faaa90d573b08823a4d1d07106208ed009b72993d05ae6a56a51f7"
+    }
+  ],
+  "search_roots": [
+    "tools/mmgeo",
+    "tools/mmmetrics",
+    "tools/mmtrain",
+    "tools/mmgpu",
+    "tools/mmtemporal",
+    "tools/mmscene"
+  ]
+}

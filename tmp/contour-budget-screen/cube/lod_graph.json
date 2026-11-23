@@ -1,0 +1,33 @@
+{
+  "source": "E:\\ManyMesh\\assets\\models\\cube\\cube.obj",
+  "vertices": 54,
+  "generatedVertices": 0,
+  "sourceVertices": 54,
+  "triangles": 48,
+  "nodes": 7,
+  "levels": 2,
+  "clustersPerNode": 8,
+  "ratio": 0.7,
+  "attributeQem": true,
+  "cornerSeam": true,
+  "cornerSplitUv": true,
+  "tier": "balanced",
+  "targetRatio": 0.5,
+  "selectedTriangles": 36,
+  "baseTriangles": 48,
+  "culledTriangles": 0,
+  "visibleRatio": 0.75,
+  "maxScreenErrorPx": 0,
+  "roots": [6],
+  "leaves": [0,1,2,3,4,5],
+  "selectedNodes": [6],
+  "dag": [
+    {"id":0,"level":0,"parent":6,"children":[],"tri":8,"baseTri":8,"selfError":0,"accumulatedError":0,"material":0,"submesh":0,"simplified":false,"bounds":{"center":[-0.5,-0.0529229,-0.0646407],"radius":0.79028},"boundaryEdges":8,"nonManifoldEdges":0,"duplicateTriangles":0,"degenerateTriangles":0,"minQuality":0.866025,"normalErrorDeg":0,"uvError":0},
+    {"id":1,"level":0,"parent":6,"children":[],"tri":8,"baseTri":8,"selfError":0,"accumulatedError":0,"material":0,"submesh":0,"simplified":false,"bounds":{"center":[0.0529229,-0.0646407,-0.5],"radius":0.79028},"boundaryEdges":8,"nonManifoldEdges":0,"duplicateTriangles":0,"degenerateTriangles":0,"minQuality":0.866025,"normalErrorDeg":0,"uvError":0},
+    {"id":2,"level":0,"parent":6,"children":[],"tri":8,"baseTri":8,"selfError":0,"accumulatedError":0,"material":0,"submesh":0,"simplified":false,"bounds":{"center":[0.5,-0.0529229,0.0646407],"radius":0.79028},"boundaryEdges":8,"nonManifoldEdges":0,"duplicateTriangles":0,"degenerateTriangles":0,"minQuality":0.866025,"normalErrorDeg":0,"uvError":0},
+    {"id":3,"level":0,"parent":6,"children":[],"tri":8,"baseTri":8,"selfError":0,"accumulatedError":0,"material":0,"submesh":0,"simplified":false,"bounds":{"center":[-0.0529229,-0.0646407,0.5],"radius":0.79028},"boundaryEdges":8,"nonManifoldEdges":0,"duplicateTriangles":0,"degenerateTriangles":0,"minQuality":0.866025,"normalErrorDeg":0,"uvError":0},
+    {"id":4,"level":0,"parent":6,"children":[],"tri":8,"baseTri":8,"selfError":0,"accumulatedError":0,"material":0,"submesh":0,"simplified":false,"bounds":{"center":[-0.0529229,-0.5,0.0646407],"radius":0.79028},"boundaryEdges":8,"nonManifoldEdges":0,"duplicateTriangles":0,"degenerateTriangles":0,"minQuality":0.866025,"normalErrorDeg":0,"uvError":0},
+    {"id":5,"level":0,"parent":6,"children":[],"tri":8,"baseTri":8,"selfError":0,"accumulatedError":0,"material":0,"submesh":0,"simplified":false,"bounds":{"center":[0.0529229,0.5,0.0646407],"radius":0.79028},"boundaryEdges":8,"nonManifoldEdges":0,"duplicateTriangles":0,"degenerateTriangles":0,"minQuality":0.866025,"normalErrorDeg":0,"uvError":0},
+    {"id":6,"level":1,"parent":4294967295,"children":[0,4,3,1,2,5],"tri":36,"baseTri":48,"selfError":0,"accumulatedError":0,"material":0,"submesh":0,"simplified":true,"bounds":{"center":[-0.10945,-0.151112,0.0152374],"radius":1.46315},"boundaryEdges":48,"nonManifoldEdges":0,"duplicateTriangles":0,"degenerateTriangles":0,"minQuality":0.433013,"normalErrorDeg":0,"uvError":0}
+  ]
+}

@@ -1,0 +1,1256 @@
+{
+  "schema": 2,
+  "purpose": "development-only contour selector budget-match feasibility screen",
+  "ratios": [
+    0.3,
+    0.5,
+    0.7
+  ],
+  "interiorMultipliers": "3,4,5",
+  "marginDegrees": 5.0,
+  "executable": "E:\\ManyMesh\\out\\cmake-cut-audit\\tools\\mmgeo\\Release\\mmgeo.exe",
+  "executableSha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+  "sourceRevision": "2d417cacdeb545a13e6bfb7192310191e60670d6",
+  "mmgeoSourceSha256": "c044d8d026b32ccb335e99a8c9b0ef4e2ffc766e51455647f29f75bdcf6edea4",
+  "assetsRoot": "E:\\ManyMesh\\assets\\models",
+  "assetsAreHeldOut": false,
+  "imageQualityEvaluated": false,
+  "records": [
+    {
+      "asset": "camera",
+      "mesh": "models\\camera\\camera.obj",
+      "sourceTriangles": 590,
+      "assetSha256": "438f027b6477fcb453a2f81218a4d0b7ac122bb1ac7905bcc29d11395ea8ca56",
+      "uniformCuts": [
+        {
+          "ratio": 0.3,
+          "triangles": 296
+        },
+        {
+          "ratio": 0.5,
+          "triangles": 296
+        },
+        {
+          "ratio": 0.7,
+          "triangles": 394
+        }
+      ],
+      "candidateCuts": [
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 3.0,
+          "triangles": 316,
+          "uniformTriangles": 296,
+          "triangleDelta": 20,
+          "geometrySha256": "74c6d13db26305e01fb1ba3806ff1152534929bd88961f887253255675012890"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 4.0,
+          "triangles": 316,
+          "uniformTriangles": 296,
+          "triangleDelta": 20,
+          "geometrySha256": "74c6d13db26305e01fb1ba3806ff1152534929bd88961f887253255675012890"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 5.0,
+          "triangles": 316,
+          "uniformTriangles": 296,
+          "triangleDelta": 20,
+          "geometrySha256": "74c6d13db26305e01fb1ba3806ff1152534929bd88961f887253255675012890"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 3.0,
+          "triangles": 316,
+          "uniformTriangles": 296,
+          "triangleDelta": 20,
+          "geometrySha256": "74c6d13db26305e01fb1ba3806ff1152534929bd88961f887253255675012890"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 4.0,
+          "triangles": 316,
+          "uniformTriangles": 296,
+          "triangleDelta": 20,
+          "geometrySha256": "74c6d13db26305e01fb1ba3806ff1152534929bd88961f887253255675012890"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 5.0,
+          "triangles": 316,
+          "uniformTriangles": 296,
+          "triangleDelta": 20,
+          "geometrySha256": "74c6d13db26305e01fb1ba3806ff1152534929bd88961f887253255675012890"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 3.0,
+          "triangles": 386,
+          "uniformTriangles": 394,
+          "triangleDelta": -8,
+          "geometrySha256": "8e546545b297c9cc7ff0b3624621a3678e160f4218bf924cb054ef3af4f4bba1"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 4.0,
+          "triangles": 386,
+          "uniformTriangles": 394,
+          "triangleDelta": -8,
+          "geometrySha256": "8e546545b297c9cc7ff0b3624621a3678e160f4218bf924cb054ef3af4f4bba1"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 5.0,
+          "triangles": 386,
+          "uniformTriangles": 394,
+          "triangleDelta": -8,
+          "geometrySha256": "8e546545b297c9cc7ff0b3624621a3678e160f4218bf924cb054ef3af4f4bba1"
+        }
+      ],
+      "candidateGeometryFilesIdenticalByBudget": {
+        "0.3": true,
+        "0.5": true,
+        "0.7": true
+      },
+      "returnCode": 0,
+      "elapsedSeconds": 0.0989,
+      "stdout": null,
+      "stderr": null
+    },
+    {
+      "asset": "cloth",
+      "mesh": "models\\cloth\\cloth.obj",
+      "sourceTriangles": 74976,
+      "assetSha256": "3dbcb96aaf5142ee16922c6138e23fa8dd8471e847c58978fd09df596168c24f",
+      "uniformCuts": [
+        {
+          "ratio": 0.3,
+          "triangles": 30214
+        },
+        {
+          "ratio": 0.5,
+          "triangles": 37488
+        },
+        {
+          "ratio": 0.7,
+          "triangles": 52484
+        }
+      ],
+      "candidateCuts": [
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 3.0,
+          "triangles": 30214,
+          "uniformTriangles": 30214,
+          "triangleDelta": 0,
+          "geometrySha256": "817a278cd3fc9a486fe6b789677d3c87c3f11357cc9fe60f8e0b99514ab77e0c"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 4.0,
+          "triangles": 30214,
+          "uniformTriangles": 30214,
+          "triangleDelta": 0,
+          "geometrySha256": "817a278cd3fc9a486fe6b789677d3c87c3f11357cc9fe60f8e0b99514ab77e0c"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 5.0,
+          "triangles": 30214,
+          "uniformTriangles": 30214,
+          "triangleDelta": 0,
+          "geometrySha256": "817a278cd3fc9a486fe6b789677d3c87c3f11357cc9fe60f8e0b99514ab77e0c"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 3.0,
+          "triangles": 37484,
+          "uniformTriangles": 37488,
+          "triangleDelta": -4,
+          "geometrySha256": "d90d2014128fea9f9654a990062b27b8e2d8e36e8dd5b99ada46a9b534f4e45b"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 4.0,
+          "triangles": 37484,
+          "uniformTriangles": 37488,
+          "triangleDelta": -4,
+          "geometrySha256": "d90d2014128fea9f9654a990062b27b8e2d8e36e8dd5b99ada46a9b534f4e45b"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 5.0,
+          "triangles": 37484,
+          "uniformTriangles": 37488,
+          "triangleDelta": -4,
+          "geometrySha256": "d90d2014128fea9f9654a990062b27b8e2d8e36e8dd5b99ada46a9b534f4e45b"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 3.0,
+          "triangles": 52490,
+          "uniformTriangles": 52484,
+          "triangleDelta": 6,
+          "geometrySha256": "7cf8375fbf83544ae46e8c5e42792fe30c9c4e311159286968ff741805ec7f5c"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 4.0,
+          "triangles": 52466,
+          "uniformTriangles": 52484,
+          "triangleDelta": -18,
+          "geometrySha256": "9e22103bb71562b16637eaf3c08d547d38623b00bcf32c53ad4775891f112a13"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 5.0,
+          "triangles": 52482,
+          "uniformTriangles": 52484,
+          "triangleDelta": -2,
+          "geometrySha256": "5bdd5daabb0a8cad5a5299c11ffd0222a8045f42c9741e61cf2700885239dce2"
+        }
+      ],
+      "candidateGeometryFilesIdenticalByBudget": {
+        "0.3": true,
+        "0.5": true,
+        "0.7": false
+      },
+      "returnCode": 0,
+      "elapsedSeconds": 15.2375,
+      "stdout": null,
+      "stderr": null
+    },
+    {
+      "asset": "cornell_box",
+      "mesh": "models\\cornell_box\\cornell_box.obj",
+      "sourceTriangles": 288,
+      "assetSha256": "c7bd87c3d7be13e72c6b393443a0123b2b1f9b251275acd23d426576d7d950f9",
+      "uniformCuts": [
+        {
+          "ratio": 0.3,
+          "triangles": 228
+        },
+        {
+          "ratio": 0.5,
+          "triangles": 228
+        },
+        {
+          "ratio": 0.7,
+          "triangles": 228
+        }
+      ],
+      "candidateCuts": [
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 3.0,
+          "triangles": 228,
+          "uniformTriangles": 228,
+          "triangleDelta": 0,
+          "geometrySha256": "03f835a2e1c0f07ac0b97836d3cf5d6c817b28332e43d07897eae9da9e3112f1"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 4.0,
+          "triangles": 228,
+          "uniformTriangles": 228,
+          "triangleDelta": 0,
+          "geometrySha256": "03f835a2e1c0f07ac0b97836d3cf5d6c817b28332e43d07897eae9da9e3112f1"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 5.0,
+          "triangles": 228,
+          "uniformTriangles": 228,
+          "triangleDelta": 0,
+          "geometrySha256": "03f835a2e1c0f07ac0b97836d3cf5d6c817b28332e43d07897eae9da9e3112f1"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 3.0,
+          "triangles": 228,
+          "uniformTriangles": 228,
+          "triangleDelta": 0,
+          "geometrySha256": "03f835a2e1c0f07ac0b97836d3cf5d6c817b28332e43d07897eae9da9e3112f1"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 4.0,
+          "triangles": 228,
+          "uniformTriangles": 228,
+          "triangleDelta": 0,
+          "geometrySha256": "03f835a2e1c0f07ac0b97836d3cf5d6c817b28332e43d07897eae9da9e3112f1"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 5.0,
+          "triangles": 228,
+          "uniformTriangles": 228,
+          "triangleDelta": 0,
+          "geometrySha256": "03f835a2e1c0f07ac0b97836d3cf5d6c817b28332e43d07897eae9da9e3112f1"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 3.0,
+          "triangles": 228,
+          "uniformTriangles": 228,
+          "triangleDelta": 0,
+          "geometrySha256": "03f835a2e1c0f07ac0b97836d3cf5d6c817b28332e43d07897eae9da9e3112f1"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 4.0,
+          "triangles": 228,
+          "uniformTriangles": 228,
+          "triangleDelta": 0,
+          "geometrySha256": "03f835a2e1c0f07ac0b97836d3cf5d6c817b28332e43d07897eae9da9e3112f1"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 5.0,
+          "triangles": 228,
+          "uniformTriangles": 228,
+          "triangleDelta": 0,
+          "geometrySha256": "03f835a2e1c0f07ac0b97836d3cf5d6c817b28332e43d07897eae9da9e3112f1"
+        }
+      ],
+      "candidateGeometryFilesIdenticalByBudget": {
+        "0.3": true,
+        "0.5": true,
+        "0.7": true
+      },
+      "returnCode": 0,
+      "elapsedSeconds": 0.0576,
+      "stdout": null,
+      "stderr": null
+    },
+    {
+      "asset": "cube",
+      "mesh": "models\\cube\\cube.obj",
+      "sourceTriangles": 48,
+      "assetSha256": "46054ec105b613a8d574d8cdc90887a3d0aed5338880942988881f9eba478732",
+      "uniformCuts": [
+        {
+          "ratio": 0.3,
+          "triangles": 36
+        },
+        {
+          "ratio": 0.5,
+          "triangles": 36
+        },
+        {
+          "ratio": 0.7,
+          "triangles": 36
+        }
+      ],
+      "candidateCuts": [
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 3.0,
+          "triangles": 36,
+          "uniformTriangles": 36,
+          "triangleDelta": 0,
+          "geometrySha256": "6623b6eb54c21c7c58035e58515bd4c6dd4dd17adfe0dadf01b997a85b2ce287"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 4.0,
+          "triangles": 36,
+          "uniformTriangles": 36,
+          "triangleDelta": 0,
+          "geometrySha256": "6623b6eb54c21c7c58035e58515bd4c6dd4dd17adfe0dadf01b997a85b2ce287"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 5.0,
+          "triangles": 36,
+          "uniformTriangles": 36,
+          "triangleDelta": 0,
+          "geometrySha256": "6623b6eb54c21c7c58035e58515bd4c6dd4dd17adfe0dadf01b997a85b2ce287"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 3.0,
+          "triangles": 36,
+          "uniformTriangles": 36,
+          "triangleDelta": 0,
+          "geometrySha256": "6623b6eb54c21c7c58035e58515bd4c6dd4dd17adfe0dadf01b997a85b2ce287"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 4.0,
+          "triangles": 36,
+          "uniformTriangles": 36,
+          "triangleDelta": 0,
+          "geometrySha256": "6623b6eb54c21c7c58035e58515bd4c6dd4dd17adfe0dadf01b997a85b2ce287"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 5.0,
+          "triangles": 36,
+          "uniformTriangles": 36,
+          "triangleDelta": 0,
+          "geometrySha256": "6623b6eb54c21c7c58035e58515bd4c6dd4dd17adfe0dadf01b997a85b2ce287"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 3.0,
+          "triangles": 36,
+          "uniformTriangles": 36,
+          "triangleDelta": 0,
+          "geometrySha256": "6623b6eb54c21c7c58035e58515bd4c6dd4dd17adfe0dadf01b997a85b2ce287"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 4.0,
+          "triangles": 36,
+          "uniformTriangles": 36,
+          "triangleDelta": 0,
+          "geometrySha256": "6623b6eb54c21c7c58035e58515bd4c6dd4dd17adfe0dadf01b997a85b2ce287"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 5.0,
+          "triangles": 36,
+          "uniformTriangles": 36,
+          "triangleDelta": 0,
+          "geometrySha256": "6623b6eb54c21c7c58035e58515bd4c6dd4dd17adfe0dadf01b997a85b2ce287"
+        }
+      ],
+      "candidateGeometryFilesIdenticalByBudget": {
+        "0.3": true,
+        "0.5": true,
+        "0.7": true
+      },
+      "returnCode": 0,
+      "elapsedSeconds": 0.0381,
+      "stdout": null,
+      "stderr": null
+    },
+    {
+      "asset": "material_sphere",
+      "mesh": "models\\material_sphere\\material_sphere.obj",
+      "sourceTriangles": 9428,
+      "assetSha256": "5b60f57bfaca60da55c06a195a1b5ed01d9208c80feb2e26c45a5adda440b852",
+      "uniformCuts": [
+        {
+          "ratio": 0.3,
+          "triangles": 3972
+        },
+        {
+          "ratio": 0.5,
+          "triangles": 4714
+        },
+        {
+          "ratio": 0.7,
+          "triangles": 6600
+        }
+      ],
+      "candidateCuts": [
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 3.0,
+          "triangles": 4180,
+          "uniformTriangles": 3972,
+          "triangleDelta": 208,
+          "geometrySha256": "56d74050cdc8a79f8402a3353dd8bfcce0752b7ca97f4b7f6aefd28716760b6a"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 4.0,
+          "triangles": 4180,
+          "uniformTriangles": 3972,
+          "triangleDelta": 208,
+          "geometrySha256": "56d74050cdc8a79f8402a3353dd8bfcce0752b7ca97f4b7f6aefd28716760b6a"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 5.0,
+          "triangles": 4180,
+          "uniformTriangles": 3972,
+          "triangleDelta": 208,
+          "geometrySha256": "56d74050cdc8a79f8402a3353dd8bfcce0752b7ca97f4b7f6aefd28716760b6a"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 3.0,
+          "triangles": 4792,
+          "uniformTriangles": 4714,
+          "triangleDelta": 78,
+          "geometrySha256": "1621fd4874055d42ed6b695b999d2cadfe4cae605e59452b3825e520d7f4dde2"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 4.0,
+          "triangles": 4792,
+          "uniformTriangles": 4714,
+          "triangleDelta": 78,
+          "geometrySha256": "1621fd4874055d42ed6b695b999d2cadfe4cae605e59452b3825e520d7f4dde2"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 5.0,
+          "triangles": 4792,
+          "uniformTriangles": 4714,
+          "triangleDelta": 78,
+          "geometrySha256": "1621fd4874055d42ed6b695b999d2cadfe4cae605e59452b3825e520d7f4dde2"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 3.0,
+          "triangles": 6620,
+          "uniformTriangles": 6600,
+          "triangleDelta": 20,
+          "geometrySha256": "f640de1fc09a3cbd465b25cd18a5dd55bc69f559d8863fa19a7b5808f37670ef"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 4.0,
+          "triangles": 6620,
+          "uniformTriangles": 6600,
+          "triangleDelta": 20,
+          "geometrySha256": "f640de1fc09a3cbd465b25cd18a5dd55bc69f559d8863fa19a7b5808f37670ef"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 5.0,
+          "triangles": 6620,
+          "uniformTriangles": 6600,
+          "triangleDelta": 20,
+          "geometrySha256": "f640de1fc09a3cbd465b25cd18a5dd55bc69f559d8863fa19a7b5808f37670ef"
+        }
+      ],
+      "candidateGeometryFilesIdenticalByBudget": {
+        "0.3": true,
+        "0.5": true,
+        "0.7": true
+      },
+      "returnCode": 0,
+      "elapsedSeconds": 2.4159,
+      "stdout": null,
+      "stderr": null
+    },
+    {
+      "asset": "monkey",
+      "mesh": "models\\monkey\\monkey.obj",
+      "sourceTriangles": 15744,
+      "assetSha256": "7b754119aa286ff618b9ac30038c8aa9a093e2820242913728c8b20d8000ca88",
+      "uniformCuts": [
+        {
+          "ratio": 0.3,
+          "triangles": 4724
+        },
+        {
+          "ratio": 0.5,
+          "triangles": 7870
+        },
+        {
+          "ratio": 0.7,
+          "triangles": 11020
+        }
+      ],
+      "candidateCuts": [
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 3.0,
+          "triangles": 4372,
+          "uniformTriangles": 4724,
+          "triangleDelta": -352,
+          "geometrySha256": "6bff6a6967437b5865005221da675a2c43f9e77c3561fcec5c7ecc9e37caf1b9"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 4.0,
+          "triangles": 4372,
+          "uniformTriangles": 4724,
+          "triangleDelta": -352,
+          "geometrySha256": "6bff6a6967437b5865005221da675a2c43f9e77c3561fcec5c7ecc9e37caf1b9"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 5.0,
+          "triangles": 4372,
+          "uniformTriangles": 4724,
+          "triangleDelta": -352,
+          "geometrySha256": "6bff6a6967437b5865005221da675a2c43f9e77c3561fcec5c7ecc9e37caf1b9"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 3.0,
+          "triangles": 7958,
+          "uniformTriangles": 7870,
+          "triangleDelta": 88,
+          "geometrySha256": "9d87d7d541c9aa38d80ed3f9ad8f68be1e9b4dbb593aae7c33803ff87fd6ebbe"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 4.0,
+          "triangles": 7958,
+          "uniformTriangles": 7870,
+          "triangleDelta": 88,
+          "geometrySha256": "9d87d7d541c9aa38d80ed3f9ad8f68be1e9b4dbb593aae7c33803ff87fd6ebbe"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 5.0,
+          "triangles": 7958,
+          "uniformTriangles": 7870,
+          "triangleDelta": 88,
+          "geometrySha256": "9d87d7d541c9aa38d80ed3f9ad8f68be1e9b4dbb593aae7c33803ff87fd6ebbe"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 3.0,
+          "triangles": 11070,
+          "uniformTriangles": 11020,
+          "triangleDelta": 50,
+          "geometrySha256": "a1266827e4ee091e68f373355fc37fbf13ea337a5403a7f1471a46d30162b851"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 4.0,
+          "triangles": 11070,
+          "uniformTriangles": 11020,
+          "triangleDelta": 50,
+          "geometrySha256": "a1266827e4ee091e68f373355fc37fbf13ea337a5403a7f1471a46d30162b851"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 5.0,
+          "triangles": 11070,
+          "uniformTriangles": 11020,
+          "triangleDelta": 50,
+          "geometrySha256": "a1266827e4ee091e68f373355fc37fbf13ea337a5403a7f1471a46d30162b851"
+        }
+      ],
+      "candidateGeometryFilesIdenticalByBudget": {
+        "0.3": true,
+        "0.5": true,
+        "0.7": true
+      },
+      "returnCode": 0,
+      "elapsedSeconds": 3.5813,
+      "stdout": null,
+      "stderr": null
+    },
+    {
+      "asset": "prism",
+      "mesh": "models\\prism\\prism.obj",
+      "sourceTriangles": 8,
+      "assetSha256": "7913c534a2158f1060690b3ff841dea628b2f8babaeee5e85690e69cf922754a",
+      "uniformCuts": [
+        {
+          "ratio": 0.3,
+          "triangles": 8
+        },
+        {
+          "ratio": 0.5,
+          "triangles": 8
+        },
+        {
+          "ratio": 0.7,
+          "triangles": 8
+        }
+      ],
+      "candidateCuts": [
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 3.0,
+          "triangles": 8,
+          "uniformTriangles": 8,
+          "triangleDelta": 0,
+          "geometrySha256": "47769e8882cbf5ad51ec1b2a1c52fcb275ba87f721cdf7af93c16a6aab6b864b"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 4.0,
+          "triangles": 8,
+          "uniformTriangles": 8,
+          "triangleDelta": 0,
+          "geometrySha256": "47769e8882cbf5ad51ec1b2a1c52fcb275ba87f721cdf7af93c16a6aab6b864b"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 5.0,
+          "triangles": 8,
+          "uniformTriangles": 8,
+          "triangleDelta": 0,
+          "geometrySha256": "47769e8882cbf5ad51ec1b2a1c52fcb275ba87f721cdf7af93c16a6aab6b864b"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 3.0,
+          "triangles": 8,
+          "uniformTriangles": 8,
+          "triangleDelta": 0,
+          "geometrySha256": "47769e8882cbf5ad51ec1b2a1c52fcb275ba87f721cdf7af93c16a6aab6b864b"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 4.0,
+          "triangles": 8,
+          "uniformTriangles": 8,
+          "triangleDelta": 0,
+          "geometrySha256": "47769e8882cbf5ad51ec1b2a1c52fcb275ba87f721cdf7af93c16a6aab6b864b"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 5.0,
+          "triangles": 8,
+          "uniformTriangles": 8,
+          "triangleDelta": 0,
+          "geometrySha256": "47769e8882cbf5ad51ec1b2a1c52fcb275ba87f721cdf7af93c16a6aab6b864b"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 3.0,
+          "triangles": 8,
+          "uniformTriangles": 8,
+          "triangleDelta": 0,
+          "geometrySha256": "47769e8882cbf5ad51ec1b2a1c52fcb275ba87f721cdf7af93c16a6aab6b864b"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 4.0,
+          "triangles": 8,
+          "uniformTriangles": 8,
+          "triangleDelta": 0,
+          "geometrySha256": "47769e8882cbf5ad51ec1b2a1c52fcb275ba87f721cdf7af93c16a6aab6b864b"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 5.0,
+          "triangles": 8,
+          "uniformTriangles": 8,
+          "triangleDelta": 0,
+          "geometrySha256": "47769e8882cbf5ad51ec1b2a1c52fcb275ba87f721cdf7af93c16a6aab6b864b"
+        }
+      ],
+      "candidateGeometryFilesIdenticalByBudget": {
+        "0.3": true,
+        "0.5": true,
+        "0.7": true
+      },
+      "returnCode": 0,
+      "elapsedSeconds": 0.0282,
+      "stdout": null,
+      "stderr": null
+    },
+    {
+      "asset": "rounded_cube",
+      "mesh": "models\\rounded_cube\\rounded_cube.obj",
+      "sourceTriangles": 1200,
+      "assetSha256": "8d224cdc307a5be9b35d19ab86797698ca1cd218e479b9c714d5e333f7421e4c",
+      "uniformCuts": [
+        {
+          "ratio": 0.3,
+          "triangles": 280
+        },
+        {
+          "ratio": 0.5,
+          "triangles": 576
+        },
+        {
+          "ratio": 0.7,
+          "triangles": 840
+        }
+      ],
+      "candidateCuts": [
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 3.0,
+          "triangles": 280,
+          "uniformTriangles": 280,
+          "triangleDelta": 0,
+          "geometrySha256": "902e8b65bbb86b9d18d5700ecd867172d6fcc2e6bb9a3f9ab6db1fe9107d2b07"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 4.0,
+          "triangles": 280,
+          "uniformTriangles": 280,
+          "triangleDelta": 0,
+          "geometrySha256": "902e8b65bbb86b9d18d5700ecd867172d6fcc2e6bb9a3f9ab6db1fe9107d2b07"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 5.0,
+          "triangles": 280,
+          "uniformTriangles": 280,
+          "triangleDelta": 0,
+          "geometrySha256": "902e8b65bbb86b9d18d5700ecd867172d6fcc2e6bb9a3f9ab6db1fe9107d2b07"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 3.0,
+          "triangles": 576,
+          "uniformTriangles": 576,
+          "triangleDelta": 0,
+          "geometrySha256": "2d1f5f24757d6fbea18cefdc18e7efea90aa407cd1661a67713b7f3452376a6b"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 4.0,
+          "triangles": 576,
+          "uniformTriangles": 576,
+          "triangleDelta": 0,
+          "geometrySha256": "2d1f5f24757d6fbea18cefdc18e7efea90aa407cd1661a67713b7f3452376a6b"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 5.0,
+          "triangles": 576,
+          "uniformTriangles": 576,
+          "triangleDelta": 0,
+          "geometrySha256": "2d1f5f24757d6fbea18cefdc18e7efea90aa407cd1661a67713b7f3452376a6b"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 3.0,
+          "triangles": 844,
+          "uniformTriangles": 840,
+          "triangleDelta": 4,
+          "geometrySha256": "5e2a6f753b8d8ddb85c2ae66ecd1d03f268c48e922182f835c7696e895750d99"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 4.0,
+          "triangles": 844,
+          "uniformTriangles": 840,
+          "triangleDelta": 4,
+          "geometrySha256": "5e2a6f753b8d8ddb85c2ae66ecd1d03f268c48e922182f835c7696e895750d99"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 5.0,
+          "triangles": 844,
+          "uniformTriangles": 840,
+          "triangleDelta": 4,
+          "geometrySha256": "5e2a6f753b8d8ddb85c2ae66ecd1d03f268c48e922182f835c7696e895750d99"
+        }
+      ],
+      "candidateGeometryFilesIdenticalByBudget": {
+        "0.3": true,
+        "0.5": true,
+        "0.7": true
+      },
+      "returnCode": 0,
+      "elapsedSeconds": 0.162,
+      "stdout": null,
+      "stderr": null
+    },
+    {
+      "asset": "shapes",
+      "mesh": "models\\shapes\\shapes.obj",
+      "sourceTriangles": 73728,
+      "assetSha256": "92fe720cb17e3419b381bac9f364697cd0502c101138b308d493dd9a01e2780f",
+      "uniformCuts": [
+        {
+          "ratio": 0.3,
+          "triangles": 22119
+        },
+        {
+          "ratio": 0.5,
+          "triangles": 36864
+        },
+        {
+          "ratio": 0.7,
+          "triangles": 51610
+        }
+      ],
+      "candidateCuts": [
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 3.0,
+          "triangles": 22217,
+          "uniformTriangles": 22119,
+          "triangleDelta": 98,
+          "geometrySha256": "9cbd09a2700c50727c2d114457e50bec35e6902a65041e2445ff31496324eddd"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 4.0,
+          "triangles": 22217,
+          "uniformTriangles": 22119,
+          "triangleDelta": 98,
+          "geometrySha256": "9cbd09a2700c50727c2d114457e50bec35e6902a65041e2445ff31496324eddd"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 5.0,
+          "triangles": 22217,
+          "uniformTriangles": 22119,
+          "triangleDelta": 98,
+          "geometrySha256": "9cbd09a2700c50727c2d114457e50bec35e6902a65041e2445ff31496324eddd"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 3.0,
+          "triangles": 36492,
+          "uniformTriangles": 36864,
+          "triangleDelta": -372,
+          "geometrySha256": "5c975d50f47615c246e23b78c08bad91105427bbae9d21df20d42bb6196e5605"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 4.0,
+          "triangles": 36492,
+          "uniformTriangles": 36864,
+          "triangleDelta": -372,
+          "geometrySha256": "5c975d50f47615c246e23b78c08bad91105427bbae9d21df20d42bb6196e5605"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 5.0,
+          "triangles": 36492,
+          "uniformTriangles": 36864,
+          "triangleDelta": -372,
+          "geometrySha256": "5c975d50f47615c246e23b78c08bad91105427bbae9d21df20d42bb6196e5605"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 3.0,
+          "triangles": 51626,
+          "uniformTriangles": 51610,
+          "triangleDelta": 16,
+          "geometrySha256": "5e65bb2a196d9e091b5dd06e322b8e922ed533efde1cd604de07e031ea1c9b80"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 4.0,
+          "triangles": 51604,
+          "uniformTriangles": 51610,
+          "triangleDelta": -6,
+          "geometrySha256": "c87a3726cd1b380abb2701ca20650d27b7ab9298bc7ff27bc620c78f9badab09"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 5.0,
+          "triangles": 51620,
+          "uniformTriangles": 51610,
+          "triangleDelta": 10,
+          "geometrySha256": "ec1ce2b71d153163a94fcd338149a3bce613ddb20445733b9788dd7b3a81559c"
+        }
+      ],
+      "candidateGeometryFilesIdenticalByBudget": {
+        "0.3": true,
+        "0.5": true,
+        "0.7": false
+      },
+      "returnCode": 0,
+      "elapsedSeconds": 5.7139,
+      "stdout": null,
+      "stderr": null
+    },
+    {
+      "asset": "sphere",
+      "mesh": "models\\sphere\\sphere.obj",
+      "sourceTriangles": 8064,
+      "assetSha256": "4faad281defdf74e2db79f0a03a24544bc66fcd97bb718226617a18f7d4562cf",
+      "uniformCuts": [
+        {
+          "ratio": 0.3,
+          "triangles": 1978
+        },
+        {
+          "ratio": 0.5,
+          "triangles": 4032
+        },
+        {
+          "ratio": 0.7,
+          "triangles": 5644
+        }
+      ],
+      "candidateCuts": [
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 3.0,
+          "triangles": 1978,
+          "uniformTriangles": 1978,
+          "triangleDelta": 0,
+          "geometrySha256": "0dd70805ce5a209733a656bc6d28efbbd256a64fd17ef91b7585bb8633e3f4c1"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 4.0,
+          "triangles": 1978,
+          "uniformTriangles": 1978,
+          "triangleDelta": 0,
+          "geometrySha256": "0dd70805ce5a209733a656bc6d28efbbd256a64fd17ef91b7585bb8633e3f4c1"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 5.0,
+          "triangles": 1978,
+          "uniformTriangles": 1978,
+          "triangleDelta": 0,
+          "geometrySha256": "0dd70805ce5a209733a656bc6d28efbbd256a64fd17ef91b7585bb8633e3f4c1"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 3.0,
+          "triangles": 4066,
+          "uniformTriangles": 4032,
+          "triangleDelta": 34,
+          "geometrySha256": "545821a6ffdc6b1729a3f5da118e5b0516f1bc3daba450a7e2273165d6a1226b"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 4.0,
+          "triangles": 4066,
+          "uniformTriangles": 4032,
+          "triangleDelta": 34,
+          "geometrySha256": "545821a6ffdc6b1729a3f5da118e5b0516f1bc3daba450a7e2273165d6a1226b"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 5.0,
+          "triangles": 4066,
+          "uniformTriangles": 4032,
+          "triangleDelta": 34,
+          "geometrySha256": "545821a6ffdc6b1729a3f5da118e5b0516f1bc3daba450a7e2273165d6a1226b"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 3.0,
+          "triangles": 5642,
+          "uniformTriangles": 5644,
+          "triangleDelta": -2,
+          "geometrySha256": "c46a0d5654e3413aa67c808de8176a482597b984061528543d38b2ac48b5b72d"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 4.0,
+          "triangles": 5642,
+          "uniformTriangles": 5644,
+          "triangleDelta": -2,
+          "geometrySha256": "c46a0d5654e3413aa67c808de8176a482597b984061528543d38b2ac48b5b72d"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 5.0,
+          "triangles": 5642,
+          "uniformTriangles": 5644,
+          "triangleDelta": -2,
+          "geometrySha256": "c46a0d5654e3413aa67c808de8176a482597b984061528543d38b2ac48b5b72d"
+        }
+      ],
+      "candidateGeometryFilesIdenticalByBudget": {
+        "0.3": true,
+        "0.5": true,
+        "0.7": true
+      },
+      "returnCode": 0,
+      "elapsedSeconds": 0.9014,
+      "stdout": null,
+      "stderr": null
+    },
+    {
+      "asset": "thinglass",
+      "mesh": "models\\thinglass\\thinglass.obj",
+      "sourceTriangles": 12,
+      "assetSha256": "f5ae2a11104b96d7128440db76288f740311b8a8419a43780544087a2d2f459a",
+      "uniformCuts": [
+        {
+          "ratio": 0.3,
+          "triangles": 12
+        },
+        {
+          "ratio": 0.5,
+          "triangles": 12
+        },
+        {
+          "ratio": 0.7,
+          "triangles": 12
+        }
+      ],
+      "candidateCuts": [
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 3.0,
+          "triangles": 12,
+          "uniformTriangles": 12,
+          "triangleDelta": 0,
+          "geometrySha256": "fa6ece6ffc145548b7ea9f7d69cd9a2d8c853159c32f4117ddae514f3a11b856"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 4.0,
+          "triangles": 12,
+          "uniformTriangles": 12,
+          "triangleDelta": 0,
+          "geometrySha256": "fa6ece6ffc145548b7ea9f7d69cd9a2d8c853159c32f4117ddae514f3a11b856"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 5.0,
+          "triangles": 12,
+          "uniformTriangles": 12,
+          "triangleDelta": 0,
+          "geometrySha256": "fa6ece6ffc145548b7ea9f7d69cd9a2d8c853159c32f4117ddae514f3a11b856"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 3.0,
+          "triangles": 12,
+          "uniformTriangles": 12,
+          "triangleDelta": 0,
+          "geometrySha256": "fa6ece6ffc145548b7ea9f7d69cd9a2d8c853159c32f4117ddae514f3a11b856"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 4.0,
+          "triangles": 12,
+          "uniformTriangles": 12,
+          "triangleDelta": 0,
+          "geometrySha256": "fa6ece6ffc145548b7ea9f7d69cd9a2d8c853159c32f4117ddae514f3a11b856"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 5.0,
+          "triangles": 12,
+          "uniformTriangles": 12,
+          "triangleDelta": 0,
+          "geometrySha256": "fa6ece6ffc145548b7ea9f7d69cd9a2d8c853159c32f4117ddae514f3a11b856"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 3.0,
+          "triangles": 12,
+          "uniformTriangles": 12,
+          "triangleDelta": 0,
+          "geometrySha256": "fa6ece6ffc145548b7ea9f7d69cd9a2d8c853159c32f4117ddae514f3a11b856"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 4.0,
+          "triangles": 12,
+          "uniformTriangles": 12,
+          "triangleDelta": 0,
+          "geometrySha256": "fa6ece6ffc145548b7ea9f7d69cd9a2d8c853159c32f4117ddae514f3a11b856"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 5.0,
+          "triangles": 12,
+          "uniformTriangles": 12,
+          "triangleDelta": 0,
+          "geometrySha256": "fa6ece6ffc145548b7ea9f7d69cd9a2d8c853159c32f4117ddae514f3a11b856"
+        }
+      ],
+      "candidateGeometryFilesIdenticalByBudget": {
+        "0.3": true,
+        "0.5": true,
+        "0.7": true
+      },
+      "returnCode": 0,
+      "elapsedSeconds": 0.0266,
+      "stdout": null,
+      "stderr": null
+    },
+    {
+      "asset": "torus",
+      "mesh": "models\\torus\\torus.obj",
+      "sourceTriangles": 1152,
+      "assetSha256": "6a97e75507caf5322d9c8bba243304a880c08152ab76836d2c35af02f87cb4ec",
+      "uniformCuts": [
+        {
+          "ratio": 0.3,
+          "triangles": 366
+        },
+        {
+          "ratio": 0.5,
+          "triangles": 562
+        },
+        {
+          "ratio": 0.7,
+          "triangles": 804
+        }
+      ],
+      "candidateCuts": [
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 3.0,
+          "triangles": 402,
+          "uniformTriangles": 366,
+          "triangleDelta": 36,
+          "geometrySha256": "ab68670101c7c33e01313f97ba1ac2974a535ba1dde2628bc3acea0af97b4162"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 4.0,
+          "triangles": 402,
+          "uniformTriangles": 366,
+          "triangleDelta": 36,
+          "geometrySha256": "ab68670101c7c33e01313f97ba1ac2974a535ba1dde2628bc3acea0af97b4162"
+        },
+        {
+          "ratio": 0.3,
+          "interiorMultiplier": 5.0,
+          "triangles": 402,
+          "uniformTriangles": 366,
+          "triangleDelta": 36,
+          "geometrySha256": "ab68670101c7c33e01313f97ba1ac2974a535ba1dde2628bc3acea0af97b4162"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 3.0,
+          "triangles": 504,
+          "uniformTriangles": 562,
+          "triangleDelta": -58,
+          "geometrySha256": "e52df0499db68bd0ce8611180c44bdf7887555aded65f1d0a4adf1b774ae9650"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 4.0,
+          "triangles": 504,
+          "uniformTriangles": 562,
+          "triangleDelta": -58,
+          "geometrySha256": "e52df0499db68bd0ce8611180c44bdf7887555aded65f1d0a4adf1b774ae9650"
+        },
+        {
+          "ratio": 0.5,
+          "interiorMultiplier": 5.0,
+          "triangles": 504,
+          "uniformTriangles": 562,
+          "triangleDelta": -58,
+          "geometrySha256": "e52df0499db68bd0ce8611180c44bdf7887555aded65f1d0a4adf1b774ae9650"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 3.0,
+          "triangles": 800,
+          "uniformTriangles": 804,
+          "triangleDelta": -4,
+          "geometrySha256": "f34f87f2949c5fa3c07e443a4bc0319e374d257c01ab59793c1599f7dfa65fd5"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 4.0,
+          "triangles": 800,
+          "uniformTriangles": 804,
+          "triangleDelta": -4,
+          "geometrySha256": "f34f87f2949c5fa3c07e443a4bc0319e374d257c01ab59793c1599f7dfa65fd5"
+        },
+        {
+          "ratio": 0.7,
+          "interiorMultiplier": 5.0,
+          "triangles": 800,
+          "uniformTriangles": 804,
+          "triangleDelta": -4,
+          "geometrySha256": "f34f87f2949c5fa3c07e443a4bc0319e374d257c01ab59793c1599f7dfa65fd5"
+        }
+      ],
+      "candidateGeometryFilesIdenticalByBudget": {
+        "0.3": true,
+        "0.5": true,
+        "0.7": true
+      },
+      "returnCode": 0,
+      "elapsedSeconds": 0.4075,
+      "stdout": null,
+      "stderr": null
+    }
+  ]
+}

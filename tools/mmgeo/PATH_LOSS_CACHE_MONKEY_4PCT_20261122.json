@@ -1,0 +1,187 @@
+{
+  "schema": "manymesh-path-loss-cache-pair-v1",
+  "scope": "Single-run 4% Monkey development check; CPU flat-geometry raster proxy, not production rendering.",
+  "inputs": {
+    "capture": {
+      "path": "out\\filter-real-candidates\\monkey.json",
+      "sha256": "a4e80d9cdb7ed979faa66002f80be8ab7428d1ae56ee245f2d8170ef4a012a88"
+    },
+    "uncached_report": {
+      "path": "out\\pathloss-captures\\monkey-96px-pool4-no-cache-4pct.json",
+      "sha256": "7d9d667e87bd8d07d631fd2195e48f02ef43ad8ea0f5fb2f6110978255192b86"
+    },
+    "cached_report": {
+      "path": "out\\pathloss-captures\\monkey-96px-pool4-axis-row-cache-4pct.json",
+      "sha256": "c0a3b423b943db94610039b196b80fa1ffc6f993226e4170e21a3dcdb9044d3c"
+    },
+    "code": {
+      "tools/mmgeo/audit_path_loss_cache_pair.py": "23c30a306f8d237a1578c91e0c7378d13c8f4b7b3101bfc2c54862087c788e84",
+      "tools/mmgeo/probe_global_path_qem.py": "60d39beac4e14d9dcd12cd641b6a058b177e3d8898dc5ff09539bf07c73dc8a9",
+      "tools/mmgeo/probe_dynamic_path_simplification.py": "ebe15c3558fdfc131bc57a53c684d09247ff9a8d024dc5b7856d0297cef1844a"
+    }
+  },
+  "setup": {
+    "initial_faces": 15744,
+    "final_faces": 15114,
+    "edits": 315,
+    "views": 6,
+    "view_size": 96,
+    "supersampling": 3,
+    "pan_samples": 4,
+    "normal_weight": 0.25
+  },
+  "same_face_count_and_edit_sequence": true,
+  "max_abs_fit_score_difference": 3.922643460052555e-16,
+  "final_fit_view_audit_max_pixel_difference": {
+    "cached": 1.3960119410287575e-16,
+    "uncached": 3.189756672770244e-17
+  },
+  "cpu_seconds_single_run": {
+    "qem_total": 4.5900699000339955,
+    "path_uncached_total": 38.66828689991962,
+    "path_cached_total": 17.537257499992847,
+    "cache_speedup_vs_uncached": 2.204922115098977,
+    "cached_path_over_qem": 3.8206950835025326,
+    "path_scorer_uncached": 35.6875,
+    "path_scorer_cached": 14.5
+  },
+  "cache_peak_lines_per_view_source_and_current": [
+    [
+      20000,
+      1711
+    ],
+    [
+      20000,
+      3628
+    ],
+    [
+      19998,
+      1471
+    ]
+  ],
+  "heldout_quality": {
+    "matchedEdits": 315,
+    "matchedFaces": 15114,
+    "size": 96,
+    "scale": 3,
+    "steps": 4,
+    "radius": 1.875,
+    "views": [
+      {
+        "view": "orbit1",
+        "azimuth": 2.718879020478639,
+        "panAngle": 127.0,
+        "path": {
+          "coverageMse": 0.0,
+          "depthMse": 0.0,
+          "flatNormalSquaredDistance": 0.0
+        },
+        "qem": {
+          "coverageMse": 0.0,
+          "depthMse": 0.0,
+          "flatNormalSquaredDistance": 0.0
+        }
+      },
+      {
+        "view": "orbit2",
+        "azimuth": 3.6089969389957473,
+        "panAngle": 61.0,
+        "path": {
+          "coverageMse": 0.0,
+          "depthMse": 0.0,
+          "flatNormalSquaredDistance": 0.0
+        },
+        "qem": {
+          "coverageMse": 0.0,
+          "depthMse": 0.0,
+          "flatNormalSquaredDistance": 0.0
+        }
+      },
+      {
+        "view": "orbit3",
+        "azimuth": 5.00526034059121,
+        "panAngle": 105.0,
+        "path": {
+          "coverageMse": 0.0,
+          "depthMse": 1.1995897593273405e-12,
+          "flatNormalSquaredDistance": 2.558632491439921e-07
+        },
+        "qem": {
+          "coverageMse": 0.0,
+          "depthMse": 1.2995942696888891e-12,
+          "flatNormalSquaredDistance": 2.4767560739488115e-07
+        }
+      },
+      {
+        "view": "orbit4",
+        "azimuth": 5.616125578789227,
+        "panAngle": 137.0,
+        "path": {
+          "coverageMse": 0.0,
+          "depthMse": 6.019376947720015e-13,
+          "flatNormalSquaredDistance": 9.832049320920778e-07
+        },
+        "qem": {
+          "coverageMse": 0.0,
+          "depthMse": 7.303585096114841e-13,
+          "flatNormalSquaredDistance": 1.148815136782527e-06
+        }
+      },
+      {
+        "view": "orbit5",
+        "azimuth": 7.099655442984406,
+        "panAngle": 47.0,
+        "path": {
+          "coverageMse": 0.0,
+          "depthMse": 6.919052683734789e-13,
+          "flatNormalSquaredDistance": 1.0134066464190034e-06
+        },
+        "qem": {
+          "coverageMse": 0.0,
+          "depthMse": 7.498376449528528e-13,
+          "flatNormalSquaredDistance": 1.070820726434638e-06
+        }
+      },
+      {
+        "view": "orbit6",
+        "azimuth": 8.059586531581287,
+        "panAngle": 111.0,
+        "path": {
+          "coverageMse": 0.0,
+          "depthMse": 1.6909934240566138e-10,
+          "flatNormalSquaredDistance": 1.981488719866832e-07
+        },
+        "qem": {
+          "coverageMse": 0.0,
+          "depthMse": 1.6909934240566138e-10,
+          "flatNormalSquaredDistance": 1.981488719866832e-07
+        }
+      }
+    ],
+    "geometry": {
+      "path": {
+        "maxVertexDisplacement": 0.05571645592906172,
+        "relativeToSourceRadius": 0.03828208080135302,
+        "coversBothSurfaces": true,
+        "symmetricSurfaceDistanceUpperBound": 0.05571645592906172
+      },
+      "qem": {
+        "maxVertexDisplacement": 0.0537037850972364,
+        "relativeToSourceRadius": 0.03689919981716834,
+        "coversBothSurfaces": true,
+        "symmetricSurfaceDistanceUpperBound": 0.0537037850972364
+      }
+    },
+    "view_pair_delta_means": {
+      "coverageMse": 0.0,
+      "depthMse": -4.772628363006753e-14,
+      "flatNormalSquaredDistance": -3.5806107159495464e-08
+    }
+  },
+  "limitations": [
+    "One asset and one serial run per condition; timings are not a statistical comparison.",
+    "The cache is faster than this path-loss implementation but remains slower than QEM.",
+    "The six held-out views show no coverage gain and negligible average depth/normal differences.",
+    "This geometry-only CPU proxy does not measure materials, hardware rendering, temporal behavior, or perception."
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "source_revision": "2d417cacdeb545a13e6bfb7192310191e60670d6",
+  "source_worktree_was_dirty": true,
+  "patch": {
+    "path": "current_mmgeo_source_patch_20261123.diff",
+    "sha256": "fe20c1155af2c861764670397948776ca458902b8f71f1669ca0731c2dc7f6a3",
+    "bytes": 28834,
+    "scope": [
+      "libs/manymesh/include/manymesh/Cluster.h",
+      "libs/manymesh/include/manymesh/Simplifier.h",
+      "libs/manymesh/src/Clusterizer.cpp",
+      "libs/manymesh/src/Grouper.cpp",
+      "libs/manymesh/src/LodGraph.cpp",
+      "libs/manymesh/src/Simplifier.cpp",
+      "libs/manymesh/tests/test_manymesh.cpp",
+      "tools/mmgeo/src/main.cpp"
+    ]
+  },
+  "source_file_sha256": {
+    "libs/manymesh/include/manymesh/Cluster.h": "22f023326b734c743b1c00f35b0bf72177ff310f29dafeac1bb07fd454b0fc5e",
+    "libs/manymesh/include/manymesh/Simplifier.h": "2765428bd8def355edef95b20d2714ddd24377f72399ae995d029b720370e950",
+    "libs/manymesh/src/Clusterizer.cpp": "b060f37a6167f0f1876165767937564a739855a2c68327614734665665b8975a",
+    "libs/manymesh/src/Grouper.cpp": "cd5171e10c48497fc3f6ca29bfc98e81cdea984efdf0d35a465f6a7048edb864",
+    "libs/manymesh/src/LodGraph.cpp": "773eabde39e1dbe4602f0d1be40b8fbc126dbdfcaedd954aebf90ee4c9a2f8f0",
+    "libs/manymesh/src/Simplifier.cpp": "6f43d308dbec71f167af06262d18c22ffc07142ef8eb35769f7a981a1459a0ff",
+    "libs/manymesh/tests/test_manymesh.cpp": "bf50cd81e8a2add6f76d1711ee0bd5bdb99d636513e17407e20262eacead7954",
+    "tools/mmgeo/src/main.cpp": "c044d8d026b32ccb335e99a8c9b0ef4e2ffc766e51455647f29f75bdcf6edea4"
+  },
+  "mmgeo_binary": {
+    "path": "out/cmake-cut-audit/tools/mmgeo/Release/mmgeo.exe",
+    "sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+    "bytes": 1942016
+  },
+  "build": {
+    "directory": "out/cmake-cut-audit",
+    "cmake_generator": "Visual Studio 17 2022",
+    "compiler_version": "not recorded; current host has no cmake or compiler command on PATH"
+  },
+  "experiment_scripts": {
+    "tools/mmtrain/sweep_cluster_cut_eligibility.py": "e0d128970d37ece77d6c6366031829a230939bb62c54557216a8ec8584eeb37b",
+    "tools/mmtrain/score_cluster_cut_eligibility_sweep.py": "6c6ed23fc04b4d765ec88828b50893238f0c7b8bff435641be4015ff4b6c3fad"
+  },
+  "verification": {
+    "reverse_patch_check": "git apply --check --reverse passed against the current source tree"
+  }
+}

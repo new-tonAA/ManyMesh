@@ -1,0 +1,3796 @@
+{
+  "historical_binary_sha256": "b70ef5872f5bee1c303fd47d16394507e5998799fff5606eecd3adb6ad95ffc6",
+  "source_build": {
+    "head": "2d417cacdeb545a13e6bfb7192310191e60670d6",
+    "modified_source_sha256": {
+      "libs/manymesh/include/manymesh/Simplifier.h": "2765428bd8def355edef95b20d2714ddd24377f72399ae995d029b720370e950",
+      "libs/manymesh/src/Simplifier.cpp": "6f43d308dbec71f167af06262d18c22ffc07142ef8eb35769f7a981a1459a0ff",
+      "tools/mmgeo/src/main.cpp": "3d86db95f92f318642d6af497422933e9287ce41e8a949ae316f93a7bf35b806"
+    },
+    "source_diff_sha256": "9a3989f838a7b9b97c4d1c864e305e7d7a3afe496715ca50ae327bbc121533c5",
+    "build": "CMake 3.31.6-msvc6 Visual Studio 17 2022, MSVC 19.38.33145, Release x64",
+    "binary_sha256": "b5d0cf8e6f990ab1a5ed37bbfc6e3ac5ab8493f84dd8a80f49153fab89ed1b8d",
+    "exit_after_build": "CreateProcess denied by Windows application control",
+    "windows_error": 4551
+  },
+  "historical_assembly": [
+    {
+      "asset": 90431,
+      "target_faces": 368,
+      "hashes": {
+        "source.obj": "c600aaf0f19b86a8acd56b5701399e900f6a7c9244d8cdfa6ea8cb5a7aec4722",
+        "lod_graph.json": "998357014feacbeea5a660cd7753c98dd588a587b8a51c87cad33fd3f6704cc5",
+        "lod_graph.mmb": "704f36345c71fbd141bf6d43d72beaff69dee59988d5fe698d7c0f061eeb0946",
+        "selected.ply": "ec4857ea1b26834d129687b5b5274318df54eb5433499c7b292767b1eb9232c0"
+      },
+      "ply_matches_assembly": true,
+      "source_faces": 736,
+      "ply_reconciled_position_count": 0,
+      "ply_max_position_delta": 0.0,
+      "selected_faces": 392,
+      "assembly_dropped_faces": 0,
+      "edge_failures": 0,
+      "nonmanifold_edges": 0,
+      "multi_owner_nonmanifold_edges": 0,
+      "introduced_multi_owner_nonmanifold_edges": 0,
+      "examples": [],
+      "refinement": {
+        "rounds": [],
+        "passes_edge_check": true,
+        "faces": 392,
+        "under_face_cap": false,
+        "python_ms": 2.970999979879707
+      }
+    },
+    {
+      "asset": 263198,
+      "target_faces": 226,
+      "hashes": {
+        "source.obj": "8092a4ac70def9acbb9677ec61e8e09d7846a8cd13dbe3abb838a8470eb8ec1d",
+        "lod_graph.json": "4cbaba7f331258d4571596ac7b67e0c8a18082d657a7ab281c3fc3440d5d757c",
+        "lod_graph.mmb": "7fb562867a0a539943fb4d1b6044178d7b4a9d8818c6275645f6146fad0b2790",
+        "selected.ply": "b5a0d69fa37ae098737af16b2cf0360192152d56376df3221df4d991bc4831b4"
+      },
+      "ply_matches_assembly": true,
+      "source_faces": 452,
+      "ply_reconciled_position_count": 0,
+      "ply_max_position_delta": 0.0,
+      "selected_faces": 140,
+      "assembly_dropped_faces": 0,
+      "edge_failures": 0,
+      "nonmanifold_edges": 0,
+      "multi_owner_nonmanifold_edges": 0,
+      "introduced_multi_owner_nonmanifold_edges": 0,
+      "examples": [],
+      "refinement": {
+        "rounds": [],
+        "passes_edge_check": true,
+        "faces": 140,
+        "under_face_cap": true,
+        "python_ms": 2.3305999930016696
+      }
+    },
+    {
+      "asset": 44710,
+      "target_faces": 1586,
+      "hashes": {
+        "source.obj": "c418802ec8fb0a2cd5c3b26353cb80406e5f1cd622bf851311df69712b59f1dc",
+        "lod_graph.json": "8917fb8bf57ec77ca8ebd15137000a8071b94516a514d6f14a003eeabe359a26",
+        "lod_graph.mmb": "3ca30f28afa06d479b1f46eb9406cbb8b7c6aaaa7c8711602b9a8575031180dc",
+        "selected.ply": "399c392fe13a40b367a2eaf998b00bcfce5d54018dff59c3194c5db8ba45e748"
+      },
+      "ply_matches_assembly": true,
+      "source_faces": 3172,
+      "ply_reconciled_position_count": 0,
+      "ply_max_position_delta": 0.0,
+      "selected_faces": 1586,
+      "assembly_dropped_faces": 0,
+      "edge_failures": 2,
+      "nonmanifold_edges": 2,
+      "multi_owner_nonmanifold_edges": 2,
+      "introduced_multi_owner_nonmanifold_edges": 2,
+      "examples": [
+        {
+          "edge": [
+            [
+              300026.375,
+              46930.765625,
+              -64024.421875
+            ],
+            [
+              652533.625,
+              -488272.28125,
+              86703.765625
+            ]
+          ],
+          "total_incidence": 4,
+          "owners": {
+            "42": {
+              "level": 1,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "41": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              300026.375,
+              46930.765625,
+              -64024.421875
+            ],
+            [
+              703687.4375,
+              -488272.28125,
+              44147.65234375
+            ]
+          ],
+          "total_incidence": 4,
+          "owners": {
+            "42": {
+              "level": 1,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "41": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            }
+          },
+          "source_incidence": 0
+        }
+      ],
+      "refinement": {
+        "rounds": [
+          {
+            "expanded_nodes": [
+              41,
+              42
+            ],
+            "faces": 1690,
+            "remaining_edge_failures": 0
+          }
+        ],
+        "passes_edge_check": true,
+        "faces": 1690,
+        "under_face_cap": false,
+        "python_ms": 10.607500036712736
+      }
+    },
+    {
+      "asset": 191968,
+      "target_faces": 530,
+      "hashes": {
+        "source.obj": "08e519752203ed6e0a19f6087a71bff2a9dbad220021fff0645c856c10a746e5",
+        "lod_graph.json": "0d82b93e7041d606d63a28dfdbbc223331a4999ba70c838a5ff2d9545169def7",
+        "lod_graph.mmb": "bcb2d7365c8c8e03cfe9091ffcb587be265e85e00e45e0461862dc373e1c5bee",
+        "selected.ply": "e3ad77a3e9d71b0af93bfe0d0aad9bc4ca46c8c6b0dc0519c1f01d12c9fe042e"
+      },
+      "ply_matches_assembly": true,
+      "source_faces": 1060,
+      "ply_reconciled_position_count": 0,
+      "ply_max_position_delta": 0.0,
+      "selected_faces": 408,
+      "assembly_dropped_faces": 0,
+      "edge_failures": 0,
+      "nonmanifold_edges": 0,
+      "multi_owner_nonmanifold_edges": 0,
+      "introduced_multi_owner_nonmanifold_edges": 0,
+      "examples": [],
+      "refinement": {
+        "rounds": [],
+        "passes_edge_check": true,
+        "faces": 408,
+        "under_face_cap": true,
+        "python_ms": 2.6852000155486166
+      }
+    },
+    {
+      "asset": 383021,
+      "target_faces": 6894,
+      "hashes": {
+        "source.obj": "7ab9ac50ee14e4ce830bb3c09b70a2c56295807abbb62cc5d8cadee03854ef73",
+        "lod_graph.json": "d921b2dd375efc89d6a2af1e5e9ecf36bdec323fa2e5b7dd0850da362daadc78",
+        "lod_graph.mmb": "950077ce0ce31f66f36a1eceda6dd8b37f71906bb225f2a95a71270a2bee30f6",
+        "selected.ply": "e1480aa81a57a80e98656318b3adef80d68f47e92c491452a1171c4fbb888a64"
+      },
+      "ply_matches_assembly": true,
+      "source_faces": 13788,
+      "ply_reconciled_position_count": 0,
+      "ply_max_position_delta": 0.0,
+      "selected_faces": 6870,
+      "assembly_dropped_faces": 24,
+      "edge_failures": 55,
+      "nonmanifold_edges": 31,
+      "multi_owner_nonmanifold_edges": 31,
+      "introduced_multi_owner_nonmanifold_edges": 31,
+      "examples": [
+        {
+          "edge": [
+            [
+              -108038.8828125,
+              -68707.5625,
+              326535.09375
+            ],
+            [
+              -70086.5,
+              -140784.03125,
+              307803.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "334": {
+              "level": 5,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "333": {
+              "level": 5,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                -1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -107773.125,
+              -68774.2109375,
+              323362.3125
+            ],
+            [
+              -70086.5,
+              -140784.03125,
+              307803.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "334": {
+              "level": 5,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "333": {
+              "level": 5,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -103263.328125,
+              -123649.0,
+              373624.25
+            ],
+            [
+              -70086.5,
+              -140784.03125,
+              307803.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "149": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "347": {
+              "level": 6,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -97130.328125,
+              -152975.359375,
+              336523.71875
+            ],
+            [
+              -70086.5,
+              -140784.03125,
+              307803.0
+            ]
+          ],
+          "total_incidence": 4,
+          "owners": {
+            "162": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "160": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -94681.21875,
+              -54023.12109375,
+              371678.0625
+            ],
+            [
+              -70086.5,
+              -140784.03125,
+              307803.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "151": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "347": {
+              "level": 6,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                -1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -89231.0234375,
+              -146541.84375,
+              378125.875
+            ],
+            [
+              -70086.5,
+              -140784.03125,
+              307803.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "149": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "347": {
+              "level": 6,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                -1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -85927.3828125,
+              -181675.328125,
+              297914.4375
+            ],
+            [
+              -70086.5,
+              -140784.03125,
+              307803.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "217": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "162": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -85113.7421875,
+              -45862.96484375,
+              369126.71875
+            ],
+            [
+              -70086.5,
+              -140784.03125,
+              307803.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "151": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "347": {
+              "level": 6,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -83220.6875,
+              -168426.421875,
+              335820.46875
+            ],
+            [
+              -70086.5,
+              -140784.03125,
+              307803.0
+            ]
+          ],
+          "total_incidence": 4,
+          "owners": {
+            "162": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "160": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -79275.125,
+              -177478.328125,
+              313946.09375
+            ],
+            [
+              -70086.5,
+              -140784.03125,
+              307803.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "217": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "162": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                -1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -77656.015625,
+              -181396.078125,
+              352408.1875
+            ],
+            [
+              -70086.5,
+              -140784.03125,
+              307803.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "217": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "160": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -73894.4453125,
+              -64787.3515625,
+              331960.75
+            ],
+            [
+              -70086.5,
+              -140784.03125,
+              307803.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "331": {
+              "level": 5,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "347": {
+              "level": 6,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                1
+              ]
+            }
+          },
+          "source_incidence": 0
+        }
+      ],
+      "refinement": {
+        "rounds": [
+          {
+            "expanded_nodes": [
+              149,
+              151,
+              160,
+              162,
+              217,
+              223,
+              251,
+              258,
+              325,
+              328,
+              331,
+              333,
+              334,
+              335,
+              338,
+              347
+            ],
+            "faces": 7389,
+            "remaining_edge_failures": 42
+          },
+          {
+            "expanded_nodes": [
+              144,
+              150,
+              166,
+              168,
+              194,
+              197,
+              222,
+              225,
+              227,
+              229,
+              248,
+              250,
+              282,
+              329
+            ],
+            "faces": 7886,
+            "remaining_edge_failures": 6
+          },
+          {
+            "expanded_nodes": [
+              193,
+              196
+            ],
+            "faces": 7980,
+            "remaining_edge_failures": 0
+          }
+        ],
+        "passes_edge_check": true,
+        "faces": 7980,
+        "under_face_cap": false,
+        "python_ms": 522.4660999956541
+      }
+    },
+    {
+      "asset": 100894,
+      "target_faces": 2910,
+      "hashes": {
+        "source.obj": "60c85b15e2cb3c11021fd55b87216096da6b210b836b67763937f0f60180a4d3",
+        "lod_graph.json": "f93e6e6fea0699c732059c081be8489dfdea1b65b000723e0e50416b358f859d",
+        "lod_graph.mmb": "765b93dbb424e539d51a7bbc7b7fb4e1c566d0c98bec289d9f38ba1723219419",
+        "selected.ply": "d8b420a1307dfa279192bc2ba5a5b1589ce8c1f7fc273a44d4efd812a9fc8984"
+      },
+      "ply_matches_assembly": true,
+      "source_faces": 5820,
+      "ply_reconciled_position_count": 6,
+      "ply_max_position_delta": 2.220446049250313e-16,
+      "selected_faces": 2849,
+      "assembly_dropped_faces": 3,
+      "edge_failures": 11,
+      "nonmanifold_edges": 8,
+      "multi_owner_nonmanifold_edges": 7,
+      "introduced_multi_owner_nonmanifold_edges": 7,
+      "examples": [
+        {
+          "edge": [
+            [
+              131603.078125,
+              462537.6875,
+              -929922.9375
+            ],
+            [
+              341466.9375,
+              -416045.9375,
+              71866.5
+            ]
+          ],
+          "total_incidence": 4,
+          "owners": {
+            "98": {
+              "level": 5,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "91": {
+              "level": 3,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              138709.875,
+              487515.65625,
+              -916991.625
+            ],
+            [
+              341466.9375,
+              -416045.9375,
+              71866.5
+            ]
+          ],
+          "total_incidence": 4,
+          "owners": {
+            "98": {
+              "level": 5,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "91": {
+              "level": 3,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              221171.453125,
+              383080.59375,
+              38960.9140625
+            ],
+            [
+              341466.9375,
+              -416045.9375,
+              71866.5
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "90": {
+              "level": 3,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "92": {
+              "level": 3,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                -1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              235139.765625,
+              407273.84375,
+              57468.70703125
+            ],
+            [
+              341466.9375,
+              -416045.9375,
+              71866.5
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "90": {
+              "level": 3,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "92": {
+              "level": 3,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              242869.375,
+              420662.625,
+              64013.75
+            ],
+            [
+              341466.9375,
+              -416045.9375,
+              71866.5
+            ]
+          ],
+          "total_incidence": 4,
+          "owners": {
+            "90": {
+              "level": 3,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "92": {
+              "level": 3,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              341466.9375,
+              -416045.9375,
+              71866.5
+            ],
+            [
+              388576.53125,
+              312686.25,
+              -922359.5
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "98": {
+              "level": 5,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "91": {
+              "level": 3,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              341466.9375,
+              -416045.9375,
+              71866.5
+            ],
+            [
+              394888.875,
+              317765.65625,
+              -916991.625
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "98": {
+              "level": 5,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "91": {
+              "level": 3,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                -1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              341466.9375,
+              -416045.9375,
+              71866.5
+            ],
+            [
+              426712.875,
+              264209.21875,
+              68606.890625
+            ]
+          ],
+          "total_incidence": 4,
+          "owners": {
+            "90": {
+              "level": 3,
+              "before_assembly": [
+                4,
+                0
+              ],
+              "after_assembly": [
+                4,
+                0
+              ]
+            }
+          },
+          "source_incidence": 0
+        }
+      ],
+      "refinement": {
+        "rounds": [
+          {
+            "expanded_nodes": [
+              90,
+              91,
+              92,
+              98
+            ],
+            "faces": 3535,
+            "remaining_edge_failures": 15
+          },
+          {
+            "expanded_nodes": [
+              52,
+              53,
+              55,
+              56,
+              60,
+              81,
+              97
+            ],
+            "faces": 4114,
+            "remaining_edge_failures": 0
+          }
+        ],
+        "passes_edge_check": true,
+        "faces": 4114,
+        "under_face_cap": false,
+        "python_ms": 196.65230001555756
+      }
+    },
+    {
+      "asset": 257594,
+      "target_faces": 17222,
+      "hashes": {
+        "source.obj": "4c4591b0a95cebdb7b73388228dc01c830dc2551d331098b64a87b328db491ec",
+        "lod_graph.json": "4efeebe713f950ec80a25477002ffb32ed082b6984c3c4f80e4c757841415c24",
+        "lod_graph.mmb": "561a174bfdd9c74d4a3d8c7855317384351f7a11dfdc38992c628bd12818493d",
+        "selected.ply": "cbd010029b33c9bbdd49ec7ef7aeb044423e4bfd406f07cc030beee47d0d7ea1"
+      },
+      "ply_matches_assembly": true,
+      "source_faces": 34448,
+      "ply_reconciled_position_count": 0,
+      "ply_max_position_delta": 0.0,
+      "selected_faces": 17032,
+      "assembly_dropped_faces": 190,
+      "edge_failures": 508,
+      "nonmanifold_edges": 320,
+      "multi_owner_nonmanifold_edges": 315,
+      "introduced_multi_owner_nonmanifold_edges": 315,
+      "examples": [
+        {
+          "edge": [
+            [
+              -794202.0625,
+              -335051.375,
+              -323473.34375
+            ],
+            [
+              51647.0,
+              158492.53125,
+              195724.5
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "722": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "726": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                -1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -793554.3125,
+              -320425.21875,
+              -320683.3125
+            ],
+            [
+              51647.0,
+              158492.53125,
+              195724.5
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "726": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "724": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                -1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -792798.3125,
+              -309429.21875,
+              -330447.28125
+            ],
+            [
+              51647.0,
+              158492.53125,
+              195724.5
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "726": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "724": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -791206.3125,
+              -338576.6875,
+              -259762.5
+            ],
+            [
+              51647.0,
+              158492.53125,
+              195724.5
+            ]
+          ],
+          "total_incidence": 4,
+          "owners": {
+            "722": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "724": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -789705.0625,
+              -404046.8125,
+              -363148.4375
+            ],
+            [
+              51647.0,
+              158492.53125,
+              195724.5
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "722": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "726": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -788828.9375,
+              -339898.25,
+              -245492.9375
+            ],
+            [
+              51647.0,
+              158492.53125,
+              195724.5
+            ]
+          ],
+          "total_incidence": 4,
+          "owners": {
+            "722": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "724": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -788368.125,
+              -266554.78125,
+              -348119.5625
+            ],
+            [
+              51647.0,
+              158492.53125,
+              195724.5
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "726": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "724": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                -1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -786049.5625,
+              -238324.1875,
+              -331847.75
+            ],
+            [
+              51647.0,
+              158492.53125,
+              195724.5
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "726": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "724": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -784015.4375,
+              -353883.34375,
+              -222255.9375
+            ],
+            [
+              51647.0,
+              158492.53125,
+              195724.5
+            ]
+          ],
+          "total_incidence": 4,
+          "owners": {
+            "722": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "724": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -782957.625,
+              -459416.125,
+              -352395.40625
+            ],
+            [
+              51647.0,
+              158492.53125,
+              195724.5
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "720": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "722": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -781850.4375,
+              -480154.0,
+              -315753.1875
+            ],
+            [
+              51647.0,
+              158492.53125,
+              195724.5
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "720": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "722": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                -1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -778853.3125,
+              -212310.375,
+              -268697.125
+            ],
+            [
+              51647.0,
+              158492.53125,
+              195724.5
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "724": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "582": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                -1
+              ]
+            }
+          },
+          "source_incidence": 0
+        }
+      ],
+      "refinement": {
+        "rounds": [
+          {
+            "expanded_nodes": [
+              271,
+              279,
+              281,
+              283,
+              285,
+              289,
+              291,
+              295,
+              301,
+              303,
+              307,
+              327,
+              362,
+              368,
+              370,
+              383,
+              385,
+              387,
+              393,
+              399,
+              403,
+              407,
+              413,
+              415,
+              417,
+              426,
+              431,
+              433,
+              435,
+              439,
+              441,
+              443,
+              445,
+              447,
+              449,
+              451,
+              453,
+              455,
+              456,
+              458,
+              466,
+              468,
+              470,
+              472,
+              479,
+              497,
+              499,
+              502,
+              504,
+              506,
+              516,
+              540,
+              542,
+              543,
+              553,
+              555,
+              557,
+              561,
+              582,
+              592,
+              594,
+              595,
+              598,
+              606,
+              611,
+              615,
+              620,
+              625,
+              631,
+              635,
+              637,
+              639,
+              654,
+              684,
+              694,
+              714,
+              715,
+              720,
+              722,
+              724,
+              726,
+              728,
+              731,
+              740,
+              770,
+              780,
+              783,
+              789,
+              791,
+              801,
+              802,
+              803,
+              809,
+              813,
+              827,
+              828,
+              830,
+              840,
+              841,
+              852,
+              864,
+              870,
+              875
+            ],
+            "faces": 20267,
+            "remaining_edge_failures": 94
+          },
+          {
+            "expanded_nodes": [
+              288,
+              294,
+              297,
+              299,
+              310,
+              312,
+              382,
+              389,
+              395,
+              405,
+              406,
+              411,
+              412,
+              414,
+              430,
+              440,
+              442,
+              452,
+              465,
+              486,
+              496,
+              498,
+              514,
+              581,
+              613,
+              619,
+              627,
+              638,
+              641,
+              650,
+              653,
+              685,
+              723,
+              725,
+              739,
+              743,
+              769,
+              784,
+              811,
+              836,
+              872
+            ],
+            "faces": 22174,
+            "remaining_edge_failures": 3
+          },
+          {
+            "expanded_nodes": [
+              437,
+              488,
+              549,
+              745,
+              782
+            ],
+            "faces": 22264,
+            "remaining_edge_failures": 2
+          },
+          {
+            "expanded_nodes": [
+              436,
+              487,
+              492,
+              643
+            ],
+            "faces": 22408,
+            "remaining_edge_failures": 0
+          }
+        ],
+        "passes_edge_check": true,
+        "faces": 22408,
+        "under_face_cap": false,
+        "python_ms": 1600.6128000444733
+      }
+    },
+    {
+      "asset": 94990,
+      "target_faces": 13598,
+      "hashes": {
+        "source.obj": "091e135f557d31b5a32627f08e3ed9aac7953958b3f84b12a7e1359f4bdda8c3",
+        "lod_graph.json": "cda90758da19b6848c5e3f4a893b12f369e12ff2abf57676d69de67a93627ada",
+        "lod_graph.mmb": "077364c0af68bc7e633b7c6b1bcc2f239b2c2dd56f78ba56217cde9dc0e6bbe6",
+        "selected.ply": "c009492dba45f9916faba2e33f6f9e38fdc00a744510ad7cace5ebe941fef114"
+      },
+      "ply_matches_assembly": true,
+      "source_faces": 27200,
+      "ply_reconciled_position_count": 0,
+      "ply_max_position_delta": 0.0,
+      "selected_faces": 13415,
+      "assembly_dropped_faces": 183,
+      "edge_failures": 508,
+      "nonmanifold_edges": 327,
+      "multi_owner_nonmanifold_edges": 321,
+      "introduced_multi_owner_nonmanifold_edges": 321,
+      "examples": [
+        {
+          "edge": [
+            [
+              -445464.03125,
+              159392.328125,
+              -746639.5
+            ],
+            [
+              69238.1640625,
+              63775.2265625,
+              -118320.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "586": {
+              "level": 4,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "585": {
+              "level": 4,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                -1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -440768.53125,
+              0.03589741513133049,
+              -725823.0625
+            ],
+            [
+              69238.1640625,
+              63775.2265625,
+              -118320.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "289": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "585": {
+              "level": 4,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -430648.90625,
+              154091.375,
+              -735357.375
+            ],
+            [
+              69238.1640625,
+              63775.2265625,
+              -118320.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "586": {
+              "level": 4,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "585": {
+              "level": 4,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -423564.78125,
+              0.04261104390025139,
+              -718111.5
+            ],
+            [
+              69238.1640625,
+              63775.2265625,
+              -118320.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "289": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "585": {
+              "level": 4,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                -1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -415008.5625,
+              148495.171875,
+              -725823.0625
+            ],
+            [
+              69238.1640625,
+              63775.2265625,
+              -118320.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "586": {
+              "level": 4,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "585": {
+              "level": 4,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                -1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -406052.3125,
+              0.049445126205682755,
+              -712239.5
+            ],
+            [
+              69238.1640625,
+              63775.2265625,
+              -118320.0
+            ]
+          ],
+          "total_incidence": 4,
+          "owners": {
+            "289": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "585": {
+              "level": 4,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -391327.78125,
+              -162094.71875,
+              -718111.5
+            ],
+            [
+              69238.1640625,
+              63775.2265625,
+              -118320.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "287": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "289": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -382321.25,
+              136799.40625,
+              -712239.5
+            ],
+            [
+              69238.1640625,
+              63775.2265625,
+              -118320.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "586": {
+              "level": 4,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "585": {
+              "level": 4,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -358933.3125,
+              -148676.546875,
+              -708170.0
+            ],
+            [
+              69238.1640625,
+              63775.2265625,
+              -118320.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "287": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "289": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                -1
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -323008.875,
+              215830.0625,
+              -708170.0
+            ],
+            [
+              69238.1640625,
+              63775.2265625,
+              -118320.0
+            ]
+          ],
+          "total_incidence": 4,
+          "owners": {
+            "586": {
+              "level": 4,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "393": {
+              "level": 1,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -311676.15625,
+              311682.46875,
+              -725823.0625
+            ],
+            [
+              69238.1640625,
+              63775.2265625,
+              -118320.0
+            ]
+          ],
+          "total_incidence": 4,
+          "owners": {
+            "586": {
+              "level": 4,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "303": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            }
+          },
+          "source_incidence": 0
+        },
+        {
+          "edge": [
+            [
+              -296005.09375,
+              -326594.75,
+              -725823.0625
+            ],
+            [
+              69238.1640625,
+              63775.2265625,
+              -118320.0
+            ]
+          ],
+          "total_incidence": 3,
+          "owners": {
+            "583": {
+              "level": 4,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                2,
+                0
+              ]
+            },
+            "287": {
+              "level": 2,
+              "before_assembly": [
+                2,
+                0
+              ],
+              "after_assembly": [
+                1,
+                1
+              ]
+            }
+          },
+          "source_incidence": 0
+        }
+      ],
+      "refinement": {
+        "rounds": [
+          {
+            "expanded_nodes": [
+              240,
+              248,
+              251,
+              259,
+              261,
+              263,
+              266,
+              267,
+              268,
+              273,
+              283,
+              287,
+              289,
+              303,
+              306,
+              310,
+              316,
+              318,
+              320,
+              324,
+              347,
+              393,
+              408,
+              410,
+              427,
+              429,
+              431,
+              433,
+              439,
+              441,
+              443,
+              445,
+              447,
+              449,
+              451,
+              453,
+              459,
+              461,
+              463,
+              465,
+              469,
+              471,
+              473,
+              477,
+              478,
+              485,
+              490,
+              492,
+              494,
+              496,
+              498,
+              500,
+              502,
+              504,
+              507,
+              509,
+              511,
+              517,
+              519,
+              521,
+              523,
+              525,
+              533,
+              538,
+              540,
+              545,
+              547,
+              549,
+              554,
+              556,
+              558,
+              560,
+              563,
+              565,
+              566,
+              570,
+              577,
+              581,
+              582,
+              583,
+              585,
+              586,
+              587,
+              589,
+              594,
+              597,
+              598,
+              600,
+              602,
+              610,
+              611,
+              612,
+              614,
+              615,
+              626,
+              627,
+              628,
+              632
+            ],
+            "faces": 16228,
+            "remaining_edge_failures": 216
+          },
+          {
+            "expanded_nodes": [
+              220,
+              230,
+              250,
+              254,
+              257,
+              258,
+              260,
+              262,
+              265,
+              282,
+              285,
+              286,
+              288,
+              291,
+              302,
+              305,
+              309,
+              312,
+              314,
+              346,
+              375,
+              376,
+              392,
+              395,
+              407,
+              409,
+              421,
+              425,
+              426,
+              428,
+              430,
+              432,
+              434,
+              437,
+              438,
+              440,
+              442,
+              444,
+              446,
+              452,
+              458,
+              460,
+              462,
+              468,
+              470,
+              472,
+              475,
+              476,
+              480,
+              487,
+              489,
+              493,
+              495,
+              497,
+              499,
+              501,
+              503,
+              506,
+              508,
+              513,
+              515,
+              518,
+              520,
+              522,
+              532,
+              539,
+              542,
+              543,
+              544,
+              546,
+              555,
+              557,
+              559,
+              564,
+              572,
+              601,
+              607
+            ],
+            "faces": 20047,
+            "remaining_edge_failures": 9
+          },
+          {
+            "expanded_nodes": [
+              253,
+              256,
+              414,
+              436,
+              512,
+              514,
+              528,
+              541
+            ],
+            "faces": 20418,
+            "remaining_edge_failures": 1
+          },
+          {
+            "expanded_nodes": [
+              252,
+              255
+            ],
+            "faces": 20546,
+            "remaining_edge_failures": 0
+          }
+        ],
+        "passes_edge_check": true,
+        "faces": 20546,
+        "under_face_cap": false,
+        "python_ms": 1351.4870000071824
+      }
+    }
+  ],
+  "historical_feasibility": [
+    {
+      "asset": 90431,
+      "source_faces": 736,
+      "target_faces": 368,
+      "mmb_sha256": "704f36345c71fbd141bf6d43d72beaff69dee59988d5fe698d7c0f061eeb0946",
+      "node_variables": 18,
+      "constraint_rows": 1677,
+      "model_ms": 19.642600032966584,
+      "solve_ms": 7.874300004914403,
+      "solver_status": 0,
+      "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "dual_bound": 392.0,
+      "faces": 392,
+      "under_face_cap": false,
+      "selected_nodes": [
+        17
+      ]
+    },
+    {
+      "asset": 263198,
+      "source_faces": 452,
+      "target_faces": 226,
+      "mmb_sha256": "7fb562867a0a539943fb4d1b6044178d7b4a9d8818c6275645f6146fad0b2790",
+      "node_variables": 12,
+      "constraint_rows": 1013,
+      "model_ms": 10.331000026781112,
+      "solve_ms": 2.751799998804927,
+      "solver_status": 0,
+      "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "dual_bound": 108.0,
+      "faces": 108,
+      "under_face_cap": true,
+      "selected_nodes": [
+        11
+      ],
+      "budget_cut": {
+        "solver_status": 0,
+        "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+        "solve_ms": 2.4947000201791525,
+        "selected_nodes": [
+          10
+        ],
+        "weighted_accumulated_error": 0.026799678802490234,
+        "faces": 140,
+        "vertices": 72,
+        "topology_error": null,
+        "source_directed_boundary_preserved": true,
+        "image": {
+          "mse": 0.000153853544243133,
+          "ssim": 0.9964302820032297,
+          "flip": 0.00404994251584867,
+          "silhouette_xor_fraction": 0.0006510416666666667,
+          "coverage_mae": 0.0007298787434895833,
+          "psnr_db": 38.12892494687854,
+          "silhouette_xor_mse_share": 0.48340405692568617
+        },
+        "per_view": [
+          {
+            "mse": 0.000270874383250032,
+            "psnr_db": 35.67232064509828,
+            "ssim": 0.9960330555331015,
+            "flip": 0.00414621364325285,
+            "silhouette_xor_fraction": 0.0011393229166666667,
+            "silhouette_xor_mse_share": 0.703573650717379,
+            "coverage_mae": 0.001681857638888889
+          },
+          {
+            "mse": 0.00015837800431991965,
+            "psnr_db": 38.003051337679324,
+            "ssim": 0.9964424712762773,
+            "flip": 0.00459384685382247,
+            "silhouette_xor_fraction": 0.0006510416666666666,
+            "silhouette_xor_mse_share": 0.5442479158160914,
+            "coverage_mae": 0.0007392035590277778
+          },
+          {
+            "mse": 8.278066128412149e-05,
+            "psnr_db": 40.82071108608153,
+            "ssim": 0.9962083729615134,
+            "flip": 0.003615178633481264,
+            "silhouette_xor_fraction": 0.00037977430555555556,
+            "silhouette_xor_mse_share": 0.39754172714078373,
+            "coverage_mae": 0.000244140625
+          },
+          {
+            "mse": 0.00011112429380793713,
+            "psnr_db": 39.54190985943355,
+            "ssim": 0.9963114822268753,
+            "flip": 0.0033216294832527637,
+            "silhouette_xor_fraction": 0.0005967881944444445,
+            "silhouette_xor_mse_share": 0.40433751041768345,
+            "coverage_mae": 0.0006239149305555555
+          },
+          {
+            "mse": 0.00023589810209214402,
+            "psnr_db": 36.27275553197595,
+            "ssim": 0.996653130822701,
+            "flip": 0.005174970254302025,
+            "silhouette_xor_fraction": 0.0008409288194444445,
+            "silhouette_xor_mse_share": 0.6633685077997479,
+            "coverage_mae": 0.001064724392361111
+          },
+          {
+            "mse": 0.00017768690060446837,
+            "psnr_db": 37.503445879791215,
+            "ssim": 0.9945240881167224,
+            "flip": 0.005827086511999369,
+            "silhouette_xor_fraction": 0.0006239149305555555,
+            "silhouette_xor_mse_share": 0.23894067100227742,
+            "coverage_mae": 0.0005628797743055555
+          },
+          {
+            "mse": 3.1305150396215134e-05,
+            "psnr_db": 45.04384205436142,
+            "ssim": 0.9987365423356215,
+            "flip": 0.0008716623415239155,
+            "silhouette_xor_fraction": 0.0002712673611111111,
+            "silhouette_xor_mse_share": 0.4300315827347716,
+            "coverage_mae": 0.00023057725694444444
+          },
+          {
+            "mse": 0.00016278085819022598,
+            "psnr_db": 37.88396666222759,
+            "ssim": 0.9965331127530256,
+            "flip": 0.004848952405154705,
+            "silhouette_xor_fraction": 0.0007052951388888889,
+            "silhouette_xor_mse_share": 0.4851908897767549,
+            "coverage_mae": 0.0006917317708333334
+          }
+        ],
+        "surface": {
+          "samples_per_direction": 10000,
+          "chamfer_l1_mean": 0.0065168663751709825,
+          "chamfer_l2_squared_mean": 5.325737172912522e-05,
+          "bidirectional_distance_p95": 0.012525398120287246,
+          "bidirectional_distance_max_sampled": 0.021144626050596027,
+          "normal_consistency_absdot": 0.9687215992428477
+        }
+      }
+    },
+    {
+      "asset": 44710,
+      "source_faces": 3172,
+      "target_faces": 1586,
+      "mmb_sha256": "3ca30f28afa06d479b1f46eb9406cbb8b7c6aaaa7c8711602b9a8575031180dc",
+      "node_variables": 84,
+      "constraint_rows": 5716,
+      "model_ms": 325.6275000167079,
+      "solve_ms": 42.780700023286045,
+      "solver_status": 0,
+      "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "dual_bound": 1178.0,
+      "faces": 1178,
+      "under_face_cap": true,
+      "selected_nodes": [
+        17,
+        32,
+        36,
+        39,
+        40,
+        66,
+        80,
+        82
+      ],
+      "budget_cut": {
+        "solver_status": 0,
+        "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+        "solve_ms": 55.92309997882694,
+        "selected_nodes": [
+          17,
+          32,
+          34,
+          39,
+          40,
+          42,
+          45,
+          47,
+          61,
+          63,
+          65,
+          67,
+          69,
+          71,
+          73,
+          74,
+          77,
+          78
+        ],
+        "weighted_accumulated_error": 0.012388292416047027,
+        "faces": 1586,
+        "vertices": 791,
+        "topology_error": null,
+        "source_directed_boundary_preserved": true,
+        "image": {
+          "mse": 0.0031018956029698784,
+          "ssim": 0.9559921467435899,
+          "flip": 0.02667499188100919,
+          "silhouette_xor_fraction": 0.002678765190972222,
+          "coverage_mae": 0.002854241265190972,
+          "psnr_db": 25.083728228399714,
+          "silhouette_xor_mse_share": 0.23122059301437028
+        },
+        "per_view": [
+          {
+            "mse": 0.004608013344226579,
+            "psnr_db": 23.364862719208737,
+            "ssim": 0.9227875459129503,
+            "flip": 0.050322458148002625,
+            "silhouette_xor_fraction": 0.005615234375,
+            "silhouette_xor_mse_share": 0.2088818684124187,
+            "coverage_mae": 0.005791558159722222
+          },
+          {
+            "mse": 0.006315393685388099,
+            "psnr_db": 21.99599571464555,
+            "ssim": 0.9180055172677365,
+            "flip": 0.05135668069124222,
+            "silhouette_xor_fraction": 0.0022786458333333335,
+            "silhouette_xor_mse_share": 0.02809443516054482,
+            "coverage_mae": 0.0023396809895833335
+          },
+          {
+            "mse": 0.003931955424462813,
+            "psnr_db": 24.053914142935035,
+            "ssim": 0.9644643363495756,
+            "flip": 0.023825833573937416,
+            "silhouette_xor_fraction": 5.425347222222222e-05,
+            "silhouette_xor_mse_share": 0.0012609787911536901,
+            "coverage_mae": 0.00023735894097222222
+          },
+          {
+            "mse": 0.0015751946033042848,
+            "psnr_db": 28.026657847820665,
+            "ssim": 0.9706173664550811,
+            "flip": 0.01371791958808899,
+            "silhouette_xor_fraction": 0.004286024305555556,
+            "silhouette_xor_mse_share": 0.6651182376511904,
+            "coverage_mae": 0.004469129774305556
+          },
+          {
+            "mse": 0.002393410387030629,
+            "psnr_db": 26.209828285315954,
+            "ssim": 0.9760290906981656,
+            "flip": 0.015059277415275574,
+            "silhouette_xor_fraction": 0.004801432291666667,
+            "silhouette_xor_mse_share": 0.5016279718329498,
+            "coverage_mae": 0.005160861545138889
+          },
+          {
+            "mse": 0.0018856225002936904,
+            "psnr_db": 27.24545248210138,
+            "ssim": 0.9805150794190401,
+            "flip": 0.013693012297153473,
+            "silhouette_xor_fraction": 0.0010308159722222222,
+            "silhouette_xor_mse_share": 0.2102048433282279,
+            "coverage_mae": 0.00103759765625
+          },
+          {
+            "mse": 0.0001772230031718569,
+            "psnr_db": 37.51479908282911,
+            "ssim": 0.9825002829184935,
+            "flip": 0.005693027283996344,
+            "silhouette_xor_fraction": 0.0002712673611111111,
+            "silhouette_xor_mse_share": 0.11482093508278836,
+            "coverage_mae": 0.0004611545138888889
+          },
+          {
+            "mse": 0.003928351875881072,
+            "psnr_db": 24.057896179041673,
+            "ssim": 0.9330179549276765,
+            "flip": 0.03973172605037689,
+            "silhouette_xor_fraction": 0.0030924479166666665,
+            "silhouette_xor_mse_share": 0.11975547385568862,
+            "coverage_mae": 0.0033365885416666665
+          }
+        ],
+        "surface": {
+          "samples_per_direction": 10000,
+          "chamfer_l1_mean": 0.023069110302964,
+          "chamfer_l2_squared_mean": 0.0012168797229991685,
+          "bidirectional_distance_p95": 0.07886941711064192,
+          "bidirectional_distance_max_sampled": 0.21746858824701246,
+          "normal_consistency_absdot": 0.8790232064653457
+        }
+      }
+    },
+    {
+      "asset": 191968,
+      "source_faces": 1060,
+      "target_faces": 530,
+      "mmb_sha256": "bcb2d7365c8c8e03cfe9091ffcb587be265e85e00e45e0461862dc373e1c5bee",
+      "node_variables": 30,
+      "constraint_rows": 2187,
+      "model_ms": 70.15509996563196,
+      "solve_ms": 16.10489998711273,
+      "solver_status": 0,
+      "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "dual_bound": 238.0,
+      "faces": 238,
+      "under_face_cap": true,
+      "selected_nodes": [
+        29
+      ],
+      "budget_cut": {
+        "solver_status": 0,
+        "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+        "solve_ms": 16.65309997042641,
+        "selected_nodes": [
+          6,
+          26
+        ],
+        "weighted_accumulated_error": 0.022573541965124743,
+        "faces": 408,
+        "vertices": 204,
+        "topology_error": null,
+        "source_directed_boundary_preserved": true,
+        "image": {
+          "mse": 0.0010283783205377738,
+          "ssim": 0.9800111275436285,
+          "flip": 0.011852399009512737,
+          "silhouette_xor_fraction": 0.005082872178819444,
+          "coverage_mae": 0.005022684733072916,
+          "psnr_db": 29.878470873870704,
+          "silhouette_xor_mse_share": 0.6886919218616318
+        },
+        "per_view": [
+          {
+            "mse": 0.003778493815145884,
+            "psnr_db": 24.226812843235944,
+            "ssim": 0.9590404792462977,
+            "flip": 0.027303317561745644,
+            "silhouette_xor_fraction": 0.010633680555555556,
+            "silhouette_xor_mse_share": 0.8918084059391269,
+            "coverage_mae": 0.010728624131944444
+          },
+          {
+            "mse": 0.0008903789508041778,
+            "psnr_db": 30.50425115584455,
+            "ssim": 0.9825343018508658,
+            "flip": 0.012022190727293491,
+            "silhouette_xor_fraction": 0.0027669270833333335,
+            "silhouette_xor_mse_share": 0.721970696866577,
+            "coverage_mae": 0.0027330186631944445
+          },
+          {
+            "mse": 7.804031368811142e-05,
+            "psnr_db": 41.076809935991236,
+            "ssim": 0.9956892398356851,
+            "flip": 0.0051685781218111515,
+            "silhouette_xor_fraction": 0.00037977430555555556,
+            "silhouette_xor_mse_share": 0.28038851974405166,
+            "coverage_mae": 0.00035942925347222225
+          },
+          {
+            "mse": 0.00042496467370989793,
+            "psnr_db": 33.716471703038344,
+            "ssim": 0.9823296805125409,
+            "flip": 0.009661671705543995,
+            "silhouette_xor_fraction": 0.005940755208333333,
+            "silhouette_xor_mse_share": 0.8824090117063833,
+            "coverage_mae": 0.005716959635416667
+          },
+          {
+            "mse": 0.0007176580889027723,
+            "psnr_db": 31.440824157430715,
+            "ssim": 0.9645135731491243,
+            "flip": 0.01695326901972294,
+            "silhouette_xor_fraction": 0.010552300347222222,
+            "silhouette_xor_mse_share": 0.8751433628730122,
+            "coverage_mae": 0.010491265190972222
+          },
+          {
+            "mse": 0.0003416658823796403,
+            "psnr_db": 34.66398386240822,
+            "ssim": 0.9819678734843377,
+            "flip": 0.009267106652259827,
+            "silhouette_xor_fraction": 0.004340277777777778,
+            "silhouette_xor_mse_share": 0.8104690958863299,
+            "coverage_mae": 0.004442003038194444
+          },
+          {
+            "mse": 2.704663871267461e-05,
+            "psnr_db": 45.67886700215199,
+            "ssim": 0.991154838093828,
+            "flip": 0.001841746037825942,
+            "silhouette_xor_fraction": 0.000244140625,
+            "silhouette_xor_mse_share": 0.11193373744852154,
+            "coverage_mae": 0.00013563368055555556
+          },
+          {
+            "mse": 0.001968778200959033,
+            "psnr_db": 27.058032079478863,
+            "ssim": 0.982859034176348,
+            "flip": 0.01260131224989891,
+            "silhouette_xor_fraction": 0.005805121527777778,
+            "silhouette_xor_mse_share": 0.9354125444290513,
+            "coverage_mae": 0.005574544270833333
+          }
+        ],
+        "surface": {
+          "samples_per_direction": 10000,
+          "chamfer_l1_mean": 0.015516300438724297,
+          "chamfer_l2_squared_mean": 0.00031262353846497236,
+          "bidirectional_distance_p95": 0.0307495598094556,
+          "bidirectional_distance_max_sampled": 0.0834236976056562,
+          "normal_consistency_absdot": 0.9578297329386971
+        }
+      }
+    },
+    {
+      "asset": 383021,
+      "source_faces": 13788,
+      "target_faces": 6894,
+      "mmb_sha256": "950077ce0ce31f66f36a1eceda6dd8b37f71906bb225f2a95a71270a2bee30f6",
+      "node_variables": 355,
+      "constraint_rows": 26341,
+      "model_ms": 1202.5369000039063,
+      "solve_ms": 246.19340000208467,
+      "solver_status": 0,
+      "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "dual_bound": 5404.0,
+      "faces": 5404,
+      "under_face_cap": true,
+      "selected_nodes": [
+        64,
+        145,
+        161,
+        165,
+        179,
+        192,
+        201,
+        213,
+        216,
+        224,
+        226,
+        229,
+        231,
+        279,
+        282,
+        284,
+        287,
+        292,
+        306,
+        328,
+        331,
+        332,
+        333,
+        336,
+        339,
+        341,
+        343,
+        345,
+        346,
+        354
+      ],
+      "budget_cut": {
+        "solver_status": 0,
+        "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+        "solve_ms": 324.34639998245984,
+        "selected_nodes": [
+          20,
+          112,
+          145,
+          154,
+          156,
+          158,
+          159,
+          162,
+          164,
+          165,
+          179,
+          185,
+          192,
+          201,
+          203,
+          211,
+          213,
+          215,
+          216,
+          219,
+          221,
+          223,
+          224,
+          227,
+          228,
+          231,
+          238,
+          239,
+          242,
+          244,
+          245,
+          247,
+          251,
+          257,
+          258,
+          260,
+          261,
+          275,
+          277,
+          287,
+          292,
+          293,
+          294,
+          296,
+          297,
+          299,
+          301,
+          304,
+          308,
+          309,
+          315,
+          316,
+          319,
+          321,
+          323,
+          324,
+          325,
+          327,
+          328,
+          330,
+          331,
+          333,
+          336,
+          337,
+          339,
+          343
+        ],
+        "weighted_accumulated_error": 0.0047196407717070375,
+        "faces": 6894,
+        "vertices": 3428,
+        "topology_error": null,
+        "source_directed_boundary_preserved": true,
+        "image": {
+          "mse": 0.00023305824257296873,
+          "ssim": 0.9939831245841584,
+          "flip": 0.0036600716412067413,
+          "silhouette_xor_fraction": 0.00017632378472222222,
+          "coverage_mae": 0.00014919704861111112,
+          "psnr_db": 36.32535532762915,
+          "silhouette_xor_mse_share": 0.0777566799275688
+        },
+        "per_view": [
+          {
+            "mse": 0.00017158281136528687,
+            "psnr_db": 37.65526220584642,
+            "ssim": 0.9949252169727952,
+            "flip": 0.0027243744116276503,
+            "silhouette_xor_fraction": 0.000732421875,
+            "silhouette_xor_mse_share": 0.3210956532732958,
+            "coverage_mae": 0.0005832248263888889
+          },
+          {
+            "mse": 0.0004462226066897347,
+            "psnr_db": 33.50448431112017,
+            "ssim": 0.9909351678552754,
+            "flip": 0.004243811592459679,
+            "silhouette_xor_fraction": 0.00010850694444444444,
+            "silhouette_xor_mse_share": 0.04101971519176688,
+            "coverage_mae": 7.459852430555556e-05
+          },
+          {
+            "mse": 0.0001674348507785467,
+            "psnr_db": 37.761541405750656,
+            "ssim": 0.9940283396637181,
+            "flip": 0.0036234643775969744,
+            "silhouette_xor_fraction": 0.00010850694444444444,
+            "silhouette_xor_mse_share": 0.0574179965367318,
+            "coverage_mae": 7.459852430555556e-05
+          },
+          {
+            "mse": 9.22208906029732e-05,
+            "psnr_db": 40.35170687992895,
+            "ssim": 0.9972937384133429,
+            "flip": 0.0024336501955986023,
+            "silhouette_xor_fraction": 8.138020833333333e-05,
+            "silhouette_xor_mse_share": 0.03487272743722321,
+            "coverage_mae": 8.138020833333333e-05
+          },
+          {
+            "mse": 0.0003342606275898159,
+            "psnr_db": 34.75914775748136,
+            "ssim": 0.9939539614518659,
+            "flip": 0.004771596286445856,
+            "silhouette_xor_fraction": 8.138020833333333e-05,
+            "silhouette_xor_mse_share": 0.02176349453978159,
+            "coverage_mae": 0.00010850694444444444
+          },
+          {
+            "mse": 0.00010148298664509374,
+            "psnr_db": 39.93606759972214,
+            "ssim": 0.9950014176773262,
+            "flip": 0.003743709297850728,
+            "silhouette_xor_fraction": 5.425347222222222e-05,
+            "silhouette_xor_mse_share": 0.030111443170560248,
+            "coverage_mae": 7.459852430555556e-05
+          },
+          {
+            "mse": 0.0004568830698128925,
+            "psnr_db": 33.4019493479408,
+            "ssim": 0.9904536444034603,
+            "flip": 0.004783655051141977,
+            "silhouette_xor_fraction": 2.712673611111111e-05,
+            "silhouette_xor_mse_share": 0.002282717273595535,
+            "coverage_mae": 2.712673611111111e-05
+          },
+          {
+            "mse": 9.43780970994062e-05,
+            "psnr_db": 40.251287833774605,
+            "ssim": 0.9952735102354833,
+            "flip": 0.0029563119169324636,
+            "silhouette_xor_fraction": 0.00021701388888888888,
+            "silhouette_xor_mse_share": 0.11348969199759536,
+            "coverage_mae": 0.00016954210069444444
+          }
+        ],
+        "surface": {
+          "samples_per_direction": 10000,
+          "chamfer_l1_mean": 0.01281111666025828,
+          "chamfer_l2_squared_mean": 0.00021087045295997863,
+          "bidirectional_distance_p95": 0.024807122042450207,
+          "bidirectional_distance_max_sampled": 0.07090950520773104,
+          "normal_consistency_absdot": 0.9365118796731748
+        }
+      }
+    },
+    {
+      "asset": 100894,
+      "source_faces": 5820,
+      "target_faces": 2910,
+      "mmb_sha256": "765b93dbb424e539d51a7bbc7b7fb4e1c566d0c98bec289d9f38ba1723219419",
+      "node_variables": 99,
+      "constraint_rows": 13254,
+      "model_ms": 587.7247000462376,
+      "solve_ms": 109.80450001079589,
+      "solver_status": 0,
+      "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "dual_bound": 3278.0,
+      "faces": 3278,
+      "under_face_cap": false,
+      "selected_nodes": [
+        6,
+        8,
+        10,
+        36,
+        46,
+        47,
+        48,
+        49,
+        50,
+        52,
+        54,
+        59,
+        60,
+        64,
+        79,
+        80,
+        92,
+        98
+      ]
+    },
+    {
+      "asset": 257594,
+      "source_faces": 34448,
+      "target_faces": 17222,
+      "mmb_sha256": "561a174bfdd9c74d4a3d8c7855317384351f7a11dfdc38992c628bd12818493d",
+      "node_variables": 877,
+      "constraint_rows": 60576,
+      "model_ms": 3176.6760000027716,
+      "solve_ms": 639.9738999898545,
+      "solver_status": 0,
+      "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "dual_bound": 16766.0,
+      "faces": 16766,
+      "under_face_cap": true,
+      "selected_nodes": [
+        5,
+        16,
+        28,
+        65,
+        72,
+        73,
+        80,
+        90,
+        95,
+        115,
+        119,
+        145,
+        161,
+        170,
+        171,
+        188,
+        192,
+        195,
+        218,
+        228,
+        235,
+        249,
+        261,
+        262,
+        272,
+        282,
+        285,
+        289,
+        290,
+        293,
+        294,
+        296,
+        298,
+        308,
+        311,
+        326,
+        333,
+        362,
+        368,
+        369,
+        372,
+        374,
+        381,
+        383,
+        384,
+        387,
+        388,
+        393,
+        394,
+        404,
+        415,
+        416,
+        420,
+        422,
+        430,
+        432,
+        434,
+        437,
+        445,
+        446,
+        448,
+        450,
+        454,
+        456,
+        457,
+        467,
+        469,
+        478,
+        490,
+        492,
+        495,
+        503,
+        506,
+        508,
+        514,
+        515,
+        541,
+        543,
+        547,
+        549,
+        551,
+        554,
+        557,
+        559,
+        570,
+        572,
+        574,
+        575,
+        578,
+        580,
+        607,
+        610,
+        613,
+        614,
+        617,
+        618,
+        621,
+        623,
+        624,
+        626,
+        629,
+        630,
+        633,
+        636,
+        641,
+        642,
+        647,
+        649,
+        654,
+        656,
+        659,
+        683,
+        692,
+        700,
+        706,
+        708,
+        709,
+        713,
+        718,
+        720,
+        721,
+        724,
+        727,
+        732,
+        733,
+        736,
+        742,
+        766,
+        767,
+        772,
+        773,
+        774,
+        781,
+        792,
+        796,
+        797,
+        803,
+        805,
+        807,
+        810,
+        812,
+        819,
+        820,
+        821,
+        822,
+        831,
+        832,
+        834,
+        843,
+        846,
+        849,
+        857,
+        861,
+        869
+      ],
+      "budget_cut": {
+        "solver_status": 0,
+        "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+        "solve_ms": 1202.1143000456505,
+        "selected_nodes": [
+          16,
+          28,
+          65,
+          72,
+          73,
+          81,
+          90,
+          95,
+          115,
+          119,
+          145,
+          161,
+          170,
+          171,
+          188,
+          192,
+          195,
+          218,
+          228,
+          235,
+          249,
+          262,
+          271,
+          272,
+          277,
+          278,
+          281,
+          282,
+          285,
+          289,
+          290,
+          293,
+          294,
+          296,
+          298,
+          308,
+          311,
+          326,
+          333,
+          362,
+          368,
+          369,
+          372,
+          374,
+          381,
+          383,
+          384,
+          387,
+          388,
+          393,
+          394,
+          404,
+          415,
+          416,
+          420,
+          422,
+          430,
+          432,
+          434,
+          437,
+          438,
+          441,
+          445,
+          446,
+          448,
+          450,
+          454,
+          456,
+          457,
+          467,
+          469,
+          481,
+          484,
+          490,
+          492,
+          495,
+          503,
+          506,
+          508,
+          514,
+          515,
+          541,
+          543,
+          547,
+          549,
+          551,
+          554,
+          557,
+          559,
+          570,
+          572,
+          574,
+          575,
+          578,
+          580,
+          592,
+          607,
+          610,
+          613,
+          614,
+          617,
+          618,
+          621,
+          623,
+          624,
+          626,
+          629,
+          630,
+          633,
+          636,
+          641,
+          642,
+          647,
+          649,
+          683,
+          692,
+          696,
+          698,
+          706,
+          708,
+          709,
+          713,
+          718,
+          720,
+          721,
+          724,
+          727,
+          732,
+          733,
+          736,
+          742,
+          772,
+          773,
+          774,
+          781,
+          785,
+          788,
+          792,
+          796,
+          797,
+          803,
+          805,
+          807,
+          809,
+          815,
+          816,
+          817,
+          818,
+          819,
+          820,
+          821,
+          822,
+          826,
+          831,
+          834,
+          843,
+          844,
+          846,
+          848,
+          849
+        ],
+        "weighted_accumulated_error": 0.010199981359897277,
+        "faces": 17222,
+        "vertices": 8525,
+        "topology_error": null,
+        "source_directed_boundary_preserved": true,
+        "image": {
+          "mse": 0.0037095863778688217,
+          "ssim": 0.9038035634966659,
+          "flip": 0.04549081576988101,
+          "silhouette_xor_fraction": 0.0025634765625,
+          "coverage_mae": 0.00262451171875,
+          "psnr_db": 24.3067451190071,
+          "silhouette_xor_mse_share": 0.09600545174508376
+        },
+        "per_view": [
+          {
+            "mse": 0.004656024642632107,
+            "psnr_db": 23.319847297905515,
+            "ssim": 0.8739655492651545,
+            "flip": 0.054789572954177856,
+            "silhouette_xor_fraction": 0.005289713541666667,
+            "silhouette_xor_mse_share": 0.23687559868759345,
+            "coverage_mae": 0.005106608072916667
+          },
+          {
+            "mse": 0.003846443108152847,
+            "psnr_db": 24.149406867276003,
+            "ssim": 0.9019490244840321,
+            "flip": 0.047172337770462036,
+            "silhouette_xor_fraction": 0.0018988715277777778,
+            "silhouette_xor_mse_share": 0.09568494869655209,
+            "coverage_mae": 0.001925998263888889
+          },
+          {
+            "mse": 0.003304488257721389,
+            "psnr_db": 24.808957870272828,
+            "ssim": 0.9275505368565758,
+            "flip": 0.03759423643350601,
+            "silhouette_xor_fraction": 0.0002712673611111111,
+            "silhouette_xor_mse_share": 0.0037335591597560344,
+            "coverage_mae": 0.0004069010416666667
+          },
+          {
+            "mse": 0.0022150376524520485,
+            "psnr_db": 26.54618886997042,
+            "ssim": 0.8986421758946509,
+            "flip": 0.03834889829158783,
+            "silhouette_xor_fraction": 0.0022786458333333335,
+            "silhouette_xor_mse_share": 0.04741915908954792,
+            "coverage_mae": 0.0025431315104166665
+          },
+          {
+            "mse": 0.0030339496995012596,
+            "psnr_db": 25.17991623750385,
+            "ssim": 0.9212587311199857,
+            "flip": 0.037785228341817856,
+            "silhouette_xor_fraction": 0.00732421875,
+            "silhouette_xor_mse_share": 0.2904736597858407,
+            "coverage_mae": 0.007419162326388889
+          },
+          {
+            "mse": 0.003197672119297065,
+            "psnr_db": 24.951660696955532,
+            "ssim": 0.9234646903151583,
+            "flip": 0.04101613163948059,
+            "silhouette_xor_fraction": 0.0013292100694444445,
+            "silhouette_xor_mse_share": 0.029416388424336287,
+            "coverage_mae": 0.0010850694444444445
+          },
+          {
+            "mse": 0.005329040112777136,
+            "psnr_db": 22.733510107232092,
+            "ssim": 0.9026732937686859,
+            "flip": 0.05235549062490463,
+            "silhouette_xor_fraction": 0.0005696614583333334,
+            "silhouette_xor_mse_share": 0.007797861054329747,
+            "coverage_mae": 0.0007392035590277778
+          },
+          {
+            "mse": 0.00409403543041672,
+            "psnr_db": 23.87848403205538,
+            "ssim": 0.8809245062690843,
+            "flip": 0.05486463010311127,
+            "silhouette_xor_fraction": 0.0015462239583333333,
+            "silhouette_xor_mse_share": 0.05664243906271382,
+            "coverage_mae": 0.00177001953125
+          }
+        ],
+        "surface": {
+          "samples_per_direction": 10000,
+          "chamfer_l1_mean": 0.037324281706025565,
+          "chamfer_l2_squared_mean": 0.003202033758577021,
+          "bidirectional_distance_p95": 0.13572749218048655,
+          "bidirectional_distance_max_sampled": 0.27457691985597515,
+          "normal_consistency_absdot": 0.7917413713886561
+        }
+      }
+    },
+    {
+      "asset": 94990,
+      "source_faces": 27200,
+      "target_faces": 13598,
+      "mmb_sha256": "077364c0af68bc7e633b7c6b1bcc2f239b2c2dd56f78ba56217cde9dc0e6bbe6",
+      "node_variables": 643,
+      "constraint_rows": 48116,
+      "model_ms": 2190.374300000258,
+      "solve_ms": 424.3022000300698,
+      "solver_status": 0,
+      "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "dual_bound": 16118.0,
+      "faces": 16118,
+      "under_face_cap": false,
+      "selected_nodes": [
+        3,
+        22,
+        29,
+        31,
+        33,
+        44,
+        51,
+        53,
+        60,
+        88,
+        100,
+        101,
+        102,
+        103,
+        109,
+        113,
+        114,
+        127,
+        129,
+        130,
+        133,
+        135,
+        137,
+        141,
+        145,
+        146,
+        150,
+        152,
+        164,
+        166,
+        168,
+        169,
+        170,
+        171,
+        173,
+        176,
+        181,
+        192,
+        196,
+        197,
+        200,
+        203,
+        204,
+        208,
+        214,
+        216,
+        220,
+        221,
+        222,
+        229,
+        249,
+        261,
+        266,
+        272,
+        275,
+        284,
+        287,
+        296,
+        308,
+        315,
+        317,
+        319,
+        330,
+        332,
+        334,
+        339,
+        341,
+        342,
+        349,
+        376,
+        377,
+        379,
+        381,
+        390,
+        396,
+        401,
+        402,
+        404,
+        408,
+        413,
+        414,
+        415,
+        425,
+        428,
+        438,
+        443,
+        446,
+        448,
+        451,
+        455,
+        458,
+        473,
+        476,
+        488,
+        492,
+        509,
+        510,
+        516,
+        519,
+        520,
+        525,
+        526,
+        527,
+        531,
+        542,
+        543,
+        549,
+        551,
+        563,
+        571,
+        577,
+        579,
+        584,
+        585,
+        589,
+        591,
+        597,
+        599,
+        600,
+        602,
+        603,
+        605,
+        607,
+        609,
+        610,
+        617,
+        625,
+        631,
+        633,
+        640
+      ]
+    }
+  ],
+  "audit_sha256": {
+    "tools/mmgeo/audit_cut_edge_witnesses.py": "553bc592c9c6f80513e644c264fa44a9e81121a9c6ba4b98d7a99660ede6562b",
+    "tools/mmgeo/audit_manifold_cut_feasibility.py": "24f5350cbc04076ead2987cef513f47e99a6b62969b575350f6a852714604cc7",
+    "tools/mmtrain/compare_manymesh_clusterlod.py": "eaaf148711b9a6aefc02fd27b780dd8915a893ef5119b5c58e34693baf0cf735"
+  }
+}

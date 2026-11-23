@@ -1,0 +1,103 @@
+ManyMesh geometry optimization layer
+  input: E:\ManyMesh\out\upstream-clusterlod\validation\100894\source.obj
+  loaded: 2912 vertices, 5820 triangles (0.01s)
+  bounds: (-538233.25, -538233.25, -932937.62) .. (538233.25, 538233.25, 932937.62)   extent (1076466.50, 1076466.50, 1865875.25)
+  DAG built: 99 nodes, 6 levels (8.97s)
+  vertices: 2912 source + 26 generated = 2938 total
+  generated AO: 1.000 .. 1.000 (1.000 mean) [no source AO field; all vertices unoccluded]
+  build phases: clusterize 0.005s, leaf setup 0.002s, cluster chains 0.043s, groups 8.908s (simplify 8.907s)
+  simplify calls: cluster 46 accepted 44 attempts 44; group 12 accepted 9 attempts 35; seam-locked vertex uses 4214
+  cluster simplify profile: attribute-qem 0.170s, corner 0.263s, meshopt 0.007s, gate 0.106s, boundary 0.039s, lock-mask 0.003s (build 0.006s) | calls 90 attempts 99, attribute candidates 87, corner candidates 83, meshopt candidates 99, accepted 87, rejected: topology 0 geometry 0 attributes 0 boundary 0 locked 0 none 0
+  cluster gate detail: cleanup 0.004s, sliver 0.029s, topology 0.008s, welded-topology 0.006s, error 0.058s
+  cluster extended-mesh: 0.000s, copies 20
+  cluster corner detail: setup 0.122s, evaluate 0.210s (61592 evals, 3.41 us/eval), topology 0.028s, target 0.140s (65536 placements), apply 0.004s (916 applied)
+  cluster corner topology: neighbor 0.014s, triangles 0.015s, local-triangles 0.000s, local-edges 0.012s
+  group simplify profile: attribute-qem 1.262s, corner 2.020s, meshopt 0.014s, gate 5.102s, boundary 0.066s, lock-mask 0.001s (build 0.000s) | calls 12 attempts 35, attribute candidates 35, corner candidates 35, meshopt candidates 35, accepted 9, rejected: topology 63 geometry 14 attributes 0 boundary 0 locked 19 none 0
+  group gate detail: cleanup 0.014s, sliver 4.728s, topology 0.019s, welded-topology 0.014s, error 0.327s
+  group extended-mesh: 0.000s, copies 12
+  group corner detail: setup 0.847s, evaluate 1.883s (345003 evals, 5.46 us/eval), topology 0.672s, target 0.806s (1009587 placements), apply 0.021s (8016 applied)
+  group corner topology: neighbor 0.115s, triangles 0.186s, local-triangles 0.161s, local-edges 0.222s
+  cut vertices: 1398 of 2912 source + 19 of 26 generated = 1417 total (48.2% of the 2938-vertex global buffer, 0 KiB generated tail)
+
+  DAG: 99 nodes, 6 levels, 4 roots, 46 leaves, 5820 base triangles
+  camera: eye(0.000, 0.000, 2297318.000) fovY(45.0 deg) screen(1920 x 1080) budget inf px
+  level           nodes      triangles
+  0                   0              0
+  1                   0              0
+  2                   0              0
+  3                   3           1593
+  4                   0              0
+  5                   1           1256
+  drawn: 2849 of 5820 visible triangles (48.95%) in 4 nodes
+  frustum culled: 0 of 5820 triangles (0.00%)
+  worst selected screen error: 37.1347 px
+  base topology: boundary 0, non-manifold 0, duplicates 0, degenerate 0, flipped 0, min quality 0.0015
+  selected topology: boundary 3, non-manifold 8, duplicates 0, degenerate 0, flipped 0, min quality 0.0015
+  bad edge (392,740) use=1 nodes=98 91 
+    node 98 tri 392 740 2912
+    node 91 tri 740 392 2912
+    base use=2 leaves=36(use=1) 38(use=1) 
+  bad edge (392,2912) use=3 nodes=98 91 
+    node 98 tri 2912 393 392
+    node 98 tri 392 740 2912
+    node 91 tri 740 392 2912
+    node 91 tri 363 2912 392
+    base use=0 leaves=
+  bad edge (417,2912) use=4 nodes=98 91 
+    node 98 tri 403 417 2912
+    node 98 tri 417 746 2912
+    node 91 tri 402 2912 417
+    node 91 tri 2912 442 417
+    base use=0 leaves=
+  bad edge (438,2912) use=4 nodes=98 91 
+    node 98 tri 438 2912 744
+    node 98 tri 436 2912 438
+    node 91 tri 438 2912 437
+    node 91 tri 2912 438 440
+    base use=0 leaves=
+  bad edge (740,2912) use=3 nodes=98 91 
+    node 98 tri 392 740 2912
+    node 98 tri 732 2912 740
+    node 91 tri 2912 741 740
+    node 91 tri 740 392 2912
+    base use=0 leaves=
+  bad edge (1478,1479) use=1 nodes=90 92 
+    node 90 tri 1478 2912 1479
+    node 92 tri 2912 1478 1479
+    base use=2 leaves=9(use=1) 10(use=1) 
+  bad edge (1478,2912) use=3 nodes=90 92 
+    node 90 tri 1478 2912 1479
+    node 90 tri 1478 1476 2912
+    node 92 tri 2912 1478 1479
+    node 92 tri 1478 2912 1489
+    base use=0 leaves=
+  bad edge (1479,2010) use=1 nodes=90 92 
+    node 90 tri 2912 2010 1479
+    node 92 tri 1479 2010 2912
+    base use=2 leaves=9(use=1) 10(use=1) 
+  bad edge (1489,2912) use=4 nodes=90 92 
+    node 90 tri 1476 1489 2912
+    node 90 tri 1489 1906 2912
+    node 92 tri 2912 1903 1489
+    node 92 tri 1478 2912 1489
+    base use=0 leaves=
+  bad edge (1846,2912) use=4 nodes=90 
+    node 90 tri 1469 1846 2912
+    node 90 tri 1918 2912 1846
+    node 90 tri 1915 1846 2912
+    node 90 tri 1846 1470 2912
+    base use=0 leaves=
+  bad edge (2010,2912) use=3 nodes=90 92 
+    node 90 tri 2912 2010 1479
+    node 90 tri 2912 2004 2010
+    node 92 tri 2010 2009 2912
+    node 92 tri 1479 2010 2912
+    base use=0 leaves=
+  budget reached: 2849 <= 2910 triangles (48.95% <= 50.00%)
+  wrote tmp\current-mmgeo-clusterlod-20261123-final-controls\100894/selected.ply
+  uniform cut 0.5: 2849 triangles (48.9519%), wrote tmp\current-mmgeo-clusterlod-20261123-final-controls\100894/selected_ratio_0.5.ply
+  uniform cut 0.2498: 2849 triangles (48.9519%), wrote tmp\current-mmgeo-clusterlod-20261123-final-controls\100894/selected_ratio_0.249828.ply
+  wrote tmp\current-mmgeo-clusterlod-20261123-final-controls\100894/lod_graph.json
+  streaming: memory-backed, 4 pages, queue prepared, resident 2 pages / 85084 bytes, hits 0 misses 2 evictions 0
+
+  total time: 8.99s

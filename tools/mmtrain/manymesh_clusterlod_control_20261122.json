@@ -1,0 +1,1862 @@
+{
+  "manifest_sha256": "3a7cfbd6e652f5fbeade83110c5027e37d05629303580657d444a5bbcd645742",
+  "upstream_receipt_sha256": "a137ccd65357c087ac8f4e845fef1665a53c2c03e2c410f97babd92c166386dc",
+  "mmgeo_sha256": "b70ef5872f5bee1c303fd47d16394507e5998799fff5606eecd3adb6ad95ffc6",
+  "script_sha256": "6c774225fd6af3555b200691fc5386b10fdc4bbcbfb19d31ec2ceea6a4c33c06",
+  "protocol": {
+    "native_cuts": [
+      1,
+      2,
+      -1
+    ],
+    "views": 8,
+    "size": 192,
+    "samples_per_pixel": 4,
+    "flip_ppd": 67,
+    "surface_samples": 10000
+  },
+  "assets": [
+    {
+      "asset": 90431,
+      "status": "measured",
+      "command": [
+        "E:\\ManyMesh\\out\\cmake-vulkan\\tools\\mmgeo\\Release\\mmgeo.exe",
+        "out\\upstream-clusterlod\\validation\\90431\\source.obj",
+        "--out",
+        "out\\upstream-clusterlod\\manymesh-control\\90431",
+        "--mode",
+        "dag",
+        "--levels",
+        "8",
+        "--ratio",
+        "0.5",
+        "--target-ratio",
+        "0.5",
+        "--target-ratio-cut",
+        "0.5,0.25",
+        "--quality-gate",
+        "1",
+        "--dump-format",
+        "ply",
+        "--visibility",
+        "0",
+        "--write-dag",
+        "0"
+      ],
+      "command_ms": 268.6929000192322,
+      "returncode": 0,
+      "cuts": [
+        {
+          "upstream_cut": 1,
+          "target_faces": 368,
+          "requested_ratio": "0.5",
+          "faces": 392,
+          "vertices": 190,
+          "topology_error": null,
+          "source_directed_boundary_preserved": true,
+          "image": {
+            "mse": 0.001501659663984739,
+            "ssim": 0.9539961520705752,
+            "flip": 0.028198173036798835,
+            "silhouette_xor_fraction": 0.005255805121527778,
+            "coverage_mae": 0.005329555935329862,
+            "psnr_db": 28.23428484643123,
+            "silhouette_xor_mse_share": 0.48401200096051455
+          },
+          "per_view": [
+            {
+              "mse": 0.0011077015484162076,
+              "psnr_db": 29.55577237203076,
+              "ssim": 0.951343398492357,
+              "flip": 0.02644225023686886,
+              "silhouette_xor_fraction": 0.0018446180555555555,
+              "silhouette_xor_mse_share": 0.1567328286478378,
+              "coverage_mae": 0.0019124348958333333
+            },
+            {
+              "mse": 0.002942974490313554,
+              "psnr_db": 25.312135023462176,
+              "ssim": 0.9300337131337927,
+              "flip": 0.04488073289394379,
+              "silhouette_xor_fraction": 0.007703993055555556,
+              "silhouette_xor_mse_share": 0.6897001226159004,
+              "coverage_mae": 0.007703993055555556
+            },
+            {
+              "mse": 0.0004360118570848817,
+              "psnr_db": 33.60501700188945,
+              "ssim": 0.9736178684021856,
+              "flip": 0.026790084317326546,
+              "silhouette_xor_fraction": 0.0005425347222222222,
+              "silhouette_xor_mse_share": 0.0519817137346004,
+              "coverage_mae": 0.0006510416666666666
+            },
+            {
+              "mse": 0.0013214585602759623,
+              "psnr_db": 28.789464513939155,
+              "ssim": 0.9518986498332054,
+              "flip": 0.024816034361720085,
+              "silhouette_xor_fraction": 0.007025824652777778,
+              "silhouette_xor_mse_share": 0.6848787300593124,
+              "coverage_mae": 0.007046169704861111
+            },
+            {
+              "mse": 0.0006416039403915162,
+              "psnr_db": 31.927329775090595,
+              "ssim": 0.9825675663467903,
+              "flip": 0.01176177617162466,
+              "silhouette_xor_fraction": 0.004150390625,
+              "silhouette_xor_mse_share": 0.6396337526503973,
+              "coverage_mae": 0.004252115885416667
+            },
+            {
+              "mse": 0.002444321878737878,
+              "psnr_db": 26.118416049126193,
+              "ssim": 0.938755349967303,
+              "flip": 0.03272682800889015,
+              "silhouette_xor_fraction": 0.010389539930555556,
+              "silhouette_xor_mse_share": 0.5649759294679736,
+              "coverage_mae": 0.010640462239583334
+            },
+            {
+              "mse": 0.0005263742377397582,
+              "psnr_db": 32.78705374487673,
+              "ssim": 0.9761135818160444,
+              "flip": 0.013622608967125416,
+              "silhouette_xor_fraction": 0.0035264756944444445,
+              "silhouette_xor_mse_share": 0.6578419701972319,
+              "coverage_mae": 0.0034654405381944445
+            },
+            {
+              "mse": 0.0025928307989181516,
+              "psnr_db": 25.862258231819713,
+              "ssim": 0.927639088572923,
+              "flip": 0.044545069336891174,
+              "silhouette_xor_fraction": 0.006863064236111111,
+              "silhouette_xor_mse_share": 0.4263509603108624,
+              "coverage_mae": 0.006964789496527778
+            }
+          ],
+          "surface": {
+            "samples_per_direction": 10000,
+            "chamfer_l1_mean": 0.014575069169518586,
+            "chamfer_l2_squared_mean": 0.0002741724445814303,
+            "bidirectional_distance_p95": 0.02892045188496255,
+            "bidirectional_distance_max_sampled": 0.06842330924481671,
+            "normal_consistency_absdot": 0.9424026316934154
+          },
+          "under_face_cap": false,
+          "ply_sha256": "ec4857ea1b26834d129687b5b5274318df54eb5433499c7b292767b1eb9232c0"
+        },
+        {
+          "upstream_cut": 2,
+          "target_faces": 184,
+          "requested_ratio": "0.25",
+          "faces": 392,
+          "vertices": 190,
+          "topology_error": null,
+          "source_directed_boundary_preserved": true,
+          "image": {
+            "mse": 0.001501659663984739,
+            "ssim": 0.9539961520705752,
+            "flip": 0.028198173036798835,
+            "silhouette_xor_fraction": 0.005255805121527778,
+            "coverage_mae": 0.005329555935329862,
+            "psnr_db": 28.23428484643123,
+            "silhouette_xor_mse_share": 0.48401200096051455
+          },
+          "per_view": [
+            {
+              "mse": 0.0011077015484162076,
+              "psnr_db": 29.55577237203076,
+              "ssim": 0.951343398492357,
+              "flip": 0.02644225023686886,
+              "silhouette_xor_fraction": 0.0018446180555555555,
+              "silhouette_xor_mse_share": 0.1567328286478378,
+              "coverage_mae": 0.0019124348958333333
+            },
+            {
+              "mse": 0.002942974490313554,
+              "psnr_db": 25.312135023462176,
+              "ssim": 0.9300337131337927,
+              "flip": 0.04488073289394379,
+              "silhouette_xor_fraction": 0.007703993055555556,
+              "silhouette_xor_mse_share": 0.6897001226159004,
+              "coverage_mae": 0.007703993055555556
+            },
+            {
+              "mse": 0.0004360118570848817,
+              "psnr_db": 33.60501700188945,
+              "ssim": 0.9736178684021856,
+              "flip": 0.026790084317326546,
+              "silhouette_xor_fraction": 0.0005425347222222222,
+              "silhouette_xor_mse_share": 0.0519817137346004,
+              "coverage_mae": 0.0006510416666666666
+            },
+            {
+              "mse": 0.0013214585602759623,
+              "psnr_db": 28.789464513939155,
+              "ssim": 0.9518986498332054,
+              "flip": 0.024816034361720085,
+              "silhouette_xor_fraction": 0.007025824652777778,
+              "silhouette_xor_mse_share": 0.6848787300593124,
+              "coverage_mae": 0.007046169704861111
+            },
+            {
+              "mse": 0.0006416039403915162,
+              "psnr_db": 31.927329775090595,
+              "ssim": 0.9825675663467903,
+              "flip": 0.01176177617162466,
+              "silhouette_xor_fraction": 0.004150390625,
+              "silhouette_xor_mse_share": 0.6396337526503973,
+              "coverage_mae": 0.004252115885416667
+            },
+            {
+              "mse": 0.002444321878737878,
+              "psnr_db": 26.118416049126193,
+              "ssim": 0.938755349967303,
+              "flip": 0.03272682800889015,
+              "silhouette_xor_fraction": 0.010389539930555556,
+              "silhouette_xor_mse_share": 0.5649759294679736,
+              "coverage_mae": 0.010640462239583334
+            },
+            {
+              "mse": 0.0005263742377397582,
+              "psnr_db": 32.78705374487673,
+              "ssim": 0.9761135818160444,
+              "flip": 0.013622608967125416,
+              "silhouette_xor_fraction": 0.0035264756944444445,
+              "silhouette_xor_mse_share": 0.6578419701972319,
+              "coverage_mae": 0.0034654405381944445
+            },
+            {
+              "mse": 0.0025928307989181516,
+              "psnr_db": 25.862258231819713,
+              "ssim": 0.927639088572923,
+              "flip": 0.044545069336891174,
+              "silhouette_xor_fraction": 0.006863064236111111,
+              "silhouette_xor_mse_share": 0.4263509603108624,
+              "coverage_mae": 0.006964789496527778
+            }
+          ],
+          "surface": {
+            "samples_per_direction": 10000,
+            "chamfer_l1_mean": 0.014575069169518586,
+            "chamfer_l2_squared_mean": 0.0002741724445814303,
+            "bidirectional_distance_p95": 0.02892045188496255,
+            "bidirectional_distance_max_sampled": 0.06842330924481671,
+            "normal_consistency_absdot": 0.9424026316934154
+          },
+          "under_face_cap": false,
+          "ply_sha256": "ec4857ea1b26834d129687b5b5274318df54eb5433499c7b292767b1eb9232c0"
+        }
+      ],
+      "nodes": 18,
+      "hierarchy_levels": 4,
+      "reported_build_seconds": 0.24
+    },
+    {
+      "asset": 263198,
+      "status": "measured",
+      "command": [
+        "E:\\ManyMesh\\out\\cmake-vulkan\\tools\\mmgeo\\Release\\mmgeo.exe",
+        "out\\upstream-clusterlod\\validation\\263198\\source.obj",
+        "--out",
+        "out\\upstream-clusterlod\\manymesh-control\\263198",
+        "--mode",
+        "dag",
+        "--levels",
+        "8",
+        "--ratio",
+        "0.5",
+        "--target-ratio",
+        "0.5",
+        "--target-ratio-cut",
+        "0.5,0.247788",
+        "--quality-gate",
+        "1",
+        "--dump-format",
+        "ply",
+        "--visibility",
+        "0",
+        "--write-dag",
+        "0"
+      ],
+      "command_ms": 135.98710001679137,
+      "returncode": 0,
+      "cuts": [
+        {
+          "upstream_cut": 1,
+          "target_faces": 226,
+          "requested_ratio": "0.5",
+          "faces": 140,
+          "vertices": 72,
+          "topology_error": null,
+          "source_directed_boundary_preserved": true,
+          "image": {
+            "mse": 0.000153853544243133,
+            "ssim": 0.9964302820032297,
+            "flip": 0.00404994251584867,
+            "silhouette_xor_fraction": 0.0006510416666666667,
+            "coverage_mae": 0.0007298787434895833,
+            "psnr_db": 38.12892494687854,
+            "silhouette_xor_mse_share": 0.48340405692568617
+          },
+          "per_view": [
+            {
+              "mse": 0.000270874383250032,
+              "psnr_db": 35.67232064509828,
+              "ssim": 0.9960330555331015,
+              "flip": 0.00414621364325285,
+              "silhouette_xor_fraction": 0.0011393229166666667,
+              "silhouette_xor_mse_share": 0.703573650717379,
+              "coverage_mae": 0.001681857638888889
+            },
+            {
+              "mse": 0.00015837800431991965,
+              "psnr_db": 38.003051337679324,
+              "ssim": 0.9964424712762773,
+              "flip": 0.00459384685382247,
+              "silhouette_xor_fraction": 0.0006510416666666666,
+              "silhouette_xor_mse_share": 0.5442479158160914,
+              "coverage_mae": 0.0007392035590277778
+            },
+            {
+              "mse": 8.278066128412149e-05,
+              "psnr_db": 40.82071108608153,
+              "ssim": 0.9962083729615134,
+              "flip": 0.003615178633481264,
+              "silhouette_xor_fraction": 0.00037977430555555556,
+              "silhouette_xor_mse_share": 0.39754172714078373,
+              "coverage_mae": 0.000244140625
+            },
+            {
+              "mse": 0.00011112429380793713,
+              "psnr_db": 39.54190985943355,
+              "ssim": 0.9963114822268753,
+              "flip": 0.0033216294832527637,
+              "silhouette_xor_fraction": 0.0005967881944444445,
+              "silhouette_xor_mse_share": 0.40433751041768345,
+              "coverage_mae": 0.0006239149305555555
+            },
+            {
+              "mse": 0.00023589810209214402,
+              "psnr_db": 36.27275553197595,
+              "ssim": 0.996653130822701,
+              "flip": 0.005174970254302025,
+              "silhouette_xor_fraction": 0.0008409288194444445,
+              "silhouette_xor_mse_share": 0.6633685077997479,
+              "coverage_mae": 0.001064724392361111
+            },
+            {
+              "mse": 0.00017768690060446837,
+              "psnr_db": 37.503445879791215,
+              "ssim": 0.9945240881167224,
+              "flip": 0.005827086511999369,
+              "silhouette_xor_fraction": 0.0006239149305555555,
+              "silhouette_xor_mse_share": 0.23894067100227742,
+              "coverage_mae": 0.0005628797743055555
+            },
+            {
+              "mse": 3.1305150396215134e-05,
+              "psnr_db": 45.04384205436142,
+              "ssim": 0.9987365423356215,
+              "flip": 0.0008716623415239155,
+              "silhouette_xor_fraction": 0.0002712673611111111,
+              "silhouette_xor_mse_share": 0.4300315827347716,
+              "coverage_mae": 0.00023057725694444444
+            },
+            {
+              "mse": 0.00016278085819022598,
+              "psnr_db": 37.88396666222759,
+              "ssim": 0.9965331127530256,
+              "flip": 0.004848952405154705,
+              "silhouette_xor_fraction": 0.0007052951388888889,
+              "silhouette_xor_mse_share": 0.4851908897767549,
+              "coverage_mae": 0.0006917317708333334
+            }
+          ],
+          "surface": {
+            "samples_per_direction": 10000,
+            "chamfer_l1_mean": 0.0065168663751709825,
+            "chamfer_l2_squared_mean": 5.325737172912522e-05,
+            "bidirectional_distance_p95": 0.012525398120287246,
+            "bidirectional_distance_max_sampled": 0.021144626050596027,
+            "normal_consistency_absdot": 0.9687215992428477
+          },
+          "under_face_cap": true,
+          "ply_sha256": "b5a0d69fa37ae098737af16b2cf0360192152d56376df3221df4d991bc4831b4"
+        },
+        {
+          "upstream_cut": 2,
+          "target_faces": 112,
+          "requested_ratio": "0.247788",
+          "faces": 108,
+          "vertices": 56,
+          "topology_error": null,
+          "source_directed_boundary_preserved": true,
+          "image": {
+            "mse": 0.00024499452792929534,
+            "ssim": 0.9936420639271233,
+            "flip": 0.00554363323317375,
+            "silhouette_xor_fraction": 0.0012986924913194445,
+            "coverage_mae": 0.001313103569878472,
+            "psnr_db": 36.108436157034326,
+            "silhouette_xor_mse_share": 0.5517634363855211
+          },
+          "per_view": [
+            {
+              "mse": 0.0003539537410824896,
+              "psnr_db": 34.5105349307409,
+              "ssim": 0.9945178298893972,
+              "flip": 0.004836270585656166,
+              "silhouette_xor_fraction": 0.001491970486111111,
+              "silhouette_xor_mse_share": 0.7209566553834258,
+              "coverage_mae": 0.0019395616319444445
+            },
+            {
+              "mse": 0.0002574071737899953,
+              "psnr_db": 35.893793537253586,
+              "ssim": 0.9948150992869212,
+              "flip": 0.005610477179288864,
+              "silhouette_xor_fraction": 0.001003689236111111,
+              "silhouette_xor_mse_share": 0.6215232421324223,
+              "coverage_mae": 0.0010511610243055555
+            },
+            {
+              "mse": 0.00012076977271028234,
+              "psnr_db": 39.18041751044583,
+              "ssim": 0.9938404324413316,
+              "flip": 0.00531318224966526,
+              "silhouette_xor_fraction": 0.00043402777777777775,
+              "silhouette_xor_mse_share": 0.31694502495725313,
+              "coverage_mae": 0.00029839409722222225
+            },
+            {
+              "mse": 0.0001548211792205989,
+              "psnr_db": 38.10169628992446,
+              "ssim": 0.9947400891296211,
+              "flip": 0.0037559212651103735,
+              "silhouette_xor_fraction": 0.0008680555555555555,
+              "silhouette_xor_mse_share": 0.4887461973113744,
+              "coverage_mae": 0.0009765625
+            },
+            {
+              "mse": 0.0003840136272373873,
+              "psnr_db": 34.15653363838221,
+              "ssim": 0.9924574571097765,
+              "flip": 0.008098339661955833,
+              "silhouette_xor_fraction": 0.002170138888888889,
+              "silhouette_xor_mse_share": 0.6139767868316764,
+              "coverage_mae": 0.0018717447916666667
+            },
+            {
+              "mse": 0.0003825168071041052,
+              "psnr_db": 34.17349477968639,
+              "ssim": 0.9857747495322796,
+              "flip": 0.010122649371623993,
+              "silhouette_xor_fraction": 0.0030110677083333335,
+              "silhouette_xor_mse_share": 0.48129397856310896,
+              "coverage_mae": 0.0029703776041666665
+            },
+            {
+              "mse": 5.658630895168525e-05,
+              "psnr_db": 42.47288633581817,
+              "ssim": 0.997963820580427,
+              "flip": 0.0011454239720478654,
+              "silhouette_xor_fraction": 0.0004069010416666667,
+              "silhouette_xor_mse_share": 0.5824228483802953,
+              "coverage_mae": 0.00044080946180555556
+            },
+            {
+              "mse": 0.0002498876133378188,
+              "psnr_db": 36.022552708537795,
+              "ssim": 0.9950270334472319,
+              "flip": 0.005466801580041647,
+              "silhouette_xor_fraction": 0.001003689236111111,
+              "silhouette_xor_mse_share": 0.5882427575246119,
+              "coverage_mae": 0.0009562174479166666
+            }
+          ],
+          "surface": {
+            "samples_per_direction": 10000,
+            "chamfer_l1_mean": 0.006794121232554423,
+            "chamfer_l2_squared_mean": 5.791684011648715e-05,
+            "bidirectional_distance_p95": 0.013121601303026188,
+            "bidirectional_distance_max_sampled": 0.023513518852421925,
+            "normal_consistency_absdot": 0.9607163716702618
+          },
+          "under_face_cap": true,
+          "ply_sha256": "0cec5969eb654c399ddf55c6340a2a167466d0a4321f1102cbd7fecdd2d52dfa"
+        }
+      ],
+      "nodes": 12,
+      "hierarchy_levels": 5,
+      "reported_build_seconds": 0.11
+    },
+    {
+      "asset": 44710,
+      "status": "measured",
+      "command": [
+        "E:\\ManyMesh\\out\\cmake-vulkan\\tools\\mmgeo\\Release\\mmgeo.exe",
+        "out\\upstream-clusterlod\\validation\\44710\\source.obj",
+        "--out",
+        "out\\upstream-clusterlod\\manymesh-control\\44710",
+        "--mode",
+        "dag",
+        "--levels",
+        "8",
+        "--ratio",
+        "0.5",
+        "--target-ratio",
+        "0.5",
+        "--target-ratio-cut",
+        "0.5,0.249685",
+        "--quality-gate",
+        "1",
+        "--dump-format",
+        "ply",
+        "--visibility",
+        "0",
+        "--write-dag",
+        "0"
+      ],
+      "command_ms": 1327.7086000307463,
+      "returncode": 0,
+      "cuts": [
+        {
+          "upstream_cut": 1,
+          "target_faces": 1586,
+          "requested_ratio": "0.5",
+          "faces": 1586,
+          "vertices": 792,
+          "topology_error": "Nonmanifold or inconsistently oriented edge",
+          "source_directed_boundary_preserved": false,
+          "image": {
+            "mse": 0.002250769070606524,
+            "ssim": 0.9621701266027848,
+            "flip": 0.022663053183350712,
+            "silhouette_xor_fraction": 0.003828260633680556,
+            "coverage_mae": 0.003919813368055556,
+            "psnr_db": 26.476690614215492,
+            "silhouette_xor_mse_share": 0.23707522727644487
+          },
+          "per_view": [
+            {
+              "mse": 0.0024561416682686143,
+              "psnr_db": 26.097465870533014,
+              "ssim": 0.9392531002473969,
+              "flip": 0.038428112864494324,
+              "silhouette_xor_fraction": 0.007595486111111111,
+              "silhouette_xor_mse_share": 0.21795606066473583,
+              "coverage_mae": 0.007656521267361111
+            },
+            {
+              "mse": 0.004775315950862915,
+              "psnr_db": 23.209978887552314,
+              "ssim": 0.9305597520717056,
+              "flip": 0.0433114692568779,
+              "silhouette_xor_fraction": 0.0038248697916666665,
+              "silhouette_xor_mse_share": 0.06259003590690934,
+              "coverage_mae": 0.003818088107638889
+            },
+            {
+              "mse": 0.0036012232541437045,
+              "psnr_db": 24.43549954152957,
+              "ssim": 0.9730007003974923,
+              "flip": 0.021870486438274384,
+              "silhouette_xor_fraction": 0.00018988715277777778,
+              "silhouette_xor_mse_share": 0.011740268610469413,
+              "coverage_mae": 0.00016276041666666666
+            },
+            {
+              "mse": 0.0013616808038574907,
+              "psnr_db": 28.659246849121146,
+              "ssim": 0.9681232517089392,
+              "flip": 0.014791829511523247,
+              "silhouette_xor_fraction": 0.006266276041666667,
+              "silhouette_xor_mse_share": 0.6480466045354559,
+              "coverage_mae": 0.006368001302083333
+            },
+            {
+              "mse": 0.0015688456329563413,
+              "psnr_db": 28.044197868486197,
+              "ssim": 0.9766579704666872,
+              "flip": 0.013400276191532612,
+              "silhouette_xor_fraction": 0.006781684027777778,
+              "silhouette_xor_mse_share": 0.5875025361300478,
+              "coverage_mae": 0.006985134548611111
+            },
+            {
+              "mse": 0.0006212642072760476,
+              "psnr_db": 32.06723666554725,
+              "ssim": 0.9867902522208031,
+              "flip": 0.00863772165030241,
+              "silhouette_xor_fraction": 0.0007595486111111111,
+              "silhouette_xor_mse_share": 0.07096999035065986,
+              "coverage_mae": 0.0007256401909722222
+            },
+            {
+              "mse": 0.00019725110734653337,
+              "psnr_db": 37.04980550029117,
+              "ssim": 0.9815315228189169,
+              "flip": 0.006114015821367502,
+              "silhouette_xor_fraction": 0.00043402777777777775,
+              "silhouette_xor_mse_share": 0.1528043026307719,
+              "coverage_mae": 0.0006103515625
+            },
+            {
+              "mse": 0.0034244299401405436,
+              "psnr_db": 24.654117145239066,
+              "ssim": 0.9414444628903368,
+              "flip": 0.03475051373243332,
+              "silhouette_xor_fraction": 0.004774305555555556,
+              "silhouette_xor_mse_share": 0.144992019382509,
+              "coverage_mae": 0.005032009548611111
+            }
+          ],
+          "surface": null,
+          "under_face_cap": true,
+          "ply_sha256": "399c392fe13a40b367a2eaf998b00bcfce5d54018dff59c3194c5db8ba45e748"
+        },
+        {
+          "upstream_cut": 2,
+          "target_faces": 792,
+          "requested_ratio": "0.249685",
+          "faces": 965,
+          "vertices": 477,
+          "topology_error": "Nonmanifold or inconsistently oriented edge",
+          "source_directed_boundary_preserved": false,
+          "image": {
+            "mse": 0.0041560527184389545,
+            "ssim": 0.9392841786579762,
+            "flip": 0.03723864909261465,
+            "silhouette_xor_fraction": 0.004964192708333333,
+            "coverage_mae": 0.005132887098524306,
+            "psnr_db": 23.81318952168296,
+            "silhouette_xor_mse_share": 0.26475814796211106
+          },
+          "per_view": [
+            {
+              "mse": 0.005329772253059721,
+              "psnr_db": 22.732913484504735,
+              "ssim": 0.8994722688035105,
+              "flip": 0.06502794474363327,
+              "silhouette_xor_fraction": 0.009385850694444444,
+              "silhouette_xor_mse_share": 0.23620177335465783,
+              "coverage_mae": 0.009806315104166666
+            },
+            {
+              "mse": 0.008362949763579179,
+              "psnr_db": 20.776405120237573,
+              "ssim": 0.8853224300449893,
+              "flip": 0.0717257559299469,
+              "silhouette_xor_fraction": 0.004692925347222222,
+              "silhouette_xor_mse_share": 0.05620388979258553,
+              "coverage_mae": 0.004706488715277778
+            },
+            {
+              "mse": 0.0063412171700788144,
+              "psnr_db": 21.978273731098668,
+              "ssim": 0.9487948701339163,
+              "flip": 0.03914879262447357,
+              "silhouette_xor_fraction": 0.00021701388888888888,
+              "silhouette_xor_mse_share": 0.007153949415196889,
+              "coverage_mae": 0.00018310546875
+            },
+            {
+              "mse": 0.0022061743747063094,
+              "psnr_db": 26.563601641624516,
+              "ssim": 0.9532965362283684,
+              "flip": 0.021367521956562996,
+              "silhouette_xor_fraction": 0.008165147569444444,
+              "silhouette_xor_mse_share": 0.7103050461578025,
+              "coverage_mae": 0.008226182725694444
+            },
+            {
+              "mse": 0.0032455369896460754,
+              "psnr_db": 24.887134368155152,
+              "ssim": 0.9663336625454275,
+              "flip": 0.021095648407936096,
+              "silhouette_xor_fraction": 0.008246527777777778,
+              "silhouette_xor_mse_share": 0.5291705447570296,
+              "coverage_mae": 0.008748372395833334
+            },
+            {
+              "mse": 0.002289336750154855,
+              "psnr_db": 26.402903200483614,
+              "ssim": 0.9738504530796916,
+              "flip": 0.01828690804541111,
+              "silhouette_xor_fraction": 0.001980251736111111,
+              "silhouette_xor_mse_share": 0.21655195311282802,
+              "coverage_mae": 0.0020548502604166665
+            },
+            {
+              "mse": 0.0002452219398788927,
+              "psnr_db": 36.10440676314818,
+              "ssim": 0.978632159563379,
+              "flip": 0.007670015096664429,
+              "silhouette_xor_fraction": 0.0005154079861111111,
+              "silhouette_xor_mse_share": 0.15352226968597366,
+              "coverage_mae": 0.0006985134548611111
+            },
+            {
+              "mse": 0.005228212506407791,
+              "psnr_db": 22.816467683591625,
+              "ssim": 0.9085710488645268,
+              "flip": 0.053586605936288834,
+              "silhouette_xor_fraction": 0.006510416666666667,
+              "silhouette_xor_mse_share": 0.20895575742081438,
+              "coverage_mae": 0.006639268663194444
+            }
+          ],
+          "surface": null,
+          "under_face_cap": false,
+          "ply_sha256": "381f33fcb6c0c1e759d3cb8d90b41b9a2dd65e74c9b637e14472355fcdb5f27f"
+        }
+      ],
+      "nodes": 84,
+      "hierarchy_levels": 7,
+      "reported_build_seconds": 1.29
+    },
+    {
+      "asset": 191968,
+      "status": "measured",
+      "command": [
+        "E:\\ManyMesh\\out\\cmake-vulkan\\tools\\mmgeo\\Release\\mmgeo.exe",
+        "out\\upstream-clusterlod\\validation\\191968\\source.obj",
+        "--out",
+        "out\\upstream-clusterlod\\manymesh-control\\191968",
+        "--mode",
+        "dag",
+        "--levels",
+        "8",
+        "--ratio",
+        "0.5",
+        "--target-ratio",
+        "0.5",
+        "--target-ratio-cut",
+        "0.5,0.249057",
+        "--quality-gate",
+        "1",
+        "--dump-format",
+        "ply",
+        "--visibility",
+        "0",
+        "--write-dag",
+        "0"
+      ],
+      "command_ms": 246.18720001308247,
+      "returncode": 0,
+      "cuts": [
+        {
+          "upstream_cut": 1,
+          "target_faces": 530,
+          "requested_ratio": "0.5",
+          "faces": 408,
+          "vertices": 204,
+          "topology_error": null,
+          "source_directed_boundary_preserved": true,
+          "image": {
+            "mse": 0.0010283783205377738,
+            "ssim": 0.9800111275436285,
+            "flip": 0.011852399009512737,
+            "silhouette_xor_fraction": 0.005082872178819444,
+            "coverage_mae": 0.005022684733072916,
+            "psnr_db": 29.878470873870704,
+            "silhouette_xor_mse_share": 0.6886919218616318
+          },
+          "per_view": [
+            {
+              "mse": 0.003778493815145884,
+              "psnr_db": 24.226812843235944,
+              "ssim": 0.9590404792462977,
+              "flip": 0.027303317561745644,
+              "silhouette_xor_fraction": 0.010633680555555556,
+              "silhouette_xor_mse_share": 0.8918084059391269,
+              "coverage_mae": 0.010728624131944444
+            },
+            {
+              "mse": 0.0008903789508041778,
+              "psnr_db": 30.50425115584455,
+              "ssim": 0.9825343018508658,
+              "flip": 0.012022190727293491,
+              "silhouette_xor_fraction": 0.0027669270833333335,
+              "silhouette_xor_mse_share": 0.721970696866577,
+              "coverage_mae": 0.0027330186631944445
+            },
+            {
+              "mse": 7.804031368811142e-05,
+              "psnr_db": 41.076809935991236,
+              "ssim": 0.9956892398356851,
+              "flip": 0.0051685781218111515,
+              "silhouette_xor_fraction": 0.00037977430555555556,
+              "silhouette_xor_mse_share": 0.28038851974405166,
+              "coverage_mae": 0.00035942925347222225
+            },
+            {
+              "mse": 0.00042496467370989793,
+              "psnr_db": 33.716471703038344,
+              "ssim": 0.9823296805125409,
+              "flip": 0.009661671705543995,
+              "silhouette_xor_fraction": 0.005940755208333333,
+              "silhouette_xor_mse_share": 0.8824090117063833,
+              "coverage_mae": 0.005716959635416667
+            },
+            {
+              "mse": 0.0007176580889027723,
+              "psnr_db": 31.440824157430715,
+              "ssim": 0.9645135731491243,
+              "flip": 0.01695326901972294,
+              "silhouette_xor_fraction": 0.010552300347222222,
+              "silhouette_xor_mse_share": 0.8751433628730122,
+              "coverage_mae": 0.010491265190972222
+            },
+            {
+              "mse": 0.0003416658823796403,
+              "psnr_db": 34.66398386240822,
+              "ssim": 0.9819678734843377,
+              "flip": 0.009267106652259827,
+              "silhouette_xor_fraction": 0.004340277777777778,
+              "silhouette_xor_mse_share": 0.8104690958863299,
+              "coverage_mae": 0.004442003038194444
+            },
+            {
+              "mse": 2.704663871267461e-05,
+              "psnr_db": 45.67886700215199,
+              "ssim": 0.991154838093828,
+              "flip": 0.001841746037825942,
+              "silhouette_xor_fraction": 0.000244140625,
+              "silhouette_xor_mse_share": 0.11193373744852154,
+              "coverage_mae": 0.00013563368055555556
+            },
+            {
+              "mse": 0.001968778200959033,
+              "psnr_db": 27.058032079478863,
+              "ssim": 0.982859034176348,
+              "flip": 0.01260131224989891,
+              "silhouette_xor_fraction": 0.005805121527777778,
+              "silhouette_xor_mse_share": 0.9354125444290513,
+              "coverage_mae": 0.005574544270833333
+            }
+          ],
+          "surface": {
+            "samples_per_direction": 10000,
+            "chamfer_l1_mean": 0.015431316303661121,
+            "chamfer_l2_squared_mean": 0.0003109134026757608,
+            "bidirectional_distance_p95": 0.030510791186610653,
+            "bidirectional_distance_max_sampled": 0.082135120693161,
+            "normal_consistency_absdot": 0.9568746034286043
+          },
+          "under_face_cap": true,
+          "ply_sha256": "e3ad77a3e9d71b0af93bfe0d0aad9bc4ca46c8c6b0dc0519c1f01d12c9fe042e"
+        },
+        {
+          "upstream_cut": 2,
+          "target_faces": 264,
+          "requested_ratio": "0.249057",
+          "faces": 238,
+          "vertices": 119,
+          "topology_error": null,
+          "source_directed_boundary_preserved": true,
+          "image": {
+            "mse": 0.001281621681130922,
+            "ssim": 0.9711589447628315,
+            "flip": 0.017112636676756665,
+            "silhouette_xor_fraction": 0.006418863932291667,
+            "coverage_mae": 0.006346808539496528,
+            "psnr_db": 28.922401542593104,
+            "silhouette_xor_mse_share": 0.6677111568643042
+          },
+          "per_view": [
+            {
+              "mse": 0.0041492108570688625,
+              "psnr_db": 23.820344943745447,
+              "ssim": 0.9457590477057263,
+              "flip": 0.031440619379282,
+              "silhouette_xor_fraction": 0.011800130208333334,
+              "silhouette_xor_mse_share": 0.8574848755735598,
+              "coverage_mae": 0.011847601996527778
+            },
+            {
+              "mse": 0.0013546572632320902,
+              "psnr_db": 28.681705701145095,
+              "ssim": 0.973837684340544,
+              "flip": 0.01663672924041748,
+              "silhouette_xor_fraction": 0.004069010416666667,
+              "silhouette_xor_mse_share": 0.6845702667878778,
+              "coverage_mae": 0.004062228732638889
+            },
+            {
+              "mse": 0.00021026276285296256,
+              "psnr_db": 36.77237633254722,
+              "ssim": 0.9907819428532711,
+              "flip": 0.009633890353143215,
+              "silhouette_xor_fraction": 0.001003689236111111,
+              "silhouette_xor_mse_share": 0.26139396091798484,
+              "coverage_mae": 0.0010240342881944445
+            },
+            {
+              "mse": 0.0006282126565904139,
+              "psnr_db": 32.01893318125344,
+              "ssim": 0.9723188316989094,
+              "flip": 0.01591748185455799,
+              "silhouette_xor_fraction": 0.008409288194444444,
+              "silhouette_xor_mse_share": 0.8182613852260178,
+              "coverage_mae": 0.008293999565972222
+            },
+            {
+              "mse": 0.0008921289955252254,
+              "psnr_db": 30.495723451817188,
+              "ssim": 0.9551961771378547,
+              "flip": 0.024281032383441925,
+              "silhouette_xor_fraction": 0.011745876736111112,
+              "silhouette_xor_mse_share": 0.7982956325584308,
+              "coverage_mae": 0.011522081163194444
+            },
+            {
+              "mse": 0.0005403274548517663,
+              "psnr_db": 32.673429647434375,
+              "ssim": 0.9734349842916789,
+              "flip": 0.016827668994665146,
+              "silhouette_xor_fraction": 0.0048828125,
+              "silhouette_xor_mse_share": 0.614660645502,
+              "coverage_mae": 0.005011664496527778
+            },
+            {
+              "mse": 6.325233150177282e-05,
+              "psnr_db": 41.989234616194544,
+              "ssim": 0.9886401129144726,
+              "flip": 0.0033923655282706022,
+              "silhouette_xor_fraction": 0.0010579427083333333,
+              "silhouette_xor_mse_share": 0.39832213215847406,
+              "coverage_mae": 0.0009697808159722222
+            },
+            {
+              "mse": 0.0024149211274242816,
+              "psnr_db": 26.170970489637227,
+              "ssim": 0.9693027771601955,
+              "flip": 0.018771305680274963,
+              "silhouette_xor_fraction": 0.008382161458333334,
+              "silhouette_xor_mse_share": 0.9087003561900877,
+              "coverage_mae": 0.008043077256944444
+            }
+          ],
+          "surface": {
+            "samples_per_direction": 10000,
+            "chamfer_l1_mean": 0.015497234602913041,
+            "chamfer_l2_squared_mean": 0.000311828914065175,
+            "bidirectional_distance_p95": 0.030388676660954274,
+            "bidirectional_distance_max_sampled": 0.082135120693161,
+            "normal_consistency_absdot": 0.9566852457733639
+          },
+          "under_face_cap": true,
+          "ply_sha256": "7595a82af6884b7aba3222b2e4b4cb130db17e7cf5e6ffa181af3151714d9017"
+        }
+      ],
+      "nodes": 30,
+      "hierarchy_levels": 7,
+      "reported_build_seconds": 0.22
+    },
+    {
+      "asset": 383021,
+      "status": "measured",
+      "command": [
+        "E:\\ManyMesh\\out\\cmake-vulkan\\tools\\mmgeo\\Release\\mmgeo.exe",
+        "out\\upstream-clusterlod\\validation\\383021\\source.obj",
+        "--out",
+        "out\\upstream-clusterlod\\manymesh-control\\383021",
+        "--mode",
+        "dag",
+        "--levels",
+        "8",
+        "--ratio",
+        "0.5",
+        "--target-ratio",
+        "0.5",
+        "--target-ratio-cut",
+        "0.5,0.249927",
+        "--quality-gate",
+        "1",
+        "--dump-format",
+        "ply",
+        "--visibility",
+        "0",
+        "--write-dag",
+        "0"
+      ],
+      "command_ms": 13499.390300014056,
+      "returncode": 0,
+      "cuts": [
+        {
+          "upstream_cut": 1,
+          "target_faces": 6894,
+          "requested_ratio": "0.5",
+          "faces": 6870,
+          "vertices": 3421,
+          "topology_error": "Nonmanifold or inconsistently oriented edge",
+          "source_directed_boundary_preserved": false,
+          "image": {
+            "mse": 0.00024774777170706244,
+            "ssim": 0.9936809191781715,
+            "flip": 0.003636070992797613,
+            "silhouette_xor_fraction": 0.00018649631076388888,
+            "coverage_mae": 0.0001746283637152778,
+            "psnr_db": 36.05990242956426,
+            "silhouette_xor_mse_share": 0.10240952372920122
+          },
+          "per_view": [
+            {
+              "mse": 0.000193238728293605,
+              "psnr_db": 37.13905829273322,
+              "ssim": 0.9942162478661939,
+              "flip": 0.0026709556113928556,
+              "silhouette_xor_fraction": 0.0008680555555555555,
+              "silhouette_xor_mse_share": 0.4823330289351028,
+              "coverage_mae": 0.0007527669270833334
+            },
+            {
+              "mse": 0.0004563319830246913,
+              "psnr_db": 33.4071909168237,
+              "ssim": 0.9900171550745496,
+              "flip": 0.0043217455968260765,
+              "silhouette_xor_fraction": 0.00010850694444444444,
+              "silhouette_xor_mse_share": 0.040110982616684866,
+              "coverage_mae": 7.459852430555556e-05
+            },
+            {
+              "mse": 0.00019621484725426116,
+              "psnr_db": 37.072681333646685,
+              "ssim": 0.992855002669175,
+              "flip": 0.003707299707457423,
+              "silhouette_xor_fraction": 0.00010850694444444444,
+              "silhouette_xor_mse_share": 0.04899615812290179,
+              "coverage_mae": 6.781684027777778e-05
+            },
+            {
+              "mse": 9.409942490067922e-05,
+              "psnr_db": 40.26413030804675,
+              "ssim": 0.9972802877005086,
+              "flip": 0.002449441235512495,
+              "silhouette_xor_fraction": 8.138020833333333e-05,
+              "silhouette_xor_mse_share": 0.014191094323562269,
+              "coverage_mae": 8.816189236111111e-05
+            },
+            {
+              "mse": 0.00043027905266136956,
+              "psnr_db": 33.66249796225177,
+              "ssim": 0.9934483136563488,
+              "flip": 0.004983836319297552,
+              "silhouette_xor_fraction": 8.138020833333333e-05,
+              "silhouette_xor_mse_share": 0.031624546496363246,
+              "coverage_mae": 0.00013563368055555556
+            },
+            {
+              "mse": 0.0001006302830909052,
+              "psnr_db": 39.97271305560741,
+              "ssim": 0.9951515086072363,
+              "flip": 0.0037037236616015434,
+              "silhouette_xor_fraction": 2.712673611111111e-05,
+              "silhouette_xor_mse_share": 0.007665233667331347,
+              "coverage_mae": 6.781684027777778e-05
+            },
+            {
+              "mse": 0.00045689099611794616,
+              "psnr_db": 33.401874004359165,
+              "ssim": 0.990421979790104,
+              "flip": 0.004787548910826445,
+              "silhouette_xor_fraction": 2.712673611111111e-05,
+              "silhouette_xor_mse_share": 0.002282677672216617,
+              "coverage_mae": 2.712673611111111e-05
+            },
+            {
+              "mse": 5.429685831304199e-05,
+              "psnr_db": 42.652252985286935,
+              "ssim": 0.9960568580612555,
+              "flip": 0.0024640168994665146,
+              "silhouette_xor_fraction": 0.00018988715277777778,
+              "silhouette_xor_mse_share": 0.19207246799944677,
+              "coverage_mae": 0.00018310546875
+            }
+          ],
+          "surface": null,
+          "under_face_cap": true,
+          "ply_sha256": "e1480aa81a57a80e98656318b3adef80d68f47e92c491452a1171c4fbb888a64"
+        },
+        {
+          "upstream_cut": 2,
+          "target_faces": 3446,
+          "requested_ratio": "0.249927",
+          "faces": 4257,
+          "vertices": 2114,
+          "topology_error": "Nonmanifold or inconsistently oriented edge",
+          "source_directed_boundary_preserved": false,
+          "image": {
+            "mse": 0.0003228428894535755,
+            "ssim": 0.9890686231069403,
+            "flip": 0.007535261218436062,
+            "silhouette_xor_fraction": 0.00035942925347222225,
+            "coverage_mae": 0.00032806396484375,
+            "psnr_db": 34.91008774397006,
+            "silhouette_xor_mse_share": 0.15160616058474322
+          },
+          "per_view": [
+            {
+              "mse": 0.0003635232943259002,
+              "psnr_db": 34.394677546177114,
+              "ssim": 0.9918278601815071,
+              "flip": 0.005291839595884085,
+              "silhouette_xor_fraction": 0.001220703125,
+              "silhouette_xor_mse_share": 0.6330791432128944,
+              "coverage_mae": 0.0011054144965277778
+            },
+            {
+              "mse": 0.0004910592113343159,
+              "psnr_db": 33.0886613800871,
+              "ssim": 0.9855385177456139,
+              "flip": 0.008461661636829376,
+              "silhouette_xor_fraction": 0.00016276041666666666,
+              "silhouette_xor_mse_share": 0.04685887203309125,
+              "coverage_mae": 0.00013563368055555556
+            },
+            {
+              "mse": 0.00020635259141783076,
+              "psnr_db": 36.853900727938466,
+              "ssim": 0.9897853515663503,
+              "flip": 0.006799221038818359,
+              "silhouette_xor_fraction": 0.0004069010416666667,
+              "silhouette_xor_mse_share": 0.17265144224937534,
+              "coverage_mae": 0.0004069010416666667
+            },
+            {
+              "mse": 0.00015586995453137684,
+              "psnr_db": 38.07237591281778,
+              "ssim": 0.9944865282527665,
+              "flip": 0.005618391092866659,
+              "silhouette_xor_fraction": 0.0002712673611111111,
+              "silhouette_xor_mse_share": 0.14683660169203466,
+              "coverage_mae": 0.00020345052083333334
+            },
+            {
+              "mse": 0.0005646403526688452,
+              "psnr_db": 32.48228087727933,
+              "ssim": 0.9877635217133296,
+              "flip": 0.00937106553465128,
+              "silhouette_xor_fraction": 0.00035264756944444444,
+              "silhouette_xor_mse_share": 0.07699360689300022,
+              "coverage_mae": 0.0003662109375
+            },
+            {
+              "mse": 0.00016186808158721004,
+              "psnr_db": 37.908387803829065,
+              "ssim": 0.9900534735858311,
+              "flip": 0.008857078850269318,
+              "silhouette_xor_fraction": 8.138020833333333e-05,
+              "silhouette_xor_mse_share": 0.023867880034328926,
+              "coverage_mae": 0.00010172526041666667
+            },
+            {
+              "mse": 0.0005073264923480285,
+              "psnr_db": 32.94712458439247,
+              "ssim": 0.9868099991897553,
+              "flip": 0.007943877950310707,
+              "silhouette_xor_fraction": 8.138020833333333e-05,
+              "silhouette_xor_mse_share": 0.0031674948585769455,
+              "coverage_mae": 6.781684027777778e-05
+            },
+            {
+              "mse": 0.00013210313741509675,
+              "psnr_db": 38.79086867882191,
+              "ssim": 0.9862837326203694,
+              "flip": 0.007938954047858715,
+              "silhouette_xor_fraction": 0.00029839409722222225,
+              "silhouette_xor_mse_share": 0.10939424370464401,
+              "coverage_mae": 0.00023735894097222222
+            }
+          ],
+          "surface": null,
+          "under_face_cap": false,
+          "ply_sha256": "a7ba9c65fdb452a6a5f5e60d263186cb843ca6f5179cf3d238fce7cd1fe327a9"
+        }
+      ],
+      "nodes": 355,
+      "hierarchy_levels": 8,
+      "reported_build_seconds": 13.37
+    },
+    {
+      "asset": 100894,
+      "status": "measured",
+      "command": [
+        "E:\\ManyMesh\\out\\cmake-vulkan\\tools\\mmgeo\\Release\\mmgeo.exe",
+        "out\\upstream-clusterlod\\validation\\100894\\source.obj",
+        "--out",
+        "out\\upstream-clusterlod\\manymesh-control\\100894",
+        "--mode",
+        "dag",
+        "--levels",
+        "8",
+        "--ratio",
+        "0.5",
+        "--target-ratio",
+        "0.5",
+        "--target-ratio-cut",
+        "0.5,0.249828",
+        "--quality-gate",
+        "1",
+        "--dump-format",
+        "ply",
+        "--visibility",
+        "0",
+        "--write-dag",
+        "0"
+      ],
+      "command_ms": 12729.646300023887,
+      "returncode": 0,
+      "cuts": [
+        {
+          "upstream_cut": 1,
+          "target_faces": 2910,
+          "requested_ratio": "0.5",
+          "faces": 2849,
+          "vertices": 1417,
+          "topology_error": "Nonmanifold or inconsistently oriented edge",
+          "source_directed_boundary_preserved": false,
+          "image": {
+            "mse": 0.001936026812770996,
+            "ssim": 0.9589525703172361,
+            "flip": 0.024313395144417882,
+            "silhouette_xor_fraction": 0.0033399793836805555,
+            "coverage_mae": 0.003312004937065972,
+            "psnr_db": 27.130886322766685,
+            "silhouette_xor_mse_share": 0.18969868297848066
+          },
+          "per_view": [
+            {
+              "mse": 0.0006114702144474348,
+              "psnr_db": 32.13624693192164,
+              "ssim": 0.9832718110693385,
+              "flip": 0.013984168879687786,
+              "silhouette_xor_fraction": 0.0017632378472222222,
+              "silhouette_xor_mse_share": 0.15797915597812442,
+              "coverage_mae": 0.0018853081597222222
+            },
+            {
+              "mse": 0.004703599577085736,
+              "psnr_db": 23.27569657353708,
+              "ssim": 0.9316524921844985,
+              "flip": 0.04127410054206848,
+              "silhouette_xor_fraction": 0.005995008680555556,
+              "silhouette_xor_mse_share": 0.21405169282030762,
+              "coverage_mae": 0.005839029947916667
+            },
+            {
+              "mse": 0.005388191624348541,
+              "psnr_db": 22.68556967530099,
+              "ssim": 0.9217352958223963,
+              "flip": 0.051711127161979675,
+              "silhouette_xor_fraction": 0.011094835069444444,
+              "silhouette_xor_mse_share": 0.3006553532516229,
+              "coverage_mae": 0.010654025607638888
+            },
+            {
+              "mse": 0.001737486533624888,
+              "psnr_db": 27.600785527206206,
+              "ssim": 0.9397961561053029,
+              "flip": 0.02736113965511322,
+              "silhouette_xor_fraction": 0.0017632378472222222,
+              "silhouette_xor_mse_share": 0.054294259858046916,
+              "coverage_mae": 0.0016886393229166667
+            },
+            {
+              "mse": 0.0012222466686157031,
+              "psnr_db": 29.128411377857788,
+              "ssim": 0.9666119743526759,
+              "flip": 0.018060773611068726,
+              "silhouette_xor_fraction": 0.0020345052083333335,
+              "silhouette_xor_mse_share": 0.08650482537352915,
+              "coverage_mae": 0.0019327799479166667
+            },
+            {
+              "mse": 0.0008346578606251869,
+              "psnr_db": 30.784915121725604,
+              "ssim": 0.9693431956821135,
+              "flip": 0.016956377774477005,
+              "silhouette_xor_fraction": 0.0009765625,
+              "silhouette_xor_mse_share": 0.06884092559614104,
+              "coverage_mae": 0.0013292100694444445
+            },
+            {
+              "mse": 0.00023862725407428764,
+              "psnr_db": 36.22279956230958,
+              "ssim": 0.983664305162865,
+              "flip": 0.008477152325212955,
+              "silhouette_xor_fraction": 0.0013834635416666667,
+              "silhouette_xor_mse_share": 0.4455996321736196,
+              "coverage_mae": 0.0015055338541666667
+            },
+            {
+              "mse": 0.0007519347693461915,
+              "psnr_db": 31.238198330011162,
+              "ssim": 0.9755453321586988,
+              "flip": 0.016682321205735207,
+              "silhouette_xor_fraction": 0.001708984375,
+              "silhouette_xor_mse_share": 0.18966361877645363,
+              "coverage_mae": 0.0016615125868055555
+            }
+          ],
+          "surface": null,
+          "under_face_cap": true,
+          "ply_sha256": "d8b420a1307dfa279192bc2ba5a5b1589ce8c1f7fc273a44d4efd812a9fc8984"
+        },
+        {
+          "upstream_cut": 2,
+          "target_faces": 1454,
+          "requested_ratio": "0.249828",
+          "faces": 2849,
+          "vertices": 1417,
+          "topology_error": "Nonmanifold or inconsistently oriented edge",
+          "source_directed_boundary_preserved": false,
+          "image": {
+            "mse": 0.001936026812770996,
+            "ssim": 0.9589525703172361,
+            "flip": 0.024313395144417882,
+            "silhouette_xor_fraction": 0.0033399793836805555,
+            "coverage_mae": 0.003312004937065972,
+            "psnr_db": 27.130886322766685,
+            "silhouette_xor_mse_share": 0.18969868297848066
+          },
+          "per_view": [
+            {
+              "mse": 0.0006114702144474348,
+              "psnr_db": 32.13624693192164,
+              "ssim": 0.9832718110693385,
+              "flip": 0.013984168879687786,
+              "silhouette_xor_fraction": 0.0017632378472222222,
+              "silhouette_xor_mse_share": 0.15797915597812442,
+              "coverage_mae": 0.0018853081597222222
+            },
+            {
+              "mse": 0.004703599577085736,
+              "psnr_db": 23.27569657353708,
+              "ssim": 0.9316524921844985,
+              "flip": 0.04127410054206848,
+              "silhouette_xor_fraction": 0.005995008680555556,
+              "silhouette_xor_mse_share": 0.21405169282030762,
+              "coverage_mae": 0.005839029947916667
+            },
+            {
+              "mse": 0.005388191624348541,
+              "psnr_db": 22.68556967530099,
+              "ssim": 0.9217352958223963,
+              "flip": 0.051711127161979675,
+              "silhouette_xor_fraction": 0.011094835069444444,
+              "silhouette_xor_mse_share": 0.3006553532516229,
+              "coverage_mae": 0.010654025607638888
+            },
+            {
+              "mse": 0.001737486533624888,
+              "psnr_db": 27.600785527206206,
+              "ssim": 0.9397961561053029,
+              "flip": 0.02736113965511322,
+              "silhouette_xor_fraction": 0.0017632378472222222,
+              "silhouette_xor_mse_share": 0.054294259858046916,
+              "coverage_mae": 0.0016886393229166667
+            },
+            {
+              "mse": 0.0012222466686157031,
+              "psnr_db": 29.128411377857788,
+              "ssim": 0.9666119743526759,
+              "flip": 0.018060773611068726,
+              "silhouette_xor_fraction": 0.0020345052083333335,
+              "silhouette_xor_mse_share": 0.08650482537352915,
+              "coverage_mae": 0.0019327799479166667
+            },
+            {
+              "mse": 0.0008346578606251869,
+              "psnr_db": 30.784915121725604,
+              "ssim": 0.9693431956821135,
+              "flip": 0.016956377774477005,
+              "silhouette_xor_fraction": 0.0009765625,
+              "silhouette_xor_mse_share": 0.06884092559614104,
+              "coverage_mae": 0.0013292100694444445
+            },
+            {
+              "mse": 0.00023862725407428764,
+              "psnr_db": 36.22279956230958,
+              "ssim": 0.983664305162865,
+              "flip": 0.008477152325212955,
+              "silhouette_xor_fraction": 0.0013834635416666667,
+              "silhouette_xor_mse_share": 0.4455996321736196,
+              "coverage_mae": 0.0015055338541666667
+            },
+            {
+              "mse": 0.0007519347693461915,
+              "psnr_db": 31.238198330011162,
+              "ssim": 0.9755453321586988,
+              "flip": 0.016682321205735207,
+              "silhouette_xor_fraction": 0.001708984375,
+              "silhouette_xor_mse_share": 0.18966361877645363,
+              "coverage_mae": 0.0016615125868055555
+            }
+          ],
+          "surface": null,
+          "under_face_cap": false,
+          "ply_sha256": "d8b420a1307dfa279192bc2ba5a5b1589ce8c1f7fc273a44d4efd812a9fc8984"
+        }
+      ],
+      "nodes": 99,
+      "hierarchy_levels": 6,
+      "reported_build_seconds": 12.68
+    },
+    {
+      "asset": 257594,
+      "status": "measured",
+      "command": [
+        "E:\\ManyMesh\\out\\cmake-vulkan\\tools\\mmgeo\\Release\\mmgeo.exe",
+        "out\\upstream-clusterlod\\validation\\257594\\source.obj",
+        "--out",
+        "out\\upstream-clusterlod\\manymesh-control\\257594",
+        "--mode",
+        "dag",
+        "--levels",
+        "8",
+        "--ratio",
+        "0.5",
+        "--target-ratio",
+        "0.499942",
+        "--target-ratio-cut",
+        "0.499942,0.249884",
+        "--quality-gate",
+        "1",
+        "--dump-format",
+        "ply",
+        "--visibility",
+        "0",
+        "--write-dag",
+        "0"
+      ],
+      "command_ms": 63868.10850002803,
+      "returncode": 0,
+      "cuts": [
+        {
+          "upstream_cut": 1,
+          "target_faces": 17222,
+          "requested_ratio": "0.499942",
+          "faces": 17032,
+          "vertices": 8468,
+          "topology_error": "Nonmanifold or inconsistently oriented edge",
+          "source_directed_boundary_preserved": false,
+          "image": {
+            "mse": 0.005107513966149504,
+            "ssim": 0.8732177702893809,
+            "flip": 0.05991476494818926,
+            "silhouette_xor_fraction": 0.002356635199652778,
+            "coverage_mae": 0.0024083455403645835,
+            "psnr_db": 22.917904371451733,
+            "silhouette_xor_mse_share": 0.08883279073112312
+          },
+          "per_view": [
+            {
+              "mse": 0.007699482570806101,
+              "psnr_db": 21.135384597878225,
+              "ssim": 0.813175146052041,
+              "flip": 0.08491596579551697,
+              "silhouette_xor_fraction": 0.005181206597222222,
+              "silhouette_xor_mse_share": 0.11029910239805533,
+              "coverage_mae": 0.005011664496527778
+            },
+            {
+              "mse": 0.006979628061055576,
+              "psnr_db": 21.561677199749795,
+              "ssim": 0.8428730278977964,
+              "flip": 0.07314340770244598,
+              "silhouette_xor_fraction": 0.0013834635416666667,
+              "silhouette_xor_mse_share": 0.04833259596797224,
+              "coverage_mae": 0.0015326605902777778
+            },
+            {
+              "mse": 0.004885289261742278,
+              "psnr_db": 23.11109716272894,
+              "ssim": 0.8961577397470992,
+              "flip": 0.05215775966644287,
+              "silhouette_xor_fraction": 0.0004069010416666667,
+              "silhouette_xor_mse_share": 0.011116920743435963,
+              "coverage_mae": 0.0005357530381944445
+            },
+            {
+              "mse": 0.003170122368800462,
+              "psnr_db": 24.989239734071425,
+              "ssim": 0.8824913580673779,
+              "flip": 0.0479467511177063,
+              "silhouette_xor_fraction": 0.0015462239583333333,
+              "silhouette_xor_mse_share": 0.01864879809849715,
+              "coverage_mae": 0.001797146267361111
+            },
+            {
+              "mse": 0.0031070248088342087,
+              "psnr_db": 25.076552789958193,
+              "ssim": 0.9204365329698746,
+              "flip": 0.03578154742717743,
+              "silhouette_xor_fraction": 0.007080078125,
+              "silhouette_xor_mse_share": 0.44681121599529094,
+              "coverage_mae": 0.007080078125
+            },
+            {
+              "mse": 0.003372858896418044,
+              "psnr_db": 24.720018271442818,
+              "ssim": 0.9157246964919304,
+              "flip": 0.046600133180618286,
+              "silhouette_xor_fraction": 0.0016004774305555555,
+              "silhouette_xor_mse_share": 0.03711432677082475,
+              "coverage_mae": 0.001220703125
+            },
+            {
+              "mse": 0.0055370989456512455,
+              "psnr_db": 22.567177157572736,
+              "ssim": 0.8870419718371236,
+              "flip": 0.06140155345201492,
+              "silhouette_xor_fraction": 0.00029839409722222225,
+              "silhouette_xor_mse_share": 0.003524781889805662,
+              "coverage_mae": 0.0005357530381944445
+            },
+            {
+              "mse": 0.006108606815888119,
+              "psnr_db": 22.140578275911047,
+              "ssim": 0.8278416892518029,
+              "flip": 0.07737100124359131,
+              "silhouette_xor_fraction": 0.0013563368055555555,
+              "silhouette_xor_mse_share": 0.03481458398510288,
+              "coverage_mae": 0.001553005642361111
+            }
+          ],
+          "surface": null,
+          "under_face_cap": true,
+          "ply_sha256": "cbd010029b33c9bbdd49ec7ef7aeb044423e4bfd406f07cc030beee47d0d7ea1"
+        },
+        {
+          "upstream_cut": 2,
+          "target_faces": 8608,
+          "requested_ratio": "0.249884",
+          "faces": 11332,
+          "vertices": 5618,
+          "topology_error": "Nonmanifold or inconsistently oriented edge",
+          "source_directed_boundary_preserved": false,
+          "image": {
+            "mse": 0.0067482303793913396,
+            "ssim": 0.8520045786906456,
+            "flip": 0.07216917490586638,
+            "silhouette_xor_fraction": 0.003940158420138889,
+            "coverage_mae": 0.004063076443142361,
+            "psnr_db": 21.70810099350469,
+            "silhouette_xor_mse_share": 0.09315908299206815
+          },
+          "per_view": [
+            {
+              "mse": 0.00865539454309774,
+              "psnr_db": 20.62713130678842,
+              "ssim": 0.7959448797555692,
+              "flip": 0.09240705519914627,
+              "silhouette_xor_fraction": 0.007134331597222222,
+              "silhouette_xor_mse_share": 0.13665079871312885,
+              "coverage_mae": 0.006985134548611111
+            },
+            {
+              "mse": 0.008021210458584303,
+              "psnr_db": 20.957600885966198,
+              "ssim": 0.8249370112203879,
+              "flip": 0.08207255601882935,
+              "silhouette_xor_fraction": 0.00244140625,
+              "silhouette_xor_mse_share": 0.06350722943850827,
+              "coverage_mae": 0.00250244140625
+            },
+            {
+              "mse": 0.006538741943536673,
+              "psnr_db": 21.845058020636813,
+              "ssim": 0.8840018522426699,
+              "flip": 0.06096717342734337,
+              "silhouette_xor_fraction": 0.001220703125,
+              "silhouette_xor_mse_share": 0.06120347344355566,
+              "coverage_mae": 0.0014580620659722222
+            },
+            {
+              "mse": 0.004683080876345636,
+              "psnr_db": 23.29468341930214,
+              "ssim": 0.8483956053579477,
+              "flip": 0.0648011863231659,
+              "silhouette_xor_fraction": 0.003933376736111111,
+              "silhouette_xor_mse_share": 0.0418196523040334,
+              "coverage_mae": 0.004347059461805556
+            },
+            {
+              "mse": 0.005111995770189883,
+              "psnr_db": 22.914095141970652,
+              "ssim": 0.8871416767420358,
+              "flip": 0.05263804644346237,
+              "silhouette_xor_fraction": 0.009792751736111112,
+              "silhouette_xor_mse_share": 0.338069986210888,
+              "coverage_mae": 0.009718153211805556
+            },
+            {
+              "mse": 0.006100818595412022,
+              "psnr_db": 22.146118883304815,
+              "ssim": 0.8908374690261965,
+              "flip": 0.06363463401794434,
+              "silhouette_xor_fraction": 0.003173828125,
+              "silhouette_xor_mse_share": 0.036858595638997384,
+              "coverage_mae": 0.0029703776041666665
+            },
+            {
+              "mse": 0.0076141279462493055,
+              "psnr_db": 21.18379829664653,
+              "ssim": 0.8756174813662027,
+              "flip": 0.07314100116491318,
+              "silhouette_xor_fraction": 0.000732421875,
+              "silhouette_xor_mse_share": 0.007555411593208428,
+              "coverage_mae": 0.001010470920138889
+            },
+            {
+              "mse": 0.007260472901715153,
+              "psnr_db": 21.390350911571115,
+              "ssim": 0.8091606538141559,
+              "flip": 0.08769174665212631,
+              "silhouette_xor_fraction": 0.0030924479166666665,
+              "silhouette_xor_mse_share": 0.059607516594225245,
+              "coverage_mae": 0.003512912326388889
+            }
+          ],
+          "surface": null,
+          "under_face_cap": false,
+          "ply_sha256": "d453f7c45f5ed31f4511c1834defcb1515c11a6ec9b0e0bff9c1b9f47b1feb6a"
+        }
+      ],
+      "nodes": 877,
+      "hierarchy_levels": 12,
+      "reported_build_seconds": 63.57
+    },
+    {
+      "asset": 94990,
+      "status": "measured",
+      "command": [
+        "E:\\ManyMesh\\out\\cmake-vulkan\\tools\\mmgeo\\Release\\mmgeo.exe",
+        "out\\upstream-clusterlod\\validation\\94990\\source.obj",
+        "--out",
+        "out\\upstream-clusterlod\\manymesh-control\\94990",
+        "--mode",
+        "dag",
+        "--levels",
+        "8",
+        "--ratio",
+        "0.5",
+        "--target-ratio",
+        "0.499926",
+        "--target-ratio-cut",
+        "0.499926,0.249779",
+        "--quality-gate",
+        "1",
+        "--dump-format",
+        "ply",
+        "--visibility",
+        "0",
+        "--write-dag",
+        "0"
+      ],
+      "command_ms": 14979.374999995343,
+      "returncode": 0,
+      "cuts": [
+        {
+          "upstream_cut": 1,
+          "target_faces": 13598,
+          "requested_ratio": "0.499926",
+          "faces": 13415,
+          "vertices": 6676,
+          "topology_error": "Nonmanifold or inconsistently oriented edge",
+          "source_directed_boundary_preserved": false,
+          "image": {
+            "mse": 0.006754181052910339,
+            "ssim": 0.8974018094738614,
+            "flip": 0.05515828519128263,
+            "silhouette_xor_fraction": 0.012725830078125,
+            "coverage_mae": 0.012747022840711806,
+            "psnr_db": 21.704273018252742,
+            "silhouette_xor_mse_share": 0.42530375104258056
+          },
+          "per_view": [
+            {
+              "mse": 0.0065263869198278444,
+              "psnr_db": 21.853271824382766,
+              "ssim": 0.8748215680014085,
+              "flip": 0.06947317719459534,
+              "silhouette_xor_fraction": 0.001925998263888889,
+              "silhouette_xor_mse_share": 0.019782627288360045,
+              "coverage_mae": 0.0020616319444444445
+            },
+            {
+              "mse": 0.005081489090734332,
+              "psnr_db": 22.940090024554603,
+              "ssim": 0.8754630268617781,
+              "flip": 0.06446099281311035,
+              "silhouette_xor_fraction": 0.005967881944444444,
+              "silhouette_xor_mse_share": 0.19988532720168822,
+              "coverage_mae": 0.005940755208333333
+            },
+            {
+              "mse": 0.013414674327315348,
+              "psnr_db": 18.72419866381286,
+              "ssim": 0.8835377851009388,
+              "flip": 0.06895972788333893,
+              "silhouette_xor_fraction": 0.027560763888888888,
+              "silhouette_xor_mse_share": 0.763499232446603,
+              "coverage_mae": 0.027377658420138888
+            },
+            {
+              "mse": 0.004361132303547781,
+              "psnr_db": 23.604007379472645,
+              "ssim": 0.9260853796449711,
+              "flip": 0.03775094449520111,
+              "silhouette_xor_fraction": 0.010443793402777778,
+              "silhouette_xor_mse_share": 0.5813101026498015,
+              "coverage_mae": 0.01025390625
+            },
+            {
+              "mse": 0.0013211210665502585,
+              "psnr_db": 28.790573821390552,
+              "ssim": 0.9541863698452465,
+              "flip": 0.019019445404410362,
+              "silhouette_xor_fraction": 0.0018717447916666667,
+              "silhouette_xor_mse_share": 0.0829812731007457,
+              "coverage_mae": 0.0019327799479166667
+            },
+            {
+              "mse": 0.006506317098258148,
+              "psnr_db": 21.8666477433609,
+              "ssim": 0.9178223250205385,
+              "flip": 0.048884108662605286,
+              "silhouette_xor_fraction": 0.01416015625,
+              "silhouette_xor_mse_share": 0.6062968780866947,
+              "coverage_mae": 0.014472113715277778
+            },
+            {
+              "mse": 0.008250912275994275,
+              "psnr_db": 20.83498030295358,
+              "ssim": 0.8915183975951934,
+              "flip": 0.05697543919086456,
+              "silhouette_xor_fraction": 0.028944227430555556,
+              "silhouette_xor_mse_share": 0.7564501360342317,
+              "coverage_mae": 0.028876410590277776
+            },
+            {
+              "mse": 0.008571415341054723,
+              "psnr_db": 20.669474599836054,
+              "ssim": 0.8557796237208158,
+              "flip": 0.0757424458861351,
+              "silhouette_xor_fraction": 0.010932074652777778,
+              "silhouette_xor_mse_share": 0.39222443153251996,
+              "coverage_mae": 0.011060926649305556
+            }
+          ],
+          "surface": null,
+          "under_face_cap": true,
+          "ply_sha256": "c009492dba45f9916faba2e33f6f9e38fdc00a744510ad7cace5ebe941fef114"
+        },
+        {
+          "upstream_cut": 2,
+          "target_faces": 6794,
+          "requested_ratio": "0.249779",
+          "faces": 10031,
+          "vertices": 4984,
+          "topology_error": "Nonmanifold or inconsistently oriented edge",
+          "source_directed_boundary_preserved": false,
+          "image": {
+            "mse": 0.006960340805669694,
+            "ssim": 0.8929771442387301,
+            "flip": 0.05718572367914021,
+            "silhouette_xor_fraction": 0.013085259331597222,
+            "coverage_mae": 0.013089497884114582,
+            "psnr_db": 21.573694951023526,
+            "silhouette_xor_mse_share": 0.42570996051679244
+          },
+          "per_view": [
+            {
+              "mse": 0.006751260783112264,
+              "psnr_db": 21.706151160551435,
+              "ssim": 0.8701457122013033,
+              "flip": 0.07197485864162445,
+              "silhouette_xor_fraction": 0.0023057725694444445,
+              "silhouette_xor_mse_share": 0.02506357934028753,
+              "coverage_mae": 0.002414279513888889
+            },
+            {
+              "mse": 0.005412117801913794,
+              "psnr_db": 22.66632758976794,
+              "ssim": 0.8733844346759588,
+              "flip": 0.0668037012219429,
+              "silhouette_xor_fraction": 0.00634765625,
+              "silhouette_xor_mse_share": 0.2070614635241274,
+              "coverage_mae": 0.006381564670138889
+            },
+            {
+              "mse": 0.013700906969541628,
+              "psnr_db": 18.632506825640668,
+              "ssim": 0.8810155625104251,
+              "flip": 0.07079983502626419,
+              "silhouette_xor_fraction": 0.027940538194444444,
+              "silhouette_xor_mse_share": 0.7588392394758546,
+              "coverage_mae": 0.0277099609375
+            },
+            {
+              "mse": 0.004421290873034943,
+              "psnr_db": 23.544509122828785,
+              "ssim": 0.9198342407546048,
+              "flip": 0.03904996067285538,
+              "silhouette_xor_fraction": 0.010959201388888888,
+              "silhouette_xor_mse_share": 0.5832613949828248,
+              "coverage_mae": 0.010708279079861112
+            },
+            {
+              "mse": 0.0016067196043722503,
+              "psnr_db": 27.940599072434647,
+              "ssim": 0.9466060879718402,
+              "flip": 0.02136811800301075,
+              "silhouette_xor_fraction": 0.002251519097222222,
+              "silhouette_xor_mse_share": 0.09199992314558875,
+              "coverage_mae": 0.00225830078125
+            },
+            {
+              "mse": 0.006684129985395575,
+              "psnr_db": 21.749551130289284,
+              "ssim": 0.9135782843448887,
+              "flip": 0.05100143328309059,
+              "silhouette_xor_fraction": 0.014350043402777778,
+              "silhouette_xor_mse_share": 0.5943313753459609,
+              "coverage_mae": 0.014682345920138888
+            },
+            {
+              "mse": 0.008253003986180528,
+              "psnr_db": 20.83387945127442,
+              "ssim": 0.8893477588806152,
+              "flip": 0.05788513645529747,
+              "silhouette_xor_fraction": 0.029188368055555556,
+              "silhouette_xor_mse_share": 0.7503616213495906,
+              "coverage_mae": 0.029086642795138888
+            },
+            {
+              "mse": 0.00885329644180657,
+              "psnr_db": 20.528949937171937,
+              "ssim": 0.8499050725702043,
+              "flip": 0.07860274612903595,
+              "silhouette_xor_fraction": 0.011338975694444444,
+              "silhouette_xor_mse_share": 0.39476108697010476,
+              "coverage_mae": 0.011474609375
+            }
+          ],
+          "surface": null,
+          "under_face_cap": false,
+          "ply_sha256": "fdfd9083a55492dfc234facef13663707a23dc9ed973c15940878f356d6b01ba"
+        }
+      ],
+      "nodes": 643,
+      "hierarchy_levels": 8,
+      "reported_build_seconds": 14.74
+    }
+  ]
+}

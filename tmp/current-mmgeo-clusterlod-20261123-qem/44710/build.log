@@ -1,0 +1,56 @@
+ManyMesh geometry optimization layer
+  input: E:\ManyMesh\out\upstream-clusterlod\validation\44710\source.obj
+  loaded: 1588 vertices, 3172 triangles (0.01s)
+  bounds: (-728832.94, -904236.00, -260111.30) .. (728832.94, 904236.00, 260111.30)   extent (1457665.88, 1808472.00, 520222.59)
+  DAG built: 84 nodes, 7 levels (1.27s)
+  vertices: 1588 source + 6 generated = 1594 total
+  generated AO: 1.000 .. 1.000 (1.000 mean) [no source AO field; all vertices unoccluded]
+  build phases: clusterize 0.002s, leaf setup 0.001s, cluster chains 0.106s, groups 1.143s (simplify 1.143s)
+  simplify calls: cluster 25 accepted 53 attempts 71; group 10 accepted 6 attempts 30; seam-locked vertex uses 1027
+  cluster simplify profile: attribute-qem 0.435s, corner 0.664s, meshopt 0.006s, gate 0.105s, boundary 0.039s, lock-mask 0.002s (build 0.003s) | calls 77 attempts 123, attribute candidates 123, corner candidates 123, meshopt candidates 123, accepted 77, rejected: topology 0 geometry 0 attributes 0 boundary 0 locked 0 none 0
+  cluster gate detail: cleanup 0.003s, sliver 0.028s, topology 0.009s, welded-topology 0.007s, error 0.058s
+  cluster extended-mesh: 0.000s, copies 20
+  cluster corner detail: setup 0.253s, evaluate 0.583s (102987 evals, 5.66 us/eval), topology 0.097s, target 0.354s (274331 placements), apply 0.010s (2981 applied)
+  cluster corner topology: neighbor 0.038s, triangles 0.050s, local-triangles 0.000s, local-edges 0.042s
+  group simplify profile: attribute-qem 0.391s, corner 0.553s, meshopt 0.004s, gate 0.137s, boundary 0.016s, lock-mask 0.000s (build 0.000s) | calls 10 attempts 30, attribute candidates 30, corner candidates 30, meshopt candidates 30, accepted 6, rejected: topology 62 geometry 18 attributes 0 boundary 0 locked 4 none 0
+  group gate detail: cleanup 0.003s, sliver 0.070s, topology 0.006s, welded-topology 0.004s, error 0.055s
+  group extended-mesh: 0.000s, copies 10
+  group corner detail: setup 0.240s, evaluate 0.516s (99452 evals, 5.19 us/eval), topology 0.168s, target 0.232s (309837 placements), apply 0.006s (2668 applied)
+  group corner topology: neighbor 0.033s, triangles 0.049s, local-triangles 0.037s, local-edges 0.053s
+  cut vertices: 791 of 1588 source + 1 of 6 generated = 792 total (49.7% of the 1594-vertex global buffer, 0 KiB generated tail)
+
+  DAG: 84 nodes, 7 levels, 4 roots, 25 leaves, 3172 base triangles
+  camera: eye(0.000, 0.000, 2552280.750) fovY(45.0 deg) screen(1920 x 1080) budget inf px
+  level           nodes      triangles
+  0                   3            384
+  1                   2            132
+  2                   7            536
+  3                   5            268
+  4                   0              0
+  5                   1            266
+  6                   0              0
+  drawn: 1586 of 3172 visible triangles (50.00%) in 18 nodes
+  frustum culled: 0 of 3172 triangles (0.00%)
+  worst selected screen error: 17.5481 px
+  base topology: boundary 0, non-manifold 0, duplicates 0, degenerate 0, flipped 0, min quality 0.0006
+  selected topology: boundary 0, non-manifold 2, duplicates 0, degenerate 0, flipped 0, min quality 0.0057
+  bad edge (795,1589) use=4 nodes=42 41 
+    node 42 tri 1589 1295 795
+    node 42 tri 795 790 1589
+    node 41 tri 795 1589 797
+    node 41 tri 1296 1589 795
+    base use=0 leaves=
+  bad edge (1284,1589) use=4 nodes=42 41 
+    node 42 tri 1284 1285 1589
+    node 42 tri 1284 1589 132
+    node 41 tri 1284 141 1589
+    node 41 tri 1284 1589 1286
+    base use=0 leaves=
+  budget reached: 1586 <= 1586 triangles (50.00% <= 50.00%)
+  wrote tmp\current-mmgeo-clusterlod-20261123-qem\44710/selected.ply
+  uniform cut 0.5: 1586 triangles (50.0000%), wrote tmp\current-mmgeo-clusterlod-20261123-qem\44710/selected_ratio_0.5.ply
+  uniform cut 0.2497: 965 triangles (30.4224%), wrote tmp\current-mmgeo-clusterlod-20261123-qem\44710/selected_ratio_0.249685.ply
+  wrote tmp\current-mmgeo-clusterlod-20261123-qem\44710/lod_graph.json
+  streaming: memory-backed, 2 pages, queue prepared, resident 2 pages / 122792 bytes, hits 0 misses 2 evictions 0
+
+  total time: 1.28s

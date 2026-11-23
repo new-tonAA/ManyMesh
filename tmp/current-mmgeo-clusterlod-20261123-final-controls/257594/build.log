@@ -1,0 +1,115 @@
+ManyMesh geometry optimization layer
+  input: E:\ManyMesh\out\upstream-clusterlod\validation\257594\source.obj
+  loaded: 17226 vertices, 34448 triangles (0.06s)
+  bounds: (-819697.31, -670730.81, -414316.25) .. (819697.31, 670730.81, 414316.25)   extent (1639394.62, 1341461.62, 828632.50)
+  DAG built: 877 nodes, 12 levels (29.43s)
+  vertices: 17226 source + 179 generated = 17405 total
+  generated AO: 1.000 .. 1.000 (1.000 mean) [no source AO field; all vertices unoccluded]
+  build phases: clusterize 0.031s, leaf setup 0.012s, cluster chains 0.551s, groups 28.762s (simplify 28.749s)
+  simplify calls: cluster 270 accepted 509 attempts 509; group 195 accepted 98 attempts 529; seam-locked vertex uses 46044
+  cluster simplify profile: attribute-qem 3.378s, corner 5.719s, meshopt 0.050s, gate 0.732s, boundary 0.277s, lock-mask 0.019s (build 0.031s) | calls 778 attempts 783, attribute candidates 779, corner candidates 779, meshopt candidates 783, accepted 777, rejected: topology 0 geometry 0 attributes 0 boundary 0 locked 0 none 0
+  cluster gate detail: cleanup 0.026s, sliver 0.162s, topology 0.056s, welded-topology 0.039s, error 0.449s
+  cluster extended-mesh: 0.001s, copies 20
+  cluster corner detail: setup 2.292s, evaluate 5.282s (665338 evals, 7.94 us/eval), topology 0.756s, target 3.426s (1739101 placements), apply 0.074s (19637 applied)
+  cluster corner topology: neighbor 0.312s, triangles 0.405s, local-triangles 0.000s, local-edges 0.319s
+  group simplify profile: attribute-qem 19.266s, corner 16.650s, meshopt 0.145s, gate 18.897s, boundary 0.721s, lock-mask 0.008s (build 0.000s) | calls 195 attempts 529, attribute candidates 498, corner candidates 499, meshopt candidates 529, accepted 98, rejected: topology 1173 geometry 94 attributes 0 boundary 0 locked 130 none 0
+  group gate detail: cleanup 0.138s, sliver 15.029s, topology 0.226s, welded-topology 0.175s, error 3.328s
+  group extended-mesh: 0.013s, copies 136
+  group corner detail: setup 10.188s, evaluate 15.539s (2082472 evals, 7.46 us/eval), topology 9.813s, target 3.439s (2686368 placements), apply 0.120s (35007 applied)
+  group corner topology: neighbor 0.734s, triangles 1.388s, local-triangles 4.638s, local-edges 0.984s
+  cut vertices: 8363 of 17226 source + 105 of 179 generated = 8468 total (48.7% of the 17405-vertex global buffer, 3 KiB generated tail)
+
+  DAG: 877 nodes, 12 levels, 54 roots, 270 leaves, 34448 base triangles
+  camera: eye(0.000, 0.000, 2114568.000) fovY(45.0 deg) screen(1920 x 1080) budget inf px
+  level           nodes      triangles
+  0                   4            400
+  1                  41           3668
+  2                 138           8296
+  3                  21           1046
+  4                   1             24
+  5                  15           2181
+  6                   3            595
+  7                   1            256
+  8                   1            300
+  9                   1            105
+  10                  1            161
+  11                  0              0
+  drawn: 17032 of 34448 visible triangles (49.44%) in 227 nodes
+  frustum culled: 0 of 34448 triangles (0.00%)
+  worst selected screen error: 7.7744 px
+  base topology: boundary 0, non-manifold 0, duplicates 0, degenerate 0, flipped 0, min quality 0.0006
+  selected topology: boundary 188, non-manifold 320, duplicates 0, degenerate 0, flipped 0, min quality 0.0004
+  bad edge (62,17229) use=4 nodes=813 468 
+    node 813 tri 2499 62 17229
+    node 813 tri 60 17229 62
+    node 468 tri 62 2498 17229
+    node 468 tri 17229 5108 62
+    base use=0 leaves=
+  bad edge (66,7091) use=1 nodes=615 592 
+    node 615 tri 17229 7091 66
+    node 592 tri 7091 17229 66
+    base use=2 leaves=166(use=1) 179(use=1) 
+  bad edge (66,17229) use=3 nodes=615 592 
+    node 615 tri 17229 7091 66
+    node 615 tri 66 67 17229
+    node 592 tri 7000 66 17229
+    node 592 tri 7091 17229 66
+    base use=0 leaves=
+  bad edge (85,17229) use=4 nodes=830 684 
+    node 830 tri 85 84 17229
+    node 830 tri 12529 85 17229
+    node 684 tri 85 9562 17229
+    node 684 tri 85 17229 86
+    base use=0 leaves=
+  bad edge (86,9019) use=1 nodes=830 684 
+    node 830 tri 86 9019 17229
+    node 684 tri 86 17229 9019
+    base use=2 leaves=211(use=1) 212(use=1) 
+  bad edge (86,17229) use=3 nodes=830 684 
+    node 830 tri 86 9019 17229
+    node 830 tri 86 17229 8100
+    node 684 tri 85 17229 86
+    node 684 tri 86 17229 9019
+    base use=0 leaves=
+  bad edge (111,17229) use=4 nodes=516 840 
+    node 516 tri 3928 17229 111
+    node 516 tri 110 111 17229
+    node 840 tri 111 17229 3929
+    node 840 tri 111 13875 17229
+    base use=0 leaves=
+  bad edge (132,17229) use=4 nodes=468 466 
+    node 468 tri 132 9657 17229
+    node 468 tri 2498 132 17229
+    node 466 tri 132 17229 13480
+    node 466 tri 17229 132 133
+    base use=0 leaves=
+  bad edge (133,7588) use=1 nodes=813 466 
+    node 813 tri 7588 133 17229
+    node 466 tri 7588 17229 133
+    base use=2 leaves=104(use=1) 181(use=1) 
+  bad edge (133,17229) use=3 nodes=813 466 
+    node 813 tri 7588 133 17229
+    node 813 tri 17229 133 2499
+    node 466 tri 7588 17229 133
+    node 466 tri 17229 132 133
+    base use=0 leaves=
+  bad edge (134,17229) use=4 nodes=557 555 
+    node 557 tri 134 17229 14791
+    node 557 tri 10854 17229 134
+    node 555 tri 134 14440 17229
+    node 555 tri 134 17229 136
+    base use=0 leaves=
+  bad edge (172,17229) use=4 nodes=281 279 
+    node 281 tri 172 8129 17229
+    node 281 tri 172 17229 2112
+    node 279 tri 2111 17229 172
+    node 279 tri 17229 171 172
+    base use=0 leaves=
+  budget reached: 17032 <= 17223 triangles (49.44% <= 50.00%)
+  wrote tmp\current-mmgeo-clusterlod-20261123-final-controls\257594/selected.ply
+  uniform cut 0.4999: 17032 triangles (49.4426%), wrote tmp\current-mmgeo-clusterlod-20261123-final-controls\257594/selected_ratio_0.499942.ply
+  uniform cut 0.2499: 11332 triangles (32.8960%), wrote tmp\current-mmgeo-clusterlod-20261123-final-controls\257594/selected_ratio_0.249884.ply
+  wrote tmp\current-mmgeo-clusterlod-20261123-final-controls\257594/lod_graph.json
+  streaming: memory-backed, 22 pages, queue prepared, resident 17 pages / 1053344 bytes, hits 0 misses 17 evictions 0
+
+  total time: 29.52s

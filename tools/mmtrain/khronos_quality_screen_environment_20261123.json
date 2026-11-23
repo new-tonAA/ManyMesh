@@ -1,0 +1,15 @@
+{
+  "schema": "manymesh-khronos-quality-screen-environment-v1",
+  "python": "3.12.3",
+  "node": "v22.16.0",
+  "packages": {
+    "numpy": "2.3.4",
+    "fast-simplification": "0.2.0",
+    "flip-evaluator": "1.7",
+    "scikit-image": "0.25.2",
+    "scipy": "1.15.3",
+    "Pillow": "12.1.1",
+    "trimesh": "4.5.3"
+  },
+  "note": "Versions queried from the isolated scoring environment after the screen. The environment is not a lockfile and package artifact hashes are not recorded."
+}

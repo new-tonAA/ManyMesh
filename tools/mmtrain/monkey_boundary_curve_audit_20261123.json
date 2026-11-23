@@ -1,0 +1,107 @@
+{
+  "source_path": "assets\\models\\monkey\\monkey.obj",
+  "source_sha256": "7b754119aa286ff618b9ac30038c8aa9a093e2820242913728c8b20d8000ca88",
+  "script_sha256": "1cdbe8d0bd848ed2baa18c4eabc413ed8e4efc0048e7ab3bf0676d8b110c1e44",
+  "sampling": {
+    "method": "uniform samples on every boundary segment, maximum spacing relative to source AABB diagonal",
+    "step_relative": 0.0001,
+    "normalized_step": 0.0002508764868723685,
+    "source_aabb_diagonal": 3.651303226622106
+  },
+  "source_boundary_edges": 168,
+  "cuts": [
+    {
+      "reference_edge_count": 168,
+      "candidate_edge_count": 168,
+      "reference_unique_boundary_vertices": 168,
+      "candidate_unique_boundary_vertices": 168,
+      "exact_shared_boundary_vertices": 78,
+      "nearest_vertex_map_is_one_to_one": true,
+      "max_nearest_boundary_vertex_distance": 6.188917057900187e-08,
+      "approximate_directed_edge_matches": 168,
+      "approximate_reversed_edge_matches": 0,
+      "reference_total_length": 3.6130075312533085,
+      "candidate_total_length": 3.6130075193289195,
+      "relative_length_error": 3.3004052520231877e-09,
+      "reference_to_candidate": {
+        "mean": 1.1370924109045293e-08,
+        "p95": 3.0387634701387395e-08,
+        "max_sampled": 6.076097893952889e-08
+      },
+      "candidate_to_reference": {
+        "mean": 1.1368802207102969e-08,
+        "p95": 3.0387634759161355e-08,
+        "max_sampled": 5.980302833578245e-08
+      },
+      "symmetric_hausdorff_sampled": 6.076097893952889e-08,
+      "sample_spacing": 0.0002508764868723685,
+      "requested_ratio": 0.3,
+      "cut_path": "out\\monkey-source-reference-screen-20261123\\selected_ratio_0.3.ply",
+      "cut_sha256": "576df7bdcae1e138934a492df112de54e96c2ff5070ba8ff499eb18545acf089",
+      "cut_faces": 4724,
+      "exact_directed_edge_set_preserved": false
+    },
+    {
+      "reference_edge_count": 168,
+      "candidate_edge_count": 168,
+      "reference_unique_boundary_vertices": 168,
+      "candidate_unique_boundary_vertices": 168,
+      "exact_shared_boundary_vertices": 78,
+      "nearest_vertex_map_is_one_to_one": true,
+      "max_nearest_boundary_vertex_distance": 6.188917057900187e-08,
+      "approximate_directed_edge_matches": 168,
+      "approximate_reversed_edge_matches": 0,
+      "reference_total_length": 3.6130075312533085,
+      "candidate_total_length": 3.6130075193289195,
+      "relative_length_error": 3.3004052520231877e-09,
+      "reference_to_candidate": {
+        "mean": 1.1370924109045293e-08,
+        "p95": 3.0387634701387395e-08,
+        "max_sampled": 6.076097893952889e-08
+      },
+      "candidate_to_reference": {
+        "mean": 1.1368802207102969e-08,
+        "p95": 3.0387634759161355e-08,
+        "max_sampled": 5.980302833578245e-08
+      },
+      "symmetric_hausdorff_sampled": 6.076097893952889e-08,
+      "sample_spacing": 0.0002508764868723685,
+      "requested_ratio": 0.5,
+      "cut_path": "out\\monkey-source-reference-screen-20261123\\selected_ratio_0.5.ply",
+      "cut_sha256": "55b7fef248058cddd7d757d5b5daf623e8b043677cd282896a4b6b911e8ea958",
+      "cut_faces": 7870,
+      "exact_directed_edge_set_preserved": false
+    },
+    {
+      "reference_edge_count": 168,
+      "candidate_edge_count": 168,
+      "reference_unique_boundary_vertices": 168,
+      "candidate_unique_boundary_vertices": 168,
+      "exact_shared_boundary_vertices": 78,
+      "nearest_vertex_map_is_one_to_one": true,
+      "max_nearest_boundary_vertex_distance": 6.188917057900187e-08,
+      "approximate_directed_edge_matches": 168,
+      "approximate_reversed_edge_matches": 0,
+      "reference_total_length": 3.6130075312533085,
+      "candidate_total_length": 3.6130075193289195,
+      "relative_length_error": 3.3004052520231877e-09,
+      "reference_to_candidate": {
+        "mean": 1.1370924109045293e-08,
+        "p95": 3.0387634701387395e-08,
+        "max_sampled": 6.076097893952889e-08
+      },
+      "candidate_to_reference": {
+        "mean": 1.1368802207102969e-08,
+        "p95": 3.0387634759161355e-08,
+        "max_sampled": 5.980302833578245e-08
+      },
+      "symmetric_hausdorff_sampled": 6.076097893952889e-08,
+      "sample_spacing": 0.0002508764868723685,
+      "requested_ratio": 0.7,
+      "cut_path": "out\\monkey-source-reference-screen-20261123\\selected_ratio_0.7.ply",
+      "cut_sha256": "eecdbb4cc765d96605c7e22cba7d3452739a4530d357a6e09bce28dac07cbcad",
+      "cut_faces": 11020,
+      "exact_directed_edge_set_preserved": false
+    }
+  ]
+}

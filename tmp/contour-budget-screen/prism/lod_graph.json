@@ -1,0 +1,31 @@
+{
+  "source": "E:\\ManyMesh\\assets\\models\\prism\\prism.obj",
+  "vertices": 18,
+  "generatedVertices": 0,
+  "sourceVertices": 18,
+  "triangles": 8,
+  "nodes": 5,
+  "levels": 1,
+  "clustersPerNode": 8,
+  "ratio": 0.7,
+  "attributeQem": true,
+  "cornerSeam": true,
+  "cornerSplitUv": true,
+  "tier": "balanced",
+  "targetRatio": 0.5,
+  "selectedTriangles": 8,
+  "baseTriangles": 8,
+  "culledTriangles": 0,
+  "visibleRatio": 1,
+  "maxScreenErrorPx": 0,
+  "roots": [0,1,2,3,4],
+  "leaves": [0,1,2,3,4],
+  "selectedNodes": [0,1,2,3,4],
+  "dag": [
+    {"id":0,"level":0,"parent":4294967295,"children":[],"tri":2,"baseTri":2,"selfError":0,"accumulatedError":0,"material":1,"submesh":0,"simplified":false,"bounds":{"center":[0,0.5,0.1625],"radius":0.725539},"boundaryEdges":4,"nonManifoldEdges":0,"duplicateTriangles":0,"degenerateTriangles":0,"minQuality":0.864935,"normalErrorDeg":0,"uvError":0},
+    {"id":1,"level":0,"parent":4294967295,"children":[],"tri":1,"baseTri":1,"selfError":0,"accumulatedError":0,"material":1,"submesh":0,"simplified":false,"bounds":{"center":[-0.5,0.438216,0.102261],"radius":0.612034},"boundaryEdges":3,"nonManifoldEdges":0,"duplicateTriangles":0,"degenerateTriangles":0,"minQuality":0.854928,"normalErrorDeg":0,"uvError":0},
+    {"id":2,"level":0,"parent":4294967295,"children":[],"tri":1,"baseTri":1,"selfError":0,"accumulatedError":0,"material":1,"submesh":0,"simplified":false,"bounds":{"center":[0.5,0.438216,-0.102261],"radius":0.612034},"boundaryEdges":3,"nonManifoldEdges":0,"duplicateTriangles":0,"degenerateTriangles":0,"minQuality":0.854928,"normalErrorDeg":0,"uvError":0},
+    {"id":3,"level":0,"parent":4294967295,"children":[],"tri":2,"baseTri":2,"selfError":0,"accumulatedError":0,"material":1,"submesh":0,"simplified":false,"bounds":{"center":[0,0,0],"radius":0.596343},"boundaryEdges":4,"nonManifoldEdges":0,"duplicateTriangles":0,"degenerateTriangles":0,"minQuality":0.791447,"normalErrorDeg":0,"uvError":0},
+    {"id":4,"level":0,"parent":4294967295,"children":[],"tri":2,"baseTri":2,"selfError":0,"accumulatedError":0,"material":1,"submesh":0,"simplified":false,"bounds":{"center":[0,0.5,-0.1625],"radius":0.725539},"boundaryEdges":4,"nonManifoldEdges":0,"duplicateTriangles":0,"degenerateTriangles":0,"minQuality":0.864935,"normalErrorDeg":0,"uvError":0}
+  ]
+}

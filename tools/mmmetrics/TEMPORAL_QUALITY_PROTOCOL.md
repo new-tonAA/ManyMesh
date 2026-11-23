@@ -1,0 +1,28 @@
+# Temporal quality protocol
+
+Updated 2026-11-22. A first CGVQM-5 screen has been measured on captured ManyMesh sequences, but it does **not** establish a temporal-quality gain. Existing 13-asset records also retain framewise PSNR and sparse SSIM/silhouette metrics.
+
+## Metric choice
+
+Use [CGVQM-5](https://doi.org/10.1111/cgf.70221) as the primary full-reference temporal quality metric. CGVQM was published for computer-graphics video and is calibrated on rendering artifacts, including neural supersampling, denoising, frame interpolation, and variable-rate shading. The authors provide the [metric implementation](https://github.com/IntelLabs/cgvqm). Their implementation also offers CGVQM-2 as a faster option, but documents it as having weaker correlation with human ratings; use it only as a secondary speed/diagnostic result. This is a published task-specific perceptual metric, not a universal or ISO-standard score. Record its version, model weights, configuration, and score direction with every result.
+
+Also report per-frame PSNR, SSIM, and LDR-FLIP so readers can compare spatial quality and inspect whether a video score hides a bad frame. Record the per-frame error curve, 95th-percentile frame error, LOD switch count, and switch-associated error. These are diagnostics, not substitutes for CGVQM or a user study. Use a small blinded A/B study before making a user-preference claim.
+
+## Capture protocol
+
+1. Freeze the licensed assets, source hashes, train/validation/confirmation split, camera paths, frame timestamps, resolution, frame rate, renderer, and color pipeline before generating comparisons.
+2. Render a full-detail reference and every candidate at identical timestamps and camera poses. Keep materials, lighting, exposure, tone mapping, antialiasing, and output encoding identical. Do not temporally denoise one sequence unless the same temporal pipeline is part of every compared method.
+3. Save lossless RGB sequences before video compression. Confirm matching frame count, timestamps, dimensions, channel order, and color range; then encode both inputs to CGVQM's supported video format with the same lossless or visually lossless settings.
+4. Evaluate CGVQM per asset and trajectory. Pair candidate-minus-baseline deltas on each asset, average trajectories within asset, then bootstrap over assets. Never treat frames or trajectories from one asset as independent asset samples.
+5. Report GPU and CPU time, memory, preprocessing, output bytes, topology failures, and temporal quality together. Match frame budgets and camera schedules; include area-based LOD with hysteresis, fixed discrete LOD, and the closest published baseline.
+6. Keep confirmation assets untouched until the method and metric configuration are frozen. Existing 13 Khronos assets and the 32-asset Thingi10K corpus have already informed development and cannot serve as fresh confirmation data.
+
+## Current evidence and limitation
+
+The original 13-asset dynamic LOD receipts contain per-frame metrics but no image sequences, so they cannot be rescored with a video metric. A separate harness run now captures moving-camera clips with an isolated flat-shaded renderer. The earlier custom adjacent-frame image-derivative diagnostic improved foreground MAE by 0.000942 (95% asset-bootstrap CI [0.000488, 0.001434] in the improvement direction) across four paths, while silhouette IoU regressed. That pixel measure is not motion-compensated or perceptually calibrated and does not establish temporal quality. See the [custom temporal diagnostic](../mmtrain/DYNAMIC_LOD_TEMPORAL_DIAGNOSTIC_20261122.md), [shared-profile screen](../mmtrain/DYNAMIC_LOD_LOAO_13ASSET_20261122.md), and [CGVQM screen](CGVQM_DYNAMIC_LOD_SCREEN_20261122.md).
+
+A subsequent CGVQM-5 screen compares the leave-one-asset-out color-SSE profile with area ranking on two paths across 13 reused Khronos assets. At 640x360 and 48 frames per clip, the path-averaged selected-profile minus area mean is -0.0590 (95% asset-bootstrap CI [-0.1476, +0.0424]); four assets improve and nine regress. The interval crosses zero. The experiment uses the same 16-instance isolated grayscale renderer and face budget for both policies. Scores are averaged over paths within each asset before the asset bootstrap. See the [full screen report](CGVQM_DYNAMIC_LOD_SCREEN_20261122.md), path 1 receipts under `out/geometry-refinement-pilot/cgvqm-dynamic-640-20261122/`, and path 2 receipts under `out/geometry-refinement-pilot/cgvqm-dynamic-path2-640-20261122/`.
+
+The official repository was subsequently fetched after bypassing the invalid `127.0.0.1:9` proxy. An [OpenCV/FFmpeg adapter](run_cgvqm.py) runs the upstream CGVQM model without PyAV, which has no ready wheel in this Python 3.12 Windows environment. On the upstream 1024x1024, 90-frame Dock example, CGVQM-5 returned 64.9953/100 using the upstream calibration and R3D-18 weights, CPU inference, mean patch pooling, and patch scale 4. At four CPU threads it took 416.8 s. The raw receipt is `out/geometry-refinement-pilot/cgvqm-dock-demo-5.json`; upstream source is pinned to `c4f1222c978e2c853609cf38d240920cfb92d15e`.
+
+The upstream calibration and R3D-18 weights are used, but OpenCV FFmpeg decodes RGB frames instead of the upstream PyAV path. Treat the metric screen as an adapter-based paired diagnostic, not a canonical reproduction or a comparison with the paper's human-rating data. The dynamic LOD harness exports lossless FFV1 with pixel-exact round-trip checks. The screen covers two camera paths on reused assets; fresh licensed assets, more paths/materials, and an A/B user study remain necessary before a broad perceptual or temporal-stability claim.

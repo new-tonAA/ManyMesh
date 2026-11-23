@@ -1,0 +1,34 @@
+{
+  "asset": "Khronos glTF Sample Assets Suzanne, 2017 UX3D, Norbert Nopper, CC0-1.0",
+  "source_revision": "f0920f5b32d172a30efe3f9257e965918831e6ea",
+  "source_sha256": {
+    "Suzanne.gltf": "7e8ae013010aff530162ef2795cec74c2646019e224af17bcfb691664f0f0aec",
+    "Suzanne.bin": "b85c2727aa41318e00673d8892f5879d46fb6e476e280f28ee1febd07602b6b8"
+  },
+  "upstream_meshoptimizer_revision": "9d9890c73011d75920af614485296d1e03e95448",
+  "demo_sha256": "828aaa9cf1a3862617d3ba980fc9b037bf4636085930bd0d7751aa8f66bac1b7",
+  "figure_sha256": "bf60c5712e396416d8cf4f657afa7468c6d8e6b5c02162fed4f068b8fa1fd74c",
+  "generator_sha256": "37bc49f8853bba391e0adeb821ffcb253d720e817d839507f5b7e6c8f34b3d05",
+  "source_faces": 3936,
+  "cut_faces": 982,
+  "cut_clusters": 8,
+  "camera": {
+    "projection": "orthographic",
+    "yaw_degrees": 20,
+    "pitch_degrees": 10
+  },
+  "resolution": [
+    384,
+    384
+  ],
+  "samples_per_pixel": 4,
+  "metrics": {
+    "mse": 0.0014021113215336512,
+    "psnr_db": 28.53217503909669,
+    "ssim": 0.9253513503890534,
+    "flip": 0.03953833132982254,
+    "silhouette_xor_fraction": 0.001864963107638889,
+    "silhouette_xor_mse_share": 0.15992322466522177,
+    "coverage_mae": 0.0019429524739583333
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "date": "2026-11-23",
+  "asset_path": "third_party/models/DamagedHelmet/DamagedHelmet.glb",
+  "asset_sha256": "a1e3b04de97b11de564ce6e53b95f02954a297f0008183ac63a4f5974f6b32d8",
+  "license_local_note": "The tracked README identifies the original as CC Attribution-NonCommercial without a version. Current Khronos Sample Assets metadata lists the earlier model as CC-BY-NC-4.0 and the rebuild/conversion as CC-BY-4.0; this is not a byte-specific provenance record for the local file.",
+  "upstream_license_sources": [
+    "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/main/Models/Models-core.md",
+    "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/main/REUSE.toml"
+  ],
+  "reuse_audit": "tools/mmtrain/asset_reuse_audits/damaged_helmet_20261123.json",
+  "reuse_matches": 0,
+  "reuse_scan_files": 469,
+  "extraction": {
+    "script": "tools/mmtrain/extract_static_gltf_geometry.py",
+    "script_sha256": "ac3ec8373f1f9fcc36f8949f47eb2137f20c950e7c92950c082487b863789c7b",
+    "receipt": "tools/mmtrain/asset_reuse_audits/damaged_helmet_geometry_extraction_20261123.json",
+    "output": "out/damaged-helmet-static.obj",
+    "output_sha256": "056132b7831a41dd51c1eff31b253dc1a837f20af37eb17a73fcb811426a712c",
+    "vertices_in_export": 14556,
+    "triangles": 15452,
+    "scope": "default scene, node world transform applied, one static triangle-list primitive; no skinning, animation, materials, or textures"
+  },
+  "mmgeo": {
+    "binary": "out/cmake-cut-audit/tools/mmgeo/Release/mmgeo.exe",
+    "binary_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+    "source_provenance": "tools/mmtrain/CURRENT_SOURCE_MMGeo_PROVENANCE_20261123.md",
+    "log": "tools/mmtrain/asset_reuse_audits/damaged_helmet_mmgeo_20261123.log",
+    "log_sha256": "7417a86ef20e6e84144e7fe227987f64a97acca10c5ac51b2a0b72710c919603",
+    "imported_vertices": 8661,
+    "source_triangles": 15452,
+    "dag_nodes": 513,
+    "dag_levels": 9,
+    "base_boundary_edges": 1820,
+    "base_nonmanifold_edges": 7,
+    "candidate_nonmanifold_edges": 4,
+    "cuts": {
+      "0.3": 4636,
+      "0.5": 7726,
+      "0.7": 10816
+    }
+  },
+  "control_scoring": {
+    "script": "tools/mmtrain/score_mmgeo_obj_controls.py",
+    "script_sha256": "84a6ac7545301e4461d43248a17ad3bc09982f910705cb6afccb5054b19e155a",
+    "log": "tools/mmtrain/asset_reuse_audits/damaged_helmet_control_rejection_20261123.log",
+    "log_sha256": "4dbcff73f0f37c1e8fc17126ff78fab1870cd97f2684cad5251596ab89868e33",
+    "exit_code": 1,
+    "failure": "Strict topology validation rejected the source for non-manifold or inconsistently oriented edges before any image metrics were computed.",
+    "image_metrics_computed": false
+  },
+  "decision": "Development-only asset lead; not eligible for the current strict matched-face image-quality protocol or a redistribution-cleared confirmation set."
+}

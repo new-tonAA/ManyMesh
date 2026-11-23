@@ -1,0 +1,757 @@
+{
+  "benchmark_sha256": "65d9527c309c934ed04c561a86f73c7e82ac1662723be13f59715052d3c84b9e",
+  "code_sha256": "32b80de1cec23b02652eab58b42c31d22028e5b53e78628a41745a5059d7b2e1",
+  "band_radii_pixels": [
+    1,
+    2,
+    4
+  ],
+  "assets": {
+    "AntiqueCamera": {
+      "part_msaa4_gpu_ms": 0.35960936622047424,
+      "existing_quality": {
+        "psnr_db": 32.477431680599665,
+        "ssim": 0.984653650893163,
+        "flip": 0.01247468777000904
+      },
+      "eligible_without_correction_cost": {
+        "source-native": {
+          "psnr_db": 29.095904854551012,
+          "ssim": 0.9777752386351354,
+          "flip": 0.011351197957992554
+        },
+        "source-linear": {
+          "psnr_db": 26.989057691101145,
+          "ssim": 0.9551018515410201,
+          "flip": 0.022391045466065407
+        },
+        "qem-msaa4": {
+          "psnr_db": 27.895379122756925,
+          "ssim": 0.9742450751452791,
+          "flip": 0.01933317258954048
+        }
+      },
+      "source_smaa_quality": {
+        "psnr_db": 32.20850230397094,
+        "ssim": 0.9859279239301907,
+        "flip": 0.010849609039723873
+      },
+      "bands": {
+        "1": {
+          "pixel_fraction": 0.02201388888888889,
+          "sse_fraction_removed": 0.505901161173948,
+          "perfect_copy_quality": {
+            "psnr_db": 35.539293638539775,
+            "ssim": 0.9885030822099681,
+            "flip": 0.008710653521120548
+          }
+        },
+        "2": {
+          "pixel_fraction": 0.042222222222222223,
+          "sse_fraction_removed": 0.581053394258449,
+          "perfect_copy_quality": {
+            "psnr_db": 36.25584523231257,
+            "ssim": 0.9890085031507629,
+            "flip": 0.007083290256559849
+          }
+        },
+        "4": {
+          "pixel_fraction": 0.0792361111111111,
+          "sse_fraction_removed": 0.6830423874483588,
+          "perfect_copy_quality": {
+            "psnr_db": 37.46742015809798,
+            "ssim": 0.9902077004063589,
+            "flip": 0.004842559807002544
+          }
+        }
+      }
+    },
+    "Avocado": {
+      "part_msaa4_gpu_ms": 0.20729166160583495,
+      "existing_quality": {
+        "psnr_db": 29.30416201517935,
+        "ssim": 0.9753777181150988,
+        "flip": 0.02511044777929783
+      },
+      "eligible_without_correction_cost": {
+        "source-native": {
+          "psnr_db": 32.45924753920738,
+          "ssim": 0.9907018659354657,
+          "flip": 0.004268357530236244
+        },
+        "source-linear": {
+          "psnr_db": 30.497761890358067,
+          "ssim": 0.9790715050460018,
+          "flip": 0.011058298870921135
+        },
+        "source-cubic": {
+          "psnr_db": 31.08538626082627,
+          "ssim": 0.9810869271060878,
+          "flip": 0.010159728117287159
+        }
+      },
+      "source_smaa_quality": {
+        "psnr_db": 41.695925351457646,
+        "ssim": 0.9981898016428304,
+        "flip": 0.0036601275205612183
+      },
+      "bands": {
+        "1": {
+          "pixel_fraction": 0.013055555555555556,
+          "sse_fraction_removed": 0.8099033663133918,
+          "perfect_copy_quality": {
+            "psnr_db": 36.5144181366737,
+            "ssim": 0.9897770244466818,
+            "flip": 0.016933497041463852
+          }
+        },
+        "2": {
+          "pixel_fraction": 0.026111111111111113,
+          "sse_fraction_removed": 0.8690491056897254,
+          "perfect_copy_quality": {
+            "psnr_db": 38.13307780125426,
+            "ssim": 0.9905143071577371,
+            "flip": 0.01522280927747488
+          }
+        },
+        "4": {
+          "pixel_fraction": 0.0521875,
+          "sse_fraction_removed": 0.8984115708393412,
+          "perfect_copy_quality": {
+            "psnr_db": 39.23571998765798,
+            "ssim": 0.9900991396215468,
+            "flip": 0.013287141919136047
+          }
+        }
+      }
+    },
+    "BarramundiFish": {
+      "part_msaa4_gpu_ms": 0.18838541206741333,
+      "existing_quality": {
+        "psnr_db": 38.40119164563916,
+        "ssim": 0.9961290124628197,
+        "flip": 0.005629266146570444
+      },
+      "eligible_without_correction_cost": {
+        "source-native": {
+          "psnr_db": 34.30968747157907,
+          "ssim": 0.9936223035470416,
+          "flip": 0.0031139047350734472
+        },
+        "source-linear": {
+          "psnr_db": 32.19007055750138,
+          "ssim": 0.9877273369924158,
+          "flip": 0.0071149952709674835
+        }
+      },
+      "source_smaa_quality": {
+        "psnr_db": 38.23788340679928,
+        "ssim": 0.9967356762249348,
+        "flip": 0.0031406530179083347
+      },
+      "bands": {
+        "1": {
+          "pixel_fraction": 0.008888888888888889,
+          "sse_fraction_removed": 0.7813831308093706,
+          "perfect_copy_quality": {
+            "psnr_db": 45.004355342546454,
+            "ssim": 0.9979185368160828,
+            "flip": 0.0039056921377778053
+          }
+        },
+        "2": {
+          "pixel_fraction": 0.017430555555555557,
+          "sse_fraction_removed": 0.8221627591482215,
+          "perfect_copy_quality": {
+            "psnr_db": 45.900964908252526,
+            "ssim": 0.9980125593318767,
+            "flip": 0.0032757525332272053
+          }
+        },
+        "4": {
+          "pixel_fraction": 0.03342013888888889,
+          "sse_fraction_removed": 0.8788763973321989,
+          "perfect_copy_quality": {
+            "psnr_db": 47.568904345267015,
+            "ssim": 0.9982435784470656,
+            "flip": 0.0023583858273923397
+          }
+        }
+      }
+    },
+    "CesiumMilkTruck": {
+      "part_msaa4_gpu_ms": 0.24687499397277832,
+      "existing_quality": {
+        "psnr_db": 29.355997239348397,
+        "ssim": 0.9754286620810937,
+        "flip": 0.01804928667843342
+      },
+      "eligible_without_correction_cost": {
+        "source-native": {
+          "psnr_db": 32.92506526361965,
+          "ssim": 0.987623420280827,
+          "flip": 0.006971533410251141
+        },
+        "source-linear": {
+          "psnr_db": 29.987668690137244,
+          "ssim": 0.9693291385307722,
+          "flip": 0.015255256555974483
+        },
+        "source-cubic": {
+          "psnr_db": 30.28655901024459,
+          "ssim": 0.9704544064398614,
+          "flip": 0.015126538462936878
+        },
+        "qem-msaa4": {
+          "psnr_db": 23.675683490480672,
+          "ssim": 0.9583520453928229,
+          "flip": 0.025814862921833992
+        }
+      },
+      "source_smaa_quality": {
+        "psnr_db": 37.74812143138384,
+        "ssim": 0.9930182994170875,
+        "flip": 0.005850955843925476
+      },
+      "bands": {
+        "1": {
+          "pixel_fraction": 0.012569444444444444,
+          "sse_fraction_removed": 0.2670310738644512,
+          "perfect_copy_quality": {
+            "psnr_db": 30.70514166715451,
+            "ssim": 0.9790402118460256,
+            "flip": 0.015231137163937092
+          }
+        },
+        "2": {
+          "pixel_fraction": 0.024947916666666667,
+          "sse_fraction_removed": 0.36215201053927215,
+          "perfect_copy_quality": {
+            "psnr_db": 31.308825401749306,
+            "ssim": 0.9802317693855485,
+            "flip": 0.013675983063876629
+          }
+        },
+        "4": {
+          "pixel_fraction": 0.04923611111111111,
+          "sse_fraction_removed": 0.5785994581657605,
+          "perfect_copy_quality": {
+            "psnr_db": 33.109046455330045,
+            "ssim": 0.9827097750455613,
+            "flip": 0.011115819215774536
+          }
+        }
+      }
+    },
+    "Lantern": {
+      "part_msaa4_gpu_ms": 0.2038541616897583,
+      "existing_quality": {
+        "psnr_db": 33.58971376018594,
+        "ssim": 0.993479289540901,
+        "flip": 0.007482690270990133
+      },
+      "eligible_without_correction_cost": {
+        "source-native": {
+          "psnr_db": 30.729573752849532,
+          "ssim": 0.9872730732110859,
+          "flip": 0.007960891351103783
+        },
+        "source-linear": {
+          "psnr_db": 28.41822476013008,
+          "ssim": 0.9724988841073825,
+          "flip": 0.01672591269016266
+        },
+        "qem-msaa4": {
+          "psnr_db": 27.973247063167022,
+          "ssim": 0.9847619632420727,
+          "flip": 0.012212644331157207
+        }
+      },
+      "source_smaa_quality": {
+        "psnr_db": 33.63716312183353,
+        "ssim": 0.9922530494811623,
+        "flip": 0.007467546500265598
+      },
+      "bands": {
+        "1": {
+          "pixel_fraction": 0.01855902777777778,
+          "sse_fraction_removed": 0.6995388299788126,
+          "perfect_copy_quality": {
+            "psnr_db": 38.81183035037224,
+            "ssim": 0.9973630575601516,
+            "flip": 0.003964627161622047
+          }
+        },
+        "2": {
+          "pixel_fraction": 0.03666666666666667,
+          "sse_fraction_removed": 0.8292648845213852,
+          "perfect_copy_quality": {
+            "psnr_db": 41.266485369940156,
+            "ssim": 0.9979897673876895,
+            "flip": 0.0025048907846212387
+          }
+        },
+        "4": {
+          "pixel_fraction": 0.07145833333333333,
+          "sse_fraction_removed": 0.9710618138072757,
+          "perfect_copy_quality": {
+            "psnr_db": 48.97500116643521,
+            "ssim": 0.9990087590622666,
+            "flip": 0.0009928169893100858
+          }
+        }
+      }
+    },
+    "SheenChair": {
+      "part_msaa4_gpu_ms": 0.4423958225326538,
+      "existing_quality": {
+        "psnr_db": 37.66670164745276,
+        "ssim": 0.9956668524595643,
+        "flip": 0.008547530509531498
+      },
+      "eligible_without_correction_cost": {
+        "qem-msaa4": {
+          "psnr_db": 35.30445917277352,
+          "ssim": 0.992758978257505,
+          "flip": 0.01247619092464447
+        },
+        "qem-smaa": {
+          "psnr_db": 33.21181235413872,
+          "ssim": 0.990347770861013,
+          "flip": 0.01472718920558691
+        }
+      },
+      "source_smaa_quality": {
+        "psnr_db": 33.76131849406231,
+        "ssim": 0.9927313543300718,
+        "flip": 0.00836885254830122
+      },
+      "bands": {
+        "1": {
+          "pixel_fraction": 0.025729166666666668,
+          "sse_fraction_removed": 0.8043492399760868,
+          "perfect_copy_quality": {
+            "psnr_db": 44.75188657263486,
+            "ssim": 0.9977499318333731,
+            "flip": 0.005763876251876354
+          }
+        },
+        "2": {
+          "pixel_fraction": 0.05074652777777778,
+          "sse_fraction_removed": 0.8488000615480564,
+          "perfect_copy_quality": {
+            "psnr_db": 45.871185820720385,
+            "ssim": 0.9978586586514293,
+            "flip": 0.00468583544716239
+          }
+        },
+        "4": {
+          "pixel_fraction": 0.0948611111111111,
+          "sse_fraction_removed": 0.929093752647995,
+          "perfect_copy_quality": {
+            "psnr_db": 49.159857161973974,
+            "ssim": 0.9982069719127267,
+            "flip": 0.0032965161371976137
+          }
+        }
+      }
+    },
+    "ToyCar": {
+      "part_msaa4_gpu_ms": 0.8269531048107147,
+      "existing_quality": {
+        "psnr_db": 31.458622931710067,
+        "ssim": 0.9819948445433507,
+        "flip": 0.012921541929244995
+      },
+      "eligible_without_correction_cost": {},
+      "source_smaa_quality": {
+        "psnr_db": 34.9697457231437,
+        "ssim": 0.9917571400528513,
+        "flip": 0.006380445323884487
+      },
+      "bands": {
+        "1": {
+          "pixel_fraction": 0.011475694444444445,
+          "sse_fraction_removed": 0.7351983464027695,
+          "perfect_copy_quality": {
+            "psnr_db": 37.22941632973517,
+            "ssim": 0.9874967979598868,
+            "flip": 0.008664670400321484
+          }
+        },
+        "2": {
+          "pixel_fraction": 0.022743055555555555,
+          "sse_fraction_removed": 0.8067015963212636,
+          "perfect_copy_quality": {
+            "psnr_db": 38.59634070148047,
+            "ssim": 0.9881382909390711,
+            "flip": 0.00762499775737524
+          }
+        },
+        "4": {
+          "pixel_fraction": 0.044756944444444446,
+          "sse_fraction_removed": 0.8545867515169072,
+          "perfect_copy_quality": {
+            "psnr_db": 39.83258367780073,
+            "ssim": 0.9891713212559873,
+            "flip": 0.006546280812472105
+          }
+        }
+      }
+    },
+    "WaterBottle": {
+      "part_msaa4_gpu_ms": 0.26374999356079104,
+      "existing_quality": {
+        "psnr_db": 37.62283201637529,
+        "ssim": 0.9894508757299372,
+        "flip": 0.012351179495453835
+      },
+      "eligible_without_correction_cost": {
+        "source-native": {
+          "psnr_db": 33.576587348396494,
+          "ssim": 0.9904243190165328,
+          "flip": 0.00546603137627244
+        },
+        "source-linear": {
+          "psnr_db": 31.028891333124786,
+          "ssim": 0.9768148258137732,
+          "flip": 0.012550314888358116
+        },
+        "source-cubic": {
+          "psnr_db": 31.421160646499324,
+          "ssim": 0.978162452053294,
+          "flip": 0.011992893181741238
+        },
+        "qem-msaa4": {
+          "psnr_db": 37.20370987249906,
+          "ssim": 0.9890297808778171,
+          "flip": 0.012763099744915962
+        }
+      },
+      "source_smaa_quality": {
+        "psnr_db": 38.88332540159384,
+        "ssim": 0.9957399698617626,
+        "flip": 0.004905362613499165
+      },
+      "bands": {
+        "1": {
+          "pixel_fraction": 0.013402777777777777,
+          "sse_fraction_removed": 0.5936854217183808,
+          "perfect_copy_quality": {
+            "psnr_db": 41.53420836049678,
+            "ssim": 0.9912967591283326,
+            "flip": 0.010279239155352116
+          }
+        },
+        "2": {
+          "pixel_fraction": 0.02673611111111111,
+          "sse_fraction_removed": 0.6666694982006889,
+          "perfect_copy_quality": {
+            "psnr_db": 42.39408187255019,
+            "ssim": 0.9914992498843503,
+            "flip": 0.009070148691534996
+          }
+        },
+        "4": {
+          "pixel_fraction": 0.05331597222222222,
+          "sse_fraction_removed": 0.7368380002162263,
+          "perfect_copy_quality": {
+            "psnr_db": 43.42060065297167,
+            "ssim": 0.9918749276112595,
+            "flip": 0.007742108311504126
+          }
+        }
+      }
+    },
+    "FlightHelmet": {
+      "part_msaa4_gpu_ms": 0.7915364390087127,
+      "existing_quality": {
+        "psnr_db": 33.97159686565624,
+        "ssim": 0.981982141670901,
+        "flip": 0.013566008768975735
+      },
+      "eligible_without_correction_cost": {
+        "qem-smaa": {
+          "psnr_db": 33.754921329352904,
+          "ssim": 0.9813808324948462,
+          "flip": 0.015150747261941433
+        }
+      },
+      "source_smaa_quality": {
+        "psnr_db": 34.77992722278248,
+        "ssim": 0.989925471955093,
+        "flip": 0.008493148721754551
+      },
+      "bands": {
+        "1": {
+          "pixel_fraction": 0.01659722222222222,
+          "sse_fraction_removed": 0.4321241113229095,
+          "perfect_copy_quality": {
+            "psnr_db": 36.42906279771546,
+            "ssim": 0.9846786587007217,
+            "flip": 0.011048748157918453
+          }
+        },
+        "2": {
+          "pixel_fraction": 0.031892361111111114,
+          "sse_fraction_removed": 0.48614893233821627,
+          "perfect_copy_quality": {
+            "psnr_db": 36.86322449241652,
+            "ssim": 0.9850094892650271,
+            "flip": 0.009876511059701443
+          }
+        },
+        "4": {
+          "pixel_fraction": 0.06053819444444444,
+          "sse_fraction_removed": 0.5601476643239287,
+          "perfect_copy_quality": {
+            "psnr_db": 37.53852812340972,
+            "ssim": 0.9854892338954472,
+            "flip": 0.008273468352854252
+          }
+        }
+      }
+    },
+    "GlassVaseFlowers": {
+      "part_msaa4_gpu_ms": 0.3124739507045746,
+      "existing_quality": {
+        "psnr_db": 24.302536357113222,
+        "ssim": 0.9656890920951483,
+        "flip": 0.030208371579647064
+      },
+      "eligible_without_correction_cost": {
+        "source-native": {
+          "psnr_db": 27.48897591281454,
+          "ssim": 0.9791519591785051,
+          "flip": 0.011280178092420101
+        },
+        "source-linear": {
+          "psnr_db": 25.611740739683263,
+          "ssim": 0.9568301373423431,
+          "flip": 0.026797669008374214
+        },
+        "qem-msaa4": {
+          "psnr_db": 22.955181608685503,
+          "ssim": 0.9468582429610027,
+          "flip": 0.04497108981013298
+        }
+      },
+      "source_smaa_quality": {
+        "psnr_db": 31.258792203187376,
+        "ssim": 0.9895379729669269,
+        "flip": 0.011352590285241604
+      },
+      "bands": {
+        "1": {
+          "pixel_fraction": 0.03680555555555556,
+          "sse_fraction_removed": 0.7551680373415676,
+          "perfect_copy_quality": {
+            "psnr_db": 30.41385520827393,
+            "ssim": 0.9890273195793514,
+            "flip": 0.01250398252159357
+          }
+        },
+        "2": {
+          "pixel_fraction": 0.0675173611111111,
+          "sse_fraction_removed": 0.9416744909798336,
+          "perfect_copy_quality": {
+            "psnr_db": 36.64395097236175,
+            "ssim": 0.9956438206568703,
+            "flip": 0.00678260438144207
+          }
+        },
+        "4": {
+          "pixel_fraction": 0.11796875,
+          "sse_fraction_removed": 0.9932365289990209,
+          "perfect_copy_quality": {
+            "psnr_db": 46.00084024275893,
+            "ssim": 0.998053727333464,
+            "flip": 0.0038676115218549967
+          }
+        }
+      }
+    },
+    "IridescenceLamp": {
+      "part_msaa4_gpu_ms": 0.42661457291793825,
+      "existing_quality": {
+        "psnr_db": 37.361679240978,
+        "ssim": 0.9914156013245952,
+        "flip": 0.01037695910781622
+      },
+      "eligible_without_correction_cost": {
+        "source-native": {
+          "psnr_db": 32.4428801203952,
+          "ssim": 0.9886971292913364,
+          "flip": 0.006154225207865238
+        },
+        "source-linear": {
+          "psnr_db": 30.797212331080903,
+          "ssim": 0.9808667047603228,
+          "flip": 0.011632388457655907
+        },
+        "source-cubic": {
+          "psnr_db": 31.191116982529298,
+          "ssim": 0.9822037237474761,
+          "flip": 0.011159437708556652
+        },
+        "qem-msaa4": {
+          "psnr_db": 37.361679240978,
+          "ssim": 0.9914156013245952,
+          "flip": 0.01037695910781622
+        },
+        "qem-smaa": {
+          "psnr_db": 35.5442213889952,
+          "ssim": 0.9896769327766102,
+          "flip": 0.011073313653469086
+        }
+      },
+      "source_smaa_quality": {
+        "psnr_db": 36.904482083985656,
+        "ssim": 0.9948790659449166,
+        "flip": 0.005005561280995607
+      },
+      "bands": {
+        "1": {
+          "pixel_fraction": 0.015034722222222222,
+          "sse_fraction_removed": 0.539760485225026,
+          "perfect_copy_quality": {
+            "psnr_db": 40.73184044285347,
+            "ssim": 0.9929480160744201,
+            "flip": 0.008594424463808537
+          }
+        },
+        "2": {
+          "pixel_fraction": 0.029965277777777778,
+          "sse_fraction_removed": 0.6061611536383514,
+          "perfect_copy_quality": {
+            "psnr_db": 41.40849393941706,
+            "ssim": 0.9930425222388406,
+            "flip": 0.00739285908639431
+          }
+        },
+        "4": {
+          "pixel_fraction": 0.059444444444444446,
+          "sse_fraction_removed": 0.6957555899263888,
+          "perfect_copy_quality": {
+            "psnr_db": 42.52945333046456,
+            "ssim": 0.9932634700726829,
+            "flip": 0.005870514549314976
+          }
+        }
+      }
+    },
+    "SheenCloth": {
+      "part_msaa4_gpu_ms": 0.7026041495132447,
+      "existing_quality": {
+        "psnr_db": 38.873789049191714,
+        "ssim": 0.9965164374387012,
+        "flip": 0.0043832226656377316
+      },
+      "eligible_without_correction_cost": {
+        "qem-msaa4": {
+          "psnr_db": 38.873789049191714,
+          "ssim": 0.9965164374387012,
+          "flip": 0.0043832226656377316
+        },
+        "qem-smaa": {
+          "psnr_db": 35.992788430297324,
+          "ssim": 0.9950039638658711,
+          "flip": 0.005981744732707739
+        }
+      },
+      "source_smaa_quality": {
+        "psnr_db": 36.40137922830929,
+        "ssim": 0.9961618607236181,
+        "flip": 0.005048932507634163
+      },
+      "bands": {
+        "1": {
+          "pixel_fraction": 0.011371527777777777,
+          "sse_fraction_removed": 0.6530848098684251,
+          "perfect_copy_quality": {
+            "psnr_db": 43.47155618257127,
+            "ssim": 0.9975114634179931,
+            "flip": 0.003066826378926635
+          }
+        },
+        "2": {
+          "pixel_fraction": 0.022534722222222223,
+          "sse_fraction_removed": 0.6929528023781125,
+          "perfect_copy_quality": {
+            "psnr_db": 44.001737929328385,
+            "ssim": 0.9975676985228288,
+            "flip": 0.0026513938792049885
+          }
+        },
+        "4": {
+          "pixel_fraction": 0.04390625,
+          "sse_fraction_removed": 0.7344039371522392,
+          "perfect_copy_quality": {
+            "psnr_db": 44.631572954036976,
+            "ssim": 0.9976892219530289,
+            "flip": 0.002152574248611927
+          }
+        }
+      }
+    },
+    "StainedGlassLamp": {
+      "part_msaa4_gpu_ms": 0.594296860490799,
+      "existing_quality": {
+        "psnr_db": 27.92695873688426,
+        "ssim": 0.975049791438975,
+        "flip": 0.024798627942800522
+      },
+      "eligible_without_correction_cost": {
+        "source-native": {
+          "psnr_db": 27.408459632585146,
+          "ssim": 0.9809628484707734,
+          "flip": 0.010144819505512714
+        },
+        "source-linear": {
+          "psnr_db": 26.0579191220296,
+          "ssim": 0.9599460827598327,
+          "flip": 0.022803625091910362
+        },
+        "qem-smaa": {
+          "psnr_db": 26.119394505964245,
+          "ssim": 0.965440113211987,
+          "flip": 0.028636964038014412
+        }
+      },
+      "source_smaa_quality": {
+        "psnr_db": 30.285071228060943,
+        "ssim": 0.9882872131696241,
+        "flip": 0.011860691010951996
+      },
+      "bands": {
+        "1": {
+          "pixel_fraction": 0.026788194444444444,
+          "sse_fraction_removed": 0.6149489797677349,
+          "perfect_copy_quality": {
+            "psnr_db": 32.07177617892577,
+            "ssim": 0.9827950601290456,
+            "flip": 0.016490669921040535
+          }
+        },
+        "2": {
+          "pixel_fraction": 0.04583333333333333,
+          "sse_fraction_removed": 0.7191191934712042,
+          "perfect_copy_quality": {
+            "psnr_db": 33.441738375733394,
+            "ssim": 0.9845634150532664,
+            "flip": 0.012744622305035591
+          }
+        },
+        "4": {
+          "pixel_fraction": 0.07743055555555556,
+          "sse_fraction_removed": 0.822162724204605,
+          "perfect_copy_quality": {
+            "psnr_db": 35.42673106938709,
+            "ssim": 0.9874687107874283,
+            "flip": 0.00876536499708891
+          }
+        }
+      }
+    }
+  }
+}

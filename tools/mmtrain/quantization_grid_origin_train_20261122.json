@@ -1,0 +1,2828 @@
+{
+  "split": "train",
+  "preflight": true,
+  "manifest_sha256": "3a7cfbd6e652f5fbeade83110c5027e37d05629303580657d444a5bbcd645742",
+  "bits": [
+    10,
+    12,
+    14,
+    16,
+    18,
+    20
+  ],
+  "phases": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      2
+    ],
+    [
+      0,
+      0,
+      3
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      1,
+      1
+    ],
+    [
+      0,
+      1,
+      2
+    ],
+    [
+      0,
+      1,
+      3
+    ],
+    [
+      0,
+      2,
+      0
+    ],
+    [
+      0,
+      2,
+      1
+    ],
+    [
+      0,
+      2,
+      2
+    ],
+    [
+      0,
+      2,
+      3
+    ],
+    [
+      0,
+      3,
+      0
+    ],
+    [
+      0,
+      3,
+      1
+    ],
+    [
+      0,
+      3,
+      2
+    ],
+    [
+      0,
+      3,
+      3
+    ],
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      2
+    ],
+    [
+      1,
+      0,
+      3
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      2
+    ],
+    [
+      1,
+      1,
+      3
+    ],
+    [
+      1,
+      2,
+      0
+    ],
+    [
+      1,
+      2,
+      1
+    ],
+    [
+      1,
+      2,
+      2
+    ],
+    [
+      1,
+      2,
+      3
+    ],
+    [
+      1,
+      3,
+      0
+    ],
+    [
+      1,
+      3,
+      1
+    ],
+    [
+      1,
+      3,
+      2
+    ],
+    [
+      1,
+      3,
+      3
+    ],
+    [
+      2,
+      0,
+      0
+    ],
+    [
+      2,
+      0,
+      1
+    ],
+    [
+      2,
+      0,
+      2
+    ],
+    [
+      2,
+      0,
+      3
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      2,
+      1,
+      1
+    ],
+    [
+      2,
+      1,
+      2
+    ],
+    [
+      2,
+      1,
+      3
+    ],
+    [
+      2,
+      2,
+      0
+    ],
+    [
+      2,
+      2,
+      1
+    ],
+    [
+      2,
+      2,
+      2
+    ],
+    [
+      2,
+      2,
+      3
+    ],
+    [
+      2,
+      3,
+      0
+    ],
+    [
+      2,
+      3,
+      1
+    ],
+    [
+      2,
+      3,
+      2
+    ],
+    [
+      2,
+      3,
+      3
+    ],
+    [
+      3,
+      0,
+      0
+    ],
+    [
+      3,
+      0,
+      1
+    ],
+    [
+      3,
+      0,
+      2
+    ],
+    [
+      3,
+      0,
+      3
+    ],
+    [
+      3,
+      1,
+      0
+    ],
+    [
+      3,
+      1,
+      1
+    ],
+    [
+      3,
+      1,
+      2
+    ],
+    [
+      3,
+      1,
+      3
+    ],
+    [
+      3,
+      2,
+      0
+    ],
+    [
+      3,
+      2,
+      1
+    ],
+    [
+      3,
+      2,
+      2
+    ],
+    [
+      3,
+      2,
+      3
+    ],
+    [
+      3,
+      3,
+      0
+    ],
+    [
+      3,
+      3,
+      1
+    ],
+    [
+      3,
+      3,
+      2
+    ],
+    [
+      3,
+      3,
+      3
+    ]
+  ],
+  "views": 8,
+  "size": 192,
+  "coordinate_scale": 1048576,
+  "cpu": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
+  "hashes": {
+    "tools/mmtrain/bench_quantization_phases.py": "3ee7d78dce1289504ccbac9143ce87e2115651f50440998ab813d2a20a36024f",
+    "tools/mmtrain/encode_quantization_phases.cjs": "78c51f37b9cb0309cd2d4d4eec3636c611d83ba740e42dc2b1e1a28208d4d88c",
+    "tools/mmtrain/geometry_codec_baseline.cjs": "1c87d596d190f85e5ea35342b1c30d652c32ff01bc0e2fe1c2eb2e190eef9e0d",
+    "tools/mmtrain/bench_geometry_codecs.py": "3d3d985abc3fc5b73b9c7db045b556b28a93d8f5398fb8b0784cd84810233872",
+    "tools/mmtrain/cluster_decoder_quality.py": "c64cf7c5a4dc75351c3182ac92adca61a91816b500ec12934e45453f99756b0a",
+    "third_party/draco/javascript/npm/draco3d/draco_encoder.wasm": "d2a3ac80c91980d5d321c116454834ff36264825c6d1794cc84e42288f158958",
+    "third_party/draco/javascript/npm/draco3d/draco_decoder.wasm": "2516a4e43526d71787bf2f678f951329f7f858f8f15f42d4bc9e370b31a0da3a"
+  },
+  "assets": [
+    {
+      "asset": 132057,
+      "sha256": "af347392d9380cc917d2cead4c44b9849cf46f466929f77447fdab67626024a5",
+      "vertices": 263,
+      "faces": 530,
+      "quantization": [
+        {
+          "bits": 10,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 0.31379994470626116,
+          "search_ms": 14.549699961207807
+        },
+        {
+          "bits": 12,
+          "valid_phases": 16,
+          "fixed": null,
+          "searched": {
+            "phase": [
+              1,
+              1,
+              0
+            ],
+            "origin": [
+              -1007274.375,
+              -282381.5,
+              -74083.625
+            ],
+            "range": 2016787.5,
+            "bits": 12,
+            "position_mse_scaled": 15537.987999474783
+          },
+          "fixed_ms": 0.19510003039613366,
+          "search_ms": 18.087800010107458
+        },
+        {
+          "bits": 14,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -1007151.25,
+              -282258.375,
+              -74083.625
+            ],
+            "range": 2015109.0,
+            "bits": 14,
+            "position_mse_scaled": 1279.2074944285914
+          },
+          "searched": {
+            "phase": [
+              1,
+              1,
+              1
+            ],
+            "origin": [
+              -1007182.0,
+              -282289.125,
+              -74114.375
+            ],
+            "range": 2015109.0,
+            "bits": 14,
+            "position_mse_scaled": 861.3690106254189
+          },
+          "fixed_ms": 0.4257000400684774,
+          "search_ms": 60.36930001573637
+        },
+        {
+          "bits": 16,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -1007151.25,
+              -282258.375,
+              -74083.625
+            ],
+            "range": 2031585.0,
+            "bits": 16,
+            "position_mse_scaled": 79.69484150806308
+          },
+          "searched": {
+            "phase": [
+              1,
+              3,
+              1
+            ],
+            "origin": [
+              -1007159.0,
+              -282281.625,
+              -74091.375
+            ],
+            "range": 2031585.0,
+            "bits": 16,
+            "position_mse_scaled": 63.47845648499194
+          },
+          "fixed_ms": 0.4225000157020986,
+          "search_ms": 39.887199993245304
+        },
+        {
+          "bits": 18,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -1007151.25,
+              -282258.375,
+              -74083.625
+            ],
+            "range": 2097144.0,
+            "bits": 18,
+            "position_mse_scaled": 3.3598418917568313
+          },
+          "searched": {
+            "phase": [
+              0,
+              1,
+              0
+            ],
+            "origin": [
+              -1007151.25,
+              -282260.375,
+              -74083.625
+            ],
+            "range": 2097144.0,
+            "bits": 18,
+            "position_mse_scaled": 3.232784798125653
+          },
+          "fixed_ms": 0.4026999813504517,
+          "search_ms": 33.825799997430295
+        },
+        {
+          "bits": 20,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -1007151.25,
+              -282258.375,
+              -74083.625
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.3856347763417489
+          },
+          "searched": {
+            "phase": [
+              2,
+              2,
+              1
+            ],
+            "origin": [
+              -1007152.25,
+              -282259.375,
+              -74084.125
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.2650348773398478
+          },
+          "fixed_ms": 0.3378000110387802,
+          "search_ms": 29.172400012612343
+        }
+      ]
+    },
+    {
+      "asset": 59494,
+      "sha256": "9c3be26665505629911145b446068f9e3de938b6d2dad4d7ca63b9854f7ec1b6",
+      "vertices": 140,
+      "faces": 308,
+      "quantization": [
+        {
+          "bits": 10,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -697219.5,
+              -482690.5,
+              -616771.125
+            ],
+            "range": 1395883.5,
+            "bits": 10,
+            "position_mse_scaled": 164045.97309105282
+          },
+          "searched": {
+            "phase": [
+              1,
+              3,
+              0
+            ],
+            "origin": [
+              -697560.625,
+              -483713.875,
+              -616771.125
+            ],
+            "range": 1395883.5,
+            "bits": 10,
+            "position_mse_scaled": 118420.19976515997
+          },
+          "fixed_ms": 0.6828999612480402,
+          "search_ms": 42.527200013864785
+        },
+        {
+          "bits": 12,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -697219.5,
+              -482690.5,
+              -616771.125
+            ],
+            "range": 1396395.0,
+            "bits": 12,
+            "position_mse_scaled": 6601.614311290923
+          },
+          "searched": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -697219.5,
+              -482690.5,
+              -616771.125
+            ],
+            "range": 1396395.0,
+            "bits": 12,
+            "position_mse_scaled": 6601.614311290923
+          },
+          "fixed_ms": 0.5629999795928597,
+          "search_ms": 40.761100011877716
+        },
+        {
+          "bits": 14,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -697219.5,
+              -482690.5,
+              -616771.125
+            ],
+            "range": 1400746.5,
+            "bits": 14,
+            "position_mse_scaled": 445.4907993861607
+          },
+          "searched": {
+            "phase": [
+              3,
+              0,
+              3
+            ],
+            "origin": [
+              -697283.625,
+              -482690.5,
+              -616835.25
+            ],
+            "range": 1400746.5,
+            "bits": 14,
+            "position_mse_scaled": 387.320263671875
+          },
+          "fixed_ms": 0.6373000214807689,
+          "search_ms": 35.7808000408113
+        },
+        {
+          "bits": 16,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -697219.5,
+              -482690.5,
+              -616771.125
+            ],
+            "range": 1409002.5,
+            "bits": 16,
+            "position_mse_scaled": 37.371900576636904
+          },
+          "searched": {
+            "phase": [
+              1,
+              3,
+              0
+            ],
+            "origin": [
+              -697224.875,
+              -482706.625,
+              -616771.125
+            ],
+            "range": 1409002.5,
+            "bits": 16,
+            "position_mse_scaled": 30.187637183779763
+          },
+          "fixed_ms": 0.5530999624170363,
+          "search_ms": 25.545399985276163
+        },
+        {
+          "bits": 18,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -697219.5,
+              -482690.5,
+              -616771.125
+            ],
+            "range": 1441786.5,
+            "bits": 18,
+            "position_mse_scaled": 1.994073195684524
+          },
+          "searched": {
+            "phase": [
+              0,
+              0,
+              2
+            ],
+            "origin": [
+              -697219.5,
+              -482690.5,
+              -616773.875
+            ],
+            "range": 1441786.5,
+            "bits": 18,
+            "position_mse_scaled": 1.702704148065476
+          },
+          "fixed_ms": 0.2951000351458788,
+          "search_ms": 26.072500040754676
+        },
+        {
+          "bits": 20,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -697219.5,
+              -482690.5,
+              -616771.125
+            ],
+            "range": 1572862.5,
+            "bits": 20,
+            "position_mse_scaled": 0.19392438616071428
+          },
+          "searched": {
+            "phase": [
+              3,
+              0,
+              1
+            ],
+            "origin": [
+              -697220.625,
+              -482690.5,
+              -616771.5
+            ],
+            "range": 1572862.5,
+            "bits": 20,
+            "position_mse_scaled": 0.13187081473214285
+          },
+          "fixed_ms": 0.31730002956464887,
+          "search_ms": 20.963700022548437
+        }
+      ]
+    },
+    {
+      "asset": 53581,
+      "sha256": "ef3c07a286e63867598a35237fe2663f679e8cd155de075a010b826636fb7ef7",
+      "vertices": 198,
+      "faces": 404,
+      "quantization": [
+        {
+          "bits": 10,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 0.31209998996928334,
+          "search_ms": 15.545499976724386
+        },
+        {
+          "bits": 12,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 0.2802000381052494,
+          "search_ms": 12.231600005179644
+        },
+        {
+          "bits": 14,
+          "valid_phases": 12,
+          "fixed": null,
+          "searched": {
+            "phase": [
+              3,
+              1,
+              0
+            ],
+            "origin": [
+              -871904.375,
+              -493747.75,
+              -380634.625
+            ],
+            "range": 1744789.5,
+            "bits": 14,
+            "position_mse_scaled": 779.2882958124784
+          },
+          "fixed_ms": 0.17680000746622682,
+          "search_ms": 14.153000025544316
+        },
+        {
+          "bits": 16,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -871824.5,
+              -493721.125,
+              -380634.625
+            ],
+            "range": 1769445.0,
+            "bits": 16,
+            "position_mse_scaled": 54.10058619679024
+          },
+          "searched": {
+            "phase": [
+              0,
+              0,
+              1
+            ],
+            "origin": [
+              -871824.5,
+              -493721.125,
+              -380641.375
+            ],
+            "range": 1769445.0,
+            "bits": 16,
+            "position_mse_scaled": 50.659890174062966
+          },
+          "fixed_ms": 0.380899989977479,
+          "search_ms": 29.12969997851178
+        },
+        {
+          "bits": 18,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -871824.5,
+              -493721.125,
+              -380634.625
+            ],
+            "range": 1835001.0,
+            "bits": 18,
+            "position_mse_scaled": 4.180447307901351
+          },
+          "searched": {
+            "phase": [
+              1,
+              1,
+              3
+            ],
+            "origin": [
+              -871826.25,
+              -493722.875,
+              -380639.875
+            ],
+            "range": 1835001.0,
+            "bits": 18,
+            "position_mse_scaled": 3.600854176062125
+          },
+          "fixed_ms": 0.3792999777942896,
+          "search_ms": 38.60069997608662
+        },
+        {
+          "bits": 20,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -871824.5,
+              -493721.125,
+              -380634.625
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.31056193069175436
+          },
+          "searched": {
+            "phase": [
+              3,
+              0,
+              3
+            ],
+            "origin": [
+              -871826.0,
+              -493721.125,
+              -380636.125
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.264170279807916
+          },
+          "fixed_ms": 0.3320000250823796,
+          "search_ms": 42.09699999773875
+        }
+      ]
+    },
+    {
+      "asset": 145328,
+      "sha256": "8bb9c166a14f7216ab069b877e4800f086a2094c21f883e5ac1d35b05d8a9388",
+      "vertices": 180,
+      "faces": 360,
+      "quantization": [
+        {
+          "bits": 10,
+          "valid_phases": 16,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -705062.5,
+              -628167.375,
+              -455855.5
+            ],
+            "range": 1411740.0,
+            "bits": 10,
+            "position_mse_scaled": 151266.9541180646
+          },
+          "searched": {
+            "phase": [
+              1,
+              1,
+              1
+            ],
+            "origin": [
+              -705407.5,
+              -628512.375,
+              -456200.5
+            ],
+            "range": 1411740.0,
+            "bits": 10,
+            "position_mse_scaled": 117080.67851042571
+          },
+          "fixed_ms": 0.4694000235758722,
+          "search_ms": 14.865600038319826
+        },
+        {
+          "bits": 12,
+          "valid_phases": 48,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -705062.5,
+              -628167.375,
+              -455855.5
+            ],
+            "range": 1410727.5,
+            "bits": 12,
+            "position_mse_scaled": 9342.01674827293
+          },
+          "searched": {
+            "phase": [
+              0,
+              1,
+              1
+            ],
+            "origin": [
+              -705062.5,
+              -628253.5,
+              -455941.625
+            ],
+            "range": 1410727.5,
+            "bits": 12,
+            "position_mse_scaled": 6852.171905969691
+          },
+          "fixed_ms": 0.36999996518716216,
+          "search_ms": 31.8264999659732
+        },
+        {
+          "bits": 14,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -705062.5,
+              -628167.375,
+              -455855.5
+            ],
+            "range": 1417129.5,
+            "bits": 14,
+            "position_mse_scaled": 412.5511522081163
+          },
+          "searched": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -705062.5,
+              -628167.375,
+              -455855.5
+            ],
+            "range": 1417129.5,
+            "bits": 14,
+            "position_mse_scaled": 412.5511522081163
+          },
+          "fixed_ms": 0.6972000119276345,
+          "search_ms": 38.85549999540672
+        },
+        {
+          "bits": 16,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -705062.5,
+              -628167.375,
+              -455855.5
+            ],
+            "range": 1441770.0,
+            "bits": 16,
+            "position_mse_scaled": 40.26042593496817
+          },
+          "searched": {
+            "phase": [
+              0,
+              3,
+              3
+            ],
+            "origin": [
+              -705062.5,
+              -628183.875,
+              -455872.0
+            ],
+            "range": 1441770.0,
+            "bits": 16,
+            "position_mse_scaled": 32.99679746274595
+          },
+          "fixed_ms": 0.9824999724514782,
+          "search_ms": 45.727699995040894
+        },
+        {
+          "bits": 18,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -705062.5,
+              -628167.375,
+              -455855.5
+            ],
+            "range": 1441786.5,
+            "bits": 18,
+            "position_mse_scaled": 2.5677610044126156
+          },
+          "searched": {
+            "phase": [
+              1,
+              1,
+              3
+            ],
+            "origin": [
+              -705063.875,
+              -628168.75,
+              -455859.625
+            ],
+            "range": 1441786.5,
+            "bits": 18,
+            "position_mse_scaled": 2.12689367223669
+          },
+          "fixed_ms": 0.35170000046491623,
+          "search_ms": 36.218699999153614
+        },
+        {
+          "bits": 20,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -705062.5,
+              -628167.375,
+              -455855.5
+            ],
+            "range": 1572862.5,
+            "bits": 20,
+            "position_mse_scaled": 0.14496007848668982
+          },
+          "searched": {
+            "phase": [
+              1,
+              0,
+              0
+            ],
+            "origin": [
+              -705062.875,
+              -628167.375,
+              -455855.5
+            ],
+            "range": 1572862.5,
+            "bits": 20,
+            "position_mse_scaled": 0.1431480125144676
+          },
+          "fixed_ms": 0.803799950517714,
+          "search_ms": 44.485699967481196
+        }
+      ]
+    },
+    {
+      "asset": 96074,
+      "sha256": "f7b74c91b0526fd437c17aebd7694a1cff6c08055668109b5f8f96e560088b99",
+      "vertices": 629,
+      "faces": 1270,
+      "quantization": [
+        {
+          "bits": 10,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 0.3738999948836863,
+          "search_ms": 19.42660001805052
+        },
+        {
+          "bits": 12,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 0.671599991619587,
+          "search_ms": 22.69840001827106
+        },
+        {
+          "bits": 14,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 0.3374999505467713,
+          "search_ms": 19.55879997694865
+        },
+        {
+          "bits": 16,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 0.29669998912140727,
+          "search_ms": 19.350699963979423
+        },
+        {
+          "bits": 18,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 0.2937999670393765,
+          "search_ms": 27.453199960291386
+        },
+        {
+          "bits": 20,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -1008555.0,
+              -208722.375,
+              -210537.375
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.33567869661113964
+          },
+          "searched": {
+            "phase": [
+              0,
+              3,
+              1
+            ],
+            "origin": [
+              -1008555.0,
+              -208723.875,
+              -210537.875
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.3138370156770604
+          },
+          "fixed_ms": 0.8205999620258808,
+          "search_ms": 82.70919998176396
+        }
+      ]
+    },
+    {
+      "asset": 57809,
+      "sha256": "3b0fbe2a61dd2799ce7b52697500860c89a3ee14841d42c4f4531c17a205c3b8",
+      "vertices": 940,
+      "faces": 1908,
+      "quantization": [
+        {
+          "bits": 10,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 0.7548999856226146,
+          "search_ms": 41.66440002154559
+        },
+        {
+          "bits": 12,
+          "valid_phases": 20,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -858460.25,
+              -858460.25,
+              -602126.375
+            ],
+            "range": 1717852.5,
+            "bits": 12,
+            "position_mse_scaled": 11415.981725152133
+          },
+          "searched": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -858460.25,
+              -858460.25,
+              -602126.375
+            ],
+            "range": 1717852.5,
+            "bits": 12,
+            "position_mse_scaled": 11415.981725152133
+          },
+          "fixed_ms": 0.9919000440277159,
+          "search_ms": 68.60620004590601
+        },
+        {
+          "bits": 14,
+          "valid_phases": 48,
+          "fixed": null,
+          "searched": {
+            "phase": [
+              3,
+              1,
+              0
+            ],
+            "origin": [
+              -858539.0,
+              -858486.5,
+              -602126.375
+            ],
+            "range": 1720215.0,
+            "bits": 14,
+            "position_mse_scaled": 789.3856711399154
+          },
+          "fixed_ms": 0.5921000265516341,
+          "search_ms": 70.32420003088191
+        },
+        {
+          "bits": 16,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -858460.25,
+              -858460.25,
+              -602126.375
+            ],
+            "range": 1736677.5,
+            "bits": 16,
+            "position_mse_scaled": 54.24327040645459
+          },
+          "searched": {
+            "phase": [
+              1,
+              1,
+              0
+            ],
+            "origin": [
+              -858466.875,
+              -858466.875,
+              -602126.375
+            ],
+            "range": 1736677.5,
+            "bits": 16,
+            "position_mse_scaled": 50.95892977660641
+          },
+          "fixed_ms": 1.7652999958954751,
+          "search_ms": 86.90589998150244
+        },
+        {
+          "bits": 18,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -858460.25,
+              -858460.25,
+              -602126.375
+            ],
+            "range": 1835001.0,
+            "bits": 18,
+            "position_mse_scaled": 3.2718017014734286
+          },
+          "searched": {
+            "phase": [
+              2,
+              2,
+              0
+            ],
+            "origin": [
+              -858463.75,
+              -858463.75,
+              -602126.375
+            ],
+            "range": 1835001.0,
+            "bits": 18,
+            "position_mse_scaled": 3.1293439152921345
+          },
+          "fixed_ms": 1.8798999954015017,
+          "search_ms": 97.17179997824132
+        },
+        {
+          "bits": 20,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -858460.25,
+              -858460.25,
+              -602126.375
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.29373730375623025
+          },
+          "searched": {
+            "phase": [
+              3,
+              0,
+              0
+            ],
+            "origin": [
+              -858461.75,
+              -858460.25,
+              -602126.375
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.29084778691225865
+          },
+          "fixed_ms": 1.260999997612089,
+          "search_ms": 95.89200001209974
+        }
+      ]
+    },
+    {
+      "asset": 84030,
+      "sha256": "98735ebb00fea705f77386b3672dfc1023beb49e7c19c233e73f6009af3c1ba6",
+      "vertices": 516,
+      "faces": 1116,
+      "quantization": [
+        {
+          "bits": 10,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 0.3819999983534217,
+          "search_ms": 30.041599995456636
+        },
+        {
+          "bits": 12,
+          "valid_phases": 56,
+          "fixed": null,
+          "searched": {
+            "phase": [
+              1,
+              0,
+              3
+            ],
+            "origin": [
+              -1048650.625,
+              -1048522.5,
+              -10975.625
+            ],
+            "range": 2098687.5,
+            "bits": 12,
+            "position_mse_scaled": 16354.493182330169
+          },
+          "fixed_ms": 0.6825000164099038,
+          "search_ms": 67.29039998026565
+        },
+        {
+          "bits": 14,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -1048522.5,
+              -1048522.5,
+              -10591.25
+            ],
+            "range": 2105215.5,
+            "bits": 14,
+            "position_mse_scaled": 978.8484201874844
+          },
+          "searched": {
+            "phase": [
+              3,
+              1,
+              0
+            ],
+            "origin": [
+              -1048618.875,
+              -1048554.625,
+              -10591.25
+            ],
+            "range": 2105215.5,
+            "bits": 14,
+            "position_mse_scaled": 915.1279353380819
+          },
+          "fixed_ms": 1.2289999867789447,
+          "search_ms": 53.88889997266233
+        },
+        {
+          "bits": 16,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -1048522.5,
+              -1048522.5,
+              -10591.25
+            ],
+            "range": 2097120.0,
+            "bits": 16,
+            "position_mse_scaled": 57.87708999328219
+          },
+          "searched": {
+            "phase": [
+              1,
+              3,
+              0
+            ],
+            "origin": [
+              -1048530.5,
+              -1048546.5,
+              -10591.25
+            ],
+            "range": 2097120.0,
+            "bits": 16,
+            "position_mse_scaled": 55.11053637571113
+          },
+          "fixed_ms": 0.651800015475601,
+          "search_ms": 69.7543999995105
+        },
+        {
+          "bits": 18,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -1048522.5,
+              -1048522.5,
+              -10591.25
+            ],
+            "range": 2097144.0,
+            "bits": 18,
+            "position_mse_scaled": 3.9499259105948514
+          },
+          "searched": {
+            "phase": [
+              3,
+              0,
+              0
+            ],
+            "origin": [
+              -1048528.5,
+              -1048522.5,
+              -10591.25
+            ],
+            "range": 2097144.0,
+            "bits": 18,
+            "position_mse_scaled": 3.9308488757111304
+          },
+          "fixed_ms": 0.6457999697886407,
+          "search_ms": 71.14219997311011
+        },
+        {
+          "bits": 20,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -1048522.5,
+              -1048522.5,
+              -10591.25
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.2660949593674613
+          },
+          "searched": {
+            "phase": [
+              3,
+              1,
+              0
+            ],
+            "origin": [
+              -1048524.0,
+              -1048523.0,
+              -10591.25
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.23553637571113054
+          },
+          "fixed_ms": 0.8034000056795776,
+          "search_ms": 61.76499999128282
+        }
+      ]
+    },
+    {
+      "asset": 148292,
+      "sha256": "38eeb83b26b3cdfe95c8ff9df9442fe8e3c1df3e5d762ea66bb2bc390f525471",
+      "vertices": 530,
+      "faces": 1072,
+      "quantization": [
+        {
+          "bits": 10,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 0.583200016990304,
+          "search_ms": 30.361999990418553
+        },
+        {
+          "bits": 12,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 0.27870002668350935,
+          "search_ms": 18.38820002740249
+        },
+        {
+          "bits": 14,
+          "valid_phases": 4,
+          "fixed": null,
+          "searched": {
+            "phase": [
+              3,
+              2,
+              3
+            ],
+            "origin": [
+              -733402.5,
+              -798562.75,
+              -154887.125
+            ],
+            "range": 1597342.5,
+            "bits": 14,
+            "position_mse_scaled": 769.7194215972117
+          },
+          "fixed_ms": 0.2742999931797385,
+          "search_ms": 31.81149996817112
+        },
+        {
+          "bits": 16,
+          "valid_phases": 20,
+          "fixed": null,
+          "searched": {
+            "phase": [
+              1,
+              3,
+              1
+            ],
+            "origin": [
+              -733335.5,
+              -798532.375,
+              -154820.125
+            ],
+            "range": 1605607.5,
+            "bits": 16,
+            "position_mse_scaled": 42.2715777312833
+          },
+          "fixed_ms": 0.6149999680928886,
+          "search_ms": 43.088699982035905
+        },
+        {
+          "bits": 18,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -733329.375,
+              -798514.0,
+              -154814.0
+            ],
+            "range": 1703929.5,
+            "bits": 18,
+            "position_mse_scaled": 2.859147384296517
+          },
+          "searched": {
+            "phase": [
+              1,
+              2,
+              1
+            ],
+            "origin": [
+              -733331.0,
+              -798517.25,
+              -154815.625
+            ],
+            "range": 1703929.5,
+            "bits": 18,
+            "position_mse_scaled": 2.630752025425153
+          },
+          "fixed_ms": 0.7044999510981143,
+          "search_ms": 78.40559998294339
+        },
+        {
+          "bits": 20,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -733329.375,
+              -798514.0,
+              -154814.0
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.30780015797969307
+          },
+          "searched": {
+            "phase": [
+              3,
+              1,
+              1
+            ],
+            "origin": [
+              -733330.875,
+              -798514.5,
+              -154814.5
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.25025951393979523
+          },
+          "fixed_ms": 1.1784000089392066,
+          "search_ms": 47.228300012648106
+        }
+      ]
+    },
+    {
+      "asset": 84736,
+      "sha256": "4de846fb7c6ae5259655d89f2cf9c8ef021c234da02efd81df47efa0744a0da4",
+      "vertices": 5290,
+      "faces": 10580,
+      "quantization": [
+        {
+          "bits": 10,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 2.5810999795794487,
+          "search_ms": 131.74839998828247
+        },
+        {
+          "bits": 12,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 2.6962999836541712,
+          "search_ms": 183.4421000094153
+        },
+        {
+          "bits": 14,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -1003809.375,
+              -583224.75,
+              -115291.0
+            ],
+            "range": 2015109.0,
+            "bits": 14,
+            "position_mse_scaled": 1085.5771089993004
+          },
+          "searched": {
+            "phase": [
+              0,
+              0,
+              1
+            ],
+            "origin": [
+              -1003809.375,
+              -583224.75,
+              -115321.75
+            ],
+            "range": 2015109.0,
+            "bits": 14,
+            "position_mse_scaled": 994.8562530210395
+          },
+          "fixed_ms": 7.622000004630536,
+          "search_ms": 550.1556000090204
+        },
+        {
+          "bits": 16,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -1003809.375,
+              -583224.75,
+              -115291.0
+            ],
+            "range": 2031585.0,
+            "bits": 16,
+            "position_mse_scaled": 73.52900224292783
+          },
+          "searched": {
+            "phase": [
+              3,
+              0,
+              0
+            ],
+            "origin": [
+              -1003832.625,
+              -583224.75,
+              -115291.0
+            ],
+            "range": 2031585.0,
+            "bits": 16,
+            "position_mse_scaled": 73.12375290219983
+          },
+          "fixed_ms": 7.644500001333654,
+          "search_ms": 481.74800002016127
+        },
+        {
+          "bits": 18,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -1003809.375,
+              -583224.75,
+              -115291.0
+            ],
+            "range": 2097144.0,
+            "bits": 18,
+            "position_mse_scaled": 4.821783756913539
+          },
+          "searched": {
+            "phase": [
+              1,
+              3,
+              0
+            ],
+            "origin": [
+              -1003811.375,
+              -583230.75,
+              -115291.0
+            ],
+            "range": 2097144.0,
+            "bits": 18,
+            "position_mse_scaled": 4.79602538259781
+          },
+          "fixed_ms": 7.16499995905906,
+          "search_ms": 448.37150000967085
+        },
+        {
+          "bits": 20,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -1003809.375,
+              -583224.75,
+              -115291.0
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.35101871218980674
+          },
+          "searched": {
+            "phase": [
+              1,
+              1,
+              3
+            ],
+            "origin": [
+              -1003809.875,
+              -583225.25,
+              -115292.5
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.31561548710291915
+          },
+          "fixed_ms": 9.804600034840405,
+          "search_ms": 452.0807000226341
+        }
+      ]
+    },
+    {
+      "asset": 59301,
+      "sha256": "71db678a59bc1a4093eca62ae0236ce52725846f2e91b0ddfe9060ea7121a22c",
+      "vertices": 5852,
+      "faces": 11716,
+      "quantization": [
+        {
+          "bits": 10,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 5.047600017860532,
+          "search_ms": 258.7710000225343
+        },
+        {
+          "bits": 12,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 4.525700001977384,
+          "search_ms": 249.41320001380518
+        },
+        {
+          "bits": 14,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -1042607.25,
+              -1042607.25,
+              -111708.0
+            ],
+            "range": 2088832.5,
+            "bits": 14,
+            "position_mse_scaled": 1326.1134492632305
+          },
+          "searched": {
+            "phase": [
+              3,
+              3,
+              3
+            ],
+            "origin": [
+              -1042702.875,
+              -1042702.875,
+              -111803.625
+            ],
+            "range": 2088832.5,
+            "bits": 14,
+            "position_mse_scaled": 1251.6432427633158
+          },
+          "fixed_ms": 10.39800001308322,
+          "search_ms": 601.3055000221357
+        },
+        {
+          "bits": 16,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -1042607.25,
+              -1042607.25,
+              -111708.0
+            ],
+            "range": 2097120.0,
+            "bits": 16,
+            "position_mse_scaled": 83.13695006512867
+          },
+          "searched": {
+            "phase": [
+              3,
+              3,
+              1
+            ],
+            "origin": [
+              -1042631.25,
+              -1042631.25,
+              -111716.0
+            ],
+            "range": 2097120.0,
+            "bits": 16,
+            "position_mse_scaled": 80.50359109953287
+          },
+          "fixed_ms": 9.713700041174889,
+          "search_ms": 536.4596000290476
+        },
+        {
+          "bits": 18,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -1042607.25,
+              -1042607.25,
+              -111708.0
+            ],
+            "range": 2097144.0,
+            "bits": 18,
+            "position_mse_scaled": 4.793237445511452
+          },
+          "searched": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -1042607.25,
+              -1042607.25,
+              -111708.0
+            ],
+            "range": 2097144.0,
+            "bits": 18,
+            "position_mse_scaled": 4.793237445511452
+          },
+          "fixed_ms": 6.491700012702495,
+          "search_ms": 564.1312000225298
+        },
+        {
+          "bits": 20,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -1042607.25,
+              -1042607.25,
+              -111708.0
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.30595033569144725
+          },
+          "searched": {
+            "phase": [
+              2,
+              2,
+              0
+            ],
+            "origin": [
+              -1042608.25,
+              -1042608.25,
+              -111708.0
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.30293320479602687
+          },
+          "fixed_ms": 6.555900035891682,
+          "search_ms": 566.4702000212856
+        }
+      ]
+    },
+    {
+      "asset": 84757,
+      "sha256": "a763dce4e69ceb68129abf8a02cc8f2045e53e2da83bf66857b7f4e9ea686ef7",
+      "vertices": 6035,
+      "faces": 12090,
+      "quantization": [
+        {
+          "bits": 10,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 5.352600011974573,
+          "search_ms": 289.7880999953486
+        },
+        {
+          "bits": 12,
+          "valid_phases": 12,
+          "fixed": null,
+          "searched": {
+            "phase": [
+              1,
+              0,
+              3
+            ],
+            "origin": [
+              -988528.0,
+              -988408.25,
+              -411927.375
+            ],
+            "range": 1977885.0,
+            "bits": 12,
+            "position_mse_scaled": 18714.8394684973
+          },
+          "fixed_ms": 3.6080999998375773,
+          "search_ms": 398.5777000198141
+        },
+        {
+          "bits": 14,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -988407.25,
+              -988408.25,
+              -411565.125
+            ],
+            "range": 1982343.0,
+            "bits": 14,
+            "position_mse_scaled": 1169.9154649297784
+          },
+          "searched": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -988407.25,
+              -988408.25,
+              -411565.125
+            ],
+            "range": 1982343.0,
+            "bits": 14,
+            "position_mse_scaled": 1169.9154649297784
+          },
+          "fixed_ms": 12.133199954405427,
+          "search_ms": 649.0508999559097
+        },
+        {
+          "bits": 16,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -988407.25,
+              -988408.25,
+              -411565.125
+            ],
+            "range": 1998817.5,
+            "bits": 16,
+            "position_mse_scaled": 77.22498592105308
+          },
+          "searched": {
+            "phase": [
+              1,
+              0,
+              1
+            ],
+            "origin": [
+              -988414.875,
+              -988408.25,
+              -411572.75
+            ],
+            "range": 1998817.5,
+            "bits": 16,
+            "position_mse_scaled": 70.57092323740031
+          },
+          "fixed_ms": 9.92519996361807,
+          "search_ms": 667.2503000008874
+        },
+        {
+          "bits": 18,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -988407.25,
+              -988408.25,
+              -411565.125
+            ],
+            "range": 2097144.0,
+            "bits": 18,
+            "position_mse_scaled": 5.2417959855584915
+          },
+          "searched": {
+            "phase": [
+              2,
+              0,
+              2
+            ],
+            "origin": [
+              -988411.25,
+              -988408.25,
+              -411569.125
+            ],
+            "range": 2097144.0,
+            "bits": 18,
+            "position_mse_scaled": 5.180848504768131
+          },
+          "fixed_ms": 7.51909997779876,
+          "search_ms": 616.4565000217408
+        },
+        {
+          "bits": 20,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -988407.25,
+              -988408.25,
+              -411565.125
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.32161667395945565
+          },
+          "searched": {
+            "phase": [
+              0,
+              1,
+              3
+            ],
+            "origin": [
+              -988407.25,
+              -988408.75,
+              -411566.625
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.30794333409094854
+          },
+          "fixed_ms": 7.1983999805524945,
+          "search_ms": 629.8674999852665
+        }
+      ]
+    },
+    {
+      "asset": 73858,
+      "sha256": "409da0134c25314942808b0048a2c94ab24c0ce1b01daae29522d50ee5bacf4b",
+      "vertices": 4343,
+      "faces": 8748,
+      "quantization": [
+        {
+          "bits": 10,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 2.70990002900362,
+          "search_ms": 158.3270999835804
+        },
+        {
+          "bits": 12,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 2.3181999567896128,
+          "search_ms": 137.8023999859579
+        },
+        {
+          "bits": 14,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 1.8706999835558236,
+          "search_ms": 152.6280000107363
+        },
+        {
+          "bits": 16,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 2.4769000010564923,
+          "search_ms": 112.58600000292063
+        },
+        {
+          "bits": 18,
+          "valid_phases": 8,
+          "fixed": null,
+          "searched": {
+            "phase": [
+              0,
+              3,
+              1
+            ],
+            "origin": [
+              -894834.25,
+              -894839.5,
+              -288694.5
+            ],
+            "range": 1835001.0,
+            "bits": 18,
+            "position_mse_scaled": 3.9058325272308396
+          },
+          "fixed_ms": 1.540200028102845,
+          "search_ms": 274.7100000269711
+        },
+        {
+          "bits": 20,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 6.551300000865012,
+          "search_ms": 367.58319998625666
+        }
+      ]
+    },
+    {
+      "asset": 97859,
+      "sha256": "b53d4bc507e41638e67cff2252ce74e6ed202f82e0cd93739147078581f69315",
+      "vertices": 15134,
+      "faces": 30264,
+      "quantization": [
+        {
+          "bits": 10,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 12.359799991827458,
+          "search_ms": 811.4433999871835
+        },
+        {
+          "bits": 12,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 8.371700008865446,
+          "search_ms": 838.8803999987431
+        },
+        {
+          "bits": 14,
+          "valid_phases": 8,
+          "fixed": null,
+          "searched": {
+            "phase": [
+              0,
+              2,
+              1
+            ],
+            "origin": [
+              -618742.875,
+              -623149.625,
+              -837914.125
+            ],
+            "range": 1679257.5,
+            "bits": 14,
+            "position_mse_scaled": 857.3878864398332
+          },
+          "fixed_ms": 14.387000002898276,
+          "search_ms": 1030.418100010138
+        },
+        {
+          "bits": 16,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -618742.875,
+              -623098.375,
+              -837888.5
+            ],
+            "range": 1703910.0,
+            "bits": 16,
+            "position_mse_scaled": 56.381089145735594
+          },
+          "searched": {
+            "phase": [
+              1,
+              0,
+              2
+            ],
+            "origin": [
+              -618749.375,
+              -623098.375,
+              -837901.5
+            ],
+            "range": 1703910.0,
+            "bits": 16,
+            "position_mse_scaled": 55.3554746821442
+          },
+          "fixed_ms": 28.09859998524189,
+          "search_ms": 1800.3762000007555
+        },
+        {
+          "bits": 18,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -618742.875,
+              -623098.375,
+              -837888.5
+            ],
+            "range": 1703929.5,
+            "bits": 18,
+            "position_mse_scaled": 3.5938736199491035
+          },
+          "searched": {
+            "phase": [
+              0,
+              1,
+              2
+            ],
+            "origin": [
+              -618742.875,
+              -623100.0,
+              -837891.75
+            ],
+            "range": 1703929.5,
+            "bits": 18,
+            "position_mse_scaled": 3.3452690545563133
+          },
+          "fixed_ms": 29.63930001715198,
+          "search_ms": 1702.2373000509106
+        },
+        {
+          "bits": 20,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -618742.875,
+              -623098.375,
+              -837888.5
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.35081702739893406
+          },
+          "searched": {
+            "phase": [
+              3,
+              0,
+              3
+            ],
+            "origin": [
+              -618744.375,
+              -623098.375,
+              -837890.0
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.31691490857105337
+          },
+          "fixed_ms": 23.817299981601536,
+          "search_ms": 1502.2654000204057
+        }
+      ]
+    },
+    {
+      "asset": 741525,
+      "sha256": "b6a751d128a57778977bbc124f061d09c3162a1e21ad534ebec1251ed9845a4e",
+      "vertices": 10685,
+      "faces": 21370,
+      "quantization": [
+        {
+          "bits": 10,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 7.559399993624538,
+          "search_ms": 494.51789999147877
+        },
+        {
+          "bits": 12,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 6.347600021399558,
+          "search_ms": 474.90680002374575
+        },
+        {
+          "bits": 14,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 8.757999981753528,
+          "search_ms": 525.009399978444
+        },
+        {
+          "bits": 16,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -319764.25,
+              -319764.25,
+              -1023900.875
+            ],
+            "range": 2064352.5,
+            "bits": 16,
+            "position_mse_scaled": 82.41097691960272
+          },
+          "searched": {
+            "phase": [
+              1,
+              1,
+              1
+            ],
+            "origin": [
+              -319772.125,
+              -319772.125,
+              -1023908.75
+            ],
+            "range": 2064352.5,
+            "bits": 16,
+            "position_mse_scaled": 80.23369957931564
+          },
+          "fixed_ms": 23.661600018385798,
+          "search_ms": 1198.1303000357002
+        },
+        {
+          "bits": 18,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -319764.25,
+              -319764.25,
+              -1023900.875
+            ],
+            "range": 2097144.0,
+            "bits": 18,
+            "position_mse_scaled": 5.289395679723145
+          },
+          "searched": {
+            "phase": [
+              1,
+              1,
+              3
+            ],
+            "origin": [
+              -319766.25,
+              -319766.25,
+              -1023906.875
+            ],
+            "range": 2097144.0,
+            "bits": 18,
+            "position_mse_scaled": 5.1752792117978625
+          },
+          "fixed_ms": 13.81149998633191,
+          "search_ms": 1167.5662999623455
+        },
+        {
+          "bits": 20,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -319764.25,
+              -319764.25,
+              -1023900.875
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.32586388887392637
+          },
+          "searched": {
+            "phase": [
+              2,
+              3,
+              0
+            ],
+            "origin": [
+              -319765.25,
+              -319765.75,
+              -1023900.875
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.32531280423559644
+          },
+          "fixed_ms": 15.6561000039801,
+          "search_ms": 1142.187500023283
+        }
+      ]
+    },
+    {
+      "asset": 104559,
+      "sha256": "bb821a80e919e004d3192bd1aab5796ffaa8255b9e1d2a4228cc3efe8da501f6",
+      "vertices": 23577,
+      "faces": 47330,
+      "quantization": [
+        {
+          "bits": 10,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 22.622400021646172,
+          "search_ms": 1441.1125000333413
+        },
+        {
+          "bits": 12,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 23.008799995295703,
+          "search_ms": 1414.9206000147387
+        },
+        {
+          "bits": 14,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 22.061499999836087,
+          "search_ms": 1349.1464999970049
+        },
+        {
+          "bits": 16,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -686857.25,
+              -693920.25,
+              -792888.875
+            ],
+            "range": 1605607.5,
+            "bits": 16,
+            "position_mse_scaled": 51.15656995186959
+          },
+          "searched": {
+            "phase": [
+              2,
+              2,
+              3
+            ],
+            "origin": [
+              -686869.5,
+              -693932.5,
+              -792907.25
+            ],
+            "range": 1605607.5,
+            "bits": 16,
+            "position_mse_scaled": 48.68005139794815
+          },
+          "fixed_ms": 44.785299978684634,
+          "search_ms": 3062.2239999938756
+        },
+        {
+          "bits": 18,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -686857.25,
+              -693920.25,
+              -792888.875
+            ],
+            "range": 1703929.5,
+            "bits": 18,
+            "position_mse_scaled": 3.610388261460118
+          },
+          "searched": {
+            "phase": [
+              2,
+              3,
+              2
+            ],
+            "origin": [
+              -686860.5,
+              -693925.125,
+              -792892.125
+            ],
+            "range": 1703929.5,
+            "bits": 18,
+            "position_mse_scaled": 3.4251584402681265
+          },
+          "fixed_ms": 44.19169999891892,
+          "search_ms": 2967.97300002072
+        },
+        {
+          "bits": 20,
+          "valid_phases": 64,
+          "fixed": {
+            "phase": [
+              0,
+              0,
+              0
+            ],
+            "origin": [
+              -686857.25,
+              -693920.25,
+              -792888.875
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.33081149348333433
+          },
+          "searched": {
+            "phase": [
+              1,
+              3,
+              3
+            ],
+            "origin": [
+              -686857.75,
+              -693921.75,
+              -792890.375
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.3207327721202774
+          },
+          "fixed_ms": 46.494900016114116,
+          "search_ms": 2853.520100004971
+        }
+      ]
+    },
+    {
+      "asset": 32770,
+      "sha256": "05cadafafe14a6b6a5463a46b0fdf6d9bf706fa8d6e3358cff6e8096f7d82e7c",
+      "vertices": 18944,
+      "faces": 37884,
+      "quantization": [
+        {
+          "bits": 10,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 15.207700023893267,
+          "search_ms": 1087.2518999967724
+        },
+        {
+          "bits": 12,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 17.848199990112334,
+          "search_ms": 1007.3484000167809
+        },
+        {
+          "bits": 14,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 11.218200030270964,
+          "search_ms": 974.8712999862619
+        },
+        {
+          "bits": 16,
+          "valid_phases": 0,
+          "fixed": null,
+          "searched": null,
+          "fixed_ms": 17.02349999686703,
+          "search_ms": 1012.4249999644235
+        },
+        {
+          "bits": 18,
+          "valid_phases": 8,
+          "fixed": null,
+          "searched": {
+            "phase": [
+              1,
+              3,
+              3
+            ],
+            "origin": [
+              -981526.875,
+              -986548.75,
+              -355309.625
+            ],
+            "range": 2097144.0,
+            "bits": 18,
+            "position_mse_scaled": 5.310703478894813
+          },
+          "fixed_ms": 14.945500006433576,
+          "search_ms": 1188.7901999871247
+        },
+        {
+          "bits": 20,
+          "valid_phases": 24,
+          "fixed": null,
+          "searched": {
+            "phase": [
+              2,
+              2,
+              0
+            ],
+            "origin": [
+              -981525.875,
+              -986543.75,
+              -355303.625
+            ],
+            "range": 2097150.0,
+            "bits": 20,
+            "position_mse_scaled": 0.33182430982887073
+          },
+          "fixed_ms": 12.817099981475621,
+          "search_ms": 1399.6554999612272
+        }
+      ]
+    }
+  ]
+}

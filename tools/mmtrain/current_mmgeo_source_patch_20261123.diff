@@ -1,0 +1,612 @@
+diff --git a/libs/manymesh/include/manymesh/Cluster.h b/libs/manymesh/include/manymesh/Cluster.h
+index bb335c4cc..b3ff58988 100644
+--- a/libs/manymesh/include/manymesh/Cluster.h
++++ b/libs/manymesh/include/manymesh/Cluster.h
+@@ -44,6 +44,10 @@ struct Cone {
+     float cutoff = 0.0f;  //!< cos(half angle) within which the cone is guaranteed to contain the normals
+ };
+ 
++//! Returns a cone whose angular cap contains the normal directions in both inputs.
++//! Invalid input conservatively produces a full-sphere normal cone (cutoff = -1).
++Cone mergeNormalCones(Cone const& a, Cone const& b) noexcept;
++
+ /**
+  * One group of triangles that is simplified, selected and (eventually) culled as a unit.
+  *
+diff --git a/libs/manymesh/include/manymesh/Simplifier.h b/libs/manymesh/include/manymesh/Simplifier.h
+index 972bea037..b58856d67 100644
+--- a/libs/manymesh/include/manymesh/Simplifier.h
++++ b/libs/manymesh/include/manymesh/Simplifier.h
+@@ -80,6 +80,22 @@ struct LodLevel {
+     size_t triangleCount() const noexcept { return indices.size() / 3; }
+ };
+ 
++//! One rejected simplified candidate. Vertex and triangle indices refer to the mesh passed to
++//! the simplifier; a DAG caller stores these records beside the parent group's child IDs.
++struct SimplifyRejectObservation {
++    size_t sourceIndexCount = 0;
++    size_t targetIndexCount = 0;
++    size_t candidateIndexCount = 0;
++    uint32_t attempt = 0;
++    uint32_t rejectMask = 0;
++    uint32_t worstNormalVertex = UINT32_MAX;
++    uint32_t worstNormalTriangle = UINT32_MAX;
++    uint32_t worstUvVertex = UINT32_MAX;
++    uint32_t worstUvTriangle = UINT32_MAX;
++    float maxNormalErrorRadians = 0.0f;
++    float maxUvError = 0.0f;
++};
++
+ /**
+  * Optional diagnostics for one or more simplification runs. All fields accumulate, so a caller
+  * can reuse one profile for a whole DAG build. This is deliberately separate from the LOD data:
+@@ -127,6 +143,8 @@ struct SimplifyProfile {
+     //! Optional exact five-bit rejection-mask histogram, enabled only for DAG diagnostics.
+     //! Bits 0..4 mean topology, geometry, attributes, boundary, and locked-mask failure.
+     std::shared_ptr<std::array<uint64_t, 32>> rejectedMaskCounts;
++    //! Candidate details are populated only when the caller enabled the DAG diagnostic ledger.
++    std::vector<SimplifyRejectObservation> rejectionDetails;
+     uint64_t extendedMeshCopies = 0;
+ };
+ 
+diff --git a/libs/manymesh/src/Clusterizer.cpp b/libs/manymesh/src/Clusterizer.cpp
+index 06bfa6b5b..fee4e14b0 100644
+--- a/libs/manymesh/src/Clusterizer.cpp
++++ b/libs/manymesh/src/Clusterizer.cpp
+@@ -19,6 +19,7 @@
+ #include <meshoptimizer.h>
+ 
+ #include <algorithm>
++#include <cmath>
+ #include <functional>
+ #include <unordered_map>
+ #include <utility>
+@@ -27,6 +28,75 @@
+ namespace filament {
+ namespace manymesh {
+ 
++Cone mergeNormalCones(Cone const& a, Cone const& b) noexcept {
++    constexpr float kAxisEpsilon = 1e-6f;
++    constexpr float kAngleEpsilon = 1e-4f;
++    constexpr float kPi = 3.14159265358979323846f;
++
++    Cone result;
++    result.apex = (a.apex + b.apex) * 0.5f;
++
++    auto const fullSphere = [&result]() {
++        result.axis = { 0.0f, 0.0f, 1.0f };
++        result.cutoff = -1.0f;
++        return result;
++    };
++    auto const finiteVector = [](math::float3 v) {
++        return std::isfinite(v.x) && std::isfinite(v.y) && std::isfinite(v.z);
++    };
++
++    if (!finiteVector(a.axis) || !finiteVector(b.axis) || !std::isfinite(a.cutoff) ||
++            !std::isfinite(b.cutoff)) {
++        return fullSphere();
++    }
++
++    float const axisLengthA = length(a.axis);
++    float const axisLengthB = length(b.axis);
++    if (!(axisLengthA > kAxisEpsilon) || !(axisLengthB > kAxisEpsilon)) {
++        return fullSphere();
++    }
++
++    math::float3 const axisA = a.axis / axisLengthA;
++    math::float3 const axisB = b.axis / axisLengthB;
++    float const angleA = std::acos(std::clamp(a.cutoff, -1.0f, 1.0f));
++    float const angleB = std::acos(std::clamp(b.cutoff, -1.0f, 1.0f));
++    float const cosine = std::clamp(dot(axisA, axisB), -1.0f, 1.0f);
++    float const centerAngle = std::acos(cosine);
++
++    math::float3 axis;
++    float angle = 0.0f;
++    if (angleA >= centerAngle + angleB) {
++        axis = axisA;
++        angle = angleA;
++    } else if (angleB >= centerAngle + angleA) {
++        axis = axisB;
++        angle = angleB;
++    } else if (centerAngle <= kAxisEpsilon) {
++        axis = axisA;
++        angle = std::max(angleA, centerAngle + angleB);
++    } else if (kPi - centerAngle <= kAngleEpsilon) {
++        // The shortest great-circle arc is ambiguous for antipodal axes. A full sphere is a
++        // conservative fallback and avoids choosing a numerically unstable separating plane.
++        return fullSphere();
++    } else {
++        angle = 0.5f * (centerAngle + angleA + angleB);
++        float const moveFromA = 0.5f * (centerAngle + angleB - angleA);
++        float const denominator = std::sin(centerAngle);
++        axis = axisA * (std::sin(centerAngle - moveFromA) / denominator) +
++               axisB * (std::sin(moveFromA) / denominator);
++        float const axisLength = length(axis);
++        if (!(axisLength > kAxisEpsilon) || !finiteVector(axis)) {
++            return fullSphere();
++        }
++        axis = axis / axisLength;
++    }
++
++    angle = std::min(kPi, angle + kAngleEpsilon);
++    result.axis = axis;
++    result.cutoff = angle >= kPi ? -1.0f : std::cos(angle);
++    return result;
++}
++
+ namespace {
+ 
+ // meshopt_buildMeshlets stores micro-indices in a byte, which caps the vertex count of a
+diff --git a/libs/manymesh/src/Grouper.cpp b/libs/manymesh/src/Grouper.cpp
+index 25722ada1..250f59476 100644
+--- a/libs/manymesh/src/Grouper.cpp
++++ b/libs/manymesh/src/Grouper.cpp
+@@ -46,18 +46,6 @@ Sphere mergeSpheres(Sphere const& a, Sphere const& b) {
+     return result;
+ }
+ 
+-//! Cone that contains both inputs: the widest of the two, which is the smallest cutoff.
+-Cone mergeCones(Cone const& a, Cone const& b) {
+-    math::float3 const axis = a.axis + b.axis;
+-    float const axisLength = length(axis);
+-
+-    Cone result;
+-    result.apex = a.apex;
+-    result.axis = axisLength > 0.0f ? axis / axisLength : a.axis;
+-    result.cutoff = std::min(a.cutoff, b.cutoff);
+-    return result;
+-}
+-
+ } // anonymous namespace
+ 
+ ClusterSet groupClusters(ClusterSet const& clusters, GroupOptions const& options) {
+@@ -174,7 +162,7 @@ ClusterSet groupClusters(ClusterSet const& clusters, GroupOptions const& options
+         for (size_t i = 1; i < members.size(); ++i) {
+             Cluster const& member = clusters.clusters[members[i]];
+             group.bounds = mergeSpheres(group.bounds, member.bounds);
+-            group.cone = mergeCones(group.cone, member.cone);
++            group.cone = mergeNormalCones(group.cone, member.cone);
+             group.indices.insert(group.indices.end(),
+                     member.indices.begin(), member.indices.end());
+         }
+diff --git a/libs/manymesh/src/LodGraph.cpp b/libs/manymesh/src/LodGraph.cpp
+index a348d06c7..9907fa341 100644
+--- a/libs/manymesh/src/LodGraph.cpp
++++ b/libs/manymesh/src/LodGraph.cpp
+@@ -215,16 +215,6 @@ Sphere mergeSpheres(Sphere const& a, Sphere const& b) {
+     return result;
+ }
+ 
+-Cone mergeCones(Cone const& a, Cone const& b) {
+-    Cone result;
+-    result.apex = (a.apex + b.apex) * 0.5f;
+-    math::float3 const axis = a.axis + b.axis;
+-    float const axisLength = length(axis);
+-    result.axis = axisLength > 1e-6f ? axis / axisLength : a.axis;
+-    result.cutoff = std::min(a.cutoff, b.cutoff);
+-    return result;
+-}
+-
+ std::vector<std::vector<uint32_t>> groupNodes(LodGraph const& graph,
+         std::vector<uint32_t> const& current, uint32_t clustersPerNode, size_t vertexCount,
+         std::vector<uint32_t> const* positionIds, std::vector<int32_t>* lastOwner,
+@@ -1009,7 +999,7 @@ LodGraph buildLodGraph(Mesh const& mesh, LodGraphOptions const& options,
+             parent.simplified = true;
+             for (size_t i = 1; i < members.size(); ++i) {
+                 parent.bounds = mergeSpheres(parent.bounds, graph.nodes[members[i]].bounds);
+-                parent.cone = mergeCones(parent.cone, graph.nodes[members[i]].cone);
++                parent.cone = mergeNormalCones(parent.cone, graph.nodes[members[i]].cone);
+             }
+             for (uint32_t member: members) {
+                 parent.baseTriangles += graph.nodes[member].baseTriangles;
+diff --git a/libs/manymesh/src/Simplifier.cpp b/libs/manymesh/src/Simplifier.cpp
+index 20c86c07e..0f8a28836 100644
+--- a/libs/manymesh/src/Simplifier.cpp
++++ b/libs/manymesh/src/Simplifier.cpp
+@@ -1461,6 +1461,23 @@ void simplifyClusterInto(std::vector<uint32_t> const& source, Mesh const& mesh,
+ 
+         for (Candidate const& candidate: candidates) {
+             LodLevel const& level = candidate.level;
++            if (profile != nullptr && profile->rejectedMaskCounts != nullptr &&
++                    level.simplified && !candidate.acceptable) {
++                SimplifyRejectObservation const observation {
++                    source.size(),
++                    attemptTarget,
++                    level.indices.size(),
++                    attempt + 1,
++                    candidate.rejectMask,
++                    level.attributes.worstNormalVertex,
++                    level.attributes.worstNormalTriangle,
++                    level.attributes.worstUvVertex,
++                    level.attributes.worstUvTriangle,
++                    level.attributes.maxNormalErrorRadians,
++                    level.attributes.maxUvError,
++                };
++                profile->rejectionDetails.push_back(observation);
++            }
+             if (options.verbose && level.simplified && !candidate.acceptable) {
+                 std::fprintf(stderr,
+                         "quality reject: source=%zu target=%zu got=%zu attempt=%u "
+@@ -1771,6 +1788,8 @@ std::vector<ClusterLods> simplifyClusters(Mesh const& mesh, ClusterSet const& cl
+             profile->cornerCandidates += local.cornerCandidates;
+             profile->meshoptCandidates += local.meshoptCandidates;
+             profile->accepted += local.accepted;
++            profile->rejectionDetails.insert(profile->rejectionDetails.end(),
++                    local.rejectionDetails.begin(), local.rejectionDetails.end());
+             if (local.rejectedMaskCounts) {
+                 if (!profile->rejectedMaskCounts) {
+                     profile->rejectedMaskCounts =
+diff --git a/libs/manymesh/tests/test_manymesh.cpp b/libs/manymesh/tests/test_manymesh.cpp
+index acd5c2791..2a1cde006 100644
+--- a/libs/manymesh/tests/test_manymesh.cpp
++++ b/libs/manymesh/tests/test_manymesh.cpp
+@@ -2834,6 +2834,46 @@ TEST(ManyMesh, SelectedCutDropsFacesDuplicatedAtWeldedPositions) {
+     EXPECT_EQ(selection.indices.size(), 3u);
+ }
+ 
++TEST(ManyMesh, MergeNormalConesConservativelyContainsBothInputs) {
++    constexpr float pi = 3.14159265358979323846f;
++    constexpr float degreesToRadians = pi / 180.0f;
++    auto const unit = [](math::float3 value) { return value / length(value); };
++    auto const angle = [&unit](math::float3 a, math::float3 b) {
++        return std::acos(std::clamp(dot(unit(a), unit(b)), -1.0f, 1.0f));
++    };
++    auto const contains = [&angle](Cone const& outer, Cone const& inner) {
++        float const outerAngle = std::acos(std::clamp(outer.cutoff, -1.0f, 1.0f));
++        float const innerAngle = std::acos(std::clamp(inner.cutoff, -1.0f, 1.0f));
++        return angle(outer.axis, inner.axis) + innerAngle <= outerAngle + 5e-4f;
++    };
++
++    Cone const a{ {}, { 0.0f, 0.0f, 1.0f }, std::cos(20.0f * degreesToRadians) };
++    Cone const b{ {}, { 1.0f, 0.0f, 0.0f }, std::cos(10.0f * degreesToRadians) };
++    Cone const merged = mergeNormalCones(a, b);
++    EXPECT_TRUE(contains(merged, a));
++    EXPECT_TRUE(contains(merged, b));
++}
++
++TEST(ManyMesh, MergeNormalConesHandlesContainmentAndAntipodalAxes) {
++    constexpr float pi = 3.14159265358979323846f;
++    Cone const broad{ {}, { 0.0f, 0.0f, 1.0f }, std::cos(60.0f * pi / 180.0f) };
++    Cone const narrow{ {}, { 0.0f, 0.0f, 1.0f }, std::cos(10.0f * pi / 180.0f) };
++    Cone const contained = mergeNormalCones(broad, narrow);
++    EXPECT_NEAR(contained.cutoff, broad.cutoff, 2e-4f);
++
++    Cone const opposite{ {}, { 0.0f, 0.0f, -1.0f }, 1.0f };
++    Cone const antipodal = mergeNormalCones(narrow, opposite);
++    EXPECT_EQ(antipodal.cutoff, -1.0f);
++}
++
++TEST(ManyMesh, MergeNormalConesInvalidInputFailsOpen) {
++    Cone const valid{ {}, { 0.0f, 0.0f, 1.0f }, 0.9f };
++    Cone invalid = valid;
++    invalid.axis = {};
++    Cone const merged = mergeNormalCones(valid, invalid);
++    EXPECT_EQ(merged.cutoff, -1.0f);
++}
++
+ namespace {
+ 
+ Mesh makeBakeQuad(math::float3 normal) {
+diff --git a/tools/mmgeo/src/main.cpp b/tools/mmgeo/src/main.cpp
+index 028280b87..7ca62ef1f 100644
+--- a/tools/mmgeo/src/main.cpp
++++ b/tools/mmgeo/src/main.cpp
+@@ -82,6 +82,10 @@ struct Options {
+     //! Extra uniform-ratio cuts exported from the same DAG build, to match the triangle count
+     //! of a screen-error cut without rebuilding.
+     std::vector<float> targetRatioCuts;
++    //! Research-only contour-risk cuts. Each target ratio is paired with every interior scale.
++    std::vector<float> contourRatioCuts;
++    std::vector<float> contourInteriorMultipliers{ 3.0f, 4.0f, 5.0f };
++    float contourMarginDegrees = 5.0f;
+     uint32_t oracleSwaps = 0;
+     uint32_t oracleComposites = 0;
+     bool writeDag = true;
+@@ -170,6 +174,9 @@ Options:
+                        exported as selected_px_<P>.ply from the same DAG build
+   --target-ratio-cut R Comma separated uniform ratios; each one is exported as
+                        selected_ratio_<R>.ply from the same DAG build
++  --contour-ratio-cut R Comma separated research budgets matched to uniform-ratio cuts
++  --contour-interior F Comma separated interior threshold multipliers (default: 3,4,5)
++  --contour-margin D   cone-angle margin in degrees (default: 5; clamped to [0, 90])
+   --oracle-swaps N     export up to N equal-triangle split/merge candidates for the selected cut
+                        (DAG mode; 0 disables, maximum 256)
+   --oracle-composites N export up to N equal-triangle candidates with up to two
+@@ -1560,6 +1567,150 @@ ViewCamera makeCamera(Options const& options, Mesh const& mesh) {
+     return camera;
+ }
+ 
++struct CutCameraBasis {
++    math::float3 forward{};
++    math::float3 right{};
++    math::float3 up{};
++    float tanHalfFovY = 1.0f;
++    float aspect = 1.0f;
++    bool valid = false;
++};
++
++CutCameraBasis makeCutCameraBasis(ViewCamera const& camera) {
++    CutCameraBasis basis;
++    math::float3 const forward = camera.target - camera.eye;
++    float const forwardLength = length(forward);
++    if (!(forwardLength > 1e-6f)) {
++        return basis;
++    }
++    basis.forward = forward / forwardLength;
++    math::float3 const right = cross(basis.forward, camera.up);
++    float const rightLength = length(right);
++    if (!(rightLength > 1e-6f)) {
++        return basis;
++    }
++    basis.right = right / rightLength;
++    basis.up = cross(basis.right, basis.forward);
++    basis.tanHalfFovY = std::max(std::tan(camera.fovY * 0.5f), 1e-4f);
++    basis.aspect = float(camera.screenWidth) / float(std::max(camera.screenHeight, 1u));
++    basis.valid = true;
++    return basis;
++}
++
++bool cutSphereOutsideFrustum(Sphere const& sphere, ViewCamera const& camera,
++        CutCameraBasis const& basis) {
++    math::float3 const d = sphere.center - camera.eye;
++    float const depth = dot(d, basis.forward);
++    if (depth + sphere.radius < camera.near || depth - sphere.radius > camera.far) {
++        return true;
++    }
++    float const tanX = basis.tanHalfFovY * basis.aspect;
++    float const tanY = basis.tanHalfFovY;
++    return std::abs(dot(d, basis.right)) - depth * tanX >
++                   sphere.radius * std::sqrt(1.0f + tanX * tanX) ||
++           std::abs(dot(d, basis.up)) - depth * tanY >
++                   sphere.radius * std::sqrt(1.0f + tanY * tanY);
++}
++
++bool nodeMayContainContour(LodGraphNode const& node, ViewCamera const& camera,
++        float marginRadians) {
++    if (!(node.cone.cutoff > -1.0f)) {
++        return true;
++    }
++    float const axisLength = length(node.cone.axis);
++    math::float3 const viewVector = camera.eye - node.bounds.center;
++    float const viewLength = length(viewVector);
++    if (!(axisLength > 1e-6f) || !(viewLength > 1e-6f)) {
++        return true;
++    }
++    math::float3 const axis = node.cone.axis / axisLength;
++    math::float3 const view = viewVector / viewLength;
++    float const halfAngle = std::acos(std::clamp(node.cone.cutoff, -1.0f, 1.0f));
++    float const effectiveAngle = std::min(halfAngle + marginRadians, 1.57079632679f);
++    return std::abs(dot(axis, view)) <= std::sin(effectiveAngle);
++}
++
++struct ContourCutDraft {
++    std::vector<uint32_t> nodes;
++    uint64_t triangles = 0;
++    uint64_t culledTriangles = 0;
++};
++
++void collectContourCut(LodGraph const& graph, ViewCamera const& camera,
++        CutCameraBasis const& basis, ScreenErrorProjection const& projection,
++        float scale, float interiorMultiplier, float marginRadians, uint32_t nodeId,
++        ContourCutDraft* cut) {
++    LodGraphNode const& node = graph.nodes[nodeId];
++    if (basis.valid && cutSphereOutsideFrustum(node.bounds, camera, basis)) {
++        cut->culledTriangles += node.baseTriangles;
++        return;
++    }
++
++    float const error = screenSpaceErrorForSphere(node.accumulatedError, node.bounds, projection);
++    bool const contourProne = nodeMayContainContour(node, camera, marginRadians);
++    float const threshold = scale * (contourProne ? 1.0f : interiorMultiplier);
++    if (!node.children.empty() && error > threshold) {
++        for (uint32_t child: node.children) {
++            collectContourCut(graph, camera, basis, projection, scale, interiorMultiplier,
++                    marginRadians, child, cut);
++        }
++        return;
++    }
++    cut->nodes.push_back(nodeId);
++    cut->triangles += node.triangleCount();
++}
++
++ContourCutDraft makeContourCutDraft(LodGraph const& graph, ViewCamera const& camera,
++        float scale, float interiorMultiplier, float marginRadians) {
++    ContourCutDraft cut;
++    CutCameraBasis const basis = makeCutCameraBasis(camera);
++    ScreenErrorProjection const projection = makeScreenErrorProjection(camera);
++    for (uint32_t root: graph.roots) {
++        collectContourCut(graph, camera, basis, projection, scale, interiorMultiplier,
++                marginRadians, root, &cut);
++    }
++    return cut;
++}
++
++LodGraphSelection selectContourCutAtBudget(LodGraph const& graph, ViewCamera const& camera,
++        uint64_t targetTriangles, float interiorMultiplier, float marginRadians,
++        float* selectedScale) {
++    ScreenErrorProjection const projection = makeScreenErrorProjection(camera);
++    float maxScale = 1e-6f;
++    for (LodGraphNode const& node: graph.nodes) {
++        maxScale = std::max(maxScale,
++                screenSpaceErrorForSphere(node.accumulatedError, node.bounds, projection));
++    }
++
++    float low = 0.0f;
++    float high = maxScale;
++    float bestScale = high;
++    uint64_t bestDelta = std::numeric_limits<uint64_t>::max();
++    for (uint32_t iteration = 0; iteration < 40; ++iteration) {
++        float const scale = low + (high - low) * 0.5f;
++        ContourCutDraft const draft = makeContourCutDraft(graph, camera, scale,
++                interiorMultiplier, marginRadians);
++        uint64_t const delta = draft.triangles > targetTriangles
++                ? draft.triangles - targetTriangles : targetTriangles - draft.triangles;
++        if (delta < bestDelta) {
++            bestDelta = delta;
++            bestScale = scale;
++        }
++        if (draft.triangles > targetTriangles) {
++            low = scale;
++        } else {
++            high = scale;
++        }
++    }
++
++    ContourCutDraft const draft = makeContourCutDraft(graph, camera, bestScale,
++            interiorMultiplier, marginRadians);
++    if (selectedScale != nullptr) {
++        *selectedScale = bestScale;
++    }
++    return assembleLodSelection(graph, camera, draft.nodes, draft.culledTriangles);
++}
++
+ //! Does the option named by this argument require a value?
+ bool optionRequiresValue(char const* arg, utils::getopt::option const* table) {
+     if (arg[0] != '-' || arg[1] == '\0') {
+@@ -1631,6 +1782,9 @@ int handleArguments(int argc, char* argv[], Options* options) {
+         { "target-ratio", utils::getopt::required_argument, 0, 'R' },
+         { "screen-error-cut", utils::getopt::required_argument, 0, 'i' },
+         { "target-ratio-cut", utils::getopt::required_argument, 0, 'k' },
++        { "contour-ratio-cut", utils::getopt::required_argument, 0, 260 },
++        { "contour-interior", utils::getopt::required_argument, 0, 261 },
++        { "contour-margin", utils::getopt::required_argument, 0, 262 },
+         { "oracle-swaps", utils::getopt::required_argument, 0, 256 },
+         { "oracle-composites", utils::getopt::required_argument, 0, 257 },
+         { "write-dag", utils::getopt::required_argument, 0, 'J' },
+@@ -1751,6 +1905,58 @@ int handleArguments(int argc, char* argv[], Options* options) {
+                 options->dagDiagnosticWork = work;
+                 break;
+             }
++            case 260: {
++                char const* cursor = arg;
++                while (*cursor != '\0') {
++                    char* end = nullptr;
++                    float const value = std::strtof(cursor, &end);
++                    if (end == cursor || !std::isfinite(value)) {
++                        std::cerr << "--contour-ratio-cut expects comma-separated ratios"
++                                  << std::endl;
++                        return -1;
++                    }
++                    options->contourRatioCuts.push_back(std::clamp(value, 0.0f, 1.0f));
++                    if (*end == '\0') break;
++                    if (*end != ',') {
++                        std::cerr << "--contour-ratio-cut expects comma-separated ratios"
++                                  << std::endl;
++                        return -1;
++                    }
++                    cursor = end + 1;
++                }
++                break;
++            }
++            case 261: {
++                options->contourInteriorMultipliers.clear();
++                char const* cursor = arg;
++                while (*cursor != '\0') {
++                    char* end = nullptr;
++                    float const value = std::strtof(cursor, &end);
++                    if (end == cursor || !std::isfinite(value) || value < 1.0f) {
++                        std::cerr << "--contour-interior expects positive comma-separated values"
++                                  << std::endl;
++                        return -1;
++                    }
++                    options->contourInteriorMultipliers.push_back(value);
++                    if (*end == '\0') break;
++                    if (*end != ',') {
++                        std::cerr << "--contour-interior expects comma-separated values"
++                                  << std::endl;
++                        return -1;
++                    }
++                    cursor = end + 1;
++                }
++                break;
++            }
++            case 262: {
++                float const value = float(std::atof(arg));
++                if (!std::isfinite(value) || value < 0.0f || value > 90.0f) {
++                    std::cerr << "--contour-margin must be in [0, 90] degrees" << std::endl;
++                    return -1;
++                }
++                options->contourMarginDegrees = value;
++                break;
++            }
+             case 'T':
+                 options->tierName = arg;
+                 options->useTier = true;
+@@ -1912,6 +2118,10 @@ int main(int argc, char* argv[]) {
+         std::cerr << "oracle candidates require --mode dag" << std::endl;
+         return 1;
+     }
++    if (!options.contourRatioCuts.empty() && !options.dagMode) {
++        std::cerr << "contour-risk cuts require --mode dag" << std::endl;
++        return 1;
++    }
+     if (!options.dagDiagnostics.empty() && (!options.dagMode || !options.qualityGate)) {
+         std::cerr << "DAG diagnostics require --mode dag and --quality-gate 1" << std::endl;
+         return 1;
+@@ -2056,7 +2266,7 @@ int main(int argc, char* argv[]) {
+                 file << ']';
+             };
+             file.precision(9);
+-            file << "{\"schema\":1,\"qualityGate\":" << options.qualityGate
++            file << "{\"schema\":2,\"qualityGate\":" << options.qualityGate
+                  << ",\"trialInputTriangles\":" << diagnostics.trialInputTriangles
+                  << ",\"trialSeconds\":" << diagnostics.trialSeconds << ",\"groups\":[";
+             for (size_t i = 0; i < diagnostics.groups.size(); ++i) {
+@@ -2084,6 +2294,22 @@ int main(int argc, char* argv[]) {
+                     if (mask) file << ',';
+                     file << (*p.rejectedMaskCounts)[mask];
+                 }
++                file << "],\"rejectionDetails\":[";
++                for (size_t j = 0; j < p.rejectionDetails.size(); ++j) {
++                    auto const& r = p.rejectionDetails[j];
++                    if (j) file << ',';
++                    file << "{\"sourceIndexCount\":" << r.sourceIndexCount
++                         << ",\"targetIndexCount\":" << r.targetIndexCount
++                         << ",\"candidateIndexCount\":" << r.candidateIndexCount
++                         << ",\"attempt\":" << r.attempt
++                         << ",\"rejectMask\":" << r.rejectMask
++                         << ",\"worstNormalVertex\":" << r.worstNormalVertex
++                         << ",\"worstNormalTriangle\":" << r.worstNormalTriangle
++                         << ",\"worstUvVertex\":" << r.worstUvVertex
++                         << ",\"worstUvTriangle\":" << r.worstUvTriangle
++                         << ",\"maxNormalErrorRadians\":" << r.maxNormalErrorRadians
++                         << ",\"maxUvError\":" << r.maxUvError << '}';
++                }
+                 file << "]}";
+             }
+             file << "],\"trials\":[";
+@@ -2327,6 +2553,34 @@ int main(int argc, char* argv[]) {
+                     cutPath.c_str());
+         }
+ 
++        for (float const ratio: options.contourRatioCuts) {
++            LodGraphSelection const uniform = selectLodGraphAtRatio(graph, camera, ratio,
++                    std::numeric_limits<float>::infinity());
++            for (float const multiplier: options.contourInteriorMultipliers) {
++                float scale = 0.0f;
++                LodGraphSelection const contour = selectContourCutAtBudget(graph, camera,
++                        uniform.selectedTriangles, multiplier,
++                        options.contourMarginDegrees * 3.14159265358979323846f / 180.0f,
++                        &scale);
++                GeometryOutput const cutGeometry = outputFromDagSelection(contour);
++                char name[96];
++                std::snprintf(name, sizeof(name),
++                        options.dumpPly ? "selected_contour_r%g_k%g_m%g.ply"
++                                        : "selected_contour_r%g_k%g_m%g.obj",
++                        double(ratio), double(multiplier), double(options.contourMarginDegrees));
++                std::string const cutPath = join(options.outDir, name);
++                writeGeometry(dagMesh, cutGeometry, cutPath.c_str(), options, nullptr, nullptr);
++                int64_t const faceDelta = int64_t(contour.selectedTriangles) -
++                                          int64_t(uniform.selectedTriangles);
++                printf("  contour cut ratio %.4g, k %.3g, margin %.3g deg: "
++                       "%llu vs uniform %llu triangles (delta %+lld), scale %.6g px, wrote %s\n",
++                        double(ratio), double(multiplier), double(options.contourMarginDegrees),
++                        (unsigned long long) contour.selectedTriangles,
++                        (unsigned long long) uniform.selectedTriangles,
++                        (long long) faceDelta, double(scale), cutPath.c_str());
++            }
++        }
++
+         std::vector<uint8_t> const blob = serializeLodGraph(graph);
+         std::string const dagPath = join(options.outDir, "lod_graph.mmb");
+         if (options.writeDag) {

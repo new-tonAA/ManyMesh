@@ -1,0 +1,10 @@
+{
+  "input_path": "third_party\\models\\DamagedHelmet\\DamagedHelmet.glb",
+  "input_sha256": "a1e3b04de97b11de564ce6e53b95f02954a297f0008183ac63a4f5974f6b32d8",
+  "extractor_sha256": "ac3ec8373f1f9fcc36f8949f47eb2137f20c950e7c92950c082487b863789c7b",
+  "output_path": "out\\damaged-helmet-static.obj",
+  "output_sha256": "056132b7831a41dd51c1eff31b253dc1a837f20af37eb17a73fcb811426a712c",
+  "vertices": 14556,
+  "triangles": 15452,
+  "geometry_scope": "default-scene static bind-pose base positions; no skinning, animation, materials, or texture data"
+}

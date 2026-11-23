@@ -1,0 +1,110 @@
+ManyMesh geometry optimization layer
+  input: E:\ManyMesh\out\upstream-clusterlod\validation\94990\source.obj
+  loaded: 13602 vertices, 27200 triangles (0.05s)
+  bounds: (-544985.31, -544304.75, -895810.44) .. (544985.31, 544304.75, 895810.44)   extent (1089970.62, 1088609.50, 1791620.88)
+  DAG built: 1022 nodes, 11 levels (16.23s)
+  vertices: 13602 source + 147 generated = 13749 total
+  generated AO: 1.000 .. 1.000 (1.000 mean) [no source AO field; all vertices unoccluded]
+  build phases: clusterize 0.020s, leaf setup 0.009s, cluster chains 0.186s, groups 15.962s (simplify 15.947s)
+  simplify calls: cluster 425 accepted 436 attempts 492; group 320 accepted 161 attempts 823; seam-locked vertex uses 58531
+  cluster simplify profile: attribute-qem 0.976s, corner 1.601s, meshopt 0.032s, gate 0.453s, boundary 0.197s, lock-mask 0.015s (build 0.023s) | calls 861 attempts 1190, attribute candidates 742, corner candidates 742, meshopt candidates 1190, accepted 784, rejected: topology 0 geometry 0 attributes 0 boundary 0 locked 0 none 0
+  cluster gate detail: cleanup 0.018s, sliver 0.138s, topology 0.054s, welded-topology 0.026s, error 0.216s
+  cluster extended-mesh: 0.002s, copies 20
+  cluster corner detail: setup 0.775s, evaluate 1.295s (373824 evals, 3.47 us/eval), topology 0.204s, target 0.833s (389985 placements), apply 0.027s (5990 applied)
+  cluster corner topology: neighbor 0.086s, triangles 0.100s, local-triangles 0.000s, local-edges 0.096s
+  group simplify profile: attribute-qem 15.961s, corner 13.804s, meshopt 0.216s, gate 17.544s, boundary 1.021s, lock-mask 0.012s (build 0.000s) | calls 320 attempts 823, attribute candidates 735, corner candidates 738, meshopt candidates 823, accepted 161, rejected: topology 1788 geometry 82 attributes 0 boundary 19 locked 178 none 0
+  group gate detail: cleanup 0.193s, sliver 13.573s, topology 0.321s, welded-topology 0.281s, error 3.174s
+  group extended-mesh: 0.016s, copies 169
+  group corner detail: setup 7.981s, evaluate 12.300s (2037595 evals, 6.04 us/eval), topology 6.908s, target 3.242s (1831077 placements), apply 0.129s (27291 applied)
+  group corner topology: neighbor 0.712s, triangles 1.266s, local-triangles 2.642s, local-edges 0.937s
+  cut vertices: 6459 of 13602 source + 106 of 147 generated = 6565 total (47.7% of the 13749-vertex global buffer, 3 KiB generated tail)
+
+  DAG: 1022 nodes, 11 levels, 75 roots, 425 leaves, 27200 base triangles
+  camera: eye(0.000, 0.000, 2275581.750) fovY(45.0 deg) screen(1920 x 1080) budget inf px
+  level           nodes      triangles
+  0                   0              0
+  1                  53           2030
+  2                  14            441
+  3                  23           3290
+  4                  12           2080
+  5                   5           2472
+  6                   3            270
+  7                   4            780
+  8                   6           1625
+  9                   3            317
+  10                  1             73
+  drawn: 13378 of 27200 visible triangles (49.18%) in 124 nodes
+  frustum culled: 0 of 27200 triangles (0.00%)
+  worst selected screen error: 15.1590 px
+  base topology: boundary 0, non-manifold 0, duplicates 0, degenerate 0, flipped 0, min quality 0.0033
+  selected topology: boundary 218, non-manifold 438, duplicates 0, degenerate 0, flipped 0, min quality 0.0005
+  bad edge (518,13602) use=4 nodes=957 
+    node 957 tri 9972 518 13602
+    node 957 tri 518 9939 13602
+    node 957 tri 518 13602 410
+    node 957 tri 518 517 13602
+    base use=0 leaves=
+  bad edge (799,3435) use=1 nodes=972 698 
+    node 972 tri 13602 3435 799
+    node 698 tri 13602 799 3435
+    base use=2 leaves=288(use=1) 289(use=1) 
+  bad edge (799,13602) use=3 nodes=972 698 
+    node 972 tri 791 13602 799
+    node 972 tri 13602 3435 799
+    node 698 tri 838 799 13602
+    node 698 tri 13602 799 3435
+    base use=0 leaves=
+  bad edge (1666,13602) use=4 nodes=955 
+    node 955 tri 13602 1666 1670
+    node 955 tri 1666 13602 1673
+    node 955 tri 1666 1622 13602
+    node 955 tri 1666 13602 3455
+    base use=0 leaves=
+  bad edge (1795,1796) use=1 nodes=639 955 
+    node 639 tri 1795 1796 13602
+    node 955 tri 13602 1796 1795
+    base use=2 leaves=253(use=1) 254(use=1) 
+  bad edge (1795,13602) use=3 nodes=639 955 
+    node 639 tri 1794 1795 13602
+    node 639 tri 1795 1796 13602
+    node 955 tri 13602 1796 1795
+    node 955 tri 1795 1751 13602
+    base use=0 leaves=
+  bad edge (1796,1798) use=1 nodes=639 955 
+    node 639 tri 1796 1798 13602
+    node 955 tri 1796 13602 1798
+    base use=2 leaves=253(use=1) 254(use=1) 
+  bad edge (1798,13602) use=3 nodes=639 955 
+    node 639 tri 1796 1798 13602
+    node 639 tri 3457 13602 1798
+    node 955 tri 1796 13602 1798
+    node 955 tri 3456 1798 13602
+    base use=0 leaves=
+  bad edge (1926,1927) use=1 nodes=639 907 
+    node 639 tri 1926 13602 1927
+    node 907 tri 13602 1926 1927
+    base use=2 leaves=252(use=1) 253(use=1) 
+  bad edge (1926,13602) use=3 nodes=639 907 
+    node 639 tri 1926 13602 1927
+    node 639 tri 1926 1879 13602
+    node 907 tri 1926 13602 1924
+    node 907 tri 13602 1926 1927
+    base use=0 leaves=
+  bad edge (1927,13602) use=3 nodes=639 907 
+    node 639 tri 13602 3460 1927
+    node 639 tri 1926 13602 1927
+    node 907 tri 13602 1926 1927
+    node 907 tri 13602 1927 1928
+    base use=0 leaves=
+  bad edge (2359,3514) use=1 nodes=998 972 
+    node 998 tri 3514 13602 2359
+    node 972 tri 3514 2359 13602
+    base use=2 leaves=279(use=1) 280(use=1) 
+  budget reached: 13378 <= 13598 triangles (49.18% <= 49.99%)
+  wrote tmp\cluster-cut-parameter-sweep-20261123-all\94990\ct64_dg8/selected.ply
+  uniform cut 0.4999: 13378 triangles (49.1838%), wrote tmp\cluster-cut-parameter-sweep-20261123-all\94990\ct64_dg8/selected_ratio_0.499926.ply
+  uniform cut 0.2498: 12331 triangles (45.3346%), wrote tmp\cluster-cut-parameter-sweep-20261123-all\94990\ct64_dg8/selected_ratio_0.249779.ply
+  wrote tmp\cluster-cut-parameter-sweep-20261123-all\94990\ct64_dg8/lod_graph.json
+  streaming: memory-backed, 19 pages, queue prepared, resident 13 pages / 804292 bytes, hits 0 misses 13 evictions 0
+
+  total time: 16.29s

@@ -1,0 +1,40 @@
+ManyMesh geometry optimization layer
+  input: E:\ManyMesh\out\upstream-clusterlod\validation\90431\source.obj
+  loaded: 362 vertices, 736 triangles (0.01s)
+  bounds: (-616950.75, -616950.75, -774803.69) .. (616950.75, 616950.75, 774803.69)   extent (1233901.50, 1233901.50, 1549607.38)
+  DAG built: 18 nodes, 4 levels (0.22s)
+  vertices: 362 source + 0 generated = 362 total
+  build phases: clusterize 0.001s, leaf setup 0.000s, cluster chains 0.060s, groups 0.151s (simplify 0.151s)
+  simplify calls: cluster 6 accepted 11 attempts 37; group 2 accepted 1 attempts 6; seam-locked vertex uses 79
+  cluster simplify profile: attribute-qem 0.085s, corner 0.128s, meshopt 0.003s, gate 0.054s, boundary 0.018s, lock-mask 0.000s (build 0.001s) | calls 17 attempts 61, attribute candidates 61, corner candidates 61, meshopt candidates 61, accepted 12, rejected: topology 0 geometry 0 attributes 0 boundary 0 locked 0 none 0
+  cluster gate detail: cleanup 0.002s, sliver 0.017s, topology 0.004s, welded-topology 0.003s, error 0.029s
+  cluster extended-mesh: 0.000s, copies 6
+  cluster corner detail: setup 0.059s, evaluate 0.106s (40299 evals, 2.63 us/eval), topology 0.021s, target 0.055s (74591 placements), apply 0.002s (885 applied)
+  cluster corner topology: neighbor 0.009s, triangles 0.011s, local-triangles 0.000s, local-edges 0.009s
+  group simplify profile: attribute-qem 0.046s, corner 0.082s, meshopt 0.001s, gate 0.019s, boundary 0.002s, lock-mask 0.000s (build 0.000s) | calls 2 attempts 6, attribute candidates 6, corner candidates 6, meshopt candidates 6, accepted 1, rejected: topology 10 geometry 7 attributes 0 boundary 0 locked 0 none 0
+  group gate detail: cleanup 0.000s, sliver 0.009s, topology 0.001s, welded-topology 0.000s, error 0.008s
+  group extended-mesh: 0.000s, copies 2
+  group corner detail: setup 0.038s, evaluate 0.075s (16882 evals, 4.47 us/eval), topology 0.015s, target 0.039s (67780 placements), apply 0.001s (478 applied)
+  group corner topology: neighbor 0.005s, triangles 0.009s, local-triangles 0.000s, local-edges 0.006s
+  cut vertices: 190 of 362 source + 0 of 0 generated = 190 total (52.5% of the 362-vertex global buffer, 0 KiB generated tail)
+
+  DAG: 18 nodes, 4 levels, 1 roots, 6 leaves, 736 base triangles
+  camera: eye(0.000, 0.000, 2338727.000) fovY(45.0 deg) screen(1920 x 1080) budget inf px
+  level           nodes      triangles
+  0                   0              0
+  1                   0              0
+  2                   0              0
+  3                   1            392
+  drawn: 392 of 736 visible triangles (53.26%) in 1 nodes
+  frustum culled: 0 of 736 triangles (0.00%)
+  worst selected screen error: 39.4076 px
+  base topology: boundary 0, non-manifold 0, duplicates 0, degenerate 0, flipped 0, min quality 0.0107
+  selected topology: boundary 0, non-manifold 0, duplicates 0, degenerate 0, flipped 0, min quality 0.0306
+  budget unreachable: coarsest legal cut is 392 triangles (53.26%), budget is 368 (50.00%)
+  wrote tmp\cluster-cut-parameter-sweep-20261123-all\90431\ct128_dg8/selected.ply
+  uniform cut 0.5: 392 triangles (53.2609%), wrote tmp\cluster-cut-parameter-sweep-20261123-all\90431\ct128_dg8/selected_ratio_0.5.ply
+  uniform cut 0.25: 392 triangles (53.2609%), wrote tmp\cluster-cut-parameter-sweep-20261123-all\90431\ct128_dg8/selected_ratio_0.25.ply
+  wrote tmp\cluster-cut-parameter-sweep-20261123-all\90431\ct128_dg8/lod_graph.json
+  streaming: memory-backed, 1 pages, queue prepared, resident 1 pages / 30380 bytes, hits 0 misses 1 evictions 0
+
+  total time: 0.22s

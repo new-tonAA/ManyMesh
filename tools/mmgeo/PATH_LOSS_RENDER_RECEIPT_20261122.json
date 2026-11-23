@@ -1,0 +1,1381 @@
+{
+  "scope": "matched shared-default-material desktop image-quality screen",
+  "backend": "Filament mm_bench, OpenGL on host default adapter",
+  "image_size": [
+    256,
+    256
+  ],
+  "views_per_asset": 8,
+  "warmup_frames": 2,
+  "measured_frames": 2,
+  "method": "same source capture and camera per asset; path-loss vs QEM at equal faces",
+  "reused_from_receipt_sha256": "ab7e9df413f65d8628ad6677b8202e7c080abaed4925a515be2418f3fad41ca9",
+  "mm_bench_sha256": "ff59e7e19e35e72ae69af3bfb9409be9db420f5f354fda60769b9cffdd8de1b8",
+  "script_sha256": "840574f37a6fc7b43cfa383c655cf472a7680f7bf638d67beeddcaabb341e06b",
+  "records": [
+    {
+      "asset": "Pirate",
+      "unit_index": 5,
+      "source_faces": 3032,
+      "face_budget": 2426,
+      "center": [
+        -3.647804260253906e-05,
+        1.4531090259552002,
+        -0.018361501395702362
+      ],
+      "radius": 0.8604924631811574,
+      "capture_sha256": "e63ec2f6749cceb168cc2135467e643715e10afc838c3e1b9e3a91fa7681d28d",
+      "optimization_report_sha256": "2a3c45c6dd429a85163a20392569db06380f19ee421e1e569138b552b772e9fa",
+      "renders": {
+        "source": {
+          "faces": 3032,
+          "mesh_sha256": "f396220318c9df731068e4894a4374dc0110e13eb80da246550cd138bc2ccc45",
+          "topology": {
+            "duplicate_faces": 0,
+            "degenerate_faces_area2_le_1e-12": 0,
+            "nonmanifold_edges": 0,
+            "inconsistent_winding_edges": 0,
+            "boundary_edges": 80,
+            "boundary_edge_symmetric_difference_from_source": 0
+          },
+          "adapter_line": "[Intel], [Intel(R) Iris(R) Xe Graphics], [4.5.0 - Build 31.0.101.4502], [4.50 - Build 31.0.101.4502]",
+          "log_sha256": "56c27ba48f26c64f716173a5ddb82d098efae7fa66fb9757cfea3466de7c0822",
+          "image_provenance": "verified reuse",
+          "images": [
+            {
+              "path": "Pirate-source_v00.png",
+              "sha256": "5e76f1f0960af0ac0398da79b2b2200c14f368ee9180c7a2e7169c45db82b4b1",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-source_v01.png",
+              "sha256": "22134e7347ca90f729c49681d2ef5abd72433fa3f94c95743b7be79023fff87f",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-source_v02.png",
+              "sha256": "343b931bc0a141c8c2377046021f682f7606464a66767198da705c8e708c26c8",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-source_v03.png",
+              "sha256": "5afb6b3c6ab0a11830238ee200a20484b507d0b96ebae532083606b5bad75c92",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-source_v04.png",
+              "sha256": "8ab4d747248b86346b4775cef5e967d3523c388088ac28b0e935edd870e52cac",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-source_v05.png",
+              "sha256": "dcbcf8b44a8958383b1955b22307bc8d2e45112028d98edc42672bbc2140aeb0",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-source_v06.png",
+              "sha256": "5d73fcf32bb68cde2168573475f7c7a31e60f7435c5d4803ddf6c50b8dbcc84a",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-source_v07.png",
+              "sha256": "91e2d1f989efc8bdd5844d8415a00fd645057daa8c3a0450723ebd0c9ed4fb7c",
+              "size": [
+                256,
+                256
+              ]
+            }
+          ],
+          "command_cwd": ".",
+          "command": [
+            "out\\cmake-release\\samples\\mm_bench.exe",
+            "--headless",
+            "--api",
+            "opengl",
+            "--no-shadows",
+            "--window-size",
+            "256x256",
+            "--fixed-timestep",
+            "0.0166667",
+            "--out",
+            "out\\pathloss-render-audit\\Pirate-source.png",
+            "--eye",
+            "-3.64780426e-05,1.45310903,2.56311589",
+            "--target",
+            "-3.64780426e-05,1.45310903,-0.0183615014",
+            "--views",
+            "8",
+            "--warmup",
+            "2",
+            "--measure",
+            "2",
+            "out\\pathloss-render-audit\\Pirate-source.obj"
+          ]
+        },
+        "path": {
+          "faces": 2426,
+          "mesh_sha256": "eddb1f11201a8eac5b0850e8b5673fcf2556526cf2387b4b1b0856c6af0b84a3",
+          "topology": {
+            "duplicate_faces": 0,
+            "degenerate_faces_area2_le_1e-12": 0,
+            "nonmanifold_edges": 0,
+            "inconsistent_winding_edges": 0,
+            "boundary_edges": 80,
+            "boundary_edge_symmetric_difference_from_source": 0
+          },
+          "adapter_line": "[Intel], [Intel(R) Iris(R) Xe Graphics], [4.5.0 - Build 31.0.101.4502], [4.50 - Build 31.0.101.4502]",
+          "log_sha256": "63f2a9f3f1ddc6691fff6ca3863b595e5c98b5b90bd543c8fa38ac0e318432fa",
+          "image_provenance": "verified reuse",
+          "images": [
+            {
+              "path": "Pirate-path_v00.png",
+              "sha256": "0e82a80c0cda88a0c56bdeb2dd074330496093694c24d3b5a55a780337248112",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-path_v01.png",
+              "sha256": "838a2b88f2f66c8de73415d7410b8ce42cb098898ba000ac621bfd1ce22a7539",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-path_v02.png",
+              "sha256": "7a7dcd68e00e73e49e0ca6f8ce514639342b158a3151486911ba0322fe3436cf",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-path_v03.png",
+              "sha256": "e20ac9b4283abf06c7e0cf5d589277b7b7ff77a0a81ea94399fe44458f824b87",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-path_v04.png",
+              "sha256": "f98b53edd034ee1f69571ab0ae68931d57e259431f1d409d157c7762363ac8a2",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-path_v05.png",
+              "sha256": "a452b56d02da3f18afa365a65a3218d0bdae662588cb8c996d77b67e53192c4e",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-path_v06.png",
+              "sha256": "74ea94b8c2a6168c10011b70a66b7010589fd4a7128f35c4302c3979d9c5b7fd",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-path_v07.png",
+              "sha256": "705ba44ebd20e293c4ec0e9e32d54b0d425c86145b4a2b94d908931abfe46dea",
+              "size": [
+                256,
+                256
+              ]
+            }
+          ],
+          "command_cwd": ".",
+          "command": [
+            "out\\cmake-release\\samples\\mm_bench.exe",
+            "--headless",
+            "--api",
+            "opengl",
+            "--no-shadows",
+            "--window-size",
+            "256x256",
+            "--fixed-timestep",
+            "0.0166667",
+            "--out",
+            "out\\pathloss-render-audit\\Pirate-path.png",
+            "--eye",
+            "-3.64780426e-05,1.45310903,2.56311589",
+            "--target",
+            "-3.64780426e-05,1.45310903,-0.0183615014",
+            "--views",
+            "8",
+            "--warmup",
+            "2",
+            "--measure",
+            "2",
+            "out\\pathloss-render-audit\\Pirate-path.obj"
+          ]
+        },
+        "qem": {
+          "faces": 2426,
+          "mesh_sha256": "ba8e40ff6b6bb8ccca15149b76ecf70e1a8e0b21eee55778d0de1848e4df9aef",
+          "topology": {
+            "duplicate_faces": 0,
+            "degenerate_faces_area2_le_1e-12": 0,
+            "nonmanifold_edges": 0,
+            "inconsistent_winding_edges": 0,
+            "boundary_edges": 80,
+            "boundary_edge_symmetric_difference_from_source": 0
+          },
+          "adapter_line": "[Intel], [Intel(R) Iris(R) Xe Graphics], [4.5.0 - Build 31.0.101.4502], [4.50 - Build 31.0.101.4502]",
+          "log_sha256": "9451216ec4e4511de09d8494dc647b82916b89a03a242fc172f4d1fcc7bd0fc6",
+          "image_provenance": "verified reuse",
+          "images": [
+            {
+              "path": "Pirate-qem_v00.png",
+              "sha256": "7d6bbed3bed57926983ea63025de4adb7728b55f9a872727f73ce4262c7ca117",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-qem_v01.png",
+              "sha256": "14d898004ec3a0a20cbdf59a9e88ee38631ecafa0ef7b77ea766075b12bb0095",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-qem_v02.png",
+              "sha256": "cb8fcf5563360fdaf27ab4362d28c444868eba0ce883baf2b706e6a43a236d6a",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-qem_v03.png",
+              "sha256": "0556195220406b1661fd23fcb0165c1d91100360fbecf9ce8f2f37894abd66f6",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-qem_v04.png",
+              "sha256": "62ced72a2a0924ecd93a2e6a474e7a70e9b92f9a019e253810c6e536ee7ed8c9",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-qem_v05.png",
+              "sha256": "e0d1a651739055be7e3ba7b6be608babfca07c9df7bb7010af72b791f9b3978d",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-qem_v06.png",
+              "sha256": "480ecbd4d6ac32a951040c76698805e16132eecc10a40f2f53b1c2f1ee6bc4da",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Pirate-qem_v07.png",
+              "sha256": "41b24714fc02fc20ba1287a27b45d2ff3d46effcb80aeac6f4aa7204e017ea31",
+              "size": [
+                256,
+                256
+              ]
+            }
+          ],
+          "command_cwd": ".",
+          "command": [
+            "out\\cmake-release\\samples\\mm_bench.exe",
+            "--headless",
+            "--api",
+            "opengl",
+            "--no-shadows",
+            "--window-size",
+            "256x256",
+            "--fixed-timestep",
+            "0.0166667",
+            "--out",
+            "out\\pathloss-render-audit\\Pirate-qem.png",
+            "--eye",
+            "-3.64780426e-05,1.45310903,2.56311589",
+            "--target",
+            "-3.64780426e-05,1.45310903,-0.0183615014",
+            "--views",
+            "8",
+            "--warmup",
+            "2",
+            "--measure",
+            "2",
+            "out\\pathloss-render-audit\\Pirate-qem.obj"
+          ]
+        }
+      },
+      "source_topology": {
+        "duplicate_faces": 0,
+        "degenerate_faces_area2_le_1e-12": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "boundary_edges": 80
+      }
+    },
+    {
+      "asset": "RoundedCube",
+      "unit_index": 0,
+      "source_faces": 1200,
+      "face_budget": 960,
+      "center": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "radius": 1.6569288931178145,
+      "capture_sha256": "89bf7eff63037228f36820556ad0b3b0ec0a6474a71cbe7c2dc96c26cb4bd2f4",
+      "optimization_report_sha256": "c0432015a4116884a492ae7875d3e6006c22a7b907d4b29d8cefeb89d2c3a262",
+      "renders": {
+        "source": {
+          "faces": 1200,
+          "mesh_sha256": "8a945734a1a469fa195dcfd230339efa27eafbd0fb52ff9542364a6961a4f955",
+          "topology": {
+            "duplicate_faces": 0,
+            "degenerate_faces_area2_le_1e-12": 0,
+            "nonmanifold_edges": 0,
+            "inconsistent_winding_edges": 0,
+            "boundary_edges": 0,
+            "boundary_edge_symmetric_difference_from_source": 0
+          },
+          "adapter_line": "[Intel], [Intel(R) Iris(R) Xe Graphics], [4.5.0 - Build 31.0.101.4502], [4.50 - Build 31.0.101.4502]",
+          "log_sha256": "519aa890c629b791aac051f53a3469608bac323ca7981b6273d29f871bd81584",
+          "image_provenance": "verified reuse",
+          "images": [
+            {
+              "path": "RoundedCube-source_v00.png",
+              "sha256": "e1b1b1634eca7500ffec84a1b4308ed96e2a8a8f7e632dc754185c207f2ff595",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-source_v01.png",
+              "sha256": "2453170b0dc5f8888c440c977b11349731ef14c3028c6b3e989baab406fc655d",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-source_v02.png",
+              "sha256": "6744b5c322e7f7a190041d3efa16dfe18a8ed3170fec252b54374607f708cdd4",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-source_v03.png",
+              "sha256": "f252b6524234218df68984451a91d434913fda82843586bc35b4c1321cdad872",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-source_v04.png",
+              "sha256": "e29271482c32c7f92ec52309ae4f6c1a8968cf0cadfc752091885fde678cad9e",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-source_v05.png",
+              "sha256": "9319bf35b5d0d5e55c21932069aa06f62b3c6a92b83c0091dbf899a520052851",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-source_v06.png",
+              "sha256": "0ded59899943799b447e80c5cbf6df9bb7c1384167ad4a5e3b88d1c80c53075d",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-source_v07.png",
+              "sha256": "c08c7e553544f42f081fbeda0685d154c694a7c0445dc6d0eff85e2bea4ae02c",
+              "size": [
+                256,
+                256
+              ]
+            }
+          ],
+          "command_cwd": ".",
+          "command": [
+            "out\\cmake-release\\samples\\mm_bench.exe",
+            "--headless",
+            "--api",
+            "opengl",
+            "--no-shadows",
+            "--window-size",
+            "256x256",
+            "--fixed-timestep",
+            "0.0166667",
+            "--out",
+            "out\\pathloss-render-audit\\RoundedCube-source.png",
+            "--eye",
+            "0,0,4.97078668",
+            "--target",
+            "0,0,0",
+            "--views",
+            "8",
+            "--warmup",
+            "2",
+            "--measure",
+            "2",
+            "out\\pathloss-render-audit\\RoundedCube-source.obj"
+          ]
+        },
+        "path": {
+          "faces": 960,
+          "mesh_sha256": "a3421a74497cd6b3aa973149f309e120078f6fe3467fdcfccf225210998c2235",
+          "topology": {
+            "duplicate_faces": 0,
+            "degenerate_faces_area2_le_1e-12": 0,
+            "nonmanifold_edges": 0,
+            "inconsistent_winding_edges": 0,
+            "boundary_edges": 0,
+            "boundary_edge_symmetric_difference_from_source": 0
+          },
+          "adapter_line": "[Intel], [Intel(R) Iris(R) Xe Graphics], [4.5.0 - Build 31.0.101.4502], [4.50 - Build 31.0.101.4502]",
+          "log_sha256": "6251ec0ea5174fa800282da9aacc44b90a6652a8bec961c03ac775455a580822",
+          "image_provenance": "verified reuse",
+          "images": [
+            {
+              "path": "RoundedCube-path_v00.png",
+              "sha256": "9a867bbfa8fff35ca3e6185517720a2444a561f2b725f50eb6fbf747c52b0720",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-path_v01.png",
+              "sha256": "c10df7bb43cc255d2c21482a2a090da7c4a7c0b68d383714d9450afda06e0fd0",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-path_v02.png",
+              "sha256": "ce4c7d47408e47f2b646d3a87db857ef8090e1ea00f1542ffb0a5fe3fc0d7e1b",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-path_v03.png",
+              "sha256": "48660e177d56ccbc65ca5c6585f4b74f4ef4a78f96b634623e2338c553cdc115",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-path_v04.png",
+              "sha256": "46bc5ffecca994ee33a026ae7fbc46a51e109ce65b3ef9274b45fd91ec9ec5bf",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-path_v05.png",
+              "sha256": "83c260bfd0a1dd3fbd163147f765ca20a2e30e2f155e513535e4b6350ad70817",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-path_v06.png",
+              "sha256": "bd20edec1419eae70ecdefa5c1ac6f02ba376c2698bade2d47f0aefc1b46e9fb",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-path_v07.png",
+              "sha256": "2660531fb7dcdc6089eb4f045a19273485e7f1ca92a172596d1face59f6da97d",
+              "size": [
+                256,
+                256
+              ]
+            }
+          ],
+          "command_cwd": ".",
+          "command": [
+            "out\\cmake-release\\samples\\mm_bench.exe",
+            "--headless",
+            "--api",
+            "opengl",
+            "--no-shadows",
+            "--window-size",
+            "256x256",
+            "--fixed-timestep",
+            "0.0166667",
+            "--out",
+            "out\\pathloss-render-audit\\RoundedCube-path.png",
+            "--eye",
+            "0,0,4.97078668",
+            "--target",
+            "0,0,0",
+            "--views",
+            "8",
+            "--warmup",
+            "2",
+            "--measure",
+            "2",
+            "out\\pathloss-render-audit\\RoundedCube-path.obj"
+          ]
+        },
+        "qem": {
+          "faces": 960,
+          "mesh_sha256": "628529854767b65d521219be77056add595b77d9ce0073e98c366170e638abfd",
+          "topology": {
+            "duplicate_faces": 0,
+            "degenerate_faces_area2_le_1e-12": 0,
+            "nonmanifold_edges": 0,
+            "inconsistent_winding_edges": 0,
+            "boundary_edges": 0,
+            "boundary_edge_symmetric_difference_from_source": 0
+          },
+          "adapter_line": "[Intel], [Intel(R) Iris(R) Xe Graphics], [4.5.0 - Build 31.0.101.4502], [4.50 - Build 31.0.101.4502]",
+          "log_sha256": "093137b81e65d4f977c842ec93c8d4cb96949b0610ef6d3a32e0591af8d3207d",
+          "image_provenance": "verified reuse",
+          "images": [
+            {
+              "path": "RoundedCube-qem_v00.png",
+              "sha256": "4195ee64cb5450ac6684860f67efbd2d08e81f5fb4677dad150d5d01e5666282",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-qem_v01.png",
+              "sha256": "687c1a7fe87e95e45c9efd81968023dc6f1cc946488cb5fd32daaa6fa901a1c6",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-qem_v02.png",
+              "sha256": "1b319060852306a98aabe0ced2434c25c696919cb859ddb04ad6df18a1d9a73c",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-qem_v03.png",
+              "sha256": "5c8f6e43a7115c19dcb376ea30c63e7a6f244710205ecde077b7f1fafef4f550",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-qem_v04.png",
+              "sha256": "3dba9bac5f0ace285c2df28da9706b4da07d5fd13c5b86cb93f8f1757aad59dd",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-qem_v05.png",
+              "sha256": "059913d4a2478eac735c57de3ad03f0ba016730ae91e556562e4d7acb2ae5cb2",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-qem_v06.png",
+              "sha256": "e0d9f7cf9b3f29b9e449f9f17f7b68fa59f95f563098c47541679b891560d8c7",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "RoundedCube-qem_v07.png",
+              "sha256": "cb5b647bb7777d693b2673f5745a0b5d738fe9ea64c6c5d907920d6089b9cede",
+              "size": [
+                256,
+                256
+              ]
+            }
+          ],
+          "command_cwd": ".",
+          "command": [
+            "out\\cmake-release\\samples\\mm_bench.exe",
+            "--headless",
+            "--api",
+            "opengl",
+            "--no-shadows",
+            "--window-size",
+            "256x256",
+            "--fixed-timestep",
+            "0.0166667",
+            "--out",
+            "out\\pathloss-render-audit\\RoundedCube-qem.png",
+            "--eye",
+            "0,0,4.97078668",
+            "--target",
+            "0,0,0",
+            "--views",
+            "8",
+            "--warmup",
+            "2",
+            "--measure",
+            "2",
+            "out\\pathloss-render-audit\\RoundedCube-qem.obj"
+          ]
+        }
+      },
+      "source_topology": {
+        "duplicate_faces": 0,
+        "degenerate_faces_area2_le_1e-12": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "boundary_edges": 0
+      }
+    },
+    {
+      "asset": "Sphere",
+      "unit_index": 0,
+      "source_faces": 9428,
+      "face_budget": 7542,
+      "center": [
+        0.0,
+        0.09760749340057373,
+        -0.04718500375747681
+      ],
+      "radius": 0.969754676315193,
+      "capture_sha256": "ba1eebb108584982de0a3964517283ee3c66864af861b6175f6c24690ec1d334",
+      "optimization_report_sha256": "a378f6304323ab80ab9f41f4add5cf851814eb9e24c835a3ec60ab1ee5bc6003",
+      "renders": {
+        "source": {
+          "faces": 9428,
+          "mesh_sha256": "36c92363eb9ca54217cecede3fbac0c291be4a1fc960746769ac130eb875c565",
+          "topology": {
+            "duplicate_faces": 0,
+            "degenerate_faces_area2_le_1e-12": 0,
+            "nonmanifold_edges": 0,
+            "inconsistent_winding_edges": 0,
+            "boundary_edges": 568,
+            "boundary_edge_symmetric_difference_from_source": 0
+          },
+          "adapter_line": "[Intel], [Intel(R) Iris(R) Xe Graphics], [4.5.0 - Build 31.0.101.4502], [4.50 - Build 31.0.101.4502]",
+          "log_sha256": "d964448de387d6246166b9402e14ce191021b7737fc0d0329babb68699da8a00",
+          "image_provenance": "verified reuse",
+          "images": [
+            {
+              "path": "Sphere-source_v00.png",
+              "sha256": "1f18977741764d5aad4406bf488a91603d7e0c719c76bef345de906bc3cd62c6",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-source_v01.png",
+              "sha256": "a357788218dd5a0e66a239028e447ebee2daedcb171049c5403cd70fcc78df6b",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-source_v02.png",
+              "sha256": "8fa78a0e698a32d98c59924cfa5a1ab255920a2c699bf946d2550cfa545ae13a",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-source_v03.png",
+              "sha256": "e3b73740a15bcc8150b808436273c7ea409f5235cec15da75425e071c37796b9",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-source_v04.png",
+              "sha256": "0867423ff2018a1e483caaa903d24d1687b013444022fb8603272179adc728c8",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-source_v05.png",
+              "sha256": "6580faa88b46708bb4412f428a8e171335a8a1fcd76c2f35a93f80391754b0e4",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-source_v06.png",
+              "sha256": "a12700cf25a533b639096c4f82c8c17de5ba2819b84a63da9eb6ba85290b74fe",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-source_v07.png",
+              "sha256": "2a53ee844aa356a3c20a3a8f57bc39085e483026037081687674f3490ae0b218",
+              "size": [
+                256,
+                256
+              ]
+            }
+          ],
+          "command_cwd": ".",
+          "command": [
+            "out\\cmake-release\\samples\\mm_bench.exe",
+            "--headless",
+            "--api",
+            "opengl",
+            "--no-shadows",
+            "--window-size",
+            "256x256",
+            "--fixed-timestep",
+            "0.0166667",
+            "--out",
+            "out\\pathloss-render-audit\\Sphere-source.png",
+            "--eye",
+            "0,0.0976074934,2.86207903",
+            "--target",
+            "0,0.0976074934,-0.0471850038",
+            "--views",
+            "8",
+            "--warmup",
+            "2",
+            "--measure",
+            "2",
+            "out\\pathloss-render-audit\\Sphere-source.obj"
+          ]
+        },
+        "path": {
+          "faces": 7542,
+          "mesh_sha256": "43beb9f5654e7522b29fe9fdd44c613f51eee9f9caf5db4ae212fc219d3c6256",
+          "topology": {
+            "duplicate_faces": 0,
+            "degenerate_faces_area2_le_1e-12": 0,
+            "nonmanifold_edges": 0,
+            "inconsistent_winding_edges": 0,
+            "boundary_edges": 568,
+            "boundary_edge_symmetric_difference_from_source": 0
+          },
+          "adapter_line": "[Intel], [Intel(R) Iris(R) Xe Graphics], [4.5.0 - Build 31.0.101.4502], [4.50 - Build 31.0.101.4502]",
+          "log_sha256": "832daceeb1ac27deaa671b7f1b3086573e653a526bf013d1e251789f270ed756",
+          "image_provenance": "verified reuse",
+          "images": [
+            {
+              "path": "Sphere-path_v00.png",
+              "sha256": "1a85164d6f7097199ebce263f02e36e60452e7218d5aabdcd89db13d1f2e0e70",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-path_v01.png",
+              "sha256": "fdc91c67817c774f38bb090b92b800b63323eda4428151a4f78298e59657aaaf",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-path_v02.png",
+              "sha256": "2973c00f04043bee62d12f2dcb1c26405fcb597f647e1b1983ff59a5d808707c",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-path_v03.png",
+              "sha256": "e6def51bde1cec03f50e4cb56f8a95e241c2680dcffedf230090f9e3437a6022",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-path_v04.png",
+              "sha256": "eca8cfeb0e72cba8c76f234a46271e85c229377e208736a26356889a4ad4fe1d",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-path_v05.png",
+              "sha256": "3fe9f617e4e957d4ad90edac6327df6d997106ca183ced1dd6ec5208352439c6",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-path_v06.png",
+              "sha256": "73e57b2d7cc02b34812c3a08b745d7c54074789f9acab44d01e09c83604ce18e",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-path_v07.png",
+              "sha256": "7be33634db0ffde7202c66a6b90c70431c66da3ac71a48c6224cbb38e6403c07",
+              "size": [
+                256,
+                256
+              ]
+            }
+          ],
+          "command_cwd": ".",
+          "command": [
+            "out\\cmake-release\\samples\\mm_bench.exe",
+            "--headless",
+            "--api",
+            "opengl",
+            "--no-shadows",
+            "--window-size",
+            "256x256",
+            "--fixed-timestep",
+            "0.0166667",
+            "--out",
+            "out\\pathloss-render-audit\\Sphere-path.png",
+            "--eye",
+            "0,0.0976074934,2.86207903",
+            "--target",
+            "0,0.0976074934,-0.0471850038",
+            "--views",
+            "8",
+            "--warmup",
+            "2",
+            "--measure",
+            "2",
+            "out\\pathloss-render-audit\\Sphere-path.obj"
+          ]
+        },
+        "qem": {
+          "faces": 7542,
+          "mesh_sha256": "001aaa9daea45aeee8648a4de54a71cee8521346ca3782ad7945e76ddb1b2767",
+          "topology": {
+            "duplicate_faces": 0,
+            "degenerate_faces_area2_le_1e-12": 0,
+            "nonmanifold_edges": 0,
+            "inconsistent_winding_edges": 0,
+            "boundary_edges": 568,
+            "boundary_edge_symmetric_difference_from_source": 0
+          },
+          "adapter_line": "[Intel], [Intel(R) Iris(R) Xe Graphics], [4.5.0 - Build 31.0.101.4502], [4.50 - Build 31.0.101.4502]",
+          "log_sha256": "f4363fa965647068d1b744ec394b0cb89e9d2957131707766509c9370400904b",
+          "image_provenance": "verified reuse",
+          "images": [
+            {
+              "path": "Sphere-qem_v00.png",
+              "sha256": "600bb9f85b92bb7bfd9bb03a0cad20d40e87fd0be157f8149a99393bb5f794c6",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-qem_v01.png",
+              "sha256": "a940e7897b5a552e9400338bce1e401f0a60dd7a4f6298f531695f5dbfaad75e",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-qem_v02.png",
+              "sha256": "08132a428dd57394e75b21986a63fca8689567e5dc8076adb065849f01f83e9a",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-qem_v03.png",
+              "sha256": "de896385436371678971ba3ea0935c8a2011a5a67ec6f0382cecca665077858d",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-qem_v04.png",
+              "sha256": "13e4ef0deb0696dfa639cb3d1cc297520e94906b70325c0548ce60708962fdb3",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-qem_v05.png",
+              "sha256": "7f1ffac2f0036daace2a1411b374217bf95a385e10381ca4acd94d237773c288",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-qem_v06.png",
+              "sha256": "ef1f37aeb82993f98200f90dff3b4592b9b3dd9f58e6d6ff8f0bc0f3e79cd492",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Sphere-qem_v07.png",
+              "sha256": "0e5d40fc1950fd3f5e47b6c6766f74adada1f2ebdb413536864e36750860094e",
+              "size": [
+                256,
+                256
+              ]
+            }
+          ],
+          "command_cwd": ".",
+          "command": [
+            "out\\cmake-release\\samples\\mm_bench.exe",
+            "--headless",
+            "--api",
+            "opengl",
+            "--no-shadows",
+            "--window-size",
+            "256x256",
+            "--fixed-timestep",
+            "0.0166667",
+            "--out",
+            "out\\pathloss-render-audit\\Sphere-qem.png",
+            "--eye",
+            "0,0.0976074934,2.86207903",
+            "--target",
+            "0,0.0976074934,-0.0471850038",
+            "--views",
+            "8",
+            "--warmup",
+            "2",
+            "--measure",
+            "2",
+            "out\\pathloss-render-audit\\Sphere-qem.obj"
+          ]
+        }
+      },
+      "source_topology": {
+        "duplicate_faces": 0,
+        "degenerate_faces_area2_le_1e-12": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "boundary_edges": 568
+      }
+    },
+    {
+      "asset": "Torus",
+      "unit_index": 0,
+      "source_faces": 1152,
+      "face_budget": 922,
+      "center": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "radius": 1.2500004370462001,
+      "capture_sha256": "091a30aba8a3d09db01de91bfc537b7d73a42550d6b350c3f976d9e723644c31",
+      "optimization_report_sha256": "69033ec484ec9ba80b63ed21726a841cc501feafba59fd8515a9d4511b29b2ac",
+      "renders": {
+        "source": {
+          "faces": 1152,
+          "mesh_sha256": "04468bc64b5b7d9c12f8d74315fea1930fbe78acbfa2e60601b814c8d815b73d",
+          "topology": {
+            "duplicate_faces": 0,
+            "degenerate_faces_area2_le_1e-12": 0,
+            "nonmanifold_edges": 0,
+            "inconsistent_winding_edges": 0,
+            "boundary_edges": 0,
+            "boundary_edge_symmetric_difference_from_source": 0
+          },
+          "adapter_line": "[Intel], [Intel(R) Iris(R) Xe Graphics], [4.5.0 - Build 31.0.101.4502], [4.50 - Build 31.0.101.4502]",
+          "log_sha256": "dfc098b6adf828da46bccce2cda00ec3f04d123e365f4529e9be54b6c83a8f55",
+          "image_provenance": "verified reuse",
+          "images": [
+            {
+              "path": "Torus-source_v00.png",
+              "sha256": "cb6ae385bfa1b14abc3491e75330740f9360ca7e9e26ce952dbb37e4711facf0",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-source_v01.png",
+              "sha256": "aa28d7b791c556a2303ab0339f9118daf83deab27a2600aab0f44d9b03dbb13a",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-source_v02.png",
+              "sha256": "61e6bb9e32fa96990560a8f2b4b80a822613eefeca71da84e9475c126827f2c2",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-source_v03.png",
+              "sha256": "d94d8c3eed9a67cf5692fc349250242191865cd9ae3dd0d776ffe89c7c618f40",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-source_v04.png",
+              "sha256": "d3e36dd9c1d4bfcd2c98defb720e82989ac32088463374e1a369460808127797",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-source_v05.png",
+              "sha256": "31f39e7f979ef6d0e1313893c31ae306dd20d56d2b074d19efc0408bd5066b8a",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-source_v06.png",
+              "sha256": "0a818708b8d8095b6f44b9fec555fe56965bf45d9028a051ce489f36951d5a0a",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-source_v07.png",
+              "sha256": "bc0b85d7b65aebd90b26743228fe9595a07a347d3d06bb9680097383f9e1331b",
+              "size": [
+                256,
+                256
+              ]
+            }
+          ],
+          "command_cwd": ".",
+          "command": [
+            "out\\cmake-release\\samples\\mm_bench.exe",
+            "--headless",
+            "--api",
+            "opengl",
+            "--no-shadows",
+            "--window-size",
+            "256x256",
+            "--fixed-timestep",
+            "0.0166667",
+            "--out",
+            "out\\pathloss-render-audit\\Torus-source.png",
+            "--eye",
+            "0,0,3.75000131",
+            "--target",
+            "0,0,0",
+            "--views",
+            "8",
+            "--warmup",
+            "2",
+            "--measure",
+            "2",
+            "out\\pathloss-render-audit\\Torus-source.obj"
+          ]
+        },
+        "path": {
+          "faces": 922,
+          "mesh_sha256": "6f7bc591ae749ffcbd4868ed65abd9d229ac9129d743ed7f3d14ac68657ab527",
+          "topology": {
+            "duplicate_faces": 0,
+            "degenerate_faces_area2_le_1e-12": 0,
+            "nonmanifold_edges": 0,
+            "inconsistent_winding_edges": 0,
+            "boundary_edges": 0,
+            "boundary_edge_symmetric_difference_from_source": 0
+          },
+          "adapter_line": "[Intel], [Intel(R) Iris(R) Xe Graphics], [4.5.0 - Build 31.0.101.4502], [4.50 - Build 31.0.101.4502]",
+          "log_sha256": "7ab3d23895a6a0dda799747e46271ff34897aed3687bccebbd3ee3ae55ae59f6",
+          "image_provenance": "verified reuse",
+          "images": [
+            {
+              "path": "Torus-path_v00.png",
+              "sha256": "9dd06397e5811af4b51fe086ef034c34d32e588a942a19d7136f48f970317797",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-path_v01.png",
+              "sha256": "a32acec91aee462773f054d52cea9ff199ad19cf48eccf6f2df1b8b1a77e0322",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-path_v02.png",
+              "sha256": "db52fc514757897139ad278de345669abf9a49bbc0d066162981414a456fd512",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-path_v03.png",
+              "sha256": "905e28de5a3dabf05e829e8f92a5b9aa99a3510f726aabf2d818c9452ab35348",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-path_v04.png",
+              "sha256": "90986584ec2bb9ff308043340bb6f930c134b55883cf1bc1a087cb984c3c4926",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-path_v05.png",
+              "sha256": "dea0c91e9cf951d32ab7707cd785758a101f1ef91115507c878a90e3eca68222",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-path_v06.png",
+              "sha256": "7a107eaf24d18a01dbdfe173ef106f9b3aacadd7ba5a75f671fbef14956169a5",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-path_v07.png",
+              "sha256": "bcf8ca930dd9cbd3d05093c4eb7cc9b5fa804918d86c821a971acfbc5d63fc06",
+              "size": [
+                256,
+                256
+              ]
+            }
+          ],
+          "command_cwd": ".",
+          "command": [
+            "out\\cmake-release\\samples\\mm_bench.exe",
+            "--headless",
+            "--api",
+            "opengl",
+            "--no-shadows",
+            "--window-size",
+            "256x256",
+            "--fixed-timestep",
+            "0.0166667",
+            "--out",
+            "out\\pathloss-render-audit\\Torus-path.png",
+            "--eye",
+            "0,0,3.75000131",
+            "--target",
+            "0,0,0",
+            "--views",
+            "8",
+            "--warmup",
+            "2",
+            "--measure",
+            "2",
+            "out\\pathloss-render-audit\\Torus-path.obj"
+          ]
+        },
+        "qem": {
+          "faces": 922,
+          "mesh_sha256": "3eb5da17e7caf8e4c838909032a099a6501b107ab5f9413aee5d9198fc0915ca",
+          "topology": {
+            "duplicate_faces": 0,
+            "degenerate_faces_area2_le_1e-12": 0,
+            "nonmanifold_edges": 0,
+            "inconsistent_winding_edges": 0,
+            "boundary_edges": 0,
+            "boundary_edge_symmetric_difference_from_source": 0
+          },
+          "adapter_line": "[Intel], [Intel(R) Iris(R) Xe Graphics], [4.5.0 - Build 31.0.101.4502], [4.50 - Build 31.0.101.4502]",
+          "log_sha256": "eced786035fe470e7e7c7e768623c19e98ca92075aec6a0ee46331c885b40c70",
+          "image_provenance": "verified reuse",
+          "images": [
+            {
+              "path": "Torus-qem_v00.png",
+              "sha256": "9109e5337c765c00e5bd67447f6acaef6f45060a755d92097047af0a6e5de84a",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-qem_v01.png",
+              "sha256": "1c222bce10e131ac7dfc9fbf59ae74f2e7d3927318ed806b82834dba61f01d05",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-qem_v02.png",
+              "sha256": "482deef16bf5a177c232e49f257436bd500fdb27a32902c49bf36be038fe72b8",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-qem_v03.png",
+              "sha256": "212d43a39c14b083cc255d3b1daa74a56c9557658d3d3fbda178a7d17f0d32bd",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-qem_v04.png",
+              "sha256": "e204ed322146f71670aa70880a29c35483af664d8ab40ab3b098a450d13ecea5",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-qem_v05.png",
+              "sha256": "08c48a59f41bdea3666bee0d7bcce0b08ed80d691d68f3f8d1cc2214216e2f79",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-qem_v06.png",
+              "sha256": "6129b15b42d9eab27cea14c8c28009767fc8bb7b30fcf93b0c1fd4e9d7e9fee1",
+              "size": [
+                256,
+                256
+              ]
+            },
+            {
+              "path": "Torus-qem_v07.png",
+              "sha256": "21fcbb03f2754a2e92225bc2b799de47463cb03b76ecad9689d0270d7d06833f",
+              "size": [
+                256,
+                256
+              ]
+            }
+          ],
+          "command_cwd": ".",
+          "command": [
+            "out\\cmake-release\\samples\\mm_bench.exe",
+            "--headless",
+            "--api",
+            "opengl",
+            "--no-shadows",
+            "--window-size",
+            "256x256",
+            "--fixed-timestep",
+            "0.0166667",
+            "--out",
+            "out\\pathloss-render-audit\\Torus-qem.png",
+            "--eye",
+            "0,0,3.75000131",
+            "--target",
+            "0,0,0",
+            "--views",
+            "8",
+            "--warmup",
+            "2",
+            "--measure",
+            "2",
+            "out\\pathloss-render-audit\\Torus-qem.obj"
+          ]
+        }
+      },
+      "source_topology": {
+        "duplicate_faces": 0,
+        "degenerate_faces_area2_le_1e-12": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "boundary_edges": 0
+      }
+    }
+  ]
+}

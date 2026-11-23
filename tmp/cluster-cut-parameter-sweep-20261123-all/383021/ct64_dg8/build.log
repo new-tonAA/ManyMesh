@@ -1,0 +1,110 @@
+ManyMesh geometry optimization layer
+  input: E:\ManyMesh\out\upstream-clusterlod\validation\383021\source.obj
+  loaded: 6894 vertices, 13788 triangles (0.03s)
+  bounds: (-647808.12, -639896.50, -696113.62) .. (647808.12, 639896.50, 696113.62)   extent (1295616.25, 1279793.00, 1392227.25)
+  DAG built: 577 nodes, 11 levels (20.17s)
+  vertices: 6894 source + 38 generated = 6932 total
+  generated AO: 1.000 .. 1.000 (1.000 mean) [no source AO field; all vertices unoccluded]
+  build phases: clusterize 0.010s, leaf setup 0.006s, cluster chains 0.116s, groups 20.010s (simplify 20.004s)
+  simplify calls: cluster 216 accepted 292 attempts 304; group 104 accepted 69 attempts 233; seam-locked vertex uses 26340
+  cluster simplify profile: attribute-qem 0.510s, corner 0.874s, meshopt 0.018s, gate 0.253s, boundary 0.106s, lock-mask 0.008s (build 0.013s) | calls 508 attempts 569, attribute candidates 508, corner candidates 508, meshopt candidates 569, accepted 496, rejected: topology 0 geometry 0 attributes 0 boundary 0 locked 0 none 0
+  cluster gate detail: cleanup 0.009s, sliver 0.070s, topology 0.022s, welded-topology 0.017s, error 0.134s
+  cluster extended-mesh: 0.001s, copies 20
+  cluster corner detail: setup 0.384s, evaluate 0.735s (199265 evals, 3.69 us/eval), topology 0.112s, target 0.433s (289868 placements), apply 0.016s (4699 applied)
+  cluster corner topology: neighbor 0.052s, triangles 0.062s, local-triangles 0.000s, local-edges 0.045s
+  group simplify profile: attribute-qem 6.842s, corner 7.504s, meshopt 0.057s, gate 5.400s, boundary 0.273s, lock-mask 0.005s (build 0.000s) | calls 104 attempts 233, attribute candidates 210, corner candidates 213, meshopt candidates 233, accepted 69, rejected: topology 436 geometry 40 attributes 0 boundary 0 locked 92 none 0
+  group gate detail: cleanup 0.054s, sliver 3.632s, topology 0.089s, welded-topology 0.064s, error 1.560s
+  group extended-mesh: 0.005s, copies 92
+  group corner detail: setup 4.578s, evaluate 7.006s (1077124 evals, 6.50 us/eval), topology 4.224s, target 1.733s (1747397 placements), apply 0.064s (21717 applied)
+  group corner topology: neighbor 0.333s, triangles 0.595s, local-triangles 2.119s, local-edges 0.544s
+  cut vertices: 3364 of 6894 source + 19 of 38 generated = 3383 total (48.8% of the 6932-vertex global buffer, 0 KiB generated tail)
+
+  DAG: 577 nodes, 11 levels, 7 roots, 216 leaves, 13788 base triangles
+  camera: eye(0.000, 0.000, 2318202.500) fovY(45.0 deg) screen(1920 x 1080) budget inf px
+  level           nodes      triangles
+  0                   7            448
+  1                  29           1355
+  2                   8            332
+  3                   0              0
+  4                   9           1693
+  5                   5           1581
+  6                   1            122
+  7                   1            257
+  8                   1            447
+  9                   1            632
+  10                  0              0
+  drawn: 6867 of 13788 visible triangles (49.80%) in 62 nodes
+  frustum culled: 0 of 13788 triangles (0.00%)
+  worst selected screen error: 9.0250 px
+  base topology: boundary 0, non-manifold 0, duplicates 0, degenerate 0, flipped 0, min quality 0.0000
+  selected topology: boundary 27, non-manifold 61, duplicates 0, degenerate 0, flipped 0, min quality 0.0000
+  bad edge (361,6895) use=4 nodes=569 552 
+    node 569 tri 898 361 6895
+    node 569 tri 318 6895 361
+    node 552 tri 361 893 6895
+    node 552 tri 903 361 6895
+    base use=0 leaves=
+  bad edge (668,2813) use=1 nodes=479 480 
+    node 479 tri 6895 668 2813
+    node 480 tri 2813 668 6895
+    base use=2 leaves=190(use=1) 191(use=1) 
+  bad edge (668,6895) use=3 nodes=479 480 
+    node 479 tri 6895 668 2813
+    node 479 tri 663 668 6895
+    node 480 tri 2813 668 6895
+    node 480 tri 667 6895 668
+    base use=0 leaves=
+  bad edge (686,691) use=1 nodes=426 569 
+    node 426 tri 691 686 6895
+    node 569 tri 691 6895 686
+    base use=2 leaves=143(use=1) 144(use=1) 
+  bad edge (686,6895) use=3 nodes=426 569 
+    node 426 tri 932 6895 686
+    node 426 tri 691 686 6895
+    node 569 tri 686 6895 687
+    node 569 tri 691 6895 686
+    base use=0 leaves=
+  bad edge (691,692) use=1 nodes=426 569 
+    node 426 tri 691 6895 692
+    node 569 tri 691 692 6895
+    base use=2 leaves=143(use=1) 144(use=1) 
+  bad edge (692,6895) use=3 nodes=426 569 
+    node 426 tri 692 6895 696
+    node 426 tri 691 6895 692
+    node 569 tri 691 692 6895
+    node 569 tri 6895 692 695
+    base use=0 leaves=
+  bad edge (859,860) use=1 nodes=572 552 
+    node 572 tri 859 6895 860
+    node 552 tri 860 6895 859
+    base use=2 leaves=31(use=1) 32(use=1) 
+  bad edge (859,6895) use=3 nodes=572 552 
+    node 572 tri 859 856 6895
+    node 572 tri 859 6895 860
+    node 552 tri 860 6895 859
+    node 552 tri 859 6895 858
+    base use=0 leaves=
+  bad edge (860,6895) use=3 nodes=572 552 
+    node 572 tri 859 6895 860
+    node 572 tri 6895 874 860
+    node 552 tri 860 6895 859
+    node 552 tri 860 869 6895
+    base use=0 leaves=
+  bad edge (898,1177) use=1 nodes=569 552 
+    node 569 tri 898 6895 1177
+    node 552 tri 898 1177 6895
+    base use=2 leaves=141(use=1) 142(use=1) 
+  bad edge (898,6895) use=3 nodes=569 552 
+    node 569 tri 898 361 6895
+    node 569 tri 898 6895 1177
+    node 552 tri 6895 893 898
+    node 552 tri 898 1177 6895
+    base use=0 leaves=
+  budget reached: 6867 <= 6894 triangles (49.80% <= 50.00%)
+  wrote tmp\cluster-cut-parameter-sweep-20261123-all\383021\ct64_dg8/selected.ply
+  uniform cut 0.5: 6867 triangles (49.8042%), wrote tmp\cluster-cut-parameter-sweep-20261123-all\383021\ct64_dg8/selected_ratio_0.5.ply
+  uniform cut 0.2499: 5562 triangles (40.3394%), wrote tmp\cluster-cut-parameter-sweep-20261123-all\383021\ct64_dg8/selected_ratio_0.249927.ply
+  wrote tmp\cluster-cut-parameter-sweep-20261123-all\383021\ct64_dg8/lod_graph.json
+  streaming: memory-backed, 11 pages, queue prepared, resident 10 pages / 639608 bytes, hits 0 misses 10 evictions 0
+
+  total time: 20.21s

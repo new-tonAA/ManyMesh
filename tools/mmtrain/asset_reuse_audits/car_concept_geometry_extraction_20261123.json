@@ -1,0 +1,13 @@
+{
+  "input_path": "out\\khronos-confirmation-assets\\Models\\CarConcept\\glTF-Binary\\CarConcept.glb",
+  "input_sha256": "c272098089d78c5cd9fd9f24ff50ee8acf8d932c55f2d55fc10adb6c8998966b",
+  "extractor_sha256": "1b304e26b07e78564108c3e7d57c26ced82667fe6887706645664420699fc280",
+  "output_path": "out\\khronos-confirmation-assets\\extracted\\car_concept.obj",
+  "output_sha256": "087dc7109fee8a10b42a9239bb865d6a94cc6969cad82734177bbedce268bd9a",
+  "vertices": 162766,
+  "triangles": 213347,
+  "mesh_instances": 97,
+  "triangle_primitives": 109,
+  "animation_count_ignored": 0,
+  "geometry_scope": "all default-scene static mesh instances at default node transforms; animation channels ignored; no skinning, materials, or texture data"
+}

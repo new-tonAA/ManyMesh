@@ -1,0 +1,377 @@
+{
+  "metric": "CGVQM-5",
+  "direction": "higher_is_better",
+  "benchmark": "tools/mmtrain/mixed_scene_dynamic_instance_lod_validated_720p_20261123.json",
+  "benchmark_sha256": "c9179c4c025c7b1ba2dbbe0b956b01bbc6ae39df716ae3747e3a4735049837ac",
+  "scene_unit": "three reused synthetic mixed scenes; bootstrap unit is scene, not frame",
+  "camera_frames_per_scene": 48,
+  "fps": 30,
+  "device": "CPU",
+  "decoder_note": "OpenCV FFmpeg RGB24 decoder; upstream PyAV reader replaced",
+  "patch_pool": "mean",
+  "patch_scale": 4,
+  "scenes": {
+    "display-wall": {
+      "group-area": {
+        "metric": "CGVQM-5",
+        "score": 95.03205871582031,
+        "scoreDirection": "higher_is_better",
+        "patchPool": "mean",
+        "patchScale": 4,
+        "device": "cpu",
+        "cpuThreads": 8,
+        "elapsedSeconds": 146.41293539997423,
+        "upstreamRepository": "https://github.com/IntelLabs/cgvqm",
+        "upstreamCommit": "c4f1222c978e2c853609cf38d240920cfb92d15e",
+        "decoder": "OpenCV FFmpeg backend; RGB24 conversion; upstream PyAV reader replaced",
+        "opencvVersion": "4.10.0",
+        "distorted": {
+          "path": "out/mixed-scene/dynamic-sequences-validated-20261123/display-wall/group-area.mkv",
+          "sha256": "ecd87b654f88e67ed6686e1760de2133b29a74edcfa762ad5d9620fe22576a92",
+          "width": 1280,
+          "height": 720,
+          "frameCount": 48,
+          "fps": 30.0,
+          "backend": "FFMPEG"
+        },
+        "reference": {
+          "path": "out/mixed-scene/dynamic-sequences-validated-20261123/display-wall/reference.mkv",
+          "sha256": "340f0d68d20bcdbb9fbe698c2a024b60d3cd4d9963958dfc0ddcd5cf87d2999f",
+          "width": 1280,
+          "height": 720,
+          "frameCount": 48,
+          "fps": 30.0,
+          "backend": "FFMPEG"
+        },
+        "calibrationWeightsSha256": "851ba1fcc92beddf4dd24c5bcfc1f2aa80f0f8b926b6b42fbffb2b0db7130cfd",
+        "r3d18WeightsSha256": "b3b3357ead25631ec9c57362ff2128a92d0427e01e2cd184951a44380c3f2e9d",
+        "torchVersion": "2.7.1+cpu",
+        "torchvisionVersion": "0.22.1+cpu"
+      },
+      "instance-area": {
+        "metric": "CGVQM-5",
+        "score": 95.03308868408203,
+        "scoreDirection": "higher_is_better",
+        "patchPool": "mean",
+        "patchScale": 4,
+        "device": "cpu",
+        "cpuThreads": 8,
+        "elapsedSeconds": 150.62844719999703,
+        "upstreamRepository": "https://github.com/IntelLabs/cgvqm",
+        "upstreamCommit": "c4f1222c978e2c853609cf38d240920cfb92d15e",
+        "decoder": "OpenCV FFmpeg backend; RGB24 conversion; upstream PyAV reader replaced",
+        "opencvVersion": "4.10.0",
+        "distorted": {
+          "path": "out/mixed-scene/dynamic-sequences-validated-20261123/display-wall/instance-area.mkv",
+          "sha256": "017442725b148fed8c43ef828c1a0a806f4c9fe4a4529f927a496895ae13fcaa",
+          "width": 1280,
+          "height": 720,
+          "frameCount": 48,
+          "fps": 30.0,
+          "backend": "FFMPEG"
+        },
+        "reference": {
+          "path": "out/mixed-scene/dynamic-sequences-validated-20261123/display-wall/reference.mkv",
+          "sha256": "340f0d68d20bcdbb9fbe698c2a024b60d3cd4d9963958dfc0ddcd5cf87d2999f",
+          "width": 1280,
+          "height": 720,
+          "frameCount": 48,
+          "fps": 30.0,
+          "backend": "FFMPEG"
+        },
+        "calibrationWeightsSha256": "851ba1fcc92beddf4dd24c5bcfc1f2aa80f0f8b926b6b42fbffb2b0db7130cfd",
+        "r3d18WeightsSha256": "b3b3357ead25631ec9c57362ff2128a92d0427e01e2cd184951a44380c3f2e9d",
+        "torchVersion": "2.7.1+cpu",
+        "torchvisionVersion": "0.22.1+cpu"
+      },
+      "instance-matched": {
+        "metric": "CGVQM-5",
+        "score": 95.03205871582031,
+        "scoreDirection": "higher_is_better",
+        "patchPool": "mean",
+        "patchScale": 4,
+        "device": "cpu",
+        "cpuThreads": 8,
+        "elapsedSeconds": 149.4172205000068,
+        "upstreamRepository": "https://github.com/IntelLabs/cgvqm",
+        "upstreamCommit": "c4f1222c978e2c853609cf38d240920cfb92d15e",
+        "decoder": "OpenCV FFmpeg backend; RGB24 conversion; upstream PyAV reader replaced",
+        "opencvVersion": "4.10.0",
+        "distorted": {
+          "path": "out/mixed-scene/dynamic-sequences-validated-20261123/display-wall/instance-matched.mkv",
+          "sha256": "68878f1b3e58c8a4a83caea360304f9a4fd1f5b0d9dcc9a66db0654699e835ce",
+          "width": 1280,
+          "height": 720,
+          "frameCount": 48,
+          "fps": 30.0,
+          "backend": "FFMPEG"
+        },
+        "reference": {
+          "path": "out/mixed-scene/dynamic-sequences-validated-20261123/display-wall/reference.mkv",
+          "sha256": "340f0d68d20bcdbb9fbe698c2a024b60d3cd4d9963958dfc0ddcd5cf87d2999f",
+          "width": 1280,
+          "height": 720,
+          "frameCount": 48,
+          "fps": 30.0,
+          "backend": "FFMPEG"
+        },
+        "calibrationWeightsSha256": "851ba1fcc92beddf4dd24c5bcfc1f2aa80f0f8b926b6b42fbffb2b0db7130cfd",
+        "r3d18WeightsSha256": "b3b3357ead25631ec9c57362ff2128a92d0427e01e2cd184951a44380c3f2e9d",
+        "torchVersion": "2.7.1+cpu",
+        "torchvisionVersion": "0.22.1+cpu"
+      }
+    },
+    "layered-aisles": {
+      "group-area": {
+        "metric": "CGVQM-5",
+        "score": 97.79236602783203,
+        "scoreDirection": "higher_is_better",
+        "patchPool": "mean",
+        "patchScale": 4,
+        "device": "cpu",
+        "cpuThreads": 8,
+        "elapsedSeconds": 150.93296989996452,
+        "upstreamRepository": "https://github.com/IntelLabs/cgvqm",
+        "upstreamCommit": "c4f1222c978e2c853609cf38d240920cfb92d15e",
+        "decoder": "OpenCV FFmpeg backend; RGB24 conversion; upstream PyAV reader replaced",
+        "opencvVersion": "4.10.0",
+        "distorted": {
+          "path": "out/mixed-scene/dynamic-sequences-validated-20261123/layered-aisles/group-area.mkv",
+          "sha256": "100476b29d8939b7a2c9271943dbf22baaf4c579dd2cf84352a3ad7097043882",
+          "width": 1280,
+          "height": 720,
+          "frameCount": 48,
+          "fps": 30.0,
+          "backend": "FFMPEG"
+        },
+        "reference": {
+          "path": "out/mixed-scene/dynamic-sequences-validated-20261123/layered-aisles/reference.mkv",
+          "sha256": "9fe043eda592d3222c5298ad0b7f096bf11b29c5845928078c837698e7ab6b38",
+          "width": 1280,
+          "height": 720,
+          "frameCount": 48,
+          "fps": 30.0,
+          "backend": "FFMPEG"
+        },
+        "calibrationWeightsSha256": "851ba1fcc92beddf4dd24c5bcfc1f2aa80f0f8b926b6b42fbffb2b0db7130cfd",
+        "r3d18WeightsSha256": "b3b3357ead25631ec9c57362ff2128a92d0427e01e2cd184951a44380c3f2e9d",
+        "torchVersion": "2.7.1+cpu",
+        "torchvisionVersion": "0.22.1+cpu"
+      },
+      "instance-area": {
+        "metric": "CGVQM-5",
+        "score": 97.8118667602539,
+        "scoreDirection": "higher_is_better",
+        "patchPool": "mean",
+        "patchScale": 4,
+        "device": "cpu",
+        "cpuThreads": 8,
+        "elapsedSeconds": 148.30493610003032,
+        "upstreamRepository": "https://github.com/IntelLabs/cgvqm",
+        "upstreamCommit": "c4f1222c978e2c853609cf38d240920cfb92d15e",
+        "decoder": "OpenCV FFmpeg backend; RGB24 conversion; upstream PyAV reader replaced",
+        "opencvVersion": "4.10.0",
+        "distorted": {
+          "path": "out/mixed-scene/dynamic-sequences-validated-20261123/layered-aisles/instance-area.mkv",
+          "sha256": "ae6cbd96e5bd43cda61c52ce7a97c844380483d6b692c76712833239165a10c1",
+          "width": 1280,
+          "height": 720,
+          "frameCount": 48,
+          "fps": 30.0,
+          "backend": "FFMPEG"
+        },
+        "reference": {
+          "path": "out/mixed-scene/dynamic-sequences-validated-20261123/layered-aisles/reference.mkv",
+          "sha256": "9fe043eda592d3222c5298ad0b7f096bf11b29c5845928078c837698e7ab6b38",
+          "width": 1280,
+          "height": 720,
+          "frameCount": 48,
+          "fps": 30.0,
+          "backend": "FFMPEG"
+        },
+        "calibrationWeightsSha256": "851ba1fcc92beddf4dd24c5bcfc1f2aa80f0f8b926b6b42fbffb2b0db7130cfd",
+        "r3d18WeightsSha256": "b3b3357ead25631ec9c57362ff2128a92d0427e01e2cd184951a44380c3f2e9d",
+        "torchVersion": "2.7.1+cpu",
+        "torchvisionVersion": "0.22.1+cpu"
+      },
+      "instance-matched": {
+        "metric": "CGVQM-5",
+        "score": 97.79236602783203,
+        "scoreDirection": "higher_is_better",
+        "patchPool": "mean",
+        "patchScale": 4,
+        "device": "cpu",
+        "cpuThreads": 8,
+        "elapsedSeconds": 150.69020960002672,
+        "upstreamRepository": "https://github.com/IntelLabs/cgvqm",
+        "upstreamCommit": "c4f1222c978e2c853609cf38d240920cfb92d15e",
+        "decoder": "OpenCV FFmpeg backend; RGB24 conversion; upstream PyAV reader replaced",
+        "opencvVersion": "4.10.0",
+        "distorted": {
+          "path": "out/mixed-scene/dynamic-sequences-validated-20261123/layered-aisles/instance-matched.mkv",
+          "sha256": "a415470871e4a9996f3a8d1cd049f385e4061c9d7217ef550600e867024e2c09",
+          "width": 1280,
+          "height": 720,
+          "frameCount": 48,
+          "fps": 30.0,
+          "backend": "FFMPEG"
+        },
+        "reference": {
+          "path": "out/mixed-scene/dynamic-sequences-validated-20261123/layered-aisles/reference.mkv",
+          "sha256": "9fe043eda592d3222c5298ad0b7f096bf11b29c5845928078c837698e7ab6b38",
+          "width": 1280,
+          "height": 720,
+          "frameCount": 48,
+          "fps": 30.0,
+          "backend": "FFMPEG"
+        },
+        "calibrationWeightsSha256": "851ba1fcc92beddf4dd24c5bcfc1f2aa80f0f8b926b6b42fbffb2b0db7130cfd",
+        "r3d18WeightsSha256": "b3b3357ead25631ec9c57362ff2128a92d0427e01e2cd184951a44380c3f2e9d",
+        "torchVersion": "2.7.1+cpu",
+        "torchvisionVersion": "0.22.1+cpu"
+      }
+    },
+    "mixed-scale": {
+      "group-area": {
+        "metric": "CGVQM-5",
+        "score": 96.30839538574219,
+        "scoreDirection": "higher_is_better",
+        "patchPool": "mean",
+        "patchScale": 4,
+        "device": "cpu",
+        "cpuThreads": 8,
+        "elapsedSeconds": 151.75607240002137,
+        "upstreamRepository": "https://github.com/IntelLabs/cgvqm",
+        "upstreamCommit": "c4f1222c978e2c853609cf38d240920cfb92d15e",
+        "decoder": "OpenCV FFmpeg backend; RGB24 conversion; upstream PyAV reader replaced",
+        "opencvVersion": "4.10.0",
+        "distorted": {
+          "path": "out/mixed-scene/dynamic-sequences-validated-20261123/mixed-scale/group-area.mkv",
+          "sha256": "49b9fa646d45d0d381995e61f9f0a574c59964b4daaacfbaa4f07b0b84ca3d79",
+          "width": 1280,
+          "height": 720,
+          "frameCount": 48,
+          "fps": 30.0,
+          "backend": "FFMPEG"
+        },
+        "reference": {
+          "path": "out/mixed-scene/dynamic-sequences-validated-20261123/mixed-scale/reference.mkv",
+          "sha256": "f40f2c0b2efd184af520d93783328569d8ddd82f828d1a5b04218aaa622036ed",
+          "width": 1280,
+          "height": 720,
+          "frameCount": 48,
+          "fps": 30.0,
+          "backend": "FFMPEG"
+        },
+        "calibrationWeightsSha256": "851ba1fcc92beddf4dd24c5bcfc1f2aa80f0f8b926b6b42fbffb2b0db7130cfd",
+        "r3d18WeightsSha256": "b3b3357ead25631ec9c57362ff2128a92d0427e01e2cd184951a44380c3f2e9d",
+        "torchVersion": "2.7.1+cpu",
+        "torchvisionVersion": "0.22.1+cpu"
+      },
+      "instance-area": {
+        "metric": "CGVQM-5",
+        "score": 96.46082305908203,
+        "scoreDirection": "higher_is_better",
+        "patchPool": "mean",
+        "patchScale": 4,
+        "device": "cpu",
+        "cpuThreads": 8,
+        "elapsedSeconds": 152.44547949999105,
+        "upstreamRepository": "https://github.com/IntelLabs/cgvqm",
+        "upstreamCommit": "c4f1222c978e2c853609cf38d240920cfb92d15e",
+        "decoder": "OpenCV FFmpeg backend; RGB24 conversion; upstream PyAV reader replaced",
+        "opencvVersion": "4.10.0",
+        "distorted": {
+          "path": "out/mixed-scene/dynamic-sequences-validated-20261123/mixed-scale/instance-area.mkv",
+          "sha256": "9f2f03eb03f1115e90f88cd7b9010ac252dddc5b7d3f8c3d960d73396a6c161a",
+          "width": 1280,
+          "height": 720,
+          "frameCount": 48,
+          "fps": 30.0,
+          "backend": "FFMPEG"
+        },
+        "reference": {
+          "path": "out/mixed-scene/dynamic-sequences-validated-20261123/mixed-scale/reference.mkv",
+          "sha256": "f40f2c0b2efd184af520d93783328569d8ddd82f828d1a5b04218aaa622036ed",
+          "width": 1280,
+          "height": 720,
+          "frameCount": 48,
+          "fps": 30.0,
+          "backend": "FFMPEG"
+        },
+        "calibrationWeightsSha256": "851ba1fcc92beddf4dd24c5bcfc1f2aa80f0f8b926b6b42fbffb2b0db7130cfd",
+        "r3d18WeightsSha256": "b3b3357ead25631ec9c57362ff2128a92d0427e01e2cd184951a44380c3f2e9d",
+        "torchVersion": "2.7.1+cpu",
+        "torchvisionVersion": "0.22.1+cpu"
+      },
+      "instance-matched": {
+        "metric": "CGVQM-5",
+        "score": 96.42005920410156,
+        "scoreDirection": "higher_is_better",
+        "patchPool": "mean",
+        "patchScale": 4,
+        "device": "cpu",
+        "cpuThreads": 8,
+        "elapsedSeconds": 149.20784539997112,
+        "upstreamRepository": "https://github.com/IntelLabs/cgvqm",
+        "upstreamCommit": "c4f1222c978e2c853609cf38d240920cfb92d15e",
+        "decoder": "OpenCV FFmpeg backend; RGB24 conversion; upstream PyAV reader replaced",
+        "opencvVersion": "4.10.0",
+        "distorted": {
+          "path": "out/mixed-scene/dynamic-sequences-validated-20261123/mixed-scale/instance-matched.mkv",
+          "sha256": "c9f1bc783556aa397d4ebb743105b89cd995cb721cceb1eb1e0e3b875248e091",
+          "width": 1280,
+          "height": 720,
+          "frameCount": 48,
+          "fps": 30.0,
+          "backend": "FFMPEG"
+        },
+        "reference": {
+          "path": "out/mixed-scene/dynamic-sequences-validated-20261123/mixed-scale/reference.mkv",
+          "sha256": "f40f2c0b2efd184af520d93783328569d8ddd82f828d1a5b04218aaa622036ed",
+          "width": 1280,
+          "height": 720,
+          "frameCount": 48,
+          "fps": 30.0,
+          "backend": "FFMPEG"
+        },
+        "calibrationWeightsSha256": "851ba1fcc92beddf4dd24c5bcfc1f2aa80f0f8b926b6b42fbffb2b0db7130cfd",
+        "r3d18WeightsSha256": "b3b3357ead25631ec9c57362ff2128a92d0427e01e2cd184951a44380c3f2e9d",
+        "torchVersion": "2.7.1+cpu",
+        "torchvisionVersion": "0.22.1+cpu"
+      }
+    }
+  },
+  "paired_comparisons": {
+    "instance-area_minus_group_area": {
+      "mean": 0.057652791341145836,
+      "ci95_percentile": [
+        0.00102996826171875,
+        0.15242767333984375
+      ],
+      "positive_scene_count": 3,
+      "negative_scene_count": 0,
+      "scene_count": 3,
+      "paired_differences": [
+        0.00102996826171875,
+        0.019500732421875,
+        0.15242767333984375
+      ]
+    },
+    "instance-matched_minus_group_area": {
+      "mean": 0.037221272786458336,
+      "ci95_percentile": [
+        0.0,
+        0.111663818359375
+      ],
+      "positive_scene_count": 1,
+      "negative_scene_count": 0,
+      "scene_count": 3,
+      "paired_differences": [
+        0.0,
+        0.0,
+        0.111663818359375
+      ]
+    }
+  }
+}
