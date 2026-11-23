@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "input_path": "out/khronos-pilot-candidates-20261123/sheenwoodleathersofa/geometry.obj (not committed)",
+  "input_sha256": "d07606e3c2a621ef51f08b29f537b4287c56e1e0d88e61f39891b87ac7ce22a7",
+  "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+  "exported_vertices": 139476,
+  "used_vertices": 139476,
+  "unused_exported_vertices": 0,
+  "welded_vertices": 22416,
+  "triangles": 46492,
+  "connected_components_by_exact_welded_vertex": 23,
+  "boundary_edges": 2065,
+  "duplicate_geometric_triangles": 1224,
+  "degenerate_triangles": 0,
+  "nonmanifold_edges": 3025,
+  "inconsistently_oriented_edges": 415,
+  "minimum_double_area": 1.2146901449095798e-08,
+  "edge_incidence_histogram": {
+    "4": 2868,
+    "2": 62734,
+    "3": 157,
+    "1": 2065
+  },
+  "topology_status": "fail",
+  "topology_errors": [
+    "1224 duplicate geometric faces",
+    "3025 nonmanifold edges",
+    "415 inconsistently oriented edges"
+  ],
+  "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+}

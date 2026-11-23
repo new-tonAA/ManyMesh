@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "input_path": "out/khronos-pilot-candidates-20261123/mosquitoinamber/geometry.obj (not committed)",
+  "input_sha256": "d3752d126c99c5fa9abb7848608e1f699d6fbe3986a37118781d79edfbe820fe",
+  "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+  "exported_vertices": 18678,
+  "used_vertices": 18678,
+  "unused_exported_vertices": 0,
+  "welded_vertices": 10140,
+  "triangles": 14349,
+  "connected_components_by_exact_welded_vertex": 1208,
+  "boundary_edges": 4208,
+  "duplicate_geometric_triangles": 0,
+  "degenerate_triangles": 0,
+  "nonmanifold_edges": 157,
+  "inconsistently_oriented_edges": 99,
+  "minimum_double_area": 4.0894056568516603e-10,
+  "edge_incidence_histogram": {
+    "2": 19170,
+    "1": 4208,
+    "3": 129,
+    "4": 28
+  },
+  "topology_status": "fail",
+  "topology_errors": [
+    "157 nonmanifold edges",
+    "99 inconsistently oriented edges"
+  ],
+  "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+}

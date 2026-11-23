@@ -1,0 +1,13 @@
+{
+  "input_path": "Khronos glTF-Sample-Assets@e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea/Models/diffusetransmissionplant/glTF-Binary/diffusetransmissionplant.glb",
+  "input_sha256": "1748be8847e24bdd5cb6c5ac2bfd0afe8f11efc4f85091148550555e47c7ee83",
+  "extractor_sha256": "1b304e26b07e78564108c3e7d57c26ced82667fe6887706645664420699fc280",
+  "output_path": "out/khronos-pilot-candidates-20261123/diffusetransmissionplant/geometry.obj (not committed)",
+  "output_sha256": "0b91a5e9fb55dd8abcb8ca09b50d1eaa5a5c2e5e748b47502b143d094eeb55fe",
+  "vertices": 50369,
+  "triangles": 68409,
+  "mesh_instances": 9,
+  "triangle_primitives": 9,
+  "animation_count_ignored": 1,
+  "geometry_scope": "all default-scene static mesh instances at default node transforms; animation channels ignored; no skinning, materials, or texture data"
+}

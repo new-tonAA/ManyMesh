@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "input_path": "out/khronos-pilot-candidates-20261123/scatterplant/geometry.obj (not committed)",
+  "input_sha256": "76594afc7125bf2eaaf05a75ad15954521cb05a5558b9557704ffd021d23fc35",
+  "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+  "exported_vertices": 132222,
+  "used_vertices": 132222,
+  "unused_exported_vertices": 0,
+  "welded_vertices": 35155,
+  "triangles": 54491,
+  "connected_components_by_exact_welded_vertex": 517,
+  "boundary_edges": 14829,
+  "duplicate_geometric_triangles": 0,
+  "degenerate_triangles": 0,
+  "nonmanifold_edges": 0,
+  "inconsistently_oriented_edges": 0,
+  "minimum_double_area": 5.4811325363643135e-09,
+  "edge_incidence_histogram": {
+    "2": 74322,
+    "1": 14829
+  },
+  "topology_status": "pass",
+  "topology_errors": [],
+  "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+}

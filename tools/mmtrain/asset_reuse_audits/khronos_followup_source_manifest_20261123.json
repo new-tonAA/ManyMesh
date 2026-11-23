@@ -1,0 +1,138 @@
+{
+  "schema": "manymesh-khronos-candidate-screen-v1",
+  "sourceRepository": "KhronosGroup/glTF-Sample-Assets",
+  "sourceCommit": "e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea",
+  "downloadedUtc": "2026-11-23T13:14:39.7909571Z",
+  "assets": [
+    {
+      "model": "DiffuseTransmissionPlant",
+      "upstreamCommit": "e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea",
+      "files": [
+        {
+          "path": "out/khronos-pilot-candidates-20261123/DiffuseTransmissionPlant/DiffuseTransmissionPlant.glb",
+          "bytes": 5759100,
+          "sha256": "1748be8847e24bdd5cb6c5ac2bfd0afe8f11efc4f85091148550555e47c7ee83"
+        },
+        {
+          "path": "out/khronos-pilot-candidates-20261123/DiffuseTransmissionPlant/README.md",
+          "bytes": 3436,
+          "sha256": "3108a77ae8ca657843f8adea6c5dac8e380b18eb535ec9bfa596f29eb9a2639b"
+        },
+        {
+          "path": "out/khronos-pilot-candidates-20261123/DiffuseTransmissionPlant/LICENSE.md",
+          "bytes": 936,
+          "sha256": "7d77d8b4a9c626f103cd94aaffc59ec41e4a70f7cfe7f5b4fa43e38cc45d3556"
+        },
+        {
+          "path": "out/khronos-pilot-candidates-20261123/DiffuseTransmissionPlant/metadata.json",
+          "bytes": 1116,
+          "sha256": "6f4364881a1393c3d1ef1f0818efb3f3209e5c16aaff631eaed5f9e5cd1dda1a"
+        }
+      ]
+    },
+    {
+      "model": "MosquitoInAmber",
+      "upstreamCommit": "e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea",
+      "files": [
+        {
+          "path": "out/khronos-pilot-candidates-20261123/MosquitoInAmber/MosquitoInAmber.glb",
+          "bytes": 24229904,
+          "sha256": "1c0b49000650e8a8c00d69bc8d64e46d33527871a47d74e4f2278887325cc35f"
+        },
+        {
+          "path": "out/khronos-pilot-candidates-20261123/MosquitoInAmber/README.md",
+          "bytes": 2318,
+          "sha256": "ae32397c975638d730ae130c76b95da4c7b2b0ede82aaad56d1b18826bb2d85a"
+        },
+        {
+          "path": "out/khronos-pilot-candidates-20261123/MosquitoInAmber/LICENSE.md",
+          "bytes": 933,
+          "sha256": "89dd2e0dfc8b4c48efef6093c1bba565718cca1fbde8d22a97d10c56c39b73a3"
+        },
+        {
+          "path": "out/khronos-pilot-candidates-20261123/MosquitoInAmber/metadata.json",
+          "bytes": 1075,
+          "sha256": "57793ae4ff534da9cb13ec2801f9ea667ca9d3d14138a4a4579b067d6f98315f"
+        }
+      ]
+    },
+    {
+      "model": "ScatterPlant",
+      "upstreamCommit": "e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea",
+      "files": [
+        {
+          "path": "out/khronos-pilot-candidates-20261123/ScatterPlant/ScatterPlant.glb",
+          "bytes": 9409444,
+          "sha256": "4d6d44c61c8986706b56cfe41a96cd19b28389924507ea24e982a2f9d1cd4150"
+        },
+        {
+          "path": "out/khronos-pilot-candidates-20261123/ScatterPlant/README.md",
+          "bytes": 3817,
+          "sha256": "b9070b74a2bb59b7ca553773a72e6c1d436ebd9be7074b45c7416049e55140af"
+        },
+        {
+          "path": "out/khronos-pilot-candidates-20261123/ScatterPlant/LICENSE.md",
+          "bytes": 922,
+          "sha256": "f65df48a9d668c59f9e207c2d06b053a758721b5a0f64bdaed0aaf3bffd0452c"
+        },
+        {
+          "path": "out/khronos-pilot-candidates-20261123/ScatterPlant/metadata.json",
+          "bytes": 1095,
+          "sha256": "1900269cc9d1f4aebf570616fb80dbd730399a731d200e9e8cf2b28b30a711dd"
+        }
+      ]
+    },
+    {
+      "model": "SheenWoodLeatherSofa",
+      "upstreamCommit": "e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea",
+      "files": [
+        {
+          "path": "out/khronos-pilot-candidates-20261123/SheenWoodLeatherSofa/SheenWoodLeatherSofa.glb",
+          "bytes": 10107912,
+          "sha256": "5349e042ad41e695e89f1110230c4ee0c75b2bc62ef830c7016be6ecf665bfb6"
+        },
+        {
+          "path": "out/khronos-pilot-candidates-20261123/SheenWoodLeatherSofa/README.md",
+          "bytes": 4864,
+          "sha256": "9b935a1afd709a187df9ab2ee4556d252ff58df324538fa23e4166439f9d529d"
+        },
+        {
+          "path": "out/khronos-pilot-candidates-20261123/SheenWoodLeatherSofa/LICENSE.md",
+          "bytes": 933,
+          "sha256": "4ab306869a96deedf15b93b546e235aea897982a1151057e6dd9f61a3c70ea20"
+        },
+        {
+          "path": "out/khronos-pilot-candidates-20261123/SheenWoodLeatherSofa/metadata.json",
+          "bytes": 1109,
+          "sha256": "a8ce07f6c0be172ff475a60d7da9e9624d047509100e4d72baa080d94b4645f3"
+        }
+      ]
+    },
+    {
+      "model": "ToyCar",
+      "upstreamCommit": "e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea",
+      "files": [
+        {
+          "path": "out/khronos-pilot-candidates-20261123/ToyCar/ToyCar.glb",
+          "bytes": 5422412,
+          "sha256": "01a60862de55cd4b9f3acfab0b0def86451800f9c42467fcd61052c16cb9838c"
+        },
+        {
+          "path": "out/khronos-pilot-candidates-20261123/ToyCar/README.md",
+          "bytes": 2073,
+          "sha256": "aed216cda25deab59a115bdd6f486da0437fe4e1d9df11c34e496242dbf89fe2"
+        },
+        {
+          "path": "out/khronos-pilot-candidates-20261123/ToyCar/LICENSE.md",
+          "bytes": 911,
+          "sha256": "6e7c41dba03a561a67197a5aba92219bcc462806d69d13d8aba1c0ccbe183253"
+        },
+        {
+          "path": "out/khronos-pilot-candidates-20261123/ToyCar/metadata.json",
+          "bytes": 1070,
+          "sha256": "4ccccf4f019521aea50d462a8b20b876478aca456ab6adde17cd8e4a53110b73"
+        }
+      ]
+    }
+  ]
+}

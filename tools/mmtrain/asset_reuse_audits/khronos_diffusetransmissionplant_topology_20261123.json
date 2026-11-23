@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "input_path": "out/khronos-pilot-candidates-20261123/diffusetransmissionplant/geometry.obj (not committed)",
+  "input_sha256": "0b91a5e9fb55dd8abcb8ca09b50d1eaa5a5c2e5e748b47502b143d094eeb55fe",
+  "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+  "exported_vertices": 50369,
+  "used_vertices": 50369,
+  "unused_exported_vertices": 0,
+  "welded_vertices": 35677,
+  "triangles": 68409,
+  "connected_components_by_exact_welded_vertex": 219,
+  "boundary_edges": 1715,
+  "duplicate_geometric_triangles": 0,
+  "degenerate_triangles": 0,
+  "nonmanifold_edges": 8,
+  "inconsistently_oriented_edges": 0,
+  "minimum_double_area": 1.435814510169828e-06,
+  "edge_incidence_histogram": {
+    "2": 101740,
+    "1": 1715,
+    "4": 8
+  },
+  "topology_status": "fail",
+  "topology_errors": [
+    "8 nonmanifold edges"
+  ],
+  "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+}

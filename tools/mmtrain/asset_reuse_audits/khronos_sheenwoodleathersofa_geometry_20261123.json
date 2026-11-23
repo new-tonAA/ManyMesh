@@ -1,0 +1,13 @@
+{
+  "input_path": "Khronos glTF-Sample-Assets@e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea/Models/sheenwoodleathersofa/glTF-Binary/sheenwoodleathersofa.glb",
+  "input_sha256": "5349e042ad41e695e89f1110230c4ee0c75b2bc62ef830c7016be6ecf665bfb6",
+  "extractor_sha256": "1b304e26b07e78564108c3e7d57c26ced82667fe6887706645664420699fc280",
+  "output_path": "out/khronos-pilot-candidates-20261123/sheenwoodleathersofa/geometry.obj (not committed)",
+  "output_sha256": "d07606e3c2a621ef51f08b29f537b4287c56e1e0d88e61f39891b87ac7ce22a7",
+  "vertices": 139476,
+  "triangles": 46492,
+  "mesh_instances": 6,
+  "triangle_primitives": 6,
+  "animation_count_ignored": 0,
+  "geometry_scope": "all default-scene static mesh instances at default node transforms; animation channels ignored; no skinning, materials, or texture data"
+}

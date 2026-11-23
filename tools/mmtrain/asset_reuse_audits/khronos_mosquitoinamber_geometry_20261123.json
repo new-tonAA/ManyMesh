@@ -1,0 +1,13 @@
+{
+  "input_path": "Khronos glTF-Sample-Assets@e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea/Models/mosquitoinamber/glTF-Binary/mosquitoinamber.glb",
+  "input_sha256": "1c0b49000650e8a8c00d69bc8d64e46d33527871a47d74e4f2278887325cc35f",
+  "extractor_sha256": "1b304e26b07e78564108c3e7d57c26ced82667fe6887706645664420699fc280",
+  "output_path": "out/khronos-pilot-candidates-20261123/mosquitoinamber/geometry.obj (not committed)",
+  "output_sha256": "d3752d126c99c5fa9abb7848608e1f699d6fbe3986a37118781d79edfbe820fe",
+  "vertices": 18678,
+  "triangles": 14349,
+  "mesh_instances": 3,
+  "triangle_primitives": 3,
+  "animation_count_ignored": 0,
+  "geometry_scope": "all default-scene static mesh instances at default node transforms; animation channels ignored; no skinning, materials, or texture data"
+}
