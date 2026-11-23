@@ -1,413 +1,676 @@
-# ManyMesh 动态几何优化：学习式算法调研与研究方案
+# ManyMesh dynamic geometry: learned algorithms and research protocol
 
-调研日期：2026-11-10；更新：2026-11-13。本文的方案部分描述待验证的研究方向。实验进度见第 8 节及以后章节。
+Research date: 2026-11-10; updated 2026-11-22. Sections 1-7 describe the original
+research proposal; experiment results start at section 8. This is a historical
+proposal and experiment record. The tested rank-8 decoder configurations are closed;
+see [current research status](MANYMESH.md) and the [prior-art audit](docs/manymesh/siggraph-prior-art-screen-20261123.md).
 
-## 1. 结论
+## 1. Recommendation
 
-建议优先研究“重建残余误差驱动的动态 LOD”：保留现有几何简化与层级合法性约束，学习每次局部细化能消除多少最终画面误差，并结合切换风险、页面驻留和实际执行成本分配预算。
+The original proposed direction was reconstruction-residual-driven dynamic LOD:
+retain geometry and hierarchy legality, predict the final-image error removed by
+local refinement, and allocate budgets using switching risk, residency, and actual
+execution costs. Ask how much additional geometry improves the final image in its
+current context. Reconstruction must be optional and enabled only after measuring
+net benefit.
 
-核心问题从“这个节点的几何误差多大”变成“现在给这个节点更多几何，最终画面会改善多少”。重建器必须允许关闭；只有测出净收益才能启用。
+Initially restrict scope to static meshes, moving cameras, and changing lighting.
+Skinning and topology changes need separate bounds, deformation errors, and training
+distributions; support cannot be assumed.
 
-第一阶段限定为静态网格、移动相机和变化光照。骨骼动画与拓扑变化需要单独处理包围体、变形误差和训练分布，不能直接声称已经支持。
+## 2. Existing repository components
 
-## 2. 当前仓库提供了什么
+- `libs/manymesh/src/Simplifier.cpp`, `AttributeSimplifier.cpp`, and
+  `CornerSimplifier.cpp` provide geometry/attribute simplification and quality gates.
+- `libs/manymesh/src/LodGraph.cpp` builds the hierarchy, accumulates errors, and
+  maintains legal cuts. `selectLodGraphCut` selects by screen error;
+  `selectLodGraphAtRatio` selects under a triangle budget with further refinement.
+- `libs/manymesh/src/GeometryError.cpp` projects world errors into pixels, estimating
+  sphere depth at the near side. This already exceeds a distance-only threshold.
+- `libs/manymesh/src/GpuLodCutShaders.h` uses accumulated errors and one screen threshold.
+- `libs/manymesh/src/Streaming.cpp` supplies page caches, asynchronous requests,
+  and residency queries for joint scheduling.
+- `tools/mmtrain/train.py` already contains Tiny/TinyUpsample reconstruction and
+  error-map experiments; adding a CNN is not this study's contribution.
 
-- `libs/manymesh/src/Simplifier.cpp`、`AttributeSimplifier.cpp`、`CornerSimplifier.cpp`：现有几何/属性简化与质量约束，可继续生成候选几何。
-- `libs/manymesh/src/LodGraph.cpp`：层级构建、累计误差、合法层级 cut。`selectLodGraphCut` 是屏幕误差驱动的运行时选择；`selectLodGraphAtRatio` 提供三角形预算选择和预算内进一步细化。
-- `libs/manymesh/src/GeometryError.cpp`：将世界误差按相机投影成像素误差，球体使用靠近相机的一侧估计深度。因此当前实现已经超出简单距离阈值。
-- `libs/manymesh/src/GpuLodCutShaders.h`：GPU 选择也使用累计误差与统一屏幕阈值。
-- `libs/manymesh/src/Streaming.cpp`：已有页面缓存、异步请求和驻留查询，可以支撑进一步的预算联合调度。
-- `tools/mmtrain/train.py`：已有 Tiny、TinyUpsample 等重建网络及误差图输入实验。不能把新增 CNN 重建包装为本轮创新。
+CPU reference algorithms, GPU selection, actual rendering submission, and device
+performance are separate evidence. GPU data structures do not establish mobile gains.
+Historical observations used for design, not reproduced for this proposal:
 
-需要区分 CPU 参考算法、GPU 选择、实际渲染提交和设备性能。存在 GPU 数据结构不意味着端到端移动端性能已经验证。
+- `tools/mmtrain/README.md` reports about +1.88 dB reconstruction on training asset
+  Dragon but only +0.15 dB on Monkey. Whole-image gain need not improve common coverage.
+- Error-map gains change sign; adding a geometry-error channel need not help.
+- Temporal experiments in [the history](MANYMESH_HISTORY.md) show negative history
+  gains at low budgets. Small motion does not automatically justify aggressive reduction.
 
-已有实验记录值得作为设计依据，但本次未重新复现：
+## 3. Related work and applicability
 
-- `tools/mmtrain/README.md` 记录 dragon 同资产重建约 +1.88 dB，迁移 monkey 约 +0.15 dB；整图提升也不代表共同覆盖区域同样改善。
-- 同文档记录几何误差图的增益符号不稳定，不能假设“多加一个误差通道”就能有效。
-- `MANYMESH.md` 的时域实验记录低预算情况下历史收益可能转负；当前不能使用“运动小就自动大幅减面”的未经验证规则。
+Descriptions come from author/institution pages or abstracts. Applicability is
+project judgment; these external methods have not been reproduced here.
 
-## 3. 相关工作与适配判断
-
-以下论文结论来自作者/机构页面或论文摘要；适配建议是本项目的工程判断，尚未复现这些方法。
-
-| 工作 | 已有贡献 | 对 ManyMesh 的意义与局限 |
+| Work | Established contribution | Implication and limits |
 |---|---|---|
-| [Adaptive Display Algorithm，SIGGRAPH 1993](https://pixl.cs.princeton.edu/pubs/Funkhouser_1993_ADA/index.php) | 在目标帧时内按收益和成本为可见对象分配 LOD 与渲染算法 | 预算内的收益优化已有先例。本实验把贡献检验集中在重建前后，等面数局部操作的价值排序是否发生有意义的变化 |
-| [Neural Mesh Simplification，CVPR 2022](https://www.ploumpis.com/publication/neural_simp/) | 学习顶点采样、稀疏注意力候选三角形和三角形选择，直接做可学习简化 | 是直接神经减面的参考；需要另行验证材质、UV、拓扑和大场景适配，论文速度不能直接换算成我们的帧率 |
-| [Appearance-Driven Automatic 3D Model Simplification，EGSR 2021](https://research.nvidia.com/publication/2021-04_appearance-driven-automatic-3d-model-simplification) | 用可微渲染联合优化网格和着色，使渲染外观接近参考 | 适合离线优化 LOD 和材质；可微优化不等于训练一个可泛化的运行时深度网络 |
-| [Neural Progressive Meshes，SIGGRAPH 2023](https://arxiv.org/abs/2308.05741) | 学习细分编码/解码，以渐进残差特征控制传输与重建质量 | 对神经压缩和流式传输有价值；改变资产表示及解码链路，不宜作为第一步 |
-| [Gaze-Contingent Perceptual Level of Detail Prediction](https://www.pdf.inf.usi.ch/projects/GazeContingentPerceptualLOD/) | 建模轮廓/表面空间失真和 LOD 切换的时间可见性 | 感知与时间稳定性已是相关工作的组成部分；没有眼动设备不能把屏幕中心当成真实注视点 |
-| [VertexRegen，ICCV 2025](https://vertexregen.github.io/) | 学习反向边折叠，即顶点分裂，允许生成过程随时停止并输出不同细节的完整网格 | 属于生成式连续 LOD；不同于忠实保留输入资产的实时 LOD 选择 |
-| [Learned Localized Mesh Refinement，2026-09 预印本](https://arxiv.org/abs/2609.31946) | 对选定区域自回归细化，展示视点相关细化应用 | “局部学习细化/视点相关”本身不足以构成我们的新颖性主张 |
-| [Perceptually Guided 3DGS Streaming and Rendering for Mixed Reality，机构介绍 2026-04](https://sonyinteractive.com/en/news/blog/perceptually-guided-3dgs-streaming-and-rendering-for-mixed-reality/) | 将时空感知指标蒸馏成轻量模型，预算驱动地调节 LOD 并考虑流式场景 | 表示是 3D Gaussian，而非三角网格；仍是很近的思想先例，不能只把“感知学习 + 预算”作为创新 |
+| [Adaptive Display Algorithm, SIGGRAPH 1993](https://pixl.cs.princeton.edu/pubs/Funkhouser_1993_ADA/index.php) | Benefit/cost allocation of LOD and rendering algorithms under a frame budget. | Budget optimization is established; test whether reconstruction meaningfully changes equal-face edit rankings. |
+| [Neural Mesh Simplification, CVPR 2022](https://www.ploumpis.com/publication/neural_simp/) | Learned vertex sampling, sparse-attention triangle proposals, and triangle selection. | Direct neural reduction baseline; validate materials, UVs, topology, scale, and our frame costs separately. |
+| [Appearance-Driven Automatic 3D Model Simplification, EGSR 2021](https://research.nvidia.com/publication/2021-04_appearance-driven-automatic-3d-model-simplification) | Differentiable joint mesh/shading optimization against reference appearance. | Useful offline LOD/material optimization; not automatically a generalizing runtime network. |
+| [Neural Compression for 3D Geometry Sets, ICCV 2025](https://openaccess.thecvf.com/content/ICCV2025/html/Ren_Neural_Compression_for_3D_Geometry_Sets_ICCV_2025_paper.html) ([code](https://github.com/rsy6318/NeCGS)) | Shared quantization-aware auto-decoder, per-model embedded features, entropy coding, and TSDF-Def/deformable-marching-cubes mesh reconstruction; evaluated on up to 1,000 Thingi10K models. | Direct learned set-compression neighbor. A cluster-latent decoder must distinguish independent access, source-topology/attribute guarantees, or a measured rate-distortion and total-cost advantage; those are not established by the current prototype. |
+| [Neural Progressive Meshes, SIGGRAPH 2023](https://arxiv.org/abs/2308.05741) | Learned subdivision encoding/decoding with progressive residual features. | Relevant compression/streaming neighbor that changes representation and decoding. |
+| [Gaze-Contingent Perceptual LOD Prediction](https://www.pdf.inf.usi.ch/projects/GazeContingentPerceptualLOD/) | Silhouette/surface distortion and temporal visibility of switching. | Perception and temporal stability have precedents; screen center is not measured gaze. |
+| [VertexRegen, ICCV 2025](https://vertexregen.github.io/) | Learned reverse collapses/vertex splits, stoppable generation of complete meshes at different detail. | Generative continuous LOD differs from faithful runtime selection for an input asset. |
+| [Learned Localized Mesh Refinement, SIGGRAPH Asia 2026 paper deferred to SIGGRAPH 2027](https://adg.csail.mit.edu/?page_id=13) ([paper](https://arxiv.org/abs/2609.31946), [code](https://github.com/seanxzhan/learned-localized-mesh-refinement)) | Autoregressive regional refinement with topology/geometry updates and view-dependent applications. | Direct overlap with the local-refinement branch; region selection alone is insufficient novelty. |
+| [Perceptually Guided 3DGS Streaming and Rendering for Mixed Reality, institutional introduction April 2026](https://sonyinteractive.com/en/news/blog/perceptually-guided-3dgs-streaming-and-rendering-for-mixed-reality/) | Distilled spatiotemporal perceptual metrics and budget-driven streaming LOD. | Gaussian rather than triangle representation, but perceptual learning plus budgets already has a close precedent. |
 
-不优先采用每帧直接生成网格或全局强化学习策略。我们首先需要可校验的局部决策、稳定的执行时间，以及和现有合法层级兼容的方案。生成式方法可以作为后续离线候选生成路线。
+Do not begin with per-frame mesh generation or global reinforcement learning.
+Start with verifiable local decisions, bounded execution, and existing legal
+hierarchies. Generative methods could later supply offline candidates.
 
-## 4. 拟研究的算法
+## 4. Proposed algorithm
 
-工作名：重建残余误差驱动的预算 LOD。它是待验证的方法，不是已发表算法。
+Working name: reconstruction-residual-driven budget LOD. This is a hypothesis,
+not a published algorithm.
 
-### 4.1 用真实渲染干预生成监督
+### 4.1 Supervision from rendering interventions
 
-在相同相机、光照、材质、分辨率和历史缓冲条件下，对一个合法 cut C 以及仅将某个节点替换成其子节点的合法 cut C' 分别渲染。
-
-定义最终误差：
+Render a legal cut C and C', which replaces only one node with its children, using
+identical camera, lighting, materials, resolution, and history state:
 
 `D(C) = distance(F(render(C), auxiliary, history), reference)`
 
-其中 F 是固定版本的重建器；关闭重建时为恒等映射。reference 是相同设置下全细节几何的参考渲染。第一阶段固定分辨率、抗锯齿、材质补偿，隔离几何的影响。
+F is a frozen reconstructor or identity when disabled. Reference uses full-detail
+geometry under identical settings. Freeze resolution, AA, and compensation to
+isolate geometry. The label `G(C -> C') = D(C) - D(C')` is contextual marginal gain,
+not an intrinsic node error. Allow negative G: extra triangles can worsen network output.
 
-局部细化收益标签为 `G(C → C') = D(C) - D(C')`。这是对当前 cut 的边际收益，不是脱离上下文的节点固定误差。G 可以为负，不能硬编码为“更多三角形一定让网络输出更好”。
+Report image, silhouette, depth/normal, and temporal errors separately, even if
+training combines them. Separate common coverage and silhouette XOR to prevent
+background dilution or metric weights concealing regressions.
 
-距离函数同时报告图像误差、轮廓误差、深度/法线误差和时域差异。训练可组合这些项；最终评估必须分别报告，避免一个权重掩盖另一个问题。共同覆盖区域和轮廓异或区域分开统计，避免背景像素稀释误差。
+### 4.2 Small gain predictor
 
-### 4.2 学习小型收益预测器
+Start with tabular features and a small MLP; an offline GNN is a later comparison
+and should deploy only if gains exceed costs. Candidate inputs:
 
-建议先用特征表 + 小型 MLP；离线 GNN 是后续对照，只有收益超过代价才部署。
+- Geometry: screen error, area, normal change, thin-structure/contour risk, parent-child face difference.
+- Appearance: roughness, texture frequency, available compensation, reconstructor version.
+- Time: camera angular speed, predicted screen displacement, valid-history fraction,
+  recent switches, disocclusion fraction.
+- Context: neighboring LOD, current budget, viewing direction. Costs/page state may
+  use separate analytic models.
 
-输入候选：
+Predict gain and uncertainty. Compare linear models, tables, and MLPs before claiming
+nonlinear learning is necessary. Evaluate actionable nodes near the current cut,
+cache static features, filter cheaply, and infer in batches. Count feature extraction,
+transfers, and synchronization; avoid a large per-frame network over all source vertices.
 
-- 几何：屏幕误差、面积、法线变化、细长结构/轮廓风险、父子三角形差。
-- 外观：材质粗糙度、纹理频率、可用补偿方式、当前重建器版本。
-- 时域：相机角速度、预测屏幕位移、历史有效率、近期切换次数、遮挡解除比例。
-- 上下文：邻居 LOD、当前预算档、相机视向；成本和页面状态也可以由独立解析模型处理。
+### 4.3 Budgets and legality
 
-输出为细化收益估计及误差区间。先比较线性模型、查表、MLP，证明确实需要非线性学习。
+`min D_final(C_t) + lambda_t * temporal_error(C_t, C_(t-1)) + lambda_s * streaming_stall(C_t)`
 
-不建议每帧对所有原始顶点运行大网络。只评估当前 cut 附近的可操作节点，缓存静态特征；用廉价几何规则筛选，按需批量推理。必须计入特征提取、数据搬运和同步成本。
+Constrain hierarchy legality and complete coverage, executable residency, memory/
+transfer budgets, and full frame time including selection/reconstruction. Runtime
+uses bounded local split/merge search rather than exact combinatorial optimization.
+Rank conservative gain against incremental cost. `G - kappa*U` is a possible
+uncertainty-aware score requiring calibration, not a quality guarantee.
 
-### 4.3 预算与合法性分开处理
+GPU time is not linear in triangle count. Isolate the algorithm with triangle
+budgets, then fit measured device costs including materials, overdraw, draws, and
+reconstruction. Treat zero/negative incremental costs separately from ratios.
 
-研究目标可写成：
+Do not draw parents and children together. Commit complete replacements; keep a
+valid resident cut and request prefetch when refinement is unavailable. Charge shared
+pages as sets rather than repeatedly per node. Explicitly report infeasibility when
+the coarsest legal cut exceeds budget or quality-required detail is absent; use an
+executable fallback instead of promising all constraints simultaneously.
 
-`min D_final(C_t) + λt * temporal_error(C_t, C_(t-1)) + λs * streaming_stall(C_t)`
+### 4.4 Time and risk
 
-约束：合法且完整覆盖的层级 cut、可执行的驻留状态、显存/传输预算，以及包含选择器和重建器的整帧时间预算。
+Use hysteresis, minimum residence time, and a per-frame replacement cap. Invalidate
+history after camera jumps and become more conservative. Short camera prediction is
+for prefetch/risk, not knowledge of future visibility. Low confidence falls back to
+existing screen-error selection. Retain topology, seam, and quality gates; sampled
+geometry errors do not imply strict mathematical bounds.
 
-运行时不精确求解这个组合优化。使用可预算的局部 split/merge 搜索，按保守收益与增量成本排序。若细化收益预测为 G、估计不确定度为 U，可以用 `G - κU` 作保守排序值；它只是一种需校准的策略，不是质量证明。
+Switches change depth, normals, and historical correspondence, so training must cover
+these changes. Hold history equal in single-switch tests; continuous runs maintain
+each method's own history rather than borrowing reference history.
 
-GPU 时间不是三角形数量的线性函数。先用三角形预算隔离算法，再用设备实测更新成本模型；材质、过绘制、draw 数和重建开销必须考虑。增量成本为零或负数时单独处理，避免比值排序失效。
+### 4.5 Candidate geometry
 
-父节点和子节点不能同时绘制，替换必须完整提交。新细节未驻留时保留覆盖有效的驻留 cut，并发出预取请求；不能为了符合预测而出现空洞。共享页面按页面集合计费，不能对每个节点重复累计传输量。
+A separate offline direction learns priorities for legal collapses from multiview
+render residuals while retaining topology/attribute checks. Score legal candidates
+before attempting arbitrary topology generation. Fix the hierarchy when testing
+selection; separately ablate candidate generation and runtime policy to avoid confounding.
 
-任何策略都可能遇到预算不可行：例如最粗的合法 cut 已超预算，或者满足几何上限所需细节尚未驻留。必须显式记录预算/质量违约并采用可执行回退，不能承诺同时满足所有约束。
+## 5. Candidate contribution and claim limits
 
-### 4.4 时间与风险控制
+The proposed combination uses local post-reconstruction intervention labels to learn
+marginal hierarchy-replacement benefit and combines history validity, switching risk,
+and residency in a deployable selector. Compare prediction before and after
+reconstruction. Without a stable difference, no independent reconstruction-aware
+value is established; retain the reconstruction-free selection control.
 
-切换阈值使用滞回与最短驻留时间；限制每帧替换数量；相机突变时清理失效历史并提高保守程度。预测下一小段相机轨迹只用于预取和风险估计，不把未来可见性当成事实。
+Perceptual LOD, neural simplification, neural progressive meshes, scheduling, and
+temporal stability all have precedents. Full papers, strong implementations, recent
+literature, and independent gains are needed to establish novelty. Networks cannot
+promise recovery of deleted silhouettes, occlusion, or thin rods.
 
-低置信度时退回现有屏幕误差选择。沿用拓扑、接缝和几何质量检查；几何误差测量可能是采样或近似结果，不能据此宣称严格数学上界。
+## 6. Validation and stopping rules
 
-候选切换会改变深度/法线与历史对应关系，训练样本必须包含这种状态变化。单次切换实验控制历史一致，连续评估则分别维护各方法自己的历史，不能偷用参考方法的正确历史。
+1. Freeze the hierarchy and record approach/recede, orbit, fast turn, disocclusion,
+   and lighting trajectories. Initially use static geometry with dynamic LOD.
+2. Capture paired split/merge renders and an offline reference-image oracle as a
+   potential bound, not a deployable policy.
+3. If the oracle cannot improve equal-face quality, revisit hierarchy/labels before
+   increasing model complexity.
+4. Distill with supervised regression/ranking before sequence policies or complex RL.
+5. Verify CPU legality/quality before GPU/mobile deployment. Repeated editor threshold
+   searches are not automatically a per-frame algorithm.
 
-### 4.5 如何进一步创新候选几何
+Baselines: distance LOD, current screen-error/budget selectors, strong contour/material
+weights with hysteresis and identical residency, learned selection without reconstruction,
+existing selection with the same reconstructor, the full method, and same-data linear/table
+models. Compare equal triangles, equal final quality, and equal end-to-end time. Report
+actual faces, draws, CPU/GPU times, P50/P95/P99 frame times, memory, transfers, page
+misses, inference, quality, switching/flicker, and failures. Measure warm-up and sustained
+runs; fix mobile resolution and report thermal throttling.
 
-第二条路线是离线学习合法边折叠的优先级，使用多视角渲染残余误差作为监督，并保留传统折叠的拓扑/属性检查。网络只对合法候选打分，避免一开始直接生成任意拓扑。
+Split by asset and scene rather than adjacent views. Test unseen materials, rods,
+holes, metal highlights, and camera jumps. Report per-asset fine-tuning separately.
+Ablate post-reconstruction labels, temporal terms, uncertainty, streaming, and MLP
+versus linear prediction. Use paired trajectories, repeats, and intervals. Proceed only
+if gains survive strong manual baselines on unseen assets, inference/scheduling do not
+consume savings, and average quality does not hide silhouette/flicker regressions.
 
-它能改善现有层级本身的质量，但同时改变层级和选择器会混淆贡献。因此先固定层级验证选择器，再分别消融“新候选生成”和“新运行时选择”。
+## 7. Suggested code locations
 
-## 5. 候选创新与不能声称的内容
+- `tools/mmtrain/`: intervention capture and gain prediction, separate from image reconstruction.
+- `samples/mm_bench.cpp`: paired cut renders, trajectories, timing.
+- Near `libs/manymesh/src/LodGraph.cpp`: a policy reusing hierarchy/legal replacement
+  rules, retaining the original selector as baseline/fallback.
+- `Streaming`: page costs, residency, cancellable prefetch priorities.
+- GPU phase: separate feature/score buffers before changing node layouts or formats.
 
-值得验证的具体贡献是：利用重建后残余误差的局部干预标签，学习层级替换的边际收益，并把历史有效性、切换风险及可驻留约束结合成可部署的动态选择器。
+## 8. First equal-face experiment
 
-对照重点应包括“预测重建前误差”与“预测重建后误差”。如果二者没有稳定差别，就不能主张重建感知的独立价值；此时保留无重建的感知选择路线。
+`mmgeo --oracle-swaps` exports local exchanges: refine one node and merge another
+sibling set, then require exactly the baseline triangle count after assembly,
+clipping, and deduplication. `tools/mmtrain/lod_oracle.py` captures hierarchy/camera
+hashes and evaluates errors before/after reconstruction. Commands:
+[mmtrain experiments](tools/mmtrain/README.md).
 
-感知 LOD、神经简化、神经渐进网格、预算调度和时域稳定都已有工作。上述组合是否具有论文新颖性，需要进一步阅读全文、复现强基线、检查最近论文并验证独立贡献。重建网络不能保证恢复已删除的轮廓、遮挡关系或细杆。
+Two oracles use the same pool. The raw-image oracle selects by directly rendered
+coarse error; the reconstruction oracle selects by frozen reconstructed error.
+Evaluate both choices after reconstruction to separate redistribution benefit from
+the extra benefit of considering reconstruction.
 
-## 6. 验证计划与停止条件
+Monkey, Cloth, and Torus each use four views at a 60% face target, Filament desktop
+OpenGL, 640x360, same-resolution reconstruction. There are 136 equal-face candidates
+and 24 baseline/reference renders. Use Dragon-trained `out/m3/models/tiny_s1_no.pt`,
+without history, shadows, or textures. Repeated baseline renders match RGB exactly
+on all three assets.
 
-1. 固定现有层级，录制推近/拉远、绕行、快速转头、遮挡解除、光照变化的轨迹。先以静态模型验证动态 LOD。
-2. 渲染局部 split/merge 配对数据并建立离线 oracle：允许使用参考图挑选收益最高的动作，只作为潜力上限，不能作为可部署方法。
-3. 若 oracle 在相同面数下不能明显改善质量，优先改候选层级或标签，不继续堆深度模型。
-4. 使用监督回归/排序蒸馏 oracle，再考虑序列策略；不从复杂强化学习开始。
-5. 先在 CPU 参考选择器验证合法性与画质，再迁移 GPU/移动端。不能把编辑器的多次阈值搜索直接称为每帧方案。
-
-基线至少包括：
-
-- 距离 LOD；现有屏幕误差 LOD；现有预算选择。
-- 强手工基线：轮廓/材质权重 + 滞回 + 相同驻留约束。
-- 学习式选择、关闭重建；现有选择、开启相同重建器；完整方法。
-- 相同数据的线性模型/查表，验证深度网络是否必要。
-
-分别在相同三角形预算、相同最终质量、相同端到端耗时下比较。记录实际面数、draw 数、GPU/CPU 时间、帧时间 P50/P95/P99、显存、传输量、页面未命中、推理开销、质量指标、切换/闪烁和失败率。预热与持续运行都要测，移动端固定分辨率并报告热降频条件。
-
-训练/验证按资产及场景划分，不能只留出同一模型的相邻视角。单独测试未见材质、细杆、孔洞、金属反光和相机跳变。每资产微调只能作为独立实验报告。
-
-消融：移除重建后标签、时域项、不确定度项、流式约束，以及将 MLP 替换为线性模型。用配对轨迹、多次重复和区间统计判断收益是否稳定。
-
-继续推进的条件：在强手工基线和相同重建器配置之上仍存在稳定净收益；收益跨未见资产成立；推理和调度没有吃掉节省的渲染成本；画质均值改善没有掩盖轮廓/闪烁的明显退化。
-
-## 7. 代码落点建议
-
-- `tools/mmtrain/`：新增局部干预数据与收益预测训练工具，与现有图像重建训练分开。
-- `samples/mm_bench.cpp`：采集候选 cut 的成对渲染、轨迹和时序数据。
-- `libs/manymesh/src/LodGraph.cpp` 附近：新增策略入口，复用层级与合法替换约束，保留原选择器作为基线和回退。
-- `Streaming`：接入页面成本、驻留判断和可取消的预取优先级。
-- GPU 阶段优先使用独立特征/分数缓冲，避免第一阶段就修改所有节点布局与资源格式。
-
-## 8. 首轮等面数实验
-
-已在 `mmgeo --oracle-swaps` 中实现局部交换导出。每个候选同时细化一个节点并合并另一组兄弟节点，装配、裁剪和去重后仍须与基线具有完全相同的三角形数。`tools/mmtrain/lod_oracle.py` 自动采集并记录层级和相机哈希，随后计算重建前、重建后的画面误差。复现命令见 [mmtrain 实验说明](tools/mmtrain/README.md)。
-
-核心对照是以相同候选集计算两种 oracle。原始画面 oracle 根据粗网格直接渲染的误差选择候选，重建 oracle 根据冻结重建器处理后的误差选择候选。两者的选择都在重建后的图像上评价。这样可以把“局部重新分配面数的价值”和“考虑重建之后才获得的额外价值”分开。
-
-在 Monkey、Cloth 和 Torus 上各取 4 个视角，目标面数比例 60%，使用 Filament 桌面 OpenGL 渲染 640×360 的同分辨率图像。共渲染 136 个等面数候选和 24 个基线/参考对照。重建使用仓库已有的 dragon 训练权重 `out/m3/models/tiny_s1_no.pt`。采集不使用时间历史、阴影或纹理。每个资产重复渲染一个基线，三组 RGB 均逐像素一致。
-
-| 资产 | 每个 cut 的面数 | 候选数 | 原始画面 oracle 相对基线，中位 PSNR 增益 | 重建后 oracle 相对基线，中位 PSNR 增益 | 考虑重建的额外收益，最大值 |
+| Asset | Faces per cut | Candidates | Raw oracle median PSNR gain | Reconstructed oracle median gain | Maximum extra reconstruction-aware gain |
 |---|---:|---:|---:|---:|---:|
 | Monkey | 9,446 | 64 | +0.1885 dB | +0.1508 dB | 0 dB |
 | Cloth | 44,986 | 64 | +0.0035 dB | +0.0015 dB | +0.00013 dB |
 | Torus | 692 | 8 | +0.4555 dB | +0.4206 dB | 0 dB |
 
-原始画面与重建后的最佳候选在 11/12 个视角相同。重建后重新排序只改变一个 Cloth 视角，增益为 0.00013 dB。Torus 有一帧在相同面数下提高 1.315 dB，另一个视角的轮廓 XOR 则从 0.743% 增至 0.925%。这说明 RGB 指标需要和轮廓指标并列。关闭重建的恒等对照中，两种 oracle 的选择收益完全一致。
+The two oracles choose the same candidate in 11/12 views. Only one Cloth view changes,
+by 0.00013 dB. One Torus frame gains 1.315 dB at equal faces; another view's silhouette
+XOR worsens from 0.743% to 0.925%. Report RGB and silhouettes together. With identity
+reconstruction both oracles have identical selection gains.
 
-当前结果支持继续研究局部三角形重分配，尤其是把屏幕上的实际可见影响纳入评分。在这套重建器、资产和采样候选范围内，依据重建后的误差重新排序几乎没有额外收益。样本只有 3 个资产，每个视角最多搜索 16 个单步交换，因此这是一轮筛选方向的试验。该规模不足以判断其他重建器、材质和连续运动下的效果。
+Local redistribution merits investigation, especially visible screen impact. In this
+reconstructor/asset/pool configuration, post-reconstruction reranking adds almost
+nothing. Three assets and at most 16 single-step exchanges per view cannot establish
+behavior under other reconstructors, materials, or continuous motion. Further
+reconstruction-aware experiments must predefine assets/budgets, vary reconstruction
+strength, coverage, and camera paths, and check silhouettes and temporal stability.
+Stable extra ranking gain is a prerequisite for training that selector.
 
-如果继续验证重建感知这一贡献，下一组实验应事先固定测试资产和多个面数预算，在不同重建强度、几何覆盖和相机轨迹下测量额外排序收益，并同时检查轮廓和跨帧稳定性。稳定的额外收益是训练运行时重建感知选择器的前提。
+Per-candidate results, cameras, hashes, and identity controls:
+`out/lod-oracle-pilot/score.json`, `capture.json`, `identity.json`.
+Mesa llvmpipe provided quality captures; these are not device performance results.
 
-逐候选结果、摄像机、哈希及恒等对照见 `out/lod-oracle-pilot/score.json`、`capture.json` 与 `identity.json`。本轮使用 Mesa llvmpipe 完成画质采集，结果不包含设备渲染性能结论。
+## 9. Camera-trajectory experiment
 
-## 9. 第二轮相机轨迹实验
+Compare 55% and 75% targets on Monkey, Cloth, Torus, Sphere, and Rounded Cube.
+Each eight-frame trajectory starts at azimuth 32 degrees, rotates 21 degrees, and
+approaches the model, at 384x216. Total: 80 frame positions, 400 equal-face candidates,
+160 baseline/reference renders. Budgets share cameras and graph hashes; candidate
+counts exactly match each frame's baseline. Torus has no exchange candidates in any
+55% frame but remains in the results.
 
-在 Monkey、Cloth、Torus、Sphere、Rounded Cube 上比较 55% 和 75% 两个目标面数档。每条轨迹从 32° 方位开始，转动 21° 并向模型推近。每条轨迹采 8 帧，分辨率 384×216。共渲染 80 个帧位置、400 个等面数候选和 160 个基线/参考对照。两档使用相同相机位置和图哈希，逐帧候选与基线面数完全相等。Torus 在 55% 档的八帧均无等面数交换候选，仍计入结果。
+Compute candidate RGB residuals against full-detail frames. Temporal error is mean
+squared change of screen-space residual between adjacent frames. Triangle switching
+is symmetric difference divided by union of adjacent cuts' triangle sets. Temporal
+error detects changing image residual but also residual motion; it neither aligns
+surface points nor simulates renderer history.
 
-用全细节参考帧计算每个候选的 RGB 残差。时间指标是相邻帧的屏幕空间残差之差的均方，三角形切换量是相邻 cut 的三角形集合对称差除以并集。该时间指标能发现屏幕误差变化，也会受误差随物体移动的影响。它没有对齐表面点，也没有模拟渲染器的历史缓冲。
+A dynamic-programming sequence oracle minimizes summed frame RGB MSE over captured
+paths. Image-constrained paths permit no frame RGB/silhouette regression and no
+adjacent temporal-error regression. Strict paths also constrain triangle switching.
+They use complete trajectories and references, so are offline feasibility bounds.
+DP matched exhaustive enumeration on 100 small controls.
 
-序列 oracle 使用动态规划，在已采集的候选路径中最小化各帧 RGB MSE 之和。图像约束路径要求每帧 RGB 和轮廓误差、每条相邻帧边的时间误差都不高于基线。严格约束路径进一步限制每条边的三角形切换量。它使用了完整轨迹和参考图，因此是离线可行性分析。动态规划在 100 个小规模对照中与穷举结果一致。
-
-| 选择方式 | 80 帧的中位 PSNR 增益 | 增益超过 0.01 dB 的帧 | 轮廓退化帧 | 时间误差变大的边 | 三角形切换增加的边 |
+| Selection | Median PSNR gain, 80 frames | Frames above +0.01 dB | Worse silhouettes | Worse temporal edges | Increased triangle-switch edges |
 |---|---:|---:|---:|---:|---:|
-| 几何打分 | 0 dB | 10 | 11 | 22 | 3 |
-| 单帧 RGB oracle | +0.0052 dB | 31 | 2 | 1 | 24 |
-| 图像约束路径 | +0.0048 dB | 30 | 0 | 0 | 22 |
-| 严格约束路径 | 0 dB | 20 | 0 | 0 | 0 |
+| Geometry score | 0 dB | 10 | 11 | 22 | 3 |
+| Per-frame RGB oracle | +0.0052 dB | 31 | 2 | 1 | 24 |
+| Image-constrained path | +0.0048 dB | 30 | 0 | 0 | 22 |
+| Strict path | 0 dB | 20 | 0 | 0 | 0 |
 
-最清楚的正例是 Monkey 的 55% 档。每帧 8,660 面，同一组交换保留了全部 8 帧的画质收益。中位提升 **0.425 dB**，范围 +0.313 至 +0.691 dB，三角形切换量为零，平均时间误差约下降 2.7%。Rounded Cube 在 75% 档的严格路径只在最后两帧交换，仍保留了 +8.42 和 +8.57 dB 的两个局部收益。该模型的基线已约为 55 dB，整个轨迹的严格路径中位增益仍为零。
+Monkey at 55%, 8,660 faces/frame, is the clearest positive case: one exchange improves
+all eight frames, median +0.425 dB, range +0.313 to +0.691 dB, zero triangle switching,
+and about 2.7% lower mean temporal error. Rounded Cube's 75% strict path switches only
+in the final two frames, gaining +8.42 and +8.57 dB. Its baseline is already about
+55 dB; median gain over the trajectory remains zero.
 
-重建对照用同一个冻结 Tiny 模型，将 RGB 残差分别乘以 0、0.5、1.0 和 1.5。在每个强度下，比较按该强度选出的候选与按原始图像选出的候选，二者都在同一重建强度下评分。
+Scale the same frozen Tiny RGB residual by 0, 0.5, 1.0, and 1.5. At each strength,
+compare reconstruction-aware and raw-image choices, both scored at that strength:
 
-| 残差强度 | 改变选择的帧 | 额外 PSNR 中位增益 | 额外 PSNR 最大增益 | 额外增益超过 0.01 dB 的帧 |
+| Residual strength | Changed selections | Median extra PSNR | Maximum extra PSNR | Extra gain above 0.01 dB |
 |---|---:|---:|---:|---:|
 | 0 | 0 | 0 dB | 0 dB | 0 |
 | 0.5 | 14 | 0 dB | +0.0275 dB | 3 |
 | 1.0 | 20 | 0 dB | +0.0609 dB | 4 |
 | 1.5 | 23 | 0 dB | +0.0877 dB | 2 |
 
-本轮的实证方向是预测可跨帧保留的等预算交换，并将三角形切换成本加入决策。Monkey 的稳定交换表明这种机会存在，80 帧汇总也说明它分布不均。放大同一个网络的残差让更多候选改变排序，额外收益仍集中在少量帧。这些结果来自五个静态网格、每条轨迹八个采样点及有限的单步候选，尚不足以支持跨资产泛化、时域重建或实时加速结论。
+Stable equal-budget exchanges exist but are unevenly distributed. Amplifying one
+network changes more rankings while extra gains remain concentrated in few frames.
+Five static meshes, eight samples/trajectory, and limited single-step pools do not
+establish cross-asset generalization, temporal reconstruction, or real-time speedup.
+[Reproduction](tools/mmtrain/README.md#camera-trajectory-experiment);
+paths, counts, transitions, and strength controls: `out/lod-sequence-results/summary.json`.
 
-复现说明见 [相机轨迹实验](tools/mmtrain/README.md#camera-trajectory-experiment)。逐帧路径、三角形数量、转移指标和重建强度对照保存在 `out/lod-sequence-results/summary.json`。
+## 10. Causal prediction with whole-asset holdout
 
-## 10. 因果预测与整资产留出
+Add opposite-view trajectories starting at 212 degrees, retaining the 21-degree arc,
+approach, and 55%/75% budgets. Total: five assets, 20 trajectories, 160 frames, 800
+equal-face candidates. Each fold holds out an entire asset, both trajectories and
+budgets. Normalize features and fit ridge regression/16-unit MLP on only the other
+four assets.
 
-补采从 212° 开始的相反视角轨迹，沿用原来的 21° 转动、推近距离、55% 和 75% 预算。两组数据合计 5 个资产、20 条轨迹、160 帧和 800 个等面数候选。每折留出一个资产，两条轨迹和两个预算档全部留出。特征归一化、岭回归和 16 单元 MLP 都只用其余四个资产拟合。
+Inputs include split/merge projected errors and bounding-sphere radii, exchanged-face
+fraction, budget, and geometry score. Target is RGB PSNR gain minus silhouette
+regression penalty, clipped to +/-1 dB. The causal policy computes switching from
+the current candidate and previously committed cut, accepts only switching no greater
+than falling back to the current baseline, subtracts switching cost, and requires a
+0.02 dB acceptance margin. Replay scores/selections use geometry and committed history only.
 
-模型用 split 和 merge 的投影误差与包围球半径、交换面数比例、预算档和几何分数预测收益。监督目标是 RGB PSNR 增益减去轮廓退化惩罚，再截断到 ±1 dB。因果策略从当前候选和上次实际选择计算三角形切换量，只接受切换代价不高于回退到当前基线的候选。预测收益还扣除切换成本并留出 0.02 dB 的接受余量。回放时的模型评分和选择只依赖几何与已提交的历史 cut。
-
-| 策略 | 提升超过 0.01 dB 的帧 | 退化超过 0.01 dB 的帧 | 轮廓退化帧 | 时间误差变大的边 | 平均三角形切换 |
+| Policy | Frames improved >0.01 dB | Frames degraded >0.01 dB | Worse silhouettes | Worse temporal edges | Mean triangle switching |
 |---|---:|---:|---:|---:|---:|
-| 现有预算选择 | 0 | 0 | 0 | 0 | 1.054% |
-| 逐帧几何打分 | 21 | 12 | 11 | 24 | 1.504% |
-| 因果几何打分 | 10 | 14 | 12 | 25 | 1.114% |
-| 因果岭回归 | 15 | 45 | 24 | 56 | 1.075% |
-| 逐帧 MLP | 12 | 25 | 12 | 48 | 1.721% |
-| 因果 MLP | 9 | 24 | 12 | 45 | 1.138% |
-| 因果真实收益对照 | 29 | 1 | 0 | 3 | 1.556% |
-| 使用完整轨迹的严格约束 oracle | 42 | 0 | 0 | 0 | 1.032% |
+| Existing budget selection | 0 | 0 | 0 | 0 | 1.054% |
+| Per-frame geometry | 21 | 12 | 11 | 24 | 1.504% |
+| Causal geometry | 10 | 14 | 12 | 25 | 1.114% |
+| Causal ridge | 15 | 45 | 24 | 56 | 1.075% |
+| Per-frame MLP | 12 | 25 | 12 | 48 | 1.721% |
+| Causal MLP | 9 | 24 | 12 | 45 | 1.138% |
+| Causal true-gain control | 29 | 1 | 0 | 3 | 1.556% |
+| Full-trajectory strict oracle | 42 | 0 | 0 | 0 | 1.032% |
 
-因果限制降低了 MLP 的三角形切换量，整资产留出的画质仍弱于几何打分。给同一条因果规则真实收益，改善帧从 9 增至 29，退化帧从 24 降至 1。这个诊断表明预测是瓶颈之一。它与严格约束 oracle 的差距还包含未来信息、目标函数和约束定义的区别，不能全归因于切换算法。两个学习模型均保持在离线回放中。
+Causality reduces MLP switching but whole-asset quality remains weaker than geometry
+scoring. Substituting true gain into the same causal rule changes improvements 9->29
+and regressions 24->1, identifying prediction as one bottleneck. The strict-oracle gap
+also includes future information, objectives, and constraints, not just switching.
+Both learned models remain offline.
 
-视角也会改变潜在收益。Monkey 的 55% 档在原轨迹有一组跨 8 帧的稳定交换，反向轨迹上即使逐帧使用参考图选择，最大收益也只有约 0.002 dB。后续优先验证实际可见覆盖、轮廓归属和遮挡变化能否预测这种差异，再用未见资产检验。
+Monkey's original 55% trajectory supports one stable eight-frame exchange; on the
+opposite path even the per-frame oracle gains at most about 0.002 dB. Investigate
+coverage, silhouette ownership, and visibility change before further unseen-asset tests.
 
-回放验证了候选的等面数、整资产拆分和因果路径的前缀一致性。上一轮序列报告可逐字节重现。全量数据使用当时开发工作区的几何构建，输入图与二进制哈希记录在采集元数据中。发布分支在干净父提交上另行验证了 `mmgeo`、一帧采集评分以及 ManyMesh 专项测试（76 通过，1 跳过）。干净构建的候选可能不同，因此报告的逐帧数值对应留存的实验语料。
+Replay checked equal faces, whole-asset splits, and causal prefix consistency.
+The preceding sequence report reproduces byte-for-byte. Full captures use the then
+current development geometry build, with graph/binary hashes in metadata. A clean
+parent-commit build separately verified mmgeo, one-frame capture/scoring, and ManyMesh
+tests (76 passed, one skipped). Clean-build candidates may differ; numeric results
+refer to the saved experimental corpus. Fold weights and frame reports:
+`out/lod-predictor-results/held-out.json`.
+[Reproduction](tools/mmtrain/README.md#predicting-stable-swaps).
 
-完整逐帧报告和各折模型权重见 `out/lod-predictor-results/held-out.json`。复现流程见 [稳定交换预测](tools/mmtrain/README.md#predicting-stable-swaps)。
+## 11. Visibility features and geometric silhouette labels
 
-## 11. 可见性特征与几何轮廓标签
+Add geometry-derived visibility features on the same 160 frames/800 candidates.
+One software depth raster generates baseline fragments. Candidates reuse unchanged
+triangles and project only added triangles. Features cover visible/occluded fractions
+of added/deleted faces, silhouette changes, affected-region contact with the contour,
+and relative depth. Candidate/baseline vertex spaces and face counts match. Inputs
+use only current camera and geometry.
 
-在同一组 160 帧、800 个候选上增加几何可见性特征。一次软件深度栅格化生成基线片元。每个候选复用未变更三角形的片元，仅重新投影新增三角形。特征包括增删三角形的可见覆盖和遮挡比例、轮廓变化、被影响区域与轮廓的接触以及相对深度变化。候选与基线保持相同的顶点空间和面数。模型的可见性输入只来自当前相机、基线和候选几何。
+Ten incremental depth buffers exactly match full software rasterization. Compared
+with Filament unlit coverage masks, baseline median IoU is 99.98%, minimum 99.90%.
+Earlier black-background RGB masks misclassified dark surfaces. Among 800 candidates,
+RGB and geometric masks disagree on whether silhouette error worsens in 71 cases:
+54 detected only geometrically, 17 only by RGB. Interpret sections 8-10 silhouettes
+as RGB proxies.
 
-10 个样本的增量深度缓冲与完整软件栅格化逐值一致。同一批基线与 Filament 的无光照覆盖遮罩相比，中位 IoU 为 **99.98%**，最低为 **99.90%**。此前使用黑底 RGB 估算轮廓，会把一些暗面像素误算为背景。800 个候选中，旧 RGB 遮罩与几何遮罩对「是否比基线更差」的判定有 **71 个**不同，其中 54 个仅被几何遮罩检出，17 个仅被 RGB 遮罩检出。第 8 至 10 节的轮廓数据应按 RGB 代理指标解读。
+Cross two inputs and two labels using identical holdouts, network, and parameters.
+Full-detail independent geometric masks supply supervision/evaluation only. Feature
+files match byte-for-byte before/after labeling; disabling visibility/geometric labels
+also reproduces the earlier geometry control byte-for-byte.
 
-为分开特征变化与标签变化，使用相同的整资产留出、网络结构和超参数，对两种输入与两种标签交叉比较。几何轮廓标签由全细节网格的独立覆盖遮罩生成，只用于监督和评估。生成标签前后的可见性特征文件逐字节一致，关闭可见性与几何标签选项时的几何对照也与上一轮报告逐字节一致。
-
-| 轮廓标签 | MLP 输入 | 逐帧改善 / 退化 | 因果改善 / 退化 | 因果平均三角形切换 |
+| Silhouette label | MLP input | Per-frame improved/degraded | Causal improved/degraded | Causal mean switching |
 |---|---|---:|---:|---:|
-| RGB 遮罩 | 原几何特征 | 12 / 25 | 9 / 24 | 1.138% |
-| RGB 遮罩 | 加可见性 | 24 / 22 | 17 / 32 | 1.885% |
-| 几何遮罩 | 原几何特征 | 24 / 18 | 14 / 9 | 1.109% |
-| 几何遮罩 | 加可见性 | 13 / 23 | 7 / 21 | 1.391% |
+| RGB mask | Geometry | 12 / 25 | 9 / 24 | 1.138% |
+| RGB mask | With visibility | 24 / 22 | 17 / 32 | 1.885% |
+| Geometric mask | Geometry | 24 / 18 | 14 / 9 | 1.109% |
+| Geometric mask | With visibility | 13 / 23 | 7 / 21 | 1.391% |
 
-改善和退化按相对现有预算选择的 PSNR 变化超过 ±0.01 dB 计数。四组策略的整组中位增益均为 0 dB。在更直接的几何轮廓标签下，这组可见性特征降低了两种 MLP 策略的表现。仅换成几何标签的原输入因果 MLP 改善 14 帧、退化 9 帧，但仍有 17 帧轮廓变差，而因果几何打分有 9 帧。这些结果支持保留几何轮廓标签作为后续评估口径。可见性特征继续作为离线消融选项。
+Counts use +/-0.01 dB versus the existing budget selector. All four overall medians
+are zero. Under geometric labels these visibility features hurt both MLP policies.
+Geometry-only causal MLP with new labels improves 14 and degrades 9 frames but worsens
+17 silhouettes, versus 9 for causal geometry scoring. Retain geometric labels for
+evaluation; visibility remains an offline ablation. Same assets/paths make this a
+paired ablation, not independent testing; runtime overhead needs separate measurement.
+[Commands](tools/mmtrain/README.md#visibility-feature-ablation); reports/weights:
+`out/lod-visibility-results/{geometry-control,held-out,geometry-silhouette,visibility-silhouette}.json`.
 
-复现命令见 [可见性消融](tools/mmtrain/README.md#visibility-feature-ablation)。四组逐帧结果和模型权重位于 `out/lod-visibility-results/`，分别是 `geometry-control.json`、`held-out.json`、`geometry-silhouette.json` 和 `visibility-silhouette.json`。这组结果复用了相同资产和轨迹，属于配对消融，运行时开销需单独测量。
+## 12. Equal-face exchanges scored with local refinement references
 
-## 12. 用局部细化参考评估等面数交换
+Budgeted view-dependent LOD dates to Funkhouser/Sequin 1993. Lindstrom/Turk 2000 use
+pixel differences for offline simplification and discuss multilayer fragments/local
+redraw for collapses. Charalambos 2006 includes visible pixels in HLOD refinement.
+NVIDIA 2021 uses differentiable rendering to generate appearance-preserving assets.
+Budget, visibility, and image error already have clear precedents:
+[Adaptive Display](https://pixl.cs.princeton.edu/pubs/Funkhouser_1993_ADA/index.php),
+[Image-Driven Simplification](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf),
+[Coherent HLOD Refinement](https://diglib.eg.org/server/api/core/bitstreams/ad004952-4a0b-4a6e-a99c-6ed56d9a2c4a/content),
+[Appearance-Driven Simplification](https://research.nvidia.com/publication/2021-04_appearance-driven-automatic-3d-model-simplification).
 
-预算下的视角相关 LOD 已有 Funkhouser 与 Séquin 的 SIGGRAPH 1993 工作。Lindstrom 与 Turk 在 2000 年用逐像素差分引导离线简化，也讨论了用多层片元缓冲或局部重绘评估边折叠。Charalambos 在 2006 年已将实际可见像素数纳入 HLOD 细化准则。NVIDIA 的 2021 年工作通过可微渲染生成保外观的简化资产。把预算、可见性和图像误差用于 LOD 已有明确先例。 [Adaptive Display](https://pixl.cs.princeton.edu/pubs/Funkhouser_1993_ADA/index.php) · [Image-Driven Simplification](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf) · [Coherent HLOD Refinement](https://diglib.eg.org/server/api/core/bitstreams/ad004952-4a0b-4a6e-a99c-6ed56d9a2c4a/content) · [Appearance-Driven Simplification](https://research.nvidia.com/publication/2021-04_appearance-driven-automatic-3d-model-simplification)
+Epic's SIGGRAPH 2021 Nanite material notes that scalar object-space error lacks
+direction and projected surface angle, potentially overallocating at grazing angles.
+This study redistributes within an existing hierarchy and inherits its partitions.
+Aggregate foliage coverage/overdraw is separate; Epic's 5.8 documentation includes
+Preserve Area and voxel Nanite Foliage:
+[Nanite Deep Dive, Glancing Angle Surfaces](https://advances.realtimerendering.com/s2021/Karis_Nanite_SIGGRAPH_Advances_2021_final.pdf),
+[Working with Nanite](https://dev.epicgames.com/documentation/unreal-engine/working-with-naniteenabled-content),
+[Nanite Foliage](https://dev.epicgames.com/documentation/en-us/unreal-engine/nanite-foliage).
 
-Epic 的 SIGGRAPH 2021 资料指出，Nanite 的物体空间标量简化误差缺少方向信息，投影时也没有考虑表面角度，掠射视角可能分配过多细节。这里测试的是选定层次结构上能否重新分配三角形，仍受已有节点划分的限制。树叶等聚合几何的覆盖和过绘属于另一类问题，Epic 的 5.8 文档已给出 Preserve Area 和 Nanite Foliage 的体素方案。 [Nanite Deep Dive，Glancing Angle Surfaces](https://advances.realtimerendering.com/s2021/Karis_Nanite_SIGGRAPH_Advances_2021_final.pdf) · [Working with Nanite](https://dev.epicgames.com/documentation/unreal-engine/working-with-naniteenabled-content) · [Nanite Foliage](https://dev.epicgames.com/documentation/en-us/unreal-engine/nanite-foliage)
+Construct one shared reference for all current equal-face exchanges: refine touched
+baseline nodes by one or two levels and keep other baseline geometry for occlusion.
+Score candidate silhouette/relative-depth improvement against this reference, sharing
+fragments for common triangles. Scoring reads only current camera/hierarchy; full
+references and geometric masks independently measure selected paths. Hypothesis:
+a small number of extra hierarchy nodes provides useful directional/occlusion information.
 
-本轮检验一个更窄的差异。给当前所有等面数交换构造同一个参考切分，只将候选触及的基线节点细化一层或两层，保留其余区域的基线几何来处理遮挡。然后对每个候选评估轮廓和相对深度误差相对于基线的改善。多个候选共有的三角形只生成一次片元。整个打分阶段只读当前相机与层次几何。完整参考图和几何轮廓标签用于随后测量选中路径。该原型的可检验假设是，层次结构中少量额外节点就能提供足够好的方向与遮挡信息，使等面数交换比投影标量打分更可靠。
+Use identical candidates, faces, causal switching, and frame logs. Compare one/two
+reference levels and silhouette-only versus silhouette+depth. Causal choices use
+current scores and the previously selected cut. Proxy references may favor refined
+nodes, especially where matching a candidate's refinement; judge via independent full
+references. Software raster uses two-sided geometry/single samples as in section 11.
+Production GPU selection, streaming, and material costs are unmeasured.
 
-对照使用同一候选集、相同面数和同一因果切换约束，同时记录逐帧结果。实验比较一层与两层参考，以及只用轮廓和加入深度两种损失。因果选择仅依赖当前分数和上一帧实际选中的切分。代理参考可能偏好细分节点，尤其当它与候选的局部细分相同时，因此结果以完整参考的独立测量为准。软件栅格化使用双面几何和单像素采样，适用范围与第 11 节相同，未测量生产 GPU 选切、流送和材质成本。
+First replay five development assets, two budgets, two starts: 20 paths, 160 frames,
+800 candidates. With +/-0.01 dB thresholds and identical causal constraints, geometry
+improves/degrades 10/14 frames, silhouette-only proxy 11/1, silhouette+depth 30/5.
+The last averages +0.256 dB, median zero, zero geometric-silhouette regressions,
+six worse temporal edges. These are development assets, not independent evidence.
 
-先在已有 5 个资产、两档预算、两个相机起点的 20 条轨迹上回放，共 160 帧、800 个候选。计数阈值为相对基线 ±0.01 dB。使用相同的因果路径约束，几何打分为 10 帧改善、14 帧退化。局部参考仅轮廓为 11 帧改善、1 帧退化；加入相对深度后为 **30 帧改善、5 帧退化**。后者的整组平均增益为 +0.256 dB，中位增益为 0 dB，0 帧几何轮廓退化、6 条时间边比基线更差。已有资产包含方法开发中接触过的场景，独立资产结果必须另看。
+One/two levels choose identical paths. Candidate frames average 5.56 exchanges.
+Median shared raster size is 6,765 triangles versus 54,872 summed across independently
+rasterized cuts. One-level reference adds a median 117 triangles beyond the candidate
+union. Python median scoring is 116 ms including both reference levels and all
+candidates; no real-time claim follows.
 
-一层和两层参考在这 160 帧中选择了相同路径。每个有候选的帧平均有 5.56 个交换。共享栅格的三角形数量中位数为 6,765，逐一完整栅格化各切分的合计中位数为 54,872。相对于所有候选并集，一层参考额外使用 117 个三角形的中位数。Python 原型中位打分时间为 116 毫秒，包含两层参考与全部候选的栅格化，不能据此声称实时。
+New Pirate, Shader Ball, and Lucy captures use start 118 degrees and 42-degree arcs,
+24 frames. Pirate has no single exchange in eight frames. Shader Ball/Lucy each have
+eight frames and 96 candidates. Geometry has no changes beyond +/-0.01 dB. Silhouette-only
+proxy improves/degrades 2/1 frames; adding depth gives 3/2, mean +0.103 dB, median zero.
+Lucy path mean is +0.323 dB, Shader Ball -0.016 dB; its two regressions are -0.075 and
+-0.051 dB. Depth paths have zero silhouette regressions and two worse temporal edges.
+Full-reference per-frame strict selection improves 11 frames without regressions,
+showing remaining opportunity.
 
-另外用未参与这组开发的 Pirate、Shader Ball、Lucy，在新起点 118° 和 42° 相机弧线上采集 24 帧。Pirate 的 8 帧没有单次等面数交换。Shader Ball 和 Lucy 各有 8 帧、96 个候选。对这 24 帧，几何打分无超过 ±0.01 dB 的变化。局部参考仅轮廓产生 2 帧改善、1 帧退化；加入深度产生 **3 帧改善、2 帧退化**，整组平均 +0.103 dB，中位 0 dB。Lucy 单条轨迹平均 +0.323 dB，Shader Ball 平均 −0.016 dB。Shader Ball 的两个退化帧各损失 −0.075 和 −0.051 dB。加入深度的路径有 0 帧几何轮廓退化、2 条时间边比基线更差。完整参考的逐帧严格选择有 11 帧改善、0 帧退化，说明这批候选仍有剩余机会。
+On new candidate frames, shared median raster size is 33,589 versus 469,484 summed
+independent triangles; median scoring is about 631 ms. Reports:
+`out/lod-proxy-results/pilot.json`, `out/lod-proxy-results/unseen.json`. Both reference
+depths again select the same paths. Useful directional/occlusion signals coexist
+with missing equal-face pairs, material effects, and high cost. No network is trained
+here and no production selector reaches real time.
 
-新资产有候选帧的共享栅格三角形中位数为 33,589，逐切分完整栅格化的合计中位数为 469,484。Python 原型中位打分时间约 631 毫秒。额外数据和逐帧路径保存在 `out/lod-proxy-results/pilot.json` 与 `out/lod-proxy-results/unseen.json`。两个代理参考深度在新资产中也选出相同路径。此实验表明少量局部细化包含有用的方向和遮挡信号，同时暴露出无等面数配对、材质影响以及计算成本三个待解决问题。现阶段没有训练网络，也没有在生产选择器上达到实时性能。
+Pirate at 55% selects 46 DAG roots, 2,822/5,010 triangles, already its coarsest cut.
+The hierarchy floor, not simply absent paired exchanges, prevents further reduction.
+Audit hierarchy compressibility separately from runtime allocation.
 
-进一步检查 Pirate 的 55% 档发现，实际选中的 46 个节点全部为 DAG 根节点，根切分为 2,822 / 5,010 个三角形，已经是当前 DAG 能提供的最粗切分。该档没有候选的根因是层次结构本身到达下限，不是仅仅缺少相同面数的拆分和合并。这意味着需要单独评估层次构建的可压缩性，不能把所有无候选帧都算作运行时预算分配失败。
+FastMesh and Hoppe already provide view-dependent multiresolution/refinement;
+appearance-driven simplification already optimizes image appearance/materials.
+Local render error, viewwise complexity, normals, and materials are not firsts.
+The narrow question is shared local references for legal hierarchical redistribution
+under a hard triangle budget, cross-frame costs, and limited GPU work. Section 12
+only tests single exchanges; section 13 explores combinations:
+[FastMesh](https://escholarship.org/uc/item/9s30k0b0),
+[View-Dependent Refinement](https://hhoppe.com/proj/vdrpm/),
+[Appearance-Driven Simplification](https://research.nvidia.com/labs/rtr/publication/hasselgren2021diffmodeling/).
 
-继续查证发现，FastMesh 已做实时视角相关多分辨率网格和误差度量，Hoppe 的 progressive mesh 也早已按视角选择性细化。NVIDIA 的 Appearance-Driven Simplification 则直接优化图像外观，并能联合处理材质与网格。由此，局部渲染误差、逐视角网格复杂度分配、法线或材质感知都不能单独作为本工作的首创。当前最窄的研究问题是，能否把多候选共享的局部细化参考用于**硬三角形预算下的一组层次合法重分配**，同时预测跨帧成本并在有限的 GPU 代价内取得可复现收益。第 12 节的原型只测单对等面数交换，第 13 节给出初步组合实验。 [FastMesh](https://escholarship.org/uc/item/9s30k0b0) · [View-Dependent Refinement of Progressive Meshes](https://hhoppe.com/proj/vdrpm/) · [Appearance-Driven Simplification](https://research.nvidia.com/labs/rtr/publication/hasselgren2021diffmodeling/)
+## 13. Composite candidates, interactions, and learned screening
 
-## 13. 组合候选、相互影响与学习筛选
+`--oracle-composites N` exports one/two refinements with one/two ancestor merges
+from a legal cut, balancing face changes and revalidating selected nodes and final
+faces after assembly, clipping, and deduplication. A separate switch preserves
+single-exchange captures. Proxy scoring reads selected nodes and identifies all
+current descendants covered by ancestor merges. The five-asset controls retain old
+data; new captures below are exploratory.
 
-实验导出器增加 `--oracle-composites N`。它从当前合法 DAG 切分中选择一至两处细分和一至两处祖先合并，要求增减面数相同，并在组装、裁剪与重复面消除后再次验证面数及所选节点。独立开关让原有单次候选的采集结果可复现。Python 代理打分读取选中节点名单，识别祖先合并覆盖的全部当前后代。已有 5 个资产的对照组继续使用原数据，下面的新采集仅用于这一轮探索。
+At 75%, four Lucy and four Shader Ball views each sample four single/eight composite
+candidates: eight frames, 96 candidates. Full-render winners are composite in five
+frames: Lucy adds +0.097/+0.494 dB beyond sampled single winners; Shader Ball adds
++0.750/+0.591/+0.408 dB. Unequal sample counts mean opportunity, not equal-search-cost
+superiority. Causal geometry/proxy replay both retain the baseline no-op.
 
-在 Lucy 与 Shader Ball 的 75% 档各取四个视角，每帧采样 4 个单次和 8 个组合候选，共 8 帧、96 个候选。完整渲染的逐帧最优选择在 5 帧来自组合候选，其中 Lucy 两帧相对本次单次候选最优值分别多 +0.097 和 +0.494 dB，Shader Ball 三帧分别多 +0.750、+0.591、+0.408 dB。两类候选的采样数不同，这些数值只说明组合空间存在质量机会，不能作为同等搜索成本的算法比较。几何与代理策略的因果回放都保留基线作为合法不操作候选。
+For 64 composites, build each constituent refinement/merge separately and use the
+same local reference with fixed whole-image denominator for coverage/depth loss.
+Maximum absolute composite gain minus summed individual gains is 3.4e-21, floating-point
+noise. No measurable nonadditive occlusion appears in this sample; it cannot support
+necessary joint interaction modeling. This covers current cameras, two-sided single-sample
+masks; materials and temporal response remain separate.
 
-对 64 个组合候选，分别构造各单独细分和合并的网格，并用同一局部参考计算固定全图分母的深度与覆盖损失。组合收益减去各单独收益之和的绝对值最大为 3.4×10⁻²¹，属于浮点误差。当前采样没有观察到可测的非加性遮挡作用，不能据此提出「必须联合建模操作相互影响」的主张。该诊断只覆盖当前相机和双面单采样几何遮罩；材质与跨帧响应仍需单独测量。
+Causal local-reference Lucy mean is +0.126 dB (two frames above +0.01, one below -0.01);
+Shader Ball mean +0.007 dB (one improvement, zero regressions). Geometry never exceeds
++/-0.01 dB. Python median costs for all candidates are 1.56 s Lucy/3.08 s Shader Ball.
+Sparse pixel recomputation exactly matches full depth in two real scenes, but costs
+531 versus 539 ms and 136 versus 119 ms; no reliable speedup, so it did not replace scoring.
 
-局部参考的因果策略在这 8 帧中，Lucy 平均增益 +0.126 dB，有 2 帧超过 +0.01 dB、1 帧低于 −0.01 dB；Shader Ball 平均 +0.007 dB，有 1 帧明显改善、0 帧明显退化。原几何打分在这 8 帧都没有超过 ±0.01 dB 的变化。计算全部组合及单次候选的 Python 原型，中位每帧约 1.56 秒（Lucy）和 3.08 秒（Shader Ball）。两处真实场景的稀疏像素重算虽与完整深度重算逐值一致，耗时分别为 531 对 539 毫秒、136 对 119 毫秒，未形成稳定提速，因此没有替换现有打分路径。
+Whole-asset-held-out MLP replay over the old five plus these two assets retains baseline
+on all four Lucy frames and loses about -0.008 dB on one Shader Ball frame. With reference
+images used only to measure screening potential, top-eight MLP candidates recover four
+of eight full-pool winners; geometry recovers six. This MLP is unsuitable for pruning
+expensive scoring. Reference-based final selection is an upper bound, not runtime policy.
 
-将已有五个资产和这两个资产一起做整资产留出的 MLP 回放，新资产上的因果 MLP 在 Lucy 四帧均保持基线，在 Shader Ball 一帧出现约 −0.008 dB 退化。用参考图仅评估候选筛选的上限，MLP 每帧保留排名前 8 个候选时找回 8 帧中的 4 帧全候选最优，几何打分找回 6 帧。现有 MLP 不能作为节省精算成本的筛选器。该上限分析中的最终选择读取参考误差，因此不是运行时策略。
+Scores, paths, interactions, and screening: `out/lod-composites-075/score.json` and
+`out/lod-composites-results/`. Single and at-most-two-edit sampled pools constrain scope
+by assets, views, materials, resolution, and counts. Next experiments should jointly
+measure pool coverage, material/normal error, and actual GPU scoring cost.
 
-逐帧原始评分、代理路径、相互作用与筛选结果位于本地 `out/lod-composites-075/score.json` 及 `out/lod-composites-results/`。候选池只包含单次和至多两处操作的采样，研究结论受资产、视角、材质、分辨率及候选数限制。下一步应把候选池覆盖率、材质与法线误差，以及可实际测得的 GPU 打分成本作为同一实验的指标。
+## 14. Fixed DAG group size and budget reachability
 
-## 14. 固定 DAG 分组大小的预算可达性
+Rebuild Pirate with `--dag-group` 2, 4, 8, 16, otherwise fixed input/options/budget.
+Its 5,010 baseline triangles yield 168/159/158/156 nodes, 58/50/46/60 roots, and selected
+2,810/2,958/2,822/3,186 triangles (56.09%/59.04%/56.33%/63.59%). All are root cuts;
+55% was unreachable in these historical builds. Larger groups do not consistently
+lower the floor; 16 is substantially worse.
 
-针对 Pirate 在 55% 预算下被根切分卡住的问题，分别以 `--dag-group` 2、4、8、16 重建同一 DAG，并保持其他简化选项、输入和预算不变。Pirate 有 5,010 个基准三角形。四个版本分别生成 168、159、158、156 个节点，分别有 58、50、46、60 个根；选择结果为 2,810、2,958、2,822、3,186 个三角形，即 56.09%、59.04%、56.33%、63.59%。四种选择都停在 DAG 根节点，因此该样本的 55% 预算均不可达。扩大固定分组没有持续降低最粗切分面数，分组 16 反而明显变差。
+Lucy group 2/8 builds 957/810 nodes and 97/75 roots. Both select 18,396/33,446 faces,
+55.00%. Group 8 worst selected screen error is 6.07 px versus group 2's 4.90 px.
+Fewer hierarchy nodes changes structure/error without necessarily changing budget faces.
 
-对 Lucy 的对照中，分组 2 和 8 分别构建 957 和 810 个节点、97 和 75 个根；两者都在 33,446 个基准三角形中选择 18,396 个，达到 55.00% 预算。分组 8 的最大选中屏幕误差为 6.07 px，分组 2 为 4.90 px。这表明减少 DAG 节点数会改变层级与误差，但不必然改变某一预算档可用的面数。
+This rejects simply enlarging fixed groups to solve the floor; no one parameter is
+supported. Pirate is a reachability failure, Lucy is a counterexample to universality.
+A possible next comparison builds multiple legal parents under identical offline work,
+forming root-face/error/build-cost Pareto frontiers against fixed groups. Every parent
+still passes topology/attribute/geometry gates. Acceptable cross-asset gains remain
+unverified. Compare progressively refined meshes, FastMesh, and Nanite explicitly;
+hard budgets/multiple candidates alone establish no novelty.
 
-这组结果否定了“把固定分组调大即可解决预算下限”的方案，也没有支持单一分组参数。Pirate 是预算可达性失败的实例，Lucy 则证明该问题不是普遍存在。更有依据的后续研究是构造多种合法父节点候选，在同一个离线构建预算下，以根切分的三角形数、累计误差和构建成本组成 Pareto 前沿，再比较静态固定分组；每个父节点仍需通过现有拓扑、属性和几何门限。是否能以可接受的构建时间稳定改善跨资产预算可达性，尚未验证。该方向必须与 progressive mesh 的细粒度渐进式细化、FastMesh 的视角相关多分辨率网格及 Nanite 的层次 cluster 方案做逐条差异比较，不能仅因使用硬预算或多个候选就宣称新颖。
+Outputs: `out/dag-group-audit-{2,4,8,16}/lod_graph.json`,
+`out/dag-group-lucy-{2,8}/lod_graph.json`. Inputs are repository meshoptimizer demo
+Pirate/Lucy, default view/screen/gates/program settings. This is one deterministic
+two-mesh sweep, without broader cameras/assets, memory, or runtime measurements.
 
-实验输出在 `out/dag-group-audit-{2,4,8,16}/lod_graph.json` 和 `out/dag-group-lucy-{2,8}/lod_graph.json`。输入为仓库内 meshoptimizer demo Pirate 和 Lucy 模型，视图、屏幕尺寸、质量门限及程序版本保持默认。以上是两个网格的一次确定性参数扫掠；尚未覆盖更多资产、相机或显存与运行时成本。
+## 15. Same-material grouping across submeshes
 
-## 15. 同材质跨 submesh 聚组对照
+Test whether submesh labels overconstrain same-material adjacency by removing only
+`submeshId` equality, retaining shared-vertex adjacency and all geometric/topological/
+normal/UV gates. Pirate and Lucy at group 8 match baseline field-for-field:
+158/7/46 and 810/7/75 nodes/levels/roots; 2,822/5,010 and 18,396/33,446 selected faces;
+unchanged maximum selected errors. Neither produces cross-submesh candidates, so the
+code change was discarded. It does not explain Pirate's floor. This excludes one
+simple hypothesis on two meshes, not universal usefulness; real future candidates
+need material, interface-continuity, and node-output semantic checks.
 
-对 `groupNodes` 的第二个假设是 submesh 标签可能过度限制同材质邻接节点。实验只移除 `submeshId` 相等条件，仍要求共享顶点形成邻接、材质相同，并使用原有完整的几何、拓扑、法线及 UV 门限。Pirate（分组 8）和 Lucy（分组 8）的 DAG 输出均与基线逐项一致：节点/层级/根数量分别为 158/7/46 和 810/7/75，目标切分分别为 2,822/5,010 和 18,396/33,446，最大选中误差也未变化。当前两个模型没有触发跨 submesh 候选，因此不保留该代码改动，也不把此约束作为 Pirate 预算不可达的成因。
+## 16. Budget, view error, and coherence precedents
 
-这项试验只排除了两个模型上的一个简单约束假设；它不能说明跨 submesh 聚组在其他资产上普遍无效。若未来发现真实候选，仍需核对材质一致性、边界连续性和每节点输出语义后再评估。
+Gobbetti/Bouvier optimize per-frame quality of multiple multiresolution triangle meshes
+under rendering time constraints, covering core budget allocation:
+[Time-Critical Multiresolution Rendering](https://doi.org/10.1016/S0010-4485(00)00068-3).
+Hoppe supports continuous arbitrary-mesh resolution, view-frustum/orientation/screen-error
+refinement, and temporal coherence:
+[Progressive Meshes](https://hhoppe.com/proj/pm/),
+[View-Dependent Refinement](https://hhoppe.com/proj/vdrpm/).
+[FastMesh](https://escholarship.org/uc/item/9s30k0b0) supplies real-time view-dependent
+arbitrary triangle updates with conservative bounds.
+[NVIDIA appearance-driven simplification](https://research.nvidia.com/publication/2021-04_appearance-driven-automatic-3d-model-simplification)
+jointly optimizes mesh and shading with differentiable image losses, including LOD.
 
-## 16. 硬预算、视角误差与时间连贯性的先行工作核查
+Hard faces, per-view allocation, coherence, and image error are not independent novel
+claims. A still-unestablished combination is current-frame bounded image evaluation
+plus measured runtime costs for stable strict-budget cuts of an existing quality-valid
+ManyMesh DAG, explicitly declaring infeasible hierarchy floors. Compare representation,
+candidates, error, cost, and scope through implementations and equal-budget baselines.
+Slow proxies, absent measured nonadditivity, weak learned screening, and hierarchy
+floors currently prevent a SIGGRAPH-level claim.
 
-本轮扩大了创新点的先行工作核查。Gobbetti 与 Bouvier 已在每帧对多个多分辨率三角网格执行质量最大化并满足渲染时间约束的优化；它覆盖了“给定预算，把几何复杂度分到哪里”的核心问题。[Time-Critical Multiresolution Rendering of Large Complex Models](https://doi.org/10.1016/S0010-4485(00)00068-3)。Hoppe 的 progressive mesh 与 view-dependent refinement 已支持任意网格的连续分辨率、按视锥/朝向/屏幕误差细化，并利用连续相机运动的时间连贯性。[Progressive Meshes](https://hhoppe.com/proj/pm/) · [View-Dependent Refinement](https://hhoppe.com/proj/vdrpm/)。FastMesh 已提供任意三角网格的实时视角相关多分辨率更新和保守误差界。[FastMesh](https://escholarship.org/uc/item/9s30k0b0)。NVIDIA 的 appearance-driven simplification 已用可微渲染和图像差异联合优化网格与着色模型，并覆盖 LOD 生成。[NVIDIA Research](https://research.nvidia.com/publication/2021-04_appearance-driven-automatic-3d-model-simplification)。
+## 17. More direct budget-plus-image-quality precedents
 
-因此，“硬面数预算”“逐视角分配”“帧间连贯”“图像误差”都不是单独可主张的创新。当前仍可检验但尚未建立新颖性的组合问题是：在 ManyMesh 已构建且质量合法的固定 DAG 切分上，使用当前帧的受限图像评价和实测运行成本，在严格三角形预算下选取帧间稳定的 cut；针对预算不达根切分下限的素材，则显式报告不可达，不伪称选择器达成目标。该问题与旧工作在表示、候选集合、误差模型、计算代价和适用场景上的边界必须通过实现及同预算基线实验逐项证明。当前代理误差慢、组合候选非加性未测出、学习筛选弱、预算可达性受层次限制，这些仍是阻碍 SIGGRAPH 级主张的实际缺口。
+Jehaes et al., GRAPP 2008, use objective image quality, progressive-mesh quality/cost
+Pareto curves, and frame budgets to select better representations:
+[Objective Quality Selection for Hybrid LOD Models](https://www.scitepress.org/Papers/2008/10991/).
+[US patent 12,008,716](https://patents.justia.com/patent/12008716) describes submesh-group
+hierarchies, budget-specific LODs, compound child LODs, and per-frame triangle-budget
+fidelity benefit/cost selection. Patent text is not a substitute for academic review,
+but composite pools, Pareto choice, and benefit/cost alone are insufficient.
 
-## 17. 更直接的预算加图像质量先行工作
+Do not list fixed-DAG image-aware redistribution as a SIGGRAPH contribution without
+structural differences and reproducible gains. A more falsifiable question might be
+reachability certificates and offline strict-topology hierarchy repair without worse
+build cost/screen error, but it had no supporting implementation/result at this point.
 
-Jehaes 等人在 GRAPP 2008 的 *Objective Quality Selection for Hybrid LOD Models* 使用客观图像质量度量、progressive mesh 的质量—成本 Pareto 曲线，并在帧时间预算下选择质量更好的表示；这覆盖了“图像质量 + LOD Pareto + 帧预算”的组合。[论文与 PDF](https://www.scitepress.org/Papers/2008/10991/)。此外，美国专利 US 12,008,716 描述了子网格组层级、不同预算下的多种 LOD、由子节点组合出的 compound LOD，并在每帧三角形预算下用 fidelity benefit/cost 选择表示。[专利公开文本](https://patents.justia.com/patent/12008716)。专利文本不能代替学术新颖性审查，但它清楚提示：单靠增加组合候选、Pareto 选择或逐帧 benefit/cost 不能构成可信的独立创新点。
+> Correction, 2026-11-13: section 14 Pirate results predate `candidateTopologyWelded`.
+> That fix compares group baselines using the candidate's own topology measurement.
+> At the same defaults the root cut becomes 2,756/5,010 = 55.01%, making the 55%
+> target reachable under the selector's budget criterion. The larger-group conclusion
+> remains; the old claim that Pirate cannot reach that target no longer holds.
 
-因此暂不把“固定 DAG 上图像感知的预算重分配”列作 SIGGRAPH 贡献。只有在查明相对这些方法的结构性差异，并证明该差异带来此前未展示的可复现实测结果后，才恢复这一主张。更可能需要转向具体而可证伪的瓶颈，例如 ManyMesh 的预算不可达证书与离线 hierarchy repair 是否能在严格拓扑约束下提升跨资产可达率，且不让构建成本或屏幕误差恶化；目前尚无实现或实验支持它。
+## 18. Spatial bisection retry after group failure
 
-> **更正（2026-11-13）**：§14 的 Pirate 结果是在 `candidateTopologyWelded` 修复之前采集的。
-> 该修复让 group 单元按候选自己的拓扑测量方式比较基底；同一默认配置下，Pirate 的根切分
-> 变为 2,756 / 5,010 = 55.01%，因此 55% 预算变为可达。§14 关于“调大固定分组不能降低
-> 下限”的结论仍成立，但“Pirate 55% 不可达”不再成立。
+Test multiple legal parents without exhaustive Pareto search: spatially split a
+quality-rejected multimember group, recursively retry halves (8->4->2), retaining
+all topology/attribute/geometry/boundary gates. Extra work occurs only on failed groups.
+Same-machine Release, default `--split-charts 1`, `--dag-group 8`, `--target-ratio`:
 
-## 18. 组失败后的空间二分重试
+| Asset/target | Topology-baseline fix only | With bisection | DAG build |
+|---|---|---|---|
+| Pirate 55% | 2,756 faces (55.01%), worst 19.62 px, 45 roots | 2,756 faces, worst 11.93 px, 29 roots | 1.20 -> 1.98 s |
+| Pirate 30% | 2,658 faces (53.05%), 22.32 px | 2,552 faces (50.94%), 22.32 px | 1.16 -> 1.95 s |
+| Lucy 55% | 18,396 faces (55.00%), 5.89 px, 52 roots | 18,396 faces, 5.38 px, 18 roots | 5.91 -> 9.06 s |
+| Lucy 30% | 16,560 faces (49.51%), 14.35 px | 16,044 faces (47.97%), 12.04 px | 5.98 -> 9.06 s |
+| Monkey / Torus / Sphere | -- | Bit-identical nodes, faces, errors | -- |
 
-验证 §14 提出的「多种合法父节点候选」方向，但不做全量 Pareto 搜索：只对一个被质量门拒绝的
-多成员组做空间二分，把两半作为独立父节点候选递归重试（8 → 4 → 2）。两半仍通过原有全部
-拓扑、属性、几何与边界门限，因此质量契约不变；额外构建成本只发生在失败组上。
+Retries add intermediate parents on two failure-heavy assets, improve same-budget
+screen error, and lower the 30%-target face floors by 2.1% Pirate/3.1% Lucy. Assets
+with only 1-3 roots are bit-identical. Failure-heavy builds cost about 1.5-1.65x.
+Selected boundary/non-manifold/duplicate/degenerate/flipped counts remain unchanged.
 
-同机 Release、默认 `--split-charts 1`、`--dag-group 8`、`--target-ratio`：
+This supports possible offline repair gains without relaxed gates, but covers two
+small assets, one camera/parameter set, no large scenes/material/memory/device costs.
+Reproduce with `mmgeo <mesh> --mode dag --dag-group 8 --target-ratio 0.55` and inspect
+`budget reached / unreachable`. Historical ManyMesh suite: 82 cases, 81 passed,
+one skipped (the old wording counted all cases as passed).
 
-| 资产 / 预算 | 仅修复拓扑基底 | 加入二分重试 | DAG 构建 |
-|-|-|-|-|
-| Pirate 55% | 2,756 面（55.01%），最差 19.62 px，45 根 | 2,756 面，最差 **11.93 px**，29 根 | 1.20 s → 1.98 s |
-| Pirate 30% | 2,658 面（53.05%），22.32 px | **2,552 面（50.94%）**，22.32 px | 1.16 s → 1.95 s |
-| Lucy 55% | 18,396 面（55.00%），5.89 px，52 根 | 18,396 面，**5.38 px**，18 根 | 5.91 s → 9.06 s |
-| Lucy 30% | 16,560 面（49.51%），14.35 px | **16,044 面（47.97%）**，**12.04 px** | 5.98 s → 9.06 s |
-| Monkey / Torus / Sphere | —— | 节点、面数、误差逐位不变 | —— |
+## 19. Laptop proxy costs and visual review
 
-结论：二分重试在两个「组失败多」的资产上稳定增加中间父节点，使同一预算下的 cut 更细、
-最差屏幕误差更低，并把 30% 档的可达面数分别降低 2.1%（Pirate）与 3.1%（Lucy）；对本来
-只有 1–3 个根的资产（Monkey/Torus/Sphere）逐位无变化。代价是失败组多的资产构建约
-1.5–1.65×。所有选中 cut 的拓扑统计（boundary / non-manifold / duplicate / degenerate /
-flipped）与改动前一致。
+Only Python experiment tools changed in this round. Reuse section 12's eight assets,
+23 paths, 184 historical frames with equal submitted candidate faces; no new independent
+test set. Machine: current Windows/Intel laptop, NumPy 2.5.4, CPU PyTorch 2.7.1.
 
-这支持「离线 hierarchy repair 能在不放松门限的前提下改善预算可达性与同预算质量」，但样本
-仍是两个小资产、单一相机与单组参数；尚未验证大场景、材质、显存与真机成本。复现：
-`mmgeo <mesh> --mode dag --dag-group 8 --target-ratio 0.55`；预算是否可达由
-`budget reached / unreachable` 行给出。ManyMesh 专项测试 82 项通过（81 passed + 1 skipped）。
+Shared-depth scoring resolves the common intersection of candidates, two reference
+levels, and optional interaction cuts once, then takes maximum depth with each
+remainder. Common triangles are already projected once; this removes repeated depth
+reduction. Duplicate cuts share read-only results. All 184 paths, frame quality, and
+switching metrics match the old implementation, as do eight composite-frame paths and
+interaction differences. Random occlusion controls include equal depth, empty fragments,
+no common triangles, and occluders shared by candidates but absent from references.
+Without candidates both reference levels equal baseline, so an independently tested
+early return skips rasterization but retains input reading/validation.
 
-## 19. 普通笔记本上的代理打分成本与视觉复查
+Separate full runs reduce total scoring 14.47->13.17 s but increase median 28.67->32.74 ms;
+these opposite trends do not show universal speedup. Same-process warmed alternating
+order, three measurements, on the first frame:
 
-本轮仅修改 Python 实验工具，未修改简化器、质量门或运行时选择器。复用 §12 的八个资产、
-23 条轨迹、184 帧历史采集，保持每个候选提交面数相等；这不是新增独立测试集。
-机器为当前 Windows / Intel 笔记本，NumPy 2.5.4、CPU PyTorch 2.7.1。
-
-新增共享深度路径：将候选、两层参考、可选交互切分的**共同交集**栅格化结果 resolve 一次，
-再与各自差集深度取最大值。共同三角形仍只投影一次；优化的是重复深度归约。
-重复切分共享只读结果。184 帧的全部选择路径、逐帧质量及切换指标与旧实现完全一致；
-另 8 帧复合候选的路径和交互差值一致。随机遮挡测试覆盖相等深度、空片元、无共同三角形，
-以及候选共有但参考不含的遮挡面。无候选帧的两层参考严格等于基线，因此默认直接返回零收益，
-省去栅格化；该路径另有测试，不改变读取和验证输入的步骤。
-
-整组分开运行的总打分时间 14.47 → 13.17 秒，中位数 28.67 → 32.74 ms；这种相反趋势
-不能宣称普遍加速。进一步用同进程预热、交替顺序、三次测量比较首帧：
-
-| 资产 | 独立 resolve 中位 ms | 共享 resolve 中位 ms |
-|-|-:|-:|
+| Asset | Independent resolve median ms | Shared resolve median ms |
+|---|---:|---:|
 | Monkey | 42.09 | 34.66 |
 | Cloth | 219.02 | 170.98 |
 | Torus | 10.26 | 10.30 |
-| Pirate（无候选） | 6.84 | 12.35 |
+| Pirate, no candidates | 6.84 | 12.35 |
 | Shader Ball | 215.78 | 163.31 |
 | Lucy | 117.59 | 126.48 |
 
-这些计时在最终增加无候选早退之前完成。Pirate 行表示原型开销，当前两条路径均直接早退。
-其他结果说明共享路径也会变慢，所以 `--shared-depth` 保持显式实验选项。计时覆盖代理构建、
-软件栅格化与打分，不含 OBJ 读取、验证、Filament 渲染；没有测手机帧时、功耗或 GPU 实现。
+These precede the final no-candidate early return. Pirate reflects old prototype
+overhead; both current paths return immediately. Shared resolve can still regress,
+so `--shared-depth` remains opt-in. Timings include proxy construction, software
+raster, and scoring, excluding OBJ loading, validation, and Filament rendering.
+No phone frame times, power, or GPU implementation were measured.
 
-另将代理网格从 384×216 降至 192×108，独立质量评估仍使用原始参考图和几何轮廓标签。
-比较 `proxy1_surface_causal`，改善/退化以 ±0.01 dB 为阈值：
+Reduce proxy raster 384x216->192x108 while retaining original independent reference
+images/geometric labels. For `proxy1_surface_causal`, with +/-0.01 dB thresholds:
 
-| 网格 / resolve | 中位打分 ms | 改善帧 | 退化帧 | 轮廓退化帧 | 时间误差变差的边 |
-|-|-:|-:|-:|-:|-:|
-| 384×216 / 原始 | 28.67 | 33 | 7 | 0 | 8 |
-| 384×216 / 共享 | 32.74 | 33 | 7 | 0 | 8 |
-| 192×108 / 共享 | 16.68 | 37 | 14 | 12 | 17 |
+| Raster/resolve | Median scoring ms | Improved frames | Degraded frames | Worse silhouettes | Worse temporal edges |
+|---|---:|---:|---:|---:|---:|
+| 384x216 / original | 28.67 | 33 | 7 | 0 | 8 |
+| 384x216 / shared | 32.74 | 33 | 7 | 0 | 8 |
+| 192x108 / shared | 16.68 | 37 | 14 | 12 | 17 |
 
-降低网格会漏掉细小轮廓差异。平均 PSNR 增益从 +0.236 降至 +0.195 dB，两组中位增益都为零。
-因此 `--proxy-height` 保持消融选项，不能用提速替代画质证据。
+Lower resolution misses small contour differences. Mean PSNR gain falls +0.236->+0.195 dB;
+both medians remain zero. `--proxy-height` stays an ablation, not a speedup replacing
+quality evidence.
 
-视觉复查使用每资产全部轨迹中的最好和最差帧，包含 no-op。保留原帧与统一 4× 曝光、共同
-裁剪、2× 最近邻显示，并排给出全细节、基线、选择结果及两者 8× 绝对 RGB 误差。Monkey
-正例 +0.662 dB 的眼周局部误差减轻；反向视角 −0.481 dB 的头顶高光误差增大，轮廓却未变。
-Shader Ball 的 −0.075 dB 案例主要是局部明暗变化，整图肉眼差异很小。Cloth 褶皱与下摆在
-这些小图中无明显新增破损。Lucy 大部分暗面接近黑色，当前采集无法可靠判断细节，不能算
-“视觉通过”。这些是 216 像素高的调试帧，不足以替代发表用的高分辨率、多光照和连续视频。
-本次尝试运行现有渲染器补图时遭应用控制策略拦截，未生成新的高分辨率证据。
+Visual review selects each asset's best/worst frame over all paths, including no-ops.
+Keep original frames and uniform 4x exposure, common crops, 2x nearest-neighbor display,
+full detail/baseline/selected, and 8x absolute RGB error. Monkey +0.662 dB reduces eye-region
+error; opposite-view -0.481 dB worsens crown highlights without changing silhouettes.
+Shader Ball -0.075 dB mainly changes local shading with small whole-image visual difference.
+Cloth folds/hem have no obvious new damage in these small images. Lucy's dark surfaces
+are near black, preventing reliable detail judgments; it does not pass visual review.
+These 216-pixel-high debug images cannot replace high-resolution, multilighting,
+continuous publication video. Application control blocked attempts to capture new
+high-resolution renderer evidence.
 
-保留数据：[逐帧结果及摘要](tools/mmtrain/results/proxy-grid-20261113/summary.json)、
-[交替计时](tools/mmtrain/results/proxy-grid-20261113/paired.json)、
-[Monkey 好坏案例](tools/mmtrain/results/proxy-grid-20261113/monkey-7b754119.png)。
-哈希对应留存的历史采集和报告；复现工具及命令见 `tools/mmtrain/README.md`。
+Saved [frame results/summary](tools/mmtrain/results/proxy-grid-20261113/summary.json),
+[alternating timings](tools/mmtrain/results/proxy-grid-20261113/paired.json),
+[Monkey positive/negative panels](tools/mmtrain/results/proxy-grid-20261113/monkey-7b754119.png).
+Hashes identify retained historical captures/reports; commands are in `tools/mmtrain/README.md`.
 
-### 深度学习方案的取舍与论文定位
+### Learned-method tradeoffs and paper positioning
 
-继续保留三个不同方向，部署适用性是工程判断，尚无这些外部模型的本机对比实测：
+Three external directions remain comparisons; deployment judgments are not local benchmarks:
 
-- [MeshCNN（SIGGRAPH 2019）](https://ranahanocka.github.io/MeshCNN/) 通过可学习的边折叠池化
-  服务形状分析任务。可借鉴边的表示；分析任务成功不能直接推出渲染外观最优或本项目的
-  UV、边界和流送契约成立。
-- [Neural Mesh Simplification（CVPR 2022）补充材料](https://openaccess.thecvf.com/content/CVPR2022/supplemental/Potamias_Neural_Mesh_Simplification_CVPR_2022_supplemental.pdf)
-  采用 64 维轻量表示，并显式讨论碰撞、交叉、重叠损失。适合作为离线学习简化的候选对照；
-  拓扑、属性和百万面规模的时间/内存需要实际验证，不能把论文“轻量”直接等同手机可用。
-- [Appearance-Driven Simplification（EGSR 2021）](https://research.nvidia.com/publication/2021-04_appearance-driven-automatic-3d-model-simplification)
-  联合优化几何和材质，输出可普通光栅化的网格与贴图。优先考虑离线优化、终端渲染的部署
-  分工，优化阶段与运行阶段分别计成本；不能将可微渲染优化本身称为轻量移动推理。
+- [MeshCNN, SIGGRAPH 2019](https://ranahanocka.github.io/MeshCNN/) uses learned edge-collapse
+  pooling for analysis. Edge features may help, but analysis success does not prove
+  rendered appearance or our UV/boundary/streaming contracts.
+- [Neural Mesh Simplification supplementary material, CVPR 2022](https://openaccess.thecvf.com/content/CVPR2022/supplemental/Potamias_Neural_Mesh_Simplification_CVPR_2022_supplemental.pdf)
+  uses a lightweight 64-dimensional representation and discusses collision/intersection/
+  overlap losses. It is an offline baseline; topology, attributes, and million-face
+  time/memory need testing. A paper's lightweight label does not establish phone suitability.
+- [Appearance-Driven Simplification, EGSR 2021](https://research.nvidia.com/publication/2021-04_appearance-driven-automatic-3d-model-simplification)
+  jointly optimizes geometry/materials and emits ordinary meshes/textures. Separate
+  offline optimization from device rendering and cost both; differentiable optimization
+  is not itself lightweight mobile inference.
 
-本仓库 16 单元 MLP 的整资产留出退化已记录在 §10–11，现阶段没有证据将其默认启用。
-本轮证明的是代理评估的开销取舍和小网格的失败边界，属于工程/消融证据。共享片元、图像
-误差与 LOD 的先例见 §12、§17，**不能单凭本轮结果主张 SIGGRAPH 创新**。更强的研究假设
-仍需围绕严格合法 hierarchy repair 的预算可达性，设计冻结参数的未见资产、大场景、多材质
-对照，同时报告构建成本、渲染成本、显存和视觉失败，而不是以加入深度学习作为贡献。
+Whole-asset regressions of this repository's 16-unit MLP appear in sections 10-11;
+there is no evidence to enable it by default. This round establishes proxy cost
+tradeoffs and small-raster failure boundaries, engineering/ablation evidence rather
+than SIGGRAPH novelty. Shared fragments, image error, and LOD have precedents in
+sections 12/17. The historical next hypothesis required frozen, unseen, large-scene,
+multimaterial strict-hierarchy-repair comparisons with build/render/memory costs and
+visual failures. Adding deep learning alone is not a contribution. Current research
+direction is tracked separately in [MANYMESH.md](MANYMESH.md).

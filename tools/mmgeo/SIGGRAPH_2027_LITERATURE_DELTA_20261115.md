@@ -478,7 +478,7 @@ mm_bench.exe --frames 9 --pan 80 --warmup 0 --measure 1 --taa --dag
 ```
 
 Windows Application Control refused to start `out/cmake-vulkan/samples/Release/mm_bench.exe`
-(`ApplicationFailedException`: “应用程序控制策略已阻止此文件”, exit code 1). The output directory
+(`ApplicationFailedException`: Your organization used application control to block this file, exit code 1). The output directory
 was created empty before launch; no camera list, PNGs, cut-change logs, or timings were produced.
 This is neither a negative nor a positive result for TAA. The exact command and file hashes are
 preserved in `out/taa-cut-falsify-20261116/blocked-run.md`. No rename, alternate executable, or

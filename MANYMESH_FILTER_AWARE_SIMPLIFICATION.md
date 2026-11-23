@@ -1,204 +1,336 @@
-# 面向 SIGGRAPH 的候选研究：滤波感知、可逆的局部网格简化
+# Filter-aware reversible local mesh simplification
 
-日期：2026-11-14。状态：研究假设、C++误差核与可控薄带实验；**未验证一般 mesh 动态算法，未证明新颖性或实时收益**。最新控制实验与阻碍见 [实验记录](tools/mmgeo/FILTERED_BOUNDARY_EXPERIMENT.md)。
+Date: 2026-11-14; literature reassessed through 2026-11-22.
+Status: hypothesis, C++ error kernel, and controlled thin-strip experiments.
+A general dynamic mesh algorithm, novelty, and real-time gains remain unverified.
+Latest controls and blockers: [experiment record](tools/mmgeo/FILTERED_BOUNDARY_EXPERIMENT.md).
 
-## 1. 研究决策
+## 1. Research decision
 
-主线不是继续给固定 LOD cut 调权重，而是改进局部简化操作本身：同时估计平滑表面误差和可见性边界位移的图像误差，优化折叠位置，记录可逆操作，按当前视图和执行预算更新局部几何。
+Improve local simplification itself: estimate image error from smooth surfaces and
+visibility-boundary displacement, optimize collapse placement, record reversible
+operations, and update local geometry under view and execution budgets.
 
-第一阶段关闭神经重建，固定材质、光照、分辨率和抗锯齿。只有几何贡献成立后，才研究与时域超分的联合机制。加 TAA、超分或 MLP 本身不构成论文贡献。
+Disable neural reconstruction initially. Freeze material, lighting, resolution,
+and antialiasing. Study temporal upscaling only after establishing geometry gains.
+Adding TAA, upscaling, or an MLP alone is not a contribution. See the
+[research ledger](MANYMESH_RESEARCH_ROADMAP.md) for status and gates.
 
-项目状态、验收门和下一实现任务见 [研究推进账本](MANYMESH_RESEARCH_ROADMAP.md)。
+Existing components include QEM/attribute/Corner simplification, quality gates,
+a fixed single-parent hierarchy, and dynamic cuts. There is no resumable online
+collapse/split executor. Read-only regrouping trials have not established gains
+or proved that grouping blockage is the main cause.
 
-当前已有 QEM/属性/Corner 简化、质量门、固定单父层次和动态 cut；没有在线可续算 collapse/split 执行器。近期重分组只读试算没有获得改进证据，不能把分组阻断作为已证明的主因。
+## 2. Boundary changes differ from smooth displacement
 
-## 2. 数学起点：边界变化不是普通表面位移
+For a locally straight image boundary with color jump delta_c, length L, and
+screen-normal displacement d, ignoring endpoints, curvature, and other boundaries:
 
-设局部图像中一条直边两侧颜色差为 Δc，边长 L，沿屏幕法向移动 d。忽略端点、曲率与其他边界，未滤波阶跃的连续平方图像误差为：
+```text
+E_boundary(d) = L ||delta_c||^2 |d|.
+```
 
-    E_boundary(d) = L ||Δc||² |d|.
+This unfiltered continuous squared-image error is first order in displacement;
+a first-order color linearization in a smooth region yields quadratic error.
+Using squared world distance for both misses that distinction. This observation
+is not a novelty claim.
 
-它对位移是一阶，而平滑区域的一阶颜色线性化产生二次误差。因而仅以世界距离平方统一评价二者，会漏掉不同的误差尺度。这个观察并非新颖性主张。
+Pixel filtering matters. Convolve the boundary with a Gaussian of sigma > 0 and
+let Phi be the standard normal CDF. Per unit length and unit color contrast:
 
-必须考虑像素滤波。令边界沿法向与标准差 σ > 0 的高斯核卷积，Φ 为标准正态 CDF，定义单位长度、单位颜色差的损失：
+```text
+rho_sigma(d) = integral [Phi(u/sigma) - Phi((u-d)/sigma)]^2 du
+             = |d| erf(|d|/(2 sigma))
+               + 2 sigma/sqrt(pi) [exp(-d^2/(4 sigma^2)) - 1].
+```
 
-    ρσ(d) = ∫ [Φ(u/σ) - Φ((u-d)/σ)]² du
-           = |d| erf(|d|/(2σ))
-             + 2σ/√π [exp(-d²/(4σ²)) - 1].
+Writing u = |d| and G_sqrt(2)sigma for a normalized Gaussian with standard deviation
+sqrt(2)*sigma, the step difference is an interval indicator convolved with a
+Gaussian. Kernel autocorrelation gives the analytic derivation:
 
-令 u=|d|，G√₂σ 为标准差 √2σ 的归一化一维高斯核。两段阶跃之差可写为区间指示函数与高斯的卷积；平方范数通过核自相关得到：
+```text
+rho_sigma(d) = 2 integral_0^u (u-s) G_sqrt(2)sigma(s) ds
+rho_sigma'(d)  = erf(d/(2 sigma))
+rho_sigma''(d) = exp(-d^2/(4 sigma^2)) / (sigma sqrt(pi)) > 0
+as d -> 0: rho_sigma(d) = d^2/(2 sigma sqrt(pi)) + O(d^4)
+as |d|/sigma -> infinity: rho_sigma(d) = |d| - 2 sigma/sqrt(pi) + o(1).
+```
 
-    ρσ(d) = 2 ∫₀ᵘ (u-s) G√₂σ(s) ds.
+Small displacements have quadratic loss; large displacements approach linear loss.
+Do not apply unfiltered absolute displacement to all antialiased subpixel motion.
+Historical Python standard-library quadrature checked sigma=0.5:
 
-积分即上式。这也给出解析推导，而不只依赖数值吻合。
-
-导数与极限：
-
-    ρσ'(d)  = erf(d/(2σ))
-    ρσ''(d) = exp(-d²/(4σ²)) / (σ√π) > 0
-    d → 0:  ρσ(d) = d²/(2σ√π) + O(d⁴)
-    |d|/σ → ∞: ρσ(d) = |d| - 2σ/√π + o(1).
-
-因此正确的局部模型是“小位移二次、大位移近线性”，不能对抗锯齿后的所有亚像素位移套用 |d|。
-
-本会话用 Python 标准库数值积分核对 σ=0.5：
-
-| 位移 d（像素） | 闭式 ρσ | 数值积分 |
+| Displacement in pixels | Closed form | Numerical integral |
 |---:|---:|---:|
 | 0.01 | 0.000056418 | 0.000056418 |
 | 0.05 | 0.001409887 | 0.001409887 |
 | 0.20 | 0.022418328 | 0.022418328 |
 | 1.00 | 0.486064958 | 0.486064958 |
 
-这是公式的数值自检，不是 mesh 质量或性能实验。σ=0.5 是示例，不是某款 TAA/超分器的已测参数。
+This checks the formula, not mesh quality or speed. Sigma=0.5 is illustrative,
+not a measured TAA/upscaler parameter. A synthetic ranking example uses length
+80 px, sigma=0.5: boundary A moves 0.2 px with contrast 1, B moves 0.4 px with
+contrast 0.1. Squared displacement ranks A's 0.04 below B's 0.16, while filtered
+image error ranks A's 1.793466 above B's 0.070350. No actual QEM/Corner run is
+involved; strong attribute-aware baselines may also recognize contrast.
 
-一个仅说明排序可能反转的合成例子：两条边界均长 80 px、σ=0.5。A 位移 0.2 px、颜色差为 1，B 位移 0.4 px、颜色差为 0.1。仅按位移平方，A 的 0.04 小于 B 的 0.16；按滤波后边界图像误差，A 为 1.793466、B 为 0.070350，排序相反。这里比较的是位移平方代理，不是已经运行了真实 QEM 或 Corner；属性感知的强基线可能同样辨别颜色差，故该例不能证明相对强基线的优势。
+## 3. Candidate local solver
 
-## 3. 候选局部求解器
+For one legal candidate edge, optimize placement x in R^3 within a finite trust
+region. Freeze visibility, surface correspondence, boundary samples, and attribute
+interpolation charts. Use smooth color/depth/normal residuals A_i*x-b_i,
+screen-normal boundary displacement d_j(x)=a_j^T*x-b_j, and weights
+w_j=length_j*||delta_c_j||^2 with consistent pixel-area normalization:
 
-对一条合法候选边，在有限信赖域中优化折叠后位置 x∈R³。冻结当前可见性、表面对应、边界采样和属性插值图表：
+```text
+F(x) = sum_i omega_i ||A_i*x-b_i||^2
+       + sum_j w_j rho_sigma_j(a_j^T*x-b_j)
+       + eta Q_geom(x).
+```
 
-- 平滑区域颜色/深度/法线残差的线性代理：Aᵢx-bᵢ。
-- 可见轮廓与遮挡边界的屏幕法向位移：dⱼ(x)=aⱼᵀx-bⱼ。
-- 边界权重：wⱼ=ℓⱼ||Δcⱼ||²；各项使用一致像素面积和归一化口径。
+With fixed coefficients, nonnegative weights and positive-semidefinite Q_geom,
+F is convex. A damped Newton or other low-dimensional solver can handle a convex
+trust region. Regularization must remove degenerate directions; strict convexity
+and uniqueness are not automatic. Convexity applies only to this frozen single-edge
+proxy, not perspective projection, reinterpolation, topology legality, visibility
+changes, or combinations of edits.
 
-目标：
+For a fixed real one-dimensional filter k, define
+C(s)=integral k(t)k(t+s)dt. Then
+rho_k(d)=2 integral_0^|d| (|d|-s)C(s)ds. Nonnegative kernels give C>=0 and preserve
+single-boundary convexity; negative-lobe sharpening kernels need not. This permits
+tables for measured fixed spatial kernels, not replacing nonlinear temporal models
+with one kernel.
 
-    F(x) = Σᵢ ωᵢ ||Aᵢx-bᵢ||²
-           + Σⱼ wⱼ ρσⱼ(aⱼᵀx-bⱼ)
-           + η Q_geom(x).
+Candidate procedure:
 
-固定系数、非负权重、Q_geom 半正定时，F 是凸函数；凸信赖域内可用阻尼 Newton 或其他小维求解器。正则项应消除退化方向，不能无条件宣称严格凸或唯一最优。
+1. Generate legal edges/placements using existing topology/material/chart rules.
+2. Solve the small proxy, retaining the QEM placement as a control or fallback.
+3. Check actual topology, attributes, thin sheets, boundaries, and error gates.
+4. Trigger local patch depth/coverage validation near silhouette ownership changes,
+   near-equal depth order, or closing slits.
+5. Accept only after validation and when predicted benefit exceeds estimation error.
+   Defer verification that exceeds budget; do not assume safety.
+6. Update affected neighbors only and save connectivity/attributes needed to undo.
 
-该凸性只属于**一条边、固定可见性与对应关系下的代理目标**。透视投影、重新插值、拓扑合法域、遮挡变化以及多条边的组合都不因此成为凸问题。
+Surface and boundary terms need disjoint support or explicit overlap subtraction.
+Overlapping filtered boundaries, curvature, and appearance/disappearance events can
+invalidate independent sums; evaluate a patch or reject conservatively. Infer no
+lighting/texture derivatives from background pixels. Start with controlled normal
+shading and known materials; later cover highlights, shadows, textures, unseen views.
 
-高斯不是唯一可用核。对固定的一维实值空间滤波核 k，令 C(s)=∫k(t)k(t+s)dt，则阶跃平移损失可写成 ρ_k(d)=2∫₀^|d|(|d|-s)C(s)ds。非负核使 C≥0，从而保留单边凸性；带负瓣的锐化核不保证这一性质。该扩展能用测得的固定空间核进行查表，但不适用于将非线性时域网络直接替换为一个固定核。
+### 3.1 Thin structures require coupled boundaries
 
-候选流程：
+For locally parallel boundaries with signed color jumps c_i, old positions a_i,
+and new positions b_i, per-unit-length residuals and inner products are:
 
-1. 用已有拓扑/材质/chart 规则生成合法边和备选 placement。
-2. 小维代理求解，保留旧 QEM placement 作为对照或回退候选。
-3. 检查实际拓扑、属性、薄片、边界和误差条件；不因代理更优而绕过质量门。
-4. 对轮廓归属变化、深度次序接近、狭缝闭合等事件，触发局部 patch 深度/覆盖验证。
-5. 只有在局部验证通过且收益大于估计误差时接受；验证超预算则推迟，不默认安全。
-6. 提交后仅更新受影响邻域，保存撤销所需连接与属性记录。
+```text
+r_i(t) = Phi((t-a_i)/sigma) - Phi((t-b_i)/sigma)
+K_ij = 1/2 [rho_sigma(a_i-b_j) + rho_sigma(b_i-a_j)
+            - rho_sigma(a_i-a_j) - rho_sigma(b_i-b_j)]
+E = sum_i sum_j (c_i dot c_j) K_ij.
+```
 
-表面项和边界项必须使用不重叠区域或显式扣除重叠贡献；多个边界滤波支撑重叠、曲率大或出现/消失事件时，独立求和可能失效。此时直接评估小 patch 或保守拒绝。
+K is a Gram matrix of actual residual functions and hence positive semidefinite
+in exact arithmetic. If b_i depends on optimized placement, single-boundary
+convexity does not establish joint convexity. Score a small placement set first;
+do not promise global Newton convergence.
 
-光照/纹理导数不应从整图背景推测；第一原型使用可控法线着色与已知材质。最终材质敏感实验必须覆盖高光、阴影、纹理和未见视角。
+For sigma=0.5, opposite color jumps moving from (0,0.3) to (0.2,0.5) yield
+0.044836656 by independent addition, but 0.003810298 with cross terms, matching
+numerical integration. Independent addition overestimates by about 11.8x here.
+This validates only the one-dimensional parallel-boundary model. Neither mesh
+benefit nor novelty of the closed-form kernel follows.
 
-### 3.1 薄结构：不能独立计算相邻轮廓
+A possible mechanism maintains sparse coupling for nearby filtered contours,
+uses independent terms farther away, and validates events with patches. Earlier
+DAG interaction trials used different candidates and a two-sided single-sample
+depth proxy; they neither prove nor reject these filtered cross terms. Gaussian
+support is infinite, so neighbor truncation is approximate and needs error checks.
 
-对局部平行边界，定义带符号颜色跳变 cᵢ，原位置 aᵢ、变化后位置 bᵢ。单位边长的残差函数为：
+## 4. Toward demand-driven dynamic geometry
 
-    rᵢ(t) = Φ((t-aᵢ)/σ) - Φ((t-bᵢ)/σ).
+Operation state needs local support, undo data, dependencies, version, geometry/
+attribute correspondences, estimated error, and measured execution work.
+Coarsen with legal edits that reduce faces at low incremental error; refine by
+undoing edits where demand increases. Charge dependency closures together. Prevent
+support conflicts in batches and do not sum single-edit benefits as exact batch gains.
 
-两个残差的内积有闭式：
+Updating only regions affected by cameras, visibility, or edits is a design goal,
+not measured behavior. First implement a resumable CPU state machine and correctness
+control, then consider GPU execution. Do not restart full simplification each frame.
+Closed topology, material partitions, and gates can make requested budgets infeasible.
+Progressive meshes, view-dependent refinement, coherent updates, and reversible
+collapse/split operations are established mechanisms, not standalone contributions.
 
-    Kᵢⱼ = 1/2 [ρσ(aᵢ-bⱼ) + ρσ(bᵢ-aⱼ)
-                 - ρσ(aᵢ-aⱼ) - ρσ(bᵢ-bⱼ)].
+## 5. Temporal reconstruction as a second phase
 
-因此联合误差为：
+Ask whether simplification destroys reusable historical surfaces and which cheap
+correspondences establish history validity. Local collapse provenance plus current/
+historical visibility may help, but coarse-to-fine mappings are generally not
+bijective. Deleted occlusion layers and silhouettes cannot be recovered by mapping;
+history rejection must remain possible.
 
-    E = Σᵢ Σⱼ (cᵢ·cⱼ) Kᵢⱼ.
+```text
+T_update + T_geometry + T_shading + T_reconstruction <= T_budget
+```
 
-矩阵 K 是实际残差函数的 Gram 矩阵，故理论上半正定。但当 bᵢ 依赖待优化位置时，这个联合目标**不再由单边凸性保证为凸**。第一实现应将其用于少量 placement 的评分/复核，而不是承诺全局 Newton 收敛。
+Minimize final error under this total budget, reporting actual CPU/GPU and sync
+costs. Triangle counts do not measure frame time. Real TAA/upscaling is nonlinear
+and depends on history; rho_sigma describes only controlled spatial filtering.
+Measure a real reconstructor's response and compare it with the fixed-filter proxy.
 
-数值例：σ=0.5，两条相反颜色跳变的边界由 (0,0.3) 平移至 (0.2,0.5)。逐边独立相加得到 0.044836656；含交叉项的联合误差为 0.003810298，直接数值积分同为 0.003810298。独立相加在这个例子中高估约 11.8 倍。这仅验证一维平行边界模型，尚未证明真实 mesh 收益；闭式核本身也不能声称新颖。
+A laptop can first evaluate nonneural TAAU/FSR2-style paths; Arm ASR is relevant
+to mobile investigation. DLSS needs RTX and is not an Iris Xe deployment path.
+Consider tiny models for local coefficients or failure risk before full-resolution CNNs.
 
-值得检验的更具体机制是：仅对滤波影响范围相近的轮廓维护稀疏耦合，远处用独立模型，事件用 patch 复核。这不是先前等预算 DAG 组合实验已否定或证明的交互——此前测的是不同候选与双面单采样深度代理，此处是滤波后的邻近轮廓残差交叉项。高斯核有无限支撑，截断近邻会引入近似，需测误差；不能称完全精确的稀疏分解。
+## 6. Repository confounds to exclude
 
-## 4. 从简化器到按需动态几何
+- The historical `LodGraph.cpp:927-948` lock calculation mixed original-leaf/current
+  member counts and wrote raw-vertex masks, while Corner and the unified gate read
+  canonical-position masks. Establish the contract in a minimal test; static code
+  differences do not prove cracks or stalled simplification.
+- Raw node face counts differ from assembled/deduplicated faces. Budget the actual
+  submission path consistently.
+- Existing gates use sampling, not continuous Hausdorff or global intersection proofs.
+- Bind old regroup records to their code versions instead of calling them current results.
 
-操作状态至少包含：局部支持域、撤销记录、依赖条件、当前版本、几何/属性对应、估计误差、实际执行工作量。
+## 7. Entry experiment and stopping rules
 
-- 粗化：选择低误差增量且实际减面的合法操作。
-- 细化：撤销误差过大或即将进入高需求区域的粗化操作；依赖闭包必须一并计费。
-- 并发或批量操作须防止支持域冲突；不把单边收益简单相加后视为组合真实收益。
-- 每帧只处理受相机、遮挡或局部操作影响的活动区域；这是设计目标，不是现有性能事实。
-- 优先做 CPU 可恢复状态机与正确性对照，再决定 GPU 搬迁；不每帧从原网格重跑全局简化。
-- 不能保证任意三角形预算可达；闭合拓扑、材质分区和质量约束都可能给出不可达情形。
+Start with local collapses before a dynamic system; hold hierarchy, selector,
+material, and reconstruction fixed.
 
-Progressive mesh、view-dependent refinement、时间连贯和可逆 collapse/split 都已有经典工作。本节是执行机制，不单独作为创新。
+1. Freeze legal candidates/gates; compare QEM, Corner, quadratic screen error,
+   filtered-boundary proxy, and an oracle reading reference renders.
+2. Separate placement optimization from edge ranking at equal candidate-evaluation cost.
+3. Cover smooth surfaces, contours, thin rods, slits, UV seams, highlights, and
+   occlusion. Report proxy errors, false accepts, and validation-trigger rates.
+4. On unseen assets with frozen parameters and continuous cameras, compare equal
+   faces, equal quality, and equal total time. Include failures and tail latency.
+5. In the dynamic phase measure switching/history invalidation, refinement latency,
+   caches/memory, and dependency closures, not just static PSNR.
+6. Stop if the proxy fails strong image-driven baselines on quality/cost or patch
+   rerendering consumes the gain. Upscaling cannot establish a missing geometry gain.
 
-## 5. 时域重建只作为第二阶段
+A SIGGRAPH candidate needs a justified proxy, inexpensive compatible geometry
+updates, and end-to-end benefit under strong baselines. A closed form, weighted
+QEM, GPU port, or upscaler integration alone is insufficient.
 
-更具体的问题不是“低模 + 超分”，而是：一次几何简化是否破坏了可复用的历史表面，以及保存怎样的低成本对应足以判断历史可信度。
+## 8. Prior art and boundaries
 
-可研究 collapse 的局部来源映射与当前/历史可见性联合判断，但粗到细一般不是双射，删除的遮挡层和轮廓不能靠映射恢复。必须允许历史拒绝，不能保证所有历史都可传输。
+- [Hoppe, View-Dependent Refinement, 1997](https://hhoppe.com/proj/vdrpm/): selective
+  refinement, coherent updates, and smooth transitions are established.
+- [Hoppe, New Quadric Metric, 1999](https://hhoppe.com/proj/newqem/): attributes and
+  wedge discontinuities are established.
+- [Image-Driven Simplification, 2000](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf):
+  initial retrieval failed; a later report checked sections 3-4. Multiview luminance
+  RMS collapse ranking, local rectangle redraw, dirty flags, and lazy updates already
+  exist. Topologically distant edges can be image neighbors. A candidate must improve
+  prediction accuracy/cost and dynamic use, not merely introduce local image updates.
+- [Appearance-Driven Simplification, 2021](https://research.nvidia.com/publication/2021-04_appearance-driven-automatic-3d-model-simplification):
+  joint mesh/appearance optimization is established.
+- [Dynamic Mesh Processing on the GPU, 2025](https://doi.org/10.1145/3731162): existing
+  system work covers GPU dynamic topology and decimation.
+- [HLOD ASAP, 2026](https://onlinelibrary.wiley.com/doi/10.1111/cgf.70380): the abstract
+  covers progressive interiors/boundaries, neighbor consistency, and reduced popping.
+  Publisher full text returned 403; the abstract cannot complete the overlap audit.
 
-联合目标可写为最终输出误差最小，约束总成本：
+### Joint reconstruction literature supplement
 
-    T_update + T_geometry + T_shading + T_reconstruction ≤ T_budget.
+[Appearance-Driven Simplification full text](https://arxiv.org/html/2104.03989)
+includes supersampled references, distance-dependent prefiltering, and silhouette/
+MSAA handling. Optimization fixes externally simplified topology. Filter/silhouette
+awareness alone is insufficient; compare discrete-collapse, local-update, and dynamic costs.
+[Adaptive Temporal Antialiasing, 2018](https://research.nvidia.com/sites/default/files/pubs/2018-08_Adaptive-Temporal-Antialiasing/adaptive-temporal-antialiasing-preprint.pdf)
+uses adaptive ray samples to supplement TAA. Full-text extraction failed in that
+review, so its complete mechanism and relation to geometry budgets remain unaudited.
+A complete precedent comparison for joint geometry, pixel samples, and history
+validity is missing; that does not imply no precedent exists. Also audit image
+processing, shape derivatives, and differentiable rendering for the boundary formula.
 
-同时报告每项实际 GPU/CPU 时间和同步成本，而不是把三角形数当整帧时间。真实 TAA/超分是非线性、历史相关的，不能直接当高斯核；上述 ρσ 仅用于空间滤波可控模型。若研究真实重建器，应测量局部响应，并与固定滤波代理消融。
+Deployment references, not local performance evidence:
+[FSR temporal upscaling](https://gpuopen.com/manuals/fidelityfx_sdk/techniques/super-resolution-temporal/),
+[XeSS](https://www.intel.com/content/www/us/en/developer/topic-technology/gamedev/xess.html),
+[DLSS](https://developer.nvidia.com/rtx/dlss),
+[Arm ASR](https://github.com/arm/accuracy-super-resolution-generic-library).
+TAA addresses same-resolution AA; TAAU adds upsampling. Evaluate FSR temporal
+upscaling separately from frame generation. XeSS has a non-XMX path, but hardware
+support does not prove speedup on Iris Xe. Changed triangle IDs alone do not
+invalidate history; audit correspondence, depth visibility, and confidence.
 
-普通笔记本优先验证非神经 TAAU/FSR2 类路径；移动端调研 Arm ASR。DLSS 依赖 RTX，不是 Iris Xe 部署方案。小网络只考虑局部系数或失效风险估计，不先铺满分辨率卷积。
+### 2026-11-16 literature reassessment
 
-## 6. 实现前必须排除的仓库干扰
+Lindstrom-Turk already compares source/candidate multiview image error per collapse,
+using object buffers or local redraws. Pfeiffer's 2001 thesis abstract likewise
+limits generated image data to edge neighborhoods. Replacing that local image error
+with a filtered proxy requires a substantial same-quality total-cost advantage.
+SIGGRAPH 2026 quad-dominant reduction uses global ILP edge selection; clustered HLOD
+permits progressive boundary simplification with neighbor constraints. Neither is
+identical to a filtered view objective, but broad global-selection and progressive
+cluster-boundary claims are closed. Thin-strip experiments establish no general
+mesh, visibility, or production-shading advantage for rho_sigma.
 
-- `LodGraph.cpp:927-948` 当前组锁计算混用原叶子和当前成员计数，并按 raw vertex 写 mask；Corner 与统一 gate 按 canonical position 读 mask。先用最小测试明确契约，不把静态差异直接报告为实测裂缝或停滞原因。
-- 原始 node 面数与装配去重后面数不同；新算法必须按实际提交路径统一预算口径。
-- 现有质量门包含采样检查，不是连续 Hausdorff 或全局无自交证明。
-- 旧 regroup 记录与当前代码版本需要绑定，不能把历史数值当本轮结果。
+Keep this as a hypothesis. Compare Corner/QEM, full local reference redraw, and the
+analytic proxy on the same frozen real candidates, counting extraction, validation,
+caching, undo, and full-build costs. Stop on either cost or unseen-asset quality
+failure; adding dynamic hierarchy or upscaling does not remedy a failed gate.
 
-## 7. 论文入口实验与停止条件
+### 2026-11-16 differentiable/topological derivative correction
 
-先做局部折叠实验，再做端到端动态系统，避免同时改变层级、选择器、材质和重建。
+[EdgeGrad, ECCV 2024](https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/11059.pdf)
+computes raster-loss gradients including occlusion/revelation and intersections.
+[Topological Derivatives, ICCV 2023](https://openaccess.thecvf.com/content/ICCV2023/papers/Mehta_A_Theory_of_Topological_Derivatives_for_Inverse_Rendering_of_Geometry_ICCV2023_paper.pdf)
+uses level-set derivatives for image-driven hole/region insertion and removal.
+[DiffSoup, CVPR 2026](https://openaccess.thecvf.com/content/CVPR2026/papers/Tojo_DiffSoup_Direct_Differentiable_Rasterization_of_Triangle_Soup_for_Extreme_Radiance_CVPR_2026_paper.pdf)
+optimizes opaque triangle soup from multiview images, splitting by projected edge
+length and pruning by multiview coverage under triangle budgets.
 
-1. 冻结合法候选集与验证门，对照 QEM、现有 Corner、纯二次屏幕误差、上述滤波边界代理，以及读取参考渲染的诊断 oracle。
-2. 独立比较“折叠位置优化”与“边选择排序”，区分收益来源；按同候选评价时间比较。
-3. 测试平滑面、可见轮廓、薄杆、狭缝、UV 接缝、高光与深度遮挡；检查代理预测误差、错误接受、局部验证触发率。
-4. 在冻结参数的未见资产和连续相机轨迹上，比较同面数、同画质和同总时间三组曲线；报告失败资产与尾延迟。
-5. 动态阶段报告切换/历史失效、细化延迟、缓存和内存、依赖闭包大小；不能只报静态 PSNR。
-6. 若代理相对强图像简化基线没有质量—成本优势，或频繁局部重绘吃掉收益，停止该路线。超分不是掩盖几何算法失败的补丁。
+The narrower unsolved candidate is selecting finite legal collapses of a given
+ManyMesh source mesh, preserving connectivity and attribute boundaries, below the
+cost of local redraw per candidate. Combining raster differentials with corrections
+for triangles disappearing along a collapse path is only an untested hypothesis.
+Existing differentiation, topology changes, and image-guided budgets do not become
+novel merely by combination.
 
-SIGGRAPH 候选贡献必须是可验证的完整差异：**有依据的误差代理 + 与代理适配的低代价几何更新机制 + 强基线下端到端收益**。闭式公式、加权 QEM、GPU 实现或接入超分各自都不够。
+### 2026-11-22 prior-art update
 
-## 8. 已核查的相关工作与边界
+[Rasterized Edge Gradients (EdgeGrad), ECCV 2024](https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/11059.pdf)
+computes raster-loss gradients for mesh vertex positions at visibility boundaries,
+occlusion/disocclusion, and geometry intersections without changing the forward
+rasterized image. It directly overlaps the proposed use of image-loss boundary
+signals to guide vertex edits. It does not define a legal edge-collapse sequence,
+preserve ManyMesh's chart/material contracts, or establish a dynamic simplification
+budget; those are implementation differences, not contributions without measured
+benefit.
 
-- [Hoppe, View-Dependent Refinement of Progressive Meshes, 1997](https://hhoppe.com/proj/vdrpm/)：选择性细化、连贯更新、平滑转换不是新概念。
-- [Hoppe, New Quadric Metric, 1999](https://hhoppe.com/proj/newqem/)：属性与 wedge 不连续处理已有。
-- [Image-Driven Simplification, 2000](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf)：初次抓取失败，后续独立研究报告核查了§3–4：以多视图亮度RMS排序edge collapse、局部矩形重绘、脏标记和惰性更新均已有，并指出拓扑远处的边可能在图像上相邻。因此图像驱动、局部交互与增量维护都不能单独称首次；我们的候选差异只能落在免重绘预测的准确性、代价与动态适用性。
-- [Appearance-Driven Simplification, 2021](https://research.nvidia.com/publication/2021-04_appearance-driven-automatic-3d-model-simplification)：联合优化网格与外观已有。
-- [Dynamic Mesh Processing on the GPU, 2025](https://doi.org/10.1145/3731162)：GPU 动态拓扑/decimation 已有系统工作。
-- [Construction of clustered HLOD with As-Simplified-As-Possible boundaries, 2026](https://onlinelibrary.wiley.com/doi/10.1111/cgf.70380)：检索摘要已覆盖 progressive 内部与边界、邻接一致和减轻 popping；本次出版商全文返回 403，不能据摘要完成全部差异审查。
+[DiffSoup, CVPR 2026](https://openaccess.thecvf.com/content/CVPR2026/papers/Tojo_DiffSoup_Direct_Differentiable_Rasterization_of_Triangle_Soup_for_Extreme_Radiance_CVPR_2026_paper.pdf)
+reconstructs radiance fields from multi-view images as a budgeted, unstructured
+triangle soup using differentiable rasterization, stochastic binary opacity, and
+neural textures. It does not simplify an authored connected mesh or preserve its
+topology and attributes, but it closes broad claims around image-supervised,
+triangle-budgeted reconstruction into ordinary rasterizable geometry. A fixed-mesh
+candidate would need to demonstrate a distinct capability on authored assets and
+a repeatable quality-cost advantage over this work where the input contracts
+overlap, as well as EdgeGrad, exact local redraw, and meshoptimizer/Corner controls.
 
-### 联合重建调研补充
+These papers further reduce the plausible novelty space; they do not establish
+that the constrained edge-collapse problem is solved. The candidate remains
+unvalidated. Do not implement a production path until legal candidate sequences
+on real meshes show a stable matched-cost gain over those direct baselines.
 
-只读文献研究的补充结论：
+Before implementation, freeze full legal candidate pools on at least two real
+meshes. Compare QEM/Corner, exact local redraw, shared raster-backprop EdgeGrad
+first-order ranking, and path integration with disappearing-face corrections.
+Report full-pool rankings, exact selected filtered RGB/coverage/depth changes,
+matched-face cumulative error, raster/differential calls, and total cost. Include
+visibility changes, subpixel structures, seams, and disappearing-face-dominated
+support. Stop if integration approaches per-candidate redraw cost, depends strongly
+on sample phase, or loses to exact redraw/image-driven baselines on quality/cost.
+No algorithm, result, or SIGGRAPH contribution is established here.
 
-- [Appearance-Driven Simplification 全文](https://arxiv.org/html/2104.03989) 已涉及超采样参考、距离相关预滤波和轮廓/MSAA处理；其初始拓扑由外部简化获得，优化阶段拓扑固定。因此“滤波感知/轮廓感知”不能直接作为新颖性主张，必须比较具体的离散折叠代价、局部更新代价与动态行为。
-- [Adaptive Temporal Antialiasing, 2018](https://research.nvidia.com/sites/default/files/pubs/2018-08_Adaptive-Temporal-Antialiasing/adaptive-temporal-antialiasing-preprint.pdf) 用自适应射线采样补偿TAA，是像素/历史预算的重要邻近工作；本次全文提取未成功，不据检索摘要推断其全部机制或与几何预算的关系。
-- 目前检索没有建立“离散几何更新、像素采样和历史有效性联合优化”的完整先例对照；这表示核查尚不完整，不表示不存在先例。需要进一步阅读全文和实现强基线。
-
-本清单不是穷尽的新颖性检索。滤波边界公式、形状导数和抗锯齿误差也需要对照图像处理及可微渲染文献，不能因未发现同名 mesh 算法就声称首创。
-
-部署资料（接口与硬件约束，不代表本机性能）：
-
-- [AMD FSR temporal upscaling](https://gpuopen.com/manuals/fidelityfx_sdk/techniques/super-resolution-temporal/)
-- [Intel XeSS](https://www.intel.com/content/www/us/en/developer/topic-technology/gamedev/xess.html)
-- [NVIDIA DLSS](https://developer.nvidia.com/rtx/dlss)
-- [Arm ASR](https://github.com/arm/accuracy-super-resolution-generic-library)
-
-TAA 主要用于同分辨率抗锯齿，TAAU 才同时承担时域上采样；FSR2/3 的时域上采样与插帧应分别评价。XeSS 存在非 XMX 路径，但硬件支持不等于在 Iris Xe 上有时间收益。三角形 ID 改变本身并不使时域算法失效，真正需要核查的是表面对应、深度可见性和历史置信度。
-
-### 2026-11-16 文献复核后的候选判断
-
-新增原始来源审查后，当前宽泛方案的重叠比原计划写得更直接：
-
-- Lindstrom–Turk 2000 已经对每条 edge collapse 计算原图与候选图的多视图像素误差，并用 object buffer 或只重绘局部区域来更新结果。Pfeiffer 2001 的硕士论文摘要也明确提出只生成和考虑边附近的图像数据，无需完整模型渲染。因此滤波边界代理若只替换局部图像误差、而没有显著降低同质量总成本，不够支撑新颖贡献。
-- SIGGRAPH 2026 的 quad-dominant reduction 已有全局 ILP edge-selection；2026 clustered-HLOD 已允许边界 progressive simplification 并约束相邻节点一致。前者不等于视图相关滤波目标，后者的出版商全文仍不可用，但分别封住了“全局选边新范式”和“cluster boundary 渐进简化”这两类宽泛说法。
-- 目前 `rho_sigma(d)` 只是特定高斯滤波阶跃变化的闭式，且薄带实验没有证明对通用网格、复杂可见性或生产 shading 的准确性/成本优势；闭式本身不能作为原创算法证据。
-
-**决策：**继续把该路线视为待验证研究假设，不提升为 SIGGRAPH 主贡献。若继续实现，下一项实验必须在同一冻结真实候选集上比较（a）现有 Corner/QEM、（b）完整局部参考重绘、（c）解析滤波代理，并计入特征提取、验证、缓存、撤销和完整构建成本；需要证明代理在明显低于局部重绘成本时仍能预测并选择出更好的操作。若成本门或未见资产质量门任一失败，就停止该代理路线，不以接入动态层次或超分挽救结论。
-
-### 2026-11-16 differentiable/topological derivative prior-art correction
-
-进一步核对了三项直接相邻的原始工作：[EdgeGrad, ECCV 2024](https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/11059.pdf) 已计算包含遮挡/显露与几何相交的栅格图像损失梯度；[A Theory of Topological Derivatives for Inverse Rendering of Geometry, ICCV 2023](https://openaccess.thecvf.com/content/ICCV2023/papers/Mehta_A_Theory_of_Topological_Derivatives_for_Inverse_Rendering_of_Geometry_ICCV2023_paper.pdf) 已用 level set 的拓扑导数处理孔洞/区域的图像驱动增删；[DiffSoup, CVPR 2026](https://openaccess.thecvf.com/content/CVPR2026/papers/Tojo_DiffSoup_Direct_Differentiable_Rasterization_of_Triangle_Soup_for_Extreme_Radiance_CVPR_2026_paper.pdf) 已从多视图图像优化 opaque triangle soup，并按投影边长拆分、按多视图像素覆盖率剪除三角形以满足数量预算。
-
-这些工作没有解决同一个约束问题：给定 ManyMesh 的源网格，在保持连通性、属性边界和合法 edge-collapse 的前提下，以低于逐候选局部重绘的总成本选择有限折叠。因此候选边界可以写成：把栅格微分与折叠路径上消失三角形的修正结合，估计“有限合法 edge-collapse”的图像损失变化。不过这只是尚未证伪的组合设想；现有方法分别已有可微栅格、拓扑变化和图像引导的三角形预算，拼接它们不构成新颖性证据。
-
-实现前的杀伤实验应冻结至少两张真实网格上的完整合法候选池，对比 QEM/Corner、精确局部重绘、共享一次栅格反传得到的 EdgeGrad 一阶排序、以及对折叠路径积分并补偿消失面的排序。报告完整候选池排序、选中折叠的精确滤波 RGB/coverage/depth 变化、匹配实际面数的累计误差、栅格/微分调用次数及总成本，并覆盖遮挡变化、亚像素结构、属性缝和消失面主导图像支撑的案例。如果路径积分要接近每候选一次重绘、对采样相位不稳，或质量/成本前沿不胜精确局部重绘与图像驱动基线，就停止该路线。当前没有该算法、实验结果或 SIGGRAPH 贡献结论。
-
-仓库现有 `out/filter-real-candidates/` 和 `CornerCandidateCapture` 不能直接充当该完整候选池：捕获接口只记录初始状态中每条有向边当前最佳合法 placement，不列举所有放置，也不会在已接受操作后再生候选；新接口测试只有语法检查记录，尚无执行结果。下一个实验前需实现/验证候选捕获契约并产生同一来源、同一质量门绑定的数据，不能把旧固定池回放表述为完整顺序简化。
+Existing `out/filter-real-candidates/` and `CornerCandidateCapture` are not full
+candidate pools: capture records only the currently best legal placement per directed
+edge in the initial state, neither all placements nor candidates regenerated after
+accepted edits. New capture-interface tests had only syntax-check records, not
+execution results. Verify that contract and bind captures to source/gate versions
+before the next experiment. Fixed-pool replay is not full sequential simplification.

@@ -1,700 +1,173 @@
-# ManyMesh：SIGGRAPH 研究推进账本
+# ManyMesh: SIGGRAPH Research Roadmap
 
-更新：2026-11-17。目标是 SIGGRAPH 2027 投稿级新算法，不以堆叠工程功能代替算法贡献，不承诺录用。
+Some older references are listed as repository paths. Their supporting files
+were retained in development archives.
 
-### 2026-11-16 原始论文核查：全局减面、局部图像代价与动态边界
+Updated 2026-11-23. The SIGGRAPH-level goal is **not achieved**. No candidate has yet shown both a defensible novelty boundary and repeatable quality/performance gains over strong baselines. SIGGRAPH 2027 lists the Technical Papers deadline as 28 January 2027 at 22:00 UTC; its English Review Service recommends submission by 5 January. See the submission plan and stop gates (`SIGGRAPH_2027_SUBMISSION_PLAN.md`). This page is an English research index; dated reports retain experiment protocols, numbers, failures, and limitations.
 
-新增三项会收紧当前候选新颖性边界的原始来源核查：
+The earlier cone-weighted selector proposal is not the active research thesis. Its silhouette-profile and guide screens did not pass the measured quality/cost gates, and silhouette-aware view-dependent refinement is established prior art. The current candidate question is narrower: can appearance-driven optimization improve a constrained cluster DAG when evaluated after AA/upscaling? Differentiable mesh/LOD optimization, image-space geometry/appearance fitting, appearance-preserving scene aggregation, neural cross-LOD prefiltering, learnable topology reduction and local adaptive refinement, visual-guided adaptive μ-mesh LOD, joint mesh/shader LOD, adaptive triangle topology with scale-aware residual filtering (T²-Splat), sampling-aware 3DGS LOD and jointly optimized HLoD, view-dependent silhouette simplification, foveated fixed-budget mesh selection, perceptual transitions, and crack-free clustered boundaries are established. Quick-VDR (2004) already combines a cluster hierarchy with per-cluster progressive meshes and dependency-constrained, crack-free view-dependent cuts; the paper also documents popping and conservative refinement caused by dependencies. HLOD ASAP is a closer recent precedent for progressive boundary simplification while preserving neighboring-cut consistency. Shared boundaries or legal mixed cuts alone are not a novelty claim. The candidate remains untested and must beat boundary-aware HLOD controls at matched complete cost. The first geometry-placement gate is a matched-budget nvdiffmodeling replication, which cannot run on this Iris Xe-only host. See the expanded prior-art review and falsification plan (`MANYMESH_UPSCALER_AWARE_DAG_RESEARCH.md`). The old contour proposal (`MANYMESH_CONTOUR_BUDGET_RESEARCH.md`) and [gate](MANYMESH_NEXT_EXPERIMENT_GATE.md) remain as documented exploratory work, not an approved result.
 
-- Luo 等人的 SIGGRAPH 2026 论文原文把 quad-dominant 减面写成全局 ILP 边选择，并联合 edge-flow 拓扑约束与 QEM 派生的几何约束。求解时限为 180 秒，论文明确说时限内不保证最优。这直接占据“首次把减面变成全局离散 edge-selection 优化”的宽泛主张；但论文目标是保留 quad 布局，不是任意三角网格的视图相关滤波图像误差或每帧局部几何更新。来源：[作者论文 PDF](https://roy-zzz08.github.io/assets/pdf/Quad.pdf)。
-- Ladeuil 等人的 2026 clustered-HLOD 原始出版商页面摘要确认：每个节点把内部 progressive mesh 与按邻居一一对应的边界 progressive portions 组合，允许分层简化边界，并保持相邻视图相关 cut 无裂缝。出版商全文内容目前不可取，因此仅据摘要确认这项边界能力；不声称完成了所有实现与指标的逐项比较。来源：[Computer Graphics Forum 论文页](https://onlinelibrary.wiley.com/doi/10.1111/cgf.70380)。
-- Lindstrom 与 Turk 的 SIGGRAPH/TOG 2000 正文已逐候选比较折叠前后图像差异，并用 object buffer 或硬件局部重绘更新受影响区域；Pfeiffer 2001 硕士论文摘要进一步明确只用局部图像数据估折叠成本、不渲染完整模型。于是“图像驱动 edge collapse”“只重绘局部”“增量更新”均不能作为首次主张。来源：[Image-Driven Simplification 原文](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf)、[Pfeiffer 论文馆藏页](https://www.cs.uoregon.edu/frames/reports.php?report=MS-200106-Pfeiffer)。
-- 继续追查“跨多个目标预算联合求全局嵌套层次”后，发现 Balmelli、Vetterli 与 Liebling 已对 subdivision-connectivity 网格用 global rate-distortion / tree-pruning 产生 multiresolution hierarchy；Progressive Mesh 更早已用可逆折叠序列表示连续分辨率。因此“把多个目标面数放进一个优化”仍需要具体新机制和强实验证据，不能单凭单层 ILP 扩成层次就当论文空白。来源：[Balmelli et al., Graphical Models 2002](https://www.sciencedirect.com/science/article/pii/S1524070302905783)、[Progressive Meshes 原文](https://hhoppe.com/proj/pm/)。
+The FSR1/TAA-upscaling harness change has now compiled and linked in the existing Windows Vulkan Release tree. The full dependency build was blocked when Windows Application Control refused to run shader/resource generators; direct launch of `mm_bench.exe --help` was blocked as well. There are no runtime or image measurements from these options. See the build record (`tools/mmtrain/RENDER_HARNESS_BUILD_20261123.md`).
 
-这次核查不证明上述工作与我们的所有实现细节等价；它证明目前不能把滤波误差、局部候选渲染、渐进边界或全局选边单独包装成 SIGGRAPH 创新。当前滤波边界公式只是固定一维模型中的解析损失，通用 mesh 上的预测精度、局部事件鲁棒性和端到端收益仍没有通过 Gate B/C。研究主线继续保持未通过状态，不把论文发表与“没有人做过”混为已证事实。
+## Current direction
 
-### 2026-11-15 shared-BVH local proxies: little measured headroom
+One direct triangle-mesh precedent must be included in any hierarchy comparison: Zhang and Chen (2013) combine a coarse cluster hierarchy with per-cluster progressive vertex hierarchies and GPU-parallel view-dependent updates. This closes generic claims around dual hierarchies and fine-grained within-cluster refinement. Their objective is projected geometric error and rendering efficiency, not image optimization after AA/upscaling; that difference remains only a research question, not a novelty result. See the full-paper review (`MANYMESH_UPSCALER_AWARE_DAG_RESEARCH.md`).
 
-完成复用原精细BVH遍历的局部补片对照：在原树的32/64/128面容量完整cut上做锁定有向边界、限制顶点留在原节点盒内的经典QEM，满足源/粗面同向锥与有限线段跨度条件时直接查询局部粗补片。原树/三角形核/原始射线集合不变；关闭补片后的结果与操作计数严格等于原查询。独立重载核验1737份减面补片几何和258048次精细/实际/理想查询。五项针对性测试通过，含有限线段反例、同一标量类型缓存、边界/空间包含和关闭融合等价性。
+Perceptual LOD allocation also has direct prior art. A 2026 VR mesh study collected user ratings for 320 stimuli across eight animated meshes and found that common image- and geometry-based metrics correlated only modestly with MOS under its protocol. Its QoE model used a random stimulus split, so it does not establish unseen-asset transfer. A Web3D 2026 paper then used QoE prediction for LOD allocation under GPU-memory budgets. These are not post-AA cluster-DAG geometry optimization, but they rule out claiming QoE-aware allocation itself as new. For ManyMesh, keep technical metrics distinct from user preference and require asset-held-out validation before calling a score perceptual. See the full prior-art notes and source-access limits (`MANYMESH_UPSCALER_AWARE_DAG_RESEARCH.md`).
 
-在盒测试=1、三角形=2、判据免费的局部理想对照下，Torus最佳只省1.00%，Monkey3.33%，Pirate0.113%；实际再计锥测试后未建立有用收益。敏感性模型部分Monkey配置可小省约0.9%，不能说所有正操作成本都支配它；数据仅表明当前固定cut+合取锥方案空间很小。数值数组负载1.00–1.52倍源参考，非RSS/GPU内存。初轮混用缓存标量类型已中断并标作无效；v2墙钟阶段变化又导致独立中位数比虚假放大，已统一类型并对全部九档追加五对CPU/墙钟重测。重测无可靠提速，原始比中位数数字不得用于性能宣称。完整说明见[共享遍历补片成本门](tools/mmgeo/FUSED_PATCH_VISIBILITY_COST_GATE.md)。
+The tested per-cluster latent/residual decoder ran once on the CPU during asset loading. Its rank-8/16/30 shared polynomial linear-subspace controls are closed: none beat same-face validation baselines, and higher ranks increased storage and decoding failures. A validation-only latent-scale probe also found every nonzero scale worse on four paired assets and topology/offset rejection on a fifth. Direct prior art further narrows this branch: render-space mesh simplification is established; NeCGS already compresses large geometry sets with shared decoder weights and per-model latents; Neural Progressive Meshes use per-face progressive residual features; and a local learned-refinement paper is deferred to SIGGRAPH 2027. See the updated prior-art comparison (`MANYMESH_CLUSTER_DECODER_STUDY.md`), [research status](MANYMESH.md), same-face comparison (`tools/mmtrain/CLUSTER_DECODER_MESHOPT_20261122.md`), rank sweep (`tools/mmtrain/CLUSTER_DECODER_RANK_SWEEP_20261122.md`), and scale probe (`tools/mmtrain/CLUSTER_DECODER_SCALE_PROBE_20261122.md`).
 
-另核验一个更弱但属标准绕数推理的非对称条件：粗面投影同向即可证明“粗命中⇒精命中”；精面同向即可证明“粗未命中⇒精未命中”，反向不成立。相同边界的折叠四面扇与平面两面盖有980个有理数检查点：201个粗命中均为精命中，另45个粗未命中却精命中。冻结补片20844个视图对新增308个潜在命中证书对/1422个未命中证书对，未按真实访问/结果/成本加权，也未实现非对称运行查询，不能当算法收益或新定理。关闭继续调当前合取锥固定cut方案；非对称判据仍须先过相关工作与付费查询成本门。新增原始来源明确已有BVH内节点LOD替代（GPUOpen2022及更早RLOD）、神经/经典BVH查询混合（SIGGRAPH2024 N-BVH）、光照与阴影轮廓引导减面（CGF2020）。SIGGRAPH贡献仍未建立。
+A dynamic LOD screen on 13 reused Khronos assets found that a per-asset profile's PSNR gain fell from +0.258 dB to +0.083 dB (95% asset-bootstrap CI [-0.019, +0.190]) under shared-profile leave-one-asset-out evaluation. SSIM is inconclusive and silhouette IoU significantly declines. A four-path follow-up found 3.8% lower foreground temporal finite-difference MAE for the shared profile (delta -0.000942, 95% asset-bootstrap CI [-0.001434, -0.000488]) and 2.08 fewer switch-bearing transitions per 48-frame path. This pixel diagnostic is not flow-compensated or perceptually calibrated and does not rescue the formulation. Cost-benefit LOD allocation and hysteresis have prior art; independent confirmation is also absent. See the per-asset screen (`tools/mmtrain/DYNAMIC_LOD_13ASSET_20261122.md`), leave-one-asset-out screen (`tools/mmtrain/DYNAMIC_LOD_LOAO_13ASSET_20261122.md`), and temporal diagnostic (`tools/mmtrain/DYNAMIC_LOD_TEMPORAL_DIAGNOSTIC_20261122.md`).
 
-### 2026-11-15 compact support query: full cost fails all nine cases
+A silhouette-XOR training-objective follow-up selected the area ranker on all thirteen leave-one-asset-out folds. This means the measured framewise and temporal deltas are exactly zero: the altered objective did not change the policy. Treat this as a negative result for that profile configuration, not evidence for silhouette-aware geometry. See the screen and raw receipts (`tools/mmtrain/DYNAMIC_LOD_SILHOUETTE_OBJECTIVE_20261122.md`) and temporal diagnostic (`tools/mmtrain/DYNAMIC_LOD_SILHOUETTE_TEMPORAL_20261122.md`).
 
-将展开历史包络压缩为每折叠一个3D盒与圆形法线锥，构建12-bin SAH支持BVH；精确原网格、粗网格和混合路径共享同一相交核/构建器/叶大小。加入有限线段跨越整个历史盒的门，回查时复用已测原网格根盒，逐射线核对所有选择/支持/粗精查询的收费。三个资产九档各12288条固定分层均匀射线，原/粗相交结果均等于独立旧光栅目标；另外全部29321个归档差异原子均触发正确精确回退或确定原网格未命中。四项新针对性测试通过；独立程序重载序列化树/射线，331776次查询的结果和操作计数完全重现。
+The source audit also confirms the current sidecar does not provide independent cluster decoding: the decoder reads all latents and rebuilds the whole mesh. Treat cluster-indexed storage as a data-layout choice until a partial-decode implementation and matched-cost result establish a real capability. Do not use it as the novelty boundary. Details are in the decoder implementation audit (`MANYMESH_CLUSTER_DECODER_STUDY.md`).
 
-九档全部在包围盒、三角形、法线锥三类测试数上被直接原网格查询支配：盒测试1.56–2.35倍，三角形测试也略多，另增锥测试；在每类给定正常量成本的模型下均无收益。带计数的Python查询耗时1.61–2.38倍；不是GPU测量。数值运行数组总负载仍为原网格参考1.73–1.92倍，非进程RSS/GPU内存。即使当前分类器免费，在盒:三角形=1:2的假设权重下最好只省1.69%；知道所有隐藏结果及查询成本的完美免费选择器还可省8.48–16.24%，说明不能外推成所有融合遍历/新表示都不可能。
+The dynamic-LOD renderer now exports lossless FFV1 sequences with exact pixel round-trip checks. A CGVQM-5 screen on two paths across the 13 reused Khronos assets found a path-averaged selected-profile minus area mean of -0.0590 (95% asset-bootstrap CI [-0.1476, +0.0424]); four assets improved and nine regressed. The adapter used OpenCV FFmpeg decoding, not upstream PyAV. The interval crosses zero and does not establish a temporal-quality gain; the dynamic-profile formulation remains closed. See the CGVQM screen (`tools/mmmetrics/CGVQM_DYNAMIC_LOD_SCREEN_20261122.md`), temporal diagnostic (`tools/mmtrain/DYNAMIC_LOD_TEMPORAL_DIAGNOSTIC_20261122.md`), and protocol (`tools/mmmetrics/TEMPORAL_QUALITY_PROTOCOL.md`).
 
-关闭当前“独立支持BVH+粗/精两套BVH”原型，不继续在同三资产上调锥和叶大小追收益。新增直接先例：I3D2001 Spatialized Normal Cone Hierarchies已有空间界+法线锥；SIGGRAPH2000 Silhouette Clipping已有progressive hull+anchored-cone边层次+精确轮廓裁剪粗渲染。因此通用法线锥层次、精确轮廓修正均不能作为新贡献。完整成本表、理想对照、限制与复现见[紧凑可见性查询成本门](tools/mmgeo/VISIBILITY_QUERY_BVH_COST_GATE.md)。总体SIGGRAPH新机制与端到端收益尚未建立，目标仍未完成。
+The existing 32-asset corpus uses a 16/8/8 train/validation/test split; the decoder held-out test split remains unused. On five of eight validation assets, meshoptimizer beats QEM at the same face count across image metrics; all eight source STLs pass topology, but three QEM coarse outputs fail the topology gate. The rank-8 fixed decoder leaves meshoptimizer unchanged, and its local refinement loses to meshoptimizer simplified directly from the source at the same final face count on four paired validation assets. These results close the tested configurations, not learned geometry decoding in general. See the comparison report (`tools/mmtrain/CLUSTER_DECODER_MESHOPT_20261122.md`), QEM failure audit (`tools/mmtrain/cluster_decoder_validation_failure_audit_20261122.json`), and its receipts (`tools/mmtrain/cluster_decoder_meshopt_screen_20261122.json`), refinement receipt (`tools/mmtrain/cluster_decoder_refine_budget_20261122.json`).
 
-### 2026-11-15 edit-derived coverage support: measured reduction, runtime still open
+A separate 70%-retention baseline sweep now covers all eight validation assets with 12 rendered views per asset. It reports PSNR, SSIM, FLIP, silhouette, and sampled surface metrics; effect directions are mixed, and one meshoptimizer output fails topology. See the full report (`tools/mmtrain/CLUSTER_DECODER_BASELINE_70PCT_VALIDATION_20261122.md`) and per-view receipt (`tools/mmtrain/cluster_decoder_qem_meshopt_validation_70pct_20261122.json`).
 
-重放三个归档资产的8184次既有折叠，所有九档输出顶点/三角形与原NPZ逐项精确一致；验证局部有向边界链保持不变，再用折叠前后所有面法线同向条件排除不改变平行线覆盖的操作。比较全历史四点包络盒、首尾网格改动面盒、方向筛选包络盒；108组覆盖差异计数重现旧记录，保存掩码后由独立程序重建324组混合覆盖，47775744个原子全部等于原网格，有限网格无漏检。七项针对性测试通过，包含独立投影并集检查和有限线段反例；不能外推为稳健浮点、深度/着色或任意阴影线段保证。
+The upstream cluster LOD screen (`tools/mmtrain/UPSTREAM_CLUSTERLOD_SCREEN_20261122.md`) compares the unmodified meshoptimizer v1.2 hierarchy against whole-mesh QEM. Across six valid exact-face pairs at its first coarser depth, it improves PSNR by 3.60 dB. The fixed-default current-source audit found no valid exact-face pair. A later fixed 48-build parameter grid found two legal exact-face pairs across two reused validation assets; both lost to stock on the reported image metrics. The saved-graph oracle and 44-cut reranking remain historical evidence: legal cuts improve geometric selection on two assets but still lose to stock on all five feasible assets. See the parameter sweep (`tools/mmtrain/CURRENT_SOURCE_CLUSTERLOD_PARAMETER_SWEEP_20261123.md`), fixed-default audit (`tools/mmtrain/CURRENT_SOURCE_CLUSTERLOD_AUDIT_20261123.md`), cut audit (`tools/mmgeo/HISTORICAL_CUT_TOPOLOGY_AUDIT_20261122.md`), and reranking screen (`tools/mmgeo/SAVED_CUT_VIEW_RERANK_20261122.md`).
 
-半面数时，在源投影矩形内的回查比例，Torus全历史83.84%→筛选36.83%，Monkey43.91%→5.87%，Pirate42.37%→34.43%。但Pirate约四分之一面数仍须回查97.25%的原网格命中射线；单纯历史盒几乎不优于首尾改动面盒。当前展开包络顶点数据在半面数已约为原捕获索引网格的6倍，且未计法线/加速结构，故回查比例不能当提速。法线锥/merge hierarchy轮廓筛选在TVCG1997已有，envelope在SIGGRAPH1996已有；尚未建立组合的原创性。保留方向筛选后的具体支持范围，下一门是相同相交核下计入支持查询、代理、条件性精确查询、存储和构建的总成本；不把掩码免费查表当运行算法。详见[实验、理论范围、图表与复现](tools/mmgeo/EDIT_VISIBILITY_SUPPORT_PREFLIGHT.md)。SIGGRAPH总目标仍未完成。
+Rendered reranking (`tools/mmgeo/SAVED_CUT_VIEW_RERANK_20261122.md`) scores 44 legal cuts under those same caps. Fit-view selection improves held-out LDR-FLIP on two assets. The best measured alternative for each of the five feasible assets still loses to upstream.
 
-### 2026-11-15 unbiased visibility proxy: direct prior art and image cost gate
+The eight-asset geometry codec screen (`tools/mmtrain/GEOMETRY_CODEC_RATE_DISTORTION_20261122.md`) adds Draco and meshoptimizer rate-distortion baselines for full and simplified geometry. It counts headers and streams, renders decoded geometry, and explicitly gates results on topology checks.
 
-查明EGSR2014已提出几何代理+随机精确/纠偏查询的无偏可见性估计，并分析方差、采样概率和成本；SIGGRAPH Asia2024公式29及33–35亦已有方差乘执行时间的优化目标。因此这两句通用主张均不能作为原创贡献。新增独立成本门槛脚本，对三个归档资产、九个既有QEM输出重绘108组图像，15925248个成对覆盖采样均与旧记录的差异计数一致，输入/输出网格及评估源码哈希绑定。六项针对性测试通过，含逐像素有理数枚举以排除把像素间均值变化当成图像噪声的错误。
+The Draco grid origin experiment (`tools/mmtrain/QUANTIZATION_GRID_ORIGIN_20261122.md`) tests whether shifting a uniform grid reduces byte cost while preserving the source face structure. On the eight validation meshes the significant byte reductions each accompany worse LDR-FLIP. The tested grid search is closed.
 
-对固定概率Bernoulli残差纠偏，逐像素box覆盖率目标下Torus/Pirate约四分之一面数的q/V为1.7944/1.4757，即使代理查询趋于免费也不能有严格收益；约一半面数须代理查询成本低于原网格的19.62%/19.72%，尚未计构建/探测等开销。Monkey三档成本上限94.15%/77.07%/46.26%，仅表示该有限模型中可能可行，未测硬件成本，不能把面数比当查询成本比。面积积分会给出过于宽松的结论，故仅作分离对照。详情与完整九档数据见[代理可见性成本筛查](tools/mmgeo/PROXY_VISIBILITY_COST_GATE.md)。当前没有超越既有无偏代理方法的几何构造机制，不据此接入路径追踪器；SIGGRAPH新算法目标仍未完成。
+The same protocol also covers the 16 training assets as a separate development screen. One QEM result is rejected; only 10/15 paired meshoptimizer outputs pass strict topology and boundary checks. The image-metric gains in this split are descriptive only and do not count as held-out evidence. See the training report (`tools/mmtrain/CLUSTER_DECODER_BASELINE_70PCT_TRAIN_20261122.md`) and receipt (`tools/mmtrain/cluster_decoder_qem_meshopt_train_70pct_20261122.json`).
 
-### 2026-11-15 mixed-cut ReSTIR opening downgraded
+A lower 50%-retention screen checked whether the historical Monkey silhouette-error fraction generalizes. With binary coverage XOR attribution, contour-mismatch pixels explain 27%-37% of squared image error on average, not the historical 68.3%; the result varies by model, simplifier and budget. Aggressive reduction also increases topology rejections. See the attribution report (`tools/mmtrain/SILHOUETTE_ERROR_ATTRIBUTION_20261122.md`) and the split-specific receipts (`tools/mmtrain/cluster_decoder_qem_meshopt_validation_50pct_20261122.json`), train (`tools/mmtrain/cluster_decoder_qem_meshopt_train_50pct_20261122.json`).
 
-回查ReSTIR-LoD2026全文发现：作者明确说公式不要求每对象每帧只有一个LOD，该限制仅在实现中；正文也已有部分双射与面积Jacobian。此前据per-ray未来工作推测需要新估计器的依据不足。新增有理数精确枚举控制，完整映射/部分映射在标准面积与支持域权重下期望均为49；故意忽略Jacobian为69.5，固定一半混合权重为34。它只验证给定有限映射，不含真实射线选择/BSDF/可见性/路径重连，不能替代路径追踪实验。三项针对性测试通过。详见[混合LOD测度筛查](tools/mmgeo/RESTIR_MIXED_LOD_MEASURE_SCREEN.md)。
+A three-asset, 16-instance Iris Xe screen adds 4x MSAA and half-resolution upscaling baselines at 1080p. A selected 20%-face ToyCar cut plus MSAA reaches 30.914 dB / 0.981750 SSIM at 0.956 ms median GPU time: about 3.15x faster than full-source native rendering at 1.77 dB lower PSNR, and 3.29x faster than full-source linear upscaling at 1.39 dB higher PSNR. Other assets have different quality-cost rankings. This is offscreen, fixed-view desktop data only; see the 1080p GPU report (`tools/mmtrain/CLUSTER_DECODER_GPU_MSAA_1080_BASELINE_20261122.md`) and 720p repeat (`tools/mmtrain/CLUSTER_DECODER_GPU_MSAA_BASELINE_20261122.md`).
 
-因此下调通用混合cut/per-ray映射加权作为活跃创新候选，不因参考实现限制就新建GPU路径追踪器。重开须给出明确目标积分、已有公式无法直接处理的具体选择器/映射，以及超越已有GRIS/MIS、兼容性选择和ReSTIR-LoD的质量—总成本结果。当前几何计数修复与通用ReSTIR映射两条线均未建立SIGGRAPH贡献；整体目标仍未完成。
+The 13-asset SMAA follow-up (`tools/mmtrain/GPU_SMAA_SILHOUETTE_BAND_SCREEN_20261122.md`) uses the Bevy port and an independent supersampled reference. Full-source SMAA has higher LDR-FLIP than MSAA on all assets. A perfect correction in a two-pixel coarse-outline band covers 3.43% of pixels and removes 71.0% of squared error on average. It adds three assets to the set that outperform existing measured controls at the cut's GPU budget, before correction cost.
 
-### 2026-11-15 seam-contract merge control completed
+The [half-resolution guide follow-up](tools/mmtrain/SILHOUETTE_GUIDE_FUSION_20261122.md) renders full source geometry at half resolution alongside a native-size component cut. Detail recovery lowers LDR-FLIP on 8/13 assets versus the cut alone, with a mean 1.358 ms GPU cost increase. Both fusion variants are dominated by an eligible control across LDR-FLIP, PSNR, and SSIM on every asset. Close the two tested variants.
 
-将生产已有的共享位置保留/禁止新锁定点弦边契约加入独立Python参考，重新从冻结源几何构建1054个单组基线和2542个相邻组合。原进程与独立校验均退出0；校验3596份最终几何的对外共享mask、锁定点、边界与弦边契约，以及策略收费和拼接结果。36/36组合通过拼接拓扑检查，修复了旧对照的4项失败；不保证无自交或属性/画质。五项针对性测试通过。新基线788/10608/3298面；满源工作上限下普通共享边得到608/8290/2516面，预知收益贪心606/8250/2454面，额外仅2/40/62面。全反事实表前置成本581.52秒Python测量与135035工作单位，不能只计选中项成本。详情见[带接缝契约的合并对照](tools/mmgeo/SEAM_CONTRACT_MERGE_CONTROL.md)。
+The cached sparse native-resolution guide (`tools/mmtrain/SPARSE_SILHOUETTE_GUIDE_SCREEN_20261122.md`) retains 51.2% of source triangles on average and exactly reproduces the full guide within the outline band. Even with its fixed-view preparation amortized, it extends the measured FLIP frontier on 2/13 assets and misses the frozen gate. Close this cached two-pass configuration.
 
-该参考按每次折叠约束弦边，比生产最终候选门可能更强，仍非完整Corner复现。关闭当前仅预测几何面数的双组修复原型，不在同三资产上调评分追涨；它没有建立投稿级新机制。相关工作还新增PaMO2025（独立区域、全局相交检查、反复撤销）及并行边界一致专利先例，通用安全并行编辑不能填补创新缺口。总体SIGGRAPH目标保持未完成。
+The million-triangle mixed-scene benchmark (`tools/mmtrain/MIXED_SCENE_BASELINES_20261122.md`) adds shared depth, distinct meshes, and two pinned meshoptimizer cluster cuts. Stock depth 2 with 4× MSAA beats the supplied QEM and component cuts on GPU p50 and FLIP in all nine views. The layout control (`tools/mmtrain/MIXED_SCENE_LAYOUT_CONTROL_20261122.md`) reverses the speed ranking on all views after applying common cache and fetch optimization, while depth 2 retains its quality advantage. Use both points in future baselines. The cuts submit different face counts, and stock depth 2 introduces nonmanifold edges on three meshes whose source exports had none.
 
-### 2026-11-15 exhaustive adjacent-merge screen completed
+The matched face-budget screen (`tools/mmtrain/MIXED_SCENE_FACE_BUDGETS_20261122.md`) keeps equal full-source fallbacks for ineligible assets. Stock has lower FLIP and higher PSNR/SSIM on all nine views at exact counts, within one face per asset, and in an edge-clean subset. Its exact-cohort paired medians are −0.00252 FLIP, +2.81 dB and +0.050 ms. Recomputing stock normals reduces its quality lead while keeping it ahead of QEM. Sampled surface distance is mixed. The same run remeasures optimized SMAA and both upscalers.
 
-固定32面BFS分区，对Torus/Monkey/Pirate全部138/1903/501个相邻同材质分区对执行强参考QEM，共2542个反事实；原进程及汇总校验退出0。比较分区编号、共享边、归一化共享顶点和预知收益贪心，在额外源三角形工作上限0.25/0.5/1.0倍下模拟查询与不相交合并，失败查询也收费。完整表花费135035源三角形工作单位、约249.21秒Python测量；预知收益不能隐去该前置成本。在满源工作上限下，普通共享边评分的Torus/Monkey输出562/7580面，预知收益贪心560/7550面，差仅2/30面。上游meshoptimizer已用归一化共享顶点评分，接触评分本身不是创新。
+The whole-asset LOD allocation screen (`tools/mmtrain/MIXED_SCENE_LOD_ALLOCATION_20261122.md`) exhaustively scores 384 screened stock-depth assignments. Area allocation beats all GPU-time-eligible uniform controls in 9/9 views at each of three face caps. A profile fit on the other two scene views improves on area in only three view–cap pairs across 27, with zero median gain at the main cap. Close this fitted profile. Keep area selection with its archived coverage as a development comparator.
 
-36个策略/预算组合中4个拼接拓扑失败，均因来自不同合并块的新重复面，不能作为有效减面收益。它们只有Monkey/Pirate两个不同几何模式；生产`respectsLockedMask()`已有禁止新锁定点弦边的防护，本Python对照尚未完整复现共享seam契约，不能将失败作为新机制或生产缺陷。全量反事实几何、工作收费、失败/负收益计数、全表与源码先例见[相邻分组合并筛查](tools/mmgeo/ADJACENT_MERGE_COUNTERFACTUAL.md)。三项针对性测试通过。该筛查仍未支持投稿级修复收益预测机制；总体SIGGRAPH目标未完成。
+The per-instance comparison (`tools/mmtrain/MIXED_SCENE_INSTANCE_LOD_20261122.md`) finds a small positive static result for bounding-rectangle greedy allocation. It improves FLIP over whole-asset area in 9/9 views at the same triangle ceiling, using a median 102,125 more triangles. The completed [48-frame moving-camera follow-up](tools/mmtrain/DYNAMIC_INSTANCE_LOD_MOVING_20261123.md) found that instance-area improves image metrics only while using 2.8–12.3% more faces and 12.4–15.2% more GPU time. Under a per-frame matched face cap, the instance oracle is unchanged on two scenes and slightly better on one, but costs 2.00–5.13 ms GPU and 1.25–8.68 ms CPU selection time. This does not establish a practical equal-cost or independent result; keep it as a development control, not a contribution candidate.
 
-### 2026-11-15 stronger fixed-target control completed
+Do not change the production format or rendering API until a frozen method improves the held-out quality/cost Pareto frontier over strong deterministic baselines, with topology and boundary constraints satisfied. A fresh licensed confirmation set is required for a publication claim. No mobile-device result or user study exists.
 
-新增独立经典QEM对照，允许内部点折叠到原位固定的边界目标；原参考实现和旧实验不变。三个归档资产、15组冻结分区全部完成，原进程及独立重放均退出0。逐步重放34425次折叠，边界边集/顶点位置、最终几何、面覆盖与计数均核对。三项针对性测试覆盖固定目标、边界不可删/不可移和目标ID大于删除ID。Torus32/64与Monkey32恰好达到计数下界714/536/9634；Torus128仅高2面，证明旧对照部分停滞来自端点规则，不需层次修复。各组面数无退化，但没有原始属性/画质/生产门或端到端性能结论。详见[固定边界目标对照](tools/mmgeo/FIXED_BOUNDARY_QEM_CONTROL.md)。
+The prior-art screen has been expanded to 2025-2026 work on learned local refinement, split-and-rewire mesh generation, crack-free clustered HLOD boundaries, and GPU out-of-core rendering. These works further constrain possible novelty; see the decoder study's updated prior-art table (`MANYMESH_CLUSTER_DECODER_STUDY.md`). No active method is presently supported by both a novelty gap and positive held-out results.
 
-因此关闭“拓扑下界评分+放宽旧参考端点规则”作为独立创新路线。后续修复策略必须在完整质量门与相同总构建成本下，超越这条强对照、生产Corner以及盲目/贪心修复；目前没有该证据，SIGGRAPH贡献仍未建立。
+## Closed or unproven branches
 
-### 2026-11-15 frozen partitions: actual QEM exhaustion completed
+- **Visibility proxies and shared traversal:** measured variants did not establish end-to-end gains over direct fine-mesh queries. Keep exactness checks distinct from a performance claim.
+- **Partition repair and adjacent merges:** stronger controls and complete-work accounting left little or no robust improvement; these formulations are not current contribution candidates.
+- **Image-filtered edge edits and camera-path scoring:** exact kernels and local checks exist, but quality advantage, total build cost, and novelty over prior image-driven simplification have not passed the gate. EdgeGrad already provides raster-loss gradients at mesh visibility edges; DiffSoup reconstructs budgeted triangle soups from multiview images. A rendered follow-up across four development units found mixed PSNR/SSIM/FLIP changes with asset-bootstrap intervals spanning zero, while construction took 4.5–15.1x QEM time (report (`tools/mmgeo/PATH_LOSS_RENDER_QUALITY_20261122.md`)). On Torus, allowing newly created edges improved the fitted view but increased held-out 13-view filtered error 65.68x at a 1.39% face reduction ([matched controls](tools/mmgeo/DYNAMIC_RECAPTURE_FULLPOOL_AUDIT_20261116.md)). The 4% Monkey cache replication also remains 3.82x slower than QEM and ties its held-out geometry-proxy quality. See the [filtered-boundary novelty update](MANYMESH_FILTER_AWARE_SIMPLIFICATION.md#2026-11-22-prior-art-update); this line is historical and is not the active implementation queue.
+- **ReSTIR-LoD and ray-tracing combinations:** prior-art and feasibility screens did not produce a validated candidate. The current scope is rasterized mesh processing.
+- **Learned image ranking and super-resolution:** the small learned configurations lost to their validation baselines; this does not rule out learned mesh refinement generally.
+- **Dynamic LOD profile:** the shared profile improves the custom temporal finite-difference diagnostic but has no reliable framewise PSNR gain and regresses silhouette IoU. The two-path CGVQM-5 screen has a mean paired delta of -0.0590 (95% asset-bootstrap CI [-0.1476, +0.0424]), with 4/13 assets improved; it does not provide a reliable perceptual gain. These reused assets and the synthetic grayscale renderer do not validate a novel method. CGVQM screen (`tools/mmmetrics/CGVQM_DYNAMIC_LOD_SCREEN_20261122.md`) and temporal diagnostic (`tools/mmtrain/DYNAMIC_LOD_TEMPORAL_DIAGNOSTIC_20261122.md`).
+- **Memory-bounded DAG construction:** generic external-memory continuous LOD hierarchy construction with an adjustable memory cap is established prior art. Derzapf et al. (VMV 2010) also cover file-backed view-dependent progressive updates and bounded per-frame transfer. A partial strict-gate cut remains only an untested engineering question and needs faithful construction and runtime-streaming baselines before further investment. Prior-art and experiment screen (`tools/mmgeo/ON_DEMAND_DAG_BUILD_MEMORY_SCREEN_20261118.md`).
 
-三个归档资产、五档冻结分区共15组均实际运行现有Python参考QEM到队列耗尽，原进程退出0；每组保存最终几何并核对固定边界边集/位置，最终汇总核对输入/源码哈希、完整面覆盖、输出面数及可验证子组的操作下界。32面容量的Torus/Monkey/Pirate实际保留68.40%/67.73%/67.31%；64面容量分别49.83%/51.51%/51.10%，没有材质/画质/完整生产质量门结论。关键归因：参考QEM禁止任一折叠端点被锁，Torus64实际574面恰等于该操作限制下界，Monkey32实际10664面也仅比该下界10642多22面。原开放片拓扑乐观减面量恰为两倍内部顶点数，不能当作新的修复收益预测机制。下一强基线须允许合法内部点折叠到固定边界点；生产Corner本来有固定目标处理，改善Python基线不计创新。全表、局限及复现见[分区QEM耗尽实验](tools/mmgeo/PARTITION_QEM_EXHAUSTION.md)。三项针对性测试通过。SIGGRAPH新机制仍未建立。
+## Dated experiment index
 
-### 2026-11-15 fixed-partition obstruction measured
+The links below preserve the detailed reports referenced by the earlier roadmap. Negative findings and failed cases are documented alongside successful checks.
 
-对三个归档完整初始几何做了32/64/128/256/512面容量的材质内邻接BFS分区，共15组。固定每个分区的边界及Euler特征后，32面容量下Torus/Monkey的完整条件性下界为714/9634面（原网格61.98%/61.19%），均高于55%目标；说明分区锁边在受控模型中确实能造成预算障碍。但它们不是生产叶簇，也未执行简化或测量画质/速度。其余多组因子片顶点link不连续而不能给出完整界，全部报告，不能从整体流形性推断子片流形性。该实验为归因提供具体反例，不构成新算法；扩大分组和渐进边界仍有直接先例。结果、输入/脚本哈希及每组面索引见[分区边界预检](tools/mmgeo/PARTITION_BOUNDARY_FLOOR_PREFLIGHT.md)。三项针对性测试通过。
+### 2026-11-15: visibility, partition, and topology controls
 
-### 2026-11-15 source-contract preflight: eight assets measured
-
-新增直接读取源 OBJ 的条件性拓扑下界审计，已对八个本地开发资产实际运行并保留源码/输入哈希与逐分量结果。schema 2 修正了将绕序冲突当成下界失效的错误：Pirate 全部18个材质分量满足组合流形条件且可定向，条件性下界398面；Cloth 的一个分量有13个不满足流形条件的顶点邻域，仍无完整下界。其余六个资产得到松下界。解析使用 float32 精确位置焊接与抽象扇形三角化，尚未复现 Assimp 导入和分网格划分。九项针对数学模型和拒绝条件的测试通过，含绕序可修复及不可定向曲面的计数界。详见[源资产契约审计](tools/mmgeo/OBJ_CONTRACT_FLOOR_AUDIT.md)。
-
-该结果不证明55%预算不可达，也不证明可达；低下界不能用于归因层次瓶颈。源码复核发现通用质量门未显式度量 Euler、连通分量和顶点link，边界集合检查还按输入规模有旁路；Corner候选另有局部邻域检查。不能据此断言发生了生产拓扑破坏，也不能将审计的完整假设视作所有后端共同保证的契约。另对已有Torus/Monkey/Pirate完整Corner初始捕获重做三角连通性审计，其全局及材质分区分量数/下界与源OBJ相同；捕获未绑定完整二进制版本，仍不能代替新版本导入结果。当前总计11项针对性测试通过，8份OBJ和3份捕获均核对哈希。下一次层次修复实验必须绑定实际导入和提交网格并验证其前提。当前 mmgeo 的直接及获批提权运行均被 Windows 应用控制拒绝，尚无新 DAG 原生测量。总体创新与投稿级结果仍未建立。
-
-### 2026-11-15 related-work update: adaptive mesh LOD is a crowded claim
-
-本轮核对的新增工作进一步压缩了可主张空间：[Learned Localized Mesh Refinement](https://doi.org/10.1145/3829340.3842280)（SIGGRAPH Asia 2026）用 progressive vertex-split forest 和局部条件自回归模型实现区域选择细分，并明确展示视角相关细化与面数约束；[T²-Splat](https://arxiv.org/abs/2611.06974)（2026-11-04 预印本）在离线可微重建中组合 QEM collapse、梯度驱动 split 与固定拓扑后的外观优化；[Construction of clustered HLOD with As-Simplified-As-Possible boundaries](https://doi.org/10.1111/cgf.70380)（CGF 2026）允许层次节点边界渐进简化并保持邻接无缝；[PQ-Free HD](https://doi.org/10.1145/3811324)（TOG 2026）提供 GPU 上严格 Hausdorff 有界的网格简化工具。因此局部细分、collapse/split、GPU decimation、严格几何误差、可简化 HLOD 边界及视角相关 LOD 均不能单独作为新贡献。
-
-这些方法与 ManyMesh 的已构建 DAG、材质/拓扑硬门及实时 cut 选择并不完全相同，但任务差异本身不等于新颖性。当前唯一保留的窄问题是：在保持既有资产契约的条件下，如何以可量化的离线构建预算，对失败层次节点做**目标预算驱动的局部修复**，最大化多个目标三角形预算的可达 cut 质量，并给出不能达到目标时的明确证据。现有 8→4→2 空间二分重试只是一个两小资产的初步启发式（约 1.5–1.65× 构建成本），仍须与盲目二分、当前层次、逐资产重建和新的 HLOD 基线做等预算比较；在该比较及跨资产实验完成前，不称其为原创算法或 SIGGRAPH 贡献。细节与下一决策门见[文献差异与候选定义](tools/mmgeo/SIGGRAPH_2027_LITERATURE_DELTA_20261115.md)。
-
-### 2026-11-15 continuation correction and camera-orbit preflight
-
-`out/appearance-compensation-torus-v2-refined-serial/` 的九状态800步精度追跑已在3/9状态后按预先写下的决策门停止。它不是完整排序；部分日志保留，见 [补偿实验结果](tools/mmgeo/APPEARANCE_COMPENSATION_RESULTS.md)。SIGGRAPH 2025 GPU动态网格论文进一步排除了把通用patch更新、冲突处理或GPU动态拓扑当新贡献。渐进网格、视点相关更新、view-cell误差和kinetic visibility也排除了泛化“相机事件触发LOD”的新颖性。对Torus/Monkey/Pirate冻结48候选池做了32/8/8相机角穷尽oracle：相邻排序平均Spearman ρ分别为0.987/0.722/0.908，top-10最小交集为9/10、6/10、7/10；但90%–100%的候选分数逐视角变化，Monkey/Pirate胜者几乎总是采样零损失。没有证书、实时收益或变更后的拓扑验证。结论：该窄方向**不通过动态实现门**，仅保留为负面筛查数据。数据、脚本和局限见 [预检记录](tools/mmgeo/CAMERA_EVENT_CERTIFICATE_PREFLIGHT.md)。没有新算法或SIGGRAPH水准结论。
-
-### 2026-11-16 sampled visibility event localization
-
-对Torus冻结候选1656/2275做了两段局部重采样并二分 raster predicate：同一个3×子像素样本先被源三角形567覆盖、随后只被折叠后的三角形567覆盖，最终由折叠面边缘离开该样本，形成约2.300177–2.328867 rad的覆盖差异窗口。单样本差异把候选损失从约5.6e-7推至1.18e-3再降至约3.6e-7，解释了稀疏相机角下的胜者翻转。可复核输入/脚本哈希及事件样本见[局部事件记录](tools/mmgeo/CAMERA_EVENT_CERTIFICATE_PREFLIGHT.md)和`out/camera-rank-stability/torus-event-*.json`。
-
-这个现象很依赖栅格配置：相同小角区间里1×/2×的25个采样点全由1656胜出，4×/6×全由2275胜出；3×采样则为1656胜4/49、2275胜45/49。故“事件感知可维持一个稳定的减面排名”目前不成立。且逐像素求三角形边事件已见于连续from-segment visibility；时域三角形栅格化也已有time-dependent edge functions。它只留下一个尚未验证的窄组合：旋转相机轨迹上的折叠前后**滤波图像损失排名区间**，并且必须胜过精确重评总成本、对采样相位/分辨率稳健。当前仍无可称为SIGGRAPH贡献的算法或结果；这一线继续停在负面筛查/实现门之前。
-
-## 最新执行状态
-
-### 完整补偿候选池完成，排名改变未显示独立收益（2026-11-15）
-
-动态系统相关工作边界新发现：SIGGRAPH 2025已发表Dynamic Mesh Processing on the GPU，官方摘要包含全动态三角网格操作、patch数据结构和乐观冲突处理。因此“动态拓扑/局部patch更新/GPU执行”本身不能当新贡献；必须提出网格简化决策上的实质机制并证明超越通用动态网格处理的端到端收益。当前实验没有与其比较，也没有生产CPU/GPU成本优势。详见[动态GPU相关工作核查](tools/mmgeo/RELATED_WORK_DYNAMIC_GPU.md)。
-
-顺序恢复运行68129确认退出0，当前网格与八条候选全部完成。独立汇总核对全候选、实际面数/属性预算、单位法线/参数界、相机、逐视角和及全部输入产物哈希；最初六状态日志从最终数据精确重构，匹配恢复记录中的原始SHA256。当前288面，候选均286面；九个200步拟合均未达到迭代内收敛，投影梯度约0.019至0.081。
-
-QEM及固定法线RGB选edge-00，法线拟合后选edge-07，但覆盖/深度评分也选edge-07。相同拟合法线预算下，后者对edge-00的额外视角原灯光SSE仅改善0.2694%（4/12视角更差），旋转灯光退化0.1000%（8/12更差）；相对便宜几何评分无选择差异或额外收益。训练分数差仅0.00689386，不能把不充分收敛的排名当作精确属性误差。当前几何单独优化法线的原灯光额外视角误差下降18.05%，换光却增加18.54%，说明只报拟合改善不成立。
-
-统一追加800步核查使用单进程顺序执行，句柄64868，记录目录`out/appearance-compensation-torus-v2-refined-serial/`；最终配方SHA256为14b1f2aaa92e4dc7d75766d072c98363b8d18b320119a65f2009cb550b55e2fc。当前进程已结束，目录仅含3/9状态及`partial.json`，没有完整追加排名；结果文件记录该任务按预注册决策门停止，而非计算故障。已完成数据及所有失败/限制见[补偿实验结果](tools/mmgeo/APPEARANCE_COMPENSATION_RESULTS.md)。这仍是经典逆渲染控制，不是新方法；63项测试通过，SIGGRAPH创新与质量—成本门槛未满足。
-
-### 补偿候选精度核查与顺序恢复（2026-11-15）
-
-首批v2拟合均达到200步上限，投影梯度仍约0.02至0.08，尚不足以宣称属性最优误差或可靠细微排名。已准备统一追加800步、maxcor50的全九状态精度核查；当前网格和全部八候选同预算，保留200步与追加后两套结果。
-
-三进程追加时出现资源故障：Windows工作进程管道先被沙箱拒绝，按权限流程批准重试后，原v2运行在分配3.38MiB数组时内存不足，原句柄85465确认退出1；并行追加通过原句柄1945显式停止并确认退出1，无追加状态完成。不得将此计作算法失败或完整排名。
-
-当前以`complete_compensation_probe.py`顺序恢复未完成三候选；六个既有状态逐一从参数恢复法线并重算训练分数，原数组/分数均通过核对，未覆盖既有结果。恢复来源与代码哈希另绑定`recovery.json`，完成后才能发布完整候选池。追加求解改为单进程顺序执行、请求BLAS/OpenMP单线程，代码与全九状态统一预算均独立记录。已完成63项Python测试；新序列化测试覆盖部分日志转最终结果时派生差分不破坏初始化绑定、实际参数/相机变化必须拒绝。细节与复现见[补偿实验协议](tools/mmgeo/APPEARANCE_COMPENSATION_PROTOCOL.md)。仍无新颖算法、质量—成本优势或SIGGRAPH完成结论。
-
-### 补偿误差最小实验：发现着色不连续，独立v2测量中（2026-11-15）
-
-已从真实Torus288面QEM检查点冻结八条当前合法候选，保留原累积源二次型并核对检查点；每个存活顶点两个有界法线参数，当前网格与候选同求解预算。新增法线拟合、滤波伴随及实际着色解析梯度验证，真实Torus方向导数与有限差分相差约5e-11。
-
-首个v1实验暴露测量问题：此前受控着色按插值法线是否朝向相机决定整体翻转，法线跨越视线切平面时存在颜色值跳变。当前网格拟合16.79049降至11.60185，但优化器相对变化停止成功时投影梯度仍0.3504；沿负梯度移动1e-9触发单采样翻面，误差跳增0.00726758，1e-11不翻面则方向导数恢复一致。已通过原运行句柄显式停止并确认退出1；仅当前网格与两候选完成，无完整排名。不得把该有限拟合解释为属性最优值。
-
-独立v2按三角形几何朝向选择双面符号，不依赖被优化法线；相同候选、求解预算和相机/灯光重新渲染源参考，未混用旧分数。新增朝向符号、切平面跨越连续性及导数测试，Python62项通过。v2最终配方哈希cc59f5e5ab2cf045965aeb37a0d325b9b38c87623e1dc32341d33c583af67ec7，产物目录`out/appearance-compensation-torus-v2/`，当前任务仍在运行，未声称排名或收益。环境SciPy提示NumPy版本超出支持范围，已保留限制。详见[协议](tools/mmgeo/APPEARANCE_COMPENSATION_PROTOCOL.md)与[v1停止证据](tools/mmgeo/APPEARANCE_COMPENSATION_V1_STOP.md)。这些仍属测量基础修正，SIGGRAPH新机制未确立。
-
-真实网格修复复核已完成：同一个v1停滞状态、相同扰动方向，在1e-7步长下，方向导数差异从v1的36337.9降到v2的3.85e-9；诊断图`out/appearance-facing-diagnosis/continuity.png`已检查。v2首个当前网格拟合达到200步上限，投影梯度仍0.0726；额外视角原灯光SSE72.72569降至59.59945，但旋转灯光74.88745升至88.76933。该部分结果只证明有限拟合可能出现换光退化，不代表候选排名完成或属性最优误差得到验证。后续需完成全池并处理求解精度，不能凭训练下降宣称贡献。
-
-### 固定几何的法线归因完成（2026-11-15）
-
-新增沿真实折叠历史传递源顶点法线矩的经典对照，保持低模位置、连接关系、相机、灯光和滤波完全固定。三资产六条历史均逐步核对端点，最终位置/连接关系与保存检查点一致；全部12视角重现旧重算法线RGB分数，无使用顶点触发零矩回退。同用传递法线时，图像驱动几何相对QEM的RGB误差变化为Torus增加16.73%、Monkey增加0.81%、Pirate降低26.93%，分别10/6/3视角退化。此前混合结果未被这种传递方式消除；不能据此断言最优属性或法线贴图也无法恢复。
-
-结果、哈希检查及复现见[法线归因记录](tools/mmgeo/NORMAL_TRANSFER_ATTRIBUTION.md)，汇总`out/normal-transfer/summary.json`。Python57项测试通过，未增加生产C++改动。属性简化和形状/着色联合优化分别已有Hoppe1999、Hasselgren等2021先例；法线传递、增加RGB项或联合优化本身不能作为创新。后续只将“考虑受约束外观补偿后，仍必须保留的几何误差及其廉价动态评价”列为待证假设，尚未确立机制差异、成本优势或SIGGRAPH贡献。
-
-补偿误差方向的[立项前核查](tools/mmgeo/APPEARANCE_RECOVERABILITY_PREFLIGHT.md)进一步明确：variable projection是经典方法，线性投影残差并非真实非线性着色误差下界；消去共享属性会产生跨样本耦合，局部折叠不等于可局部更新全局最优属性。当前只冻结了最小判别实验和停止条件，未将其包装为新机制。最近工作还需对照Zhang等2022的对应/纹理重建及Bhosikar等2026的特征QEM，后者目前仅核对摘要。
-
-### 连续图像基线闭环与受控RGB检验（2026-11-15）
-
-此前两个长任务均已通过原句柄确认退出码0，最终manifest及全部检查点读回。三资产完整连续减面至288/3936/1314面，共9检查点与12视角评估全部完成，缓存/真实网格/累计残差一致。末级相对QEM覆盖+深度SSE改善12.77%/5.22%/9.42%，但Monkey75%保留率退化23.85%；不能只报告正例。总Python耗时80.62/826.78/243.21秒，1728/23616/7385次候选评价，无成本优势。独立重算拓扑计数保持源Euler/边界，无新增重复/零面积/非流形边。
-
-新增固定灯光下的平滑法线Lambert+Blinn-Phong线性RGB检查。末级连续图像策略相对QEM的RGB误差变化：Torus增加7.34%、Monkey增加0.13%、Pirate降低22.90%，分别7/6/0个RGB视角退化。说明当前几何代理收益不能当作稳定外观收益；该检查无原始材质/UV/作者法线/阴影，亦不能推广为完整生产视觉结论。新增两项着色不变性测试，当前Python56项通过。
-
-细节见[完整连续图像对照](tools/mmgeo/PROGRESSIVE_IMAGE_PROTOCOL.md)与[受控RGB检查](tools/mmgeo/SHADING_CONTROLS.md)。三资产质量—代理对比图`out/shading-controls/quality-proxy-tradeoff.png`与绑定哈希汇总`out/shading-controls/summary.json`已完成。本实验不再有未结束长任务。下一机制必须同时解释外观损失与总评价成本，并与已有image-driven家族区分；单纯把RGB加进旧评分也不构成新颖性。SIGGRAPH目标仍未完成。
-
-### 连续累计图像基线：Torus完成，较大资产运行中（2026-11-15）
-
-补上此前缺失的“大幅减面、候选随当前网格更新”的累计图像对照：每步取QEM排序中4条不同合法边的首个合法放置，在3个固定构造视角评价当前累计覆盖/深度残差，选优提交；全层片元缓存随每个折叠更新，不沿用初始差分。属于已有image-driven家族，不能作为独立创新。当前完整Torus1152→288面，3个检查点都通过实际网格整图与缓存/累计残差核对。测试12视角保留75/50/25%面数时相对QEM合计SSE下降3.26%/5.83%/12.77%，仍有4/5/3个视角退化。
-
-Torus总Python耗时80.62秒，1728候选评价，评分61.75秒，提交5.92秒，整图验证3.19秒，明显不具备实时/总成本优势。两个新集成测试通过，Python总计54项通过。Monkey与Pirate同参数任务已启动并继续运行，尚需最终manifest、全部检查点及测试轨迹；不得将中途输出计作完成。详见[连续图像对照](tools/mmgeo/PROGRESSIVE_IMAGE_PROTOCOL.md)，产物目录`out/progressive-image-control/`。该基线提高后续新机制比较门槛，总体SIGGRAPH目标仍未完成。
-
-### 有符号覆盖与法向偏移对照（2026-11-15）
-
-在QEM保留约25%面数的12视角上，漏覆盖/多覆盖采样Torus5554/5107、Monkey350/246、Pirate7143/3450，不能将全部轮廓误差归因于单向缩进。随后固定拓扑/面数、边界锁定和基于平均边长的法向场，仅在8个构造视角上选择0及±1/64、±1/32、±1/16的标量偏移。三资产均选择0；Pirate三个负偏移、Monkey最大负偏移未过几何门，记录保留。该结果仅否定本方向场/离散偏移集合，未否定连续更小偏移或局部曲率方法。
-
-最终输出与QEM位置和三角形数组逐项完全相同，绑定已有全轨迹评估哈希复用其结果，没有宣称重新渲染或取得新几何收益。52项Python测试通过。实验与先例见[法向偏移对照](tools/mmgeo/NORMAL_OFFSET_PROTOCOL.md)，最终产物`out/normal-offset-control-v2/`。这是一项经典控制/因果筛查，不属于原创算法，SIGGRAPH目标仍未实现。
-
-### 源轮廓遮挡因果筛查：不足以解释失败（2026-11-15）
-
-针对轮廓对照不稳定，新增源线段可见区间求解（对三角形覆盖/深度不等式进行线性裁剪与遮挡区间求并），固定8个源视角并纳入所有子网格遮挡。Torus/Monkey/Pirate完全隐藏约束176/3500/3599，总数896/6083/6764。分别运行仅可见轮廓权重、所有轮廓统一弱化但总标量权重匹配两组对照；避免把单纯减弱约束误当可见性机制的收益。
-
-18组新检查点、12视角全部完成。仅可见轮廓在Monkey50%仍较QEM差10.74%，且比匹配强度对照差1.21%；Torus25%仍差8.86%。Pirate50%虽优于QEM15.21%，却差于全轮廓14.65%。故隐藏源约束不能独自解释不稳定，不能将其修正推广为新机制；可见性变化/源对应失效也尚未被证明为原因。Pirate25%弱化对照实际1316面与可见策略1314面不匹配，该一项比较明确留空。
-
-48项Python测试通过，18组拓扑计数独立重算保持源边界/Euler，无新增非流形边、重复或零面积面。完整正负表、先例与限制见[可见性筛查](tools/mmgeo/CONTOUR_VISIBILITY_ABLATION.md)，统计位于`out/contour-visibility/summary.json`。全部仍为开发资产、静态几何/深度，SIGGRAPH创新与动态画质成本门尚未通过。
-
-### 较大减面量的经典轮廓对照（2026-11-15）
-
-新增显式可选的源轮廓平面二次约束：固定8个构造视角、强度1，保持原QEM候选更新及相同几何门，12个不同测量视角全量报告。它属于已有轮廓保持思想的对照，不计为创新，也不声称忠实复现某篇论文。三资产9组实际面数完全匹配原QEM，包括Pirate未达25%目标而双方均为1314面。50%保留率Torus/Pirate误差下降13.96%/26.05%，Monkey却上升20.13%；25%时Torus误差上升10.85%，Monkey/Pirate下降3.11%/6.87%。不能只选正例或改权重后声称泛化。
-
-42项Python测试通过；默认Torus基线三个检查点的位置/三角形数组与添加可选策略前逐项完全相同。独立拓扑计数保持源Euler与边界数，未发现新增非流形边、重复或零面积面。记录、先例与完整失败表见[源轮廓对照](tools/mmgeo/SOURCE_CONTOUR_CONTROL.md)，图表位于`out/source-contour-control/comparison.png`。下一机制必须同时比较QEM、经典轮廓控制和真实累计图像基线；源轮廓约束失败的因果仍待分离，不能把普通加权当论文贡献。SIGGRAPH总体目标仍未完成。
-
-### 有实际减面幅度的连续基线（2026-11-15）
-
-此前少量冻结候选不足以评估大幅减面的行为。本轮新增独立Python标准QEM参考：连续折叠后更新当前一环候选、版本队列、link条件与局部几何检查，分子网格保留边界锁。Torus 1152→288、Monkey 15744→3936、Pirate 5010→1314面；最后一个因小部件锁定只到26.23%，未达25%目标。三个检查点全部独立重算拓扑，边界边数与Euler特征保持，未发现新增非流形边、重复面或零面积面。三个新回归检查通过，当前Python共41项通过。
-
-完成12个完整环绕视角的全图误差测量。末级覆盖+深度SSE合计182.371/1.153/248.267，覆盖占比72.2%/78.1%/79.9%；终于覆盖大幅减面且误差非零的基线，仍属已知QEM方法，不计为创新、强于生产Corner或达到投稿门槛。结果和限制见[连续基线记录](tools/mmgeo/PROGRESSIVE_BASELINE.md)，几何与统计产物位于`out/progressive-baseline/`。
-
-当前Windows应用控制阻止mmgeo，WSL沙箱外启动因`D:\HW\wsl\ubuntu-bmc\ext4.vhdx`缺失而失败；没有取得新的原生C++运行验证。独立基线只含捕获几何，不含UV/材质、全局自交/距离界或时域保证。下一个机制比较必须对齐实际面数并对比完整累计图像基线，不能只靠少量局部正例。
-
-### 交互审计修正与双折叠落地检查（2026-11-15）
-
-复核发现上一版兼容矩阵对角线为真，允许把上下文折叠自身当作备选项，产生无效的i+k与k+k比较。撤回上一条目中的反转率0.456%/0.481%/0.632%（1284/1518/1951次），旧`out/candidate-interactions/`不能继续作为结论依据。修正自配对并增加两项解析回归；38项Python测试通过。
-
-修正后Torus/Monkey/Pirate反转221/503/1472次，占有效三元组0.0822%/0.1665%/0.4981%。真实联合几何重绘的最强反转抽查18/18保留，但101对强案例中有5对单次差分相加不成立，不能盲信线性组合预测。更关键的是在18个资产/视角中，独立评分与包含交叉项的模型评分选出的最佳双折叠完全相同，因此当前仅减4面的候选池没有观察到选择收益。新输出位于`out/candidate-interactions-v3/`，详细记录见[交互报告](tools/mmgeo/REAL_CANDIDATE_INTERACTIONS.md)。该证据不支持扩建全局交叉项评分器；也不否定更大减面预算下的交互价值。总体目标仍未实现。
-
-### 真实候选滤波误差交互审计（2026-11-15）
-
-对三个资产共864个冻结差分，按帧计算一环顶点互不相交的折叠对之间精确滤波残差 Gram 交叉项，并用共享第三个折叠统计独立分数排序是否反转。得到6286/6667/6594个兼容对，强于单项和10%的交互对仅6/19/54；排序反转占测试三元组0.456%/0.481%/0.632%。存在真实交叉项，但稀疏；反转还可能只是近似平分，且单独候选差分不保证两步操作合成后仍成立。因此目前仅支持继续审计最大的排序反转，不支持实现全局Gram主路径。
-
-新增审计工具和[结果记录](tools/mmgeo/REAL_CANDIDATE_INTERACTIONS.md)；使用manifest精确绑定的事务成本报告与原始候选差分。尚未检查双折叠实际拓扑/可见性，也未做便宜筛查器成本对照；目标未完成。
-
-### 直接生成互补几何：冻结对照失败（2026-11-15）
-
-实现两个等面数状态交替优化有限8帧IID图像损失，并与相同48次提案预算的单状态搜索对照；三个资产共144候选。未参与拟合的两个相机偏移上，Torus/Monkey/Pirate相对静态误差分别退化0.0031%/0.0114%/2.6314%，Pirate有6次覆盖退化。训练时只有Torus微小改善0.0116%，其余亦无改善。全部未过筛选门，停止扩建此双状态放置法。六帧各抽一个候选完成整图重绘核对，缓存与整图评分一致；36项Python测试通过。详情见[报告](tools/mmgeo/DIRECT_COMPLEMENTARY_RESULTS.md)。这不是SIGGRAPH级创新或动态简化算法；目标仍未完成。
-
-### SIGGRAPH 2027 新机制筛查：时域互补与采样相位（2026-11-14）
-
-用户要求继续研究原创机制后，补查到 SIGGRAPH 2026 的 [LoD with ReSTIR](https://research.nvidia.com/labs/rtr/publication/wang2026levelOfDetail/wang2026levelOfDetail.pdf)，其跨拓扑UV映射与样本复用排除了将“减面后保留历史”单独作为贡献。另核查mesh error diffusion、随机聚合几何及标准Frank-Wolfe证书。
-
-已实现两轮筛查：①144个候选，每次确实减2面，同连接关系的位置集合做理想时域凸组合，相对同池最佳静态状态改善0.003539%/7.714436%/0.393150%；含数值上下界也无法达到预设10%资产合计收益门槛，停止该固定候选生成器。②864个真实候选的9相位审计，严格零误差额外机会40/222/691，但其中删除面原本有可见采样的机会均为0；不能将这些计数作为超越普通剔除的新机制证据。
-
-保留的具体假设是“按剩余有符号误差直接构造互补几何状态，并显式计入有限历史与切换代价”，尚未实现关键几何生成器，新颖性及优势均未确立。标准凸组合/列生成不能单独称创新；必须对比等优化预算的静态外观优化。新增7项测试、Python总计30通过，未修改生产C++。详见 [协议](tools/mmgeo/COMPLEMENTARY_GEOMETRY_PROTOCOL.md) 与 [结果、文献差异及下一问题](tools/mmgeo/COMPLEMENTARY_GEOMETRY_RESULTS.md)。当前没有达到SIGGRAPH投稿要求的已验证新算法，不把研究筛查等同于总目标完成。
-
-### Claude 中断后续接：多视图实验闭环（2026-11-14）
-
-已读取 Claude Code 会话 `ccd87efc-e90f-41fa-ba3a-e3b88f89aa2e`，接续余额不足时未分析的后台实验。保留原有拟合/测试视角及位置，新增 `audit_multiview_placement.py`：核对捕获与评估器哈希、候选集合、相机角度，把回退候选纳入测试误差分母，并对全部36个接受位置/测试视角组合进行整图重绘。
-
-144候选、576次测试视角检查：Torus/Monkey/Pirate接受0/4/5个新位置；全部候选的测试SSE改善分别为0%、0.015245%、0.474961%。Monkey/Pirate各有1次微小深度退化，无覆盖退化，失败不撤回；仅报接受子集会得到45.55%/53.47%的误导性整体收益印象。整图与patch评分最大绝对差3.71e-21。原记录拟合中位耗时232/1876/614 ms，包含每候选重复参考图光栅，不能视作纯求解器耗时或实时性能。
-
-本轮Python测试23项通过，新增两项统计回归。没有修改C++，没有重新验证历史C++构建状态。结果与复现命令见 [多视图实验记录](tools/mmgeo/RASTER_PLACEMENT_PROTOCOL.md)。结论：冻结多视图实验已完成，但收益/成本未通过既定门槛，保留实验参考、不据此接入动态生产路径。算法创新、顺序减面、连续运动与完整材质质量仍未确立；SIGGRAPH总目标未完成。后续方案须先明确机制差异和比较预算，不能继续在已经看过的测试视角上调参后宣称泛化。
-
-### WSL恢复与深度诊断更新
-
-- 明确发行版 `ubuntu-bmc` 后WSL恢复；Git Bash调用须设置 `MSYS_NO_PATHCONV=1`，否则 `/bin/bash` 被转换为Windows路径。
-- 当前Corner捕获及误差核完整回归：91通过、1 HTTP跳过；真实资产捕获工具成功构建。
-- 动态薄带72条策略/帧记录已运行；撤销与累计残差重建一致。相对位移基线24配置中21改善、2退化、1持平，合计SSE降低约7.7%；不是一般mesh结果。
-- 已捕获Torus/Monkey/Pirate的59372个初始合法定向候选，初轮轮廓评估暴露无信息样本与提取成本问题。
-- 当前五项阶段目标采用 [深度候选协议](tools/mmgeo/DEPTH_CANDIDATE_PROTOCOL.md)：最近表面patch、完整筛选计数、overlay、新连续轨迹、8/16/32总维度表示。7项Python正确性测试通过；三资产18帧/180候选轨迹已完成，所有patch/整图一致性验证通过，最差案例叠图和独立投影复核完成。结果为负：1×粗光栅丢失亚像素信息，8/16/32维均出现严重错排，不启用生产路径。详见 [阶段结果](tools/mmgeo/DEPTH_CANDIDATE_RESULTS.md)。五项诊断阶段完成，SIGGRAPH总目标未达成。
-- 后面的环境阻碍条目是历史记录，不再作为停止验证的理由。完整desktop Debug和utils失败仍未消除。
-
-### 简化—光栅协同机制实验
-
-低维粗光栅预测被真实资产反例否定后，已实现带face归属的全层片元tile缓存、替换三角形局部光栅、版本化提交与撤销。7项独立正确性测试通过，180个真实候选与空间索引patch重绘一致。单查询快3.9–37倍，但每帧10候选时计入缓存建立后全部变慢；48个不同候选/帧的审计计时已完成：含首次resolve后整批2.20/3.05/4.84倍，非整帧速度。真实多步实验18视角均完成6次折叠/减12面，图像误差优于同池Corner排序，但仅微小减面、无材质、非实时。先行工作全文核查确认Lindstrom–Turk 2000已讨论object buffer增删片元及局部重绘两条路线，**因此淘汰片元事务作为独立新颖性主张，只保留强基线**。不将单查询提速冒充整帧收益或创新。见 [片元事务记录](tools/mmgeo/FRAGMENT_TRANSACTION_RESULTS.md)。
-
-### 下一机制的实现前筛查
-
-片元事务新颖性被否定后，不立即继续扩建。当前仅研究两类候选：跨相机域的局部可见性/误差有效性界（先行工作核查中）；依赖合法折叠影响集合的遮挡见证前缀（是否属于已有query-aware object-buffer压缩，核查中）。
-
-对后一种，固定像素处按深度排序的face为f1,f2,…，令A(f)为会替换该face的候选集合。扫描至交集A(f1)∩…∩A(fk)为空，即所有当前候选都在前k层有不被替换的表面；可用该前缀精确恢复“旧几何未改部分”的最近深度，再与新增片元合并。这只对固定相机/采样、固定候选集成立；提交新几何后不能任意沿用丢弃的后层，必须重建或提供受验证的回退。
-
-实现前真实数据检查（单视图2.13rad，128px/3×采样）：Torus/Monkey/Pirate最短共同见证前缀分别保留99.53%/89.71%/66.38%片元，尚未计入候选关系、前缀求解、缓存更新费用，因此不能宣称速度或总内存收益。固定保留两层则分别有75/87/1311个像素存在“某候选会替换前两层、后面仍有表面”的风险；风险计数不等于实际输出必错，因为替代面可能重新覆盖。数据位于out/fragment-transactions-cost-audit/{depth-complexity,support-prefix,fixed-k-failure-exposure}.json。此阶段没有新机制实现或论文贡献结论。
-
-独立数学/文献复核认为交集停止规则在固定不透明采样模型下成立，但更接近object buffer的查询相关压缩，未确立新颖性。现有量测先建全层再截断，无法证明初始化收益；提交操作后还须更新见证。决策：**不立项扩建支持集截断**，保留公式与负面数据。跨视点有效性界核查已完成：Hoppe 1997覆盖视点相关渐进更新/时间摊销；vLOD (Chhugani et al., TVCG 2005)正文§4已有view-cell内复用可见候选与LOD、对整个cell最大化投影几何误差；kinetic visibility已有证书失效事件思想。因此**不立项泛化的“view-cell+事件驱动”方案**。特定折叠的着色/遮挡误差区间或许是更窄问题，但当前没有可证明差异或可运行算法，不继续堆原型。参考：https://hhoppe.com/vdrpm.pdf 、https://www.cs.jhu.edu/~graphics/papers/Chhugani05.pdf 。本轮候选筛查结束，未找到可诚实确认的新机制；总研究目标仍未完成。
-
-### 保持精算选择的分块下界：已按成本停止
-
-实现了累计残差下界 `sum_B(r+d)^2 - sum_R r^2` 与带滤波halo的候选提前拒绝；它不使用粗采样猜测。18条真实资产折叠序列与穷尽评价一致，约91%候选提前拒绝。但预建事务版本总速度仅0.939/0.975/0.953倍；最后改为按需裁剪并光栅替换片元后，仍仅0.903/0.864/0.897倍。按事先规定停止扩建该Python路线，不将剪枝率当提速，不主张分支定界新颖性。16项相关Python测试通过；无新增生产C++改动。见 [下界实验记录](tools/mmgeo/BOUNDED_COLLAPSE_PROTOCOL.md)。当前没有通过新颖性与质量—成本两道关的新机制，总目标仍未完成。
-
-### 原生离散滤波误差核（已验证，主评分路线淘汰）
-
-新增私有C++ `DiscreteFilterEnergy`：对真实稀疏采样变化计算 `2dᵀFᵀr+dᵀFᵀFd`，显式处理有限图像边界、离散高斯、box降采样相位；Gram与紧凑patch稀疏splat在同一原生二进制中比较，不用C++对Python制造提速。3项独立密集卷积对照测试通过。三资产864个真实候选评分全部与独立滤波参考一致；最新全量回归94通过、1跳过。原生Gram相对原生splat总速度仅0.0278/0.0755/0.0572倍，二次交互成本严重，**停止Gram作为主评分路径**，保留精确核验证用途。等式为标准数学，尚无新颖性或端到端收益结论。详见 [原生误差核记录](tools/mmgeo/DISCRETE_FILTER_ENERGY.md)。
-
-### 逆光栅可行放置：单视图版本不部署
-
-实现固定sample-owner与深度容差下的三维半空间放置，世界坐标中共同约束原有端点位移球；4项数学正确性测试通过。144个真实候选中Torus/Monkey/Pirate分别接受0/6/9个新位置，合计改善仅0/0.011%/0.042%。未参与求解的侧向视图审计：Monkey有局部收益，Pirate18次中6次退化、2次覆盖退化，合计误差约1.93倍。单视图方案不能提供稳定复用LOD，不部署。完整UV/法线/表面gate仍未接入，且可行域放置已有明确先例，未确立新颖性。详见 [逆光栅放置记录](tools/mmgeo/RASTER_PLACEMENT_PROTOCOL.md)。
-
-### 早先阶段记录（以下测试/阻碍按时间解读）
-
-已建立分支 `research/filter-aware-simplification`。新增私有C++误差核、7项测试及独立薄带实验目标，未修改生产简化器。详细结果与复现见 [实验记录](tools/mmgeo/FILTERED_BOUNDARY_EXPERIMENT.md)。
-
-- E1：误差核已实现、7项测试通过；含近零数值稳定性与相邻边界交叉项。未证明所有数值范围的精度。
-- E2前置控制实验：24配置/936候选；快代理相对局部CPU重绘中位7.66x，但绝对误差偏差约23%；精确到跨行的版本无速度优势。
-- 频域向量探索：16频率在控制集24/24选中最佳候选，相对局部CPU重绘中位1.35x；更快版本出现退化。收益尚不足。
-- E4前置原型：已写多步粗化/细化与累计残差/撤销检查，但最新二进制执行被拒绝，未验证动态结果。
-- E0锁约束核查、一般mesh接入、真实资产、时域视频仍待做。
-- 构建/测试：ManyMesh 89通过、1跳过；utils 333通过、1失败；完整Debug因既有GNU缓存配置失败。随后WSL启动超时，原生动态程序执行Permission denied。没有绕过执行限制。
-- 视觉：控制样例肉眼无法可靠区分，不宣称可见画质提升。
-- 新增真实Corner初始候选只读捕获接口及两项回归测试，默认关闭、不改排名，导出焊接几何/目标位置/受影响面；候选上限可控。实现、头文件与测试通过原生GCC语法检查，尚未运行；math既有匿名struct触发pedantic警告。
-- 再次尝试标准Windows/Git Bash Debug命令，环境找不到cmake；未完成新接口的全构建及回归。之前89通过结果不覆盖新接口。
-- 当前没有项目项标为进行中：实现暂停在执行验证阻碍处；不将未运行项视为完成。
-
-
-## 工作方式
-
-- 文献、独立数学检查可以并行委托；C++ 实现、集成、测试由主助手串行完成。
-- 生产默认路径与实验路径隔离；每个实验保留参数、输入与代码版本、实际提交面数及成本。
-- 用户已有未跟踪文件不清理、不覆盖；未经请求不提交或推送。
-- 每次 C++ 修改遵循 AGENTS.md 的格式、头文件、构建和测试流程；受环境阻碍时记录失败，不宣称全通过。
-
-## 当前状态
-
-| 编号 | 工作项 | 状态 | 完成依据 / 验收条件 |
-|---|---|---|---|
-| R0 | 梳理现有简化与动态 cut 链路 | 完成（只读） | QEM/Corner/质量门、单父层次、CPU/GPU与streaming实际边界已梳理；没有重新跑资产实验 |
-| R1 | 滤波轮廓误差与薄结构耦合推导 | 完成（数学原型） | 单边闭式、导数与局部凸条件；双边交叉项；Python数值积分自检一致 |
-| R2 | 完整新颖性核查 | 待继续 | 目前只有部分正文/作者页/摘要；必须细读图像简化、可微抗锯齿、HLOD与时域联合工作 |
-| E0 | 固定基线、锁约束回归 | 待做；下一实现任务 | 构造raw/canonical副本、多层前沿与point-touch最小测试；证明读写契约；只修复可复现问题 |
-| E1 | 独立局部误差核 | 已实现并通过7项测试；精度范围仍有限 | C++纯数学模块与数值测试，处理d≈0稳定性、σ>0、有限输入、邻边交叉项；不先改默认简化器 |
-| E2 | 试验性Corner候选评分/placement | 候选捕获与多种离线原型已实现；生产接入待做 | 显式开关；同候选、同质量门、同工作预算；与QEM/现有Corner/纯屏幕二次代理比较 |
-| E3 | 局部事件验证 | 待做 | 遮挡次序、轮廓出现/消失、薄结构；有限工作预算及保守推迟/回退 |
-| E4 | 可逆、可续算的动态操作状态机 | 待做 | 折叠/撤销、依赖闭包、版本/失效、支持域冲突、实际面数、完整覆盖、切换轨迹 |
-| E5 | 冻结参数的未见资产评估 | 待做 | 同面数/同质量/同整帧时间；连续视频、尾延迟、失败例及强基线；禁止只挑正例 |
-| S0 | 轻量超分部署可行性 | 初步调研完成；未实测 | TAAU/FSR2类与Arm ASR；Iris Xe不走DLSS；核查实际SDK/API与帧时 |
-| S1 | 简化对应与历史可信度联合机制 | 待做，E2/E3通过后再开 | 不把简单增加历史拒绝或超分当贡献；对比已有temporal基线，并证明端到端收益 |
-
-详细算法假设见 [滤波感知简化研究笔记](MANYMESH_FILTER_AWARE_SIMPLIFICATION.md)。
-
-## 决策门
-
-### Gate A：基线可信
-
-锁/预算/装配口径明确；默认路径不因实验开关关闭而变化。实现修复收益单独报告，绝不算新算法贡献。
-
-### Gate B：局部算法有价值
-
-新代理在强基线之上改善折叠选择或位置；代价低于逐候选真实渲染；薄结构与遮挡事件的失败可测且可控制。没有通过则停止扩展动态系统，先修正或放弃假设。
-
-### Gate C：动态部署有净收益
-
-算上几何更新、渲染、同步和可选重建，质量—时间前沿仍改善；帧间稳定不以丢失覆盖或大幅预算超限换取。
-
-### Gate D：论文贡献成立
-
-相对最接近工作的机制差异明确、独立消融成立、跨未见资产有收益、失败范围诚实。纯公式/加权QEM/可逆操作/GPU迁移/超分接入均不能单独通过本门。
-
-## 本轮验证记录
-
-- C++：新增私有误差核和实验工具，验证状态见本页最新执行状态及实验记录；默认生产算法未变。
-- 数学：Python直接积分及C++独立积分测试核对Gaussian过滤阶跃误差。
-- 邻近边界：一维薄结构两侧交叉项闭式与直接积分一致；独立计费在该合成样例高估约11.8倍。这不是资产收益。
-- 已新增代码与研究文档；没有提交或推送。
-
-### 2026-11-16 phase robustness correction
-
-后续3×采样相位消融把候选1656/2275在同一视角区间内的winner进一步翻转：将源与折叠几何一起作±0.10像素屏幕平移，三种相位下2275赢全部25个采样角；第四种相位中覆盖差异在2.301493673243 rad结束，1656赢20/25角。逐像素边事件、viewcell精确误差界和相机球可见度引导简化均有公开先例；剩余可能差异仍只是“旋转轨迹上的折叠前后滤波图像损失区间”，未证明新颖、稳健或更快。事件候选继续不进入动态实现，先要求跨采样相位/分辨率稳健并以完整事件生成/更新成本胜过精确重评。细节、来源和哈希见[相机事件预检](tools/mmgeo/CAMERA_EVENT_CERTIFICATE_PREFLIGHT.md)及[相关工作增补](tools/mmgeo/SIGGRAPH_2027_LITERATURE_DELTA_20261115.md)。
-
-### 2026-11-16 target-budget DAG parameter control
-
-用同一输入、同一二进制、同一55%目标，对 `dag-group=2/4/8/16/32` 各顺序重跑一次：五者都达到2756/5010面；mmgeo报告误差依次19.3397/21.1741/12.4154/20.4373/12.5229 px，内部构建时间0.51/1.64/2.90/3.05/3.17 s。关系明显非单调，group 4 和16被group 2在误差与耗时上同时压过；group 8 在所测设置里误差最低，代价约5.7倍构建时间。该字段是自动相机上的屏幕误差，不是参考图像误差；单资产、单次计时不能支持画质或泛化结论。该扫参仅作参数基线，不是选择性修复结果，也不构成论文贡献。下一门仍是同构建时间下的当前DAG、盲目8→4→2、按“前沿收益/构建秒”贪心与离线精确修复选择；若oracle收益很小就关闭该线。输入/执行文件哈希、图哈希与日志见[目标预算前沿试验](tools/mmgeo/TARGET_BUDGET_FRONTIER_PILOT_20261116.md)。
-
-### 2026-11-16 projected-support 扩池审计
-
-从旧报告帧并集中抽取96个候选、回放六个视角与六步后，support refresh 相对全量 oracle 少做62.3%评分，但拓扑惰性队列只做96次评分、在约一半评分时间内选出完全相同的操作序列；三者最终滤波误差均仅为5.62e-11。均匀随机128候选的三视角实验全零，作为采样失败排除。该方向在当前固定候选池契约下关闭，不进入动态实现。详细限制、输入哈希和结果见[SIGGRAPH 2027相关工作增补](tools/mmgeo/SIGGRAPH_2027_LITERATURE_DELTA_20261115.md)。
-
-### 2026-11-16 TAA/LOD novelty gate
-
-补充核查确认渐进网格geomorph、跨帧LOD图像混合、screen-space view-dependent simplification及TAA history validation均有直接先行机制。当前仅剩的“raster history validity × live cluster-DAG切换”还没有新颖性证明；渲染器被系统应用控制拦截，未得到真实cut变化序列。保持为未验证的工程问题，不实现对应机制、不把文献搜索空白当作novelty。细节见[相关工作增补](tools/mmgeo/SIGGRAPH_2027_LITERATURE_DELTA_20261115.md)。
-
-### 2026-11-16 同面数切换上界预筛
-
-Pirate group-8的2,756面cut导出3个单次交换和64个复合重分配。按相同DAG节点误差和auto-frame投影公式重算完整cut后，基线最坏误差12.4154 px，所有导出方案都更差，最佳17.6341 px。当前候选池没有同面数几何代理改进，停止该池的修补策略探索；这不是穷举上界，也不是渲染图像质量结论。仅当跨资产的真正离线最优全cut在质量有效指标上有明显收益时再恢复全局修复路线。复现细节见[同预算切换预筛](tools/mmgeo/TARGET_BUDGET_ORACLE_SCREEN_CONTROL_20261116.md)。
-
-相关工作增补还精读了Shutkin等人2025年的HLOD论文：其已有目标面数/误差简化、按质量/速度需要选择QEM或顶点聚类、并行生成、隐藏内部面删除和局部编辑后重生过期cluster；Pasman与Jansen 2002也已用分层accuracy/cost曲线支持按需LOD。因而“请求预算下选择表示”“分层质量—资源折中”“更快/增量生成”及按场景选择简化算法都不能单独作为创新点；若恢复该路线，必须提出新的候选生成或可证的选择机制，并在真实全cut指标与未见资产上超过这些思想的强实现基线。来源见[SIGGRAPH 2027相关工作增补](tools/mmgeo/SIGGRAPH_2027_LITERATURE_DELTA_20261115.md)。
-
-### 2026-11-16 BinocMesher / RTX Mega Geometry 2.0 prior-art closure
-
-一手材料确认BinocMesher（SIGGRAPH Asia 2025）以预定义长相机路径和程序化occupancy函数为输入，构造4D binary-octree、抽取4D dual-contouring网格并按时间切片；它已覆盖“轨迹条件下的时域平滑网格抽取”，但不直接处理ManyMesh的任意输入属性三角网格。NVIDIA RTX Mega Geometry 2.0更直接覆盖本项目的系统设想：离线连续cluster-LOD层次、GPU每帧按屏幕误差选group、固定显存池按需流送、池占用高时自动提高误差阈值，并允许不同层重组形成DAG。ManyMesh当前节点只有一个parent，构建的是单父层次。渲染API或源格式差异不能单独充当论文新颖性。详见[相关工作增补](tools/mmgeo/SIGGRAPH_2027_LITERATURE_DELTA_20261115.md)。
-
-据此关闭轨迹平滑、连续cluster LOD、固定显存预算下按需减面作为独立创新主张。分组修复仍只是一条待证假设：必须提出不同于盲目重试/贪心修复的候选机制，并在总构建工作匹配、完整合法cut、参考图像或可信质量指标、未见属性网格上显示稳健净收益。现有分组试算和Pirate同面数屏幕误差预筛没有这种结果。目标仍未完成；本轮只更新研究记录，没有改动C++或运行测试。
-
-### 2026-11-16 meshoptimizer / textured-wild direct-baseline audit
-
-再核对公开 `meshoptimizer/demo/clusterlod.h` 实现后，层次修复新颖性空间进一步缩小：它按层反复合并与分区，每组按固定比例简化；未达到阈值的组停止晋级，并可在常规简化停滞后回退 permissive/sloppy 模式。默认配置已启用 permissive 与 sloppy fallback，sloppy误差会乘系数上调，属性不连续处还可通过保护位锁定。ManyMesh的区别是失败组递归空间二分、并重复使用同一严格质量门。这个区别不能单凭代码结构成为论文贡献；必须在匹配总构建成本下，跨未见资产改善完整质量有效cut前沿，并与公开cluster LOD/RTXMG强基线对照。
-
-另精读[Simplifying Textured Triangle Meshes in the Wild（SIGGRAPH Asia 2025 / TOG 2025）](https://doi.org/10.1145/3763277)：它已覆盖非流形/多连通纹理网格、目标面数、折叠历史映射和纹理重烘焙；公开[glTF实现](https://github.com/illusioneering/textured-mesh-simplification)可作为复现入口。其单一输出与atlas重烘焙和ManyMesh的严格作者属性/混合cut契约不同，但这些是实验边界，不是新颖性证明。该论文明确承认successive projection可能采到内层表面，并将visibility-aware mapping列为未来工作；这也是高风险的已有明确提议，不能直接包装成原创点。
-
-决策：关闭“任意纹理网格按需目标面数减面”“简化卡住后的通用重试”“折叠历史纹理映射”作为独立贡献。当前只保留一个未证伪的窄问题：在ManyMesh的严格拓扑/几何/属性门不变时，是否存在比空间拆分重试和clusterlod permissive/sloppy fallback更好的质量有效完整cut前沿，且总构建成本相同。现有单资产代理筛选为负；下一步应先建立可匹配这些质量契约的强基线协议，而不是再叠加新打分公式。SIGGRAPH目标仍未完成；本轮仅研究记录更新，无C++改动、无测试执行。
-
-补充基线边界：本仓库固定的meshoptimizer为v0.18，不含当前上游`clusterlod.h`。v0.18 README明确说拓扑保持版可能因非一致拓扑/多UV seam停滞，sloppy版则不保持seam或border。因此本地版本不是最新clusterlod的等价替代。若做数值比较，须固定上游版本、单独构建，并把输出再过ManyMesh相同质量门；不能将改变简化契约的更低面数直接计为有效优势。
-
-再补查HPG 2023原文后，必须关闭更宽的“失败合并后拆分来改善层次覆盖”主张。Benthin与Peters明确在cluster merge因边界过多/简化不足时，把合并后的几何切成两半、尽量减少新边界，两半各自以原输入clusters为children重新入队，形成多父binary DAG；文中报告root数最多减少2倍，并指出Nanite也用split。ManyMesh现有机制虽在具体数据表示上不同：它先分割children集合，每个child至多指向一个parent，然后重跑相同严格质量门；HPG方案则从合并几何生成多个共享children的候选parent。差异只能成为实验比较边界，不能靠重述机制主张原创。恢复研究时至少要与DAG2/Nanite式split-and-reinsert、2026 ASAP边界HLOD及clusterlod/RTXMG比完整cut质量—构建成本前沿，且明确验证ManyMesh严格属性门带来的具体算法缺口。来源与逐项对照见[相关工作增补](tools/mmgeo/SIGGRAPH_2027_LITERATURE_DELTA_20261115.md)。本轮仅增加先行工作审计，没有改C++、运行实验或测试。
-
-再审计HPG公开代码后收窄比较契约：`mergeSimplifyQuadMeshClusterDAG` 先用`meshopt_SimplifyLockBorder`追求50%三角形并容许到80%；达不到80%时直接返回失败。只有简化已足够、但编码结果超过128 quads或256 vertices时，才调用PLOC重排后按顺序二分并生成DAG2 alternatives。故HPG的明确可复现split trigger是簇容量溢出；ManyMesh当前重试则由其严格拓扑/几何/属性门失败触发。论文层面的DAG2/边界驱动分裂仍然是强先行工作，但不能把两种触发完全等同。剩下的唯一值得预筛的假设是：将多父DAG2结构移植到ManyMesh后，是否能在严格质量门下产生可拼合的替代patch并扩大完整cut前沿；这需要新的图结构和cut验证，必须先以现有资产做可比性/头room预检，不宜先改核心代码。细节和代码固定commit链接已加到文献增补；本轮无C++改动、无实验/测试执行。
-
-### 2026-11-16 regroup rejection-profile reanalysis
-
-只读复核旧的Pirate diagnostics：152个生产组中114个未提升，分布在level 4–8；419次回退尝试累计出现194次拓扑门、80次几何门、334次属性门、12次locked门，boundary与not-simplified均为0。各门计数可重叠且跨回退汇总，不能当作单次折叠因果标签。48个既有重分组试算消耗29,184个输入三角形工作单位、用时3.98秒，局部improvement筛查为0。此为旧JSON的只读重分析，不是新执行或因果实验；因此不支持按直方图设计“失败感知”候选器，必须先获得逐候选拒绝归因。目标仍未完成。
-
-### 2026-11-16 RTXMG attribute-path comparison
-
-进一步读RTXMG的LOD生成细节：它说明自身使用meshoptimizer `clusterlod.h` 的fork构建层次DAG，并公开normal、texcoord、material-boundary简化权重（默认0.5/0.5/32）以及cluster级UV量化。因此“按需cluster LOD同时考虑UV/法线/材质边界”也不是足够窄的新颖性区分。该发现不证明它与ManyMesh逐项质量门等价；精确差异仍须用同输入、完整cut和实际渲染成本实测出优势。[来源](https://github.com/NVIDIA-RTX/RTXMG/blob/main/docs/ClusterLOD.md)。
-
-### 2026-11-16 differentiable rasterization / topology prior-art recheck
-
-新增核对 EdgeGrad ECCV 2024、ICCV 2023 inverse-rendering topological derivatives、DiffSoup CVPR 2026。它们分别覆盖 raster visibility-loss gradients、level-set hole/phase topology changes、以及图像监督下按视图覆盖率增删 opaque triangle-soup primitives；加上 Lindstrom–Turk 2000 与 Appearance-Driven Simplification 2021，宽泛的 image-driven / filtered-error mesh simplification 不应再作为创新主张。具体差异仅可能落在固定源网格的连通合法 edge-collapse：把现有 raster derivative 用于共享候选排序，并修正 collapse path 末端消失面的有限图像损失。该描述仍是待证假设。实现前须冻结完整真实候选池，以精确局部重绘作强基线，测候选排序、面数匹配下输出误差、renderer+derivative总调用和壁钟成本；若不能明显胜过精确重绘且不低于图像驱动简化基线，停止。ManyMesh 当前 `LodGraphNode` 存层次节点与简化后索引，不存可撤销的逐折叠路径，因此即使此门通过，仍需先解决状态记录和候选再生问题；不因文献组合就改生产路径。SIGGRAPH目标仍未完成。
-
-仓库就绪度补充：现有 `CornerCandidateCapture` 只记录初始状态每条有向边的当前最佳合法 placement，不是完整 placement 集，也不会随折叠再生候选；新接口测试目前只完成语法检查。`out/filter-real-candidates/` 是旧的固定候选捕获，不能满足“完整候选池、同一顺序状态、同质量门”的 kill gate。应先补齐并实际验证捕获/序列契约，再谈 EdgeGrad 机制原型。
-
-### 2026-11-16 exact resource oracle closes per-asset group scheduling
-
-对Pirate、Monkey、Cloth、Material Sphere、Shapes的2,500个group配置联合枚举16视角过滤覆盖/深度SSE、三次中位串行构建时间、峰值工作集和进程commit。内存采样只做一次/配置，且核心两资产与held-out输出模式有差异，故资源结果只用于当前配置集筛选。相对同时间与双内存上限内最好的固定group，精确异构配置在g2/g8/g16/g32资源帽下分别改善0%、8.1%、3.9%、38.6%；从定义资源帽的均匀配置出发的单资产边际收益/新增秒贪心在四种帽下均逐项命中精确oracle。g32下只有均匀g32满足内存限制，其38.6%不能解读为普遍质量改善。场景中按资产分配简化率已有2026先行工作，因此关闭“新 per-asset scheduler”贡献候选。机器记录见[资源oracle报告](tools/mmgeo/TARGET_BUDGET_RESOURCE_ORACLE_20261116.md)。
-
-该实验没有生成新节点，也没有证明新的cut前沿；它只给不同资产的既有group选择建立强基线。层次方向仅保留“严格门下新增父patch能否扩大完整合法cut前沿”这一待证问题，且DAG2/HLOD ASAP/RTXMG是强先例。任何试验需先做小型离线原型，并在相同总构建工作、内存、完整cut质量与未见资产下超过本资源oracle/贪心和这些基线，之后才考虑核心图结构改动。
-
-### 2026-11-16 raster boundary derivatives are crowded prior art
-
-原始文献复核进一步降低滤波边界公式的独立新颖性：Lindstrom–Turk 2000已用渲染图像差直接评估edge-collapse；EdgeGrad（ECCV 2024）对栅格可见性不连续处构造micro-edge梯度，能处理coverage、depth与normal图；Soroka等人的SIGGRAPH 2025工作用dual quadrics改善silhouette edge sampling，以减少形状导数采样方差。这些并非同一mesh简化目标，但说明“解析轮廓位移”“边界导数”“微边处理栅格不连续”本身都不能支撑新颖性。当前更窄的差异必须证明：合法离散折叠的滤波图像损失估计在多步动态序列中比精确局部重绘更便宜，同时不损失完整输出质量；现有strip耦合在纳入全部行交互后无速度收益，离散Gram还慢于splat，尚无真实mesh全程收益。来源和逐项边界见[SIGGRAPH 2027相关工作增补](tools/mmgeo/SIGGRAPH_2027_LITERATURE_DELTA_20261115.md)。
-
-本轮做了资源oracle分析、一手文献核查和冻结候选池的离线多折叠审计；没有改C++、没有运行软件测试。SIGGRAPH投稿级新颖机制和质量—总成本净收益仍未建立。
-
-### 2026-11-16 multi-collapse filtered-interaction screen
-
-针对此前只测两次折叠的局限，把Torus冻结的初始合法几何候选池扩到k=4/8/12，覆盖六个正交相机视角，每视角48个候选且每个候选恰删两面。k=2/4在vertex-disjoint候选集上穷举独立误差与完整pairwise滤波交互目标；k=8/12比较两种目标的确定性贪心前缀。所有被选组合都实际应用并完整重绘，检查Euler特征、连通分量、闭合二流形边、边方向一致、重复/零面积面和有向体积符号。
-
-四种预算下，独立/交互选择在六个视角都得到相同候选集；实际覆盖/深度SSE差为0%，交互预测与完整组合重绘的最大绝对差2.8e-17。48个组合视角/预算的拓扑检查均通过。最大k=12仅删24/1,152面（2.08%），说明冻结池仍不能证明有实用简化收益。结论：关闭“当前Torus初始候选池中，pairwise图像交互能改变所选结果”的假设；不再为此池扩建Gram scorer。它不否定候选再生后的长序列或其他网格。若主线继续，下一道有信息量的门必须捕获/再生同质量门候选并做到有意义的总减面，和精确局部重绘比较全部更新成本；现有捕获不支持这项实验。可复现数据及脚本见[多折叠交互审计](tools/mmgeo/MULTI_COLLAPSE_INTERACTION_AUDIT_20261116.md)、`out/multi-collapse-interactions-20261116/torus.json`和`tools/mmgeo/audit_multi_collapse_interactions.py`。此轮无C++改动、无软件测试。
-
-### 2026-11-16 dynamic candidate recapture kill screen
-
-通过现有 `mm_capture_candidates` 工具在每次折叠后把更新OBJ重新捕获为当前合法候选，完成8步Torus单视角序列；再生候选总计3,456降至3,408，删除16/1,152面。冻结与动态策略都只从可见受影响三角形候选中采样，动态策略同视角SSE低99.885%，最终13视角审计总SSE低99.082%，每步拓扑及patch/full redraw检查均通过。但冻结池兼容候选从32降到11，动态策略运行时间约为1.96倍，预算仅1.39%，所以这是小冻结样本不足的结果，不是公平的完整队列速度比较。放开隐藏候选的负对照则8步全部选中视图完全不可见的面，零误差结果作废。
-
-Lindstrom–Turk 2000已逐折叠比较原始/当前渲染图像、局部增量维护图像、处理投影上相距远的候选代价以及隐藏部分大幅简化，因此“动态候选再生+过滤图像误差”没有独立新颖性。投影影响域queue存档样本中也与full-rescore及topology-lazy基线选出相同序列，尚未观测到质量收益。关闭这条独立贡献主张。详细记录见[动态重捕获审计](tools/mmgeo/DYNAMIC_RECAPTURE_AUDIT_20261116.md)与[文献边界](tools/mmgeo/SIGGRAPH_2027_LITERATURE_DELTA_20261115.md)。
-
-### 2026-11-16 全候选池与新边消融修正
-
-把冻结方扩为全部2,218个初始可见合法placement后，动态重捕获的拟合视角SSE仍低99.503%，但13视角SSE反而高11.82倍；此对照仍限制冻结方的重叠邻域操作。随后做匹配消融：双方每折都重捕获当前placement并允许相邻折叠，仅全动态方可用折叠新生成的边。全动态拟合视角SSE低92.611%，构建/评分耗时约157.7秒，和初始边frontier的155.8秒相近；但最终13视角SSE高65.68倍。两策略都只减16/1,152面，拟合视角收益属于过拟合，关闭“新边候选改善整体质量”贡献假设。详见[全池与新边消融](tools/mmgeo/DYNAMIC_RECAPTURE_FULLPOOL_AUDIT_20261116.md)、`out/dynamic-recapture-fullpool-20261116/dynamic-recapture-audit.json`和`out/dynamic-edge-frontier-20261116/dynamic-edge-frontier-audit.json`。此轮增加离线Python研究脚本/记录，无C++更改、无软件测试。
-
-当前总目标仍未达到：没有经验证的SIGGRAPH级新机制，也没有相对强基线的质量—总成本净收益。本轮只新增Python研究脚本/离线记录，不改C++、不运行软件测试。
-
-### 2026-11-16 per-corner seam path: comparator gate only
-
-继续沿核心 `CornerSimplifier` 检查属性接缝方向。现代码按三角形角保存UV/法线/AO，折叠时逐角插值，并在UV分歧时拆分输出顶点。Hoppe 1999的wedge数据结构已支持一个几何顶点对应多组角属性，并在折叠时合并兼容wedge；Seamless 2017进一步刻画无缝纹理条件下哪些接缝折叠合法。2022多chart方法重建纹理，2025 textured-wild 方法传递源纹理外观。因此，“按角存属性”“跨属性接缝折叠”或“避免纹理渗色”都不能单独作为新意。
-
-只保留一个窄的待比较契约：对有作者UV/材质的PBR网格，固定输出这些源UV/材质、不rebake atlas，同时通过有UV/normal/AO hard gate 的Corner折叠保持可见外观。下一门应先构造忠实wedge-QEM与seam-constrained对照，在held-out资产和相同面数下比较PBR渲染误差、接缝渗色、属性合法性、拓扑和总构建成本；如果差异仅来自数据结构，停止，不写成创新。详细边界见[SIGGRAPH相关工作增补](tools/mmgeo/SIGGRAPH_2027_LITERATURE_DELTA_20261115.md)。这只是比较协议，尚无算法假设或实验收益。
-
-### 2026-11-16 tangent-frame 法线贴图方向关闭
-
-继续核对“固定作者UV/材质/切线空间法线贴图、不rebake”的窄方向。SIGGRAPH 1998 appearance-preserving simplification 已把表面参数化变化与纹理/法线贴图光照联系起来；SI3D 2003 已支持动态漫反射/镜面光照下的逐像素 normal-map 简化；TOG 2021 appearance-driven simplification 更直接联合优化形状与 tangent-space normal map，并从位置和UV更新切线框架、展示PBR资产。因此给Corner新增切线框架角误差项或硬门，不能单独作为SIGGRAPH新机制。
-
-代码检查确认当前 `CornerSimplifier` 输出角UV和着色法线，但没有把normal-map切线框架作为属性或误差证书。这是当前窄资产契约的验证缺口，不是新颖性证据。关闭“增加TBN角度惩罚/硬门”作为独立投稿候选；只有提出有用的渲染误差证书或在同质量、完整成本下明显优于图像驱动简化与忠实法线贴图重烘焙的增量算法，才值得重开。工作区目前没有held-out作者PBR资产集，故未宣称PBR实验结果。完整先例范围与代码审阅见[切线框架法线贴图新颖性审计](tools/mmgeo/TANGENT_FRAME_PBR_NOVELTY_AUDIT_20261116.md)。本轮只更新研究文档，无C++改动、无软件测试。总体SIGGRAPH目标仍未完成。
-
-### 2026-11-16 ReSTIR复用感知LOD构造假设
-
-筛查一个更窄的候选：在固定几何误差和面数预算下，简化序列能否改善跨LOD ReSTIR完整估计器的质量-相关性-成本Pareto前沿。原先把有效权重/ESS当成优化目标的说法已被下文的精确反例撤销；ESS只作诊断。它不能被说成UV、表面映射、外观误差或通用路径重要度的新方法；这些方向已有Progressive Meshes、appearance-driven simplification、illumination-driven reduction和ReSTIR运行时兼容性/去相关工作。四个本地资产的九个LOD过渡上，UV面积采样的前向覆盖与最近点回映一致率均为100%（每过渡10,000样本）；Cloth有约63% UV重叠，但仍未显示采样映射失效。因此“补UV覆盖/让最近点映射可逆”在当前数据上关闭。ManyMesh正式OBJ导出保留各LOD的UV，但仓库没有ReSTIR renderer；公开ReSTIR-LoD/Falcor 8实现和headless脚本可作复现起点，场景需另行获取。本机Vulkan只枚举Intel Iris Xe，且无ray-tracing pipeline/acceleration-structure/ray-query扩展，当前环境不能支撑论文级GPU方差验证。本阶段不改生产代码。继续这条线须取得可用RTX/DXR设备，验证任何贡献感知代理能预测held-out图像质量，并在等面数、误差、总成本下胜过QEM/Corner与兼容性/去相关运行时基线；否则关闭。对方差、相对帧自协方差及空间协方差分别报告，按同等成本比较Pareto前沿，不预设协方差越低越好。测量边界见[ReSTIR LOD UV传输预检](tools/mmgeo/RESTIR_LOD_UV_TRANSPORT_PREFLIGHT_20261116.md)，候选协议见[ReSTIR复用感知LOD研究假设](tools/mmgeo/RESTIR_REUSE_AWARE_LOD_HYPOTHESIS_20261116.md)。SIGGRAPH 2027 official schedule corrected 2026-11-17: paper deadline 2027-01-28 22:00 GMT; submission form/conflicts 2027-01-21; upload 2027-01-29. Submission details remain forthcoming.
-
-### 2026-11-16 本轮连续核查：TAA候选降级，ReSTIR完整估计器目标待实验
-
-复查真实栅格实验入口：`samples/mm_bench.cpp` 确认有 `--taa`、连续 `--frames`/相机轨迹导出、`--distance-lod` 和 `--gpu-cut` 开关；但 Windows 应用控制策略拦截了现有 `mm_bench.exe --help`，经批准的同一只读调用仍返回策略拒绝。没有渲染或TAA画面数据，不能把此前的离线 `mmtemporal` 当作 Filament TAA 证据。
-
-时域新颖性门进一步关闭：Nanite 的 [SIGGRAPH 2021 Seamless LOD 技术报告](https://advances.realtimerendering.com/s2021/Karis_Nanite_SIGGRAPH_Advances_2021_final.pdf)已明确，在小于约1像素误差下切换cluster，并由TAA平滑变化；渐进网格geomorph和离散LOD图像插值亦为直接先例。因此“ManyMesh DAG cut切换时利用TAA历史”目前只是整合问题；即使将来测得收益，也须提出超出亚像素LOD切换/TAA的算法机制，才可能重新考虑。
-
-完整核读[SIGGRAPH 2026 ReSTIR-LoD论文](https://research.nvidia.com/labs/rtr/publication/wang2026levelOfDetail/)后确认：它的跨拓扑UV表面映射、重叠chart的双射匹配、面积Jacobian以及reservoir shift均已给出；其实现按对象在一帧内统一LoD，论文明确将per-ray LoD列为未来工作。由此，“per-ray / 混合空间LOD下继续复用”与既有未来方向高度重合，不能作为本项目独立创新；公开每ray cluster-LOD系统也已覆盖选择/遍历侧。公开ReSTIR-LoD仓库README进一步显示其重点是LoD-aware shift、时间reservoir splatting、场景LoD选择与headless渲染驱动，并要求另行下载Chessboard场景；README没有介绍网格LOD生成方法。这只能说明该README未提供生成流程，不能据此断言其全部仓库/补充材料均无生成工具。精确检索没有发现直接以渐进折叠顺序最小化跨LOD ReSTIR完整估计器方差/时间协方差的论文，但该检索不是完整相关工作搜索，不能据此声称“无人做过”。这个剩余问题没有proxy验证、方差结果或总成本收益；本地没有所需RT硬件，短期实现风险高。
-
-研究决策：不宣称SIGGRAPH水准，不增加C++实现；权重ESS目标已被精确反例否定，只保留ESS作诊断。剩余的完整估计器目标在真实GPU路径实验可用前仍未验证，当前无达到投稿标准的创新机制。此轮无软件测试、无渲染捕获。
-
-### 2026-11-16 ReSTIR 权重 ESS 目标反例
-
-把候选目标按GRIS单次resampling公式做精确检查。固定映射候选的权重为`w_i`、`W=Σw_i`，设`g_i=f(T_i(X_i))/p_hat(T_i(X_i))`，选中候选后的输出是`W*g_i`，条件方差为`W*Σ(w_i*g_i²)-(Σw_i*g_i)²`；ESS=`W²/Σw_i²`不含`g_i`。精确二候选反例中，`w=(1,1), g=(0,2)`得到ESS=2、均值2、方差4；`w=(1,3), g=(0.5,0.5)`得到更低ESS=1.6、同一均值2、方差0。因此撤销“直接最大化shift权重ESS”作为可能的简化目标；ESS只保留作诊断。
-
-真实优化目标若要继续，应直接测量带贡献的完整ReSTIR多轮独立运行图像误差/方差、相对帧自协方差和空间协方差，并在同总成本下超过Compatibility-Guided Neighbor Selection及MCMC去相关控制。CGNS以SMAPE、三帧lag相对自协方差及半径8像素的相对空间协方差刻画error-correlation tradeoff；它说明协方差必须按Pareto前沿看待，不能把单一协方差指标设成越低越好的目标。CGNS参考实现对空间候选像素按primary-hit位置和法线打分，再用加权reservoir选邻居；这使“按跨LOD映射位置/法线兼容性打分”更不能单独作为新意。CGNS是运行时空间邻居选择，并未直接优化离线折叠序列或跨LOD时间映射；此任务差异仍不是新颖性证明。GRIS复用相关性会破坏独立RIS的简单收敛保证，单轮条件方差也不能替代全管线评价。当前UV预检未采样路径，故不能给出所需`w_i/g_i`分布；本机也无法运行RT实验。详细推导、精确反例和停止条件见[ESS目标修正](tools/mmgeo/RESTIR_REUSE_AWARE_LOD_HYPOTHESIS_20261116.md)。这轮产生了可复核的数学反例和精确的协方差测量定义，但没有Mesh质量结果或新的SIGGRAPH创新主张；无C++改动、无软件测试、无渲染捕获。
-
-### 2026-11-16 ReSTIR-LoD构造先例与现代基线补核
-
-逐节核对[SIGGRAPH 2026 ReSTIR-LoD正文](https://research.nvidia.com/labs/rtr/publication/wang2026levelOfDetail/wang2026levelOfDetail.pdf)：核心为跨拓扑UV映射、部分双射匹配和面积Jacobian；正文说明残余质量损失部分来自UV映射不精确与LOD法线差异，实验对象按帧统一LOD，per-ray选择仍属未来工作。论文和公开[实现README](https://github.com/elite-sheep/ReSTIR-LoD)聚焦映射、时间reservoir splatting和给定LoD的场景选择，没有在已查内容中描述collapse-order优化；README场景须另行下载。仅凭这些内容不能证明补充材料/外部资产生成流程不存在。
-
-测试基线须反映2026年的系统进展：[ReSTIR PT Enhanced](https://research.nvidia.com/labs/rtr/publication/lin2026restirptenhanced/)报告2–3倍提速，并加入互惠邻居选择、footprint-based shift标准和duplication maps；[ReSTIR PG](https://doi.org/10.1145/3757377.3763813)用时空复用后的路径引导初始采样；[CGNS HPG 2026](https://research.nvidia.com/labs/rtr/publication/junkins2026compatibility/)报告error-correlation Pareto改善，给出了SMAPE、三帧lag相对自协方差和半径8像素相对空间协方差的定义。它们未直接提出离线折叠序列目标，但凡仅改善邻居选择、样本突变、初始候选或一般path/normal兼容性都会和这些强先例重叠。唯一尚未被本轮定向检索命中的窄问题仍是：在同一LoD-aware GRIS映射及现代复用控制下，offline collapse sequence能否以可接受构建/内存/渲染成本改善完整error-correlation Pareto前沿。该问题仍只是待证假设；当前无RTX/DXR路径实验，不能称为SIGGRAPH水准，也不能声称“无人做过”。
-
-### 2026-11-16 screen-support batch candidate: cross-asset closure
-
-把屏幕支持互斥批次的精确有限池筛选从Torus扩到Monkey和Pirate，各六个存档视角、每视角48个合法初始候选、请求12次折叠；对屏幕旧/新面包围盒与滤波halo图、真实过滤残差像素支撑图分别求最大独立集和匹配数量最小误差批次，再全量复合重绘。三资产的盒支持图最大批次只有7–10次；真实残差支持图可容纳11–17次，但在匹配折叠数时，所选批次的实际SSE都显著高于纯拓扑兼容最优批次（残差支持图为103倍至7.86百万倍，极小分母场景同时报告绝对SSE增量）。残差互斥批次与残差加和误差至多1.11e-16，拓扑/朝向检查均通过，故损失来自排除了可互相抵消的重叠改动。该结果关闭三份冻结coverage/depth候选池上的严格屏幕互斥质量选择器，不是GPU吞吐或再生序列实验；MILP虽报告零gap，但当前SciPy 1.15.3/NumPy 2.5.4组合发出版本不兼容警告，需在受支持环境复现。细节、每视角绝对值、哈希和复现命令见[屏幕支持批次审计](tools/mmgeo/SCREEN_BATCH_SUPPORT_AUDIT_20261116.md)；工具为[批次基线生成器](tools/mmgeo/make_batch_support_schedule.py)及[结果汇总器](tools/mmgeo/summarize_batch_support_audit.py)，机器结果存于`out/screen-batch-support-20261116/`。本轮只做离线研究脚本与文档，没有C++改动或软件测试。该机制仍未达到SIGGRAPH贡献门；继续目标，不将候选关闭等同于整体任务完成。
-
-### 2026-11-16 multi-collapse pairwise interaction: cross-asset closure
-
-在Monkey/Pirate上复用同一冻结候选池，完成k=2/4穷举和k=8/12贪心的独立SSE与残差Gram交互目标对照，并对所选复合几何全图重绘。Torus、Monkey、Pirate三者在k=2/4/12六个视角全部选出相同序列；k=8仅Pirate一个视角改变，六视角均值SSE收益0.386%，唯一变化视角绝对下降8.45e-11。预测复合SSE与实测差至多2.58e-20（Monkey）、1.13e-22（Pirate），基础拓扑/朝向检查通过。该目标能精确建模当前有限残差，但在已测数据上没有有意义的批次选择收益；与图像误差折叠和全局离散选边先例结合，不能作为投稿创新。详细表格、哈希和复现命令见[多折叠交互跨资产筛查](tools/mmgeo/MULTI_COLLAPSE_INTERACTION_CROSS_ASSET_20261116.md)；本轮Python离线分析，无C++改动、无软件测试。总体SIGGRAPH贡献仍未建立。
-
-### 2026-11-16 shared-child parent alternatives
-
-Decoded MMB v7 captures for seven assets × five DAG group sizes and found six same-input, different-parent-surface sets (cloth 1, Pirate 2, shapes 3). All six preserve identical oriented parent boundaries and pass stored local attribute limits under --quality-gate 1; each alternative has the same triangle count. Two shapes parents occur in native 55% cuts; swapping group 2 → 8 preserves exact-once leaf coverage, bounds, boundary, and budget, and lowers that node's accumulated error 9.80%. Reconstructing the saved auto-framed screen metric shows the whole-cut maximum is unchanged because another node remains the bottleneck. This is a verified small construction opportunity, not a global gain or SIGGRAPH contribution. Continue only if active-bottleneck alternatives improve held-out whole-cut/rendered quality after build and storage cost. Details and commands: [shared-parent audit](tools/mmgeo/SHARED_PARENT_ALTERNATIVES_AUDIT_20261116.md).
-
-### 2026-11-16 shared-parent prior-art correction
-
-The same-region parent-alternative framing is preempted at the framework level by Batched Multi-Triangulation (2005), which models fragments replacing the same floor/domain and requires boundary-preserving mesh pasting; DAG2 (HPG 2023) independently establishes multi-parent cluster construction. Our 7-asset audit found six exact-input, distinct-surface candidates, but all keep triangle count constant and none improves the saved cut maximum screen error. Close this as a control, not a novelty claim. Detailed captures and targeted sources: [audit](tools/mmgeo/SHARED_PARENT_ALTERNATIVES_AUDIT_20261116.md).
-
-### 2026-11-17 ReSTIR-LoD overlapping-UV match preflight
-
-以UV重叠最高的Cloth LOD0→LOD1/LOD2作为分支映射压力样例，分别对20,000个source-UV-area样本复现ReSTIR-LoD的最近世界点一对一贪心匹配，并对比128方向Lambertian cosine签名匹配。两档过渡均有62.865%采样点对应多个UV命中，但签名匹配在每档20,000样本中一次也没有改变最近点基线的分支；映射率均为100%，位置/法线/Jacobian代理完全相同。再用Shapes LOD0→LOD3（减面51.2%，UV歧义28.61%）做更强减面筛选：4,000样本中仅5次改变分支（0.125%），均值签名误差反而上升0.122%，均值世界位移因一个6.97% bounds离群样本上升181.7%。Camera的UV命中全部多分支，但只减面5.1%，因此只是尾部失配诊断。结论关闭这些资产上简单几何transport-signature映射候选；不覆盖材质/遮挡/完整路径统计。通用PDF/兼容性打分还邻接Tokuyoshi 2023 PDF相似度与CGNS；不能凭组合称新。复现与限制见[重叠UV映射预检](tools/mmgeo/RESTIR_OVERLAP_MATCHING_PREFLIGHT_20261117.md)，扩展UV测量和匹配数据存于`out/restir-overlap-extension-20261117/`及`out/restir-overlap-matching-20261117/`。该结果仍未提供完整ReSTIR路径方差、相关性或总成本收益；本机缺少RT硬件，SIGGRAPH贡献门未通过。无C++改动、无软件测试。
-
-### 2026-11-17 UV分支匹配加入自遮挡响应
-
-把分支匹配代价扩展为32个Fibonacci球面方向上的`max(0,n·ω)×selfVisibility`漫反射签名，在Camera LOD0→LOD1（590→560三角形）上抽取1,000个UV面积样本，与最近世界点贪心匹配对照。全部样本UV都有多个target命中，但因partial bijection的source/target命中数不等，997个source分支可映射。24/997个映射改变；总体签名RMS仅下降0.22%，平均位置位移却从0.00233增至0.00363倍组合bounds（+56%），p99从0.0786增至0.1213。改变的点上平均响应差改善0.000991，而位移平均增加0.0540倍bounds。CPU BVH累计执行17.44M次AABB与6.01M次三角测试；这是研究参考实现计数，不是GPU性能。该代理已包含一跳自遮挡，但仍无材质/外部遮挡/多跳/实际ReSTIR估计器，且Camera只减面5.1%。该映射签名和Tokuyoshi 2023 PDF相似度空间复用高度相邻，弱效应不足以支持新算法。维持“不提升为创新”的结论；完整方差/协方差与成本收益仍需真实ReSTIR GPU实验。详见[自遮挡分支匹配筛查](tools/mmgeo/RESTIR_VISIBILITY_MATCHING_SCREEN_20261117.md)和机器记录`out/restir-visibility-matching-20261117/camera_0_1.json`。无生产C++改动、无软件测试。
-
-### 2026-11-17 UV fiber cardinality census
-
-为区分映射缺口与几何代理失败，对Camera及Shapes的source/target UV-hit集合再做20,000样本计数，不运行昂贵分支 assignment。Camera每个采样UV在source有2–42命中、target有2–43命中，source/target命中数量差异249/20,000（source多173、target多76）；uniform-branch cardinality估值99.824%，但等权假设不构成实际映射率。该Camera资产UV极端堆叠，且仅减面5.1%，不适合作为代表性质量用例。Shapes减面51.2%后，source/target fiber命中数在20,000样本上完全一致：14,312个单命中、90个13命中、5,598个14命中。结合其全样本最近映射往返和先前签名分配结果，当前资产集没有展示值得优化的跨LOD UV分支覆盖缺口；不再为“保fiber cardinality”改生产简化器。分布与输入/脚本哈希见`out/restir-multiplicity-20261117/{camera_0_1_v2,shapes_0_3_v2}.json`，预检方法在`tools/mmgeo/audit_uv_sample_coverage.py`。这不证明所有资产映射连续，也不替代ReSTIR贡献/方差测量。无C++改动、无软件测试。
-
-### 2026-11-17 targeted ReSTIR prior-art delta and deadline correction
-
-Three targeted searches for mesh collapse with ReSTIR, path reuse with LOD simplification, and temporal covariance with mesh simplification did not surface a direct paper optimizing collapse order for the full ReSTIR error/correlation/cost frontier. This is a bounded search result, not proof of novelty. ReSTIR-LoD already supplies cross-topology path mapping and Jacobians; ReSTIR PT Enhanced supplies strong runtime controls; appearance-driven simplification already optimizes rendered image error. The only surviving distinction is the offline collapse-order objective evaluated under the complete estimator and those controls, and it remains unvalidated. See [the hypothesis and prior-art delta](tools/mmgeo/RESTIR_REUSE_AWARE_LOD_HYPOTHESIS_20261116.md).
-
-Corrected against the [official SIGGRAPH 2027 schedule](https://s2027.siggraph.org/program/technical-papers/): paper deadline 2027-01-28 22:00 GMT; submission form/conflicts 2027-01-21; upload 2027-01-29. The earlier 2027-01-21 paper-deadline statement was wrong. As of this update, 72 days remain. No production C++ changes or software tests.
-
-### 2026-11-17 ReSTIR-LoD paper discussion audit
-
-The full SIGGRAPH 2026 paper says its residual quality loss partly comes from UV-map imprecision and inter-LOD normal differences, evaluates frames around LOD transitions, and lists robust mappings for changing surface representations and per-ray LOD as future work. The surviving mesh-construction hypothesis is separate only if it holds the published mapping and object/frame LOD policy fixed, then improves the complete estimator frontier at matched geometry budgets. UV/normal-aware collapse scores alone are too close to existing simplification work. The algorithm is still unspecified and has no positive renderer result; this is not a novelty claim. See the [hypothesis audit](tools/mmgeo/RESTIR_REUSE_AWARE_LOD_HYPOTHESIS_20261116.md).
-
-### 2026-11-17 local RT hardware revalidation
-
-Re-ran ulkaninfo --summary and searched full ulkaninfo output for VK_KHR_acceleration_structure, VK_KHR_ray_tracing_pipeline, and VK_KHR_ray_query. It enumerates three entries with the same Intel Iris Xe PCI/device identity and returns none of these RT extensions. A Rockstar Social Club Vulkan-layer JSON warning appears, but device enumeration succeeds. WMI video-controller inspection is denied in this account; the verified Vulkan path lacks RT support; this audit did not inspect a DXR path. This confirms that the required ReSTIR path-tracing experiment cannot run on the current local Vulkan device.
-
-
-### 2026-11-17 mixed group-size DAG cut frontier: cross-asset rejection
-
-Built a binary region-cover oracle over five independently captured group-size DAGs, then reconstructed its mixed cuts from MMB v7 and checked the result against the native PLY. On Shapes, the five-graph solution uses 40,538 triangles (cap 40,550), preserves the native boundary multiset and matches the 16-view filtered coverage/depth SSE of g16 in 16/16 views, improving mean SSE 15.9%. Restricting the pool to g2+g16 leaves only 0.8% mean-SSE improvement and loses in 8/16 views. On Material Sphere, the oracle's projected-sphere objective improves 13.3%, but its 5,152-triangle cut has 58.8% higher raster SSE than native g32 and loses 16/16 views. The proxy does not generalize.
-
-The five-graph pool costs 29.05s / 30.82 MiB for Shapes versus 7.84s / 6.12 MiB for g16; Material Sphere costs 10.19s / 3.31 MiB versus 2.69s / 0.59 MiB for g32. Candidate-pool construction is therefore several times more expensive, before MILP time. Batched Multi-Triangulation already composes precomputed patches from multiple partition levels into valid conforming cuts; the experiment is not a novelty claim. Close this objective/candidate as a research branch; retain outputs as a control. Full measurements and commands: [mixed-cut screen](tools/mmgeo/MIXED_GROUP_CUT_FRONTIER_20261117.md). No production C++ changes or software tests; the overall SIGGRAPH goal remains open and unproven.
-
-### 2026-11-17 quality-gate witness partition: bounded novelty screen
-
-Inspected the current DAG retry path: every rejected multi-child parent is split at the median along its longest spatial axis and retried to depth two, regardless of which strict gate rejected it. The optional ledger records group-level rejection counts, not the collapse/triangle/corner/child witness needed to guide a split. An archived Pirate diagnostics set from source commit `edb6ecc7a16e3a68b7b0be80a1317e8e21dd6f16` has 114 rejected groups among 152 baseline rows; topology/geometry/attribute/locked counts overlap and are not current-head evidence. A fresh capture could not run because WSL could not mount its configured distro disk (`ERROR_PATH_NOT_FOUND`); the existing Windows executable remains blocked by the previously recorded application-control result.
-
-The direct meshoptimizer `clusterlod.h` baseline already retries a stuck simplification with permissive/sloppy modes; HLOD ASAP provides crack-free progressive cluster boundaries; TOG 2025 *Simplifying Triangle Meshes in the Wild* covers non-manifold multi-component textured inputs. A bounded search did not find the exact combination of per-collapse gate witnesses, strict-gate-preserving group repartition, and fixed total build cost, but this is not proof of novelty. Record witness-conflict partitioning only as an experiment candidate, not a contribution. Its next gate is a matched work/time/memory comparison against spatial median, simple balanced splits, and a finite-pool upper bound on complete strict-gate-valid cuts and held-out views/assets. Stop if it does not expand the frontier at equal total cost. See [the novelty screen](tools/mmgeo/QUALITY_GATE_PARTITION_NOVELTY_SCREEN_20261117.md). No production C++ changed and no software tests were run; SIGGRAPH contribution remains unproven.
-
-### 2026-11-17 per-ray ReSTIR-LoD transport: new candidate, not yet validated
-
-ReSTIR-LoD (SIGGRAPH 2026) explicitly lists per-ray LoD as future work, while Locally-Adaptive LoD for Hardware-Accelerated Ray Tracing (SIGGRAPH Asia 2023) already selects triangle-mesh tessellation independently for primary and secondary rays. The candidate is therefore narrower: maintain ReSTIR path reuse when each hit in one path can use a different on-demand ManyMesh cut, with a derived path measure, per-vertex geometric Jacobians, and explicit partial-map fallback. Generic per-ray LOD, stochastic LOD, and UV mapping are prior art. A bounded search found no direct paper on this exact combination but cannot establish novelty. See [the candidate screen](tools/mmgeo/PER_RAY_LOD_RESTIR_NOVELTY_SCREEN_20261117.md).
-
-New local feasibility evidence: Windows D3D12 WARP is present as DXGI adapter index 3; a direct device feature query reports DXR Tier 1.1. This opens a possible small correctness/variance pilot, not performance testing. ReSTIR-LoD uses Falcor 8.0; its headless Python path has not yet been confirmed to select WARP, and no DXR dispatch or ReSTIR render has run here. Next gate: prove the unmodified or minimally configured Falcor testbed can select WARP and render a tiny frame; stop if that requires a renderer port. No production C++ changed and no software tests were run; the SIGGRAPH contribution remains unproven.
-
-### 2026-11-17 mixed-cut ReSTIR novelty correction
-
-Corrected the earlier “per-ray” wording: ManyMesh selects one camera-dependent, spatially mixed cut per frame; all rays then see that same frozen cut. SIGGRAPH 2026 ReSTIR-LoD already states its formulation permits more than one LOD in a frame, despite its object-wide implementation, and supplies UV partial maps plus per-vertex area Jacobians. NVIDIA `vk_lod_clusters` adds ray-hit/ray-cone-driven cluster residency and LOD selection (2026-11-11), with a path-tracing renderer; RTXMG 2.0 supplies the streamed cluster-LOD path. A public hobby demo also reports ReSTIR DI/GI over this class of renderer, so integration alone is not a contribution.
-
-The only retained low-confidence question is whether parent-child partial surface maps composed along the hierarchy can reduce cross-cut ReSTIR map memory/query cost or improve support over direct UV inversion on overlapping charts, missing UVs, and high reductions. This may collapse to progressive-mesh correspondence plus ReSTIR-LoD; abandon it unless map-level advantages survive a full ReSTIR estimator comparison with modern reuse controls. Details and sources: [mixed-cut prior-art correction](tools/mmgeo/RESTIR_MIXED_CUT_PRIOR_ART_CORRECTION_20261117.md). No renderer experiment was run; the SIGGRAPH bar remains unmet.
-
-### 2026-11-17 correction: hierarchical map composition is not the surviving novelty
-
-A follow-up prior-art check found that progressive meshes already encode inverse edge-collapse/vertex-split sequences and selective refinement, while TOG 2023 *Surface Simplification using Intrinsic Error Metrics* explicitly tracks barycentric point maps through local coarsening operations to produce a bijective fine-to-coarse map. Therefore parent-child map composition is established machinery; a ReSTIR-specific engineering gain would need direct measurement before reconsidering it. Close this representation branch as a primary novelty candidate. The remaining low-confidence ReSTIR research line is still the earlier reuse-aware collapse-order hypothesis, whose only defensible distinction is a full estimator error/correlation/cost Pareto gain beyond ReSTIR-LoD and current reuse controls. No renderer result supports that claim yet.
-
-### 2026-11-17 current-build quality-gate regroup follow-up
-
-Corrected the earlier availability note: the Windows `mmgeo.exe` runs; it is recorded by SHA-256 `46B5AB1FE0CBF2AB9C2E1EB900FD94DFB7DF08665EDDCE955118849E96774900` against workspace `HEAD` `6836c6e484b19010cfce7d413429141020f169bc` with relevant local source edits present. On Shapes, g8 and g16 both reached 40,550 triangles (55%); g8 had 1,690 nodes/9 levels/4 roots, and g16 had 1,642/9/4. The g8 read-only adjacent-group regroup screen consumed 198,064/200,000 input triangles and 55.84 trial seconds across 136 moves/swaps. Seven passed the manifold, exact-boundary, non-increasing-error and lower-triangle predicate, shaving 6–24 triangles individually; they are separate local trials and cannot be summed into a whole-cut gain. Full diagnostic build time was about 69.3s versus 10.35s without trials. `--quality-debug` exposes gate metrics and some worst attribute indices but not ordinary offending topology/boundary elements or a direct child-partition witness. This weak headroom at roughly 6.7x build time does not support implementing witness-directed repair. The candidate is demoted to low priority; its next gate remains a matched complete-cut frontier gain over DAG2 split/reinsert, HLOD ASAP and current clusterlod fallback at equal total work, time and memory on held-out assets. Details: [current quality-gate screen](tools/mmgeo/QUALITY_GATE_PARTITION_NOVELTY_SCREEN_20261117.md). No C++ changes or software tests; SIGGRAPH readiness remains unproven.
-
-### 2026-11-17 ReSTIR-LoD WARP feasibility attempt
-
-Shallow-cloned public ReSTIR-LoD source commit `37d13d9b1f3e76be88aa79109d24b0fe6e4ef6a9` into ignored `out/research/restir-lod` and initialized its six submodules. The repository includes Falcor source; its Python driver hardcodes GPU 0, while Falcor `Testbed` accepts a GPU index and `Device` enumerates/creates adapters by LUID. A WARP path is plausible but unconfirmed. Packman dependency acquisition failed twice on its first packaged Python download with `SSLEOFError`; the same CloudFront URL returned HTTP 200 to a direct HEAD request. Falcor was not configured or built, and no DXR dispatch or ReSTIR frame ran. Do not hand-install packages or modify the third-party dependency chain in this screen. Falcor's official build prerequisites specify an NVIDIA DXR GPU and driver; WARP would only support correctness/variance pilots, not performance claims. The prior “no checkout” statement is superseded. This leaves the reuse-aware collapse-order hypothesis without empirical support and low confidence; the full estimator/error-correlation-cost Pareto test remains required. Details: [ReSTIR hypothesis and feasibility log](tools/mmgeo/RESTIR_REUSE_AWARE_LOD_HYPOTHESIS_20261116.md). No production C++ changed and no software tests were run; SIGGRAPH readiness remains unproven.
-
-### 2026-11-17 matched regroup cross-asset check
-
-Matched the regroup helper's graph and gate parameters (DAG, 5 levels, ratio 0.7, group size 8, corner seam and strict quality gates) on Shapes, Material Sphere and Monkey, using one thread and a 200,000-triangle work cap to match the earlier Shapes screen (the helper default is 50,000). Shapes again produced 136 trials and 7 local improvements, but all seven belonged to three distinct adjacent-group unions at level 4; five were variants of the same pair. Material Sphere (16 failed baseline groups) and Monkey (one failed baseline group) had zero eligible trials, so they are no-sample outcomes rather than negative gain measurements. This leaves only a single-asset local signal and no complete-cut or held-out quality improvement. Details and logs: [regroup novelty screen](tools/mmgeo/QUALITY_GATE_PARTITION_NOVELTY_SCREEN_20261117.md) and `out/quality-witness-current/`. The regroup candidate remains low priority; no production C++ or software tests were changed.
-
-### 2026-11-17 ReSTIR single-vertex weight screen
-
-Ran paired 4,096×32 CPU GRIS/RIS batches on five real UV-mapped Torus/Sphere LOD transitions. With a synthetic glossy BRDF and source-luminance directional proposal, Torus L1→L2 shows 2.178× relative total MSE and Sphere L2→L3 1.053×; both positive signals reproduce under an independent seed and remain positive with 0.25/0.50 uniform proposal floors. The Torus increase is mostly between candidate sets after mapping. This is a one-vertex, no-visibility preflight over the existing LOD chain; it does not compare collapse orders or establish a ReSTIR/image-quality gain. Keep the reuse-aware collapse-order idea low-confidence. The next gate is a real path-tracing comparison of alternate collapse orders against the published mapping and modern reuse controls, at matched geometry and total cost. Details, intervals and caveats: [CPU weight screen](tools/mmgeo/RESTIR_CPU_WEIGHT_SCREEN_20261117.md). No production C++ changed and no software tests were run; SIGGRAPH readiness remains unproven.
-
-
-### 2026-11-17 ReSTIR direct-visibility follow-up
-
-Added triangle-BVH self-visibility to the paired single-vertex screen. The diffuse Torus L1->L2 and Sphere L2->L3 controls show no significant paired MSE change. For glossy Torus L1->L2, independent 4,096- and 8,192-batch runs retain positive normal and bootstrap intervals (cross/same relative MSE 2.45x and 1.87x), but the paired deltas are extremely right-skewed: the median is slightly negative while the 99th percentile is about 21-24 and the maximum is about 2,000. The added MSE is almost entirely outside the conditional reservoir-selection covariance, pointing to rare candidate-set/proposal mismatch in this toy estimator. This is a reproducible mechanism lead, not a collapse-order gain: no alternative sequence, camera path domain, multibounce transport, or spatial/temporal history was evaluated. Keep the hypothesis low-confidence; the next screen should test tail stability against candidate count, proposal floor, and material, then move to a full path-tracing comparison. Details and valid manifests: [direct-visibility screen](tools/mmgeo/RESTIR_CPU_DIRECT_VISIBILITY_SCREEN_20261117.md). No production C++ changed and no software tests were run; SIGGRAPH readiness remains unproven.
-
-
-### 2026-11-17 ReSTIR candidate-count tail follow-up
-
-Compared 8,192x32 against 2,048x128 at the same 262,144 total candidate count. Two independent M=128 runs retain positive bootstrap intervals, with cross/same relative MSE 1.386x and 1.487x. Their paired medians remain negative, while the 99th percentiles fall to 9.9-12.1 and maxima to 150-160, versus 20.8 and 1,993 at M=32. Conditional reservoir covariance changes little relative to total MSE, and cross-LOD ESS stays lower. This suggests larger candidate batches reduce but do not remove the heavy-tail proposal mismatch in the direct-light proxy; it says nothing yet about multi-bounce rendering or a better collapse order. Keep the hypothesis low-confidence. Details: [direct-visibility screen](tools/mmgeo/RESTIR_CPU_DIRECT_VISIBILITY_SCREEN_20261117.md). No production C++ changed and no software tests were run.
-
-
-### 2026-11-17 ReSTIR proposal-support floor screen
-
-At M=128/2,048 batches, single-seed direct-visibility screens with uniform floors 0.25 and 0.50 yielded cross/same relative MSE 1.154x and 1.178x, with positive within-floor bootstrap intervals. Their paired-delta maxima fell to 34.5 and 24.6 from 150-160 at floor 0.05, but 99th-percentile tails were not monotonic and ESS fell further. Since proposal floors used different seeds and no paired floor-vs-floor difference was computed, treat this as sensitivity evidence only. Next use common random numbers to estimate the floor contrast, then move from the one-vertex proxy to full ReSTIR path tracing. Details: [direct-visibility screen](tools/mmgeo/RESTIR_CPU_DIRECT_VISIBILITY_SCREEN_20261117.md). No production C++ or software tests changed.
-
-
-### 2026-11-17 common-random ReSTIR floor contrast
-
-Paired the 0.05 and 0.25 proposal floors at M=128 using the same seed, UV points, proposal random variates, reference integrals, and 2,048 batches. The mean high-minus-low change in cross-minus-same normalized MSE is +0.0044; the 95% normal and 10,000-replicate bootstrap intervals both span zero (about [-0.124, +0.131]). This reverses the apparent floor improvement in the separate-seed screen: no floor benefit is established. The paired per-batch contrast is itself heavy-tailed, and a second paired seed is needed. Details and raw batch deltas: [direct-visibility screen](tools/mmgeo/RESTIR_CPU_DIRECT_VISIBILITY_SCREEN_20261117.md) and the paired manifests under out/restir-cpu-direct-visibility-20261117/. The main unresolved result is still a one-vertex direct-light proxy, not a simplification-order or full-rendering gain.
-
-
-### 2026-11-17 nested-LOD geometry mechanism screen
-
-Generated a 486-triangle position-QEM target by simplifying Torus LOD1 (748 triangles) directly, then compared it with the existing 486-triangle LOD2 that was generated independently from the input mesh. Both mappings had 10,000/10,000 UV support samples with zero ambiguity; a combinatorial audit accepted one component with conditional floor 8. At M=128, the nested target reduced its own cross/same direct-light proxy MSE ratio to 0.997 and 0.993 in two seeds. Common-random paired alternative-minus-baseline delta differences were -0.558 (bootstrap 95% [-0.908,-0.273]) and -0.205 ([-0.312,-0.107]). The effect is tail-driven; the alternative uses ordinary position QEM with quality gate disabled and has lower p95 distortion but worse maximum normal angle. This does not isolate a ReSTIR-aware objective or a matched-geometry gain. Keep the research line low-confidence and continue to a second asset and then full path tracing. Details: [nested-LOD geometry screen](tools/mmgeo/RESTIR_NESTED_LOD_GEOMETRY_SCREEN_20261117.md). No production C++ or software tests changed.
-
-
-### 2026-11-17 nested-LOD Sphere cross-asset screen
-
-Extended the nested position-QEM target check to Sphere L2->L3 (3,406->2,212 triangles vs. the baseline 2,214). UV support was complete in 20,000 samples and the OBJ combinatorial audit accepted one component. At roughly matched p95 displacement, the one-seed 4,096x32 glossy direct-visibility screen reduced the cross/same MSE ratio from 1.056 to 1.023; the paired alternative-minus-baseline delta was -0.0457 with bootstrap 95% [-0.0887,-0.0043]. The median paired change was positive, so the mean benefit remains tail-driven. This is modest and needs an independent seed; it remains a direct-light proxy, not a full ReSTIR result. Details: [nested-LOD geometry screen](tools/mmgeo/RESTIR_NESTED_LOD_GEOMETRY_SCREEN_20261117.md).
-
-
-### 2026-11-17 Sphere nested-LOD independent replicate
-
-A second independent common-random 4,096x32 Sphere L2->L3 run reproduced the modest nested-target effect: baseline/nested cross-same relative MSE ratios 1.076/1.027; paired delta change -0.0659 with bootstrap 95% [-0.1231,-0.0178]. The first seed was 1.056/1.023 with interval [-0.0887,-0.0043]. Both assets now show a consistent direct-light proxy direction across two seeds each, but the mean gains are tail-driven and the test still has one vertex/no camera paths/no history. This strengthens the mechanism screen, not the novelty or submission claim. Details: [nested-LOD geometry screen](tools/mmgeo/RESTIR_NESTED_LOD_GEOMETRY_SCREEN_20261117.md).
-
-
-### 2026-11-17 provisional SIGGRAPH candidate framing
-
-The current narrow candidate is tail-risk-aware collapse ordering for nested LODs used with ReSTIR path reuse. The method would optimize upper-tail full-path estimator error/correlation/cost under matched geometry and triangle budgets; UV mapping, per-ray LOD, and progressive nesting are established machinery and are not novelty claims. Torus and Sphere direct-light proxies show consistent mean-tail reductions for ordinary nested position-QEM targets across two seeds each, but geometry quality is confounded and quality gates were disabled. Full path tracing and a matched-quality comparison remain decisive. Candidate framing and kill gates: [tail-risk-aware LOD hypothesis](tools/mmgeo/RESTIR_TAIL_RISK_LOD_CANDIDATE_20261117.md). SIGGRAPH readiness remains unproven.
-
-
-### 2026-11-17 nested-versus-direct QEM control
-
-Added a 314-face Torus target simplified directly from LOD0 and compared it against the same-budget target simplified sequentially from the 486-face nested LOD. Both passed 20,000-sample UV support and the one-component topology audit. Direct QEM has lower p95 displacement/normal error, so geometry quality is still not matched. At M=128, common-random direct-minus-nested cross-minus-same penalty changes are -0.0827 (bootstrap 95% [-0.1790, +0.0118]) and -0.0053 ([-0.1082, +0.1018]); neither interval excludes zero. A 204-face nested target also has inconclusive intervals against the 486-face baseline. The current evidence gives no unique benefit to nested construction and no ReSTIR-aware simplification result. Preserve the candidate only as a hypothesis pending full-path rendering and a matched-quality comparison; do not claim SIGGRAPH readiness. Details and manifests: [nested-LOD geometry screen](tools/mmgeo/RESTIR_NESTED_LOD_GEOMETRY_SCREEN_20261117.md).
-
-
-### 2026-11-17 ReSTIR-aware simplification prior-art correction
-
-A targeted primary-source search confirms that light-transport-driven geometry reduction is established: EGSR 2015 uses preliminary transport paths to preserve geometry carrying important radiance/caustics, while CGF 2020 formulates path-tracing-driven reduction and preserves shadow silhouettes using error quadrics. SIGGRAPH 2026 ReSTIR-LoD already solves temporal/spatial path-reservoir reuse across topology-changing LODs. The only possible distinction left in this candidate is an objective tied specifically to reservoir-induced estimator error/correlation or tail risk, evaluated against those reduction baselines and ReSTIR controls. This is not an exhaustive novelty search, and no claim that this is first or unexplored is supported. Sources: [EGSR 2015](https://doi.org/10.1111/cgf.12688), [CGF 2020](https://doi.org/10.1111/cgf.14008), [SIGGRAPH 2026 ReSTIR-LoD](https://research.nvidia.com/labs/rtr/publication/wang2026levelofdetail/). Candidate and kill gates: [tail-risk-aware LOD hypothesis](tools/mmgeo/RESTIR_TAIL_RISK_LOD_CANDIDATE_20261117.md).
-
-
-### 2026-11-17 variance/correlation-aware sampling prior-art correction
-
-The objective terms are not novel by themselves: SIGGRAPH 2020 variance-aware path guiding derives local target densities that account for nested-estimator variance; SIGGRAPH Asia 2019 variance-aware MIS changes weights using variance estimates; CGF 2021 correlation-aware MIS explicitly handles correlated path sampling and reuse. Thus the possible contribution must be geometry-collapse decisions that predict and improve the ReSTIR reservoir update under topology-changing LOD mapping, beyond estimator-side variance/correlation controls. Add these controls to the comparison matrix. This remains a narrow hypothesis, not evidence that no prior work has studied the exact coupling. Sources: [Variance-Aware Path Guiding](https://graphics.cg.uni-saarland.de/publications/rath-2020-siggraph-guiding.html), [Variance-Aware MIS](https://iliyan.com/publications/VarianceAwareMIS/), [Correlation-Aware MIS](https://doi.org/10.1111/cgf.142628).
-
-
-### 2026-11-17 ReSTIR source-level risk hook audit
-
-Inspected the local ReSTIR-LoD shaders without modifying the third-party checkout. `geometricLoDShift` maps UV hits and computes the UV-to-world Jacobian; temporal resampling combines that with path-reconnection Jacobians, shifted radiance, confidence, and MIS; `PathReservoir::addSampleFromReservoir` forms the final reservoir selection weight. This supplies a concrete measurement path for a possible reservoir-specific simplification objective. It does not establish novelty or predictive value. The proposed next gate is replaying fixed reservoir paths through candidate collapsed meshes, testing risk-score rankings on held-out paths, and comparing against ordinary and illumination-driven simplification at matched quality/budget. Source-level findings and exact paths: [reservoir-risk hook audit](tools/mmgeo/RESTIR_RESERVOIR_RISK_HOOK_AUDIT_20261117.md). Full rendering remains unavailable until Falcor dependencies are restored.
-
-The source's eight-hit UV list was also screened on Cloth LOD0->LOD1: 20,000 source-UV-area samples showed 62.6% multi-hit overlap but a maximum multiplicity of 4, with zero samples above the storage cap. This does not expose a cap failure on this transition. Reproduction and limits are recorded in [the overlap-capacity audit](tools/mmgeo/RESTIR_RESERVOIR_RISK_HOOK_AUDIT_20261117.md).
-
-The source audit now narrows the first measurable hypothesis further: `ScatterTemporalResampling` computes a per-path temporal MIS share from original and shifted radiance, full mapping/reconnection Jacobian, and reservoir confidence. Measure how candidate mesh collapses change this share, and test on held-out paths whether that drift predicts actual ReSTIR estimator error. The share is diagnostic only; a contribution requires a collapse objective that improves the full error/cost frontier over estimator-side variance/correlation controls.
-
-
-### 2026-11-17 ReSTIR reuse prior-art expansion
-
-A further primary-source check adds important current controls. Resampling-aware BPT weighting already derives MIS weights for path-probability changes after resampling, so temporal MIS-share drift cannot be presented as novel by itself. HPG 2026 Compatibility-Guided Neighbor Selection uses geometric compatibility to improve ReSTIR spatial reuse; SIGGRAPH 2026 Multi-Layer Reservoir Splatting recovers temporal reuse across disocclusion; and SIGGRAPH Asia 2025 ReSTIR PG builds path-guiding distributions from resampled paths. The candidate must be evaluated with the compatible reuse methods enabled and demonstrate an incremental mesh-construction gain. EGSR 2025 *Less can be more* uses path footprints to skip low-value VCM connections and merges; it is adjacent compute-allocation work but does not simplify meshes or transport ReSTIR reservoirs across LODs. This weakens generic “geometry-aware reuse,” “path-footprint-driven reduction,” and “MIS-share optimization” framings. The exact estimator-aware collapse coupling remains a bounded-search hypothesis only. Sources: [resampling-aware BPT weighting](https://doi.org/10.1145/3338994), [CGNS](https://research.nvidia.com/labs/rtr/publication/junkins2026compatibility/), [Multi-Layer Reservoir Splatting](https://research.nvidia.com/labs/rtr/publication/hong2026multilayer/), [ReSTIR PG](https://research.nvidia.com/labs/rtr/publication/zeng2025restirpg/), [footprint-driven VCM](https://graphics.cg.uni-saarland.de/papers/yazici-2025-egsr-footprint.pdf). Update the controls in [the ReSTIR reservoir-risk hook audit](tools/mmgeo/RESTIR_RESERVOIR_RISK_HOOK_AUDIT_20261117.md). The correctly targeted Falcor Packman pull was retried after approval, including with elevated network permission, but CloudFront still returned TLS EOF while fetching the missing Python package. No Falcor payload or renderer experiment resulted; SIGGRAPH readiness remains unproven.
-
-
-### 2026-11-17 ReSTIR CPU direct-light cross-asset extension
-
-Ran the existing one-vertex glossy direct-visibility proxy on a third asset, Monkey (15,744-triangle LOD0). LOD0->LOD1 (12,070 triangles) was null at 1,024 batches (cross/same relative MSE 0.998; family-wise paired interval [-0.0395, +0.0344]). LOD0->LOD2 (11,702 triangles) showed a smaller but repeatable mean penalty in two independent 4,096-batch runs: ratios 1.087 and 1.104, with family-wise intervals [+0.0184, +0.2085] and [+0.0547, +0.2148]. The paired median remains slightly negative, and the maxima (+139, +107) show heavy-tail dominance. Conditional reservoir-selection covariance barely changes, while ESS falls modestly. This supports a transition-strength-dependent candidate-set/proposal mismatch mechanism on one more asset; it does not test or validate a new collapse order, and the one-vertex synthetic direct-light limitations remain. Details, hashes, and manifests: [direct-visibility screen](tools/mmgeo/RESTIR_CPU_DIRECT_VISIBILITY_SCREEN_20261117.md). The full Falcor renderer is still unavailable after the approved Packman retry failed on CloudFront TLS EOF. No production C++ changed and no software tests were run; SIGGRAPH readiness remains unproven.
-
-
-### 2026-11-17 Monkey ordinary-QEM construction-path control
-
-Generated a 11,700-face position-QEM target directly from Monkey LOD0 and compared it with existing LOD2 (11,702 faces) using 20,000 UV samples and a same-seed 2,048x32 direct-visibility screen. Direct QEM has lower p95 displacement/normal error, but a larger maximum area Jacobian and one sampled UV miss. Its cross/same relative MSE ratio is 1.019 versus 1.120 for existing LOD2; the paired alternative-minus-baseline delta is -0.1335, with normal 95% [-0.2946, +0.0276] and bootstrap 95% [-0.3119, +0.0027], both crossing zero. This is one seed and not geometry-matched, so the result is inconclusive and does not identify a ReSTIR-aware gain. Artifacts and limitations are recorded in [the nested-LOD geometry screen](tools/mmgeo/RESTIR_NESTED_LOD_GEOMETRY_SCREEN_20261117.md). No production C++ changed and no software tests were run.
-
-The Monkey ordinary-QEM control was repeated with an independent seed, again at 2,048x32 and with the same random streams between baseline and alternative within each seed. The second paired change was -0.0171 (normal 95% [-0.0601, +0.0259], bootstrap [-0.0631, +0.0229]), versus -0.1335 in the first seed (bootstrap [-0.3119, +0.0027]); both intervals cross zero. The existing target's cross/same ratio also varied from 1.120 to 1.021, consistent with the heavy-tailed uncertainty. The ordinary-QEM geometry has better p95 errors but worse maximum Jacobian and sampled map misses; no robust estimator benefit is established. This reduces support for using the current one-vertex proxy to rank collapse paths. See paired manifests/analysis in `out/restir-alt-lod-screen-20261117/` and [the nested-LOD geometry screen](tools/mmgeo/RESTIR_NESTED_LOD_GEOMETRY_SCREEN_20261117.md). No production C++ changed and no software tests were run.
-
-
-### 2026-11-17 shared-parent cut composition and research decision
-
-Re-read the exact-cut substitution manifest and miner: only three substitutions are supported by native selected nodes (two reciprocal Shapes alternatives and one Pirate alternative). The sole local-error improvement leaves the Shapes whole-cut maximum unchanged; the reciprocal and Pirate swaps worsen local error. There are too few disjoint selected regions for a meaningful combination experiment, so this branch is closed as a paper candidate. Multiple parent/fragment alternatives are already covered by Batched Multi-Triangulation and DAG2. The active hypothesis is narrowed to collapse selection from counterfactual ReSTIR-reuse path error, evaluated against full-estimator tail error on frozen paths, matched geometry, QEM and transport-driven baselines, and total cost. A targeted search found no direct same-objective paper, but this is not an exhaustive novelty claim. The hypothesis is not submission-ready; Falcor dependency retrieval remains blocked by Packman TLS EOF. Experiment definition and kill criteria: [research decision memo](tools/mmgeo/RESEARCH_DECISION_20261117.md).
-### 2026-11-17 Falcor WARP build and execution-policy result
-
-Corrected the previous dependency blocker: Packman's full Windows dependency manifest succeeded after setting its supported `PM_PYTHON_EXT` to the installed Python 3.12 runtime and `PM_PACKAGES_ROOT` to the local cache. CMake configured Falcor 8.0 with D3D12/DXR, NRD, RTXDI, and DLSS; CUDA was absent and USD was disabled for this pilot. The Falcor core, plugins, and `FalcorPython` target compiled, producing `Falcor.dll` and `falcor_ext.cp312-win_amd64.pyd`. A build-time internal `/MP` option ignored MSBuild `/m:1`; after capping that checkout-local option to `/MP1`, sampled available RAM stayed above 5 GiB (the uncapped attempt reached 2.15 GiB and was stopped). Both normal and elevated imports of the locally built `falcor_ext` were denied by Windows Application Control. Thus no adapter selection, WARP DXR dispatch, or ReSTIR image was produced. This is now an execution-policy blocker, not a dependency or C++ build blocker. Full-path estimator evidence and SIGGRAPH readiness remain unproven. Details and captured build log are in ignored `out/research/restir-lod/build/warp312-capped-build.log`; the Falcor checkout is pinned at `37d13d9b1f3e76be88aa79109d24b0fe6e4ef6a9`.
-
-### 2026-11-17 scope pivot: no ray tracing
-
-The user explicitly ruled out ray tracing. ReSTIR-LoD, per-ray LOD transport, path-reservoir collapse ordering, and the CPU ReSTIR proxy are inactive; retain old artifacts as historical diagnostics only. The Falcor WARP build result does not change that scope. The strongest remaining experimentally accessible research question is witness-guided repartitioning of rejected ManyMesh DAG groups. Its evidence remains weak: seven non-composable local wins of 6–24 triangles occur on three Shapes group pairs; the matched Material Sphere and Monkey runs had no eligible trials. This is not a SIGGRAPH contribution. A next gate, only if further explored, must compare the complete strict-gate-valid cut frontier against median splits, DAG2 split-and-reinsert, HLOD ASAP, and meshoptimizer cluster-LOD fallback at equal work, wall time, and memory on held-out assets. Relevant boundaries: [DAG2](https://doi.org/10.1145/3592409), [HLOD ASAP](https://doi.org/10.1111/cgf.70380), and [meshoptimizer clusterlod implementation](https://github.com/zeux/meshoptimizer/blob/master/demo/clusterlod.h). No active candidate currently meets SIGGRAPH evidence standards.
-
-### 2026-11-17 non-ray screen-space direction recheck
-
-A targeted search adds a direct prior-art boundary for generic bounded-time/on-demand simplification: Brodsky and Watson's *Model Simplification Through Refinement* (Graphics Interface 2000) starts from a coarse mesh, refines toward a target size, and guarantees a displayable result within a specified time. Therefore reverse refinement, interactive output, and a time-bounded result are not new claims. Separately, a new CPU screen sampled the same two legal Torus edge collapses over 65 camera angles and four +/-0.1-pixel phases. The orbit-mean filtered coverage/depth loss chose candidate 2275 for every phase; candidate 1656's mean was 332x–1,804x larger, despite a narrow angular interval where the per-view winner flips. This is only a frozen two-candidate screen, not an algorithm or continuous integral. It shifts the next exploration from caching point-view winners toward testing event-driven evaluation of path-integrated filtered image loss against dense multi-view image-driven simplification, with strict asset/path/phase/resolution and total-cost gates. Exact result and limitations: [camera-event preflight](tools/mmgeo/CAMERA_EVENT_CERTIFICATE_PREFLIGHT.md). No active SIGGRAPH candidate is established. Sources: [Brodsky and Watson, 2000](https://citeseerx.ist.psu.edu/document?doi=5a62cfb74ec0ec37205863f9495237a482685e04&repid=rep1&type=pdf), [Eisemann and Décoret, exact view-dependent bounds](https://publications.graphics.tudelft.nl/papers/724), [Lindstrom and Turk, image-driven simplification](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf).
-
-### 2026-11-18 no-RT finite-orbit sparse-view regret gate
-
-Kept the camera-raster line within the user's no-ray-tracing scope. Extended the fixed 48-candidate CPU raster pool to 16 sampled orbit angles on Pirate and Monkey, retaining the 32-angle Torus report. For each report, candidate means on systematic phase offsets and 500 deterministic random angle subsets were compared against the winner over that report's full finite orbit. Regret is normalized by the median candidate's full-orbit mean loss. This is a finite-orbit diagnostic: Pirate and Monkey have 16 oracle angles (not a dense or continuous integral), candidates are independent single collapses, and subset construction / rendering cost is not measured as a speedup.
-
-Torus matched its full-orbit winner in 96.9% of tested 4-view subsets, but Pirate and Monkey needed 12/16 views to exceed 93% winner match. At 8/16 views they matched only 73.9% and 73.5%; p95 normalized full-orbit regret was 39.62x and 194.4x the median candidate mean loss. Zero-loss ties make winner identity imperfect, so regret is also reported. This rejects generic sparse-view scoring as a low-cost path on these frozen pools and does not validate event-driven integration. The data remain sampled-orbit coverage/depth scores, not a continuous-camera guarantee or production renderer result. Reproduction tool: [finite-orbit subset analysis](tools/mmgeo/summarize_camera_orbit_sampling.py); results, hashes and limitations: [camera-event preflight](tools/mmgeo/CAMERA_EVENT_CERTIFICATE_PREFLIGHT.md). Do not promote event-integrated loss or sparse ranking to an active candidate without a lower total-work result against dense image-driven scoring on held-out assets and camera paths. The DAG witness-partition direction also remains weak; no current candidate meets SIGGRAPH submission evidence standards.
-
-### 2026-11-18 Cloth witness-partition negative screen
-
-Extended the no-ray-tracing DAG witness-partition diagnostic to Cloth, the largest unscreened authored mesh in the local asset set (41,643 OBJ polygon records; Assimp loads 74,976 triangles). With the same strict settings and a 200,000 input-triangle trial budget, the run built 2,054 DAG nodes / 10 levels; 150/278 baseline groups were rejected. It evaluated 75 adjacent-group alternatives over 197,588 input triangles / 32.54 seconds of trial work. None satisfied the existing joint local predicate: exact boundary preservation, no non-manifold edges, non-increasing maximum accumulated error, and fewer triangles. This is a true no-improvement result with eligible trials, complementing the seven non-composable Shapes local wins; it differs from the no-eligible-trial Sphere/Monkey runs. It weakens the current fixed adjacent move/swap hypothesis but does not audit complete cuts or rule out a distinct witness-based split generator. Ledger, source/executable hashes, command, and limitations: [quality-gate partition screen](tools/mmgeo/QUALITY_GATE_PARTITION_NOVELTY_SCREEN_20261117.md). The fixed local screen should not be developed further without a new split mechanism and a matched complete-cut frontier gain. No production C++ changed; no software tests were run; no active contribution is SIGGRAPH-ready.
-
-Cloth ledger breakdown: among 278 baseline groups, topology rejection appeared in 230 and attribute rejection in 227 (overlapping sets); locked rejection appeared in 79 and geometry rejection in 7. Summed per-attempt counts were 935 topology, 1,332 attributes, 92 locked, and 7 geometry. These counters do not localize a triangle/corner/edge witness and cannot be treated as independent causes; a useful follow-on needs a concrete witness extractor and must prove that its proposed child split expands a complete valid cut.
-
-Follow-up: the existing `--quality-debug 1` mode was run on the same Cloth settings, with no source changes. Its ledger partitions rejected attempts into 2,366 production-group candidates and 1,214 regroup-trial candidates; gate masks show attributes-only and topology-only are the most frequent for both, with topology+geometry next. The 4,076 debug records include 496 cluster-stage rejects as well. The debug output also prints worst sampled normal/UV vertex and triangle, but omits group/child-region identity and those indices are candidate-local, so they do not yet specify a useful split. This narrows the instrumentation gap: a future witness extractor must bind candidate-local metrics and gate mask to the parent group and child region, then test actual partition changes. See updated [quality-gate partition screen](tools/mmgeo/QUALITY_GATE_PARTITION_NOVELTY_SCREEN_20261117.md).
-
-I also attempted a read-only group join by consuming the quality-debug reject masks in ledger-array order after removing the 496 cluster-stage candidates. Only 65 of 428 group observations matched their complete expected mask histogram. The counts reconcile globally, but the ordering assumption is invalid or the log/ledger aggregation differs; no group-level witness attribution is claimed. Reliable attribution would require carrying explicit group and child-region IDs into simplifier rejection records.
-
-### 2026-11-18 group-bound quality-gate witness instrumentation
-
-Closed the old-log join gap with a diagnostic-only C++ data path: each rejected simplified candidate now records source/target/result index counts, retry, five-bit gate mask, worst normal/UV vertex/triangle IDs, and max errors. `SimplifyProfile` merges those vectors across its existing worker-local reductions; the mmgeo schema-2 writer nests records in each group entry next to that group's level and child-node IDs. Collection is guarded by the existing diagnostic histogram pointer, so normal simplification does not allocate per-reject details or alter acceptance. Release `mmgeo` compiled (0 errors; 2 MSVC warnings for ignored Linux flags); current executable SHA256 `b70ef5872f5bee1c303fd47d16394507e5998799fff5606eecd3adb6ad95ffc6`. Runtime validation is pending because Windows Application Control blocked the newly linked binary before execution, so no schema-2 ledger was produced. No unit tests were run. The next gate is to run this exact build in an allowed environment and verify per-group rejection-detail counts against mask histograms and child-node membership, then use those witnesses to generate complete-cut counterfactuals. Compilation alone does not validate the instrumentation or establish a contribution; SIGGRAPH status remains unproven. Details: [quality-gate partition screen](tools/mmgeo/QUALITY_GATE_PARTITION_NOVELTY_SCREEN_20261117.md).
-
-Runtime follow-up: Linux execution was also unavailable in this turn. `wsl --list --verbose` and the `ubuntu-bmc` workspace probe both returned `Wsl/Service/E_ACCESSDENIED`, so no alternate schema-2 diagnostic ledger was produced. The Windows Application Control denial remains the immediate verification blocker; source/build evidence stands, runtime evidence does not.
-
-### 2026-11-18 exact runtime policy diagnosis
-
-Read-only inspection of the local Windows Code Integrity log identified events 3033 and 3077: the newly linked `mmgeo.exe` did not satisfy the enterprise signing-level policy. `Get-AuthenticodeSignature` reports `NotSigned`. WSL commands fail with `Wsl/Service/E_ACCESSDENIED`, so neither local runtime route can execute the schema-2 diagnostic. No signing or policy changes were attempted. The rejection-detail instrumentation remains compile-verified only. Do not claim candidate-level witness attribution or use schema 2 until an allowed environment produces and validates the ledger. This confirms the blocker is execution authorization, not a runtime assertion or algorithm result.
-
-### 2026-11-18 prior-art boundary for memory-bounded/on-demand mesh reduction
-
-A focused literature check rules out generic “reduce on demand under a memory budget” as a novelty claim. XFastMesh already supports paging and view-dependent rendering of very large meshes from external memory using a merge-tree hierarchy and detail blocks ([DeCoro and Pajarola, IEEE Visualization 2002](https://gfx.cs.princeton.edu/gfx/pubs/DeCoro_2002_XFV/index.php)); earlier work presents memory-insensitive simplification and hierarchy construction ([Lindstrom, Memory Insensitive Simplification for View-Dependent Refinement](https://www.researchgate.net/publication/2458846_Memory_Insensitive_Simplification_for_View-Dependent_Refinement)); and bounded-time refinement from a coarse displayable mesh was already described by Brodsky and Watson (see [the primary paper PDF](https://citeseerx.ist.psu.edu/document?doi=5a62cfb74ec0ec37205863f9495237a482685e04&repid=rep1&type=pdf)). Nanite and DAG2 also establish clustered hierarchical LOD construction and selection as direct baselines. These sources are a targeted boundary check, not an exhaustive novelty search.
-
-### 2026-11-18 budget-control prior-art correction
-
-Read the primary R-Simp paper rather than relying only on its abstract: its reverse coarse-to-fine refinement guarantees a displayable result within a time limit, gives output-size control at each iteration, and describes extending the method to a continuous LOD hierarchy ([Brodsky and Watson, Graphics Interface 2000](https://graphicsinterface.org/wp-content/uploads/gi2000-29.pdf)). Triangle-budget control while traversing a DAG multiresolution mesh is also established ([Zheng and Chan, 2006](https://doi.org/10.1109/CGIV.2006.86)). In addition, the HPG 2023 DAG2 paper describes cutting failed merged clusters into two alternatives, reinserting both into later merging, and reports up to 2x fewer roots ([Benthin and Peters, CGF 2023](https://diglib.eg.org/bitstream/handle/10.1111/cgf14868/v42i8_04_14868.pdf)). These are algorithmic precedents, not ray-tracing directions to pursue. The combined boundary closes output-size control, budget-aware DAG traversal, and generic split/reinsert as standalone novelty claims.
-
-The remaining candidate is only an offline choice of repairs under ManyMesh's stricter topology, geometry, and authored-attribute gates, with a fixed construction-work ceiling and a measurable improvement to the complete valid-cut frontier on held-out assets. Existing screens have not shown that improvement; seven local Shapes wins were non-composable, Cloth had zero qualifying wins in 75 trials, and the diagnostic witness ledger is compile-only. This is not currently a publishable claim. A counterfactual oracle must first show that a nontrivial frontier gain exists at equal work; if it does not, close this candidate and search for a different problem.
-
-### 2026-11-18 scope clarification: rasterization and mesh reduction only
-
-The active project scope is ManyMesh's mesh simplification / DAG construction and conventional rasterization. Ray tracing, ReSTIR, path-space reuse, and ray-traced visibility are out of scope and must not be used as assumptions, evaluation targets, or novelty claims for the active research direction. Earlier entries on those topics are historical screens only.
-
-The narrow hypothesis still worth one falsification pass is **witness-conditioned allocation of local DAG repairs**: under the existing strict topology, geometry, and authored-attribute gates, use only first-pass rejection records to choose which rejected groups to retry/split, under a fixed measured construction-work ceiling. Compare complete valid cuts against spatial-median all-retry, cheapest-work-first, and a frozen-outcome oracle. Evaluate triangle count and filtered coverage/depth/attribute error with a conventional rasterizer over held-out assets and camera paths; also measure wall time and peak host memory. Generic on-demand / bounded-time simplification, external-memory LOD, and generic failed-cluster split/reinsertion are prior art, including XFastMesh (external-memory hierarchy), R-Simp (time-bounded refinement), and DAG2 (split/reinsert during hierarchy construction). The hypothesis therefore lives or dies on a repeatable, composable, equal-work frontier gain from the rejection witnesses, not on the existence of retries or a memory budget.
-
-Current evidence does not pass that gate: the captured schema-1 mask ranks tie or lose to cost-only on most screens, the positive deltas are sparse and not held out, and the schema-2 group-bound witness ledger is compile-verified but not runtime-verified because the local execution policy blocks the unsigned binary. The immediate next step is validation of a schema-2 capture in an already allowed build/runtime environment; until then, no witness-based scheduler, raster-quality gain, novel contribution, or SIGGRAPH readiness is claimed. No high-memory build or renderer run should be started while available system RAM is near 1.4 GiB.
-
-The boundary is reinforced by UltraMeshRenderer (ACM TOG 2025), which already combines GPU out-of-core geometry, a coherence-constrained LOD selector, and explicit node-budget comparisons ([paper](https://aiichironakano.github.io/cs653/Zhang-UltraMeshRenderer-ACMTG25.pdf)). Recent HLOD ASAP work also directly attacks cluster-boundary under-simplification ([Ladeuil, Computer Graphics Forum 2026](https://onlinelibrary.wiley.com/doi/10.1111/cgf.70380)). In this checkout, both synchronous and asynchronous page caches evict unrequired pages but stop if all pages required by the selected cut are resident; the configured byte budget is therefore a soft cache target for an infeasible required set, not a hard cap. That behavior is a concrete engineering boundary, but choosing a coarser cut when the current cut exceeds memory is a standard LOD policy and is not itself a research claim.
-
-Accordingly, the active no-ray-tracing research bar is now an empirically demonstrated improvement in the **quality–peak-memory–total-work tradeoff** over matched existing choices, with equal output-quality/topology constraints and held-out assets. Merely being demand-driven, out-of-core, faster to first result, having a smaller resident working set, or respecting a memory budget by selecting a coarser cut is insufficient. The current witness-guided partition route has no runtime-validated witness ledger and no cut-level gain; it remains exploratory, with no SIGGRAPH-ready contribution identified.
-
-### SIGGRAPH 2026 adjacent mesh-processing screen
-
-Checked the official SIGGRAPH 2026 technical-paper list and primary project/ACM records for nearby methods. *PQ-Free HD* (TOG 2026) is a GPU branch-and-bound Hausdorff evaluator and demonstrates a strictly Hausdorff-bounded GPU mesh simplifier; therefore “GPU simplification with a strict geometric error bound” is not a new claim ([ACM paper](https://doi.org/10.1145/3811324)). *Global Discrete Optimization for Quad-Dominant Mesh Reduction* is a SIGGRAPH 2026 paper whose title and author page establish global discrete optimization for quad-dominant reduction; its exact overlap with triangle-only ManyMesh is uncertain because the ACM full record returned HTTP 403, so do not claim detailed method equivalence ([ACM record](https://doi.org/10.1145/3799902.3811043), [author page](https://roy-zzz08.github.io/)). *Texture-Aware Remeshing for Texture-Aware Geometry Processing* converts UV texture appearance into per-triangle-resampled vertex colors and demonstrates texture-aware geometry operations, further narrowing broad “appearance-aware geometry processing” claims ([author project page](https://www.julianknodt.com/papers/textures_to_vert_colors)). These papers do not establish that strict authored-attribute cluster-DAG construction is solved; they do raise the baseline for any claim based on global optimization, GPU execution, bounded error, or texture awareness.
-
-No new algorithm is promoted from this screen. The remaining no-ray-tracing candidate is still the fixed-work, complete-cut frontier question; its strongest next evidence must come from the previously specified counterfactual oracle, not another scoring term or literature-only distinction. Runtime policy still prevents generation of the schema-2 rejection ledger on this machine.
-
-### 2026-11-18 full-budget audit closes scalar rejection-mask ranking
-
-Recomputed all four archived schema-1 captures at 101 equal caps over total all-retry triangle-input work, comparing first-pass rejection-density ranks and smallest-work-first with a frozen-outcome knapsack upper bound. Only eight asset/generation rows had any error-valid, triangle-saving package (Cloth 5-9; Shapes 4-6). Aggregated across those curves, smallest-work-first achieves 83.7% of oracle integrated savings; total/attribute/topology/geometry rejection ranks achieve 75.0%/76.1%/69.0%/72.2%. Attribute rank beats cost-only in just two rows and loses in four; total rank never beats it. This is a retrospective triangle-work proxy on development captures, not wall time, memory, raster quality, or held-out evidence. Decision: close scalar rejection-mask ranking as the candidate; schema-2 should be used only to motivate a distinct, explicit partition mechanism. Artifacts and limits: [full-budget audit](tools/mmgeo/SPATIAL_RETRY_LOCAL_FRONTIER_AUDIT_20261118.md). No active candidate meets SIGGRAPH evidence standards.
-
-### 2026-11-18 camera-path raster-loss novelty boundary
-
-Primary-source review closes two broad framings. Clasen and Prohaska's 2010 *Image-Error-Based LoD for Landscape Visualization* builds a merge hierarchy using measured multi-view image error, remeasures stale heap candidates after surrounding merges, and calibrates the metric over a navigation camera path. Its primitives are disconnected landscape proxies, so it does not settle topology-legal connected-mesh collapse; however, “path-aware image-error LoD” alone is not new ([paper](https://diglib.eg.org/server/api/core/bitstreams/0e6ea129-fa7f-4a40-9013-c7c834349011/content)). Popescu et al.'s 2025 continuous from-segment visibility work computes pixel-center coverage and depth visibility intervals over a 1D camera-translation path using analytic edge-crossing events, closing generic “replace sparse camera samples with visibility events” claims ([paper](https://www.cs.purdue.edu/cgvlab/www/resources/papers/Popescu-TVCG-2025-1DVisibility.pdf)).
-
-The only unclosed question in this narrow branch is whether filtered raster loss for a **legal connected edge collapse** can be predicted from one shared raster evaluation at materially lower total cost than exact local patch redraw, while outperforming fresh QEM/Corner and dense image-driven controls on held-out meshes and paths. Existing orbit samples, analytic boundary formulas, EdgeGrad, and visibility-event literature do not establish that result. Do not promote path integration or event handling as the contribution; require a concrete algorithm and an end-to-end quality/work/memory win first. This remains an unproven, crowded hypothesis, not an active SIGGRAPH-ready contribution.
-
-### 2026-11-18 learned-proposal / event-verifier combination screen
-
-The proposed hybrid is now stated as a two-stage pipeline: a tiny model proposes legal collapses; a deterministic path-event evaluator scores only the shortlist and the simplifier applies a verified choice. The feasibility screen records proposed IDs. On held-out Monkey, the 121-parameter MLP's top five had normalized exact-raster regret `0.0447` and did not contain the winner; the lower-is-better QEM top five did contain it and had zero regret. The event verifier remains coverage-only and its complete-support audit took 5.59 seconds for one Monkey candidate, with no interval certificate. This does not justify a combined implementation yet: the learned proposal fails the shortlist gate and event verification has no measured end-to-end cost advantage. Full analysis and reproduction artifact: [camera-path raster screen](tools/mmgeo/ADAPTIVE_CAMERA_PATH_RANKING_SCREEN_20261118.md), with shortlisted IDs in the ignored research output `out/adaptive-camera-sampling-20261118/learned-shortlist-integrated-candidates.json`.
-
-If revisited, the meaningful learned target is event support or filtered-loss residual, rather than generic collapse rank. Require held-out top-K recall better than QEM, certified/calibrated fallback, depth-order handling, and measured wall time/peak memory at matched image quality. Neural mesh simplification, learned edge-collapse ranking, and continuous path visibility are established neighboring work; no exhaustive search establishes novelty for the exact composition. No SIGGRAPH-level contribution is claimed.
-
-An additional amortization screen compared event support for Monkey candidates 5852 and 42909: the supports contain 113 and 99 pixel samples with zero overlap. Candidate-specific source-event caching therefore does not amortize for this tested difficult/easy pair. A primary-source check also found prior work combining differentiable mesh construction with multi-view raster losses, so the broad "learned mesh + raster loss" framing is closed. See the linked screen for the result and citations. This weakens, but does not universally disprove, the narrower legal-collapse path-event hypothesis.
-
-The MLP label is the finite 16-view sampled-path score, whereas the event evaluator currently measures continuous coverage-only integral. No training example has both labels, so the current leave-one-asset-out result does not test whether a learner can predict the event objective itself. Any continuation must first obtain paired finite-view / event-integral labels on enough held-out assets and compare against QEM; otherwise model quality on the intended hybrid target is unknown.
-
-Ran the actual MLP top-1 Monkey proposal (candidate 26314) through the event path. Its sampled path error was entirely depth (`4.1848e-8` mean), with zero coverage error. A 651-pixel support required 34,441 global edge events and 83.78 s of CPU time; full-mesh audit found zero coverage transitions and no finite-state mismatches. Available RAM changed from 3.45 to 3.32 GiB. This verifies that the current coverage event objective cannot rank this proposal and can become expensive for large support. It is a finite coverage audit, not an interval/depth certificate. Details: [adaptive camera-path screen](tools/mmgeo/ADAPTIVE_CAMERA_PATH_RANKING_SCREEN_20261118.md), artifact under ignored `out/adaptive-camera-sampling-20261118/`.
-
-
-### 2026-11-18 raster-only camera-path algorithm screen
-
-No ray tracing or ReSTIR is used. An online sample-refinement prototype ranks 48 frozen legal Monkey collapses along a short camera segment. At the original phase and 3x raster sampling, four adaptive views selected candidate 42909, while four uniform views selected candidate 5852. A full rerender of the 48-candidate pool at the 15 interstitial views ranked 42909 first and 5852 35th. This is a promising single-asset screen, but the advantage disappears under a +0.1/+0.1-pixel phase shift and at scale 1; ranks must be recomputed for the target raster configuration. No wall-time gain or held-out asset result is established. Details and scripts: [adaptive camera-path screen](tools/mmgeo/ADAPTIVE_CAMERA_PATH_RANKING_SCREEN_20261118.md).
-
-An analytic projected-edge probe found 533 and 684 unique edge/sample event angles for the two candidates. Full-mesh checks on both sides reduced these to 0 and 28 events that actually toggle the raw source-versus-collapse coverage residual. The local Gaussian-energy update then matched direct raster measurements to floating-point precision on 157 Monkey angles and 525 Pirate angles. A full-mesh edge-event audit over the complete affected-sample support found the same coverage toggles as the candidate-local event stream on both assets: 28/28 for Monkey and 117/117 for Pirate, with no unmatched transitions at 1e-7 radians. Batched quartic roots plus incremental per-triangle coverage counts reduced the audit to 5.59 seconds on Monkey and 1.29 seconds on Pirate; start/end states and event-side incident states had zero disagreement. This is finite evidence, not an interval-certified guarantee; depth-order changes remain unsolved, and only one candidate per asset has been audited. Treat this as a validated research component, not a SIGGRAPH contribution. The hybrid learning screen used a 121-parameter MLP on 144 examples with leave-one-asset-out evaluation: it had 0/3 optimal-loss top-5 hits, mean Spearman 0.080, and normalized top-5 regret 0.459. QEM priority was much stronger (1/3 top-5 hits, Spearman 0.489, regret 0.000065), so the current learned branch shows no benefit. The sample is too small for a definitive rejection; prior art, model budget, and reproduction are documented in the linked adaptive camera-path screen.
+- [Fused patch visibility cost gate](tools/mmgeo/FUSED_PATCH_VISIBILITY_COST_GATE.md)
+- [Visibility-query BVH cost gate](tools/mmgeo/VISIBILITY_QUERY_BVH_COST_GATE.md)
+- [Edit-derived visibility support preflight](tools/mmgeo/EDIT_VISIBILITY_SUPPORT_PREFLIGHT.md)
+- [Proxy visibility cost gate](tools/mmgeo/PROXY_VISIBILITY_COST_GATE.md)
+- [Mixed-LOD ReSTIR measure screen](tools/mmgeo/RESTIR_MIXED_LOD_MEASURE_SCREEN.md)
+- [Seam-contract merge control](tools/mmgeo/SEAM_CONTRACT_MERGE_CONTROL.md)
+- [Adjacent-merge counterfactual](tools/mmgeo/ADJACENT_MERGE_COUNTERFACTUAL.md)
+- [Fixed-boundary QEM control](tools/mmgeo/FIXED_BOUNDARY_QEM_CONTROL.md)
+- [Partition QEM exhaustion](tools/mmgeo/PARTITION_QEM_EXHAUSTION.md)
+- [Partition boundary floor preflight](tools/mmgeo/PARTITION_BOUNDARY_FLOOR_PREFLIGHT.md)
+- [OBJ contract floor audit](tools/mmgeo/OBJ_CONTRACT_FLOOR_AUDIT.md)
+- [SIGGRAPH literature delta](tools/mmgeo/SIGGRAPH_2027_LITERATURE_DELTA_20261115.md)
+- [Appearance compensation results](tools/mmgeo/APPEARANCE_COMPENSATION_RESULTS.md)
+- [Camera-event certificate preflight](tools/mmgeo/CAMERA_EVENT_CERTIFICATE_PREFLIGHT.md)
+- [Dynamic GPU related work](tools/mmgeo/RELATED_WORK_DYNAMIC_GPU.md)
+- [Appearance compensation protocol](tools/mmgeo/APPEARANCE_COMPENSATION_PROTOCOL.md)
+- [Appearance compensation v1 stop decision](tools/mmgeo/APPEARANCE_COMPENSATION_V1_STOP.md)
+- [Normal-transfer attribution](tools/mmgeo/NORMAL_TRANSFER_ATTRIBUTION.md)
+- [Appearance recoverability preflight](tools/mmgeo/APPEARANCE_RECOVERABILITY_PREFLIGHT.md)
+- [Progressive image protocol](tools/mmgeo/PROGRESSIVE_IMAGE_PROTOCOL.md)
+- [Shading controls](tools/mmgeo/SHADING_CONTROLS.md)
+- [Normal-offset protocol](tools/mmgeo/NORMAL_OFFSET_PROTOCOL.md)
+- [Contour-visibility ablation](tools/mmgeo/CONTOUR_VISIBILITY_ABLATION.md)
+- [Source-contour control](tools/mmgeo/SOURCE_CONTOUR_CONTROL.md)
+- [Progressive baseline](tools/mmgeo/PROGRESSIVE_BASELINE.md)
+- [Real-candidate interactions](tools/mmgeo/REAL_CANDIDATE_INTERACTIONS.md)
+- [Direct complementary results](tools/mmgeo/DIRECT_COMPLEMENTARY_RESULTS.md)
+- [Complementary-geometry protocol](tools/mmgeo/COMPLEMENTARY_GEOMETRY_PROTOCOL.md)
+- [Complementary-geometry results](tools/mmgeo/COMPLEMENTARY_GEOMETRY_RESULTS.md)
+- [Raster-placement protocol](tools/mmgeo/RASTER_PLACEMENT_PROTOCOL.md)
+- [Depth-candidate protocol](tools/mmgeo/DEPTH_CANDIDATE_PROTOCOL.md)
+- [Depth-candidate results](tools/mmgeo/DEPTH_CANDIDATE_RESULTS.md)
+- [Fragment-transaction results](tools/mmgeo/FRAGMENT_TRANSACTION_RESULTS.md)
+- [Bounded-collapse protocol](tools/mmgeo/BOUNDED_COLLAPSE_PROTOCOL.md)
+- [Discrete filter energy](tools/mmgeo/DISCRETE_FILTER_ENERGY.md)
+- [Filtered-boundary experiment](tools/mmgeo/FILTERED_BOUNDARY_EXPERIMENT.md)
+- [Filter-aware simplification overview](MANYMESH_FILTER_AWARE_SIMPLIFICATION.md)
+
+### 2026-11-16: budget, dynamic recapture, and interaction screens
+
+- [Target-budget frontier pilot](tools/mmgeo/TARGET_BUDGET_FRONTIER_PILOT_20261116.md)
+- [Target-budget oracle control](tools/mmgeo/TARGET_BUDGET_ORACLE_SCREEN_CONTROL_20261116.md)
+- [Target-budget resource oracle](tools/mmgeo/TARGET_BUDGET_RESOURCE_ORACLE_20261116.md)
+- [Multi-collapse interaction audit](tools/mmgeo/MULTI_COLLAPSE_INTERACTION_AUDIT_20261116.md)
+- [Dynamic recapture audit](tools/mmgeo/DYNAMIC_RECAPTURE_AUDIT_20261116.md)
+- [Dynamic recapture full-pool audit](tools/mmgeo/DYNAMIC_RECAPTURE_FULLPOOL_AUDIT_20261116.md)
+- [Tangent-frame PBR novelty audit](tools/mmgeo/TANGENT_FRAME_PBR_NOVELTY_AUDIT_20261116.md)
+- [ReSTIR-LoD UV transport preflight](tools/mmgeo/RESTIR_LOD_UV_TRANSPORT_PREFLIGHT_20261116.md)
+- [ReSTIR reuse-aware LOD hypothesis](tools/mmgeo/RESTIR_REUSE_AWARE_LOD_HYPOTHESIS_20261116.md)
+- [Screen-batch support audit](tools/mmgeo/SCREEN_BATCH_SUPPORT_AUDIT_20261116.md)
+- [Batch-support schedule builder](tools/mmgeo/make_batch_support_schedule.py)
+- [Batch-support audit summarizer](tools/mmgeo/summarize_batch_support_audit.py)
+- [Multi-collapse cross-asset audit](tools/mmgeo/MULTI_COLLAPSE_INTERACTION_CROSS_ASSET_20261116.md)
+- [Shared-parent alternatives audit](tools/mmgeo/SHARED_PARENT_ALTERNATIVES_AUDIT_20261116.md)
+
+### 2026-11-17: ReSTIR-LoD and mixed-cut novelty checks
+
+- [ReSTIR overlap-matching preflight](tools/mmgeo/RESTIR_OVERLAP_MATCHING_PREFLIGHT_20261117.md)
+- [ReSTIR visibility-matching screen](tools/mmgeo/RESTIR_VISIBILITY_MATCHING_SCREEN_20261117.md)
+- [Mixed-group cut frontier](tools/mmgeo/MIXED_GROUP_CUT_FRONTIER_20261117.md)
+- [Quality-gate partition novelty screen](tools/mmgeo/QUALITY_GATE_PARTITION_NOVELTY_SCREEN_20261117.md)
+- [Per-ray LOD/ReSTIR novelty screen](tools/mmgeo/PER_RAY_LOD_RESTIR_NOVELTY_SCREEN_20261117.md)
+- [ReSTIR mixed-cut prior-art correction](tools/mmgeo/RESTIR_MIXED_CUT_PRIOR_ART_CORRECTION_20261117.md)
+- [ReSTIR CPU weight screen](tools/mmgeo/RESTIR_CPU_WEIGHT_SCREEN_20261117.md)
+- [ReSTIR CPU direct-visibility screen](tools/mmgeo/RESTIR_CPU_DIRECT_VISIBILITY_SCREEN_20261117.md)
+- [ReSTIR nested-LOD geometry screen](tools/mmgeo/RESTIR_NESTED_LOD_GEOMETRY_SCREEN_20261117.md)
+- [ReSTIR tail-risk LOD candidate](tools/mmgeo/RESTIR_TAIL_RISK_LOD_CANDIDATE_20261117.md)
+- [ReSTIR reservoir risk-hook audit](tools/mmgeo/RESTIR_RESERVOIR_RISK_HOOK_AUDIT_20261117.md)
+- [Research decision](tools/mmgeo/RESEARCH_DECISION_20261117.md)
+- [Camera-orbit sampling summarizer](tools/mmgeo/summarize_camera_orbit_sampling.py)
+
+### 2026-11-18 to 2026-11-19: camera paths and learned scheduling
+
+- [Spatial-retry local frontier audit](tools/mmgeo/SPATIAL_RETRY_LOCAL_FRONTIER_AUDIT_20261118.md)
+- [Adaptive camera-path ranking screen](tools/mmgeo/ADAPTIVE_CAMERA_PATH_RANKING_SCREEN_20261118.md)
+- Filtered depth-envelope events (`tools/mmgeo/FILTERED_DEPTH_ENVELOPE_EVENTS_20261119.md`)
+- Hybrid learned path-loss screen (`tools/mmgeo/HYBRID_LEARNED_PATH_LOSS_20261119.md`)
+- Path-loss residual hybrid audit script (`tools/mmgeo/audit_path_loss_residual_hybrid.py`)
+- Exact strict cut-frontier oracle (`tools/mmgeo/EXACT_STRICT_CUT_FRONTIER_ORACLE_20261119.md`)
+- Exact cut-frontier audit script (`tools/mmgeo/audit_exact_cut_frontier_oracle.py`)
+- Memory-capped learned DAG synthesis (`tools/mmgeo/LEARNED_MEMORY_CAPPED_DAG_SYNTHESIS_20261119.md`)
+- Oracle-guided DAG scheduler probe (`tools/mmgeo/probe_oracle_guided_dag_scheduler.py`)
+- Slack-aware cut scheduler probe (`tools/mmgeo/probe_slack_aware_cut_scheduler.py`)
+
+## Next gate
+
+Do not continue the tested rank-8/16/30 polynomial decoder configurations. The default current-source audit produced no legal exact-face stock pair. A follow-up 48-build parameter sweep recovered two exact-face, topology-valid pairs across two reused validation assets; both lost to stock cluster LOD on all reported image metrics. This is a small negative quality screen, not evidence that every parameterization loses. The saved-graph oracle found legal under-cap cuts on 5/8 assets, yet all scored legal cuts lost to stock; rendered reranking of 44 legal cuts improved geometric selection on two assets but both selected and pool-best cuts lost on all five feasible assets. A legality fix alone is insufficient. See the parameter sweep (`tools/mmtrain/CURRENT_SOURCE_CLUSTERLOD_PARAMETER_SWEEP_20261123.md`), fixed-default audit (`tools/mmtrain/CURRENT_SOURCE_CLUSTERLOD_AUDIT_20261123.md`), historical cut audit (`tools/mmgeo/HISTORICAL_CUT_TOPOLOGY_AUDIT_20261122.md`), and reranking report (`tools/mmgeo/SAVED_CUT_VIEW_RERANK_20261122.md`). The current cone-risk selector screen also failed to produce equal-face, geometry-distinct outputs; it is closed as a contribution candidate. The independent nvdiffmodeling placement baseline is the next research falsification only after suitable CUDA compute and cleared assets are available.
+A separate same-face whole-mesh meshoptimizer control screen has three eligible under-cap pairs across two reused assets: two neighboring levels improve on one asset, while the second asset regresses on all image metrics. The only eligible QEM pair also regresses. This is mixed pilot evidence, not held-out generalization or a comparison with stock cluster cuts; see the matched-face report (`tools/mmtrain/CURRENT_SOURCE_MATCHED_FACE_CONTROLS_20261123.md`).
+
+A current-source screen on previously used Stanford Lucy adds a negative development result: the DAG floor is 48.50% of source faces, so a requested 30% budget is infeasible, and the three reachable cuts lose to exact-face QEM and meshoptimizer on all listed static image metrics. Lucy is already contaminated for confirmation use. See the screen report (`tools/mmtrain/LUCY_CURRENT_SOURCE_QUALITY_SCREEN_20261123.md`) and asset reuse audit (`MANYMESH_CONFIRMATION_ASSET_SCREEN.md`). Do not count this as an independent test or a generalization result.
+
+A current-source Monkey diagnostic now uses the original 15,744-face OBJ as reference rather than a DAG cut. Its three requested budgets measured 25.8%-34.8% silhouette-error share. Exact directed-edge matching flagged every cut, but a retrospective coordinate map matched all 168 oriented boundary edges within 0.52 float32 epsilon at unit radius; sampled curve deviation was at most 6.08e-8 and relative boundary-length error was 3.3e-9. Eligible exact-face controls beat the cuts on image metrics. This resolves the reference ambiguity for this diagnostic, but does not establish a preregistered boundary criterion or a held-out result. See the report (`tools/mmtrain/MONKEY_ORIGINAL_SOURCE_DIAGNOSTIC_20261123.md`), image-quality receipt (`tools/mmtrain/monkey_source_reference_diagnostic_20261123.json`), and curve audit (`tools/mmtrain/monkey_boundary_curve_audit_20261123.json`). The DamagedHelmet lead also failed the strict topology gate before image scoring; see the asset screen (`tools/mmtrain/DAMAGED_HELMET_TOPOLOGY_GATE_20261123.md`).
+
+The node-level cone-risk selector has now been built and run on the 12 repository OBJ fixtures at requested ratios 0.3, 0.5, and 0.7. All 108 candidate PLY counts match their headers, but the screen found zero equal-face, geometry-distinct candidates; no AA image-quality metrics were scored, and Idea 3 is closed under this implementation. See the budget screen (`tools/mmgeo/CONTOUR_SELECTOR_BUDGET_SCREEN_20261123.md`) and raw receipt (`tools/mmgeo/contour_budget_screen_20261123.json`). The nvdiffmodeling/Hasselgren placement baseline remains unrun: the host has CPU-only PyTorch, no CUDA runtime, and no in-repository Dragon asset. Do not implement the constrained DAG optimizer until the matched-face baseline can run on hash-pinned, redistribution-cleared inputs. Test geomorphing only if moving-camera evidence shows a meaningful transition artifact; it is not a standalone novelty claim. Freeze assets, views, metrics, exclusion rules, and practical-effect margins in advance; the reused 32-asset test split is not assumed clean. See the submission plan (`SIGGRAPH_2027_SUBMISSION_PLAN.md`), cluster-LOD baseline screen (`tools/mmtrain/UPSTREAM_CLUSTERLOD_SCREEN_20261122.md`), cut-feasibility audit (`tools/mmgeo/HISTORICAL_CUT_TOPOLOGY_AUDIT_20261122.md`), rendered reranking report (`tools/mmgeo/SAVED_CUT_VIEW_RERANK_20261122.md`), and prior-art review (`MANYMESH_UPSCALER_AWARE_DAG_RESEARCH.md`). Production integration, mobile claims, and a perceptual claim each require separate evidence gates.

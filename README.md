@@ -80,6 +80,8 @@ claims need separate device measurements or a user study.
 ## Project notes
 
 - [Concise research status](MANYMESH.md)
+- [Learned LOD research and experiment record](MANYMESH_LEARNED_LOD_RESEARCH.md)
+- [Dated experiments and backend test inventories](MANYMESH_HISTORY.md)
 - [SIGGRAPH 2027 direction, prior art, and stop criteria](SIGGRAPH_2027_DIRECTION.md)
 - [Prior-art screen with full-text access status](docs/manymesh/siggraph-prior-art-screen-20261123.md)
 - [Research continuation prompt and evidence protocol](MANYMESH_RESEARCH_LOOP.md)
