@@ -31,6 +31,15 @@ Therefore hierarchy fitting, per-level differentiable fitting, scale-aware
 appearance, boundary consistency, and transition stability are not contributions
 on their own. Novelty is not established.
 
+The only plausible distinction to test is a measurable advantage from fitting
+the hierarchy to a specified post-reconstruction image while retaining the
+cluster DAG's legal-cut and boundary constraints. That claim is still much
+narrower than “LOD for upscalers”: classic silhouette-aware simplification,
+silhouette clipping, budgeted/predictive LOD selection, perceptual silhouette
+and transition models, and neural prediction of image error for shading-rate
+control all predate this project. The local prior-art review tracks which papers
+were read and which remain only partially accessible.
+
 | Priority | Direction | Current disposition |
 |---|---|---|
 | 1 | **A+B: post-reconstruction-aware hierarchy optimization** | Keep as a falsifiable hypothesis. First reproduce a matched-face differentiable simplification baseline; only then test the cluster-DAG constraints. |
@@ -82,8 +91,9 @@ silhouette and transition modeling has also been tested against observers in
 ## Cheapest falsification and pass criteria
 
 1. Secure two hash-pinned, redistribution-cleared assets and a CUDA-capable
-   system. The current checkout does not have a clean Monkey/Dragon pair or
-   CUDA, so the proposed replication cannot be claimed as run.
+   system. The current checkout has a local Monkey development mesh but no
+   provenance record for it, no local Dragon mesh, and no CUDA build or GPU, so
+   the proposed replication cannot be claimed as run.
 2. Compare nvdiffmodeling/Hasselgren placement against QEM, current ManyMesh
    placement, and meshoptimizer at identical face counts. Freeze training and
    held-out views before scoring; include no-AA and equal 4x MSAA arms.
@@ -95,7 +105,8 @@ silhouette and transition modeling has also been tested against observers in
    Treat objective metrics as complementary; a “perceptual” claim needs ratings
    or a predictor validated against ratings on held-out assets.
 5. Report quality first at matched face count, then at matched complete frame
-   time. Include offline time, asset bytes, load/decode time, memory, CPU
+   time. Also report an equal-quality cost point when interpolation is
+   supported. Include offline time, asset bytes, load/decode time, memory, CPU
    selection and GPU time. Mobile performance requires measurements on a real
    phone; desktop timings do not establish it.
 
