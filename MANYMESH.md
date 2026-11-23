@@ -1,22 +1,40 @@
 # ManyMesh research status
 
-Updated 2026-11-23. **The SIGGRAPH research goal remains open.** No tested method currently has both a defensible novelty boundary and a repeatable quality–cost improvement over strong baselines. This repository is a research checkout, not a submission-ready system.
+Updated 2026-11-23. **No SIGGRAPH-ready contribution is established.** The
+current candidate is offline appearance optimization for a constrained cluster
+LOD hierarchy, evaluated after antialiasing or upscaling, with separate
+matched-face and matched-complete-frame-time comparisons. It remains a
+hypothesis with close prior art, not a novelty claim.
 
 ## Decision-relevant evidence
 
-- **Image reconstruction:** In historical fixed-camera Monkey stills at 38% retention, reported PSNR is 37.38 dB without AA, 37.52 dB with a cross-asset tiny CNN, 38.81 dB with 4× MSAA, and 38.89 dB with MSAA plus the CNN. The network adds 0.08 dB after MSAA. At 29.38% retention, the report lists 39.76 dB without AA, 41.40 dB with 4× MSAA, and 37.92 dB with static TAA. Each AA mode uses its own matching full-detail reference, so these cross-mode scores are not a strict same-reference ablation. The grayscale captures use an 11,250-triangle full-detail DAG cut as the reference, not the original 15,744-triangle source. They do not establish moving-camera quality or device cost.
-- **Image metrics:** A fixed-view 13-asset Iris Xe screen compares native cuts, 4× MSAA, SMAA, and upscaling. The calibrated cut with 4× MSAA is faster than the tested full-source half-resolution linear reconstruction on 4/13 assets, despite better average PSNR and SSIM. It is a grayscale desktop screen without camera motion or authored materials.
-- **Equal-time reconstruction controls:** In the 13-asset Iris Xe screen, 0/13 means neither prototype jointly beat all controls eligible at or below its per-asset GPU p50 in LDR-FLIP, PSNR, and SSIM. It does not mean it lost on every metric to every control. A cheaper control selected after results dominated both prototypes on all three metrics for each asset (full-source 4x MSAA on 12 assets; component 4x MSAA on SheenChair). Since that winner was selected post hoc, this is exploratory, not a pre-registered baseline test. It is not full-frame or phone timing. See the [screen report](tools/mmtrain/SILHOUETTE_GUIDE_FUSION_20261122.md) and [verified repeat receipt](tools/mmtrain/silhouette_guide_fusion_720p_repeat_20261123.json).
-- **Temporal quality:** A CGVQM-5 screen on 13 reused Khronos assets and two paths reports a mean selected-profile minus area delta of −0.0590 (95% asset-bootstrap CI [−0.1476, +0.0424]); four assets improve and nine regress. This does not support a temporal-quality claim.
-- **Geometry:** The tested polynomial cluster decoder and bounded local refinement lose same-face validation comparisons against meshoptimizer. Stock meshoptimizer cluster LOD improves PSNR over whole-mesh QEM on six valid matched assets, but some stock cuts fail topology checks in mixed scenes.
-- **Per-instance LOD:** Bounding-rectangle allocation improves static FLIP over group allocation in 9/9 views and beats time-eligible controls in 7/9 by pooled medians, but only 4/9 are consistent across all batches. The replay excludes moving-camera updates and complete runtime preparation costs. Screen-area allocation is established prior art. This is a prototype lead, not a contribution claim.
-- **Moving-camera LOD:** A 48-frame, three-scene screen finds small image and CGVQM-5 improvements from per-instance area allocation, but the policy uses more faces and is slower on GPU. Under a matched per-frame face ceiling, an offline oracle is quality-neutral in two scenes and requires costly CPU selection. It does not show an equal-cost win; see the [screen report](tools/mmtrain/DYNAMIC_INSTANCE_LOD_MOVING_20261123.md).
-- **Storage:** Draco uses 29.8% fewer bytes than meshoptimizer at identical LDR-FLIP in an eight-mesh 20-bit validation screen. The result covers geometry streams, not full assets or renderer integration.
+- The 13-asset silhouette-fusion screen is **0/13** under its joint FLIP/PSNR/
+  SSIM criterion at a per-asset GPU-time budget. This means neither prototype
+  beat all eligible controls together; it does not mean every metric regressed.
+  A cheaper winning mode was selected after seeing results, so this is
+  exploratory and post-hoc. [Report](tools/mmtrain/SILHOUETTE_GUIDE_FUSION_20261122.md) · [verified repeat](tools/mmtrain/silhouette_guide_fusion_720p_repeat_20261123.json)
+- A 48-frame, three-scene moving-camera screen found that per-instance area
+  allocation used more faces and was slower on GPU. A face-budget-matched
+  offline oracle improved the temporal metric in one scene only and incurred
+  CPU selection cost. [Report](tools/mmtrain/DYNAMIC_INSTANCE_LOD_MOVING_20261123.md)
 
-## Scope and next gate
+The evidence is fixed-view or small desktop development data. There is no
+physical-phone performance, power, thermal, user-preference, or independent
+held-out generalization result. Metric suites and historical Monkey captures
+are documented in the linked reports; older single-view values should not be
+read as general claims.
 
-The current evidence is grayscale, mostly fixed-view, desktop development data. Mobile GPU performance, power, thermal behavior, authored-material quality, and user preference have not been established. The silhouette attribution figure (0.11% of pixels, 68.3% of squared error) is one Monkey still against the DAG cut, not the original source; it is motivation for measurement, not a general perceptual law. The next candidate is one time-boxed hypothesis: jittered LOD cuts with temporal accumulation. Without a physical Android device and harness by week one, choose Path B and prepare the negative result for a shorter venue. See the [frozen next-experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md).
+## Next gate
 
-Before advancing any branch, state a specific distinction from prior work, freeze the assets and camera paths, and compare against strong quality and resource controls. Report PSNR, SSIM, LDR-FLIP and video metrics where applicable, together with face/byte budgets, full CPU and GPU costs, memory, and topology failures. Pair uncertainty over assets, not frames. A positive development screen must be followed by a frozen evaluation on a fresh licensed confirmation set. Do not make a mobile claim without device measurements or a preference claim without a user study. Production integration and changes to the public renderer API or `.mmb` format remain deferred.
+1. Do not promote the tested decoder, silhouette-fusion, or moving-allocation
+   variants as contributions.
+2. Run the matched-face differentiable simplification baseline on legally
+   cleared assets with CUDA. Freeze views, metrics, topology rules, and QEM /
+   meshoptimizer controls before scoring.
+3. Continue only if the baseline shows repeatable held-out improvement. Then
+   test cluster-DAG constraints and compare actual AA/upscalers at equal full
+   frame cost. Mobile or preference claims require device measurements or a
+   user study.
 
-The README is the public project entry: [open the homepage](README.md).
+See the [next-experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md) and the
+[public project homepage](README.md).
