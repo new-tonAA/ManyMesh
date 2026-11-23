@@ -1,0 +1,401 @@
+{
+  "khronos_revision": "e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea",
+  "scope": "geometry eligibility preflight; no image scores or performance measures",
+  "assets": {
+    "Avocado": {
+      "geometry_license": "CC0-1.0",
+      "credits": [
+        "Microsoft"
+      ],
+      "inputs": {
+        "Avocado.gltf": {
+          "git_blob": "55fcd955193b268dec70ce6bcfba91f3b06c2c6b",
+          "bytes": 2413,
+          "sha256": "c9bde1d2f09514dad0a16971df2222beb582fad5dfc86203de1d56389d52feda"
+        },
+        "Avocado.bin": {
+          "git_blob": "b98140c9d860f9c135b6d221d00277f24e31e985",
+          "bytes": 23580,
+          "sha256": "3bf7ce0ec994562eabf0cb72a52bbc7976818d630d62609a966b53a5ff9b9180"
+        },
+        "LICENSE.md": {
+          "git_blob": "deb2811edcc30da57ae68c61d1adcfc31870fe18",
+          "bytes": 769,
+          "sha256": "56357fc8277990d763480c4207551cd1f4d58451c6ea5f16d9fdb7d2fa7eb00c"
+        },
+        "README.md": {
+          "git_blob": "0f9efdce9dda156503f4dbdd2384ee8548cd0b12",
+          "bytes": 969,
+          "sha256": "076b9fbb0bd7ccf39a3dcba838544331dfa71186014c24141929fbcb3e2a507e"
+        }
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "806d70a5dc14d9fc0955db7c375708917cf29d35181d8d2548e543ff04c2ba98",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 406,
+        "used_vertices": 406,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 363,
+        "triangles": 682,
+        "connected_components_by_exact_welded_vertex": 2,
+        "boundary_edges": 38,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 0,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 1.4874385621870026e-07,
+        "edge_incidence_histogram": {
+          "2": 1004,
+          "1": 38
+        },
+        "topology_status": "pass",
+        "topology_errors": [],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0
+      },
+      "controls": {
+        "source_sha256": "806d70a5dc14d9fc0955db7c375708917cf29d35181d8d2548e543ff04c2ba98",
+        "source_faces": 682,
+        "source_boundary_edges": 38,
+        "candidate_sha256": "fc5d27d9da8d4a4cf7e557d16b60cf92f7465edacbbc7465c8aeb589b475c2fe",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "17c0d4465ff00cd71e49a4322c771794a26b3d456da73e259e1db617c109034c",
+        "source_revision": "9591ccc90cdacbc9cdb2c9ce8b86254a071f317b",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.3,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.4574780058651026,
+        "candidate_in_band": false,
+        "manymesh": {
+          "faces": 312,
+          "topology_error": null,
+          "boundary_edges": 38,
+          "boundary_preserved": true
+        },
+        "control_target_faces": 205,
+        "control_indexing": "original",
+        "control_input_vertices": 406,
+        "controls": {
+          "qem_preserve_border": {
+            "faces": 204,
+            "topology_error": null,
+            "boundary_edges": 38,
+            "boundary_preserved": true,
+            "eligible": false
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 204,
+            "topology_error": null,
+            "boundary_edges": 38,
+            "boundary_preserved": true,
+            "eligible": false
+          }
+        },
+        "matched_inputs_ready": false
+      }
+    },
+    "BarramundiFish": {
+      "geometry_license": "CC0-1.0",
+      "credits": [
+        "Microsoft"
+      ],
+      "inputs": {
+        "BarramundiFish.gltf": {
+          "git_blob": "1fd5708f0dba3b7f29c62de7e8cd656efba14be6",
+          "bytes": 2554,
+          "sha256": "15e2c26d308ef73f227655703ba88c37cf817e60e25229fab5cbfd0bf6888d2e"
+        },
+        "BarramundiFish.bin": {
+          "git_blob": "cb31be86b7c7f12e071c09689240075e5fc2d229",
+          "bytes": 128208,
+          "sha256": "5d6ca35ff4e498d84597956091cf5de8ce0f236cd9b8ebf48e19d372e4187112"
+        },
+        "LICENSE.md": {
+          "git_blob": "ae0b8b59ee77322394837eaeaff1d6c3d50d5594",
+          "bytes": 777,
+          "sha256": "668819801937f5b3c4602ca744ddf06ef104e809b36795954ccb9072581a1f08"
+        },
+        "README.md": {
+          "git_blob": "21082abc1d8ad48472341f1532e40739973f2d86",
+          "bytes": 959,
+          "sha256": "0a872d23709643379fe2a13261d535d110060d73154ad9b2141a90f3a49351c4"
+        }
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "6cbce9b89fd5315929c19582afe1949502f3ea4e5705c569c6acc884b410c949",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 2188,
+        "used_vertices": 2188,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 1938,
+        "triangles": 3864,
+        "connected_components_by_exact_welded_vertex": 3,
+        "boundary_edges": 0,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 0,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 1.0022264806456895e-07,
+        "edge_incidence_histogram": {
+          "2": 5796
+        },
+        "topology_status": "pass",
+        "topology_errors": [],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0
+      },
+      "controls": {
+        "source_sha256": "6cbce9b89fd5315929c19582afe1949502f3ea4e5705c569c6acc884b410c949",
+        "source_faces": 3864,
+        "source_boundary_edges": 0,
+        "candidate_sha256": "5339b9e7c88f8cae0d1e533006795eeeeeabdb5c1ec6a61e812e0cc8fe6a0ee3",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "17c0d4465ff00cd71e49a4322c771794a26b3d456da73e259e1db617c109034c",
+        "source_revision": "9591ccc90cdacbc9cdb2c9ce8b86254a071f317b",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.3,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.296583850931677,
+        "candidate_in_band": true,
+        "manymesh": {
+          "faces": 1146,
+          "topology_error": null,
+          "boundary_edges": 0,
+          "boundary_preserved": true
+        },
+        "control_target_faces": 1146,
+        "control_indexing": "original",
+        "control_input_vertices": 2188,
+        "controls": {
+          "qem_preserve_border": {
+            "faces": 1146,
+            "topology_error": null,
+            "boundary_edges": 0,
+            "boundary_preserved": true,
+            "eligible": true
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 1146,
+            "topology_error": "Duplicate geometric triangle",
+            "boundary_preserved": false,
+            "eligible": false
+          }
+        },
+        "matched_inputs_ready": false
+      }
+    },
+    "Corset": {
+      "geometry_license": "CC0-1.0",
+      "credits": [
+        "Microsoft",
+        "UX3D"
+      ],
+      "inputs": {
+        "Corset.gltf": {
+          "git_blob": "18419af60688deed95e463bf71d1502253a6c0d8",
+          "bytes": 2487,
+          "sha256": "1aaa7fa54731ca833c3a0f919ba82c1af2a69cc7f8de36ba76bfb5038de8bd38"
+        },
+        "Corset.bin": {
+          "git_blob": "0391a11013d195adf5a314e757d9de4c31680ea0",
+          "bytes": 662184,
+          "sha256": "de7730fb4201466603410dc1a7128bc1339e945a945dbb852f6dc39f3c53ec22"
+        },
+        "LICENSE.md": {
+          "git_blob": "d629f6e909e33062e1bfc6f7f56709b060346005",
+          "bytes": 768,
+          "sha256": "9f92c99298f4bb0fa9840cf475a5ad4a90f905d5b5617161fdfb50703fee9644"
+        },
+        "README.md": {
+          "git_blob": "9bfc6f868dd5be0017cd34aaf12365e13cb8c134",
+          "bytes": 955,
+          "sha256": "437e4a46f008ed20326d9681b36b381db1ac6ef6730a94bc26f61ca366e12384"
+        }
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "590ae9c4c434b357535ee0dc176d00c3c44788d811d0625abd90dd1a7c675de5",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 11505,
+        "used_vertices": 11505,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 9774,
+        "triangles": 18324,
+        "connected_components_by_exact_welded_vertex": 75,
+        "boundary_edges": 1144,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 0,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 3.9284438250267535e-10,
+        "edge_incidence_histogram": {
+          "2": 26914,
+          "1": 1144
+        },
+        "topology_status": "pass",
+        "topology_errors": [],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0
+      },
+      "controls": {
+        "source_sha256": "590ae9c4c434b357535ee0dc176d00c3c44788d811d0625abd90dd1a7c675de5",
+        "source_faces": 18324,
+        "source_boundary_edges": 1144,
+        "candidate_sha256": "33809b1f31ce3f82592b4e91f395af7f3e58221d79ee0c366aa3a44fa5daf808",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "17c0d4465ff00cd71e49a4322c771794a26b3d456da73e259e1db617c109034c",
+        "source_revision": "9591ccc90cdacbc9cdb2c9ce8b86254a071f317b",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.3,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.30004365858982757,
+        "candidate_in_band": true,
+        "manymesh": {
+          "faces": 5498,
+          "topology_error": null,
+          "boundary_edges": 1144,
+          "boundary_preserved": true
+        },
+        "control_target_faces": 5498,
+        "control_indexing": "original",
+        "control_input_vertices": 11505,
+        "controls": {
+          "qem_preserve_border": {
+            "error": "Duplicate geometric triangle",
+            "eligible": false
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 5498,
+            "topology_error": "Duplicate geometric triangle",
+            "boundary_preserved": false,
+            "eligible": false
+          }
+        },
+        "matched_inputs_ready": false
+      }
+    },
+    "WaterBottle": {
+      "geometry_license": "CC0-1.0",
+      "credits": [
+        "Microsoft"
+      ],
+      "inputs": {
+        "WaterBottle.gltf": {
+          "git_blob": "9f23f3add06376ba56326a9e3a99223a304c60a5",
+          "bytes": 2727,
+          "sha256": "0596f4e61dc781439d254fdfb5e3462daf1762c18715e3e3ac13001aa8f3f547"
+        },
+        "WaterBottle.bin": {
+          "git_blob": "b10cfd0133b85593e01ee7f7b107d85d3ec491a6",
+          "bytes": 149412,
+          "sha256": "e4921f2d0c0a03cf65286bd195f3688d4f99d7b6a58f25935e70d516d744156e"
+        },
+        "LICENSE.md": {
+          "git_blob": "74a021479b235d023d1d9b0d007bf417e388b1b9",
+          "bytes": 774,
+          "sha256": "33cddcace3d46b3dec14275eff753c5879d5c55462a1bdce7981db4a5adb9a6b"
+        },
+        "README.md": {
+          "git_blob": "26d08a2ad63a19d7cc5edd27d9000c0db2266d25",
+          "bytes": 1004,
+          "sha256": "4ddb88bb6b835ab1b658041f1c5391b5b2128be65725d1ef84b1e434d818eb1c"
+        }
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "86218f506b2ac0b21a66b0c6012c17317ca5ee40c3edd88122be0aff7a1a3bce",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 2549,
+        "used_vertices": 2549,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 2385,
+        "triangles": 4510,
+        "connected_components_by_exact_welded_vertex": 3,
+        "boundary_edges": 264,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 0,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 9.060759660972985e-08,
+        "edge_incidence_histogram": {
+          "2": 6633,
+          "1": 264
+        },
+        "topology_status": "pass",
+        "topology_errors": [],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0
+      },
+      "controls": {
+        "source_sha256": "86218f506b2ac0b21a66b0c6012c17317ca5ee40c3edd88122be0aff7a1a3bce",
+        "source_faces": 4510,
+        "source_boundary_edges": 264,
+        "candidate_sha256": "890d82e8cca6f4c1cd9a69abac745b0bd50c876dca9785b9b82f920f448c8b3d",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "17c0d4465ff00cd71e49a4322c771794a26b3d456da73e259e1db617c109034c",
+        "source_revision": "9591ccc90cdacbc9cdb2c9ce8b86254a071f317b",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.3,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.2847006651884701,
+        "candidate_in_band": false,
+        "manymesh": {
+          "faces": 1284,
+          "topology_error": null,
+          "boundary_edges": 264,
+          "boundary_preserved": true
+        },
+        "control_target_faces": 1353,
+        "control_indexing": "original",
+        "control_input_vertices": 2549,
+        "controls": {
+          "qem_preserve_border": {
+            "faces": 1352,
+            "topology_error": null,
+            "boundary_edges": 264,
+            "boundary_preserved": true,
+            "eligible": false
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 1352,
+            "topology_error": null,
+            "boundary_edges": 264,
+            "boundary_preserved": true,
+            "eligible": false
+          }
+        },
+        "matched_inputs_ready": false
+      }
+    }
+  }
+}

@@ -35,11 +35,10 @@ physical-phone or user-preference result is available.
 
 - **The 13-asset fusion screen is 0/13 under its stated joint criterion.**
   Neither silhouette-fusion prototype beat every qualified control on all of
-  LDR-FLIP, PSNR, and SSIM at or below its per-asset GPU p50. This does not mean
-  MSAA lost on every metric. A cheaper control selected after seeing results
-  dominated both prototypes on all three metrics for each asset, so this is an
-  exploratory, post-hoc comparison. It is fixed-view grayscale Iris Xe desktop
-  data, not phone or full-frame timing. [Report](tools/mmtrain/SILHOUETTE_GUIDE_FUSION_20261122.md) · [verified repeat](tools/mmtrain/silhouette_guide_fusion_720p_repeat_20261123.json)
+  LDR-FLIP, PSNR, and SSIM within its per-asset median GPU-time budget. A cheaper
+  control selected after scoring dominated both prototypes on all three metrics
+  for each asset. The exploratory comparison uses fixed-view grayscale Iris Xe
+  desktop captures and times the tested GPU work. [Report](tools/mmtrain/SILHOUETTE_GUIDE_FUSION_20261122.md) · [verified repeat](tools/mmtrain/silhouette_guide_fusion_720p_repeat_20261123.json)
 - **Moving-camera allocation did not pass equal cost.** In a three-scene,
   48-frame screen, per-instance allocation used more faces and ran slower on
   GPU. A face-budget-matched offline oracle improved the temporal metric in one
@@ -71,9 +70,10 @@ The source contour priority improved mean PSNR in a CPU screen of seven
 development assets. The Iris Xe follow-up showed mixed FLIP under MSAA,
 SMAA, and bicubic upscaling. [Desktop AA follow-up](tools/mmtrain/CONTOUR_PRIORITY_AA_20261123.md)
 
-The first two preflight assets failed to supply a full set of legal meshes
-near 30% retention. [Input preflight](tools/mmtrain/APPEARANCE_INPUT_PREFLIGHT_20261123.md)
-The next experiment needs cleared assets with matching face counts, frozen
+Two preflights on six cleared assets found no complete set of legal meshes
+at matching face counts near 30% retention.
+[Input preflight](tools/mmtrain/KHRONOS_SEPARATE_BUFFER_PREFLIGHT_20261124.md)
+The NVIDIA appearance baseline still needs cleared matching inputs, frozen
 views, QEM and meshoptimizer controls, and a CUDA workstation. Advance only
 if the differentiable baseline produces a repeatable held-out gain, then
 test the DAG constraints with real antialiasing and upscalers. See the
