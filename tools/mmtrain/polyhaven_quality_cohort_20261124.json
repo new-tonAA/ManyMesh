@@ -1,0 +1,656 @@
+{
+  "schema": 1,
+  "status": "frozen before image scoring",
+  "quality_scored": false,
+  "selection_rule": "Include every asset that passed the source topology screen and the predeclared 50% ManyMesh/QEM/meshoptimizer face-and-boundary gate; no image quality was used to select assets.",
+  "split": "confirmation; no training or tuning on these assets",
+  "source_screen_sha256": {
+    "tools\\mmtrain\\polyhaven_candidate_topology_20261124.json": "4c0dce7e528708325a727f1b82d9e7b72bf3d6fff64372f1131b60911827eb8f",
+    "tools\\mmtrain\\polyhaven_matched_face_20261124.json": "b47f4bb3d69a80a2177a250dc8799b193f2b0d55efd2a94ddc608b01f65206c5",
+    "tools\\mmtrain\\polyhaven_expansion_topology_20261124.json": "5ef8446ab249ce1911d998625c0178a50cf49bed7f7ec7ccb3c9a9e79b3b6448",
+    "tools\\mmtrain\\polyhaven_matched_face_expansion_20261124.json": "11c6734ba3c83cb821051b6556afedee547df8bb0625ccc5c6cf2af8ee9bd695"
+  },
+  "protocol": {
+    "views": "12 frozen perspective directions at distances 3.3 and 5.2 in the normalized source frame",
+    "reference": "full source rasterized at 2x resolution with 4x MSAA and a linear box resolve",
+    "candidate_modes": [
+      "native rasterization",
+      "4x MSAA"
+    ],
+    "equal_budget": "exact matching triangle count across ManyMesh, border-preserving QEM, and meshoptimizer LockBorder; face count is fixed per asset at the pre-screened ManyMesh cut near 50% retention",
+    "image_metrics": [
+      "LDR-FLIP (67 pixels/degree)",
+      "pooled-MSE PSNR",
+      "SSIM",
+      "binary silhouette XOR",
+      "coverage MAE"
+    ],
+    "geometry_metrics": [
+      "sampled bidirectional Chamfer distance",
+      "sampled 95th-percentile surface distance",
+      "sampled normal consistency"
+    ],
+    "uncertainty_unit": "connected source-collection group; models without a collection tag are singleton groups; report every per-asset result",
+    "not_measured": [
+      "LPIPS",
+      "temporal stability",
+      "GPU time",
+      "mobile hardware",
+      "human preference"
+    ]
+  },
+  "assets": {
+    "crystalline_iceplant": {
+      "class": "botanical",
+      "catalog_category": null,
+      "collection_tags": [],
+      "authors": {
+        "James Ray Cock": "modeling",
+        "Jenelle van Heerden": "Photography"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/crystalline_iceplant",
+      "source_sha256": "d22864c599b17ceef8730c603c3f38a3d298c00d926e15a10af9645654c41dec",
+      "source_faces": 13094,
+      "control_faces": 6546,
+      "retention": 0.499923629143119,
+      "geometry_dir": "out/polyhaven-matched-face-20261124/crystalline_iceplant/exports",
+      "frozen_exports": {
+        "source_sha256": "d22864c599b17ceef8730c603c3f38a3d298c00d926e15a10af9645654c41dec",
+        "source_faces": 13094,
+        "control_target_faces": 6546,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "c9dbd3d248ae5a4f0b62c056f05f4cccfc0c792f344f1f00cb8b9a0d2efdcd49",
+          "manymesh.obj": "7789583b17436746330cc2b0e639250a464567530afe8f1a35ab4d4e3affb07f",
+          "qem_preserve_border.obj": "07e1459b62ff31f3203336395f2aad19f8246e944c2b7a50d1439bd3b1447380",
+          "meshoptimizer_lock_border.obj": "16d221a3f69d04db47b670e87a0f59286cad06af4f1e1bfe5ae31c20c902bea1"
+        }
+      },
+      "uncertainty_group": "collection:crystalline_iceplant"
+    },
+    "rock_09": {
+      "class": "rock",
+      "catalog_category": null,
+      "collection_tags": [],
+      "authors": {
+        "Jenelle van Heerden": "All"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/rock_09",
+      "source_sha256": "d730ce70302472b927d0f128fff2569bffeee22da1f04273c571cde04ff723f1",
+      "source_faces": 12416,
+      "control_faces": 6208,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-matched-face-20261124/rock_09/exports",
+      "frozen_exports": {
+        "source_sha256": "d730ce70302472b927d0f128fff2569bffeee22da1f04273c571cde04ff723f1",
+        "source_faces": 12416,
+        "control_target_faces": 6208,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "36c462629961d37637046ac93c7ec5027d1dc9e1e6aa23239f94ecf2c2d2c0ba",
+          "manymesh.obj": "3f24038c4c948ec974f5745db61a10b3db4d18140f1b13405dc87e65ae255502",
+          "qem_preserve_border.obj": "2bab8a0f3b403a536e26f49ac22075652bd658c2a2d16629d3a30a63dfb88d8a",
+          "meshoptimizer_lock_border.obj": "9e01135d9a395653e4683169d2b6a9b6ab7440bbafd68bca5bea5e6af43f0db3"
+        }
+      },
+      "uncertainty_group": "collection:rock_09"
+    },
+    "food_apple_01": {
+      "class": "food",
+      "catalog_category": null,
+      "collection_tags": [],
+      "authors": {
+        "Oliver Harries": "All"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/food_apple_01",
+      "source_sha256": "dfaab2fb03ca861cd850ca3928345c376c55e91ca20ccee4c8559a4a6254c19e",
+      "source_faces": 7012,
+      "control_faces": 3506,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-matched-face-20261124/food_apple_01/exports",
+      "frozen_exports": {
+        "source_sha256": "dfaab2fb03ca861cd850ca3928345c376c55e91ca20ccee4c8559a4a6254c19e",
+        "source_faces": 7012,
+        "control_target_faces": 3506,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "99440712b1f6dc9659adde64cecf5f18b01126400a37c2d924d1b9a71cd626af",
+          "manymesh.obj": "550093dfdf11f854406a719cd43755c633804c7b8c1cfbeec778f83f35351ce9",
+          "qem_preserve_border.obj": "6fa7b0b82fc2bdcfba9242fafe1011c5fb7fc35563f48818c472a38519b2e295",
+          "meshoptimizer_lock_border.obj": "5cd99f69bb05b9e1d9d0381abe06a7e980b9504e3c72063e757b154706a3507f"
+        }
+      },
+      "uncertainty_group": "collection:food_apple_01"
+    },
+    "Ottoman_01": {
+      "class": "furniture",
+      "catalog_category": "Furniture/Seating/Ottomans & Footstools",
+      "collection_tags": [],
+      "authors": {
+        "Caspian Fortune": "All"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/Ottoman_01",
+      "source_sha256": "65195a57f52bda52b9bbc6e2be6a8b29d82b335fab8fb07860dc7e8b2eb4045c",
+      "source_faces": 4240,
+      "control_faces": 2120,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-matched-face-expansion-20261124/Ottoman_01/controls",
+      "frozen_exports": {
+        "source_sha256": "65195a57f52bda52b9bbc6e2be6a8b29d82b335fab8fb07860dc7e8b2eb4045c",
+        "source_faces": 4240,
+        "control_target_faces": 2120,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "0202a83cf4d1de06f044e72fb96098d19b59085d1e70ddeddbcb4bf54dd45277",
+          "manymesh.obj": "e9ab413a026d78af858a734ba7f0f70c76dfcae691b53ec8a97bc77139fd0d75",
+          "qem_preserve_border.obj": "10a71006c878127fcf61482b165c6d629e8c621383f1eab7a9f6eab0b480042b",
+          "meshoptimizer_lock_border.obj": "e50b0a590914f42f6139073e5dfc9b7798b38e6a3848e61f194fa3fa8363d390"
+        }
+      },
+      "uncertainty_group": "collection:Ottoman_01"
+    },
+    "SchoolChair_01": {
+      "class": "furniture",
+      "catalog_category": "Furniture/Seating/Chairs",
+      "collection_tags": [],
+      "authors": {
+        "Ethan Place": "All"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/SchoolChair_01",
+      "source_sha256": "7735c66f94d327deebe5006f58d633ee3c008f9b3681613597260267424dea26",
+      "source_faces": 5072,
+      "control_faces": 2536,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-matched-face-expansion-20261124/SchoolChair_01/controls",
+      "frozen_exports": {
+        "source_sha256": "7735c66f94d327deebe5006f58d633ee3c008f9b3681613597260267424dea26",
+        "source_faces": 5072,
+        "control_target_faces": 2536,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "37ec13e3148aeb4e7a24b3fb5ff245eac8f9d2b4b72049731d43bd33b02d2701",
+          "manymesh.obj": "2dd9db70ac152c72d1e35f2bc48deccee8f894ce0883477b8e03feee62073fca",
+          "qem_preserve_border.obj": "0bebca0164e18d173844e63f90235a1efe6e7fff5ade8cd16ae162767e2000b5",
+          "meshoptimizer_lock_border.obj": "938f8e545c2ef5d3614e7e8e1f02751320bdb0f038e785327f7b94e1f1b3a423"
+        }
+      },
+      "uncertainty_group": "collection:SchoolChair_01"
+    },
+    "Sofa_01": {
+      "class": "furniture",
+      "catalog_category": "Furniture/Seating/Sofas & Couches",
+      "collection_tags": [],
+      "authors": {
+        "Kirill Sannikov": "All"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/Sofa_01",
+      "source_sha256": "173db1e6618c901f8aff0b386bf3342b59f15e219293fd390f83b0332fd48490",
+      "source_faces": 4101,
+      "control_faces": 2051,
+      "retention": 0.5001219214825652,
+      "geometry_dir": "out/polyhaven-matched-face-expansion-20261124/Sofa_01/controls",
+      "frozen_exports": {
+        "source_sha256": "173db1e6618c901f8aff0b386bf3342b59f15e219293fd390f83b0332fd48490",
+        "source_faces": 4101,
+        "control_target_faces": 2051,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "7c7ab802027fa9ffe1b378d0443e866e52da90959c95899c80e19a2cc0c1b3c0",
+          "manymesh.obj": "35f5c0fa594a9ec2d73264462d7809aee82553dea401375bee6c151c60a69f73",
+          "qem_preserve_border.obj": "2ea2075d346e8ec0b54a5dade496b5c732d8915958503b5e12c2697205a181f9",
+          "meshoptimizer_lock_border.obj": "e3668a90484aedc4c5a5f269b230cb2d081f4b5677dbd5be3f02130629664afc"
+        }
+      },
+      "uncertainty_group": "collection:Sofa_01"
+    },
+    "moon_rock_02": {
+      "class": "rock",
+      "catalog_category": "Nature/Rocks & Stone/Extraterrestrial Rocks",
+      "collection_tags": [
+        "moon"
+      ],
+      "authors": {
+        "Rico Cilliers": "Photography",
+        "Greg Zaal": "Photography",
+        "Jenelle van Heerden": "Processing"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/moon_rock_02",
+      "source_sha256": "0c75fc3ed6c5e6452aa5cf83424958454edc0af6b57739809dfb01252d8f2934",
+      "source_faces": 3304,
+      "control_faces": 1652,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-matched-face-expansion-20261124/moon_rock_02/controls",
+      "frozen_exports": {
+        "source_sha256": "0c75fc3ed6c5e6452aa5cf83424958454edc0af6b57739809dfb01252d8f2934",
+        "source_faces": 3304,
+        "control_target_faces": 1652,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "3631858a768834d2b3fd2470c040491aec2a5019a38660aad7dcddca78482f04",
+          "manymesh.obj": "4492a749412221a2afe19bf6910449f4b30d875af5a3f505cd2af6232e142f3d",
+          "qem_preserve_border.obj": "e12261e721460e44ad940c8d433fe5b7440db4cc8d42e89f68cf86fa40322ef6",
+          "meshoptimizer_lock_border.obj": "0ccf9fe695821ebaff1251405687077a048a54bd623f50798f2cd25aa62a9e2f"
+        }
+      },
+      "uncertainty_group": "collection:moon_rock_02+moon_rock_03+moon_rock_05+moon_rock_06"
+    },
+    "moon_rock_03": {
+      "class": "rock",
+      "catalog_category": "Nature/Rocks & Stone/Extraterrestrial Rocks",
+      "collection_tags": [
+        "moon"
+      ],
+      "authors": {
+        "Greg Zaal": "Photography",
+        "Rico Cilliers": "Photography",
+        "Jenelle van Heerden": "Processing"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/moon_rock_03",
+      "source_sha256": "458f1e78f48fb484e63c80e4127e0281075da07f703af9bcb6a43104c5f8de31",
+      "source_faces": 5598,
+      "control_faces": 2798,
+      "retention": 0.49982136477313327,
+      "geometry_dir": "out/polyhaven-matched-face-expansion-20261124/moon_rock_03/controls",
+      "frozen_exports": {
+        "source_sha256": "458f1e78f48fb484e63c80e4127e0281075da07f703af9bcb6a43104c5f8de31",
+        "source_faces": 5598,
+        "control_target_faces": 2798,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "2779fd1f5acaefcdff7eb1747af94faf734687b3ccc4ff83b5c592d8e532c1fd",
+          "manymesh.obj": "56252cc89b20e1fa00f7f54c34ce5ee96d89fcc6fff9355b17722efbd491809a",
+          "qem_preserve_border.obj": "ce4e95ae54e8cec2f080e6afd209339a9439c7b03e7d138ff79f7ee6637d89ec",
+          "meshoptimizer_lock_border.obj": "7912c21a5d3941bf3f759a7c8bb787793e52bef83509ed6e6ccf434172b7343b"
+        }
+      },
+      "uncertainty_group": "collection:moon_rock_02+moon_rock_03+moon_rock_05+moon_rock_06"
+    },
+    "moon_rock_05": {
+      "class": "rock",
+      "catalog_category": "Nature/Rocks & Stone/Extraterrestrial Rocks",
+      "collection_tags": [
+        "moon"
+      ],
+      "authors": {
+        "Greg Zaal": "Photography",
+        "Rico Cilliers": "Photography",
+        "Jenelle van Heerden": "Processing"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/moon_rock_05",
+      "source_sha256": "5e71bc9f06165b95582d5a23f4762578e10a315708766ed5e5bf898fb5e299a4",
+      "source_faces": 9850,
+      "control_faces": 4924,
+      "retention": 0.4998984771573604,
+      "geometry_dir": "out/polyhaven-matched-face-expansion-20261124/moon_rock_05/controls",
+      "frozen_exports": {
+        "source_sha256": "5e71bc9f06165b95582d5a23f4762578e10a315708766ed5e5bf898fb5e299a4",
+        "source_faces": 9850,
+        "control_target_faces": 4924,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "243b67d3cc61dbab9e3ab513497d82a3e91489404b980829849ee369e4bc82c6",
+          "manymesh.obj": "9873172568e09a4babc5cb82c104473f5c1f132fde1e1cf6952efc6e2604e2a1",
+          "qem_preserve_border.obj": "76de4954117552a4704483a56fc2b234bb7bb419a025efa8b7776648f16878b5",
+          "meshoptimizer_lock_border.obj": "d25dca1771883c89bc87de5ed316e95fda68b3db9ee3029fd0e2934b3e813d27"
+        }
+      },
+      "uncertainty_group": "collection:moon_rock_02+moon_rock_03+moon_rock_05+moon_rock_06"
+    },
+    "moon_rock_06": {
+      "class": "rock",
+      "catalog_category": "Nature/Rocks & Stone/Extraterrestrial Rocks",
+      "collection_tags": [
+        "moon"
+      ],
+      "authors": {
+        "Greg Zaal": "Photography",
+        "Jenelle van Heerden": "Processing",
+        "Rico Cilliers": "Photography"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/moon_rock_06",
+      "source_sha256": "559e2da61a9f7c4876b3e1c618ae976bbcbb9dae1cddf4710b34ef1a6dba6d34",
+      "source_faces": 6920,
+      "control_faces": 3460,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-matched-face-expansion-20261124/moon_rock_06/controls",
+      "frozen_exports": {
+        "source_sha256": "559e2da61a9f7c4876b3e1c618ae976bbcbb9dae1cddf4710b34ef1a6dba6d34",
+        "source_faces": 6920,
+        "control_target_faces": 3460,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "21cb890804f5abaa764cec8e5e4fa9e10dfb6cfa70d23f3a81a0562d9d941f65",
+          "manymesh.obj": "c6604eda3ab2099872ff11b049055f0ac3d0075455b6b3b7f8937189e513bd6a",
+          "qem_preserve_border.obj": "d20e870f3beca9c5677c700436afe14f5e5be57de02792947591744f354a8c32",
+          "meshoptimizer_lock_border.obj": "455d8409928d06878b0324bf23c87c26e29ed347b91a97d0be30edd2ea6ecc2c"
+        }
+      },
+      "uncertainty_group": "collection:moon_rock_02+moon_rock_03+moon_rock_05+moon_rock_06"
+    },
+    "food_pears_asian_01": {
+      "class": "food",
+      "catalog_category": "Food & Kitchen/Produce/Fruit",
+      "collection_tags": [],
+      "authors": {
+        "Amal Kumar": "All"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/food_pears_asian_01",
+      "source_sha256": "cc880826d07aaddddf995fed889bde37592f5576410cc01b90b80e53737e177f",
+      "source_faces": 12572,
+      "control_faces": 6286,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-matched-face-expansion-20261124/food_pears_asian_01/controls",
+      "frozen_exports": {
+        "source_sha256": "cc880826d07aaddddf995fed889bde37592f5576410cc01b90b80e53737e177f",
+        "source_faces": 12572,
+        "control_target_faces": 6286,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "acbc5591e237a9cf5d48768d9cfea303fc2398fd11dda11b41dadcc49927c50f",
+          "manymesh.obj": "e57436ac743293cd6f5585238196f52da824957fbfa3a262eb427b98102a9919",
+          "qem_preserve_border.obj": "8c9ec45a6fc41ebdaf37f6b48fe8b34ab82fea8b35f4b31e1d732ee80a763e89",
+          "meshoptimizer_lock_border.obj": "f8e8b83f9dc6f5abb8f2df170edbc77fc5a75119b43af30595ddbcbab2acb17f"
+        }
+      },
+      "uncertainty_group": "collection:food_pears_asian_01"
+    },
+    "lemon": {
+      "class": "food",
+      "catalog_category": "Food & Kitchen/Produce/Fruit",
+      "collection_tags": [],
+      "authors": {
+        "Kuutti Siitonen": "All"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/lemon",
+      "source_sha256": "046e59a441a38271b729d945fb9da0bf85e4732723cf321328bcb60eb972338d",
+      "source_faces": 4012,
+      "control_faces": 2006,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-matched-face-expansion-20261124/lemon/controls",
+      "frozen_exports": {
+        "source_sha256": "046e59a441a38271b729d945fb9da0bf85e4732723cf321328bcb60eb972338d",
+        "source_faces": 4012,
+        "control_target_faces": 2006,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "a672fb2473321456b9f6bdc0dcb64c4d6e73c4d7986d1270ca2d56e08c16fcdd",
+          "manymesh.obj": "d6892155275b521a7ae4c12cb034006afb539263469c4bdd83610ff34379fc16",
+          "qem_preserve_border.obj": "96e41296b05c0bd64310fd0f31bfdf26a901c8603cc5e69bc0c9712ef13b28b4",
+          "meshoptimizer_lock_border.obj": "bcf5b2292cd5092c91f1df15720e27829addc6d04002edcacc6c477d48b8e3ed"
+        }
+      },
+      "uncertainty_group": "collection:lemon"
+    },
+    "Megaphone_01": {
+      "class": "tools",
+      "catalog_category": "Electronics & Appliances/Devices & Instruments/Handheld Devices",
+      "collection_tags": [],
+      "authors": {
+        "Ethan Simon-Law": "All"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/Megaphone_01",
+      "source_sha256": "7cefd0f4236853f9d7cff6a5a5e6570cb556af7ed09ee7f39a0d5a6bfd01de16",
+      "source_faces": 15814,
+      "control_faces": 7906,
+      "retention": 0.49993676489186795,
+      "geometry_dir": "out/polyhaven-matched-face-expansion-20261124/Megaphone_01/controls",
+      "frozen_exports": {
+        "source_sha256": "7cefd0f4236853f9d7cff6a5a5e6570cb556af7ed09ee7f39a0d5a6bfd01de16",
+        "source_faces": 15814,
+        "control_target_faces": 7906,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "1267b752797badc5a1d719b9f8cf759280704169634654a3245fbae4f9adf4d2",
+          "manymesh.obj": "63949ca95995125b345f9e83dda1aa8c6dd89dabf8287aa4b2135e851ebd3348",
+          "qem_preserve_border.obj": "eee2553e410ad8052ee3bba343c6dd17d7668074bce5b2005ffbc783a4ab355d",
+          "meshoptimizer_lock_border.obj": "c8858c73fcd42b3fb539af11b53bcaa857cbd0c197dc5d3166c8f8183ad85160"
+        }
+      },
+      "uncertainty_group": "collection:Megaphone_01"
+    },
+    "drain_cleaner": {
+      "class": "tools",
+      "catalog_category": "Containers & Storage/Cans, Tins & Bottles/Cleaning & Chemical Bottles",
+      "collection_tags": [],
+      "authors": {
+        "James Ray Cock": "All"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/drain_cleaner",
+      "source_sha256": "742e35a69e39284013ee7cd47049530f183c09c7c35045a2819acd1a38fb166d",
+      "source_faces": 4338,
+      "control_faces": 2168,
+      "retention": 0.49976947902259106,
+      "geometry_dir": "out/polyhaven-matched-face-expansion-20261124/drain_cleaner/controls",
+      "frozen_exports": {
+        "source_sha256": "742e35a69e39284013ee7cd47049530f183c09c7c35045a2819acd1a38fb166d",
+        "source_faces": 4338,
+        "control_target_faces": 2168,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "fbc0f28a31964b5397dc40b49ba73ac4ba54145973ce4042c7dcd61e90f1e3f4",
+          "manymesh.obj": "1d6360244d0fb1013dbe1290eb2ba77c117aaab4cb5f26feee5700193fc66d70",
+          "qem_preserve_border.obj": "1358c7ecc2c0303cac02c19b3657ad28ca712da003a2373ddcab26b053e405de",
+          "meshoptimizer_lock_border.obj": "86bd3d4be016fa97a64703db824c7bc57d7e79b3a219b0a3a16b41a3fb4816ee"
+        }
+      },
+      "uncertainty_group": "collection:drain_cleaner"
+    },
+    "dustpan": {
+      "class": "tools",
+      "catalog_category": "Tools & Equipment/Garden Tools/Brooms & Cleaning",
+      "collection_tags": [
+        "project_lighthouse"
+      ],
+      "authors": {
+        "Balen": "All"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/dustpan",
+      "source_sha256": "c5fab33bb8533593192330df1c6cd922f6a8be4e34423492f2a96d4df3d77e3f",
+      "source_faces": 4332,
+      "control_faces": 2164,
+      "retention": 0.4995383194829178,
+      "geometry_dir": "out/polyhaven-matched-face-expansion-20261124/dustpan/controls",
+      "frozen_exports": {
+        "source_sha256": "c5fab33bb8533593192330df1c6cd922f6a8be4e34423492f2a96d4df3d77e3f",
+        "source_faces": 4332,
+        "control_target_faces": 2164,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "06827eae54d0f7530fec94b3f87e3f16c943d4bf835e8cccf6a60991fb269998",
+          "manymesh.obj": "bddd82cbb7d769393068f07a66bfee2089a98af0f3455956f837cf8a16962e04",
+          "qem_preserve_border.obj": "fede8dc0388e7edf7d468b7e78501f59388895883a73c704aa40166429cc4982",
+          "meshoptimizer_lock_border.obj": "03ec572a1e778db7314ca7b90dea3b46ce8a2abdc962bd27296686042221efdf"
+        }
+      },
+      "uncertainty_group": "collection:bronze_shark_statue+bronze_whale_statue+dustpan"
+    },
+    "antique_ceramic_vase_01": {
+      "class": "decor",
+      "catalog_category": "Decor & Art/Vases & Vessels/Ceramic Vases",
+      "collection_tags": [],
+      "authors": {
+        "James Ray Cock": "All"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/antique_ceramic_vase_01",
+      "source_sha256": "6d6e828b1770b180e7eaa1beb933af23002f135c173f6f760aab8680dd1663da",
+      "source_faces": 9408,
+      "control_faces": 4704,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-matched-face-expansion-20261124/antique_ceramic_vase_01/controls",
+      "frozen_exports": {
+        "source_sha256": "6d6e828b1770b180e7eaa1beb933af23002f135c173f6f760aab8680dd1663da",
+        "source_faces": 9408,
+        "control_target_faces": 4704,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "e2a53b7be60ec1c7a4e404ac9699029926d68b7601b32b771d86a307a900b944",
+          "manymesh.obj": "d72f1bcf8e814d76b2a0746cee5b069b36b09c319788cee3c9219cba32b32aea",
+          "qem_preserve_border.obj": "938d7e9bc6fff89137564928b8cd80a463831c48e5ef815eed8056f6c8566cfa",
+          "meshoptimizer_lock_border.obj": "29dcd559ba6d316ef8f6c8e97487ee6e1d76b9545175ec78290db723201c862a"
+        }
+      },
+      "uncertainty_group": "collection:antique_ceramic_vase_01"
+    },
+    "brass_vase_01": {
+      "class": "decor",
+      "catalog_category": "Decor & Art/Vases & Vessels/Metal Vases",
+      "collection_tags": [],
+      "authors": {
+        "Rico Cilliers": "All"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/brass_vase_01",
+      "source_sha256": "d40fa90df62513245799b284ba7994f38a2c82687cb6b22f70cb3191fe49fccd",
+      "source_faces": 21440,
+      "control_faces": 10720,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-matched-face-expansion-20261124/brass_vase_01/controls",
+      "frozen_exports": {
+        "source_sha256": "d40fa90df62513245799b284ba7994f38a2c82687cb6b22f70cb3191fe49fccd",
+        "source_faces": 21440,
+        "control_target_faces": 10720,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "a9428335f48af76c64b512a0df7b82de98bb3f1a93a71d78a2d26252ed52e930",
+          "manymesh.obj": "ee130f1b238b62252bb82d0e4b91382625b667d0fa6dddd43f97fdbd8e50d6a2",
+          "qem_preserve_border.obj": "4ced6290fbba903b84812a7e67013c5e6798027eac0823cc5fd384fde7883249",
+          "meshoptimizer_lock_border.obj": "d0fbe0f4861a32a1e6c1261dd942670ace8816144bb87832ad818b12c02263a8"
+        }
+      },
+      "uncertainty_group": "collection:brass_vase_01"
+    },
+    "bronze_shark_statue": {
+      "class": "decor",
+      "catalog_category": "Decor & Art/Sculptures & Figurines/Animal Figures",
+      "collection_tags": [
+        "project_lighthouse"
+      ],
+      "authors": {
+        "Tina": "All"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/bronze_shark_statue",
+      "source_sha256": "ea1ca85dbf45a6f8bc1f1dd3936623fe00133914b0d2e877d8b41736ca975767",
+      "source_faces": 7334,
+      "control_faces": 3666,
+      "retention": 0.4998636487592037,
+      "geometry_dir": "out/polyhaven-matched-face-expansion-20261124/bronze_shark_statue/controls",
+      "frozen_exports": {
+        "source_sha256": "ea1ca85dbf45a6f8bc1f1dd3936623fe00133914b0d2e877d8b41736ca975767",
+        "source_faces": 7334,
+        "control_target_faces": 3666,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "222d94f6a2da579e2aad8cfe6c52e31982b94d9d03f6ef9b8278dd3d83d8aa78",
+          "manymesh.obj": "bf91ed336b9d4dd9f899a9caa8a4c592691e82004f4461bfb252c6e67c200f90",
+          "qem_preserve_border.obj": "5d56b8eeb1c5329093963536f06a173b311998bbb7f15dbebe97e9e88398ea81",
+          "meshoptimizer_lock_border.obj": "5f127bc3cd7d726664cb1c06de6d459ce8d7e57ff0af5c2e41a193df4d448c1b"
+        }
+      },
+      "uncertainty_group": "collection:bronze_shark_statue+bronze_whale_statue+dustpan"
+    },
+    "bronze_whale_statue": {
+      "class": "decor",
+      "catalog_category": "Decor & Art/Sculptures & Figurines/Animal Figures",
+      "collection_tags": [
+        "project_lighthouse"
+      ],
+      "authors": {
+        "Tina": "All"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/bronze_whale_statue",
+      "source_sha256": "a3601d57723d5078eed09035624c4963e7db41d0f5095145f40e81f5824bca98",
+      "source_faces": 3816,
+      "control_faces": 1908,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-matched-face-expansion-20261124/bronze_whale_statue/controls",
+      "frozen_exports": {
+        "source_sha256": "a3601d57723d5078eed09035624c4963e7db41d0f5095145f40e81f5824bca98",
+        "source_faces": 3816,
+        "control_target_faces": 1908,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "28fc22e73c3d41b54db1f211181d252b301d8c80638fdbcd4fabd7add8f3dc8a",
+          "manymesh.obj": "e467c82960d1268421d725d9a9dec18350de30b14772c7bc07683b95635a4e85",
+          "qem_preserve_border.obj": "062808eacd0e73e2dfe1e84af8f8f7394e2a61b603241bd8c483a3327c65e49f",
+          "meshoptimizer_lock_border.obj": "1aa1629766524363725ecb21abcba77672038c2c4a8963223b3665b502aa8846"
+        }
+      },
+      "uncertainty_group": "collection:bronze_shark_statue+bronze_whale_statue+dustpan"
+    },
+    "bull_head": {
+      "class": "decor",
+      "catalog_category": "Decor & Art/Sculptures & Figurines/Animal Figures",
+      "collection_tags": [],
+      "authors": {
+        "Tina": "All"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/bull_head",
+      "source_sha256": "98311bfa846327e50157df4ffd352a5c8f21e0df9b51fd5a9f93f4ac86b65244",
+      "source_faces": 17148,
+      "control_faces": 8574,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-matched-face-expansion-20261124/bull_head/controls",
+      "frozen_exports": {
+        "source_sha256": "98311bfa846327e50157df4ffd352a5c8f21e0df9b51fd5a9f93f4ac86b65244",
+        "source_faces": 17148,
+        "control_target_faces": 8574,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "6f401a28ca37ed9f780a0b6cb918683eed0e67bb67f8c416eb353cfa805b4b13",
+          "manymesh.obj": "80052303f673dc8fa7d3d8b6dc2c6f447504c2615b4f94724d1b43c7f85b5714",
+          "qem_preserve_border.obj": "9f848a6c7e5a478b9203c6d8137fca39a90df8505c43c7d23172d07f75adf71d",
+          "meshoptimizer_lock_border.obj": "b699c94350505a833c74e3d9e2f5718de040961149c47d9063f9383648c544af"
+        }
+      },
+      "uncertainty_group": "collection:bull_head"
+    },
+    "concrete_cat_statue": {
+      "class": "decor",
+      "catalog_category": "Decor & Art/Sculptures & Figurines/Animal Figures",
+      "collection_tags": [],
+      "authors": {
+        "Rico Cilliers": "Guidance",
+        "Riley Queen": "All"
+      },
+      "license": "CC0 per Poly Haven terms",
+      "asset_api_url": "https://api.polyhaven.com/files/concrete_cat_statue",
+      "source_sha256": "187d9dad5ec479db367aef3c53499ba4bb080376c6ae3ad7d2001295e6111b2d",
+      "source_faces": 11950,
+      "control_faces": 5974,
+      "retention": 0.4999163179916318,
+      "geometry_dir": "out/polyhaven-matched-face-expansion-20261124/concrete_cat_statue/controls",
+      "frozen_exports": {
+        "source_sha256": "187d9dad5ec479db367aef3c53499ba4bb080376c6ae3ad7d2001295e6111b2d",
+        "source_faces": 11950,
+        "control_target_faces": 5974,
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "0f936c57a3b397b47df0166bcd199c6b023f3d9b6a84eb1df47a2cd301b808d1",
+          "manymesh.obj": "d468c6ec4ad61d27fb07541560ab9a5a1dc990eef9d2b0a63c76881756885780",
+          "qem_preserve_border.obj": "67937507218acef444fc615f902ee95e9e32522f907c548b85535d559fda900d",
+          "meshoptimizer_lock_border.obj": "d6c2a64983ce0a1676a20107f29e4fbddf6af72d46bcdfe4b09745a584df3172"
+        }
+      },
+      "uncertainty_group": "collection:concrete_cat_statue"
+    }
+  }
+}

@@ -1,8 +1,8 @@
 # SIGGRAPH 2027 research direction
 
-Updated 2026-11-23. This is a research plan, not a paper draft or novelty claim.
-The candidate remains untested; the cited work is a bounded map for verification,
-and a search that finds no paper is not evidence that none exists.
+Updated 2026-11-24. This is a research plan, not a paper draft or novelty claim.
+The differentiable candidate remains untested; the cited work is a bounded map
+for verification, and a search that finds no paper is not evidence that none exists.
 
 ## Candidate and decision
 
@@ -12,6 +12,16 @@ the screen scale where each level is used, model jittered sample accumulation
 and resolve during optimization, and preserve the hierarchy's legal cuts,
 shared boundaries, and transitions. The result must beat strong alternatives
 after real reconstruction, not only its differentiable surrogate.
+
+The unoptimized 50%-retention ManyMesh cut has now been screened on 21 unique
+Poly Haven meshes across six classes, at exact face counts against
+border-preserving QEM and meshoptimizer LockBorder. It loses on LDR-FLIP, PSNR,
+SSIM, and silhouette XOR in both native and 4x MSAA modes; paired 95% intervals
+over 16 source-collection groups exclude zero. This is a strong negative result
+for the current cut and a necessary control for any optimization. It does not
+test the differentiable hypothesis. The scored cohort is no longer available
+as an untouched test set for a method developed in response to this result.
+See the [full protocol and per-model results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md).
 
 This combination has substantial prior art. Hasselgren et al. already optimize
 mesh shape and appearance from image-space references for simplification and
@@ -107,12 +117,14 @@ For that asset, the border-preserving fast-simplification QEM control returned
 eligible wins are meshoptimizer-only; the QEM scores are not equal-face results.
 This result does not test differentiable fitting or post-upscaler quality.
 
-1. Use the pinned 50% BarramundiFish and Corset inputs. The 30% screens
-   supplied no complete matched set. [Geometry receipts](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md)
-2. Run the frozen placement-only NVIDIA control on CUDA and score with the
-   reserved camera split. Compare with QEM, ManyMesh, and meshoptimizer
-   at identical face counts, without AA and with hardware 4× MSAA.
-   [Training protocol](tools/mmtrain/appearance_cuda_protocol_20261124.json)
+1. Select two source meshes with pinned provenance that supply legal matched
+   geometry near 30% retention. CommercialRefrigerator and ScatterPlant failed
+   this input gate. The current host has a CPU build of PyTorch. The baseline
+   requires a CUDA workstation and a frozen camera split.
+   [Input preflight](tools/mmtrain/APPEARANCE_INPUT_PREFLIGHT_20261123.md)
+2. Compare nvdiffmodeling/Hasselgren placement against QEM, current ManyMesh
+   placement, and meshoptimizer at identical face counts. Freeze training and
+   held-out views before scoring; include no-AA and equal 4x MSAA arms.
 3. If that baseline has a repeatable held-out signal, test DAG-level fitting
    against legal mixed-cut and progressive-boundary controls. Evaluate real AA
    and available upscalers, not only the training surrogate.

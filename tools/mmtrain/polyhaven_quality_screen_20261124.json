@@ -1,0 +1,3540 @@
+{
+  "schema": 1,
+  "manifest_sha256": "fde256d148ee31a43aef7ce104ad6cdcc65a42807eef7003da8056815db81dbe",
+  "runner_sha256": "cb559baad2b6517c8dfbeda33cf441ca4b13a0c9ad264028ee084de4816dc405",
+  "scorer_sha256": "9354ae2a6d672e6afd0c6a11bb15339fa10197feb5d32f1f059e257a120b55c7",
+  "python_version": "3.12.3",
+  "status": "complete",
+  "assets": [
+    {
+      "asset": "crystalline_iceplant",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "crystalline_iceplant",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-20261124\\crystalline_iceplant\\exports",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\crystalline_iceplant\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 25094.879999989644,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/crystalline_iceplant/quality.json",
+      "raw_sha256": "7070679ef51ecabc4b556ba2e4408c1ef1fd5c5004de0c56dd167fd8385ed9ce",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.996011468170907,
+              "flip": 0.0018719614478565443,
+              "silhouette_xor_fraction": 0.0015319372106481482,
+              "psnr_db": 34.73700339406444
+            },
+            "worst": {
+              "ssim": 0.9937383363868644,
+              "flip": 0.0029410154093056917,
+              "silhouette_xor_fraction": 0.0022960069444444443,
+              "psnr_db": 32.828615162465695
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9992011123655713,
+              "flip": 0.0009194481535814703,
+              "silhouette_xor_fraction": 0.0004347511574074074,
+              "psnr_db": 42.99395944083976
+            },
+            "worst": {
+              "ssim": 0.9989106487338505,
+              "flip": 0.0015087163774296641,
+              "silhouette_xor_fraction": 0.0007291666666666667,
+              "psnr_db": 40.98522119926794
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.995917385163903,
+              "flip": 0.0019247773113117244,
+              "silhouette_xor_fraction": 0.0015319372106481482,
+              "psnr_db": 34.66737418522943
+            },
+            "worst": {
+              "ssim": 0.9935237017066435,
+              "flip": 0.003118253080174327,
+              "silhouette_xor_fraction": 0.0022916666666666667,
+              "psnr_db": 32.75952457375616
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.999110308675981,
+              "flip": 0.0010456112310445558,
+              "silhouette_xor_fraction": 0.00044035734953703706,
+              "psnr_db": 42.60558826377953
+            },
+            "worst": {
+              "ssim": 0.9986289206762162,
+              "flip": 0.001773516065441072,
+              "silhouette_xor_fraction": 0.0007291666666666667,
+              "psnr_db": 40.6100154011246
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9959630205144109,
+              "flip": 0.001884235044902501,
+              "silhouette_xor_fraction": 0.0015297670717592594,
+              "psnr_db": 34.72547940915103
+            },
+            "worst": {
+              "ssim": 0.9935592748378139,
+              "flip": 0.003037964692339301,
+              "silhouette_xor_fraction": 0.0022960069444444443,
+              "psnr_db": 32.78590794590923
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9991319951851566,
+              "flip": 0.0010000159212116462,
+              "silhouette_xor_fraction": 0.0004374638310185185,
+              "psnr_db": 42.80701666938854
+            },
+            "worst": {
+              "ssim": 0.9986101512041222,
+              "flip": 0.001650007558055222,
+              "silhouette_xor_fraction": 0.0007204861111111111,
+              "psnr_db": 40.71874357259655
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9960096747144492,
+              "flip": 0.0018708484810000907,
+              "silhouette_xor_fraction": 0.001529224537037037,
+              "psnr_db": 34.74074628073253
+            },
+            "worst": {
+              "ssim": 0.9936927072758577,
+              "flip": 0.0029913000762462616,
+              "silhouette_xor_fraction": 0.0022960069444444443,
+              "psnr_db": 32.823593955555296
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9991792086077402,
+              "flip": 0.00094670072333732,
+              "silhouette_xor_fraction": 0.0004361979166666667,
+              "psnr_db": 42.92594581368803
+            },
+            "worst": {
+              "ssim": 0.9988573951356265,
+              "flip": 0.0015308016445487738,
+              "silhouette_xor_fraction": 0.0007291666666666667,
+              "psnr_db": 40.91795833117831
+            }
+          }
+        }
+      },
+      "source_faces": 13094,
+      "control_faces": 6546,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "rock_09",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "rock_09",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-20261124\\rock_09\\exports",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\rock_09\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 27563.85939999018,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/rock_09/quality.json",
+      "raw_sha256": "0a5fc18051e67cea2dbb8668fb65558e85c723f97cae125dc3ff6ed9bf65a478",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9935783018935922,
+              "flip": 0.002577806022600271,
+              "silhouette_xor_fraction": 0.0010892288773148148,
+              "psnr_db": 37.20847796423797
+            },
+            "worst": {
+              "ssim": 0.9870630622877826,
+              "flip": 0.005462172441184521,
+              "silhouette_xor_fraction": 0.0015668402777777777,
+              "psnr_db": 34.649164878309655
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9987776194429102,
+              "flip": 0.0012074862061126623,
+              "silhouette_xor_fraction": 0.00029712818287037034,
+              "psnr_db": 45.56902123490798
+            },
+            "worst": {
+              "ssim": 0.9975850780648169,
+              "flip": 0.0025576797779649496,
+              "silhouette_xor_fraction": 0.00046875,
+              "psnr_db": 42.70529916923874
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9842891628653314,
+              "flip": 0.005578184301460472,
+              "silhouette_xor_fraction": 0.0014082392939814812,
+              "psnr_db": 33.8578651887734
+            },
+            "worst": {
+              "ssim": 0.9589551976824813,
+              "flip": 0.014660668559372425,
+              "silhouette_xor_fraction": 0.002434895833333333,
+              "psnr_db": 30.556513094653685
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9886370696282571,
+              "flip": 0.005005399648022528,
+              "silhouette_xor_fraction": 0.0006899233217592593,
+              "psnr_db": 36.4139913122492
+            },
+            "worst": {
+              "ssim": 0.9665919649915693,
+              "flip": 0.013615725561976433,
+              "silhouette_xor_fraction": 0.0014626736111111112,
+              "psnr_db": 32.51025017742093
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9894030711348444,
+              "flip": 0.003765054701943882,
+              "silhouette_xor_fraction": 0.0011109302662037038,
+              "psnr_db": 36.20809776124908
+            },
+            "worst": {
+              "ssim": 0.9684239835048396,
+              "flip": 0.010602787137031555,
+              "silhouette_xor_fraction": 0.0016319444444444445,
+              "psnr_db": 32.811869970285684
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9940166966810456,
+              "flip": 0.0029960436707672975,
+              "silhouette_xor_fraction": 0.00034686053240740744,
+              "psnr_db": 41.2419436983901
+            },
+            "worst": {
+              "ssim": 0.9775840820102739,
+              "flip": 0.009459885768592358,
+              "silhouette_xor_fraction": 0.0005425347222222222,
+              "psnr_db": 36.76874689367726
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9899752637310711,
+              "flip": 0.003633145424828399,
+              "silhouette_xor_fraction": 0.001077835648148148,
+              "psnr_db": 36.40833109246317
+            },
+            "worst": {
+              "ssim": 0.9712815731750832,
+              "flip": 0.010266080498695374,
+              "silhouette_xor_fraction": 0.0015581597222222223,
+              "psnr_db": 33.075743209945664
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9949005610075304,
+              "flip": 0.002814040672092233,
+              "silhouette_xor_fraction": 0.0003200954861111111,
+              "psnr_db": 41.97568099024224
+            },
+            "worst": {
+              "ssim": 0.9809529046947897,
+              "flip": 0.009074302390217781,
+              "silhouette_xor_fraction": 0.0005078125,
+              "psnr_db": 37.3383661039528
+            }
+          }
+        }
+      },
+      "source_faces": 12416,
+      "control_faces": 6208,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "food_apple_01",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "food_apple_01",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-20261124\\food_apple_01\\exports",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\food_apple_01\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 27155.221699969843,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/food_apple_01/quality.json",
+      "raw_sha256": "bedb550ff40a0f61860c829632e8fed18f8023b7a23f80401a459f5cfc915836",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9948603073547081,
+              "flip": 0.002381744013594774,
+              "silhouette_xor_fraction": 0.0016142216435185185,
+              "psnr_db": 36.96355419521828
+            },
+            "worst": {
+              "ssim": 0.9920502917854424,
+              "flip": 0.0041075171902775764,
+              "silhouette_xor_fraction": 0.0021354166666666665,
+              "psnr_db": 35.1453616274146
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9991268305136728,
+              "flip": 0.0012186869110640448,
+              "silhouette_xor_fraction": 0.0004389105902777777,
+              "psnr_db": 45.491279561041665
+            },
+            "worst": {
+              "ssim": 0.9986091294226462,
+              "flip": 0.0021156708244234324,
+              "silhouette_xor_fraction": 0.0005902777777777778,
+              "psnr_db": 43.818450456394295
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9825706820682095,
+              "flip": 0.009194077506739026,
+              "silhouette_xor_fraction": 0.0022688802083333333,
+              "psnr_db": 33.44626377376437
+            },
+            "worst": {
+              "ssim": 0.9629386241427071,
+              "flip": 0.02190646529197693,
+              "silhouette_xor_fraction": 0.003515625,
+              "psnr_db": 31.298676056989756
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9879280097155775,
+              "flip": 0.008588017609630091,
+              "silhouette_xor_fraction": 0.0010942925347222222,
+              "psnr_db": 36.629646400958734
+            },
+            "worst": {
+              "ssim": 0.9712141862513282,
+              "flip": 0.021097231656312943,
+              "silhouette_xor_fraction": 0.002191840277777778,
+              "psnr_db": 33.177419501098086
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9843842107098775,
+              "flip": 0.007722943788394332,
+              "silhouette_xor_fraction": 0.0016630497685185183,
+              "psnr_db": 35.848506484493626
+            },
+            "worst": {
+              "ssim": 0.9652132209216724,
+              "flip": 0.018359433859586716,
+              "silhouette_xor_fraction": 0.002282986111111111,
+              "psnr_db": 33.53226737473268
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9891911021601726,
+              "flip": 0.007143149933350894,
+              "silhouette_xor_fraction": 0.0005571831597222223,
+              "psnr_db": 40.91064658438303
+            },
+            "worst": {
+              "ssim": 0.9732290310473466,
+              "flip": 0.0174407958984375,
+              "silhouette_xor_fraction": 0.0008116319444444445,
+              "psnr_db": 37.88148255095748
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.987070377085205,
+              "flip": 0.006791068488382734,
+              "silhouette_xor_fraction": 0.0018337673611111109,
+              "psnr_db": 35.51503209629764
+            },
+            "worst": {
+              "ssim": 0.9740972517926474,
+              "flip": 0.014612448401749134,
+              "silhouette_xor_fraction": 0.0024262152777777776,
+              "psnr_db": 33.167443205945645
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9921539822839351,
+              "flip": 0.006101196428062394,
+              "silhouette_xor_fraction": 0.0006665943287037039,
+              "psnr_db": 41.121434936650914
+            },
+            "worst": {
+              "ssim": 0.9824900132842914,
+              "flip": 0.013449805788695812,
+              "silhouette_xor_fraction": 0.0010026041666666666,
+              "psnr_db": 37.876254865726445
+            }
+          }
+        }
+      },
+      "source_faces": 7012,
+      "control_faces": 3506,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "Ottoman_01",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "Ottoman_01",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-expansion-20261124\\Ottoman_01\\controls",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\Ottoman_01\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 26323.3911000425,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/Ottoman_01/quality.json",
+      "raw_sha256": "33dda34312377274a9539b9d69ed6083dca7e653887266af02806cf9613cc248",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9937281294427559,
+              "flip": 0.003210231133076983,
+              "silhouette_xor_fraction": 0.0014765986689814815,
+              "psnr_db": 36.48569218580917
+            },
+            "worst": {
+              "ssim": 0.989878312247951,
+              "flip": 0.005858147982507944,
+              "silhouette_xor_fraction": 0.0020442708333333333,
+              "psnr_db": 34.2641612738865
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9990488709009853,
+              "flip": 0.0013404000977364678,
+              "silhouette_xor_fraction": 0.0003716362847222222,
+              "psnr_db": 45.49492720210269
+            },
+            "worst": {
+              "ssim": 0.9983267247430861,
+              "flip": 0.002297374652698636,
+              "silhouette_xor_fraction": 0.0005815972222222222,
+              "psnr_db": 42.906513832584174
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9828578624415064,
+              "flip": 0.008597086872517442,
+              "silhouette_xor_fraction": 0.001772822627314815,
+              "psnr_db": 33.185403056522716
+            },
+            "worst": {
+              "ssim": 0.9575283384558542,
+              "flip": 0.022349674254655838,
+              "silhouette_xor_fraction": 0.0027951388888888887,
+              "psnr_db": 29.424526455369474
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9882199914686464,
+              "flip": 0.007625536755464661,
+              "silhouette_xor_fraction": 0.0007890263310185185,
+              "psnr_db": 36.01500490679392
+            },
+            "worst": {
+              "ssim": 0.9660934119507395,
+              "flip": 0.02033335529267788,
+              "silhouette_xor_fraction": 0.0014453125,
+              "psnr_db": 31.430792551131425
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9852300307997974,
+              "flip": 0.0073863812382721035,
+              "silhouette_xor_fraction": 0.0015359157986111112,
+              "psnr_db": 35.10313097640498
+            },
+            "worst": {
+              "ssim": 0.9642511410299829,
+              "flip": 0.017575420439243317,
+              "silhouette_xor_fraction": 0.0021137152777777777,
+              "psnr_db": 31.996797579071483
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9906803478317988,
+              "flip": 0.006393879705380338,
+              "silhouette_xor_fraction": 0.0005050998263888889,
+              "psnr_db": 39.78929178641287
+            },
+            "worst": {
+              "ssim": 0.9733968293941347,
+              "flip": 0.015617701224982738,
+              "silhouette_xor_fraction": 0.0007855902777777777,
+              "psnr_db": 36.14582319196218
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9901446907548417,
+              "flip": 0.0056672237600044655,
+              "silhouette_xor_fraction": 0.0014979383680555555,
+              "psnr_db": 35.91556707594705
+            },
+            "worst": {
+              "ssim": 0.9799361637751667,
+              "flip": 0.012885726988315582,
+              "silhouette_xor_fraction": 0.0020095486111111113,
+              "psnr_db": 33.55254539544185
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9955436678561581,
+              "flip": 0.004429950201786899,
+              "silhouette_xor_fraction": 0.00042498553240740734,
+              "psnr_db": 42.24807242297355
+            },
+            "worst": {
+              "ssim": 0.9883801312747659,
+              "flip": 0.0105556296184659,
+              "silhouette_xor_fraction": 0.0006510416666666666,
+              "psnr_db": 38.97233901879896
+            }
+          }
+        }
+      },
+      "source_faces": 4240,
+      "control_faces": 2120,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "SchoolChair_01",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "SchoolChair_01",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-expansion-20261124\\SchoolChair_01\\controls",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\SchoolChair_01\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 23352.106499951333,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/SchoolChair_01/quality.json",
+      "raw_sha256": "3d216d4772493a9c5f91056279c91ddf88b84c05cc82b814cd6ecf293b70ab32",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9940105302881883,
+              "flip": 0.0028093332754603275,
+              "silhouette_xor_fraction": 0.0023072193287037037,
+              "psnr_db": 35.20023241929654
+            },
+            "worst": {
+              "ssim": 0.9901985152290455,
+              "flip": 0.0047795954160392284,
+              "silhouette_xor_fraction": 0.0035677083333333333,
+              "psnr_db": 32.728769081475875
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9990172290780236,
+              "flip": 0.0012883199863911916,
+              "silhouette_xor_fraction": 0.0006155960648148148,
+              "psnr_db": 43.81996991131001
+            },
+            "worst": {
+              "ssim": 0.9976430449920988,
+              "flip": 0.00222634500823915,
+              "silhouette_xor_fraction": 0.0009852430555555556,
+              "psnr_db": 41.42091209074498
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9893469916932509,
+              "flip": 0.005459737934870645,
+              "silhouette_xor_fraction": 0.0025651041666666665,
+              "psnr_db": 32.72971331802906
+            },
+            "worst": {
+              "ssim": 0.9799036779225336,
+              "flip": 0.011182908900082111,
+              "silhouette_xor_fraction": 0.004661458333333333,
+              "psnr_db": 28.99990412120705
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.993767994056927,
+              "flip": 0.004672340175602585,
+              "silhouette_xor_fraction": 0.0013102213541666668,
+              "psnr_db": 35.64762056451241
+            },
+            "worst": {
+              "ssim": 0.9865519538070218,
+              "flip": 0.009624073281884193,
+              "silhouette_xor_fraction": 0.0027951388888888887,
+              "psnr_db": 31.526477556528704
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.992274643644261,
+              "flip": 0.003925204752401139,
+              "silhouette_xor_fraction": 0.002301613136574074,
+              "psnr_db": 34.621911049329825
+            },
+            "worst": {
+              "ssim": 0.9869589441471507,
+              "flip": 0.008475927636027336,
+              "silhouette_xor_fraction": 0.0035677083333333333,
+              "psnr_db": 31.720267245548253
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.99715068744618,
+              "flip": 0.00288280763925286,
+              "silhouette_xor_fraction": 0.0007099971064814815,
+              "psnr_db": 40.4474161287137
+            },
+            "worst": {
+              "ssim": 0.993427120571369,
+              "flip": 0.006684994790703058,
+              "silhouette_xor_fraction": 0.0010894097222222223,
+              "psnr_db": 36.8202851516697
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9927674979165921,
+              "flip": 0.003749793453607708,
+              "silhouette_xor_fraction": 0.002341941550925926,
+              "psnr_db": 34.66788681658162
+            },
+            "worst": {
+              "ssim": 0.9885012595369026,
+              "flip": 0.007260181475430727,
+              "silhouette_xor_fraction": 0.0036328125,
+              "psnr_db": 31.92402101129536
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9976346953393082,
+              "flip": 0.0028332440851954743,
+              "silhouette_xor_fraction": 0.0007304325810185185,
+              "psnr_db": 40.8026254176642
+            },
+            "worst": {
+              "ssim": 0.9952659054218777,
+              "flip": 0.006097767502069473,
+              "silhouette_xor_fraction": 0.0011501736111111111,
+              "psnr_db": 37.46901841893768
+            }
+          }
+        }
+      },
+      "source_faces": 5072,
+      "control_faces": 2536,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "Sofa_01",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "Sofa_01",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-expansion-20261124\\Sofa_01\\controls",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\Sofa_01\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 23014.37920005992,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/Sofa_01/quality.json",
+      "raw_sha256": "13c3c53d1d0a3e84e6dea45575c72fe32203929b1ba7100c21844dcffb851016",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9938677531713195,
+              "flip": 0.0029602907355486727,
+              "silhouette_xor_fraction": 0.0013997395833333333,
+              "psnr_db": 36.12056481145298
+            },
+            "worst": {
+              "ssim": 0.9905030064430096,
+              "flip": 0.005455858074128628,
+              "silhouette_xor_fraction": 0.0020703125,
+              "psnr_db": 33.64575912617547
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9989840069653315,
+              "flip": 0.0012578396490425803,
+              "silhouette_xor_fraction": 0.000362232349537037,
+              "psnr_db": 44.784206861647775
+            },
+            "worst": {
+              "ssim": 0.9982194173038682,
+              "flip": 0.001980770379304886,
+              "silhouette_xor_fraction": 0.0006032986111111111,
+              "psnr_db": 42.028676202020996
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9895455435802804,
+              "flip": 0.004994806261189903,
+              "silhouette_xor_fraction": 0.0016854745370370372,
+              "psnr_db": 33.730873007333514
+            },
+            "worst": {
+              "ssim": 0.9815214024198864,
+              "flip": 0.010316838510334492,
+              "silhouette_xor_fraction": 0.0025086805555555557,
+              "psnr_db": 30.622272427867077
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9941938032372,
+              "flip": 0.0038991391920717433,
+              "silhouette_xor_fraction": 0.0007792607060185186,
+              "psnr_db": 36.93422471278029
+            },
+            "worst": {
+              "ssim": 0.9880554864359608,
+              "flip": 0.008634258061647415,
+              "silhouette_xor_fraction": 0.0013671875,
+              "psnr_db": 33.14752388521062
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9876169816006256,
+              "flip": 0.006105459819082171,
+              "silhouette_xor_fraction": 0.0015384476273148148,
+              "psnr_db": 34.13908638348695
+            },
+            "worst": {
+              "ssim": 0.9735867382530327,
+              "flip": 0.013798275962471962,
+              "silhouette_xor_fraction": 0.0021744791666666666,
+              "psnr_db": 30.968738086433895
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9924334285694073,
+              "flip": 0.00518544451915659,
+              "silhouette_xor_fraction": 0.0005873842592592593,
+              "psnr_db": 37.86325176916282
+            },
+            "worst": {
+              "ssim": 0.9794513616982898,
+              "flip": 0.012435095384716988,
+              "silhouette_xor_fraction": 0.0009678819444444445,
+              "psnr_db": 34.44690243162887
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9917055194348486,
+              "flip": 0.004431784676853567,
+              "silhouette_xor_fraction": 0.0015162037037037039,
+              "psnr_db": 35.09529472508352
+            },
+            "worst": {
+              "ssim": 0.9847573495560986,
+              "flip": 0.008997750468552113,
+              "silhouette_xor_fraction": 0.002204861111111111,
+              "psnr_db": 32.11649633360739
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9966362852971639,
+              "flip": 0.0033313061721855775,
+              "silhouette_xor_fraction": 0.0005126953125,
+              "psnr_db": 40.51363962488347
+            },
+            "worst": {
+              "ssim": 0.9924931198854565,
+              "flip": 0.007428253069519997,
+              "silhouette_xor_fraction": 0.0008550347222222222,
+              "psnr_db": 36.98907683070476
+            }
+          }
+        }
+      },
+      "source_faces": 4101,
+      "control_faces": 2051,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "moon_rock_02",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "moon_rock_02",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-expansion-20261124\\moon_rock_02\\controls",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\moon_rock_02\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 23454.983599949628,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/moon_rock_02/quality.json",
+      "raw_sha256": "e71a177002bf66aa6f8c5b1b86828fc6f61d1e64962dafc79e1f16f5f9bdcc5b",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9943294727878894,
+              "flip": 0.0025181339005939662,
+              "silhouette_xor_fraction": 0.0012669994212962962,
+              "psnr_db": 37.5896754200179
+            },
+            "worst": {
+              "ssim": 0.9907598379068498,
+              "flip": 0.004320812877267599,
+              "silhouette_xor_fraction": 0.0017230902777777778,
+              "psnr_db": 35.65894247354911
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9990375531355786,
+              "flip": 0.0012239460338605568,
+              "silhouette_xor_fraction": 0.00035047743055555554,
+              "psnr_db": 46.08772590589615
+            },
+            "worst": {
+              "ssim": 0.9983734767061242,
+              "flip": 0.0020735745783895254,
+              "silhouette_xor_fraction": 0.0004991319444444444,
+              "psnr_db": 44.191359220893354
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9751700942161495,
+              "flip": 0.010298754292307422,
+              "silhouette_xor_fraction": 0.0016210937500000001,
+              "psnr_db": 33.20373468379976
+            },
+            "worst": {
+              "ssim": 0.944116707970798,
+              "flip": 0.024850424379110336,
+              "silhouette_xor_fraction": 0.0022743055555555555,
+              "psnr_db": 30.182194153808236
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9793342146320784,
+              "flip": 0.009857515896631716,
+              "silhouette_xor_fraction": 0.0008602792245370371,
+              "psnr_db": 35.14410363697692
+            },
+            "worst": {
+              "ssim": 0.9500815086331598,
+              "flip": 0.024343324825167656,
+              "silhouette_xor_fraction": 0.0013585069444444445,
+              "psnr_db": 31.656789731932385
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.97889446111125,
+              "flip": 0.008248488331446424,
+              "silhouette_xor_fraction": 0.0013011791087962964,
+              "psnr_db": 35.32961885152097
+            },
+            "worst": {
+              "ssim": 0.951650482949476,
+              "flip": 0.020318375900387764,
+              "silhouette_xor_fraction": 0.0017534722222222222,
+              "psnr_db": 32.40049069608406
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9833529577305701,
+              "flip": 0.0077992429966495065,
+              "silhouette_xor_fraction": 0.0005244502314814815,
+              "psnr_db": 38.4352159937577
+            },
+            "worst": {
+              "ssim": 0.9583750552943313,
+              "flip": 0.01967000961303711,
+              "silhouette_xor_fraction": 0.0008159722222222223,
+              "psnr_db": 34.48385522087002
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9809335730014558,
+              "flip": 0.00802535181477045,
+              "silhouette_xor_fraction": 0.001330656828703704,
+              "psnr_db": 35.452651239304835
+            },
+            "worst": {
+              "ssim": 0.954276147727444,
+              "flip": 0.01980220526456833,
+              "silhouette_xor_fraction": 0.0018229166666666667,
+              "psnr_db": 32.29802649900354
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9856585374531915,
+              "flip": 0.007439413772469076,
+              "silhouette_xor_fraction": 0.0004918981481481481,
+              "psnr_db": 38.950385821136415
+            },
+            "worst": {
+              "ssim": 0.9622232075590532,
+              "flip": 0.018882444128394127,
+              "silhouette_xor_fraction": 0.0008072916666666667,
+              "psnr_db": 35.233670770653255
+            }
+          }
+        }
+      },
+      "source_faces": 3304,
+      "control_faces": 1652,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "moon_rock_03",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "moon_rock_03",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-expansion-20261124\\moon_rock_03\\controls",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\moon_rock_03\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 23962.706899968907,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/moon_rock_03/quality.json",
+      "raw_sha256": "e3b315e04cbce4450372013ec41135d8bf517a068e22aac3c6fccac721c0ef11",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9946448316297051,
+              "flip": 0.002289336121369464,
+              "silhouette_xor_fraction": 0.0012156394675925926,
+              "psnr_db": 37.48225849545058
+            },
+            "worst": {
+              "ssim": 0.9913146252475358,
+              "flip": 0.004060193430632353,
+              "silhouette_xor_fraction": 0.0016710069444444444,
+              "psnr_db": 35.268586280714146
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9990518353058931,
+              "flip": 0.0011470079480204731,
+              "silhouette_xor_fraction": 0.00033365885416666673,
+              "psnr_db": 45.83860225111956
+            },
+            "worst": {
+              "ssim": 0.9984424501352029,
+              "flip": 0.0021101846359670162,
+              "silhouette_xor_fraction": 0.0004947916666666667,
+              "psnr_db": 43.28885576242402
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9817602121678289,
+              "flip": 0.0070565674735310795,
+              "silhouette_xor_fraction": 0.0017100694444444444,
+              "psnr_db": 33.354030408183625
+            },
+            "worst": {
+              "ssim": 0.9622173805648825,
+              "flip": 0.014788391999900341,
+              "silhouette_xor_fraction": 0.002651909722222222,
+              "psnr_db": 30.195918465916932
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9858824729662002,
+              "flip": 0.006614525036032622,
+              "silhouette_xor_fraction": 0.0009235749421296296,
+              "psnr_db": 35.610337887646295
+            },
+            "worst": {
+              "ssim": 0.9682131121498226,
+              "flip": 0.014135506935417652,
+              "silhouette_xor_fraction": 0.0017013888888888888,
+              "psnr_db": 31.8403936230081
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9872078820067379,
+              "flip": 0.004850246026762761,
+              "silhouette_xor_fraction": 0.0012429470486111111,
+              "psnr_db": 36.37292215275298
+            },
+            "worst": {
+              "ssim": 0.9689602728016699,
+              "flip": 0.012218218296766281,
+              "silhouette_xor_fraction": 0.0017491319444444444,
+              "psnr_db": 33.893804061549
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9915749874108041,
+              "flip": 0.0042635835585921695,
+              "silhouette_xor_fraction": 0.0004096137152777778,
+              "psnr_db": 41.25148479463037
+            },
+            "worst": {
+              "ssim": 0.9756954466590569,
+              "flip": 0.01142991241067648,
+              "silhouette_xor_fraction": 0.0006293402777777778,
+              "psnr_db": 37.78589261365937
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9874958900743792,
+              "flip": 0.004960891121299937,
+              "silhouette_xor_fraction": 0.0012131076388888888,
+              "psnr_db": 36.3825197591735
+            },
+            "worst": {
+              "ssim": 0.9703066448538568,
+              "flip": 0.012248913757503033,
+              "silhouette_xor_fraction": 0.0016449652777777777,
+              "psnr_db": 33.76771416213963
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9919286818682256,
+              "flip": 0.004312034626006304,
+              "silhouette_xor_fraction": 0.00039279513888888887,
+              "psnr_db": 41.171292645112764
+            },
+            "worst": {
+              "ssim": 0.9771730663497236,
+              "flip": 0.011397670954465866,
+              "silhouette_xor_fraction": 0.0006119791666666667,
+              "psnr_db": 37.92610637278302
+            }
+          }
+        }
+      },
+      "source_faces": 5598,
+      "control_faces": 2798,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "moon_rock_05",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "moon_rock_05",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-expansion-20261124\\moon_rock_05\\controls",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\moon_rock_05\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 24077.265400090255,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/moon_rock_05/quality.json",
+      "raw_sha256": "ec96c54ecd7fdf245c8e698ab8f0d2b4b2adaa40b9e6cc745b96a5a0ed00a00b",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9928856919129503,
+              "flip": 0.0028451087758488334,
+              "silhouette_xor_fraction": 0.0012226924189814815,
+              "psnr_db": 37.49057385103983
+            },
+            "worst": {
+              "ssim": 0.9877455492275102,
+              "flip": 0.005375342443585396,
+              "silhouette_xor_fraction": 0.0017274305555555556,
+              "psnr_db": 35.34890905178187
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9986695825653159,
+              "flip": 0.0013977041259446803,
+              "silhouette_xor_fraction": 0.00033908420138888893,
+              "psnr_db": 45.83621592873211
+            },
+            "worst": {
+              "ssim": 0.9978313527191036,
+              "flip": 0.0026020731311291456,
+              "silhouette_xor_fraction": 0.0005685763888888889,
+              "psnr_db": 43.44086578773692
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9773161853728084,
+              "flip": 0.007630634606660654,
+              "silhouette_xor_fraction": 0.0015480324074074075,
+              "psnr_db": 33.80817611058011
+            },
+            "worst": {
+              "ssim": 0.943684842280189,
+              "flip": 0.020238326862454414,
+              "silhouette_xor_fraction": 0.002634548611111111,
+              "psnr_db": 30.26484741679109
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9818543191604686,
+              "flip": 0.007107629503783149,
+              "silhouette_xor_fraction": 0.0007796223958333333,
+              "psnr_db": 36.10790950513553
+            },
+            "worst": {
+              "ssim": 0.9505414425207833,
+              "flip": 0.019491206854581833,
+              "silhouette_xor_fraction": 0.0016189236111111111,
+              "psnr_db": 31.761532177348116
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9821090368967509,
+              "flip": 0.0056843376126683625,
+              "silhouette_xor_fraction": 0.0012377025462962962,
+              "psnr_db": 35.96616894516059
+            },
+            "worst": {
+              "ssim": 0.9471668329120101,
+              "flip": 0.01770194061100483,
+              "silhouette_xor_fraction": 0.0017795138888888889,
+              "psnr_db": 32.33694363571414
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9871369259488328,
+              "flip": 0.0050666616928841295,
+              "silhouette_xor_fraction": 0.0003978587962962963,
+              "psnr_db": 39.999441788346644
+            },
+            "worst": {
+              "ssim": 0.955294010954063,
+              "flip": 0.016839489340782166,
+              "silhouette_xor_fraction": 0.0006901041666666667,
+              "psnr_db": 34.72937507491898
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9833690239901931,
+              "flip": 0.005605190512142144,
+              "silhouette_xor_fraction": 0.0012261284722222222,
+              "psnr_db": 36.13379936040646
+            },
+            "worst": {
+              "ssim": 0.9562369872839829,
+              "flip": 0.015864264219999313,
+              "silhouette_xor_fraction": 0.0017404513888888888,
+              "psnr_db": 32.91728554047503
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9888896146380578,
+              "flip": 0.004859933823657532,
+              "silhouette_xor_fraction": 0.0003763382523148148,
+              "psnr_db": 40.57322316036584
+            },
+            "worst": {
+              "ssim": 0.9651296834681276,
+              "flip": 0.01459433976560831,
+              "silhouette_xor_fraction": 0.0006467013888888889,
+              "psnr_db": 35.92848734178364
+            }
+          }
+        }
+      },
+      "source_faces": 9850,
+      "control_faces": 4924,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "moon_rock_06",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "moon_rock_06",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-expansion-20261124\\moon_rock_06\\controls",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\moon_rock_06\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 25016.057400032878,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/moon_rock_06/quality.json",
+      "raw_sha256": "5072fcda53b67346f7afc2dc3efbd99a9d44023c39ac3c8287cf4f2dd8e9a0ee",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9941338049333434,
+              "flip": 0.0026556546605813005,
+              "silhouette_xor_fraction": 0.001240776909722222,
+              "psnr_db": 37.333276270593444
+            },
+            "worst": {
+              "ssim": 0.9898131070989871,
+              "flip": 0.0050051105208694935,
+              "silhouette_xor_fraction": 0.0017057291666666666,
+              "psnr_db": 35.1640734636509
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9989512117723242,
+              "flip": 0.0013208753540917921,
+              "silhouette_xor_fraction": 0.00034179687500000003,
+              "psnr_db": 45.590662089193835
+            },
+            "worst": {
+              "ssim": 0.9980741792525294,
+              "flip": 0.0025714540388435125,
+              "silhouette_xor_fraction": 0.0004991319444444444,
+              "psnr_db": 43.32281438986982
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9789207879025614,
+              "flip": 0.008283667023836946,
+              "silhouette_xor_fraction": 0.0017272497106481481,
+              "psnr_db": 33.0506777909094
+            },
+            "worst": {
+              "ssim": 0.95585119069446,
+              "flip": 0.018204037100076675,
+              "silhouette_xor_fraction": 0.0028342013888888887,
+              "psnr_db": 29.95246383306243
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9833805058396338,
+              "flip": 0.007796093967044726,
+              "silhouette_xor_fraction": 0.0009425636574074075,
+              "psnr_db": 35.148902766843946
+            },
+            "worst": {
+              "ssim": 0.9623140172362565,
+              "flip": 0.01761329360306263,
+              "silhouette_xor_fraction": 0.0016927083333333334,
+              "psnr_db": 31.699087594195518
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9837034647378156,
+              "flip": 0.006185825142893009,
+              "silhouette_xor_fraction": 0.0012554253472222222,
+              "psnr_db": 35.887429616195
+            },
+            "worst": {
+              "ssim": 0.9604910447465138,
+              "flip": 0.015235081315040588,
+              "silhouette_xor_fraction": 0.0017838541666666667,
+              "psnr_db": 33.034204269709846
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.988390691553902,
+              "flip": 0.005563121410280776,
+              "silhouette_xor_fraction": 0.00040672019675925923,
+              "psnr_db": 40.01024339116826
+            },
+            "worst": {
+              "ssim": 0.9677555090355657,
+              "flip": 0.014573819935321808,
+              "silhouette_xor_fraction": 0.0006597222222222222,
+              "psnr_db": 35.92763950502227
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9846893401313173,
+              "flip": 0.00628494224899138,
+              "silhouette_xor_fraction": 0.001220703125,
+              "psnr_db": 35.9967891822248
+            },
+            "worst": {
+              "ssim": 0.9652252224401459,
+              "flip": 0.014722511172294617,
+              "silhouette_xor_fraction": 0.0017795138888888889,
+              "psnr_db": 33.49457364570403
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9896909002564561,
+              "flip": 0.0056013852008618414,
+              "silhouette_xor_fraction": 0.00038953993055555557,
+              "psnr_db": 40.3922944573165
+            },
+            "worst": {
+              "ssim": 0.9726206569191823,
+              "flip": 0.013919474557042122,
+              "silhouette_xor_fraction": 0.0006684027777777777,
+              "psnr_db": 36.762157759218375
+            }
+          }
+        }
+      },
+      "source_faces": 6920,
+      "control_faces": 3460,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "food_pears_asian_01",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "food_pears_asian_01",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-expansion-20261124\\food_pears_asian_01\\controls",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\food_pears_asian_01\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 24245.118700084276,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/food_pears_asian_01/quality.json",
+      "raw_sha256": "68c2f845c415403f9520b3a31fd39e5e8080394a90ca041e8db050de431c2fae",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9954988836813049,
+              "flip": 0.0020777589161298238,
+              "silhouette_xor_fraction": 0.0016485821759259257,
+              "psnr_db": 36.73470727838163
+            },
+            "worst": {
+              "ssim": 0.9925539303246269,
+              "flip": 0.003605673788115382,
+              "silhouette_xor_fraction": 0.002955729166666667,
+              "psnr_db": 34.36839714332927
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9992709285826143,
+              "flip": 0.001032822913354418,
+              "silhouette_xor_fraction": 0.0004551866319444445,
+              "psnr_db": 45.1677364280527
+            },
+            "worst": {
+              "ssim": 0.9988407613733729,
+              "flip": 0.0017306625377386808,
+              "silhouette_xor_fraction": 0.00078125,
+              "psnr_db": 43.00863029216049
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9894133582636,
+              "flip": 0.00460213305389819,
+              "silhouette_xor_fraction": 0.002051685474537037,
+              "psnr_db": 34.144859906873215
+            },
+            "worst": {
+              "ssim": 0.9762069789307974,
+              "flip": 0.010616780258715153,
+              "silhouette_xor_fraction": 0.0038888888888888888,
+              "psnr_db": 30.402797028782103
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9939323820354478,
+              "flip": 0.003979628420590113,
+              "silhouette_xor_fraction": 0.0008541304976851851,
+              "psnr_db": 38.15382818146101
+            },
+            "worst": {
+              "ssim": 0.9838234136106242,
+              "flip": 0.00952893029898405,
+              "silhouette_xor_fraction": 0.0018185763888888889,
+              "psnr_db": 33.38008158081011
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9920799991811577,
+              "flip": 0.00323133511604586,
+              "silhouette_xor_fraction": 0.0016496672453703703,
+              "psnr_db": 36.2755595802346
+            },
+            "worst": {
+              "ssim": 0.9844643359906684,
+              "flip": 0.006308967713266611,
+              "silhouette_xor_fraction": 0.002964409722222222,
+              "psnr_db": 33.830659958474335
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9959928362953255,
+              "flip": 0.0024775904312264174,
+              "silhouette_xor_fraction": 0.0004904513888888889,
+              "psnr_db": 42.78087775458836
+            },
+            "worst": {
+              "ssim": 0.9901586214734559,
+              "flip": 0.005164091009646654,
+              "silhouette_xor_fraction": 0.0009635416666666667,
+              "psnr_db": 40.10518911549559
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9948544379779717,
+              "flip": 0.002378746483979436,
+              "silhouette_xor_fraction": 0.0016688368055555556,
+              "psnr_db": 36.484231023999776
+            },
+            "worst": {
+              "ssim": 0.9910034474695351,
+              "flip": 0.00444349879398942,
+              "silhouette_xor_fraction": 0.0029817708333333332,
+              "psnr_db": 33.935173832534886
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.998742203050595,
+              "flip": 0.001446602003852604,
+              "silhouette_xor_fraction": 0.000489185474537037,
+              "psnr_db": 44.231152597498436
+            },
+            "worst": {
+              "ssim": 0.9974213329932047,
+              "flip": 0.00276614585891366,
+              "silhouette_xor_fraction": 0.0008810763888888889,
+              "psnr_db": 41.933983559510644
+            }
+          }
+        }
+      },
+      "source_faces": 12572,
+      "control_faces": 6286,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "lemon",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "lemon",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-expansion-20261124\\lemon\\controls",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\lemon\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 24123.944999999367,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/lemon/quality.json",
+      "raw_sha256": "3154962eeb81cc13680e86e9fc96939ef8565a2a487c698875620bfbb42e9793",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9953818106090006,
+              "flip": 0.002157894215391328,
+              "silhouette_xor_fraction": 0.0013344545717592592,
+              "psnr_db": 37.72575691590766
+            },
+            "worst": {
+              "ssim": 0.9931428911346697,
+              "flip": 0.0036729788407683372,
+              "silhouette_xor_fraction": 0.0018619791666666667,
+              "psnr_db": 35.47665064805458
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9992599268424988,
+              "flip": 0.0010573322773173761,
+              "silhouette_xor_fraction": 0.00036801938657407405,
+              "psnr_db": 46.327882016978265
+            },
+            "worst": {
+              "ssim": 0.9988109628948765,
+              "flip": 0.0018045376054942608,
+              "silhouette_xor_fraction": 0.0005164930555555555,
+              "psnr_db": 44.3856668047013
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9811764974433882,
+              "flip": 0.008844720034782464,
+              "silhouette_xor_fraction": 0.002076822916666667,
+              "psnr_db": 32.78592719282361
+            },
+            "worst": {
+              "ssim": 0.9596542651513039,
+              "flip": 0.019376026466488838,
+              "silhouette_xor_fraction": 0.004097222222222223,
+              "psnr_db": 28.67395344498356
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9854608442374003,
+              "flip": 0.008392877813700276,
+              "silhouette_xor_fraction": 0.0011409505208333332,
+              "psnr_db": 34.92523146207982
+            },
+            "worst": {
+              "ssim": 0.9658917827334805,
+              "flip": 0.018763819709420204,
+              "silhouette_xor_fraction": 0.002699652777777778,
+              "psnr_db": 30.171145983668353
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9872798395098236,
+              "flip": 0.005744659501942806,
+              "silhouette_xor_fraction": 0.0013481987847222222,
+              "psnr_db": 36.74085779971978
+            },
+            "worst": {
+              "ssim": 0.9708729536825123,
+              "flip": 0.012963849119842052,
+              "silhouette_xor_fraction": 0.0018315972222222223,
+              "psnr_db": 34.41954178118377
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9913323789545897,
+              "flip": 0.005228588813527797,
+              "silhouette_xor_fraction": 0.0004291449652777778,
+              "psnr_db": 41.86355963883038
+            },
+            "worst": {
+              "ssim": 0.9771774437424723,
+              "flip": 0.012280325405299664,
+              "silhouette_xor_fraction": 0.000625,
+              "psnr_db": 38.33300078215623
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9896174820123903,
+              "flip": 0.005113381509242269,
+              "silhouette_xor_fraction": 0.0013897931134259258,
+              "psnr_db": 36.808320783733784
+            },
+            "worst": {
+              "ssim": 0.9798432658110785,
+              "flip": 0.011236947029829025,
+              "silhouette_xor_fraction": 0.001974826388888889,
+              "psnr_db": 34.44834626071474
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9938051373052752,
+              "flip": 0.004478839631095373,
+              "silhouette_xor_fraction": 0.0004425274884259259,
+              "psnr_db": 42.608199960370605
+            },
+            "worst": {
+              "ssim": 0.985482011079011,
+              "flip": 0.01049748808145523,
+              "silhouette_xor_fraction": 0.0006597222222222222,
+              "psnr_db": 39.53286080088025
+            }
+          }
+        }
+      },
+      "source_faces": 4012,
+      "control_faces": 2006,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "Megaphone_01",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "Megaphone_01",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-expansion-20261124\\Megaphone_01\\controls",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\Megaphone_01\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 25176.37969995849,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/Megaphone_01/quality.json",
+      "raw_sha256": "2c383bbf844e7604afe3b398625d0cba108973223b7a41ce312946e9e7fb7cf7",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9926500619348797,
+              "flip": 0.0032452711990724006,
+              "silhouette_xor_fraction": 0.0019878472222222224,
+              "psnr_db": 35.111673335131556
+            },
+            "worst": {
+              "ssim": 0.987290071242565,
+              "flip": 0.005510176066309214,
+              "silhouette_xor_fraction": 0.0033897569444444444,
+              "psnr_db": 32.09807841619692
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9986070469591545,
+              "flip": 0.0015348168065732655,
+              "silhouette_xor_fraction": 0.0005260778356481481,
+              "psnr_db": 43.59386880420758
+            },
+            "worst": {
+              "ssim": 0.9975121061539705,
+              "flip": 0.0027024841401726007,
+              "silhouette_xor_fraction": 0.0008810763888888889,
+              "psnr_db": 41.00371826989946
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9830955028041709,
+              "flip": 0.007295367210948219,
+              "silhouette_xor_fraction": 0.002787000868055556,
+              "psnr_db": 31.345281639021195
+            },
+            "worst": {
+              "ssim": 0.9682124038351767,
+              "flip": 0.016075706109404564,
+              "silhouette_xor_fraction": 0.005078125,
+              "psnr_db": 27.530996442916297
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9888221831781611,
+              "flip": 0.006496944765482719,
+              "silhouette_xor_fraction": 0.0014350043402777777,
+              "psnr_db": 34.031806160015975
+            },
+            "worst": {
+              "ssim": 0.9771527920573715,
+              "flip": 0.014916500076651573,
+              "silhouette_xor_fraction": 0.00265625,
+              "psnr_db": 30.016626285770897
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9862265167663143,
+              "flip": 0.006374575896188617,
+              "silhouette_xor_fraction": 0.0022023292824074076,
+              "psnr_db": 33.064198004291335
+            },
+            "worst": {
+              "ssim": 0.9750080353338314,
+              "flip": 0.01290097739547491,
+              "silhouette_xor_fraction": 0.003884548611111111,
+              "psnr_db": 29.385248947130126
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.992024779965963,
+              "flip": 0.0055739330855431035,
+              "silhouette_xor_fraction": 0.0009136284722222223,
+              "psnr_db": 36.899279204749796
+            },
+            "worst": {
+              "ssim": 0.9844598618234907,
+              "flip": 0.011806105263531208,
+              "silhouette_xor_fraction": 0.0017795138888888889,
+              "psnr_db": 32.91222371645639
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9877628091402144,
+              "flip": 0.005287304675827424,
+              "silhouette_xor_fraction": 0.00243236400462963,
+              "psnr_db": 33.12168311853406
+            },
+            "worst": {
+              "ssim": 0.9775927432390753,
+              "flip": 0.010955370962619781,
+              "silhouette_xor_fraction": 0.0042751736111111115,
+              "psnr_db": 29.94274019970681
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9942408642145923,
+              "flip": 0.0043553146727693575,
+              "silhouette_xor_fraction": 0.000991572627314815,
+              "psnr_db": 37.87091086619963
+            },
+            "worst": {
+              "ssim": 0.9863570927805645,
+              "flip": 0.009612813591957092,
+              "silhouette_xor_fraction": 0.0018185763888888889,
+              "psnr_db": 34.623704242574554
+            }
+          }
+        }
+      },
+      "source_faces": 15814,
+      "control_faces": 7906,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "drain_cleaner",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "drain_cleaner",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-expansion-20261124\\drain_cleaner\\controls",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\drain_cleaner\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 22126.211100025102,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/drain_cleaner/quality.json",
+      "raw_sha256": "0431052dead91d8361dee17b32b627dc3a64fb2cb0a96083e50c1617d1c32a31",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9955481947125052,
+              "flip": 0.002244465472661735,
+              "silhouette_xor_fraction": 0.0012494574652777777,
+              "psnr_db": 37.64147011802589
+            },
+            "worst": {
+              "ssim": 0.9923441982070605,
+              "flip": 0.004363641142845154,
+              "silhouette_xor_fraction": 0.0020008680555555556,
+              "psnr_db": 35.485876915314066
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9993545135588286,
+              "flip": 0.0008948243945875826,
+              "silhouette_xor_fraction": 0.0003101490162037037,
+              "psnr_db": 46.57309418958722
+            },
+            "worst": {
+              "ssim": 0.9988735524042934,
+              "flip": 0.0015845098532736301,
+              "silhouette_xor_fraction": 0.0004991319444444444,
+              "psnr_db": 44.474274508606655
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9891403443983098,
+              "flip": 0.004812764959448638,
+              "silhouette_xor_fraction": 0.0016133174189814816,
+              "psnr_db": 34.74357701124405
+            },
+            "worst": {
+              "ssim": 0.975752245352291,
+              "flip": 0.011379451490938663,
+              "silhouette_xor_fraction": 0.0023350694444444443,
+              "psnr_db": 31.95683163707409
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9933739893529444,
+              "flip": 0.004023391447844915,
+              "silhouette_xor_fraction": 0.0007145182291666666,
+              "psnr_db": 38.21254327055277
+            },
+            "worst": {
+              "ssim": 0.9825896427872495,
+              "flip": 0.009868494234979153,
+              "silhouette_xor_fraction": 0.0011414930555555555,
+              "psnr_db": 34.65459010206412
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.991544762932684,
+              "flip": 0.003991614037659019,
+              "silhouette_xor_fraction": 0.0012952112268518519,
+              "psnr_db": 36.53025036745443
+            },
+            "worst": {
+              "ssim": 0.9824903839994876,
+              "flip": 0.009260141290724277,
+              "silhouette_xor_fraction": 0.002026909722222222,
+              "psnr_db": 33.8663425776995
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9955102267103536,
+              "flip": 0.0031135210131954714,
+              "silhouette_xor_fraction": 0.0004374638310185185,
+              "psnr_db": 41.72489113062761
+            },
+            "worst": {
+              "ssim": 0.989226083642989,
+              "flip": 0.00804633367806673,
+              "silhouette_xor_fraction": 0.0007378472222222222,
+              "psnr_db": 38.15846277464026
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9943286688846585,
+              "flip": 0.0028099228075006977,
+              "silhouette_xor_fraction": 0.0013368055555555557,
+              "psnr_db": 37.19358817757164
+            },
+            "worst": {
+              "ssim": 0.9878502135490344,
+              "flip": 0.006931344512850046,
+              "silhouette_xor_fraction": 0.0020355902777777777,
+              "psnr_db": 34.95986397927196
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9984200267199249,
+              "flip": 0.001675105149236818,
+              "silhouette_xor_fraction": 0.000400390625,
+              "psnr_db": 44.962736525849635
+            },
+            "worst": {
+              "ssim": 0.9946454297052759,
+              "flip": 0.00509978923946619,
+              "silhouette_xor_fraction": 0.0006163194444444444,
+              "psnr_db": 42.288905259145615
+            }
+          }
+        }
+      },
+      "source_faces": 4338,
+      "control_faces": 2168,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "dustpan",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "dustpan",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-expansion-20261124\\dustpan\\controls",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\dustpan\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 21649.764799978584,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/dustpan/quality.json",
+      "raw_sha256": "a84183b13964806aac78cfcb62568d02aa508bcfe5dd74f0d2ba5850192494e1",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9964676449014815,
+              "flip": 0.0015206120321333099,
+              "silhouette_xor_fraction": 0.0010892288773148148,
+              "psnr_db": 38.094049752928186
+            },
+            "worst": {
+              "ssim": 0.9937596609651907,
+              "flip": 0.002753735752776265,
+              "silhouette_xor_fraction": 0.0016883680555555556,
+              "psnr_db": 34.84881221553531
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9994281686417033,
+              "flip": 0.0006579478576895781,
+              "silhouette_xor_fraction": 0.0002875434027777778,
+              "psnr_db": 46.58965198698316
+            },
+            "worst": {
+              "ssim": 0.9986698717822293,
+              "flip": 0.001390757504850626,
+              "silhouette_xor_fraction": 0.0005251736111111111,
+              "psnr_db": 42.487127933569504
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9926731078590331,
+              "flip": 0.0029669435704515004,
+              "silhouette_xor_fraction": 0.0012205222800925925,
+              "psnr_db": 35.06424490608112
+            },
+            "worst": {
+              "ssim": 0.9848711326221137,
+              "flip": 0.006169098429381847,
+              "silhouette_xor_fraction": 0.0019444444444444444,
+              "psnr_db": 31.369043173564982
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9957811078563229,
+              "flip": 0.002334895536478143,
+              "silhouette_xor_fraction": 0.00046440972222222223,
+              "psnr_db": 38.04878710401269
+            },
+            "worst": {
+              "ssim": 0.9912036083250169,
+              "flip": 0.005373516120016575,
+              "silhouette_xor_fraction": 0.0009071180555555555,
+              "psnr_db": 34.460251604328754
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9958130713567815,
+              "flip": 0.0017489458405179903,
+              "silhouette_xor_fraction": 0.0010989945023148148,
+              "psnr_db": 37.91254317219281
+            },
+            "worst": {
+              "ssim": 0.9907417215690726,
+              "flip": 0.003751987125724554,
+              "silhouette_xor_fraction": 0.0017057291666666666,
+              "psnr_db": 34.66542648563025
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9988885306650498,
+              "flip": 0.0010030925307849732,
+              "silhouette_xor_fraction": 0.0003021918402777778,
+              "psnr_db": 45.82016100041632
+            },
+            "worst": {
+              "ssim": 0.9964891951144959,
+              "flip": 0.0025455125141888857,
+              "silhouette_xor_fraction": 0.0005121527777777778,
+              "psnr_db": 41.290594594030516
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9959835343134197,
+              "flip": 0.0016556368791498244,
+              "silhouette_xor_fraction": 0.0011143663194444443,
+              "psnr_db": 37.884687968285824
+            },
+            "worst": {
+              "ssim": 0.9926221798741494,
+              "flip": 0.003050021128728986,
+              "silhouette_xor_fraction": 0.0017100694444444444,
+              "psnr_db": 34.5472257737042
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9991053352661977,
+              "flip": 0.0008712768103578128,
+              "silhouette_xor_fraction": 0.000313404224537037,
+              "psnr_db": 45.911876249727655
+            },
+            "worst": {
+              "ssim": 0.9979246879664678,
+              "flip": 0.0018906672485172749,
+              "silhouette_xor_fraction": 0.0005859375,
+              "psnr_db": 41.56366331428106
+            }
+          }
+        }
+      },
+      "source_faces": 4332,
+      "control_faces": 2164,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "antique_ceramic_vase_01",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "antique_ceramic_vase_01",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-expansion-20261124\\antique_ceramic_vase_01\\controls",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\antique_ceramic_vase_01\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 22914.277700008824,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/antique_ceramic_vase_01/quality.json",
+      "raw_sha256": "689970645752591d13908eb5e4ad4d3436879f8d8f75101ea9e8c5759e1a6a2e",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9956376905641967,
+              "flip": 0.0022134555280596637,
+              "silhouette_xor_fraction": 0.001329752604166667,
+              "psnr_db": 37.590440496062236
+            },
+            "worst": {
+              "ssim": 0.9939383409285492,
+              "flip": 0.003544437699019909,
+              "silhouette_xor_fraction": 0.0019097222222222222,
+              "psnr_db": 35.904970771183336
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9993518660893312,
+              "flip": 0.0009356286124481509,
+              "silhouette_xor_fraction": 0.00034414785879629633,
+              "psnr_db": 46.38110924381708
+            },
+            "worst": {
+              "ssim": 0.9990397638847498,
+              "flip": 0.001466199872083962,
+              "silhouette_xor_fraction": 0.0005208333333333333,
+              "psnr_db": 44.15962948057186
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9862956888646682,
+              "flip": 0.006851251896781226,
+              "silhouette_xor_fraction": 0.0019384765625,
+              "psnr_db": 33.57179115116761
+            },
+            "worst": {
+              "ssim": 0.9731763378785091,
+              "flip": 0.015479536727070808,
+              "silhouette_xor_fraction": 0.002868923611111111,
+              "psnr_db": 30.476917190035042
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9909146879061472,
+              "flip": 0.006237199020688422,
+              "silhouette_xor_fraction": 0.0009776475694444444,
+              "psnr_db": 36.491199436670335
+            },
+            "worst": {
+              "ssim": 0.9800584928977268,
+              "flip": 0.01456298865377903,
+              "silhouette_xor_fraction": 0.0017057291666666666,
+              "psnr_db": 32.603450853484624
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9919409075799566,
+              "flip": 0.004098353975374873,
+              "silhouette_xor_fraction": 0.0013438585069444444,
+              "psnr_db": 37.14752190598325
+            },
+            "worst": {
+              "ssim": 0.9852613145426558,
+              "flip": 0.008793102577328682,
+              "silhouette_xor_fraction": 0.0019227430555555556,
+              "psnr_db": 35.02196361072965
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9958954815995611,
+              "flip": 0.0032665902326698415,
+              "silhouette_xor_fraction": 0.00037254050925925925,
+              "psnr_db": 44.13678839175988
+            },
+            "worst": {
+              "ssim": 0.9903394788636102,
+              "flip": 0.007614851463586092,
+              "silhouette_xor_fraction": 0.0005859375,
+              "psnr_db": 41.231493855869
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9933822153153423,
+              "flip": 0.00397063497803174,
+              "silhouette_xor_fraction": 0.0014485677083333332,
+              "psnr_db": 36.6494813118935
+            },
+            "worst": {
+              "ssim": 0.9866134316002836,
+              "flip": 0.010307621210813522,
+              "silhouette_xor_fraction": 0.0020963541666666665,
+              "psnr_db": 34.32724294238987
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9974987129183628,
+              "flip": 0.0031369365509211398,
+              "silhouette_xor_fraction": 0.00047399450231481484,
+              "psnr_db": 43.20516978927924
+            },
+            "worst": {
+              "ssim": 0.9932100994939707,
+              "flip": 0.009172510355710983,
+              "silhouette_xor_fraction": 0.0007595486111111111,
+              "psnr_db": 39.73797927743145
+            }
+          }
+        }
+      },
+      "source_faces": 9408,
+      "control_faces": 4704,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "brass_vase_01",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "brass_vase_01",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-expansion-20261124\\brass_vase_01\\controls",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\brass_vase_01\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 26199.083299958147,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/brass_vase_01/quality.json",
+      "raw_sha256": "c4743a646bafceaf85a4f8b0aacd2b86e9c502055299cd30ad7ca7c7bd277c9d",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9959786223807287,
+              "flip": 0.0018156682732903089,
+              "silhouette_xor_fraction": 0.001352177372685185,
+              "psnr_db": 37.615938603480224
+            },
+            "worst": {
+              "ssim": 0.9943697859943589,
+              "flip": 0.0028459730092436075,
+              "silhouette_xor_fraction": 0.001966145833333333,
+              "psnr_db": 35.63230540655476
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.999326998667545,
+              "flip": 0.0008365567070237981,
+              "silhouette_xor_fraction": 0.0003682002314814815,
+              "psnr_db": 46.112252033692386
+            },
+            "worst": {
+              "ssim": 0.9990312394144314,
+              "flip": 0.0012980125611647964,
+              "silhouette_xor_fraction": 0.0005815972222222222,
+              "psnr_db": 43.93237124434098
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9931244180047617,
+              "flip": 0.0028130847931606695,
+              "silhouette_xor_fraction": 0.0014637586805555556,
+              "psnr_db": 36.3566037806002
+            },
+            "worst": {
+              "ssim": 0.986071795078494,
+              "flip": 0.005507726687937975,
+              "silhouette_xor_fraction": 0.0020833333333333333,
+              "psnr_db": 33.74102031208862
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.996862428816379,
+              "flip": 0.0021085335805158443,
+              "silhouette_xor_fraction": 0.0005108868634259259,
+              "psnr_db": 41.659395537954794
+            },
+            "worst": {
+              "ssim": 0.991447886618899,
+              "flip": 0.004760840907692909,
+              "silhouette_xor_fraction": 0.0008072916666666667,
+              "psnr_db": 37.97741520304244
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9949292565862861,
+              "flip": 0.00216061347843303,
+              "silhouette_xor_fraction": 0.001340603298611111,
+              "psnr_db": 37.50794473453218
+            },
+            "worst": {
+              "ssim": 0.9914971806474554,
+              "flip": 0.0036028525792062283,
+              "silhouette_xor_fraction": 0.0019444444444444444,
+              "psnr_db": 35.501749352705104
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9985429044143491,
+              "flip": 0.0012916541357602303,
+              "silhouette_xor_fraction": 0.00035282841435185184,
+              "psnr_db": 45.54821471940549
+            },
+            "worst": {
+              "ssim": 0.9967768975612528,
+              "flip": 0.0024383803829550743,
+              "silhouette_xor_fraction": 0.0005121527777777778,
+              "psnr_db": 43.07188788608286
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9957197242066044,
+              "flip": 0.001924808546997762,
+              "silhouette_xor_fraction": 0.0013661024305555557,
+              "psnr_db": 37.49395545962467
+            },
+            "worst": {
+              "ssim": 0.9936159290864625,
+              "flip": 0.0030070922803133726,
+              "silhouette_xor_fraction": 0.0019835069444444444,
+              "psnr_db": 35.51116316286668
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9992011470113651,
+              "flip": 0.0009744621808446633,
+              "silhouette_xor_fraction": 0.00037814670138888886,
+              "psnr_db": 45.879146928462134
+            },
+            "worst": {
+              "ssim": 0.998511833469073,
+              "flip": 0.0017236316343769431,
+              "silhouette_xor_fraction": 0.0006119791666666667,
+              "psnr_db": 43.61193333952046
+            }
+          }
+        }
+      },
+      "source_faces": 21440,
+      "control_faces": 10720,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "bronze_shark_statue",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "bronze_shark_statue",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-expansion-20261124\\bronze_shark_statue\\controls",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\bronze_shark_statue\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 26206.968000042252,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/bronze_shark_statue/quality.json",
+      "raw_sha256": "0471d5145266652000404d214ea98f8626de02489912ccc78f8621222a1ed012",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9954935577337448,
+              "flip": 0.0021268738879977414,
+              "silhouette_xor_fraction": 0.0014066116898148147,
+              "psnr_db": 36.69406702471602
+            },
+            "worst": {
+              "ssim": 0.992767293161039,
+              "flip": 0.0038288594223558903,
+              "silhouette_xor_fraction": 0.002131076388888889,
+              "psnr_db": 34.291959668117165
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.999303403987771,
+              "flip": 0.0009432005948231866,
+              "silhouette_xor_fraction": 0.0003645833333333333,
+              "psnr_db": 45.34480576379008
+            },
+            "worst": {
+              "ssim": 0.9988512302737117,
+              "flip": 0.0015022566076368093,
+              "silhouette_xor_fraction": 0.0005642361111111111,
+              "psnr_db": 42.608616799307356
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9924833791797282,
+              "flip": 0.003609916462058512,
+              "silhouette_xor_fraction": 0.0016192853009259257,
+              "psnr_db": 34.869355946175126
+            },
+            "worst": {
+              "ssim": 0.9861805987782658,
+              "flip": 0.006954682990908623,
+              "silhouette_xor_fraction": 0.002560763888888889,
+              "psnr_db": 31.8552620750255
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9961069084037858,
+              "flip": 0.0029034400989379114,
+              "silhouette_xor_fraction": 0.0006564670138888888,
+              "psnr_db": 38.830024293223644
+            },
+            "worst": {
+              "ssim": 0.9914100132510826,
+              "flip": 0.005621104035526514,
+              "silhouette_xor_fraction": 0.0011892361111111112,
+              "psnr_db": 34.87864540510356
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9949935447228967,
+              "flip": 0.002306308529417341,
+              "silhouette_xor_fraction": 0.0014029947916666668,
+              "psnr_db": 36.61617319135682
+            },
+            "worst": {
+              "ssim": 0.9913458837454552,
+              "flip": 0.004290388431400061,
+              "silhouette_xor_fraction": 0.0021397569444444446,
+              "psnr_db": 34.20993105886289
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9988741799733537,
+              "flip": 0.0012207634960456442,
+              "silhouette_xor_fraction": 0.0003634982638888889,
+              "psnr_db": 44.814320862815535
+            },
+            "worst": {
+              "ssim": 0.9964190120802444,
+              "flip": 0.0027461647987365723,
+              "silhouette_xor_fraction": 0.0005772569444444445,
+              "psnr_db": 41.50724274908696
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.995322297347259,
+              "flip": 0.0022295879122490683,
+              "silhouette_xor_fraction": 0.0014098668981481482,
+              "psnr_db": 36.65154193604213
+            },
+            "worst": {
+              "ssim": 0.9924158733627694,
+              "flip": 0.004073942080140114,
+              "silhouette_xor_fraction": 0.0021788194444444446,
+              "psnr_db": 34.184819142126706
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9991733110163782,
+              "flip": 0.0011110610066680238,
+              "silhouette_xor_fraction": 0.00036838107638888885,
+              "psnr_db": 45.085047941139315
+            },
+            "worst": {
+              "ssim": 0.9982994858391431,
+              "flip": 0.002148235682398081,
+              "silhouette_xor_fraction": 0.0005815972222222222,
+              "psnr_db": 42.37108135893834
+            }
+          }
+        }
+      },
+      "source_faces": 7334,
+      "control_faces": 3666,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "bronze_whale_statue",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "bronze_whale_statue",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-expansion-20261124\\bronze_whale_statue\\controls",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\bronze_whale_statue\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 23362.1144000208,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/bronze_whale_statue/quality.json",
+      "raw_sha256": "ce975c1f87e5687037cd5e4a8c77bb236396d51ae75bb7696ca4bcc9491e9df2",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9955256210233064,
+              "flip": 0.0020477271852238723,
+              "silhouette_xor_fraction": 0.0015628616898148149,
+              "psnr_db": 36.69939249396259
+            },
+            "worst": {
+              "ssim": 0.9934827976975582,
+              "flip": 0.0032876499462872744,
+              "silhouette_xor_fraction": 0.0020833333333333333,
+              "psnr_db": 34.73667376224306
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9992792376359123,
+              "flip": 0.0009861723519861698,
+              "silhouette_xor_fraction": 0.000428783275462963,
+              "psnr_db": 45.1444695387847
+            },
+            "worst": {
+              "ssim": 0.9989288615558694,
+              "flip": 0.001506931148469448,
+              "silhouette_xor_fraction": 0.0006380208333333333,
+              "psnr_db": 43.04034824877627
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.990773700016715,
+              "flip": 0.0041836320839744685,
+              "silhouette_xor_fraction": 0.0018607132523148148,
+              "psnr_db": 34.20841798118956
+            },
+            "worst": {
+              "ssim": 0.9812072728001668,
+              "flip": 0.008874459192156792,
+              "silhouette_xor_fraction": 0.002699652777777778,
+              "psnr_db": 31.40831035843027
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9945675877338992,
+              "flip": 0.003695790825683313,
+              "silhouette_xor_fraction": 0.00083984375,
+              "psnr_db": 37.54064007974265
+            },
+            "worst": {
+              "ssim": 0.9862478885722815,
+              "flip": 0.008156124502420425,
+              "silhouette_xor_fraction": 0.0014019097222222221,
+              "psnr_db": 33.96720803863783
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9932252574258532,
+              "flip": 0.0032106228415311002,
+              "silhouette_xor_fraction": 0.0015923394097222222,
+              "psnr_db": 35.91250517928986
+            },
+            "worst": {
+              "ssim": 0.9849482511898794,
+              "flip": 0.007380286231637001,
+              "silhouette_xor_fraction": 0.002170138888888889,
+              "psnr_db": 33.27034471533431
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9969954164939745,
+              "flip": 0.0025399128232190074,
+              "silhouette_xor_fraction": 0.0004938874421296296,
+              "psnr_db": 41.632274322237215
+            },
+            "worst": {
+              "ssim": 0.9905045459707544,
+              "flip": 0.006518139969557524,
+              "silhouette_xor_fraction": 0.0007682291666666666,
+              "psnr_db": 37.588476155569445
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9941057927494908,
+              "flip": 0.002888195405830629,
+              "silhouette_xor_fraction": 0.0016163917824074073,
+              "psnr_db": 36.07192356043398
+            },
+            "worst": {
+              "ssim": 0.9883613203823431,
+              "flip": 0.006229254882782698,
+              "silhouette_xor_fraction": 0.0022222222222222222,
+              "psnr_db": 33.66854347504778
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9979013819673653,
+              "flip": 0.0021726535608953177,
+              "silhouette_xor_fraction": 0.0005318648726851852,
+              "psnr_db": 42.17045878110156
+            },
+            "worst": {
+              "ssim": 0.9938052732949219,
+              "flip": 0.005362880416214466,
+              "silhouette_xor_fraction": 0.0007942708333333334,
+              "psnr_db": 38.052005687398854
+            }
+          }
+        }
+      },
+      "source_faces": 3816,
+      "control_faces": 1908,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "bull_head",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "bull_head",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-expansion-20261124\\bull_head\\controls",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\bull_head\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 24428.464299999177,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/bull_head/quality.json",
+      "raw_sha256": "9c66199d7e1b0963d204e57fea0bf3aba8a36829ff2c9c4e056fbd4e791f8a9a",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9936448612049172,
+              "flip": 0.002957637586708491,
+              "silhouette_xor_fraction": 0.001672092013888889,
+              "psnr_db": 36.21420591881757
+            },
+            "worst": {
+              "ssim": 0.9901502664204087,
+              "flip": 0.00488466490060091,
+              "silhouette_xor_fraction": 0.002400173611111111,
+              "psnr_db": 34.033279005038786
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.998909763203434,
+              "flip": 0.001437585349776782,
+              "silhouette_xor_fraction": 0.0004582609953703704,
+              "psnr_db": 44.5791688945357
+            },
+            "worst": {
+              "ssim": 0.9983001340408715,
+              "flip": 0.0023388685658574104,
+              "silhouette_xor_fraction": 0.0006640625,
+              "psnr_db": 42.49010987023435
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9833978080192902,
+              "flip": 0.006507180078187957,
+              "silhouette_xor_fraction": 0.0020757378472222223,
+              "psnr_db": 33.200404643212764
+            },
+            "worst": {
+              "ssim": 0.9640505350495147,
+              "flip": 0.014116094447672367,
+              "silhouette_xor_fraction": 0.0031293402777777778,
+              "psnr_db": 30.007186798313015
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9891091982360768,
+              "flip": 0.005792647537115651,
+              "silhouette_xor_fraction": 0.0009302662037037037,
+              "psnr_db": 36.42887336867213
+            },
+            "worst": {
+              "ssim": 0.9719823322222667,
+              "flip": 0.013200853019952774,
+              "silhouette_xor_fraction": 0.0015972222222222223,
+              "psnr_db": 32.39895932668626
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9900144354593922,
+              "flip": 0.003899840148127017,
+              "silhouette_xor_fraction": 0.0016731770833333332,
+              "psnr_db": 35.71883716352545
+            },
+            "worst": {
+              "ssim": 0.97930617805318,
+              "flip": 0.007766035385429859,
+              "silhouette_xor_fraction": 0.002439236111111111,
+              "psnr_db": 33.1523074391429
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9955965299352845,
+              "flip": 0.0028000519935934185,
+              "silhouette_xor_fraction": 0.0004738136574074074,
+              "psnr_db": 42.33156639860398
+            },
+            "worst": {
+              "ssim": 0.9881455546314755,
+              "flip": 0.0064139035530388355,
+              "silhouette_xor_fraction": 0.0007204861111111111,
+              "psnr_db": 39.1114148532694
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9917169198316529,
+              "flip": 0.0036075971632574997,
+              "silhouette_xor_fraction": 0.0017078993055555554,
+              "psnr_db": 35.820301685609074
+            },
+            "worst": {
+              "ssim": 0.9854206958239446,
+              "flip": 0.006746015511453152,
+              "silhouette_xor_fraction": 0.0024652777777777776,
+              "psnr_db": 33.43295833698094
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9973048835913999,
+              "flip": 0.0024167973266836875,
+              "silhouette_xor_fraction": 0.0005090784143518518,
+              "psnr_db": 42.958498066320914
+            },
+            "worst": {
+              "ssim": 0.9941529262260514,
+              "flip": 0.004954998847097158,
+              "silhouette_xor_fraction": 0.0007682291666666666,
+              "psnr_db": 40.202574591037
+            }
+          }
+        }
+      },
+      "source_faces": 17148,
+      "control_faces": 8574,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    },
+    {
+      "asset": "concrete_cat_statue",
+      "status": "scored",
+      "command": [
+        "D:\\anaconda\\python.exe",
+        "tools/mmtrain/bench_appearance_controls.py",
+        "--manifest",
+        "E:\\ManyMesh\\tools\\mmtrain\\polyhaven_quality_cohort_20261124.json",
+        "--asset",
+        "concrete_cat_statue",
+        "--geometry-dir",
+        "E:\\ManyMesh\\out\\polyhaven-matched-face-expansion-20261124\\concrete_cat_statue\\controls",
+        "--out",
+        "E:\\ManyMesh\\out\\polyhaven-quality-screen-20261124\\concrete_cat_statue\\quality.json",
+        "--adapter",
+        "Intel(R) Iris(R) Xe Graphics",
+        "--backend",
+        "D3D12"
+      ],
+      "elapsed_ms": 25325.148200034164,
+      "stdout": "",
+      "stderr": "",
+      "raw_receipt": "out/polyhaven-quality-screen-20261124/concrete_cat_statue/quality.json",
+      "raw_sha256": "ec1f3a5dfd58c331c19b919fc076a2a24996e8ce094c674f72d07c114b0fe324",
+      "summary": {
+        "reference": {
+          "native": {
+            "mean": {
+              "ssim": 0.9957396507954348,
+              "flip": 0.002093449419286723,
+              "silhouette_xor_fraction": 0.0012481915509259258,
+              "psnr_db": 38.037459705473225
+            },
+            "worst": {
+              "ssim": 0.9931033982550747,
+              "flip": 0.003598281182348728,
+              "silhouette_xor_fraction": 0.0017144097222222222,
+              "psnr_db": 36.24531695371548
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9993295242784604,
+              "flip": 0.0009968044566145788,
+              "silhouette_xor_fraction": 0.0003275101273148148,
+              "psnr_db": 46.671808570074006
+            },
+            "worst": {
+              "ssim": 0.998878106234025,
+              "flip": 0.001732164528220892,
+              "silhouette_xor_fraction": 0.0004861111111111111,
+              "psnr_db": 44.506204442811814
+            }
+          }
+        },
+        "manymesh": {
+          "native": {
+            "mean": {
+              "ssim": 0.9849850851824372,
+              "flip": 0.006442904656675334,
+              "silhouette_xor_fraction": 0.001634837962962963,
+              "psnr_db": 34.283558766259524
+            },
+            "worst": {
+              "ssim": 0.9680471253443813,
+              "flip": 0.015006226487457752,
+              "silhouette_xor_fraction": 0.002447916666666667,
+              "psnr_db": 30.886795170231423
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9894318676217327,
+              "flip": 0.005935255050038298,
+              "silhouette_xor_fraction": 0.000802951388888889,
+              "psnr_db": 37.00629623535191
+            },
+            "worst": {
+              "ssim": 0.9745968337798472,
+              "flip": 0.014321389608085155,
+              "silhouette_xor_fraction": 0.0014973958333333334,
+              "psnr_db": 32.65608568756694
+            }
+          }
+        },
+        "qem_preserve_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9910891217237214,
+              "flip": 0.003433571798571696,
+              "silhouette_xor_fraction": 0.0012715205439814815,
+              "psnr_db": 37.34635178110865
+            },
+            "worst": {
+              "ssim": 0.9804262350138758,
+              "flip": 0.008029556833207607,
+              "silhouette_xor_fraction": 0.0017664930555555557,
+              "psnr_db": 35.281370996595896
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9952197596439056,
+              "flip": 0.002718383584578987,
+              "silhouette_xor_fraction": 0.00036476417824074075,
+              "psnr_db": 43.71216592866081
+            },
+            "worst": {
+              "ssim": 0.987338569973872,
+              "flip": 0.006981185171753168,
+              "silhouette_xor_fraction": 0.0005338541666666666,
+              "psnr_db": 40.338807396278426
+            }
+          }
+        },
+        "meshoptimizer_lock_border": {
+          "native": {
+            "mean": {
+              "ssim": 0.9935908196454758,
+              "flip": 0.0029619498576115197,
+              "silhouette_xor_fraction": 0.0012718822337962961,
+              "psnr_db": 37.66645746285438
+            },
+            "worst": {
+              "ssim": 0.9865799921129296,
+              "flip": 0.0069084251299500465,
+              "silhouette_xor_fraction": 0.0017795138888888889,
+              "psnr_db": 35.68533397114594
+            }
+          },
+          "msaa4": {
+            "mean": {
+              "ssim": 0.9975309841608796,
+              "flip": 0.0021121124057875327,
+              "silhouette_xor_fraction": 0.00035101996527777773,
+              "psnr_db": 45.17555710611815
+            },
+            "worst": {
+              "ssim": 0.9929503494355143,
+              "flip": 0.005646295379847288,
+              "silhouette_xor_fraction": 0.0005295138888888889,
+              "psnr_db": 42.31286489749637
+            }
+          }
+        }
+      },
+      "source_faces": 11950,
+      "control_faces": 5974,
+      "adapter": {
+        "vendor": "31.0.101.4502",
+        "architecture": "",
+        "device": "Intel(R) Iris(R) Xe Graphics",
+        "description": "",
+        "stackgroup_min_size": 4,
+        "stackgroup_max_size": 128,
+        "vendor_id": 32902,
+        "device_id": 42912,
+        "adapter_type": "IntegratedGPU",
+        "backend_type": "D3D12"
+      },
+      "packages": {
+        "wgpu": "0.33.0",
+        "numpy": "2.3.4",
+        "scikit-image": "0.25.2",
+        "flip-evaluator": "1.7"
+      }
+    }
+  ],
+  "complete_assets": [
+    "Megaphone_01",
+    "Ottoman_01",
+    "SchoolChair_01",
+    "Sofa_01",
+    "antique_ceramic_vase_01",
+    "brass_vase_01",
+    "bronze_shark_statue",
+    "bronze_whale_statue",
+    "bull_head",
+    "concrete_cat_statue",
+    "crystalline_iceplant",
+    "drain_cleaner",
+    "dustpan",
+    "food_apple_01",
+    "food_pears_asian_01",
+    "lemon",
+    "moon_rock_02",
+    "moon_rock_03",
+    "moon_rock_05",
+    "moon_rock_06",
+    "rock_09"
+  ]
+}

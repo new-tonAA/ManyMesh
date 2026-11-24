@@ -1,96 +1,54 @@
 # ManyMesh
 
-ManyMesh investigates how mesh level of detail (LOD) affects rendered image
-quality and cost. It is a Filament research checkout. **No submission-ready
-method or mobile-performance claim is established.**
+ManyMesh is a Filament-based research prototype for mesh level of detail
+(LOD). It studies how geometry choices affect rendered image quality and cost.
+**No new method or mobile-performance claim is established.**
 
-![Khronos Suzanne rendered at 3,936 and 982 triangles beside a map of silhouette differences.](docs/manymesh/suzanne-lod.png)
+SIGGRAPH 2027 is a research target, not a submission-ready result. Current tests
+have not shown that ManyMesh geometry beats strong matched controls. The
+upscaler-aware cluster-DAG idea remains a hypothesis with substantial prior art.
+See the [research status](MANYMESH.md), [submission plan](SIGGRAPH_2027_SUBMISSION_PLAN.md),
+and [prior-art review](MANYMESH_UPSCALER_AWARE_DAG_RESEARCH.md).
 
-*Khronos Suzanne, flat shaded, 384 × 384 per panel, CPU reference render. The center panel is the depth-2 cut from unmodified meshoptimizer v1.2. The right panel marks binary coverage differences. Asset: UX3D / Norbert Nopper, CC0 1.0. [Figure receipt](docs/manymesh/suzanne-lod.json).*
+![Khronos Suzanne at 3,936 and 982 triangles beside a silhouette-difference map.](docs/manymesh/suzanne-lod.png)
 
-## Research status
+*Suzanne comparison: flat shaded, 384 x 384 pixels per panel, CPU reference render. Center: depth-2 cut from unmodified meshoptimizer v1.2. Right: binary coverage differences. Asset: UX3D / Norbert Nopper, CC0 1.0. [Figure receipt](docs/manymesh/suzanne-lod.json).*
 
-**No current ManyMesh method has passed both the novelty and quality–cost
-gates.** The latest candidate question is whether offline appearance
-optimization can improve a constrained cluster LOD hierarchy after
-antialiasing or upscaling. This is an untested hypothesis with close prior art;
-compare separately at matched face count and matched complete frame time.
-Hasselgren et al. already optimize
-mesh appearance from differentiable image-space losses for simplification and
-LOD; silhouette-sensitive view-dependent simplification dates to Luebke and
-Erikson, and exact coarse-mesh silhouette clipping to Sander et al. ([Hasselgren
-et al.](https://diglib.eg.org/items/82ec8df1-d62a-40f0-a007-90374b5140dc),
-[Luebke and Erikson](https://techreports.cs.unc.edu/papers/97-005/97-005.pdf),
-[Sander et al.](https://hhoppe.com/silclip.pdf)). No distinction or benefit has
-been established.
+## Current evidence
 
-Evaluation is two-stage: compare image quality at matched final face counts,
-then compare complete frame time at matched conditions. Report LDR-FLIP, PSNR,
-SSIM, silhouette/coverage error, and temporal quality on frozen camera paths;
-include QEM, meshoptimizer, MSAA, SMAA, and available upscalers where applicable.
-The final-image reconstruction interaction is an untested hypothesis. No
-physical-phone or user-preference result is available.
-
-## What the current screens show
-
-- **The 13-asset fusion screen is 0/13 under its stated joint criterion.**
-  Neither silhouette-fusion prototype beat every qualified control on all of
-  LDR-FLIP, PSNR, and SSIM within its per-asset median GPU-time budget. A cheaper
-  control selected after scoring dominated both prototypes on all three metrics
-  for each asset. The exploratory comparison uses fixed-view grayscale Iris Xe
-  desktop captures and times the tested GPU work. [Report](tools/mmtrain/SILHOUETTE_GUIDE_FUSION_20261122.md) · [verified repeat](tools/mmtrain/silhouette_guide_fusion_720p_repeat_20261123.json)
-- **Contour neighborhoods concentrate image error.** In three million-face
-  moving scenes on Iris Xe at 720p with 4× MSAA, group-area LOD's binary
-  coverage mismatch accounts for 35–58% of squared error against the full source
-  at matched sampling. Adding the two-pixel contour band brings this to
-  57–86%. LPIPS does not show an equal-cost allocation win.
-  [Error and LPIPS replay](tools/mmmetrics/MOVING_SCENE_EDGE_QUALITY_20261124.md)
-- **Current geometry cuts trail matched controls.** Across 18 eligible
-  exact-face pairs on seven reused assets, ManyMesh lost all five image
-  metrics in 15 and won two meshoptimizer comparisons on GlassBrokenWindow.
-  The QEM counts did not match the broken-window cuts. The screen used a
-  retrospective boundary tolerance. [Full report](tools/mmtrain/KHRONOS_EQUAL_FACE_QUALITY_SCREEN_20261123.md)
-- **The confirmation pool is provisional.** Twelve Poly Haven assets pass
-  source topology across five classes. Three supply legal equal-face controls
-  near 50% retention. [Geometry preflight](tools/mmtrain/POLYHAVEN_CANDIDATE_TOPOLOGY_20261124.md)
-- **A fixed-cut scale screen reaches 10,000 instances.** On Iris Xe, the
-  36.1-million-triangle source scene takes 29.0 ms at 4x MSAA; the stock depth-2
-  cut takes 6.7 ms (4.31x faster) with 75.0% fewer triangles, while worsening PSNR
-  and LDR-FLIP. This is a fixed-view desktop raster diagnostic, not a ManyMesh
-  selector, full-frame, or mobile result. [Protocol and metrics](tools/mmtrain/INSTANCE_SCALE_SCREEN_20261124.md)
+- **No joint quality win in the 13-asset silhouette-fusion screen.** Within
+  the median GPU-time budget, neither prototype beat every qualified control
+  on LDR-FLIP, PSNR, and SSIM on any asset (0/13). This was a fixed-view
+  Iris Xe comparison with post-hoc control selection.
+  [Report](tools/mmtrain/SILHOUETTE_GUIDE_FUSION_20261122.md)
+- **No broad equal-cost win in a 13-asset desktop screen.** At 720p, component-selected cuts plus 4x MSAA were faster than full-source native rendering on 4/13 assets, and faster while improving both PSNR and SSIM on 2/13. The component choices were calibrated per asset, so this is not a deployable selection method. Test hardware: Intel Iris Xe, D3D12; one fixed camera and 16 identical instances per asset. [Protocol and results](tools/mmtrain/CLUSTER_DECODER_GPU_MSAA_13ASSET_SCREEN_20261122.md)
+- **Current geometry cuts lose to matched simplification controls.** Against the original 15,744-face Monkey source over eight views, the 30%, 50%, and 70% requested cuts lost to every eligible exact-face QEM or meshoptimizer control on all reported image metrics. A one-ULP boundary tolerance was chosen retrospectively; this remains a one-asset diagnostic. [Report](tools/mmtrain/MONKEY_ORIGINAL_SOURCE_DIAGNOSTIC_20261123.md) · [raw rescore](tools/mmtrain/monkey_source_float32_boundary_diagnostic_20261123.json)
+- **The frozen 21-model near-50% cohort is negative for the current cut.** At exact matching face counts, the group-mean ManyMesh result was worse than border-preserving QEM and meshoptimizer on LDR-FLIP, PSNR, SSIM, and silhouette XOR in native and 4x MSAA modes. Paired 95% group-bootstrap intervals exclude zero across 16 source-collection groups. This is fixed-view Iris Xe image-quality evidence, not an equal-time or mobile result. [Protocol and results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md) · [per-view metrics](tools/mmtrain/polyhaven_quality_metrics_20261124.json)
+- **A seven-asset source-reference screen found one narrow exception.** Of 18 eligible equal-face comparisons under a retrospective one-ULP boundary rule, ManyMesh lost all five image metrics in 15, won all five in two meshoptimizer comparisons on the 987-face GlassBrokenWindow, and had one mixed result. No QEM comparison was beaten. This is reused development data, not held-out or equal-frame-time evidence. [Screen and limitations](tools/mmtrain/KHRONOS_EQUAL_FACE_QUALITY_SCREEN_20261123.md) · [metrics and receipts](tools/mmtrain/khronos_equal_face_quality_screen_20261123.json)
+- The GlassBrokenWindow wins do not include QEM: the border-preserving QEM control returned 859 faces for all requested cuts (381/491/569), so none met the exact-face gate. Only the 491- and 569-face meshoptimizer comparisons were eligible; the requested 30% and 70% hierarchy cuts were missed.
+- Four assets have legal equal-face geometry inputs around 50% retention.
+  The 30% preflights found no complete sets. BarramundiFish and Corset are
+  the first CUDA pair. [Matched inputs and scoring protocol](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md)
+  A separate 50% projective fit worsened reserved-view mean FLIP on both
+  development assets. [CPU fitting report](tools/mmtrain/PROJECTIVE_SILHOUETTE_CPU_20261124.md)
+- The desktop contour priority comparison found mixed FLIP results under
+  hardware MSAA, SMAA, and bicubic upscaling on seven development assets.
+  [Desktop AA follow-up](tools/mmtrain/CONTOUR_PRIORITY_AA_20261123.md)
+- The [dated history](MANYMESH_HISTORY.md) retains older CNN, AA, and draw-submission experiments with their reference and provenance limits. They are not current method evidence.
 
 | Works in the measured scope | Does not pass | Not measured |
 |---|---|---|
-| Desktop experiments now compare reconstruction modes, moving-camera paths, geometry controls, and a fixed-cut 10,000-instance workload. | No new geometry or reconstruction method has a repeatable quality–cost win over strong controls. | Physical-phone performance, power, thermals, user preference, and independent held-out generalization. |
+| Desktop draw-range merging reduced CPU submission cost in a historical Iris Xe / OpenGL test. | No current ManyMesh geometry method has beaten strong matched controls; the tested contour selector did not produce a useful equal-face alternative. | Physical-phone performance, power, thermals, equal-time quality, LPIPS, temporal stability, user preference, and confirmation of a future optimized method. |
 
-## Next gate
+The historical draw-range result repairs a naive per-node submission path; its capture lacks a verified generating commit and is not a mobile result. [Details](MANYMESH_HISTORY.md#771-opengl-compute-fixes-and-draw-merging) · [Claim and provenance ledger](MANYMESH_CLAIM_EVIDENCE.md)
 
-The source contour priority improved mean PSNR in a CPU screen of seven
-development assets. The Iris Xe follow-up showed mixed FLIP under MSAA,
-SMAA, and bicubic upscaling. [Desktop AA follow-up](tools/mmtrain/CONTOUR_PRIORITY_AA_20261123.md)
-A separate CPU projective silhouette fit reduced training error on two
-development assets and worsened mean LDR-FLIP on reserved views of both.
-[Projective fit](tools/mmtrain/PROJECTIVE_SILHOUETTE_CPU_20261124.md)
+## Project documents
 
-Four licensed assets now have legal equal-face ManyMesh, QEM, and
-meshoptimizer inputs near 50% retention. The 30% preflight found no complete
-set. [Matched input receipts](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md)
-The training protocol is frozen and the reserved-view scorer has run on
-Iris Xe. The NVIDIA placement-only control still needs CUDA compute.
-Advance only if the differentiable baseline produces a repeatable held-out gain, then
-test the DAG constraints with real antialiasing and upscalers. See the
-[research status](MANYMESH.md) and
-[next-experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md). Mobile or preference
-claims need separate device measurements or a user study.
-
-## Project notes
-
-- [Concise research status](MANYMESH.md)
-- [Learned LOD research and experiment record](MANYMESH_LEARNED_LOD_RESEARCH.md)
-- [Dated experiments and backend test inventories](MANYMESH_HISTORY.md)
-- [SIGGRAPH 2027 direction, prior art, and stop criteria](SIGGRAPH_2027_DIRECTION.md)
-- [Prior-art screen with full-text access status](docs/manymesh/siggraph-prior-art-screen-20261123.md)
+- [Current research status and next gate](MANYMESH.md)
+- [SIGGRAPH 2027 direction and closest prior art](SIGGRAPH_2027_DIRECTION.md)
 - [Research continuation prompt and evidence protocol](MANYMESH_RESEARCH_LOOP.md)
-- [Next-experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md)
-- [Moving-camera per-instance LOD screen](tools/mmtrain/DYNAMIC_INSTANCE_LOD_MOVING_20261123.md)
+- [SIGGRAPH 2027 plan and stop gates](SIGGRAPH_2027_SUBMISSION_PLAN.md)
+- [Prior-art review](MANYMESH_UPSCALER_AWARE_DAG_RESEARCH.md)
+- [Dated evidence history](MANYMESH_HISTORY.md)
+- [Independent confirmation-asset screen](MANYMESH_CONFIRMATION_ASSET_SCREEN.md)
 - [Filament documentation](filament/README.md)

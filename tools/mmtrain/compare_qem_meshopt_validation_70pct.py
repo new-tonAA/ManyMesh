@@ -11,7 +11,6 @@ import sys
 import tempfile
 
 import fast_simplification
-import flip_evaluator
 import numpy as np
 import scipy
 from PIL import Image, ImageDraw
@@ -33,6 +32,8 @@ PREFER_HIGHER = {"psnr_db", "ssim", "normal_consistency_absdot"}
 
 
 def image_metrics(reference, candidate, ref_coverage, candidate_coverage, ppd):
+    import flip_evaluator
+
     ref = reference.astype(np.float64) / 255.
     image = candidate.astype(np.float64) / 255.
     difference = ref - image
