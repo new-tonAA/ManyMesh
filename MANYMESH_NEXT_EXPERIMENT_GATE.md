@@ -1,9 +1,16 @@
 # Next experiment gate: fixed-topology placement control
 
 Updated 2026-11-25. **This is a falsification plan, not a contribution claim.**
-The SIGGRAPH 2027 Technical Papers page lists 28 January 2027 as the paper
-deadline and says detailed submission instructions are forthcoming. The
-schedule does not relax the evidence gate. [Official dates](https://s2027.siggraph.org/program/technical-papers/)
+The published SIGGRAPH 2027 schedule lists the submission form for 21 January,
+the paper for 28 January, and checksum upload/conflicts/review commitment for
+29 January 2027, all at 22:00 UTC. Peer-reviewed papers published after 14
+December generally do not trigger a missing-comparison rejection, but work
+that influenced the submission must still be cited.
+The review period begins 14 January; the public ManyMesh repository identifies
+its owner and must not be linked in a double-blind submission. See the
+[official call](https://s2027.siggraph.org/program/technical-papers/) and
+[anonymity policy](https://s2027.siggraph.org/anonymity-policy/). The schedule
+does not relax the evidence gate.
 
 ## Candidate question
 

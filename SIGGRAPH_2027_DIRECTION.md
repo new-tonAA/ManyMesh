@@ -4,6 +4,40 @@ Updated 2026-11-25. This is a research plan, not a paper draft or novelty claim.
 The differentiable candidate remains untested; the cited work is a bounded map
 for verification, and a search that finds no paper is not evidence that none exists.
 
+## SIGGRAPH 2027 submission constraints
+
+The official schedule now lists the submission form and author list for 21
+January 2027 at 22:00 UTC, the paper and supplemental-material deadline for 28
+January at 22:00 UTC, and the checksum-based file upload, conflicts, expertise,
+and author review-commitment deadline for 29 January at 22:00 UTC. Peer-reviewed
+papers published after 14 December 2026 generally will not trigger a missing-
+comparison rejection, but work that influenced the submission must still be
+cited. Recheck the official call for changes
+before preparing a submission. [Technical Papers call](https://s2027.siggraph.org/program/technical-papers/)
+
+SIGGRAPH uses one Technical Papers submission track, with Journal or Conference
+acceptance decisions. A Conference Paper must contain an important new idea,
+fit within nine pages excluding references, and is considered after rebuttal
+when the main weakness is validation or comparisons. It is not a lower-novelty
+fallback. [Review process and paper types](https://s2027.siggraph.org/program/technical-papers/)
+
+The double-blind review period starts 14 January 2027 and continues until
+conditional acceptance or rejection. The current public ManyMesh repository
+identifies its owner, so it must not be linked as the submission's code/data
+repository. Submit anonymized code and data as supplementary material (up to
+500 MB) when possible. Only if an external link is necessary, prepare a
+separately anonymous, timestamped repository before the deadline and keep it
+unchanged after submission. Do not publicly list or promote the submission
+during the review period. A direct identity-revealing link in the paper or
+supplement can cause desk rejection. [Official anonymity policy](https://s2027.siggraph.org/anonymity-policy/)
+and [reviewer instructions](https://s2027.siggraph.org/technical-papers-reviewer-instructions-ethics/).
+
+Treat 13 January as the internal submission-readiness decision: proceed only
+if there is a defensible contribution and completed supporting evidence; if
+not, do not submit a plan or benchmark-only report as a method paper. Any later
+public-repository or publicity step during review must follow the anonymity
+policy.
+
 ## Candidate and decision
 
 The only current method hypothesis is **offline optimization of a triangle-mesh
