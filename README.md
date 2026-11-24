@@ -41,12 +41,14 @@ tolerance and reused development assets; its two all-metric wins were against
 meshoptimizer only, not QEM. [Reports and raw metrics](MANYMESH.md#evidence).
 The 21-model scoring replay matches byte-for-byte, but its geometry receipts
 record a different `main.cpp` hash from the Khronos run despite sharing the
-same `mmgeo` binary hash. A clean Release build of current `main` succeeded,
-but Windows application control blocked running it, so source-level
-reproduction remains unverified. The archived binary regenerated all 18
-expanded-cohort candidate PLYs byte-for-byte at their recorded face counts;
-this replay does not resolve the source hash conflict or cover the initial
-three models. See the [provenance audit](tools/mmtrain/mmgeo_source_provenance_audit_20261124.json),
+same `mmgeo` binary hash. Checksums in the retained compiler objects identify
+the actual inputs: `main.cpp` matches the Khronos receipt, while
+`Simplifier.cpp` and `Simplifier.h` match the Poly Haven pin. The Poly Haven
+`main.cpp` pin is inconsistent with the compiled object. Current `main` also
+builds cleanly, but Windows application control blocks running the new binary.
+The archived binary regenerated all 18 expanded-cohort candidate PLYs
+byte-for-byte at their recorded face counts; the initial three models were not
+included. See the [compiled-source audit](tools/mmtrain/mmgeo_compiled_source_audit_20261125.json),
 [geometry replay receipt](tools/mmtrain/polyhaven_geometry_replay_20261125.json),
 and [clean rebuild attempt](tools/mmtrain/MMGEO_CLEAN_REBUILD_ATTEMPT_20261125.json).
 

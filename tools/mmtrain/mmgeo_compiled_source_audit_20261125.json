@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "status": "compiled source checksums identify the recorded main.cpp pin mismatch",
+  "script_sha256": "eb25897f7ab2fc7f2d9da8edb22cb7953a6deafe283358d386c345877b9f643c",
+  "tool": {
+    "path": "D:\\visual studio 2022\\VC\\Tools\\Llvm\\bin\\llvm-readobj.exe",
+    "sha256": "07a3a6dafb376ad9f56f2dfcc5ff0611943466f971423866f53b2517bd9a536d",
+    "version": "LLVM (http://llvm.org/):\n  LLVM version 19.1.5\n  Optimized build."
+  },
+  "retained_build": {
+    "binary": "out/cmake-cut-audit/tools/mmgeo/Release/mmgeo.exe",
+    "binary_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+    "binary_matches_polyhaven_and_khronos_receipts": true,
+    "main_obj": "out/cmake-cut-audit/tools/mmgeo/mmgeo.dir/Release/main.obj",
+    "main_obj_sha256": "56bcefcb73eff633b4187d0b4f3e01aee60fb3e85065d3daccef7433f6e3e03a",
+    "simplifier_obj": "out/cmake-cut-audit/libs/manymesh/manymesh.dir/Release/Simplifier.obj",
+    "simplifier_obj_sha256": "d6de89db1367ff0bbffaebc89ce1ef572478cbb559ec5f23ca68a58ef58f2977",
+    "build_log": "out/cmake-cut-audit/out/cmake-cut-audit/msbuild.log",
+    "build_log_sha256": "c14b6c84ca8cd13c728526ac6274daf0f36a8ea9b9db51d40b82b13b7af73537",
+    "main_cpp_compile_tlog_sha256": "2a1e8bd6117a243c1e364372dfd1a7c27ed81dfabca8854435acba96089d72ac",
+    "recorded_compile_invocation": "D:\\visual studio 2022\\VC\\Tools\\MSVC\\14.38.33130\\bin\\HostX64\\x64\\CL.exe /c /I\"E:\\ManyMesh\\out\\cmake-cut-audit\\tools\\mmgeo\\generated\" /IE:\\ManyMesh\\third_party\\libz\\tnt\\.. /IE:\\ManyMesh\\libs\\image\\include /IE:\\ManyMesh\\libs\\math\\include /IE:\\ManyMesh\\libs\\utils\\include /IE:\\ManyMesh\\third_party\\getopt\\include /I\"E:\\ManyMesh\\third_party\\robin-map\\tnt\\..\\include\" /IE:\\ManyMesh\\libs\\imageio\\include /IE:\\ManyMesh\\third_party\\libpng\\tnt\\.. /IE:\\ManyMesh\\third_party\\tinyexr\\tnt\\.. /IE:\\ManyMesh\\third_party\\basisu\\tnt\\..\\encoder /IE:\\ManyMesh\\third_party\\basisu\\tnt\\..\\transcoder /IE:\\ManyMesh\\libs\\manymesh\\include /IE:\\ManyMesh\\third_party\\meshoptimizer\\tnt\\..\\src /Zi /nologo /W0 /WX- /diagnostics:column /MP /O2 /Ob2 /D _MBCS /D WIN32 /D _WINDOWS /D _USE_MATH_DEFINES=1 /D _CRT_SECURE_NO_WARNINGS /D _CRT_NONSTDC_NO_DEPRECATE /D NDEBUG /D FILAMENT_SUPPORTS_OPENGL /D FILAMENT_ENABLE_PERFETTO /D FILAMENT_DRIVER_SUPPORTS_VULKAN /D \"CMAKE_INTDIR=\\\"Release\\\"\" /EHsc /MT /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++latest /Fo\"mmgeo.dir\\Release\\\\\" /Fd\"mmgeo.dir\\Release\\vc143.pdb\" /external:W0 /Gd /TP /errorReport:queue  /external:I \"E:/ManyMesh/third_party/libassimp/tnt/../include\" /Zc:__cplusplus -fno-rtti E:\\ManyMesh\\tools\\mmgeo\\src\\main.cpp",
+    "main_obj_last_write_local": "2026-11-23T15:50:00.693329+08:00",
+    "executable_last_write_local": "2026-11-23T15:50:02.374816+08:00",
+    "link_command_tlog_sha256": "a1541d2a043f62727973c84dc7afca0421659a7072b346be48315ad0128e0095",
+    "link_read_tlog_sha256": "a0c12e708154287e18210e0d622dc50db0f19f525694a09f17d3b79b51720262",
+    "manymesh_lib_command_tlog_sha256": "4f2db4b7d39548a70ac5f0bcda817f99f8771455a9de6c70e61b6123cfc67a9f",
+    "manymesh_lib_read_tlog_sha256": "0c0e8783c3edd3fc160d769b3eb2e24d03973b813f1e023196734eee2d9e9406",
+    "link_tlog_names_main_obj": true,
+    "link_tlog_names_manymesh_library": true,
+    "manymesh_library_tlog_names_simplifier_obj": true,
+    "compile_tlog_names_main_cpp": true
+  },
+  "compiled_source_sha256": {
+    "tools/mmgeo/src/main.cpp": "c044d8d026b32ccb335e99a8c9b0ef4e2ffc766e51455647f29f75bdcf6edea4",
+    "libs/manymesh/src/Simplifier.cpp": "6f43d308dbec71f167af06262d18c22ffc07142ef8eb35769f7a981a1459a0ff",
+    "libs/manymesh/include/manymesh/Simplifier.h": "2765428bd8def355edef95b20d2714ddd24377f72399ae995d029b720370e950"
+  },
+  "recorded_source_sha256": {
+    "polyhaven_pin": {
+      "libs/manymesh/include/manymesh/Simplifier.h": "2765428bd8def355edef95b20d2714ddd24377f72399ae995d029b720370e950",
+      "libs/manymesh/src/Simplifier.cpp": "6f43d308dbec71f167af06262d18c22ffc07142ef8eb35769f7a981a1459a0ff",
+      "tools/mmgeo/src/main.cpp": "3d86db95f92f318642d6af497422933e9287ce41e8a949ae316f93a7bf35b806"
+    },
+    "polyhaven_source_pin_file": {
+      "libs/manymesh/include/manymesh/Simplifier.h": "2765428bd8def355edef95b20d2714ddd24377f72399ae995d029b720370e950",
+      "libs/manymesh/src/Simplifier.cpp": "6f43d308dbec71f167af06262d18c22ffc07142ef8eb35769f7a981a1459a0ff",
+      "tools/mmgeo/src/main.cpp": "3d86db95f92f318642d6af497422933e9287ce41e8a949ae316f93a7bf35b806"
+    },
+    "khronos_main_cpp": "c044d8d026b32ccb335e99a8c9b0ef4e2ffc766e51455647f29f75bdcf6edea4"
+  },
+  "comparisons": {
+    "binary_matches_receipts": true,
+    "compiled_main_matches_reconstructed_khronos_source": true,
+    "compiled_simplifier_cpp_matches_polyhaven_pin": true,
+    "compiled_simplifier_h_matches_polyhaven_pin": true,
+    "all_link_inputs_verified": true,
+    "expanded_geometry_replay_complete": true,
+    "compiled_main_matches_khronos_receipt": true,
+    "compiled_main_matches_polyhaven_receipt": false,
+    "compiled_main_matches_build_source_pin": false,
+    "compiled_main_matches_khronos_and_polyhaven_simplifier_source_set": true,
+    "expanded_cohort_binary_geometry_replay_status": "all_archived_candidates_reproduced_byte_for_byte",
+    "expanded_cohort_byte_identical_assets": 18
+  },
+  "clean_source_rebuild_verified": false,
+  "conclusion": "The retained MSVC object checksums show the archived executable was linked from a main.obj compiled with the Khronos main.cpp SHA-256, while Simplifier.cpp and Simplifier.h match the Poly Haven pin. This identifies the Poly Haven main.cpp source pin as inconsistent with the retained compiler input. The archived binary hash matches both experiment receipts and its 18-asset expansion geometry replay is byte-identical. A clean source rebuild was not verified."
+}

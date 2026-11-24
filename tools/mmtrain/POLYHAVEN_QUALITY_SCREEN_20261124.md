@@ -96,13 +96,17 @@ comparison. The pinned scorer did not emit the predeclared coverage-MAE
 field, so it is unavailable; it was not reconstructed from other metrics.
 LPIPS, temporal behavior, GPU frame time, mobile-device performance, and
 human preference were not measured.
-The Poly Haven geometry receipts use the same mmgeo executable hash as
-the Khronos receipt, but their recorded main.cpp SHA-256 values differ.
-The archived patch reconstructs the Khronos value, not the Poly Haven
-value. Source identity remains unresolved. The compiler environment is
-recorded, but the source identity conflict remains unresolved and no clean source rebuild is verified.
-See the [source-provenance audit](mmgeo_source_provenance_audit_20261124.json)
-and [audit script](audit_mmgeo_main_source_provenance.py).
+The Poly Haven geometry receipts use the same `mmgeo` executable hash as the
+Khronos receipt, but their recorded `main.cpp` SHA-256 values differ. Retained
+MSVC CodeView checksums resolve which inputs were compiled: `main.obj` records
+the Khronos `main.cpp` hash; `Simplifier.obj` records the Poly Haven hashes for
+`Simplifier.cpp` and `Simplifier.h`. The link logs associate `main.obj` and
+`manymesh.lib` with the archived executable. Therefore the Poly Haven
+`main.cpp` source pin does not describe the source used for that binary. A
+clean source rebuild is still unverified. See the
+[compiled-source audit](mmgeo_compiled_source_audit_20261125.json), its
+[reproduction script](audit_mmgeo_compiled_source_20261125.py), and the
+[original provenance audit](mmgeo_source_provenance_audit_20261124.json).
 
 The [frozen cohort](polyhaven_quality_cohort_20261124.json), complete
 [per-view metrics and geometry metrics](polyhaven_quality_metrics_20261124.json),
@@ -116,13 +120,14 @@ The source geometry screen and fixed-face eligibility reports are
 The fixed image-scoring stage was replayed from the same geometry
 exports on the same Iris Xe/D3D12 setup. All 21 score receipts matched
 byte-for-byte and the paired bootstrap values matched. This verifies
-the scoring stage only; it does not resolve the geometry-source
-identity conflict. See the [replay audit](POLYHAVEN_SCORE_REPLAY_AUDIT_20261124.md).
+the scoring stage only. The compiled-source audit below separately attributes
+the geometry executable's source inputs. See the
+[score replay audit](POLYHAVEN_SCORE_REPLAY_AUDIT_20261124.md).
 Separately, the archived `mmgeo` binary regenerated the 18 expanded-cohort
 candidate PLYs byte-for-byte from their retained source OBJs, and every replay
 matched the recorded face count. The initial three cohort assets were not part
 of this geometry replay. No image-quality metrics were recomputed. See the
 [geometry replay script](replay_polyhaven_geometry_20261125.py) and
-[machine-readable receipt](polyhaven_geometry_replay_20261125.json). This
-strengthens archived-binary reproducibility but does not resolve the recorded
-`main.cpp` hash conflict or verify a clean source rebuild.
+[machine-readable receipt](polyhaven_geometry_replay_20261125.json). Combined
+with the CodeView audit, this resolves the archived build's source-pin
+discrepancy; it does not verify a clean source rebuild.

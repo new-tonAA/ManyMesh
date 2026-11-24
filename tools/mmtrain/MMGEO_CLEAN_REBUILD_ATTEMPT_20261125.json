@@ -47,6 +47,7 @@
     "image_quality_retested": false
   },
   "expanded_cohort_replay_receipt": "tools/mmtrain/polyhaven_geometry_replay_20261125.json",
+  "compiled_source_audit": "tools/mmtrain/mmgeo_compiled_source_audit_20261125.json",
   "execution_attempt": {
     "input": "out/polyhaven-expansion-20261124/lemon/geometry.obj",
     "arguments": [
@@ -60,5 +61,5 @@
     "geometry_comparison_performed": false,
     "image_quality_comparison_performed": false
   },
-  "scope": "The current main source compiles into a fresh binary under the recorded toolchain, but Windows application control blocked its execution. Separately, the archived binary reproduced the Lemon candidate PLY byte-for-byte. That one-asset replay verifies archived-binary output determinism, not source identity or all 21 models, and does not resolve the recorded main.cpp hash conflict."
+  "scope": "The current main source compiles into a fresh binary under the recorded toolchain, but Windows application control blocked its execution. The retained CodeView object checksums identify the archived executable inputs and show that its main.cpp came from the Khronos source pin while its Simplifier.cpp and Simplifier.h match the Poly Haven pin. The archived binary reproduced the Lemon candidate and all 18 expansion-cohort candidate PLYs byte-for-byte. This identifies the recorded Poly Haven main.cpp pin mismatch, but a clean source rebuild remains unverified and the initial three cohort assets were not replayed."
 }

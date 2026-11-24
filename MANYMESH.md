@@ -20,14 +20,16 @@ use MSAA during fitting to improve silhouette gradients. See the
   SSIM, and silhouette XOR, with native sampling and 4x MSAA. Paired 95%
   intervals exclude zero across 16 source groups. This closes the tested cut,
   not every possible geometry method. It is fixed-view desktop evidence, not an
-  equal-time or mobile result. Source provenance remains unresolved: the
-  Poly Haven and Khronos receipts pin the same executable hash but record
-  different `main.cpp` hashes. See the [provenance audit](tools/mmtrain/mmgeo_source_provenance_audit_20261124.json).
+  equal-time or mobile result. The source-pin discrepancy is explained by
+  retained MSVC CodeView checksums: the linked `main.obj` used the Khronos
+  `main.cpp`, while the linked ManyMesh simplifier objects match the Poly Haven
+  pin. See the [compiled-source audit](tools/mmtrain/mmgeo_compiled_source_audit_20261125.json)
+  and [original provenance audit](tools/mmtrain/mmgeo_source_provenance_audit_20261124.json).
   A clean Release build of current `main` succeeded, but Windows application
   control blocked execution before geometry could be regenerated. The archived
   binary regenerated the 18 expanded-cohort candidate PLYs byte-for-byte at
   the recorded face counts. The initial three models were not included, and
-  binary replay does not resolve the source conflict. See the
+  binary replay does not substitute for a clean source rebuild. See the
   [geometry replay receipt](tools/mmtrain/polyhaven_geometry_replay_20261125.json)
   and [current-source rebuild receipt](tools/mmtrain/MMGEO_CLEAN_REBUILD_ATTEMPT_20261125.json).
   [Protocol and results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md) ·
