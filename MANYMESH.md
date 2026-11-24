@@ -54,12 +54,15 @@ and [SIGGRAPH direction](SIGGRAPH_2027_DIRECTION.md).
   stock depth-2 rendering reduced the 10,000-instance GPU raster p50 from
   26.15 ms to 6.66 ms on Iris Xe / D3D12 (3.93x), while PSNR fell by 0.015 dB
   and LDR-FLIP worsened by 0.00013 against the supersampled source reference.
-  Source and cut pass the recorded basic topology and boundary-edge count
-  checks. This is a one-view desktop diagnostic at unequal face counts, not a
-  held-out result, full-frame timing, mobile result, or ManyMesh method claim.
+  Source and cut pass a welded closed-manifold audit: each has three orientable
+  components with Euler characteristic 2, with matching component signatures.
+  This is a one-view desktop diagnostic at unequal face counts, not a held-out
+  result, full-frame timing, mobile result, or ManyMesh method claim. The audit
+  does not test geometric self-intersections or surface distance.
   See the [protocol and results](tools/mmtrain/INSTANCE_SCALE_BARRAMUNDIFISH_SCREEN_20261125.md)
   and [raw run receipts](tools/mmtrain/instance_scale_barramundifish_20261125_a.json),
-  [run B](tools/mmtrain/instance_scale_barramundifish_20261125_b.json).
+  [run B](tools/mmtrain/instance_scale_barramundifish_20261125_b.json), and
+  [topology audit](tools/mmtrain/barramundifish_topology_20261125.json).
 
 No physical-phone test, equal-frame-time quality comparison, LPIPS evaluation,
 moving-camera temporal evaluation, user study, or positive held-out optimized

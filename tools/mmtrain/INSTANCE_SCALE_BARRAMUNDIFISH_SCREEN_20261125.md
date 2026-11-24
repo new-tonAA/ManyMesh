@@ -103,12 +103,29 @@ timings omit loading, CPU work, LOD selection, culling, and presentation; they
 are neither full-frame nor mobile results. The comparison is not at equal face
 count or equal image quality and does not support a ManyMesh method claim.
 
-The source and depth-2 cut both have zero repeated-vertex faces, duplicate
-faces, nonmanifold edges, and boundary edges according to the recorded edge
-incidence audit. This is a basic topology eligibility check, not a geometric
-boundary-curve correspondence audit. The source is the pinned Khronos
-BarramundiFish sample asset, licensed CC0-1.0; its asset and geometry hashes
-are in each receipt.
+An additional welded-topology audit passes vertex-link manifoldness,
+orientability, edge incidence, and closedness for both source and cut. Each has
+three connected components with Euler characteristic 2; the source/cut
+component signatures match. This establishes equal closed orientable
+combinatorial surface types for this pair. It does not check geometric
+self-intersections, near-coincident seams, attributes, or surface distance.
+The source is the pinned Khronos BarramundiFish sample asset, licensed CC0-1.0;
+its asset and geometry hashes are in each receipt. Reproduce the stronger audit
+with:
+
+```powershell
+$env:PYTHONPATH = 'out/contour-gpu-pydeps-20261123;out/manymesh-research-pydeps-20261123'
+python tools/mmtrain/audit_instance_scale_topology.py `
+  --manifest out/geometry-refinement-pilot/motion-96.json `
+  --meshes out/geometry-refinement-pilot/motion-meshes `
+  --stock out/mixed-scene/stock `
+  --asset BarramundiFish `
+  --output out/mixed-scene/barramundifish_topology_20261125.json
+```
+
+The audit implementation and output are available as
+[`audit_instance_scale_topology.py`](audit_instance_scale_topology.py) and
+[`topology receipt`](barramundifish_topology_20261125.json).
 
 The raw receipts are
 [`run A`](instance_scale_barramundifish_20261125_a.json) and

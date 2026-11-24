@@ -1,0 +1,151 @@
+{
+  "schema": 1,
+  "asset": "BarramundiFish",
+  "license": "CC0-1.0; see the pinned source-list record in the benchmark receipts",
+  "manifest_sha256": "328f1efeecfb5b6e0221a2f0665aed1a7e180f50b000f3da5f44a609563ea825",
+  "stock_manifest_sha256": "f54ed747e3265b44dc5df4f78ad7b87dd5998839e1752499edca3d5daf584788",
+  "source_mesh_sha256": "0b9165dbda260456c3e7fccdb544fe0ff2169923510a0031390f1e839852a1ab",
+  "cluster2_indices_sha256": "b5e4662579b4a79ac7cc0a7883107c3ba53a9fe95147a90bc64b4ded3f8f071e",
+  "position_welding": "exact float32 xyz coordinate equality",
+  "source": {
+    "supported_closed_manifold": true,
+    "components": [
+      {
+        "triangles": 290,
+        "vertices": 147,
+        "edges": 435,
+        "chi": 2,
+        "boundary_edges": 0,
+        "supported": true,
+        "duplicate_faces": 0,
+        "degenerate_faces": 0,
+        "bad_vertex_links": 0,
+        "nonmanifold_edges": 0,
+        "orientation_conflicts": 0,
+        "orientable": true,
+        "winding_flip_count": 0,
+        "conditional_floor": 4
+      },
+      {
+        "triangles": 290,
+        "vertices": 147,
+        "edges": 435,
+        "chi": 2,
+        "boundary_edges": 0,
+        "supported": true,
+        "duplicate_faces": 0,
+        "degenerate_faces": 0,
+        "bad_vertex_links": 0,
+        "nonmanifold_edges": 0,
+        "orientation_conflicts": 0,
+        "orientable": true,
+        "winding_flip_count": 0,
+        "conditional_floor": 4
+      },
+      {
+        "triangles": 3284,
+        "vertices": 1644,
+        "edges": 4926,
+        "chi": 2,
+        "boundary_edges": 0,
+        "supported": true,
+        "duplicate_faces": 0,
+        "degenerate_faces": 0,
+        "bad_vertex_links": 0,
+        "nonmanifold_edges": 0,
+        "orientation_conflicts": 0,
+        "orientable": true,
+        "winding_flip_count": 0,
+        "conditional_floor": 4
+      }
+    ],
+    "topology_signature": [
+      {
+        "chi": 2,
+        "orientable": true
+      },
+      {
+        "chi": 2,
+        "orientable": true
+      },
+      {
+        "chi": 2,
+        "orientable": true
+      }
+    ]
+  },
+  "cluster2": {
+    "supported_closed_manifold": true,
+    "components": [
+      {
+        "triangles": 64,
+        "vertices": 34,
+        "edges": 96,
+        "chi": 2,
+        "boundary_edges": 0,
+        "supported": true,
+        "duplicate_faces": 0,
+        "degenerate_faces": 0,
+        "bad_vertex_links": 0,
+        "nonmanifold_edges": 0,
+        "orientation_conflicts": 0,
+        "orientable": true,
+        "winding_flip_count": 0,
+        "conditional_floor": 4
+      },
+      {
+        "triangles": 66,
+        "vertices": 35,
+        "edges": 99,
+        "chi": 2,
+        "boundary_edges": 0,
+        "supported": true,
+        "duplicate_faces": 0,
+        "degenerate_faces": 0,
+        "bad_vertex_links": 0,
+        "nonmanifold_edges": 0,
+        "orientation_conflicts": 0,
+        "orientable": true,
+        "winding_flip_count": 0,
+        "conditional_floor": 4
+      },
+      {
+        "triangles": 836,
+        "vertices": 420,
+        "edges": 1254,
+        "chi": 2,
+        "boundary_edges": 0,
+        "supported": true,
+        "duplicate_faces": 0,
+        "degenerate_faces": 0,
+        "bad_vertex_links": 0,
+        "nonmanifold_edges": 0,
+        "orientation_conflicts": 0,
+        "orientable": true,
+        "winding_flip_count": 0,
+        "conditional_floor": 4
+      }
+    ],
+    "topology_signature": [
+      {
+        "chi": 2,
+        "orientable": true
+      },
+      {
+        "chi": 2,
+        "orientable": true
+      },
+      {
+        "chi": 2,
+        "orientable": true
+      }
+    ]
+  },
+  "same_closed_orientable_component_signature": true,
+  "eligible_for_combinatorial_topology_comparison": true,
+  "limitations": [
+    "Does not test geometric self-intersections or near-coincident seams.",
+    "Does not compare surface distance, attributes, or image quality."
+  ],
+  "audit_script_sha256": "63434d7ee248d43f79d88c747de7dd3be939cc12cff2ad6586e177d70f5e2105"
+}
