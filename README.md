@@ -39,6 +39,11 @@ The 21-model result is fixed-view Iris Xe evidence, not mobile or equal-time
 evidence. The earlier seven-asset Khronos screen used a retrospective boundary
 tolerance and reused development assets; its two all-metric wins were against
 meshoptimizer only, not QEM. [Reports and raw metrics](MANYMESH.md#evidence).
+The 21-model scoring replay matches byte-for-byte, but its geometry receipts
+record a different `main.cpp` hash from the Khronos run despite sharing the
+same `mmgeo` binary hash. No clean source rebuild has resolved that conflict,
+so source-level reproduction remains unverified. See the
+[provenance audit](tools/mmtrain/mmgeo_source_provenance_audit_20261124.json).
 
 ## Research documents
 
