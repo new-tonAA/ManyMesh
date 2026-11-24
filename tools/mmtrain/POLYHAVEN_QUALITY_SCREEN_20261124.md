@@ -103,7 +103,15 @@ the Khronos `main.cpp` hash; `Simplifier.obj` records the Poly Haven hashes for
 `Simplifier.cpp` and `Simplifier.h`. The link logs associate `main.obj` and
 `manymesh.lib` with the archived executable. Therefore the Poly Haven
 `main.cpp` source pin does not describe the source used for that binary. A
-clean source rebuild is still unverified. See the
+clean Release build from reconstructed source commit
+`489b275dd472117ae5cc528de0443cf04bd31aa9` matches the archived PE byte-for-byte
+except for the COFF build timestamp and its duplicate in `.rdata` (six changed
+bytes total). Every other byte, including `.text`, matches. The retained
+`Grouper.obj` does not contain a `Grouper.cpp` source checksum, so that
+translation unit is not independently source-pinned. Windows application
+control prevented execution of the rebuilt binary; no runtime geometry replay
+was attempted with it. See the [clean rebuild receipt](mmgeo_clean_rebuild_489_20261125.json),
+[binary comparison verifier](verify_mmgeo_clean_rebuild_489_20261125.py),
 [compiled-source audit](mmgeo_compiled_source_audit_20261125.json), its
 [reproduction script](audit_mmgeo_compiled_source_20261125.py), and the
 [original provenance audit](mmgeo_source_provenance_audit_20261124.json).
@@ -129,5 +137,7 @@ matched the recorded face count. The initial three cohort assets were not part
 of this geometry replay. No image-quality metrics were recomputed. See the
 [geometry replay script](replay_polyhaven_geometry_20261125.py) and
 [machine-readable receipt](polyhaven_geometry_replay_20261125.json). Combined
-with the CodeView audit, this resolves the archived build's source-pin
-discrepancy; it does not verify a clean source rebuild.
+with the CodeView audit and clean rebuild, this resolves the archived build's
+`main.cpp` source-pin discrepancy and reproduces its machine code. It does not
+prove runtime behavior for the rebuilt binary or replay the initial three
+cohort assets.

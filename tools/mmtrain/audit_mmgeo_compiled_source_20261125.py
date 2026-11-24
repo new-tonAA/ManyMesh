@@ -19,6 +19,7 @@ POLYHAVEN_METRICS = ROOT / "tools/mmtrain/polyhaven_quality_metrics_20261124.jso
 KHRONOS_RECEIPT = ROOT / "tools/mmtrain/khronos_equal_face_quality_screen_20261123.json"
 OLD_AUDIT = ROOT / "tools/mmtrain/mmgeo_source_provenance_audit_20261124.json"
 GEOMETRY_REPLAY = ROOT / "tools/mmtrain/polyhaven_geometry_replay_20261125.json"
+CLEAN_REBUILD = ROOT / "tools/mmtrain/mmgeo_clean_rebuild_489_20261125.json"
 DEFAULT_LLVM = Path(
     "D:/visual studio 2022/VC/Tools/Llvm/bin/llvm-readobj.exe"
 )
@@ -103,6 +104,15 @@ def main() -> None:
     lib_read_text = tlog_text(lib_read)
     binary_hash = digest(executable)
     replay = read_json(GEOMETRY_REPLAY)
+    clean_rebuild = read_json(CLEAN_REBUILD)
+    clean_rebuild_verified = (
+        clean_rebuild["binary_comparison"]["non_timestamp_bytes_equal"]
+        and clean_rebuild["binary_comparison"]["text_section_sha256_archived"]
+        == clean_rebuild["binary_comparison"]["text_section_sha256_rebuilt"]
+        and clean_rebuild["source_pin_resolution"]["main_cpp_matches_khronos_receipt"]
+        and clean_rebuild["source_pin_resolution"]["simplifier_cpp_matches_polyhaven_codeview"]
+        and clean_rebuild["source_pin_resolution"]["simplifier_h_matches_polyhaven_codeview"]
+    )
     binary_matches_receipts = (
         binary_hash == polyhaven["mmgeo_sha256"] == khronos["mmgeo_binary_sha256"]
     )
@@ -133,6 +143,7 @@ def main() -> None:
             and replay["summary"]["byte_for_byte_matches"] == 18
             and replay["summary"]["face_count_matches"] == 18
         ),
+        "clean_rebuild_machine_code_matches_archived_binary": clean_rebuild_verified,
     }
     if not all(matches.values()):
         raise SystemExit(f"compiled-source audit checks failed: {matches}")
@@ -195,9 +206,10 @@ def main() -> None:
             "expanded_cohort_binary_geometry_replay_status": replay["status"],
             "expanded_cohort_byte_identical_assets": replay["summary"]["byte_for_byte_matches"],
         },
-        "clean_source_rebuild_verified": False,
+        "clean_source_rebuild_verified": clean_rebuild_verified,
+        "clean_source_rebuild_receipt": CLEAN_REBUILD.relative_to(ROOT).as_posix(),
         "conclusion": (
-            "The retained MSVC object checksums show the archived executable was linked from a main.obj compiled with the Khronos main.cpp SHA-256, while Simplifier.cpp and Simplifier.h match the Poly Haven pin. This identifies the Poly Haven main.cpp source pin as inconsistent with the retained compiler input. The archived binary hash matches both experiment receipts and its 18-asset expansion geometry replay is byte-identical. A clean source rebuild was not verified."
+            "The retained MSVC object checksums show that the archived executable used the Khronos main.cpp and the Poly Haven Simplifier.cpp/.h. A clean Release build from the reconstructed source commit reproduces the archived PE byte-for-byte except for the two duplicated build-timestamp fields; the .text section is identical. The Grouper.cpp source checksum was not present in the retained CodeView data. The archived binary hash matches both experiment receipts, and its 18-asset expansion geometry replay is byte-identical. The rebuilt executable was not run because Windows application control had blocked the archived executable, and no policy bypass was attempted."
         ),
     }
     output = args.output.resolve()
@@ -208,6 +220,7 @@ def main() -> None:
     print("Compiled Simplifier.cpp:", compiled["libs/manymesh/src/Simplifier.cpp"])
     print("Compiled Simplifier.h:", compiled["libs/manymesh/include/manymesh/Simplifier.h"])
     print("Binary source mismatch identified:", report["comparisons"]["compiled_main_matches_polyhaven_receipt"] is False)
+    print("Clean source rebuild machine-code match:", clean_rebuild_verified)
     print("Receipt:", output.relative_to(ROOT).as_posix())
 
 

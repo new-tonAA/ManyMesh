@@ -23,15 +23,19 @@ use MSAA during fitting to improve silhouette gradients. See the
   equal-time or mobile result. The source-pin discrepancy is explained by
   retained MSVC CodeView checksums: the linked `main.obj` used the Khronos
   `main.cpp`, while the linked ManyMesh simplifier objects match the Poly Haven
-  pin. See the [compiled-source audit](tools/mmtrain/mmgeo_compiled_source_audit_20261125.json)
-  and [original provenance audit](tools/mmtrain/mmgeo_source_provenance_audit_20261124.json).
-  A clean Release build of current `main` succeeded, but Windows application
-  control blocked execution before geometry could be regenerated. The archived
+  pin. A clean Release build from the reconstructed source commit reproduces
+  every PE byte except the two duplicated build-timestamp fields; its `.text`
+  section is identical. `Grouper.cpp` is not independently source-pinned by
+  the retained CodeView data. Windows application control prevented running
+  the rebuilt executable, so this is a static rebuild check. The archived
   binary regenerated the 18 expanded-cohort candidate PLYs byte-for-byte at
-  the recorded face counts. The initial three models were not included, and
-  binary replay does not substitute for a clean source rebuild. See the
-  [geometry replay receipt](tools/mmtrain/polyhaven_geometry_replay_20261125.json)
-  and [current-source rebuild receipt](tools/mmtrain/MMGEO_CLEAN_REBUILD_ATTEMPT_20261125.json).
+  the recorded face counts. The initial three models were not included.
+  Provenance: [clean rebuild receipt](tools/mmtrain/mmgeo_clean_rebuild_489_20261125.json),
+  [compiled-source audit](tools/mmtrain/mmgeo_compiled_source_audit_20261125.json),
+  and [rebuild verifier](tools/mmtrain/verify_mmgeo_clean_rebuild_489_20261125.py),
+  with the [initial provenance audit](tools/mmtrain/mmgeo_source_provenance_audit_20261124.json).
+  Geometry replay: [receipt](tools/mmtrain/polyhaven_geometry_replay_20261125.json)
+  and [current-source rebuild attempt](tools/mmtrain/MMGEO_CLEAN_REBUILD_ATTEMPT_20261125.json).
   [Protocol and results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md) ·
   [per-view metrics](tools/mmtrain/polyhaven_quality_metrics_20261124.json) ·
   [21/21 exact score replay](tools/mmtrain/POLYHAVEN_SCORE_REPLAY_AUDIT_20261124.md)

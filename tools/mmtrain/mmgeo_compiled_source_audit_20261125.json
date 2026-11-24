@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "status": "compiled source checksums identify the recorded main.cpp pin mismatch",
-  "script_sha256": "eb25897f7ab2fc7f2d9da8edb22cb7953a6deafe283358d386c345877b9f643c",
+  "script_sha256": "c81bd16de4d135e35a6cf280495bbf55ab786cf6ecd4df2e2545dee9fc71ef3a",
   "tool": {
     "path": "D:\\visual studio 2022\\VC\\Tools\\Llvm\\bin\\llvm-readobj.exe",
     "sha256": "07a3a6dafb376ad9f56f2dfcc5ff0611943466f971423866f53b2517bd9a536d",
@@ -55,6 +55,7 @@
     "compiled_simplifier_h_matches_polyhaven_pin": true,
     "all_link_inputs_verified": true,
     "expanded_geometry_replay_complete": true,
+    "clean_rebuild_machine_code_matches_archived_binary": true,
     "compiled_main_matches_khronos_receipt": true,
     "compiled_main_matches_polyhaven_receipt": false,
     "compiled_main_matches_build_source_pin": false,
@@ -62,6 +63,7 @@
     "expanded_cohort_binary_geometry_replay_status": "all_archived_candidates_reproduced_byte_for_byte",
     "expanded_cohort_byte_identical_assets": 18
   },
-  "clean_source_rebuild_verified": false,
-  "conclusion": "The retained MSVC object checksums show the archived executable was linked from a main.obj compiled with the Khronos main.cpp SHA-256, while Simplifier.cpp and Simplifier.h match the Poly Haven pin. This identifies the Poly Haven main.cpp source pin as inconsistent with the retained compiler input. The archived binary hash matches both experiment receipts and its 18-asset expansion geometry replay is byte-identical. A clean source rebuild was not verified."
+  "clean_source_rebuild_verified": true,
+  "clean_source_rebuild_receipt": "tools/mmtrain/mmgeo_clean_rebuild_489_20261125.json",
+  "conclusion": "The retained MSVC object checksums show that the archived executable used the Khronos main.cpp and the Poly Haven Simplifier.cpp/.h. A clean Release build from the reconstructed source commit reproduces the archived PE byte-for-byte except for the two duplicated build-timestamp fields; the .text section is identical. The Grouper.cpp source checksum was not present in the retained CodeView data. The archived binary hash matches both experiment receipts, and its 18-asset expansion geometry replay is byte-identical. The rebuilt executable was not run because Windows application control had blocked the archived executable, and no policy bypass was attempted."
 }

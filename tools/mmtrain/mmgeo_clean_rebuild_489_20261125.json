@@ -1,0 +1,188 @@
+{
+  "schema": 1,
+  "status": "clean source rebuild matches the archived PE except for two copies of its build timestamp; all other bytes match",
+  "attempt_date_local": "2026-11-25",
+  "source_revision": {
+    "commit": "489b275dd472117ae5cc528de0443cf04bd31aa9",
+    "parent": "2d417cacdeb545a13e6bfb7192310191e60670d6",
+    "subject": "On research/filter-aware-simplification: codex-preserve-before-main-sync-2026-11-23"
+  },
+  "source_sha256": {
+    "tools/mmgeo/src/main.cpp": "c044d8d026b32ccb335e99a8c9b0ef4e2ffc766e51455647f29f75bdcf6edea4",
+    "libs/manymesh/src/Simplifier.cpp": "6f43d308dbec71f167af06262d18c22ffc07142ef8eb35769f7a981a1459a0ff",
+    "libs/manymesh/include/manymesh/Simplifier.h": "2765428bd8def355edef95b20d2714ddd24377f72399ae995d029b720370e950",
+    "libs/manymesh/src/Clusterizer.cpp": "b060f37a6167f0f1876165767937564a739855a2c68327614734665665b8975a",
+    "libs/manymesh/src/LodGraph.cpp": "773eabde39e1dbe4602f0d1be40b8fbc126dbdfcaedd954aebf90ee4c9a2f8f0",
+    "libs/manymesh/src/Grouper.cpp": "cd5171e10c48497fc3f6ca29bfc98e81cdea984efdf0d35a465f6a7048edb864",
+    "libs/manymesh/include/manymesh/Cluster.h": "22f023326b734c743b1c00f35b0bf72177ff310f29dafeac1bb07fd454b0fc5e"
+  },
+  "archived_compiled_source_sha256": {
+    "tools/mmgeo/src/main.cpp": "c044d8d026b32ccb335e99a8c9b0ef4e2ffc766e51455647f29f75bdcf6edea4",
+    "libs/manymesh/src/Simplifier.cpp": "6f43d308dbec71f167af06262d18c22ffc07142ef8eb35769f7a981a1459a0ff",
+    "libs/manymesh/include/manymesh/Simplifier.h": "2765428bd8def355edef95b20d2714ddd24377f72399ae995d029b720370e950"
+  },
+  "source_pin_resolution": {
+    "main_cpp_matches_khronos_receipt": true,
+    "main_cpp_matches_polyhaven_recorded_pin": false,
+    "simplifier_cpp_matches_polyhaven_codeview": true,
+    "simplifier_h_matches_polyhaven_codeview": true,
+    "clusterizer_cpp_matches_retained_codeview": true,
+    "lodgraph_cpp_matches_retained_codeview": true,
+    "cluster_h_matches_retained_codeview": true,
+    "grouper_cpp_retained_codeview_checksum_available": false
+  },
+  "build": {
+    "configure_command": "cmake -S out/mmgeo-worktree-489-20261125 -B out/mmgeo-worktree-489-20261125/build-mmgeo-release-20261125 -G \"Visual Studio 17 2022\" -A x64 -DFILAMENT_SUPPORTS_OPENGL=ON -DFILAMENT_ENABLE_PERFETTO=ON -DFILAMENT_BUILD_TESTING=ON -DFILAMENT_BUILD_FILAMAT=ON -DFILAMENT_SKIP_SAMPLES=OFF -DFILAMENT_ENABLE_LTO=OFF",
+    "build_command": "cmake --build out/mmgeo-worktree-489-20261125/build-mmgeo-release-20261125 --config Release --target mmgeo -- /m:1 /nr:false",
+    "build_exit_code": 0,
+    "cmake": "cmake version 3.31.6-msvc6",
+    "generator": "Visual Studio 17 2022",
+    "platform": "x64",
+    "msbuild": "17.14.14.31908",
+    "msvc": "19.38.33145",
+    "open_gl": true,
+    "perfetto": true,
+    "lto": false
+  },
+  "binary_comparison": {
+    "archived_path": "out/cmake-cut-audit/tools/mmgeo/Release/mmgeo.exe",
+    "archived_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+    "rebuilt_path": "out/mmgeo-worktree-489-20261125/build-mmgeo-release-20261125/tools/mmgeo/Release/mmgeo.exe",
+    "rebuilt_sha256": "46d580f2378344b504e2dc6928fc26762600b74592f509e4577db28f95c081ad",
+    "byte_count_archived": 1942016,
+    "byte_count_rebuilt": 1942016,
+    "different_byte_count": 6,
+    "different_spans": 2,
+    "whole_file_equal_except_timestamp_field": true,
+    "timestamp_field": {
+      "section": "PE COFF header and duplicate .rdata value",
+      "archived_u32_hex": "0x6b03f02a",
+      "rebuilt_u32_hex": "0x6b05cbf2",
+      "archived_unix_utc": "2026-11-23T07:50:02Z",
+      "rebuilt_unix_utc": "2026-11-24T17:40:02Z"
+    },
+    "sections_equal_except_rdata_timestamp": true,
+    "text_section_sha256_archived": "c1c53bd2f50a46ade11942b85043e17f3ec9f75faa0dd4a66e5934c7def28d0c",
+    "text_section_sha256_rebuilt": "c1c53bd2f50a46ade11942b85043e17f3ec9f75faa0dd4a66e5934c7def28d0c",
+    "section_sha256_archived": {
+      ".text": {
+        "offset": 1024,
+        "size": 1565696,
+        "sha256": "c1c53bd2f50a46ade11942b85043e17f3ec9f75faa0dd4a66e5934c7def28d0c"
+      },
+      ".rdata": {
+        "offset": 1566720,
+        "size": 296960,
+        "sha256": "f632628e21dfe595655420a7f4e1309c87f4bc06e498715489877c6a2b610352"
+      },
+      ".data": {
+        "offset": 1863680,
+        "size": 14336,
+        "sha256": "85ebd6237483d727cdac0dc125d29cbedcd5994cb9757ed845116df0e532852c"
+      },
+      ".pdata": {
+        "offset": 1878016,
+        "size": 57344,
+        "sha256": "39be39b28587391ed544955b6f4dcf0dd342be58fb084e0464457ecbd3ce09ef"
+      },
+      "_RDATA": {
+        "offset": 1935360,
+        "size": 512,
+        "sha256": "ff7ec461822ce327385bed2c1d6a6a3b4c4b16b36b41d37ac1a3c50c4f5b33af"
+      },
+      ".fptable": {
+        "offset": 1935872,
+        "size": 512,
+        "sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560"
+      },
+      ".rsrc": {
+        "offset": 1936384,
+        "size": 512,
+        "sha256": "d0f4dd2b3677ed3eb3bf90e0d718b2c38630430a77cec595132f64064b73114a"
+      },
+      ".reloc": {
+        "offset": 1936896,
+        "size": 5120,
+        "sha256": "d9a9db57ef587369df043a5afa017fcb44cd7460dd114317e5d3984d76f7b377"
+      }
+    },
+    "section_sha256_rebuilt": {
+      ".text": {
+        "offset": 1024,
+        "size": 1565696,
+        "sha256": "c1c53bd2f50a46ade11942b85043e17f3ec9f75faa0dd4a66e5934c7def28d0c"
+      },
+      ".rdata": {
+        "offset": 1566720,
+        "size": 296960,
+        "sha256": "214c7cb90c2f6fe0eab939ff08eac5a61918f7c3ed520898a1b52d87a87a1643"
+      },
+      ".data": {
+        "offset": 1863680,
+        "size": 14336,
+        "sha256": "85ebd6237483d727cdac0dc125d29cbedcd5994cb9757ed845116df0e532852c"
+      },
+      ".pdata": {
+        "offset": 1878016,
+        "size": 57344,
+        "sha256": "39be39b28587391ed544955b6f4dcf0dd342be58fb084e0464457ecbd3ce09ef"
+      },
+      "_RDATA": {
+        "offset": 1935360,
+        "size": 512,
+        "sha256": "ff7ec461822ce327385bed2c1d6a6a3b4c4b16b36b41d37ac1a3c50c4f5b33af"
+      },
+      ".fptable": {
+        "offset": 1935872,
+        "size": 512,
+        "sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560"
+      },
+      ".rsrc": {
+        "offset": 1936384,
+        "size": 512,
+        "sha256": "d0f4dd2b3677ed3eb3bf90e0d718b2c38630430a77cec595132f64064b73114a"
+      },
+      ".reloc": {
+        "offset": 1936896,
+        "size": 5120,
+        "sha256": "d9a9db57ef587369df043a5afa017fcb44cd7460dd114317e5d3984d76f7b377"
+      }
+    },
+    "different_span_offsets": [
+      {
+        "start": "0x118",
+        "end": "0x11a"
+      },
+      {
+        "start": "0x1a61a4",
+        "end": "0x1a61a6"
+      }
+    ],
+    "non_timestamp_bytes_equal": true,
+    "whole_file_equal_except_timestamp_fields": true,
+    "timestamp_fields": [
+      {
+        "field": "PE COFF TimeDateStamp",
+        "section": "PE header",
+        "file_offset": 280,
+        "archived_u32_hex": "0x6b03f02a",
+        "rebuilt_u32_hex": "0x6b05cbf2"
+      },
+      {
+        "field": "duplicate build timestamp",
+        "section": ".rdata",
+        "file_offset": 1728932,
+        "rva_offset": 162212,
+        "archived_u32_hex": "0x6b03f02a",
+        "rebuilt_u32_hex": "0x6b05cbf2"
+      }
+    ]
+  },
+  "execution": {
+    "rebuilt_binary_executed": false,
+    "reason": "The archived executable was previously blocked by Windows application control; this rebuild check is static and no policy bypass was attempted."
+  },
+  "conclusion": "A clean Release build from reconstructed source commit 489b275dd472117ae5cc528de0443cf04bd31aa9 reproduces the archived executable byte-for-byte except for the PE COFF timestamp and its duplicate in .rdata. Those two 32-bit timestamp fields account for all six differing bytes; every other PE byte matches, including the identical .text section. Retained CodeView checksums identify the hybrid source set as Khronos main.cpp plus Poly Haven Simplifier.cpp/.h. The retained Grouper.obj has no Grouper.cpp source checksum, so that single translation unit is not independently source-pinned. The rebuilt executable was not run because Windows application control previously blocked the archived executable; no policy bypass was attempted.",
+  "verification_script": "tools/mmtrain/verify_mmgeo_clean_rebuild_489_20261125.py",
+  "verification_script_sha256": "124c6e7ff2e48892e58da38979d2f47fa6aa854816e19fd8d7d7f9a8b4475aaf"
+}

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "status": "source provenance conflict: same binary hash, different main.cpp hashes",
+  "status": "initial source-pin conflict resolved by a follow-up clean rebuild, with one translation-unit checksum limitation",
   "khronos_binary_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
   "polyhaven_recorded_binary_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
   "polyhaven_geometry_receipt_binary_sha256": [
@@ -23,8 +23,8 @@
   "patch_matches_khronos_main_hash": true,
   "patch_matches_polyhaven_main_hash": false,
   "binary_hash_matches_across_runs": true,
-  "source_identity_resolved": false,
-  "clean_binary_rebuild_verified": false,
+  "source_identity_resolved": true,
+  "clean_binary_rebuild_verified": true,
   "compiler_environment_recorded": true,
   "retained_build_trace": {
     "available": true,
@@ -40,5 +40,12 @@
     "main_cpp_compile_invocation": "D:\\visual studio 2022\\VC\\Tools\\MSVC\\14.38.33130\\bin\\HostX64\\x64\\CL.exe /c /I\"E:\\ManyMesh\\out\\cmake-cut-audit\\tools\\mmgeo\\generated\" /IE:\\ManyMesh\\third_party\\libz\\tnt\\.. /IE:\\ManyMesh\\libs\\image\\include /IE:\\ManyMesh\\libs\\math\\include /IE:\\ManyMesh\\libs\\utils\\include /IE:\\ManyMesh\\third_party\\getopt\\include /I\"E:\\ManyMesh\\third_party\\robin-map\\tnt\\..\\include\" /IE:\\ManyMesh\\libs\\imageio\\include /IE:\\ManyMesh\\third_party\\libpng\\tnt\\.. /IE:\\ManyMesh\\third_party\\tinyexr\\tnt\\.. /IE:\\ManyMesh\\third_party\\basisu\\tnt\\..\\encoder /IE:\\ManyMesh\\third_party\\basisu\\tnt\\..\\transcoder /IE:\\ManyMesh\\libs\\manymesh\\include /IE:\\ManyMesh\\third_party\\meshoptimizer\\tnt\\..\\src /Zi /nologo /W0 /WX- /diagnostics:column /MP /O2 /Ob2 /D _MBCS /D WIN32 /D _WINDOWS /D _USE_MATH_DEFINES=1 /D _CRT_SECURE_NO_WARNINGS /D _CRT_NONSTDC_NO_DEPRECATE /D NDEBUG /D FILAMENT_SUPPORTS_OPENGL /D FILAMENT_ENABLE_PERFETTO /D FILAMENT_DRIVER_SUPPORTS_VULKAN /D \"CMAKE_INTDIR=\\\"Release\\\"\" /EHsc /MT /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++latest /Fo\"mmgeo.dir\\Release\\\\\" /Fd\"mmgeo.dir\\Release\\vc143.pdb\" /external:W0 /Gd /TP /errorReport:queue  /external:I \"E:/ManyMesh/third_party/libassimp/tnt/../include\" /Zc:__cplusplus -fno-rtti E:\\ManyMesh\\tools\\mmgeo\\src\\main.cpp"
   },
   "exact_build_command_recorded": true,
-  "scope": "The archived patch reconstructs the main.cpp hash recorded for the Khronos run. Poly Haven records a different main.cpp hash for the identical executable hash. A retained build trace names the matching executable and records its MSBuild and main.cpp compiler invocations, but it does not resolve which recorded source hash produced that binary or prove a clean source rebuild."
+  "scope": "The archived patch reconstructs the main.cpp hash recorded for the Khronos run. Poly Haven records a different main.cpp hash for the identical executable hash. A retained build trace names the matching executable and records its MSBuild and main.cpp compiler invocations, but it does not resolve which recorded source hash produced that binary or prove a clean source rebuild.",
+  "follow_up_clean_source_rebuild": {
+    "report": "tools/mmtrain/mmgeo_clean_rebuild_489_20261125.json",
+    "source_revision": "489b275dd472117ae5cc528de0443cf04bd31aa9",
+    "result": "clean Release rebuild matches the archived PE except its duplicated build-timestamp fields; all other bytes, including .text, match",
+    "runtime_execution": "not performed; Windows application control blocked the prior executable and no policy bypass was attempted",
+    "remaining_source_attribution_limit": "Grouper.cpp is not independently source-pinned by the retained CodeView data"
+  }
 }
