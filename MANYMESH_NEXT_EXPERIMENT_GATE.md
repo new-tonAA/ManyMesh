@@ -43,6 +43,11 @@ Adaptive HLOD construction, parent-child vertex interpolation, and crack- and
 popping-free view-dependent transitions are also described by Li's SIGGRAPH
 Asia 2022 poster and CVMP 2023 paper ([2022 poster abstract](https://www.siggraph.org/wp-content/uploads/2023/01/SA-22-SIGGRAPH-Asia-2022-Posters.html),
 [2023 proceedings abstract](https://www.siggraph.org/wp-content/uploads/2023/12/CVMP-23-Proceedings-of-the-20th-ACM-SIGGRAPH-European-Conference-on-Visual-Media-Production.html)).
+Li's related i3D 2023 poster paper is available in full and details grid
+partitioning, octree-like merges, parent-child displacement bounds, and
+viewpoint-dependent vertex blending ([paper](https://i3dsymposium.org/2023/posters/rui_li_paper.pdf)).
+It reports 82.4M aggregate HLOD triangles for a 60.0M-triangle source and
+170 fps on an integrated-GPU desktop; these are not equal-face comparisons.
 The CVMP paper's ACM full text was inaccessible during this review; see the
 [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md) for
 review scope. The remaining experiment question is narrow: does fitting a

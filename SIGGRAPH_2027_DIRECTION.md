@@ -66,14 +66,24 @@ crack-free refinement ([full paper](https://diglib.eg.org/server/api/core/bitstr
 Li's SIGGRAPH Asia 2022 poster already describes parent-child vertex
 interpolation for crack- and popping-free adaptive multiresolution rendering
 ([official poster abstract](https://www.siggraph.org/wp-content/uploads/2023/01/SA-22-SIGGRAPH-Asia-2022-Posters.html)).
+His i3D 2023 poster paper gives a detailed public account: Euclidean grid
+partitioning, octree-like neighbor merges, parent-child displacement bounds,
+viewpoint-dependent LOD selection, and continuous parent-child vertex blending
+([full poster paper](https://i3dsymposium.org/2023/posters/rui_li_paper.pdf),
+Sections 2–4). Its table reports a 60.0-million-triangle temple source and
+82.4 million triangles across the resulting hierarchy, constructed in 35 s;
+the paper separately reports 170 fps on an integrated-GPU desktop. These are
+hierarchy-storage and desktop viewer results, not equal-face simplification
+results.
 Li's CVMP 2023 paper describes view-dependent adaptive HLOD construction by
 grid partition, neighboring-node merges and simplification, child-parent vertex
 relations, and coarse-to-fine traversal with interpolated crack-/popping-free
 transitions ([official proceedings abstract](https://www.siggraph.org/wp-content/uploads/2023/12/CVMP-23-Proceedings-of-the-20th-ACM-SIGGRAPH-European-Conference-on-Visual-Media-Production.html),
 [author-associated implementation repository](https://github.com/BigRayLee/3DViewer)).
 The ACM full paper returned HTTP 403 during this review, so these method details
-are limited to the official abstract and conference brochure; correspondence
-between the public repository and paper has not been audited. Together with
+are from the official abstract and conference brochure; the related i3D poster
+is not substituted for the CVMP paper. Repository-to-paper implementation
+correspondence has not been audited. Together with
 Quick-VDR and HLOD ASAP, this closes hierarchy construction, parent-child
 mapping, view-dependent selection, crack-free boundaries, and transition
 stability as standalone contributions. Hierarchy fitting, per-level
