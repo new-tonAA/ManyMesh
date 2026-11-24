@@ -53,14 +53,17 @@ comparison is not evidence of anything.
 
 ## Notes on the metrics
 
-- **PSNR** is computed on the 8-bit sRGB values, which is the usual convention, and is
-  reported as `inf` for identical frames.
+- **PSNR** is computed on the 8-bit sRGB values supplied to this tool and is reported as `inf`
+  for identical frames. Treat color transfer and quantization as part of the protocol; compare
+  images that use the same rendering and display transform.
 - **SSIM** is the mean of the windowed similarity map rather than skimage's scalar summary.
   A single global number hides exactly the failure mode that matters here: a simplification
   artefact is a small region going wrong while everything around it is untouched.
 - **LPIPS** is optional because it needs the `lpips` package and downloads AlexNet weights on
-  first use. It is the metric that correlates best with human judgement, so it is worth
-  enabling for anything being written up. On a CPU-only machine it is slow but workable.
+  first use. It is a learned feature-space metric that complements pixel metrics; its agreement
+  with human judgments depends on the data and task. Do not use it alone to claim user
+  preference. ManyMesh has not yet measured LPIPS on its confirmation cohort. On a CPU-only
+  machine it is slow but workable.
 - `pixels_over_1_255_percent` counts pixels where any channel moved by more than one 8-bit
   step. It is a blunt "did anything change at all" figure, useful for catching a render that
   silently did not load the mesh it was supposed to.

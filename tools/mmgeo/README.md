@@ -1,11 +1,14 @@
 # mmgeo
 
-The offline half of ManyMesh's **geometry optimization layer**. It clusters a mesh, builds a
-per-cluster LOD chain, and reports the geometric error each level introduces — both in world
-units and projected into screen space. The result is the *Geometry Error Map* that the neural
-reconstruction stage is meant to consume.
+Offline geometry preprocessing and diagnostics for ManyMesh. It clusters a mesh, builds a
+per-cluster LOD chain, and reports the geometric error each level introduces in world units and
+projected screen space. The error map is available for analysis and experiments; no active
+neural reconstruction stage consumes it. The tested ManyMesh cuts currently lose to matched
+QEM and meshoptimizer controls on the 21-model quality screen.
 
-See [`MANYMESH.md`](../../MANYMESH.md) for how this fits into the wider project.
+See [`MANYMESH.md`](../../MANYMESH.md) for how this fits into the wider project. See the
+[matched-face results](../../tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md) for the current
+quality evidence and its limits.
 
 ## What it does
 
