@@ -80,7 +80,9 @@ repeated results](tools/mmtrain/INSTANCE_SCALE_SCREEN_20261124.md) and
 A topology-clean, single-asset follow-up repeated BarramundiFish at the same
 instance counts. At 10,000 instances, stock depth-2 geometry reduced the GPU
 raster p50 from 26.15 ms to 6.66 ms (3.93x), with -0.015 dB PSNR and +0.00013
-LDR-FLIP deltas against the supersampled full-source reference. This remains a
+LDR-FLIP deltas against the supersampled full-source reference. Bidirectional
+sampled surface distance averages about 0.098% of the source bounding-box
+diagonal, with mean normal differences of 6.8-7.1 degrees. This remains a
 fixed-view desktop diagnostic at unequal face counts, not a held-out or
 full-frame result. See the [protocol and results](tools/mmtrain/INSTANCE_SCALE_BARRAMUNDIFISH_SCREEN_20261125.md)
 and [raw run receipts](tools/mmtrain/instance_scale_barramundifish_20261125_a.json)
