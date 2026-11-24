@@ -117,7 +117,20 @@ Neural level-of-detail and progressive geometry compression are also established
 an octree feature volume with multilevel SDF interpolation, and
 [Neural Progressive Meshes (SIGGRAPH 2023)](https://vovakim.com/papers_small/23_SIGGRAPHConference_NPM.pdf)
 transmits per-face features and progressive residuals to trade bandwidth for
-reconstruction quality. Together, these methods use different representations
+reconstruction quality. Weier et al.'s [Neural Prefiltering for
+Correlation-Aware Levels of Detail (TOG 2023)](https://doi.org/10.1145/3592443)
+learns appearance transport and visibility across a multilevel voxel grid for
+physically based rendering. Its full paper is now inspected; it closes broad
+claims to neural appearance LOD and multiscale appearance preservation, but it
+does not simplify triangle meshes or optimize them for raster AA/upscaling.
+Zhou et al.'s [Appearance-Preserving Scene Aggregation for Level-of-Detail
+Rendering (TOG 2025)](https://doi.org/10.1145/3708343) independently provides
+multiscale voxel scene LOD and discusses differentiable raster mesh fitting;
+its future-work section proposes combining scene aggregation with gradient-
+based optimization. This is a strong conceptual neighbor, even though it does
+not optimize a triangle-mesh cluster DAG for a specified post-AA/upscaler
+operator.
+Together, these methods use different representations
 and tasks, but rule out broad “neural LOD,” “latent mesh compression,” “learned
 residual geometry,” hierarchy optimization, learned refinement, or scale-aware
 image-fitting novelty claims. They do not establish a result for a constrained
