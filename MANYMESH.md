@@ -64,10 +64,11 @@ configuration and do not advance to a custom DAG optimizer.
 On 2026-11-25, `--prepare-only` was repeated for both frozen assets. Each output
 protocol matched its earlier per-asset receipt byte-for-byte, and the current
 fit script, scorer, and external NVIDIA source tree matched their pinned hashes.
-The base Python environment emitted a SciPy/NumPy compatibility warning
-(NumPy 2.5.4 is outside that SciPy build's declared range), although both
-preflights completed. Run from the recorded isolated research environment on
-the eventual CUDA host; no fit or quality scoring has run yet.
+The isolated research environment uses NumPy 2.3.4 and SciPy 1.15.3; both
+preflights completed there without warnings and still matched byte-for-byte. A
+run through the base Python environment emitted a SciPy/NumPy compatibility
+warning, so keep using the isolated environment on the eventual CUDA host. No
+fit or quality scoring has run yet.
 
 Frozen assets, controls, scorer, camera split, and limits are in the
 [input report](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md) and
