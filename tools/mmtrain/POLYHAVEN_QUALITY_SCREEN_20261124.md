@@ -101,6 +101,13 @@ delta was not recovered; a clean source rebuild has not been verified.
 Treat this as an auditable binary experiment, not a fully reproducible
 source build.
 
+The fixed image-scoring stage was subsequently replayed from the same local
+geometry exports on the same Iris Xe/D3D12 setup. All 21 output receipts matched
+the originals byte-for-byte, and the paired bootstrap deltas and intervals
+recomputed identically. This confirms the scoring stage only; it does not
+recover or rebuild the original `mmgeo` source.
+[Replay protocol and receipt](POLYHAVEN_SCORE_REPLAY_AUDIT_20261124.md).
+
 The [frozen cohort](polyhaven_quality_cohort_20261124.json), complete
 [per-view metrics and geometry metrics](polyhaven_quality_metrics_20261124.json),
 and [runner receipt](polyhaven_quality_screen_20261124.json) preserve the

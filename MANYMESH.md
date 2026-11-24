@@ -21,7 +21,8 @@ use MSAA during fitting to improve silhouette gradients. See the
   intervals exclude zero across 16 source groups. This closes the tested cut,
   not every possible geometry method. It is fixed-view desktop evidence, not an
   equal-time or mobile result. [Protocol and results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md) ·
-  [per-view metrics](tools/mmtrain/polyhaven_quality_metrics_20261124.json)
+  [per-view metrics](tools/mmtrain/polyhaven_quality_metrics_20261124.json) ·
+  [21/21 exact score replay](tools/mmtrain/POLYHAVEN_SCORE_REPLAY_AUDIT_20261124.md)
 - **Expanded eligibility screen:** 18 additional exact-face eligible assets
   were found; 28 of 46 topology-valid candidates failed a face-count or
   boundary gate. [Report](tools/mmtrain/POLYHAVEN_MATCHED_FACE_EXPANSION_20261124.md)
