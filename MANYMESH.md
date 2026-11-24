@@ -37,6 +37,11 @@ hypothesis with close prior art, not a novelty claim.
 - Four assets now supply boundary-preserving exact-face inputs around 50%
   retention. The 30% preflights found no complete set. BarramundiFish and
   Corset are the first CUDA pair. [Geometry receipts](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md)
+- A fixed-view desktop scale screen reaches 10,000 instances and 36.1 million
+  source triangles. A stock depth-2 cut reduces the submitted triangles by
+  75.0% and runs 4.31x faster at 4x MSAA in the 10,000-instance case, with a
+  small image-quality loss. This does not measure ManyMesh LOD selection,
+  complete frame cost, or mobile performance. [Protocol and results](tools/mmtrain/INSTANCE_SCALE_SCREEN_20261124.md) · [raw measurements](tools/mmtrain/instance_scale_20261124.json)
 - A 64-view source contour priority raised mean PSNR by 0.167 dB over the
   same unweighted QEM on seven development assets at equal faces. FLIP
   was mixed, and the only all-metric win over meshoptimizer also occurred

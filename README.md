@@ -53,10 +53,15 @@ physical-phone or user-preference result is available.
 - **The confirmation pool is provisional.** Twelve Poly Haven assets pass
   source topology across five classes. Three supply legal equal-face controls
   near 50% retention. [Geometry preflight](tools/mmtrain/POLYHAVEN_CANDIDATE_TOPOLOGY_20261124.md)
+- **A fixed-cut scale screen reaches 10,000 instances.** On Iris Xe, the
+  36.1-million-triangle source scene takes 29.0 ms at 4x MSAA; the stock depth-2
+  cut takes 6.7 ms (4.31x faster) with 75.0% fewer triangles, while worsening PSNR
+  and LDR-FLIP. This is a fixed-view desktop raster diagnostic, not a ManyMesh
+  selector, full-frame, or mobile result. [Protocol and metrics](tools/mmtrain/INSTANCE_SCALE_SCREEN_20261124.md)
 
 | Works in the measured scope | Does not pass | Not measured |
 |---|---|---|
-| Desktop experiments now compare several reconstruction modes, moving-camera paths, and geometry controls. | No new geometry or reconstruction method has a repeatable quality–cost win over strong controls. | Physical-phone performance, power, thermals, user preference, and independent held-out generalization. |
+| Desktop experiments now compare reconstruction modes, moving-camera paths, geometry controls, and a fixed-cut 10,000-instance workload. | No new geometry or reconstruction method has a repeatable quality–cost win over strong controls. | Physical-phone performance, power, thermals, user preference, and independent held-out generalization. |
 
 ## Next gate
 

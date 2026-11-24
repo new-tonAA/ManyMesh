@@ -1,0 +1,859 @@
+{
+  "protocol": "five fixed licensed Khronos meshes; identical fixed-footprint layouts; source versus stock cluster depth 2; both 4x MSAA",
+  "size": [
+    1280,
+    720
+  ],
+  "reference_size": [
+    2560,
+    1440
+  ],
+  "reference": "full source, 4x MSAA at 2x resolution, linear-light 2x box downsample",
+  "camera_eye": [
+    0.0,
+    0.0,
+    20.0
+  ],
+  "frames_per_batch": 12,
+  "batches": 2,
+  "adapter": {
+    "vendor": "31.0.101.4502",
+    "architecture": "",
+    "device": "Intel(R) Iris(R) Xe Graphics",
+    "description": "",
+    "stackgroup_min_size": 4,
+    "stackgroup_max_size": 128,
+    "vendor_id": 32902,
+    "device_id": 42912,
+    "adapter_type": "IntegratedGPU",
+    "backend_type": "D3D12"
+  },
+  "wgpu": "0.33.0",
+  "assets": {
+    "Avocado": {
+      "provenance": {
+        "name": "Avocado",
+        "license": "CC0-1.0",
+        "source": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/f0920f5b32d172a30efe3f9257e965918831e6ea/Models/Avocado",
+        "mesh": "Avocado\\Avocado.gltf",
+        "buffers": {
+          "Avocado.bin": "3bf7ce0ec994562eabf0cb72a52bbc7976818d630d62609a966b53a5ff9b9180"
+        }
+      },
+      "geometry": {
+        "source": {
+          "faces": 682,
+          "vertices": 363,
+          "sha256": "1fcb259e7b7f8d7e4b87aaa3d436b21c21c940b8efc4146a9c6bc36a7540579c"
+        },
+        "qem": {
+          "faces": 135,
+          "vertices": 75,
+          "sha256": "fcb6349d6532d0af44c881f31e8bd0ff99763b93677e164c4f7c3fde68f8dd39"
+        },
+        "whole": {
+          "faces": 135,
+          "vertices": 75,
+          "sha256": "fcb6349d6532d0af44c881f31e8bd0ff99763b93677e164c4f7c3fde68f8dd39"
+        },
+        "parts": {
+          "faces": 135,
+          "vertices": 75,
+          "sha256": "97707c48261f13954ba800862edbda68a10338e37f3b4b1ead34034483de465a"
+        }
+      },
+      "stock": {
+        "source_sha256": "1fcb259e7b7f8d7e4b87aaa3d436b21c21c940b8efc4146a9c6bc36a7540579c",
+        "source_faces": 682,
+        "source_topology": {
+          "repeated_vertex_faces": 0,
+          "duplicate_faces": 0,
+          "nonmanifold_edges": 0,
+          "boundary_edges": 38
+        },
+        "cuts": {
+          "cluster1": {
+            "count": 341,
+            "sha256": "b1275c7f1a33fbfff66b2e977ae510ad0e8b52f1afb634b13584e0cf43bbc0c5",
+            "demo_wall_ms": 12.10620003985241,
+            "topology": {
+              "repeated_vertex_faces": 0,
+              "duplicate_faces": 0,
+              "nonmanifold_edges": 0,
+              "boundary_edges": 13
+            }
+          },
+          "cluster2": {
+            "count": 169,
+            "sha256": "6daac2d14d6a1b99f5ebbd5b0bd60be7345981f7a881f10db5757bf33b480d42",
+            "demo_wall_ms": 15.005099994596094,
+            "topology": {
+              "repeated_vertex_faces": 0,
+              "duplicate_faces": 0,
+              "nonmanifold_edges": 0,
+              "boundary_edges": 11
+            }
+          }
+        }
+      }
+    },
+    "BarramundiFish": {
+      "provenance": {
+        "name": "BarramundiFish",
+        "license": "CC0-1.0",
+        "source": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/f0920f5b32d172a30efe3f9257e965918831e6ea/Models/BarramundiFish",
+        "mesh": "BarramundiFish\\BarramundiFish.gltf",
+        "buffers": {
+          "BarramundiFish.bin": "5d6ca35ff4e498d84597956091cf5de8ce0f236cd9b8ebf48e19d372e4187112"
+        }
+      },
+      "geometry": {
+        "source": {
+          "faces": 3864,
+          "vertices": 1938,
+          "sha256": "0b9165dbda260456c3e7fccdb544fe0ff2169923510a0031390f1e839852a1ab"
+        },
+        "qem": {
+          "faces": 772,
+          "vertices": 392,
+          "sha256": "897e00f7f81be5cb9fe69b0a7ee6656b1e2d0746bb2cd754690ce0b4a8ca01b5"
+        },
+        "whole": {
+          "faces": 772,
+          "vertices": 392,
+          "sha256": "ff603e3c142cca4d84eb837ae2226584ff87828a61e9197c78ec0ac533e9e453"
+        },
+        "parts": {
+          "faces": 772,
+          "vertices": 392,
+          "sha256": "488727d9d63d57d9b5b40d54adf9cd2043ab44298d8830f29508ed299d5339d1"
+        }
+      },
+      "stock": {
+        "source_sha256": "0b9165dbda260456c3e7fccdb544fe0ff2169923510a0031390f1e839852a1ab",
+        "source_faces": 3864,
+        "source_topology": {
+          "repeated_vertex_faces": 0,
+          "duplicate_faces": 0,
+          "nonmanifold_edges": 0,
+          "boundary_edges": 0
+        },
+        "cuts": {
+          "cluster1": {
+            "count": 1932,
+            "sha256": "6c95e97bb126f5fc4baec026fc9fb2886bc2ef0e4b410151a415ba1d234d6c24",
+            "demo_wall_ms": 27.11329999146983,
+            "topology": {
+              "repeated_vertex_faces": 0,
+              "duplicate_faces": 0,
+              "nonmanifold_edges": 0,
+              "boundary_edges": 0
+            }
+          },
+          "cluster2": {
+            "count": 966,
+            "sha256": "b5e4662579b4a79ac7cc0a7883107c3ba53a9fe95147a90bc64b4ded3f8f071e",
+            "demo_wall_ms": 26.76229999633506,
+            "topology": {
+              "repeated_vertex_faces": 0,
+              "duplicate_faces": 0,
+              "nonmanifold_edges": 0,
+              "boundary_edges": 0
+            }
+          }
+        }
+      }
+    },
+    "CesiumMilkTruck": {
+      "provenance": {
+        "name": "CesiumMilkTruck",
+        "license": "CC-BY-4.0",
+        "source": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/f0920f5b32d172a30efe3f9257e965918831e6ea/Models/CesiumMilkTruck",
+        "mesh": "CesiumMilkTruck\\CesiumMilkTruck.gltf",
+        "buffers": {
+          "CesiumMilkTruck_data.bin": "6783d6e3151b9ca72c64cf694cdb6964de3a2cffcf62015c1d91e358df434046"
+        }
+      },
+      "geometry": {
+        "source": {
+          "faces": 3624,
+          "vertices": 1840,
+          "sha256": "67496dd77e80f1cf40a76cd5c4301b350af13f972bbed3717d213271bd4459ae"
+        },
+        "qem": {
+          "faces": 778,
+          "vertices": 395,
+          "sha256": "20c5a4f299d91d79748b5c1f94665d0bd3316c2f9a5a7d599ee372e853e97556"
+        },
+        "whole": {
+          "faces": 778,
+          "vertices": 407,
+          "sha256": "1072d5db5c7aad78c0323325c4c0c3c74cdd528e75bdbd29b1d62ac17902ba29"
+        },
+        "parts": {
+          "faces": 778,
+          "vertices": 407,
+          "sha256": "38b7ea2cf03752bdcaa2e3d7aabb9ef448d303d36e41eb2a6431bab3caf9b899"
+        }
+      },
+      "stock": {
+        "source_sha256": "67496dd77e80f1cf40a76cd5c4301b350af13f972bbed3717d213271bd4459ae",
+        "source_faces": 3624,
+        "source_topology": {
+          "repeated_vertex_faces": 0,
+          "duplicate_faces": 0,
+          "nonmanifold_edges": 0,
+          "boundary_edges": 8
+        },
+        "cuts": {
+          "cluster1": {
+            "count": 1812,
+            "sha256": "cdf84ed64e557a25be5d1c14833db0ad9f03324a71adc99b24235263f76d204e",
+            "demo_wall_ms": 27.78619999298826,
+            "topology": {
+              "repeated_vertex_faces": 0,
+              "duplicate_faces": 0,
+              "nonmanifold_edges": 0,
+              "boundary_edges": 8
+            }
+          },
+          "cluster2": {
+            "count": 904,
+            "sha256": "424ac6e9c3a3e90791eb5f120667926154d732decc5f25ca85d467b3be249f3b",
+            "demo_wall_ms": 25.416299991775304,
+            "topology": {
+              "repeated_vertex_faces": 0,
+              "duplicate_faces": 1,
+              "nonmanifold_edges": 2,
+              "boundary_edges": 0
+            }
+          }
+        }
+      }
+    },
+    "Lantern": {
+      "provenance": {
+        "name": "Lantern",
+        "license": "CC0-1.0",
+        "source": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/f0920f5b32d172a30efe3f9257e965918831e6ea/Models/Lantern",
+        "mesh": "Lantern\\Lantern.gltf",
+        "buffers": {
+          "Lantern.bin": "ef0e2e89e4b14ff9035b43867a16dc3218569b29363ccb16b283b86f1dc50eb0"
+        }
+      },
+      "geometry": {
+        "source": {
+          "faces": 5394,
+          "vertices": 2737,
+          "sha256": "a8afd52a585f3ea07a7e93be4196ec8e898630c735e6984727e1373bd992de13"
+        },
+        "qem": {
+          "faces": 1650,
+          "vertices": 843,
+          "sha256": "96e3d85d1ba21699413741e35eb6d991db0439b1f6e2456769cabdbd607dcf1e"
+        },
+        "whole": {
+          "faces": 1650,
+          "vertices": 849,
+          "sha256": "c3a457d5c0bcb662639859e39305fb6a07d23aa3c928b70d3e6a2a410b6e3920"
+        },
+        "parts": {
+          "faces": 1650,
+          "vertices": 849,
+          "sha256": "b6d9d2a8cf73a90c9dc9d89c445724f500937ec5727e7abfaf3fc4f9b24fb53b"
+        }
+      },
+      "stock": {
+        "source_sha256": "a8afd52a585f3ea07a7e93be4196ec8e898630c735e6984727e1373bd992de13",
+        "source_faces": 5394,
+        "source_topology": {
+          "repeated_vertex_faces": 0,
+          "duplicate_faces": 0,
+          "nonmanifold_edges": 0,
+          "boundary_edges": 48
+        },
+        "cuts": {
+          "cluster1": {
+            "count": 2696,
+            "sha256": "485cf7dfa320df5061e7cf028d9ec1239c50e75d88a46d2016f66cf0478bd6fd",
+            "demo_wall_ms": 37.83869999460876,
+            "topology": {
+              "repeated_vertex_faces": 0,
+              "duplicate_faces": 0,
+              "nonmanifold_edges": 0,
+              "boundary_edges": 32
+            }
+          },
+          "cluster2": {
+            "count": 1348,
+            "sha256": "105f78393d0041cb74a3078fa2de761dd82e0eb37d6d14bece08a2f16f6e0fe0",
+            "demo_wall_ms": 32.10369998123497,
+            "topology": {
+              "repeated_vertex_faces": 0,
+              "duplicate_faces": 0,
+              "nonmanifold_edges": 0,
+              "boundary_edges": 30
+            }
+          }
+        }
+      }
+    },
+    "WaterBottle": {
+      "provenance": {
+        "name": "WaterBottle",
+        "license": "CC0-1.0",
+        "source": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/f0920f5b32d172a30efe3f9257e965918831e6ea/Models/WaterBottle",
+        "mesh": "WaterBottle\\WaterBottle.gltf",
+        "buffers": {
+          "WaterBottle.bin": "e4921f2d0c0a03cf65286bd195f3688d4f99d7b6a58f25935e70d516d744156e"
+        }
+      },
+      "geometry": {
+        "source": {
+          "faces": 4510,
+          "vertices": 2385,
+          "sha256": "7453b1ac1d0ca1ac21e4fc1c6ef91be8b49c399d0d972bddda1425ef4d846a7d"
+        },
+        "qem": {
+          "faces": 901,
+          "vertices": 502,
+          "sha256": "542a20627999acf9a3c356eb3c471f7062877361efb19bf82c45e34edda43516"
+        },
+        "whole": {
+          "faces": 901,
+          "vertices": 513,
+          "sha256": "21cad4c766604b08a0c0f0feb30b4d193fd18d0b831c3399e3e310c3841ee8d9"
+        },
+        "parts": {
+          "faces": 901,
+          "vertices": 513,
+          "sha256": "6fc152410947902017986c526ede45f773a69634c9352a7c5563a7ab926127c9"
+        }
+      },
+      "stock": {
+        "source_sha256": "7453b1ac1d0ca1ac21e4fc1c6ef91be8b49c399d0d972bddda1425ef4d846a7d",
+        "source_faces": 4510,
+        "source_topology": {
+          "repeated_vertex_faces": 0,
+          "duplicate_faces": 0,
+          "nonmanifold_edges": 0,
+          "boundary_edges": 264
+        },
+        "cuts": {
+          "cluster1": {
+            "count": 2252,
+            "sha256": "a544467445545a68bd9092f61737380af8ba3d554779302ad72125267615117a",
+            "demo_wall_ms": 30.296700017061085,
+            "topology": {
+              "repeated_vertex_faces": 0,
+              "duplicate_faces": 0,
+              "nonmanifold_edges": 0,
+              "boundary_edges": 226
+            }
+          },
+          "cluster2": {
+            "count": 1125,
+            "sha256": "724d41fba9b9bc1abbd5e13ccc523518609b21ffa314470218b240ea457d200e",
+            "demo_wall_ms": 29.52829998685047,
+            "topology": {
+              "repeated_vertex_faces": 0,
+              "duplicate_faces": 0,
+              "nonmanifold_edges": 0,
+              "boundary_edges": 137
+            }
+          }
+        }
+      }
+    }
+  },
+  "manifest_sha256": "328f1efeecfb5b6e0221a2f0665aed1a7e180f50b000f3da5f44a609563ea825",
+  "stock_manifest_sha256": "f54ed747e3265b44dc5df4f78ad7b87dd5998839e1752499edca3d5daf584788",
+  "stock_commit": "9d9890c73011d75920af614485296d1e03e95448",
+  "stock_binary_sha256": "828aaa9cf1a3862617d3ba980fc9b037bf4636085930bd0d7751aa8f66bac1b7",
+  "scripts": {
+    "bench_instance_scale.py": "2eef83437a9976c21b4a050b929c5213eda256c8abb9bb06306aa80a8537396a",
+    "bench_mixed_scenes.py": "5b43dc011e6dbd4685fe5d643e1030e9d5b2fc19c4efc176c4cfbcf0831bc82f",
+    "bench_component_gpu.py": "4dc3634e24429f408e4a22d0a0d4c87ca562ddbf6b5bf68423d512ddd829305e",
+    "bench_bevy_smaa.py": "6e5b7fbccd135ac29cf87cd601fa24d891a9ae3981ddef575cd7280b8d8143a6",
+    "bench_silhouette_guide_fusion.py": "be191a76e404959b1a5f585f6655e3940a2a008015aebd22c3f51f9844fc4b70",
+    "bench_sparse_silhouette_guide.py": "9ece2128102b855b2f341f5a13e6d500eabc0b1b1ced6a2d624d7a69b4633a3e",
+    "gray_flip.py": "c1cad8ccdeb21bb21cbb4fbda92433c2a85f36b65f42b9cf5f9ef79abb2ee3c5"
+  },
+  "timestamp_retries": [],
+  "workloads": {
+    "1000": {
+      "asset_order": [
+        "Avocado",
+        "BarramundiFish",
+        "CesiumMilkTruck",
+        "Lantern",
+        "WaterBottle"
+      ],
+      "instance_transform_sha256": {
+        "Avocado": "1ed25a93aa2c62466e4dcb0413cf724e0c0f89d94c31530b0fe32958fd004036",
+        "BarramundiFish": "78dee9b9c2f84ea2e6d2ab41e8c9097b838d185c55a74cff5fd7b878f8fd7544",
+        "CesiumMilkTruck": "77d68c1129c190b1b1224fcf7304911fcced2a044bfcaf2d11e6e1041e35e245",
+        "Lantern": "2e146d3d9155054a21af3c02f983a7ea65b5f0a6582533ea4f0cbba4e5bb44b8",
+        "WaterBottle": "2e815e67c36af3ea6592f647211d804551279a1c312ea053fb6a7f509b19535b"
+      },
+      "grid": {
+        "columns": 38,
+        "rows": 27,
+        "scale": 0.3502702702702703,
+        "world_bounds_xy": [
+          -9.0,
+          -6.5,
+          9.0,
+          6.5
+        ]
+      },
+      "indexed_draws": 5,
+      "instance_count": 1000,
+      "triangles": {
+        "source": 3614800,
+        "cluster2": 902400
+      },
+      "source_reference_sha256": "09840752207bf2ec54f7f7c2c7568fcc3b95bd2db27835ffe53e38997f8077cb",
+      "coverage_pixels": 305091,
+      "cross_asset_overlap_pixels": 10321,
+      "gpu_timing": {
+        "source-native": {
+          "gpu_ms_p50": 2.8926822210445406,
+          "gpu_ms_p95": 2.894893158490562,
+          "samples": 24,
+          "gpu_ms_samples": [
+            2.8906249294281006,
+            2.892135346057892,
+            2.891614512737274,
+            2.892135346057892,
+            2.89296867937088,
+            2.892760346042633,
+            2.8928645127067565,
+            2.8926561793785095,
+            2.8923957627182006,
+            2.8924999293823244,
+            2.892552012714386,
+            2.892291596054077,
+            2.8927082627105714,
+            2.892343679386139,
+            2.8955728459739687,
+            2.8949478459892273,
+            2.8940103460121156,
+            2.893489512691498,
+            2.89208326272583,
+            2.892760346042633,
+            2.893906179347992,
+            2.8926040960464476,
+            2.8930728460350035,
+            2.8945832626647947
+          ]
+        },
+        "source-msaa4": {
+          "gpu_ms_p50": 3.3530988764705656,
+          "gpu_ms_p95": 3.398044187873268,
+          "samples": 24,
+          "gpu_ms_samples": [
+            3.354427001438141,
+            3.398177000370026,
+            3.3972915837249755,
+            3.3626040845718386,
+            3.349010334903717,
+            3.352135334827423,
+            3.3475520016059876,
+            3.3552082514190675,
+            3.3465103349647523,
+            3.3436978350334168,
+            3.351249918182373,
+            3.3448436683387754,
+            3.346770751625061,
+            3.3540624181137084,
+            3.3730728343162535,
+            3.376354084236145,
+            3.7841144909477236,
+            3.351197834850311,
+            3.3701561677207947,
+            3.348541584915161,
+            3.3453124183273317,
+            3.3448436683387754,
+            3.364218667865753,
+            3.3728124176559446
+          ]
+        },
+        "cluster2-msaa4": {
+          "gpu_ms_p50": 1.5451562122764586,
+          "gpu_ms_p95": 1.5595650660913467,
+          "samples": 24,
+          "gpu_ms_samples": [
+            1.5396874624099732,
+            1.539947879070282,
+            1.5401041290664672,
+            1.539947879070282,
+            1.5608853785591126,
+            1.575312461540222,
+            1.5449478789482116,
+            1.5460937122535705,
+            1.5438541289749146,
+            1.5427603790016173,
+            1.5441145456352234,
+            1.5443749622955323,
+            1.543749962310791,
+            1.5456770455970763,
+            1.5469791288986205,
+            1.5520832954406738,
+            1.5488020455207825,
+            1.5458853789253235,
+            1.5444791289596558,
+            1.5441145456352234,
+            1.5481770455360413,
+            1.5460937122535705,
+            1.5457291289291382,
+            1.5453645456047058
+          ]
+        }
+      },
+      "quality_vs_full_source_reference": {
+        "source-native": {
+          "psnr_db": 22.075678613244456,
+          "ssim": 0.9192057416397028,
+          "flip": 0.05349198336993444
+        },
+        "source-msaa4": {
+          "psnr_db": 29.30883121636296,
+          "ssim": 0.978986646468232,
+          "flip": 0.03131913664415808
+        },
+        "cluster2-msaa4": {
+          "psnr_db": 28.190714570021242,
+          "ssim": 0.9737699416067274,
+          "flip": 0.04056775118816153
+        }
+      },
+      "silhouette_xor_fraction": {
+        "source-native": 0.038935546875,
+        "source-msaa4": 0.010697699652777778,
+        "cluster2-msaa4": 0.013174913194444445
+      },
+      "candidate_image_sha256": {
+        "source-native": "363ab8cef3be97ff49d5a346376b722f28d10c92c563dd9726e1e24329061d73",
+        "source-msaa4": "57279e4742cae14bc7d5a02efc99d3b2b471653eb63862c805cdd3abb3e1db28",
+        "cluster2-msaa4": "15da3643e0d216a70cd144e051e125f3d45b7c2210b291de14f55b8b711da17a"
+      }
+    },
+    "4000": {
+      "asset_order": [
+        "Avocado",
+        "BarramundiFish",
+        "CesiumMilkTruck",
+        "Lantern",
+        "WaterBottle"
+      ],
+      "instance_transform_sha256": {
+        "Avocado": "d842cbcfb65d3a6c73c3ac6f86c88afc570fc7406a39e68620bb221172ce7636",
+        "BarramundiFish": "c1733d07f7dfae6ca0a5442e5f71735be6393255997b93ffb436a2b9b626d85b",
+        "CesiumMilkTruck": "31212e02cb7cb88748d8e048e7aa2c891308b14a619116231f1ed756c673be99",
+        "Lantern": "132c966e124c7f34e1cd8bc15ae9f4ecbfd12e55f93306b7a529bc0f20294e92",
+        "WaterBottle": "14810b2e88c4b1311b07c90f8eaec173942978998f3dee0bff5ea34e17243637"
+      },
+      "grid": {
+        "columns": 75,
+        "rows": 54,
+        "scale": 0.17513513513513515,
+        "world_bounds_xy": [
+          -9.0,
+          -6.5,
+          9.0,
+          6.5
+        ]
+      },
+      "indexed_draws": 5,
+      "instance_count": 4000,
+      "triangles": {
+        "source": 14459200,
+        "cluster2": 3609600
+      },
+      "source_reference_sha256": "03a0bccc0215da5e08f80043f20d43e266e38819236aa6f0a89cb92329978b62",
+      "coverage_pixels": 285239,
+      "cross_asset_overlap_pixels": 3862,
+      "gpu_timing": {
+        "source-native": {
+          "gpu_ms_p50": 11.339218473163605,
+          "gpu_ms_p95": 11.609911174888229,
+          "samples": 24,
+          "gpu_ms_samples": [
+            11.336093473239899,
+            11.343697639720917,
+            11.336978889884948,
+            11.336822639888764,
+            11.336874723220825,
+            11.338645556510926,
+            11.339791389816284,
+            11.340155973140716,
+            11.342812223075867,
+            11.338385139850617,
+            11.656614298748016,
+            11.328801806751251,
+            11.34463513969803,
+            11.336041389907837,
+            11.343593473056794,
+            11.338437223182678,
+            11.337187223213196,
+            11.342708056411743,
+            11.340103889808654,
+            11.336926806552887,
+            11.344426806369782,
+            11.757603879615784,
+            11.333645556632996,
+            11.34526013968277
+          ]
+        },
+        "source-msaa4": {
+          "gpu_ms_p50": 11.837161169340133,
+          "gpu_ms_p95": 12.536012714778328,
+          "samples": 24,
+          "gpu_ms_samples": [
+            12.179218452655793,
+            11.791926795444489,
+            12.543176777103424,
+            11.802135128528596,
+            11.844478877494812,
+            11.829843461185455,
+            11.808072628383636,
+            11.806249711761474,
+            11.846510127445221,
+            11.828124711227417,
+            11.802864295177459,
+            11.808958045028687,
+            12.974687183235169,
+            12.15911428647995,
+            12.019114289897919,
+            12.495416361602784,
+            12.448072612758637,
+            11.733437213539123,
+            11.84739554409027,
+            12.02588512306595,
+            11.790624712142945,
+            11.986353874031067,
+            11.818385128131867,
+            11.812760128269195
+          ]
+        },
+        "cluster2-msaa4": {
+          "gpu_ms_p50": 3.2669790869064332,
+          "gpu_ms_p95": 3.293585857090187,
+          "samples": 24,
+          "gpu_ms_samples": [
+            3.26630200358963,
+            3.26984367016983,
+            3.29015616967392,
+            3.2689061701927185,
+            3.260468670398712,
+            3.2605728370628357,
+            3.2609895037193297,
+            3.2657811702690123,
+            3.2843228364830015,
+            3.7038019929084776,
+            3.2646874202957155,
+            3.2699999201660157,
+            3.260520753730774,
+            3.2588020037727357,
+            3.2838540864944457,
+            3.2926561696128847,
+            3.2679686702156068,
+            3.267656170223236,
+            3.2641665869750978,
+            3.2850520031318666,
+            3.2937499195861815,
+            3.2628124203414917,
+            3.258020753791809,
+            3.2599478370780943
+          ]
+        }
+      },
+      "quality_vs_full_source_reference": {
+        "source-native": {
+          "psnr_db": 19.532461557828015,
+          "ssim": 0.9082065757161265,
+          "flip": 0.08259579192847967
+        },
+        "source-msaa4": {
+          "psnr_db": 26.551062787700992,
+          "ssim": 0.9793209896596504,
+          "flip": 0.048346249474329646
+        },
+        "cluster2-msaa4": {
+          "psnr_db": 26.163038919546008,
+          "ssim": 0.9774431900105469,
+          "flip": 0.05254255807699183
+        }
+      },
+      "silhouette_xor_fraction": {
+        "source-native": 0.06689887152777778,
+        "source-msaa4": 0.01850151909722222,
+        "cluster2-msaa4": 0.020831163194444443
+      },
+      "candidate_image_sha256": {
+        "source-native": "a64a00fa1b7856c422157ac145d32731d22f3753e0bdbb4068633370f1107f2c",
+        "source-msaa4": "b52a8701742457c12e33969576471fda1544af30d74b669e023f7b2b6bb5e2b5",
+        "cluster2-msaa4": "10928e9d198bfe9d69452043a8c19eafb357bc32eb1a88e3553d2d2ad7eeed27"
+      }
+    },
+    "10000": {
+      "asset_order": [
+        "Avocado",
+        "BarramundiFish",
+        "CesiumMilkTruck",
+        "Lantern",
+        "WaterBottle"
+      ],
+      "instance_transform_sha256": {
+        "Avocado": "72dbfa4acb9d7924877ddb325df5b8bfcfb815d3a70b63a81ce603c5b0f445ed",
+        "BarramundiFish": "0f2f03c46f4f0a27793169c854e8291c4c6372843bd232edde4f7400d79fa95c",
+        "CesiumMilkTruck": "9e80a622698b7424558a5ee77968cdefa251723266d0ed52d2a5c0b6da14c3ba",
+        "Lantern": "6c5b109dda73b4bcb2fcf9ab25b404f89b5e969f2b03549d0b30061a17352f8e",
+        "WaterBottle": "3009ee9f0639feefbea08aba7927a0187ae966f075e0a0ad32c462733583b75e"
+      },
+      "grid": {
+        "columns": 118,
+        "rows": 85,
+        "scale": 0.11076923076923077,
+        "world_bounds_xy": [
+          -9.0,
+          -6.5,
+          9.0,
+          6.5
+        ]
+      },
+      "indexed_draws": 5,
+      "instance_count": 10000,
+      "triangles": {
+        "source": 36148000,
+        "cluster2": 9024000
+      },
+      "source_reference_sha256": "b965c1a9d04f5c095f911c215177fec8c6b33cdcbe0704ee8a53fe60233cd3e5",
+      "coverage_pixels": 304810,
+      "cross_asset_overlap_pixels": 9870,
+      "gpu_timing": {
+        "source-native": {
+          "gpu_ms_p50": 28.4934888876915,
+          "gpu_ms_p95": 29.202960224537087,
+          "samples": 24,
+          "gpu_ms_samples": [
+            29.21312428678894,
+            28.596301385181427,
+            28.297447225811005,
+            28.645363883983613,
+            28.319582641937256,
+            31.021665909301756,
+            29.14536387177658,
+            28.579113885601043,
+            28.267968059864042,
+            28.84953054566574,
+            28.711770132362364,
+            28.666613883464812,
+            28.40786388978195,
+            28.287238892726897,
+            28.258905560085296,
+            28.26281180998993,
+            28.258280560100555,
+            28.64682221728134,
+            28.26343680997467,
+            28.258280560100555,
+            28.712915965667726,
+            28.265624309921265,
+            28.72244721543503,
+            28.35499930773926
+          ]
+        },
+        "source-msaa4": {
+          "gpu_ms_p50": 28.60575450995064,
+          "gpu_ms_p95": 29.531288341521265,
+          "samples": 24,
+          "gpu_ms_samples": [
+            28.609686801521303,
+            28.94942637656021,
+            28.950415959869385,
+            28.582030552196503,
+            28.601822218379976,
+            28.58229096885681,
+            28.63286388428879,
+            29.695363858348845,
+            28.587968052051544,
+            28.564686802619935,
+            29.020988874813078,
+            28.589426385349274,
+            29.54046802879715,
+            29.171613871135712,
+            29.15208262161255,
+            28.57989513558197,
+            29.479270113624573,
+            28.622186801216124,
+            28.563280552654266,
+            28.5795826355896,
+            28.56489513594818,
+            28.9325513769722,
+            28.59666596850586,
+            28.588749302032472
+          ]
+        },
+        "cluster2-msaa4": {
+          "gpu_ms_p50": 6.724166502502442,
+          "gpu_ms_p95": 7.384273257219887,
+          "samples": 24,
+          "gpu_ms_samples": [
+            6.722499835876465,
+            6.737395668846131,
+            6.714999836059571,
+            6.710676919498444,
+            6.708020669563293,
+            6.741770668739319,
+            6.760260251621246,
+            6.7474998352661135,
+            7.515937316505432,
+            6.707187336250305,
+            6.72088525258255,
+            6.70968733618927,
+            6.7597394183006285,
+            6.970676913150787,
+            6.811145667045594,
+            7.4035935692482,
+            6.816510250247955,
+            7.2747914890594485,
+            6.701562336387634,
+            6.725833169128418,
+            6.717291502670288,
+            6.722031085887909,
+            6.717499835998535,
+            6.702083169708252
+          ]
+        }
+      },
+      "quality_vs_full_source_reference": {
+        "source-native": {
+          "psnr_db": 17.217072663969745,
+          "ssim": 0.8896850236492737,
+          "flip": 0.10066492645829331
+        },
+        "source-msaa4": {
+          "psnr_db": 24.205306899167404,
+          "ssim": 0.9739829720242253,
+          "flip": 0.057185102208135566
+        },
+        "cluster2-msaa4": {
+          "psnr_db": 24.014877208653868,
+          "ssim": 0.9731517942493528,
+          "flip": 0.0588657986970104
+        }
+      },
+      "silhouette_xor_fraction": {
+        "source-native": 0.11266059027777778,
+        "source-msaa4": 0.0319140625,
+        "cluster2-msaa4": 0.03432508680555556
+      },
+      "candidate_image_sha256": {
+        "source-native": "d954bac51ebbd3e978da0f393638857dd4a64a26cfd81e5a4d18f772e6b22373",
+        "source-msaa4": "80f4dba3787185b895d71478b43f38c42f00972a214abd023ed00cbf736da216",
+        "cluster2-msaa4": "c434a31989157801996299a6c5d0c2b986f81f626de4693654d9c1ea30f4ae5b"
+      }
+    }
+  }
+}
