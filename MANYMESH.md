@@ -61,6 +61,14 @@ or an upscaler. Two reused assets can screen this configuration only. If it
 does not show repeatable reserved-view gains at matched face count, close this
 configuration and do not advance to a custom DAG optimizer.
 
+On 2026-11-25, `--prepare-only` was repeated for both frozen assets. Each output
+protocol matched its earlier per-asset receipt byte-for-byte, and the current
+fit script, scorer, and external NVIDIA source tree matched their pinned hashes.
+The base Python environment emitted a SciPy/NumPy compatibility warning
+(NumPy 2.5.4 is outside that SciPy build's declared range), although both
+preflights completed. Run from the recorded isolated research environment on
+the eventual CUDA host; no fit or quality scoring has run yet.
+
 Frozen assets, controls, scorer, camera split, and limits are in the
 [input report](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md) and
 [protocol receipt](tools/mmtrain/appearance_cuda_protocol_20261124.json).
