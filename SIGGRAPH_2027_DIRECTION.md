@@ -25,8 +25,17 @@ See the [full protocol and per-model results](tools/mmtrain/POLYHAVEN_QUALITY_SC
 
 This combination has substantial prior art. Hasselgren et al. already optimize
 mesh shape and appearance from image-space references for simplification and
-LOD, including resolution-specific filtering and MSAA-assisted visibility
-gradients ([EGSR 2021 paper](https://users.aalto.fi/~laines9/publications/hasselgren2021egsr_paper.pdf)).
+LOD. Their method uses MSAA during optimization to improve silhouette visibility
+gradients while fitting a supersampled reference, then evaluates final 1-spp
+results without AA unless stated otherwise. Therefore neither differentiable
+image-space simplification, scale-specific fitting, nor MSAA-assisted silhouette
+optimization is a contribution here. A viable distinction would need to show
+that optimizing for a specified *final reconstruction operator* (for example,
+temporal accumulation or an upscaler) gives a repeatable gain over the same
+operator used as a baseline, while preserving legal DAG cuts and boundaries.
+This remains untested and may not be novel.
+([EGSR 2021 full paper](https://users.aalto.fi/~laines9/publications/hasselgren2021egsr_paper.pdf),
+[NVIDIA project page](https://research.nvidia.com/labs/rtr/publication/hasselgren2021diffmodeling/)).
 V3DG already fits each level of a clustered hierarchy differentiably, although
 it uses 3D Gaussian primitives ([SIGGRAPH 2025 paper](https://arxiv.org/html/2505.06523)).
 HLOD ASAP's abstract and first-page preview describe progressive interior and
@@ -41,9 +50,10 @@ Therefore hierarchy fitting, per-level differentiable fitting, scale-aware
 appearance, boundary consistency, and transition stability are not contributions
 on their own. Novelty is not established.
 
-The only plausible distinction to test is a measurable advantage from fitting
-the hierarchy to a specified post-reconstruction image while retaining the
-cluster DAG's legal-cut and boundary constraints. That claim is still much
+The only plausible distinction left to test is a measurable advantage from
+fitting the hierarchy to a specified final reconstruction operator beyond the
+MSAA-assisted optimization already used by Hasselgren, while retaining legal
+cluster-DAG cuts and boundary constraints. That claim is still much
 narrower than “LOD for upscalers”: classic silhouette-aware simplification,
 silhouette clipping, budgeted/predictive LOD selection, perceptual silhouette
 and transition models, and neural prediction of image error for shading-rate
@@ -53,7 +63,7 @@ review; it is not an exhaustive literature search.
 
 | Priority | Direction | Current disposition |
 |---|---|---|
-| 1 | **A+B: post-reconstruction-aware hierarchy optimization** | Keep as a falsifiable hypothesis. First reproduce a matched-face differentiable simplification baseline; only then test the cluster-DAG constraints. |
+| 1 | **A+B: reconstruction-conditioned hierarchy optimization** | Weak, untested hypothesis. First reproduce a matched-face differentiable simplification baseline; distinguish the actual final reconstruction operator from Hasselgren et al.'s MSAA-assisted optimization. |
 | 2 | **C: tile-GPU cost model and selection** | Systems-analysis fallback if a physical tile-based device and profiling counters are available. A screen-tile count alone is only a proxy. |
 | 3 | **D: rate-aware DAG construction** | Parked. Meshlet compression is crowded; reopen only with full-stream byte and decode comparisons against meshoptimizer, Draco, Kuth et al., and AMD DGF. |
 

@@ -14,9 +14,17 @@ frame time. The first candidate is an existing differentiable simplification
 baseline, not a custom DAG optimizer.
 
 Close prior art includes Hasselgren et al.'s differentiable mesh and shading
-optimization for simplification and LOD, silhouette-sensitive view-dependent
-simplification, and exact coarse-mesh silhouette clipping. These ideas alone do
-not establish novelty. [Hasselgren et al.](https://diglib.eg.org/items/82ec8df1-d62a-40f0-a007-90374b5140dc) · [Luebke and Erikson](https://techreports.cs.unc.edu/papers/97-005/97-005.pdf) · [Sander et al.](https://hhoppe.com/silclip.pdf)
+optimization for simplification and LOD. Their full paper states that MSAA is
+used during optimization to improve silhouette visibility gradients while
+matching a supersampled target; reported 1-spp results are rendered without AA
+unless noted. Thus differentiable fitting, scale-specific appearance fitting,
+and MSAA-assisted silhouette gradients are already established. The remaining
+testable distinction is optimization against a *different final reconstruction
+operator*, measured against that same operator without geometry optimization,
+plus the constraints of legal cluster-DAG cuts. That is a hypothesis, not a
+novelty claim. [Full paper](https://users.aalto.fi/~laines9/publications/hasselgren2021egsr_paper.pdf) ·
+[Luebke and Erikson](https://techreports.cs.unc.edu/papers/97-005/97-005.pdf) ·
+[Sander et al.](https://hhoppe.com/silclip.pdf)
 
 Hierarchy-level fitting also overlaps conceptually with [V3DG (SIGGRAPH
 2025)](https://arxiv.org/html/2505.06523), which differentiably fits cluster
