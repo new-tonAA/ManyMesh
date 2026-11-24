@@ -45,6 +45,11 @@ and [SIGGRAPH direction](SIGGRAPH_2027_DIRECTION.md).
   benefit; it is one reused asset, uses a retrospectively selected boundary
   tolerance, and has no pinned candidate-generation binary. See the
   [report and receipt](tools/mmtrain/MONKEY_SOURCE_REFERENCE_DIAGNOSTIC_20261125.md).
+- **Instance-scale screen:** The 10,000-instance desktop GPU raster interval
+  fell 4.31x for stock depth-2 geometry, but the aggregate quality comparison is
+  not geometry-eligible: four assets have changed boundary-edge counts and one
+  cut has duplicate/nonmanifold faces. Treat image deltas as diagnostic only;
+  timing applies to the submitted buffers. See the [report and receipt](tools/mmtrain/INSTANCE_SCALE_SCREEN_20261124.md).
 
 No physical-phone test, equal-frame-time quality comparison, LPIPS evaluation,
 moving-camera temporal evaluation, user study, or positive held-out optimized

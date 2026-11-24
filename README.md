@@ -68,9 +68,13 @@ pinned Khronos assets on Intel Iris Xe / D3D12 at 1280 x 720 with 4x MSAA and
 no culling. A fixed depth-2 meshoptimizer cut submitted 9.024M rather than
 36.148M triangles and reduced the GPU raster interval from 29.001 ms to
 6.734 ms (4.31x), with a -0.190 dB PSNR change against the supersampled full-
-source reference. This is a stock-cut raster diagnostic, not dynamic ManyMesh
-selection, a full-frame timing, or mobile evidence. See the [protocol, limits,
-and repeated results](tools/mmtrain/INSTANCE_SCALE_SCREEN_20261124.md) and
+source reference. The receipt also shows that the mixed-scene cut is not a
+strictly eligible geometry comparison: four assets have changed boundary-edge
+counts, and the CesiumMilkTruck cut has one duplicate face and two nonmanifold
+edges. Treat its image-quality delta as diagnostic only; the raster timing
+applies to the submitted buffers. This is not dynamic ManyMesh selection, a
+full-frame timing, or mobile evidence. See the [topology caveat, protocol, and
+repeated results](tools/mmtrain/INSTANCE_SCALE_SCREEN_20261124.md) and
 [raw receipt](tools/mmtrain/instance_scale_20261124.json).
 
 ## Research documents

@@ -33,10 +33,17 @@ trades image quality for GPU time as instance count grows.
 This screen can establish only desktop raster cost and image quality for these
 five reused assets under this camera and layout. It excludes CPU scene update,
 LOD selection, culling, asset loading, presentation, power, memory peak, motion,
-and topology validation of the stock cuts. It therefore does not establish an
-end-to-end ManyMesh win, mobile behavior, or generalization. A follow-up would
-need multiple independently licensed scenes and must time full CPU and GPU
-frame paths before making a scalable-LOD claim.
+or a strict source-boundary correspondence audit. The receipt does record basic
+topology counts for the stock cuts. Those counts reveal that the depth-2
+CesiumMilkTruck cut has one duplicate triangle and two nonmanifold edges. The
+boundary-edge counts differ from the source for Avocado, CesiumMilkTruck,
+Lantern, and WaterBottle. Thus the aggregate image-quality comparison is not
+eligible under the strict topology/boundary gate; it is diagnostic only. The
+GPU raster timings remain measurements of the submitted index and vertex
+buffers. This screen does not establish an end-to-end ManyMesh win, mobile
+behavior, or generalization. A follow-up would need eligible cuts from multiple
+independently licensed scenes and must time full CPU and GPU frame paths before
+making a scalable-LOD claim.
 
 ## Reproduction
 
@@ -90,6 +97,29 @@ XOR. The 1,000- and 4,000-instance points show a larger quality loss. The
 instance p50 varies by about 3%. The repeated measurements support a large
 workload-specific raster-cost gap, but not a device-wide scaling model or a
 reliable tail-latency estimate.
+
+### Topology and boundary eligibility
+
+The receipt's per-asset topology counts make the aggregate image comparison
+ineligible under the strict geometry gate. Four cuts change their source
+boundary-edge count, and the CesiumMilkTruck cut also has duplicate and
+nonmanifold geometry.
+
+| Asset | Source boundary edges | Depth-2 boundary edges | Duplicate faces | Nonmanifold edges | Strict screen |
+|---|---:|---:|---:|---:|---|
+| Avocado | 38 | 11 | 0 | 0 | Boundary count differs |
+| BarramundiFish | 0 | 0 | 0 | 0 | Basic topology counts pass |
+| CesiumMilkTruck | 8 | 0 | 1 | 2 | Topology and boundary fail |
+| Lantern | 48 | 30 | 0 | 0 | Boundary count differs |
+| WaterBottle | 264 | 137 | 0 | 0 | Boundary count differs |
+
+This is a screening table from the recorded edge-incidence counts; no geometric
+boundary-curve correspondence audit was run. The closed BarramundiFish cut is
+the only asset in this mixed scene whose recorded counts satisfy the basic
+screen. Because timings and quality were aggregated across all five assets,
+the 10,000-instance PSNR delta is descriptive only and cannot be attributed to
+a topology-eligible cut. The GPU timing remains a measurement of the buffers
+that were actually submitted.
 
 This is a fixed-view desktop stress test, not a matched-quality or matched-time
 winner for ManyMesh. It uses a synthetic fixed-footprint layout of five reused
