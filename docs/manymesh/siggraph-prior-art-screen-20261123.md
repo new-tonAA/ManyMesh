@@ -29,6 +29,8 @@ a paper is not evidence that none exists.
 | Surace et al., [Gaze-Contingent Perceptual LoD Prediction](https://doi.org/10.2312/sr.20231130), EGSR 2023 | Calibrates spatial silhouette/body distortion and temporal LOD-switch visibility models with observer studies, then predicts gaze-contingent mesh LOD. It reports up to 33% extra speedup over Nanite at 2K in its desktop test. | **Full paper text inspected.** This already combines perceptual LOD selection, temporal transition modeling, gaze-contingent geometry, and a Nanite comparison. Its test uses 15 participants for spatial calibration, five for temporal calibration, and an RTX 3090 scene with 2,184 Suzanne or Dragon instances; it is not a mobile result or a post-upscaler geometry-optimization method. |
 | Dou et al., [Differentiable Micro-Mesh Construction](https://openaccess.thecvf.com/content/CVPR2024/html/Dou_Differentiable_Micro-Mesh_Construction_CVPR_2024_paper.html), CVPR 2024 | End-to-end optimizes a micro-mesh base-vertex offset and per-microvertex displacement with an L1 multi-view rendering loss, Laplacian reparameterization, shell-volume and isotropy terms, and progressive 1-to-4 subdivision. It also assigns per-base-triangle adaptive subdivision levels using the image-space improvement between adjacent subdivision levels; adjacent levels differ by at most one for watertightness. The experiments use nvdiffrast on an RTX 3090, 121 meshes grouped by input size, 24 training views and 16 separate evaluation views per mesh. The optimization is per asset; this is view-held-out evaluation, not asset-generalization testing. Topology modification during optimization is unsupported. | **Full main paper and supplement inspected** (Sections 3.2–4.3, Table 1 and Supplement Sections 1–3). This is direct prior art for differentiable render-guided geometry optimization and image-guided adaptive LOD. It optimizes a displacement-based micro-mesh for compact ray tracing, not a standard triangle-mesh cluster DAG, and does not report fitting through a final MSAA or temporal upscaler. |
 
+| Son et al., [DMesh++: An Efficient Differentiable Mesh for Complex Shapes](https://openaccess.thecvf.com/content/ICCV2025/html/Son_DMesh_An_Efficient_Differentiable_Mesh_for_Complex_Shapes_ICCV_2025_paper.html), ICCV 2025 | Optimizes continuous point features whose face-existence probabilities define a changing mesh topology. Its 3D multi-view reconstruction task uses 64 synthetic diffuse/depth views at 512 x 512, image reconstruction loss, and compares methods at similar vertex and face counts. The supplement describes a custom CUDA pixel-area coverage antialiasing renderer to provide geometry visibility gradients. | **Full paper and supplement inspected** (Sections 3–4.2, 5.2.3, Supplement 8.1.1–8.2). Differentiable topology changes, multi-view image supervision, and AA-derived visibility gradients for geometry optimization are established. DMesh++ reconstructs a mesh from observations; it does not simplify a given authored mesh into a cluster-DAG LOD or evaluate the output through a final hardware MSAA/upscaler pipeline. These task differences require a direct comparator and do not establish novelty. |
+
 ## Adjacent methods that constrain broader claims
 
 | Work | Relevance | Review status |
@@ -54,14 +56,16 @@ a paper is not evidence that none exists.
 ## Candidate gap and required test
 
 The remaining experiment question is narrowly phrased as **whether offline
-optimization of a triangle-mesh cluster hierarchy for quality after a specified
-antialiasing or upscaling pipeline yields a measurable gain over applying the
-same final reconstruction operator to unoptimized geometry**. This is not an
-established gap or novelty claim. Differentiable image-space geometry fitting
-and image-guided adaptive per-triangle LOD already exist in the μ-mesh work;
-HLOD, parent-child vertex relations, view-dependent selection, crack-free cuts,
-and crack-/popping-free transitions are also established mechanisms. See
-Hasselgren et al., Dou et al., Quick-VDR, Li (2022, 2023), and HLOD ASAP.
+optimization of an existing triangle-mesh cluster hierarchy for quality after
+a specified final antialiasing or upscaling pipeline yields a measurable gain
+over applying the same operator to unoptimized geometry**. This is not an
+established gap or novelty claim. Differentiable image-space geometry fitting,
+image-guided adaptive per-triangle LOD, and changing mesh topology under
+multi-view image losses with antialiasing-derived visibility gradients are
+also established. HLOD, parent-child vertex relations, view-dependent
+selection, crack-free cuts, and crack-/popping-free transitions are
+established mechanisms too. See Hasselgren et al., Dou et al., DMesh++,
+Quick-VDR, Li (2022, 2023), and HLOD ASAP.
 “LOD for upscalers,” “silhouette aware,” “differentiable LOD,” “cluster
 hierarchy optimization,” and “temporal stability” are not novelty claims by
 themselves.
