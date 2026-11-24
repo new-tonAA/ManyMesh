@@ -20,7 +20,10 @@ use MSAA during fitting to improve silhouette gradients. See the
   SSIM, and silhouette XOR, with native sampling and 4x MSAA. Paired 95%
   intervals exclude zero across 16 source groups. This closes the tested cut,
   not every possible geometry method. It is fixed-view desktop evidence, not an
-  equal-time or mobile result. [Protocol and results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md) ·
+  equal-time or mobile result. Source provenance remains unresolved: the
+  Poly Haven and Khronos receipts pin the same executable hash but record
+  different `main.cpp` hashes. See the [provenance audit](tools/mmtrain/mmgeo_source_provenance_audit_20261124.json).
+  [Protocol and results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md) ·
   [per-view metrics](tools/mmtrain/polyhaven_quality_metrics_20261124.json) ·
   [21/21 exact score replay](tools/mmtrain/POLYHAVEN_SCORE_REPLAY_AUDIT_20261124.md)
 - **Expanded eligibility screen:** 18 additional exact-face eligible assets

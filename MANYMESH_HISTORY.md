@@ -19,7 +19,7 @@ rejected all nonzero decodes under topology/offset checks. These are small
 geometry-only development results, not a final-test or universal learned-decoder
 claim. See the rank sweep (`tools/mmtrain/CLUSTER_DECODER_RANK_SWEEP_20261122.md`),
 scale probe (`tools/mmtrain/CLUSTER_DECODER_SCALE_PROBE_20261122.md`), and
-decoder study (`MANYMESH_CLUSTER_DECODER_STUDY.md`).
+[learned-LOD research notes](MANYMESH_LEARNED_LOD_RESEARCH.md).
 
 The original proposal combined adaptive geometry reduction inspired by Nanite with
 a small neural image reconstructor, seeking real-time rendering of complex assets
@@ -2256,7 +2256,7 @@ The cluster-decoder screen closed the tested rank-8/16/30 polynomial controls an
 their latent-scale variants on validation. The local-refinement variant lost to
 same-face meshoptimizer on the paired image and sampled-surface metrics. The
 32-asset Thingi10K test split was not used in these follow-ups because it had
-already informed earlier experiments. See the decoder study (`MANYMESH_CLUSTER_DECODER_STUDY.md`)
+already informed earlier experiments. See the [learned-LOD research notes](MANYMESH_LEARNED_LOD_RESEARCH.md)
 and matched-face report (`tools/mmtrain/CLUSTER_DECODER_MESHOPT_20261122.md`).
 
 A separate multi-asset rendered audit tested the continuous-pan path-loss reranker
@@ -2358,7 +2358,7 @@ a pinned upstream revision. Keep it for development diagnostics only. The
 asset report (`tools/mmtrain/DAMAGED_HELMET_TOPOLOGY_GATE_20261123.md`) records
 the source, extraction, logs, and rejection. The revised extractor rejects the
 skinned Fox asset rather than using its unposed base geometry for image-quality
-evaluation; see the asset-screen decision (`MANYMESH_CONFIRMATION_ASSET_SCREEN.md`).
+evaluation; see the [asset-screen decision](docs/manymesh/confirmation-asset-screen-20261123.md).
 
 ## 13. References
 
