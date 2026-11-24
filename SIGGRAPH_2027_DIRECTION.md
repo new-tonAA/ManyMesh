@@ -161,6 +161,19 @@ render thin and subpixel geometry. Its moving-camera TAA result is close to
 establishes thin-geometry reconstruction plus temporal AA as prior art, but it
 does not optimize an authored cluster LOD against TAA; its TAA comparison should
 be included if ManyMesh selects a temporal operator.
+Nanite's [SIGGRAPH 2021 course](https://advances.realtimerendering.com/s2021/Karis_Nanite_SIGGRAPH_Advances_2021_final.pdf)
+selects clusters below one pixel of projected error and relies on TAA to blend
+subpixel LOD changes. Unreal's current [TSR thin-geometry system](https://dev.epicgames.com/documentation/en-us/unreal-engine/thin-geometry-detection-with-temporal-super-resolution)
+accumulates coverage over time and relaxes history rejection for geometry-driven
+flicker, at the cost of additional passes. This is direct production practice
+for coupling mesh LOD and temporal reconstruction; it narrows any claim that
+LOD decisions ignore temporal reconstruction in general. It does not establish
+offline optimization of mesh geometry against the final TSR operator.
+Loubet and Neyret's [hybrid mesh-volume LoDs](https://doi.org/10.1111/cgf.13138)
+also simplify above-resolution surfaces and prefilter their appearance while
+representing sub-resolution details volumetrically. The publisher abstract was
+inspected, not the full paper; this is prior art for scale-aware mesh/appearance
+prefiltering, with a different representation and rendering pipeline.
 Neural level-of-detail and progressive geometry compression are also established:
 [N-GLOD (CVPR 2021)](https://research.nvidia.com/labs/toronto-ai/nglod/) uses
 an octree feature volume with multilevel SDF interpolation, and

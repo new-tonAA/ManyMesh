@@ -54,6 +54,12 @@ review scope. The remaining experiment question is narrow: does fitting a
 triangle-mesh hierarchy to a specified final reconstruction operator improve
 quality over using that same operator on unoptimized geometry, while retaining
 legal cuts and boundaries? This is unproven and is not yet a novelty claim.
+Production prior art already uses TAA to blend subpixel Nanite LOD changes,
+and Unreal TSR accumulates coverage to stabilize thin geometry; the frozen
+two-asset placement control does not test those systems. Any later method claim
+must measure an optimization gain over the same actual reconstruction operator,
+not over an unfiltered image alone. See the
+[prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
 
 ## Gate 1: evaluate the frozen placement control
 
