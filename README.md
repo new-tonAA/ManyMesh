@@ -31,9 +31,9 @@ reproduction: [quality screen](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.m
   to +0.00267; all four 95% intervals favor the controls. This reuses the same
   cohort, not independent confirmation. A familywise max-t audit across the
   16 original endpoints leaves every 95% simultaneous interval favoring the
-  controls. [Original protocol and results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md) ·
-  [Multiplicity audit](tools/mmtrain/POLYHAVEN_MULTIPLICITY_AUDIT_20261125.md) ·
-  [LPIPS supplement](tools/mmtrain/POLYHAVEN_LPIPS_SUPPLEMENT_RESULTS_20261125.md).
+  controls. Reports: [original protocol and results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md),
+  [multiplicity audit](tools/mmtrain/POLYHAVEN_MULTIPLICITY_AUDIT_20261125.md),
+  and [LPIPS supplement](tools/mmtrain/POLYHAVEN_LPIPS_SUPPLEMENT_RESULTS_20261125.md).
 - **25.84%-34.75% silhouette-error share.** Source-referenced Monkey diagnostic
   across three face budgets and eight 192 x 192 views. One asset only; the
   historical 68.3% used a DAG cut as reference, not the original mesh.
@@ -59,9 +59,9 @@ The 30-model Poly Haven confirmation set has frozen inputs and an evaluation
 protocol, but remains unscored until the method configuration passes the
 two-asset gate. Scoring is disabled in the manifest. This set tests a frozen
 per-asset procedure on unseen assets, not cross-asset neural-model transfer.
-[LPIPS and temporal results](tools/mmmetrics/MOVING_SCENE_EDGE_QUALITY_20261124.md) ·
-[pool protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md)
-[Frozen confirmation protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md)
+Reports: [LPIPS and temporal results](tools/mmmetrics/MOVING_SCENE_EDGE_QUALITY_20261124.md),
+[confirmation pool](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md), and
+[frozen evaluation protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md).
 
 ## Next experiment gate
 
@@ -70,8 +70,8 @@ BarramundiFish and Corset. It still needs CUDA for fitting and quality scoring;
 the available host has CPU-only PyTorch. No fit result exists. A pass would
 only open a separate asset-held-out cluster-DAG study, not establish
 generalization or novelty.
-[Protocol](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md) ·
-[current status](MANYMESH.md)
+See the [frozen protocol and matched inputs](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md)
+and the [repeat preflight receipt](tools/mmtrain/appearance_cuda_preflight_repeat_20261125.json).
 
 ## Research documents
 

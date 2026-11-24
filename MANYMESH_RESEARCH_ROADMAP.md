@@ -21,7 +21,7 @@ per-triangle micro-mesh subdivision. No novelty or positive held-out result is
 established. The seven-asset contour-priority control showed +0.167 dB mean
 PSNR but mixed FLIP and no reliable AA gain; fixed-topology contour fitting
 regressed on two of three assets. These remain development controls, not a
-reason to advance a custom DAG optimizer. See the [dated reports](MANYMESH.md#evidence-snapshot)
+reason to advance a custom DAG optimizer. See the [current evidence summary](MANYMESH.md#what-the-evidence-says)
 and [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
 The frozen two-asset, nvdiffmodeling-based fixed-topology placement control
 remains gated on a CUDA-capable host; it is not a faithful Hasselgren
