@@ -9,7 +9,9 @@ has been measured.
 Can offline geometry optimization improve a cluster LOD after the same
 antialiasing or upscaling pipeline, against strong controls at matched face
 count and full cost? This remains an untested hypothesis with close prior art;
-it is not a novelty claim. See the [SIGGRAPH direction](SIGGRAPH_2027_DIRECTION.md)
+it is not a novelty claim. DMesh++ already combines multi-view image losses,
+changing topology, and antialiasing-derived visibility gradients for mesh
+reconstruction. See the [SIGGRAPH direction](SIGGRAPH_2027_DIRECTION.md)
 and [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
 
 ## Evidence that sets the direction

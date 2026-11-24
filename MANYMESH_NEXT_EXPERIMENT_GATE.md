@@ -41,6 +41,17 @@ assets, and does not report fitting through final MSAA or temporal upscaling.
 Any later comparison must state this overlap and test only the narrower
 final-reconstruction-operator question.
 
+DMesh++ (ICCV 2025) also reconstructs changing-topology meshes from multi-view
+image loss and uses pixel-area antialiasing in a custom CUDA differentiable
+renderer to obtain geometry visibility gradients. It reconstructs meshes from
+observations rather than simplifying an authored mesh into a cluster-DAG LOD,
+and does not evaluate its result through a separate final hardware MSAA or
+upscaler pipeline. This rules out claiming topology-changing image optimization
+or antialiasing-derived visibility gradients as new by themselves. See the
+[paper](https://openaccess.thecvf.com/content/ICCV2025/html/Son_DMesh_An_Efficient_Differentiable_Mesh_for_Complex_Shapes_ICCV_2025_paper.html),
+[supplement](https://openaccess.thecvf.com/content/ICCV2025/supplemental/Son_DMesh_An_Efficient_ICCV_2025_supplemental.pdf),
+and [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
+
 Hierarchy-level fitting also overlaps conceptually with [V3DG (SIGGRAPH
 2025)](https://arxiv.org/html/2505.06523), which differentiably fits cluster
 levels in a Gaussian representation. Boundary simplification overlaps directly

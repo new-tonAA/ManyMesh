@@ -56,6 +56,14 @@ per-triangle adaptive subdivision levels. Its representation is not a standard
 cluster-DAG triangle mesh, its evaluation holds out views rather than assets,
 and it does not report fitting through final MSAA or temporal upscaling. This
 leaves only a narrow comparison question; it does not establish novelty.
+DMesh++ further narrows broad claims about image-driven mesh optimization: it
+reconstructs changing-topology meshes from multi-view image loss and uses
+pixel-area antialiasing in a custom CUDA renderer for geometry visibility
+gradients. It does not simplify a given authored mesh into a cluster-DAG LOD or
+evaluate an output through a separate final MSAA/upscaler pipeline, but any
+ManyMesh method must be distinguished from this reconstruction formulation
+([ICCV 2025 paper](https://openaccess.thecvf.com/content/ICCV2025/html/Son_DMesh_An_Efficient_Differentiable_Mesh_for_Complex_Shapes_ICCV_2025_paper.html),
+[supplement](https://openaccess.thecvf.com/content/ICCV2025/supplemental/Son_DMesh_An_Efficient_ICCV_2025_supplemental.pdf)).
 V3DG already fits each level of a clustered hierarchy differentiably, although
 it uses 3D Gaussian primitives ([SIGGRAPH 2025 paper](https://arxiv.org/html/2505.06523)).
 HLOD ASAP's abstract and publisher preview describe a binary progressive-mesh
@@ -100,9 +108,14 @@ on their own. Novelty is not established.
 The remaining experiment question is whether fitting a hierarchy to a specified
 final reconstruction operator gives a measurable advantage over applying the
 same operator to unoptimized geometry, beyond the MSAA-assisted optimization
-already used by Hasselgren. A useful method would also need to retain legal cuts
-and boundary constraints. This is a narrow, untested comparison, not a located
-research gap or novelty claim. It is much
+already used by Hasselgren. DMesh++ also optimizes changing mesh topology from
+multi-view image losses and uses a CUDA pixel-coverage antialiasing renderer to
+provide geometry visibility gradients. It reconstructs meshes from observations,
+not a given authored asset's cluster-DAG simplification, and does not test a
+final hardware MSAA/upscaler output. A useful ManyMesh method would still need to
+retain legal cuts and boundaries and beat that broader family of image-driven
+mesh optimization methods in the narrower existing-asset LOD task. This is an
+untested comparison, not a located research gap or novelty claim. It is much
 narrower than “LOD for upscalers”: classic silhouette-aware simplification,
 silhouette clipping, budgeted/predictive LOD selection, perceptual silhouette
 and transition models, and neural prediction of image error for shading-rate
