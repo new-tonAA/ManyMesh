@@ -41,9 +41,11 @@ tolerance and reused development assets; its two all-metric wins were against
 meshoptimizer only, not QEM. [Reports and raw metrics](MANYMESH.md#evidence).
 The 21-model scoring replay matches byte-for-byte, but its geometry receipts
 record a different `main.cpp` hash from the Khronos run despite sharing the
-same `mmgeo` binary hash. No clean source rebuild has resolved that conflict,
-so source-level reproduction remains unverified. See the
-[provenance audit](tools/mmtrain/mmgeo_source_provenance_audit_20261124.json).
+same `mmgeo` binary hash. A clean Release build of current `main` succeeded,
+but Windows application control blocked running it, so source-level
+reproduction remains unverified. See the
+[provenance audit](tools/mmtrain/mmgeo_source_provenance_audit_20261124.json)
+and [clean rebuild attempt](tools/mmtrain/MMGEO_CLEAN_REBUILD_ATTEMPT_20261125.json).
 
 ## Research documents
 

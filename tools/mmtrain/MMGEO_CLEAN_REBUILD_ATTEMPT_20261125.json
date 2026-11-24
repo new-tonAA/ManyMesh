@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "attempt_date_local": "2026-11-25",
+  "status": "clean build succeeded; execution blocked by Windows application control",
+  "repository_head": "1a7599fab1b17a2ad1c7dbc1f34eb2cdd559fd48",
+  "source_sha256": {
+    "libs/manymesh/include/manymesh/Simplifier.h": "b18ca8659e82c9df2b329170487fbb1559ce19b0d3b378f2e36b90cd38f37938",
+    "libs/manymesh/src/Simplifier.cpp": "9c7dcfce176df66b10aac6f4bcd35a6e71f53cbb4bb8b2612b4af2f0c4523f5a",
+    "tools/mmgeo/src/main.cpp": "1ca3c71a1f514129778858782b80ddfa24ee65441a59d80b3d4c6b1e44486820"
+  },
+  "build": {
+    "command": "cmake --build out/cmake-main-clean-20261125 --config Release --target mmgeo -- /m:1 /nr:false",
+    "cmake": "3.31.6-msvc6",
+    "generator": "Visual Studio 17 2022",
+    "platform": "x64",
+    "msbuild": "17.14.14",
+    "msvc": "19.38.33145",
+    "exit_code": 0,
+    "binary": "out/cmake-main-clean-20261125/tools/mmgeo/Release/mmgeo.exe",
+    "binary_bytes": 1930752,
+    "binary_sha256": "1babbbcea90e9bc81dfeeff0376f8d8c9daacd9646a636c8e362efe13492eac0"
+  },
+  "archived_polyhaven_build": {
+    "binary_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+    "recorded_main_cpp_sha256": "3d86db95f92f318642d6af497422933e9287ce41e8a949ae316f93a7bf35b806",
+    "cohort_geometry": "out/polyhaven-matched-face-expansion-20261124/lemon/selected_ratio_0.5.ply"
+  },
+  "execution_attempt": {
+    "input": "out/polyhaven-expansion-20261124/lemon/geometry.obj",
+    "arguments": [
+      "--mode", "dag", "--levels", "8", "--ratio", "0.5",
+      "--target-ratio", "0.5", "--target-ratio-cut", "0.5",
+      "--quality-gate", "1", "--cluster-tris", "128",
+      "--dag-group", "4", "--dump-format", "ply",
+      "--visibility", "0", "--write-dag", "0"
+    ],
+    "result": "Windows application control policy blocked the executable before it ran; no candidate geometry was produced.",
+    "geometry_comparison_performed": false,
+    "image_quality_comparison_performed": false
+  },
+  "scope": "This verifies that the current main source compiles into a fresh binary under the recorded toolchain. It does not reproduce the archived Poly Haven geometry or resolve the source-hash conflict. The current binary hash differs from the archived binary hash, and execution was denied by the host policy."
+}
