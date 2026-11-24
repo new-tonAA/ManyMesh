@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "status": "source provenance conflict: same binary hash, different main.cpp hashes",
+  "khronos_binary_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+  "polyhaven_recorded_binary_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+  "polyhaven_geometry_receipt_binary_sha256": [
+    "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e"
+  ],
+  "polyhaven_geometry_receipt_rows": 58,
+  "polyhaven_scored_assets": 21,
+  "scored_asset_sources_found_in_geometry_receipts": 21,
+  "source_patch_archive": "tools/mmtrain/current_mmgeo_source_patch_20261123.zip",
+  "source_patch_archive_sha256": "60eace026d30a9615b5016a607ede5bef6d09f365c0bf9c789f6e06f323c1948",
+  "source_patch_sha256": "e22a1a9724dd2c69c7d1baefd4248b36f067aad4f1f4e1f396c9c075b5259ac1",
+  "source_parent_revision": "2d417cacdeb545a13e6bfb7192310191e60670d6",
+  "main_cpp_patch_base_blob": "028280b876b85e3a78bd9f06079a674783686c0e",
+  "main_cpp_patch_target_blob_prefix": "7ca62ef1f",
+  "khronos_recorded_main_cpp_sha256": "c044d8d026b32ccb335e99a8c9b0ef4e2ffc766e51455647f29f75bdcf6edea4",
+  "main_cpp_reconstructed_sha256": "c044d8d026b32ccb335e99a8c9b0ef4e2ffc766e51455647f29f75bdcf6edea4",
+  "polyhaven_recorded_main_cpp_sha256": "3d86db95f92f318642d6af497422933e9287ce41e8a949ae316f93a7bf35b806",
+  "polyhaven_recorded_source_diff_sha256": "9a3989f838a7b9b97c4d1c864e305e7d7a3afe496715ca50ae327bbc121533c5",
+  "polyhaven_recorded_build_environment": "CMake 3.31.6-msvc6 Visual Studio 17 2022, MSVC 19.38.33145, Release x64",
+  "patch_matches_khronos_main_hash": true,
+  "patch_matches_polyhaven_main_hash": false,
+  "binary_hash_matches_across_runs": true,
+  "source_identity_resolved": false,
+  "clean_binary_rebuild_verified": false,
+  "compiler_environment_recorded": true,
+  "exact_build_command_recorded": false,
+  "scope": "The archived patch reconstructs the main.cpp hash recorded for the Khronos run. Poly Haven records a different main.cpp hash for the identical executable hash. This mismatch is unresolved; neither source hash proves a clean binary rebuild."
+}

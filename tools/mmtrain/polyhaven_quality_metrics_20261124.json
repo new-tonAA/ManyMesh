@@ -4,7 +4,7 @@
   "quality_scored": true,
   "manifest_sha256": "fde256d148ee31a43aef7ce104ad6cdcc65a42807eef7003da8056815db81dbe",
   "runner_receipt_sha256": "bcabdcb5f9da4153e09dbee267f2b1224aa52b640177537a4d94dc19673387cd",
-  "summary_script_sha256": "481e0ac2c38d5a068b826ff085e9833b55d14a61cf1aeb338b42aaac373a64b5",
+  "summary_script_sha256": "c6ee221f37cf7a5365004219f82a80a90095f7362dbe29ed24c14c6e7cfb3225",
   "scorer_sha256": "9354ae2a6d672e6afd0c6a11bb15339fa10197feb5d32f1f059e257a120b55c7",
   "geometry_build": {
     "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
@@ -20,7 +20,7 @@
     },
     "source_screen_sha256": "5ef8446ab249ce1911d998625c0178a50cf49bed7f7ec7ccb3c9a9e79b3b6448",
     "clean_rebuild_verified": false,
-    "rebuild_limit": "The binary is SHA-pinned and source-file/diff digests are recorded, but the exact source delta and build command were not recovered. This is binary-auditable evidence, not a verified clean-source rebuild."
+    "rebuild_limit": "The Poly Haven and Khronos receipts pin the same mmgeo binary hash but record different main.cpp SHA-256 values. The archived patch reconstructs only the Khronos value, leaving source provenance unresolved. The compiler environment is recorded, but the exact build command is missing, so this is not a verified clean-source rebuild."
   },
   "hardware_adapter_records": [
     "{\"adapter_type\": \"IntegratedGPU\", \"architecture\": \"\", \"backend_type\": \"D3D12\", \"description\": \"\", \"device\": \"Intel(R) Iris(R) Xe Graphics\", \"device_id\": 42912, \"stackgroup_max_size\": 128, \"stackgroup_min_size\": 4, \"vendor\": \"31.0.101.4502\", \"vendor_id\": 32902}"
@@ -49,7 +49,7 @@
     "Coverage MAE was listed in the pre-score plan, but the pinned scorer emits silhouette XOR rather than coverage MAE; coverage MAE is unavailable and was not inferred.",
     "The scorer did not measure GPU frame time, LPIPS, temporal stability, mobile hardware, or human preference.",
     "The render comparison uses a fixed desktop image-quality protocol; it is not equal-frame-time evidence.",
-    "The mmgeo binary is identified by SHA-256, but its exact build patch is unavailable for a clean rebuild."
+    "The Poly Haven and Khronos receipts pin the same mmgeo binary hash but record different main.cpp hashes; the source identity conflict is unresolved. The compiler environment is recorded, but no exact build command or clean rebuild is available."
   ],
   "paired_group_deltas_manymesh_minus_control": {
     "native": {

@@ -96,17 +96,13 @@ comparison. The pinned scorer did not emit the predeclared coverage-MAE
 field, so it is unavailable; it was not reconstructed from other metrics.
 LPIPS, temporal behavior, GPU frame time, mobile-device performance, and
 human preference were not measured.
-The mmgeo executable is pinned by SHA-256, but its exact modified source
-delta was not recovered; a clean source rebuild has not been verified.
-Treat this as an auditable binary experiment, not a fully reproducible
-source build.
-
-The fixed image-scoring stage was subsequently replayed from the same local
-geometry exports on the same Iris Xe/D3D12 setup. All 21 output receipts matched
-the originals byte-for-byte, and the paired bootstrap deltas and intervals
-recomputed identically. This confirms the scoring stage only; it does not
-recover or rebuild the original `mmgeo` source.
-[Replay protocol and receipt](POLYHAVEN_SCORE_REPLAY_AUDIT_20261124.md).
+The Poly Haven geometry receipts use the same mmgeo executable hash as
+the Khronos receipt, but their recorded main.cpp SHA-256 values differ.
+The archived patch reconstructs the Khronos value, not the Poly Haven
+value. Source identity remains unresolved. The compiler environment is
+recorded, but no exact build command or clean source rebuild is available.
+See the [source-provenance audit](mmgeo_source_provenance_audit_20261124.json)
+and [audit script](audit_mmgeo_main_source_provenance.py).
 
 The [frozen cohort](polyhaven_quality_cohort_20261124.json), complete
 [per-view metrics and geometry metrics](polyhaven_quality_metrics_20261124.json),
@@ -117,3 +113,8 @@ hashes. Raw renderer receipts remain local under
 The source geometry screen and fixed-face eligibility reports are
 [here](POLYHAVEN_CANDIDATE_TOPOLOGY_20261124.md) and
 [here](POLYHAVEN_MATCHED_FACE_EXPANSION_20261124.md).
+The fixed image-scoring stage was replayed from the same geometry
+exports on the same Iris Xe/D3D12 setup. All 21 score receipts matched
+byte-for-byte and the paired bootstrap values matched. This verifies
+the scoring stage only; it does not resolve the geometry-source
+identity conflict. See the [replay audit](POLYHAVEN_SCORE_REPLAY_AUDIT_20261124.md).

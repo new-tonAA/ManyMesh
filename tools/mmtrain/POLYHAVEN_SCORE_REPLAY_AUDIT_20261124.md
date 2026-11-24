@@ -41,14 +41,19 @@ The per-asset replay JSON files and receipt are under the ignored local path
 This replay verifies only the scoring pipeline on the exact same geometry
 exports, hardware, driver, and software. It is not an independent replication,
 does not increase the number of statistical units, and does not establish
-mobile, equal-time, preference, or temporal quality. The original `mmgeo`
-binary hash and partial source hashes are recorded, but its exact source delta
-and build command remain unrecovered; a clean geometry-generation build is
-still unverified. The archived stash contains the exact pinned hashes for two
-of the three modified source files. The expected hash for
-`tools/mmgeo/src/main.cpp` was not found in `main`, the archive tag, the stash,
-or any of the 15 reachable revisions of that path. Original source assets and
-renderer receipts remain local.
+mobile, equal-time, preference, or temporal quality.
+
+A source-provenance follow-up found that all Poly Haven geometry eligibility
+rows use the same `mmgeo` binary hash as the Khronos screen, and all 21 scored
+cohort sources appear in those geometry receipts. The archived patch
+reconstructs the Khronos receipt's `main.cpp` SHA-256 (`c044d8d0…`), but the
+Poly Haven metrics record a different `main.cpp` SHA-256 (`3d86db95…`) for the
+same executable hash. The source identity conflict is unresolved. The compiler
+environment is recorded, but the exact build command is missing, so a clean
+geometry-generation rebuild remains unverified. See the
+[source-provenance audit](mmgeo_source_provenance_audit_20261124.json) and its
+[reproduction script](audit_mmgeo_main_source_provenance.py). Original source
+assets and renderer receipts remain local.
 
 ```powershell
 $env:PYTHONPATH = 'out/manymesh-research-pydeps-20261123;out/geometry-refinement-pilot/deps;out/geometry-refinement-pilot/deps/wgpu'
