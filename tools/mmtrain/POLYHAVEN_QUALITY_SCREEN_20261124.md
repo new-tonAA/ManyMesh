@@ -100,7 +100,7 @@ The Poly Haven geometry receipts use the same mmgeo executable hash as
 the Khronos receipt, but their recorded main.cpp SHA-256 values differ.
 The archived patch reconstructs the Khronos value, not the Poly Haven
 value. Source identity remains unresolved. The compiler environment is
-recorded, but no exact build command or clean source rebuild is available.
+recorded, but the source identity conflict remains unresolved and no clean source rebuild is verified.
 See the [source-provenance audit](mmgeo_source_provenance_audit_20261124.json)
 and [audit script](audit_mmgeo_main_source_provenance.py).
 

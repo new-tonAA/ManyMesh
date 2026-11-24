@@ -20,6 +20,7 @@ POLYHAVEN_COHORT = ROOT / "tools/mmtrain/polyhaven_quality_cohort_20261124.json"
 POLYHAVEN_METRICS = ROOT / "tools/mmtrain/polyhaven_quality_metrics_20261124.json"
 OUTPUT = ROOT / "tools/mmtrain/mmgeo_source_provenance_audit_20261124.json"
 MAIN_PATH = "tools/mmgeo/src/main.cpp"
+BUILD_DIR = ROOT / "out/cmake-cut-audit"
 
 
 def sha256(data: bytes) -> str:
@@ -32,6 +33,53 @@ def git(*args: str, cwd: Path = ROOT) -> bytes:
 
 def read_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def retained_build_trace(binary_hash: str) -> dict:
+    """Capture local build evidence without treating it as a clean rebuild."""
+    executable = BUILD_DIR / "tools/mmgeo/Release/mmgeo.exe"
+    build_log = BUILD_DIR / "out/cmake-cut-audit/msbuild.log"
+    compile_tlog = BUILD_DIR / "tools/mmgeo/mmgeo.dir/Release/mmgeo.tlog/CL.command.1.tlog"
+    if not (executable.is_file() and build_log.is_file() and compile_tlog.is_file()):
+        return {"available": False}
+
+    executable_hash = sha256(executable.read_bytes())
+    log = build_log.read_text(encoding="utf-8", errors="replace")
+    msbuild_command = None
+    compile_command = None
+    for line in log.splitlines():
+        match = re.search(
+            r'("[A-Za-z]:/[^\r\n]*?MSBuild\.exe" tools/mmgeo/mmgeo\.vcxproj[^\r\n]*)',
+            line,
+            re.IGNORECASE,
+        )
+        if match:
+            msbuild_command = match.group(1)
+            break
+    for line in log.splitlines():
+        match = re.search(
+            r'([A-Za-z]:\\[^\r\n]*?CL\.exe /c [^\r\n]*?tools\\mmgeo\\src\\main\.cpp)',
+            line,
+            re.IGNORECASE,
+        )
+        if match:
+            compile_command = match.group(1)
+            break
+    tlog = compile_tlog.read_bytes().decode("utf-16le", errors="replace")
+    tlog_has_source = "TOOLS\\MMGEO\\SRC\\MAIN.CPP" in tlog.upper()
+    return {
+        "available": True,
+        "executable": executable.relative_to(ROOT).as_posix(),
+        "executable_sha256": executable_hash,
+        "executable_matches_receipt": executable_hash == binary_hash,
+        "msbuild_log": build_log.relative_to(ROOT).as_posix(),
+        "msbuild_log_sha256": sha256(build_log.read_bytes()),
+        "compile_tlog": compile_tlog.relative_to(ROOT).as_posix(),
+        "compile_tlog_sha256": sha256(compile_tlog.read_bytes()),
+        "tlog_names_main_cpp": tlog_has_source,
+        "msbuild_invocation": msbuild_command,
+        "main_cpp_compile_invocation": compile_command,
+    }
 
 
 def main() -> None:
@@ -112,6 +160,8 @@ def main() -> None:
     if cohort_sources_covered != len(cohort_sources):
         raise SystemExit("one or more scored cohort sources are absent from the geometry receipts")
 
+    build_trace = retained_build_trace(binary_hash)
+
     report = {
         "schema": 1,
         "status": "source provenance conflict: same binary hash, different main.cpp hashes",
@@ -138,8 +188,14 @@ def main() -> None:
         "source_identity_resolved": reconstructed_sha256 == polyhaven_main_sha256,
         "clean_binary_rebuild_verified": False,
         "compiler_environment_recorded": bool(polyhaven_pin.get("build")),
-        "exact_build_command_recorded": False,
-        "scope": "The archived patch reconstructs the main.cpp hash recorded for the Khronos run. Poly Haven records a different main.cpp hash for the identical executable hash. This mismatch is unresolved; neither source hash proves a clean binary rebuild.",
+        "retained_build_trace": build_trace,
+        "exact_build_command_recorded": bool(
+            build_trace.get("executable_matches_receipt")
+            and build_trace.get("tlog_names_main_cpp")
+            and build_trace.get("msbuild_invocation")
+            and build_trace.get("main_cpp_compile_invocation")
+        ),
+        "scope": "The archived patch reconstructs the main.cpp hash recorded for the Khronos run. Poly Haven records a different main.cpp hash for the identical executable hash. A retained build trace names the matching executable and records its MSBuild and main.cpp compiler invocations, but it does not resolve which recorded source hash produced that binary or prove a clean source rebuild.",
     }
     OUTPUT.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"Khronos main.cpp hash reconstructed: {reconstructed_sha256}")

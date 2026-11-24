@@ -49,8 +49,10 @@ cohort sources appear in those geometry receipts. The archived patch
 reconstructs the Khronos receipt's `main.cpp` SHA-256 (`c044d8d0…`), but the
 Poly Haven metrics record a different `main.cpp` SHA-256 (`3d86db95…`) for the
 same executable hash. The source identity conflict is unresolved. The compiler
-environment is recorded, but the exact build command is missing, so a clean
-geometry-generation rebuild remains unverified. See the
+environment is recorded. A retained MSBuild log and compiler tracker record
+the invocation that produced a local executable with the same SHA-256 as the
+receipts. This still does not establish which recorded source hash produced
+that executable, and no clean geometry-generation rebuild was verified. See the
 [source-provenance audit](mmgeo_source_provenance_audit_20261124.json) and its
 [reproduction script](audit_mmgeo_main_source_provenance.py). Original source
 assets and renderer receipts remain local.
