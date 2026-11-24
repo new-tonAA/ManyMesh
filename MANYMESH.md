@@ -48,7 +48,11 @@ and [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
 Run the frozen fixed-topology placement control on CUDA for BarramundiFish and
 Corset. Both inputs pass CPU preparation at 1,932 and 9,162 faces, but the
 current host has CPU-only PyTorch and no CUDA runtime. No fit or quality scoring
-has run. The control uses a pinned nvdiffmodeling adapter; it is not a faithful
+has run. A fresh CPU-only preparation repeat produced byte-identical protocols
+for both assets, but the base Python environment emitted a NumPy/SciPy version
+warning; use the pinned isolated environment for the CUDA run. See the
+[repeat receipt](tools/mmtrain/appearance_cuda_preflight_repeat_20261125.json).
+The control uses a pinned nvdiffmodeling adapter; it is not a faithful
 reproduction of Hasselgren et al. and does not optimize through final hardware
 MSAA or an upscaler. If it fails to improve reserved-view quality at matched
 faces without topology regressions, close this configuration. Only a pass

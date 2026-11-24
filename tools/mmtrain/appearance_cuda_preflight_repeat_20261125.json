@@ -1,0 +1,48 @@
+{
+  "assets": {
+    "BarramundiFish": {
+      "byte_identical_to_previous_prepare_only_output": true,
+      "fitted_faces": 1932,
+      "frozen_hash_fields_match": true,
+      "frozen_inputs_match": true,
+      "generated_protocol_sha256": "9cc62487f795e2347c63b2d7694901df356a2fe63c384b1ff0d51bc2ab5976ab",
+      "input_hashes": {
+        "meshoptimizer_lock_border.obj": "86b28e1d16202b6a45edc6a2bfef83b58fb6e15f1bbf2f31c433f8292e9b8664",
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "eab625eba33b0abca1a5b46fd9b0789f3c80e56d16c84e53fae3b191450244fe"
+      },
+      "source_faces": 3864
+    },
+    "Corset": {
+      "byte_identical_to_previous_prepare_only_output": true,
+      "fitted_faces": 9162,
+      "frozen_hash_fields_match": true,
+      "frozen_inputs_match": true,
+      "generated_protocol_sha256": "a23b6066225bf6ad1b6b5bdefc7f69e4730a8539e08b3b3ec8461eeed7ba18d2",
+      "input_hashes": {
+        "meshoptimizer_lock_border.obj": "64d4e13db46809cc110fd0a201c4b89b4b6d02caca23cba2dce59adf90bec728",
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "1e0cd2ea26af6a015a7b39d3c4bbf2e7de9e4cd22722204e14bc937119c2bac4"
+      },
+      "source_faces": 18324
+    }
+  },
+  "command_template": "D:\\anaconda\\python.exe tools/mmtrain/fit_appearance_cuda.py --manifest tools/mmtrain/matched_appearance_inputs_20261124.json --asset <asset> --geometry-dir out/appearance-ratio-feasibility-20261124/<asset>/exports --upstream out/upstream-nvdiffmodeling-research-code --out out/appearance-gate1-reverify-20261125/<asset> --prepare-only",
+  "created_at_utc": "2026-11-24T21:29:32Z",
+  "environment": {
+    "cuda_available": false,
+    "numpy": "2.5.4",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.3",
+    "scipy": "1.15.3",
+    "scipy_numpy_compatibility_warning": "SciPy 1.15.3 requires NumPy <2.5.0; base environment has NumPy 2.5.4.",
+    "torch": "2.7.1+cpu",
+    "torch_cuda_runtime": null
+  },
+  "fit_run": false,
+  "quality_scored": false,
+  "repository_commit": "f25b769a8e9d1355396ce1484bf1dd0b2d95acfa",
+  "result": "Both generated per-asset protocols match the previous pinned prepare-only outputs byte-for-byte and match all frozen input, script, scorer, upstream, and dependency hashes. No CUDA rendering, fitting, or image scoring occurred.",
+  "schema": 1,
+  "status": "cpu_prepare_only_repeat_passed_cuda_fit_pending"
+}

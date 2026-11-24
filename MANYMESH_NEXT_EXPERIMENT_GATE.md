@@ -165,6 +165,13 @@ reserves 30 eligible models across nine categories, but the final confirmation
 split and quality-scoring protocol remain pending. Details and exclusions are
 in the [expanded-pool report](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md).
 
+A fresh `--prepare-only` repeat on 2026-11-25 reproduced both frozen per-asset
+protocol files byte-for-byte and verified their input, script, scorer, and
+upstream source hashes. It ran under the base Python environment (NumPy 2.5.4,
+SciPy 1.15.3), which emitted SciPy's NumPy-version warning; rerun in the pinned
+isolated environment for fitting. No CUDA rendering or quality scoring was
+performed. See the [repeat receipt](tools/mmtrain/appearance_cuda_preflight_repeat_20261125.json).
+
 Stop if the matched-face baseline loses, if a result depends on tuned views or
 assets, if the surrogate fails to rank real-pipeline results, if boundary or
 topology checks fail, or if total cost removes the quality gain. A mobile claim
