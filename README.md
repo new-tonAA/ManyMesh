@@ -34,17 +34,22 @@ together. See the [historical decomposition](MANYMESH_HISTORY.md#fixed-camera-45
 [source-reference follow-up](MANYMESH_HISTORY.md#12-2026-11-23-original-source-and-asset-feasibility-follow-up),
 and [research status](MANYMESH.md).
 
-![Khronos Suzanne at 3,936 and 982 triangles beside a silhouette-difference map.](docs/manymesh/suzanne-lod.png)
+![Mean PSNR difference between ManyMesh and matched-face QEM and meshoptimizer controls.](docs/manymesh/polyhaven-psnr-delta.svg)
 
-*Flat-shaded CPU reference render, 384 x 384 pixels per panel. Center: depth-2
-cut from unmodified meshoptimizer v1.2. Right: binary coverage differences.
-Asset: UX3D / Norbert Nopper, CC0 1.0. [Figure receipt](docs/manymesh/suzanne-lod.json).*
+*ManyMesh minus each control across 21 models at matched face counts; negative
+values favor the control. Bars show 95% bootstrap intervals over 16 source
+collection groups. Data: [per-view metrics](tools/mmtrain/polyhaven_quality_metrics_20261124.json),
+[protocol](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md).*
 
 ## Evidence status
 
 | Works in measured scope | Does not pass | Not measured |
 |---|---|---|
-| Fixed-view desktop image-quality screens and topology/boundary audits. | The tested ManyMesh cut does not beat matched QEM or meshoptimizer controls on the frozen 21-model cohort. | Physical-phone performance, power, equal-frame-time quality, LPIPS, moving-camera temporal quality, user preference, and a held-out optimized method. |
+| Fixed-view desktop image-quality screens and topology/boundary audits; a separate moving-camera LPIPS/temporal diagnostic. | The tested ManyMesh cut does not beat matched QEM or meshoptimizer controls on the frozen 21-model cohort. | Physical-phone performance, power, equal-frame-time quality, LPIPS on the matched-face cohort, user preference, and a held-out optimized method with a validated temporal-quality gain. |
+
+The separate moving-camera screen uses three reused synthetic scenes. It
+reports LPIPS and temporal metrics but finds no equal-time quality gain; see
+the [measurement report](tools/mmmetrics/MOVING_SCENE_EDGE_QUALITY_20261124.md).
 
 The 21-model result is fixed-view Iris Xe evidence, not mobile or equal-time
 evidence. The earlier seven-asset Khronos screen used a retrospective boundary
