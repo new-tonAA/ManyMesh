@@ -114,6 +114,13 @@ of an authored asset. [HLoD (Eurographics 2026)](https://diglib.eg.org/items/429
 jointly optimizes a hierarchy for 3D Gaussian Splatting, and
 [T²-Splat](https://arxiv.org/html/2611.06974) combines adaptive triangle topology,
 image supervision, and scale-aware residual filtering for scene reconstruction.
+Reiser et al.'s [Binary Opacity Grids (SIGGRAPH 2024)](https://www.cvlibs.net/publications/Reiser2024SIGGRAPH.pdf)
+extracts and chunk-simplifies a mesh from multi-view images, then uses TAA to
+render thin and subpixel geometry. Its moving-camera TAA result is close to
+16x SSAA in image metrics, and it reports a Pixel 8 Pro measurement. This
+establishes thin-geometry reconstruction plus temporal AA as prior art, but it
+does not optimize an authored cluster LOD against TAA; its TAA comparison should
+be included if ManyMesh selects a temporal operator.
 Neural level-of-detail and progressive geometry compression are also established:
 [N-GLOD (CVPR 2021)](https://research.nvidia.com/labs/toronto-ai/nglod/) uses
 an octree feature volume with multilevel SDF interpolation, and

@@ -86,6 +86,11 @@ placement control, and progressive-boundary cluster methods. Use both equal-face
 equal-complete-frame-time comparisons. Count optimization, loading, memory,
 selection, rendering, AA, and upscaling costs. A differentiable surrogate must
 predict outcomes under the actual non-differentiable render pipeline.
+If TAA or temporal upscaling is the target operator, include a moving-camera
+history sequence and compare against that same operator without geometry
+optimization; Binary Opacity Grids already reports moving-camera TAA versus
+SSAA for thin-geometry meshes. Static-frame or jitter-only scoring cannot
+support a temporal-reconstruction claim.
 
 Use a fresh, licensed, category-balanced confirmation set with at least 20
 assets from five or more declared categories. Split by asset; keep every view
