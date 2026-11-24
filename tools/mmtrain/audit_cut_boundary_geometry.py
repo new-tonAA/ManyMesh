@@ -105,8 +105,10 @@ def measure(reference_edges, candidate_edges, step):
         for cluster, start, end in reference_edges:
             i = ref_to_out_index[ref_index[start]]
             j = ref_to_out_index[ref_index[end]]
-            approximate_directed_edge_matches += (cluster, i, j) in candidate_directed_edges
-            approximate_reversed_edge_matches += (cluster, j, i) in candidate_directed_edges
+            approximate_directed_edge_matches += (
+                (cluster, i, j) in candidate_directed_edges)
+            approximate_reversed_edge_matches += (
+                (cluster, j, i) in candidate_directed_edges)
     ref_samples, ref_lengths = sample_segments(ref_start, ref_end, step)
     out_samples, out_lengths = sample_segments(out_start, out_end, step)
     ref_to_candidate = directed_curve_distance(ref_samples, out_start, out_end)

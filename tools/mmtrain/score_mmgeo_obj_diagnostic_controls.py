@@ -63,7 +63,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source-obj", type=Path, required=True)
     parser.add_argument("--cut-dir", type=Path, required=True)
-    parser.add_argument("--mmgeo", type=Path, required=True)
+    parser.add_argument("--mmgeo", type=Path,
+                        help="Optional generator binary hash; the scorer reads frozen PLY cuts and does not invoke it")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--views", type=int, default=8)
     parser.add_argument("--size", type=int, default=192)
@@ -101,10 +102,14 @@ def main():
     report = {
         "source_path": str(args.source_obj),
         "source_sha256": digest(args.source_obj),
-        "source_revision": subprocess.check_output(
+        "scoring_repository_revision": subprocess.check_output(
             ["git", "rev-parse", "HEAD"], text=True).strip(),
-        "mmgeo_sha256": digest(args.mmgeo),
-        "mmgeo_main_sha256": digest(ROOT / "tools/mmgeo/src/main.cpp"),
+        "candidate_generation_provenance": {
+            "generator_binary_sha256": digest(args.mmgeo) if args.mmgeo else None,
+            "generator_source_sha256": digest(ROOT / "tools/mmgeo/src/main.cpp"),
+            "note": ("The scorer reads the supplied PLY cuts and does not invoke mmgeo; "
+                     "without --mmgeo, their generator binary is not pinned."),
+        },
         "script_sha256": digest(__file__),
         "python_version": platform.python_version(),
         "numpy_version": np.__version__,
