@@ -1,113 +1,69 @@
 # ManyMesh research status
 
-Updated 2026-11-25. **No SIGGRAPH-ready contribution is established.** Mobile
-performance and user preference have not been measured.
+Updated 2026-11-25. **No SIGGRAPH-ready contribution is established.** No
+physical-phone performance, user preference, or positive held-out method result
+has been measured.
 
-## Current question
+## Research question
 
-Can offline optimization improve a triangle-mesh cluster LOD when evaluated
-after the same antialiasing or upscaling pipeline, at matched face count and
-complete runtime cost? This is an untested hypothesis, not a novelty claim.
-Differentiable mesh fitting and image-guided adaptive subdivision have close
-prior art, including per-triangle micro-mesh LOD. See the [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md)
-and [SIGGRAPH direction](SIGGRAPH_2027_DIRECTION.md).
+Can offline geometry optimization improve a cluster LOD after the same
+antialiasing or upscaling pipeline, against strong controls at matched face
+count and full cost? This remains an untested hypothesis with close prior art;
+it is not a novelty claim. See the [SIGGRAPH direction](SIGGRAPH_2027_DIRECTION.md)
+and [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
 
-## Evidence snapshot
+## Evidence that sets the direction
 
-- **Current cut:** The 21-model matched-face screen found worse LDR-FLIP, PSNR,
-  SSIM, and silhouette XOR than border-preserving QEM and meshoptimizer, with
-  native sampling and 4x MSAA. Paired 95% intervals exclude zero across 16
-  source groups. This closes the tested cut, not every geometry method. It is
-  fixed-view desktop evidence, not an equal-time or mobile result. See the
-  [protocol and results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md)
+- The eligible 21-model screen found the current ManyMesh cuts worse than
+  border-preserving QEM and meshoptimizer on LDR-FLIP, PSNR, SSIM, and silhouette
+  XOR, both with native sampling and 4x MSAA. The tested cut is closed as a
+  quality-improving method. See the [protocol and results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md)
   and [per-view metrics](tools/mmtrain/polyhaven_quality_metrics_20261124.json).
-- **Source provenance:** A clean Release build from reconstructed commit
-  `489b275` matches the archived PE except for its duplicated build timestamp;
-  all other bytes, including `.text`, match. The retained `Grouper.obj` lacks
-  an individual `Grouper.cpp` source checksum, and the rebuilt executable was
-  not run because Windows application control blocked it. The archived binary
-  replayed 18 expanded-cohort meshes exactly; the original three were not
-  replayed. See the [rebuild receipt](tools/mmtrain/mmgeo_clean_rebuild_489_20261125.json)
-  and [geometry replay receipt](tools/mmtrain/polyhaven_geometry_replay_20261125.json).
-- **Earlier controls:** The seven-asset screen used a retrospective boundary
-  tolerance and reused development assets; it beat meshoptimizer on two pairs
-  from one asset and beat no eligible QEM pair. Fixed-topology placement and
-  projective silhouette fits did not establish a repeatable gain. A 64-view
-  contour-priority QEM control gained +0.167 dB mean PSNR on seven development
-  assets, but had mixed FLIP results and no reliable AA follow-up gain. A
-  fixed-topology contour fit regressed on two of three assets. See the
-  [CPU screen](tools/mmtrain/CONTOUR_IMPORTANCE_QEM_20261123.md), [AA follow-up](tools/mmtrain/CONTOUR_PRIORITY_AA_20261123.md),
-  [fit report](tools/mmtrain/VISIBLE_CONTOUR_FIT_20261124.md), and [dated history](MANYMESH_HISTORY.md).
-- **Monkey source-reference diagnostic:** The three frozen cuts were re-scored
-  against the original 15,744-face source at matched face counts. The candidate
-  loses to eligible QEM and meshoptimizer controls on all reported image metrics
-  at every tested budget. This closes these cuts as evidence for a silhouette
-  benefit; it is one reused asset, uses a retrospectively selected boundary
-  tolerance, and has no pinned candidate-generation binary. See the
-  [report and receipt](tools/mmtrain/MONKEY_SOURCE_REFERENCE_DIAGNOSTIC_20261125.md).
-- **Instance-scale screen:** The 10,000-instance desktop GPU raster interval
-  fell 4.31x for stock depth-2 geometry, but the aggregate quality comparison is
-  not geometry-eligible: four assets have changed boundary-edge counts and one
-  cut has duplicate/nonmanifold faces. Treat image deltas as diagnostic only;
-  timing applies to the submitted buffers. See the [report and receipt](tools/mmtrain/INSTANCE_SCALE_SCREEN_20261124.md).
-- **Closed-mesh instance follow-up:** On the single reused BarramundiFish asset,
-  stock depth-2 rendering reduced the 10,000-instance GPU raster p50 from
-  26.15 ms to 6.66 ms on Iris Xe / D3D12 (3.93x), while PSNR fell by 0.015 dB
-  and LDR-FLIP worsened by 0.00013 against the supersampled source reference.
-  Bidirectional sampled surface distance averages 0.098% of the source
-  bounding-box diagonal; mean normal difference is 6.8-7.1 degrees.
-  Source and cut pass a welded closed-manifold audit: each has three orientable
-  components with Euler characteristic 2, with matching component signatures.
-  This is a one-view desktop diagnostic at unequal face counts, not a held-out
-  result, full-frame timing, mobile result, or ManyMesh method claim. The audit
-  does not test geometric self-intersections or surface distance.
-  See the [protocol and results](tools/mmtrain/INSTANCE_SCALE_BARRAMUNDIFISH_SCREEN_20261125.md)
-  and [raw run receipts](tools/mmtrain/instance_scale_barramundifish_20261125_a.json),
-  [run B](tools/mmtrain/instance_scale_barramundifish_20261125_b.json), and
-  [topology audit](tools/mmtrain/barramundifish_topology_20261125.json).
+- A source-referenced Monkey diagnostic found silhouette XOR accounted for
+  25.84%-34.75% of squared error across three tested budgets, not the historical
+  68.3%. The candidate also lost to eligible exact-face controls. This is a
+  single-asset diagnostic, not a general silhouette result. See the
+  [report](tools/mmtrain/MONKEY_SOURCE_REFERENCE_DIAGNOSTIC_20261125.md).
+- Earlier contour-priority and fixed-topology fitting screens did not show a
+  repeatable quality gain. The 64-view contour control's +0.167 dB development
+  PSNR result had mixed FLIP and no reliable AA follow-up gain. See the
+  [contour screen](tools/mmtrain/CONTOUR_IMPORTANCE_QEM_20261123.md),
+  [AA follow-up](tools/mmtrain/CONTOUR_PRIORITY_AA_20261123.md), and
+  [fit report](tools/mmtrain/VISIBLE_CONTOUR_FIT_20261124.md).
+- A 10,000-instance BarramundiFish desktop diagnostic reduced GPU raster p50
+  from 26.15 ms to 6.66 ms (3.93x), with small image-metric regressions. It is
+  one asset and one view at unequal face counts; it does not establish a
+  ManyMesh method result. See the [protocol and limits](tools/mmtrain/INSTANCE_SCALE_BARRAMUNDIFISH_SCREEN_20261125.md).
+- A fresh candidate pool now contains 30 unscored models across 25 source
+  families and nine categories. Each has topology- and boundary-eligible
+  ManyMesh, QEM, and meshoptimizer outputs at the same face count. This is a
+  pre-score cohort, not held-out quality evidence. See the
+  [pool report](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md) and
+  [manifest](tools/mmtrain/polyhaven_confirmation_pool_20261125.json).
 
-- **Reserved confirmation candidates:** Two catalog-only Poly Haven batches
-  produced 30 unscored, exact-face eligible models across 25 slug-family groups
-  and nine categories. Each model has ManyMesh, QEM, and meshoptimizer outputs
-  at the same face count, passing the recorded topology and source-boundary
-  checks. No renders or quality metrics were used to select the pool. This
-  prepares a candidate cohort; the final camera split and scoring protocol
-  remain unfrozen, and the pool is not held-out result evidence. See the
-  [selection and eligibility report](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md)
-  and [machine-readable manifest](tools/mmtrain/polyhaven_confirmation_pool_20261125.json).
+## Next decision
 
-No physical-phone test, equal-frame-time quality comparison, LPIPS evaluation,
-moving-camera temporal evaluation, user study, or positive held-out optimized
-method is available.
+Run the frozen fixed-topology placement control on CUDA for BarramundiFish and
+Corset. Both inputs pass CPU preparation at 1,932 and 9,162 faces, but the
+current host has CPU-only PyTorch and no CUDA runtime. No fit or quality scoring
+has run. The control uses a pinned nvdiffmodeling adapter; it is not a faithful
+reproduction of Hasselgren et al. and does not optimize through final hardware
+MSAA or an upscaler. If it fails to improve reserved-view quality at matched
+faces without topology regressions, close this configuration. Only a pass
+opens a frozen, asset-held-out study of the cluster-DAG distinction. See the
+[Gate 1 protocol](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md) and
+[machine-readable receipt](tools/mmtrain/appearance_cuda_protocol_20261124.json).
 
-## Next gate
+## Measurement gaps
 
-Run the frozen fixed-topology placement control on CUDA with BarramundiFish and
-Corset. Their CPU preflight passed at 1,932 and 9,162 comparison faces, but this
-host has PyTorch 2.7.1+CPU and no CUDA runtime. The experiment uses a
-nvdiffmodeling-based adapter, not a faithful reproduction of Hasselgren et al.;
-it disables MSAA during fitting and does not optimize through the final 4x MSAA
-or an upscaler. Two reused assets can screen this configuration only. If it
-does not show repeatable reserved-view gains at matched face count, close this
-configuration and do not advance to a custom DAG optimizer.
-
-On 2026-11-25, `--prepare-only` was repeated for both frozen assets. Each output
-protocol matched its earlier per-asset receipt byte-for-byte, and the current
-fit script, scorer, and external NVIDIA source tree matched their pinned hashes.
-The isolated research environment uses NumPy 2.3.4 and SciPy 1.15.3; both
-preflights completed there without warnings and still matched byte-for-byte. A
-run through the base Python environment emitted a SciPy/NumPy compatibility
-warning, so keep using the isolated environment on the eventual CUDA host. No
-fit or quality scoring has run yet.
-
-Frozen assets, controls, scorer, camera split, and limits are in the
-[input report](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md) and
-[protocol receipt](tools/mmtrain/appearance_cuda_protocol_20261124.json).
+No physical-phone test, equal-complete-frame-time quality comparison, LPIPS,
+moving-camera temporal quality, user study, or positive held-out optimized
+method result is available. Desktop timings do not support mobile claims.
 
 ## Project documents
 
 - [SIGGRAPH 2027 direction](SIGGRAPH_2027_DIRECTION.md)
 - [Next experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md)
-- [Prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md)
+- [Research roadmap](MANYMESH_RESEARCH_ROADMAP.md)
 - [Dated experiment history](MANYMESH_HISTORY.md)
 - [Filament documentation](filament/README.md)

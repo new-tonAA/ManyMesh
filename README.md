@@ -49,7 +49,11 @@ Asset: UX3D / Norbert Nopper, CC0 1.0. [Figure receipt](docs/manymesh/suzanne-lo
 The 21-model result is fixed-view Iris Xe evidence, not mobile or equal-time
 evidence. The earlier seven-asset Khronos screen used a retrospective boundary
 tolerance and reused development assets; it beat meshoptimizer on two pairs
-from one asset and beat no eligible QEM pair. [Reports and raw metrics](MANYMESH.md#evidence-snapshot).
+from one asset and beat no eligible QEM pair. [Research status and reports](MANYMESH.md).
+
+A fresh Poly Haven cohort is now reserved for confirmation: 30 eligible models
+across 25 source families and nine categories. It has not been image-scored;
+see the [pool protocol and manifest](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md).
 Retained compiler checksums resolve the archived executable's source set:
 `main.cpp` matches the Khronos receipt, while `Simplifier.cpp` and
 `Simplifier.h` match the Poly Haven pin. A clean Release rebuild from the
