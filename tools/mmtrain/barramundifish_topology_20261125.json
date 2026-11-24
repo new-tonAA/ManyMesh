@@ -147,5 +147,5 @@
     "Does not test geometric self-intersections or near-coincident seams.",
     "Does not compare surface distance, attributes, or image quality."
   ],
-  "audit_script_sha256": "63434d7ee248d43f79d88c747de7dd3be939cc12cff2ad6586e177d70f5e2105"
+  "audit_script_sha256": "d36ffdd9fb626a3dcde08e5391daa688d20e981c106fa04fc536ede76c195ee3"
 }

@@ -142,7 +142,9 @@ def main() -> None:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     if args.output.exists():
         raise FileExistsError(f"Refusing to overwrite {args.output}")
-    args.output.write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
+    with args.output.open("w", encoding="utf-8", newline="\n") as stream:
+        json.dump(receipt, stream, indent=2)
+        stream.write("\n")
     print(json.dumps({
         "source_components": source_audit["topology_signature"],
         "cluster2_components": cut_audit["topology_signature"],
