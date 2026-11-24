@@ -38,6 +38,13 @@ and [SIGGRAPH direction](SIGGRAPH_2027_DIRECTION.md).
   fixed-topology contour fit regressed on two of three assets. See the
   [CPU screen](tools/mmtrain/CONTOUR_IMPORTANCE_QEM_20261123.md), [AA follow-up](tools/mmtrain/CONTOUR_PRIORITY_AA_20261123.md),
   [fit report](tools/mmtrain/VISIBLE_CONTOUR_FIT_20261124.md), and [dated history](MANYMESH_HISTORY.md).
+- **Monkey source-reference diagnostic:** The three frozen cuts were re-scored
+  against the original 15,744-face source at matched face counts. The candidate
+  loses to eligible QEM and meshoptimizer controls on all reported image metrics
+  at every tested budget. This closes these cuts as evidence for a silhouette
+  benefit; it is one reused asset, uses a retrospectively selected boundary
+  tolerance, and has no pinned candidate-generation binary. See the
+  [report and receipt](tools/mmtrain/MONKEY_SOURCE_REFERENCE_DIAGNOSTIC_20261125.md).
 
 No physical-phone test, equal-frame-time quality comparison, LPIPS evaluation,
 moving-camera temporal evaluation, user study, or positive held-out optimized
