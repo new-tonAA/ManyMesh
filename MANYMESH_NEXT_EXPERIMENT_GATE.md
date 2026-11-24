@@ -48,6 +48,12 @@ SSIM, silhouette/coverage, sampled surface and normal error, topology failures,
 preprocessing time, peak memory, and face count. Do not use CPU timing as a
 substitute for the documented CUDA baseline.
 
+The pinned training call renders at 2x resolution, enables nvdiffrast edge
+antialiasing, disables its MSAA option, and box-averages to 128 x 128. Gate 1
+is a differentiable placement baseline, not optimization through the final
+hardware 4x MSAA or an upscaler. Gate 2 must separately fit and score against
+the same final reconstruction operator before supporting that claim.
+
 **Pass only** if the baseline produces repeatable improvement on held-out views
 at equal face count without topology regressions. If it does not, stop the
 differentiable-geometry branch before building a custom optimizer.

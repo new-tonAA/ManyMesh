@@ -19,6 +19,8 @@ NVDIFFRAST_VERSION = "0.4.0"
 NVDIFFRAST_REVISION = "253ac4fcea7de5f396371124af597e6cc957bfae"
 INITIALIZER = "meshoptimizer_lock_border.obj"
 SIZE, SPP, BATCH, EPOCHS = 128, 2, 4, 16
+TRAINING_MSAA = False
+TRAINING_EDGE_ANTIALIAS = True
 LEARNING_RATE = 0.001
 MAX_DISPLACEMENT = 0.012
 NORMAL_DOT_FRACTION = 0.2
@@ -115,7 +117,8 @@ def train(torch, dr, geometry, reference, initial, eyes, free):
     def draw(geometry, camera):
         matrix, eye = camera
         return render.render_mesh(ctx, geometry, matrix, eye, eye, np.array([2., 2., 2.]),
-                                  SIZE, spp=SPP)
+                                  SIZE, spp=SPP, msaa=TRAINING_MSAA,
+                                  antialias=TRAINING_EDGE_ANTIALIAS)
 
     def candidate():
         return flat_mesh(torch, mesh, low_obj, positions.index_copy(0, movable, parameters),
@@ -223,6 +226,12 @@ def main():
               "initializer_vertices": len(initial[0]), "welded_vertices": len(low[0]),
               "movable_welded_vertices": len(free), "initializer_boundary_edges": len(initial_edges),
               "training_eyes": eyes.tolist(), "resolution": SIZE, "supersample_axis": SPP,
+              "training_rasterization": {
+                  "render_resolution": SIZE * SPP,
+                  "msaa": TRAINING_MSAA,
+                  "nvdiffrast_edge_antialias": TRAINING_EDGE_ANTIALIAS,
+                  "resolve": "2x2 box average after edge antialiasing",
+              },
               "batch_size": BATCH, "epochs": EPOCHS, "learning_rate": LEARNING_RATE,
               "maximum_displacement": MAX_DISPLACEMENT, "min_normal_dot_fraction": NORMAL_DOT_FRACTION,
               "displacement_weight": DISPLACEMENT_WEIGHT}

@@ -99,9 +99,13 @@ fixed. The optimizer caps displacement at 0.012 normalized units and
 backtracks steps that move a triangle's unnormalized normal below the
 recorded dot-product threshold.
 
-Training uses 32 fixed cameras, 128 × 128 images with 2× linear supersampling,
-the same diffuse material and camera light on both meshes, and Adam for 128
-minibatches. The loss is linear RGB MSE plus a displacement penalty. The
+Training uses 32 fixed cameras and 128 × 128 output images rendered at
+256 × 256. nvdiffrast edge antialiasing is enabled, its MSAA option is
+explicitly disabled, and a 2 × 2 box average produces the training image.
+This is a supersampled differentiable placement control, not optimization
+through the final hardware 4× MSAA or an upscaler. Both meshes use the same
+diffuse material and camera light, with Adam for 128 minibatches. The loss
+is linear RGB MSE plus a displacement penalty. The
 closest training and reserved camera directions differ by 16.8 degrees.
 The [protocol receipt](appearance_cuda_protocol_20261124.json) pins camera
 vectors, the optimizer settings, both asset hashes, and the scorer. The

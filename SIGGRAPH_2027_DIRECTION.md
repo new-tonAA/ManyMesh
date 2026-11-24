@@ -13,6 +13,12 @@ and resolve during optimization, and preserve the hierarchy's legal cuts,
 shared boundaries, and transitions. The result must beat strong alternatives
 after real reconstruction, not only its differentiable surrogate.
 
+The frozen placement-only training baseline currently uses a 2x supersampled
+nvdiffrast render with edge antialiasing enabled and its MSAA option disabled.
+That reproduces differentiable mesh fitting; it does not test optimization
+through the final hardware 4x MSAA or an upscaler. Only a later operator-matched
+fit can test the remaining reconstruction-conditioned hypothesis.
+
 The unoptimized 50%-retention ManyMesh cut has now been screened on 21 unique
 Poly Haven meshes across six classes, at exact face counts against
 border-preserving QEM and meshoptimizer LockBorder. It loses on LDR-FLIP, PSNR,

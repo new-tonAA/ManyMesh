@@ -55,6 +55,9 @@ First run the frozen placement-only differentiable baseline on CUDA with
 BarramundiFish and Corset. The inputs, matched controls, scorer, and camera
 protocol are frozen in the [input report](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md)
 and [protocol receipt](tools/mmtrain/appearance_cuda_protocol_20261124.json).
+This is a baseline replication, not an operator-matched fit: training renders
+at 2x supersampling with nvdiffrast edge antialiasing and its MSAA option off.
+It does not optimize through the final hardware 4x MSAA or an upscaler.
 This host has PyTorch 2.7.1+CPU and no CUDA runtime, so that experiment cannot
 run here. The earlier CPU projective fit is a separate negative control, not a
 substitute. If the CUDA baseline does not show repeatable held-out gains at
