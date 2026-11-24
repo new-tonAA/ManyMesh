@@ -43,7 +43,9 @@ The 21-model scoring replay matches byte-for-byte, but its geometry receipts
 record a different `main.cpp` hash from the Khronos run despite sharing the
 same `mmgeo` binary hash. A clean Release build of current `main` succeeded,
 but Windows application control blocked running it, so source-level
-reproduction remains unverified. See the
+reproduction remains unverified. The archived binary did regenerate the Lemon
+candidate PLY byte-for-byte; this single-asset replay does not resolve the
+source hash conflict or reproduce the full cohort. See the
 [provenance audit](tools/mmtrain/mmgeo_source_provenance_audit_20261124.json)
 and [clean rebuild attempt](tools/mmtrain/MMGEO_CLEAN_REBUILD_ATTEMPT_20261125.json).
 

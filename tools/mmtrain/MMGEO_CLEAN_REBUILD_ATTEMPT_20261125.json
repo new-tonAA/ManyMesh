@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "attempt_date_local": "2026-11-25",
-  "status": "clean build succeeded; execution blocked by Windows application control",
+  "status": "current-source build compiled; archived-binary replay reproduced one geometry exactly; current-binary execution blocked by Windows application control",
   "repository_head": "1a7599fab1b17a2ad1c7dbc1f34eb2cdd559fd48",
   "source_sha256": {
     "libs/manymesh/include/manymesh/Simplifier.h": "b18ca8659e82c9df2b329170487fbb1559ce19b0d3b378f2e36b90cd38f37938",
@@ -25,6 +25,27 @@
     "recorded_main_cpp_sha256": "3d86db95f92f318642d6af497422933e9287ce41e8a949ae316f93a7bf35b806",
     "cohort_geometry": "out/polyhaven-matched-face-expansion-20261124/lemon/selected_ratio_0.5.ply"
   },
+  "archived_binary_replay": {
+    "binary": "out/cmake-cut-audit/tools/mmgeo/Release/mmgeo.exe",
+    "binary_sha256_verified": true,
+    "input": "out/polyhaven-expansion-20261124/lemon/geometry.obj",
+    "input_sha256": "046e59a441a38271b729d945fb9da0bf85e4732723cf321328bcb60eb972338d",
+    "arguments": [
+      "--mode", "dag", "--levels", "8", "--ratio", "0.5",
+      "--target-ratio", "0.5", "--target-ratio-cut", "0.5",
+      "--quality-gate", "1", "--cluster-tris", "128",
+      "--dag-group", "4", "--dump-format", "ply",
+      "--visibility", "0", "--write-dag", "0"
+    ],
+    "replayed_geometry": "out/mmgeo-archive-repeat-20261125/lemon/selected_ratio_0.5.ply",
+    "archived_geometry": "out/polyhaven-matched-face-expansion-20261124/lemon/selected_ratio_0.5.ply",
+    "geometry_sha256": "aa822082fcd87e73cde9e23698d6ab3d9f82d8d6aae42520df2c2ded09062d74",
+    "byte_count": 54412,
+    "byte_for_byte_match": true,
+    "vertex_count": 1005,
+    "face_count": 2006,
+    "image_quality_retested": false
+  },
   "execution_attempt": {
     "input": "out/polyhaven-expansion-20261124/lemon/geometry.obj",
     "arguments": [
@@ -38,5 +59,5 @@
     "geometry_comparison_performed": false,
     "image_quality_comparison_performed": false
   },
-  "scope": "This verifies that the current main source compiles into a fresh binary under the recorded toolchain. It does not reproduce the archived Poly Haven geometry or resolve the source-hash conflict. The current binary hash differs from the archived binary hash, and execution was denied by the host policy."
+  "scope": "The current main source compiles into a fresh binary under the recorded toolchain, but Windows application control blocked its execution. Separately, the archived binary reproduced the Lemon candidate PLY byte-for-byte. That one-asset replay verifies archived-binary output determinism, not source identity or all 21 models, and does not resolve the recorded main.cpp hash conflict."
 }
