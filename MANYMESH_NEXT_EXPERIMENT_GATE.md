@@ -26,7 +26,8 @@ testable distinction is optimization against a *different final reconstruction
 operator*, measured against that same operator without geometry optimization,
 plus the constraints of legal cluster-DAG cuts. That is a hypothesis, not a
 novelty claim. [Full paper](https://users.aalto.fi/~laines9/publications/hasselgren2021egsr_paper.pdf) ·
-[Luebke and Erikson](https://techreports.cs.unc.edu/papers/97-005/97-005.pdf) ·
+[Luebke and Erikson](https://dl.acm.org/doi/10.1145/258734.258847) ·
+[Luebke's detailed dissertation treatment](https://www.luebke.us/publications/pdf/dissertation.pdf) ·
 [Sander et al.](https://hhoppe.com/silclip.pdf)
 
 Hierarchy-level fitting also overlaps conceptually with [V3DG (SIGGRAPH

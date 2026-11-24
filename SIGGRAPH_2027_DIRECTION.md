@@ -85,12 +85,27 @@ review; it is not an exhaustive literature search.
 | 3 | **D: rate-aware DAG construction** | Parked. Meshlet compression is crowded; reopen only with full-stream byte and decode comparisons against meshoptimizer, Draco, Kuth et al., and AMD DGF. |
 
 Silhouette-aware LOD and clipping have direct precedents in
-[Luebke–Erikson (1997)](https://techreports.cs.unc.edu/papers/97-005/97-005.pdf)
-and [Sander et al. (2000)](https://hhoppe.com/silclip.pdf). Image-driven
+[Luebke–Erikson (1997)](https://dl.acm.org/doi/10.1145/258734.258847)
+and [Sander et al. (2000)](https://hhoppe.com/silclip.pdf). Luebke's [1998
+dissertation](https://www.luebke.us/publications/pdf/dissertation.pdf) details
+the 1997 view-dependent method: it uses a cone-of-normals/view-cone test to
+identify possible silhouette nodes, assigns them a tighter screen-space
+threshold than interior nodes, collapses back-facing nodes, and also describes
+minimizing screen-space error under a triangle budget. This directly closes
+silhouette-weighted budgeting as a novelty claim. Image-driven
 simplification also predates this project ([Lindstrom–Turk (2000)](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf)).
-Budgeted and predictive LOD selection also predates this project: see
+Budgeted LOD selection also predates this project: see
 [Funkhouser–Séquin (1993)](https://www.cs.princeton.edu/courses/archive/spr01/cs598b/papers/funkhouser93.pdf)
 and [Mason–Blake (1997)](https://doi.org/10.1111/1467-8659.16.3conferenceissue.21).
+Funkhouser–Séquin optimize scene-level representation and rendering choices
+under a target frame time. Mason–Blake formulate hierarchical LOD selection
+with shared representations and a resource budget. The authors' [corrected
+1999 technical report](https://people.cs.uct.ac.za/~edwin/MyBib/1999-mason.pdf)
+formulates this as a hierarchical multiple-choice knapsack problem and targets
+predicted frame time while maximizing estimated perceptual benefit; it also
+states that it corrects an important error in the 1997 paper. The prior-art
+screen records which primary texts were read and which claims still rely on
+abstracts or previews.
 Learned perceptual-error prediction exists for shading-rate selection, not mesh
 topology ([Cardoso et al.](https://doi.org/10.1145/3522625)). Arm documents
 Neural Super Sampling for the Mali G2-Ultra NX
