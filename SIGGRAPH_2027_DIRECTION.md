@@ -38,14 +38,16 @@ This remains untested and may not be novel.
 [NVIDIA project page](https://research.nvidia.com/labs/rtr/publication/hasselgren2021diffmodeling/)).
 V3DG already fits each level of a clustered hierarchy differentiably, although
 it uses 3D Gaussian primitives ([SIGGRAPH 2025 paper](https://arxiv.org/html/2505.06523)).
-HLOD ASAP's abstract and first-page preview describe progressive interior and
-neighbor-paired boundary meshes that simplify cluster interfaces while keeping
-mixed cuts crack-free ([Eurographics record](https://doi.org/10.1111/cgf.70380),
-[publisher preview](https://www.researchgate.net/publication/403799777_Construction_of_clustered_HLOD_with_As-Simplified-As-Possible_boundaries)).
-Its full text and quantitative results were unavailable in this review, so that
-comparison is incomplete. Quick-VDR already provides clustered progressive
-meshes and dependency-constrained crack-free refinement
-([full paper](https://diglib.eg.org/server/api/core/bitstreams/c7622379-a7d8-4af9-ae6e-977df7a26ea3/content)).
+HLOD ASAP's abstract describes progressive interior and neighbor-paired
+boundary meshes that simplify cluster interfaces while keeping mixed cuts
+crack-free ([publisher article page](https://onlinelibrary.wiley.com/doi/10.1111/cgf.70380),
+[Eurographics record](https://doi.org/10.1111/cgf.70380)). The publisher page
+exposed the abstract and references, but its full-text download reported a
+technical error during this review; the methods and quantitative results remain
+unverified. This is direct prior art for simplified, crack-free cluster
+boundaries, so boundary consistency alone is not a distinction. Quick-VDR
+already provides clustered progressive meshes and dependency-constrained,
+crack-free refinement ([full paper](https://diglib.eg.org/server/api/core/bitstreams/c7622379-a7d8-4af9-ae6e-977df7a26ea3/content)).
 Therefore hierarchy fitting, per-level differentiable fitting, scale-aware
 appearance, boundary consistency, and transition stability are not contributions
 on their own. Novelty is not established.
