@@ -220,6 +220,7 @@ def main():
               "nvdiffmodeling_src_sha256": tree_sha, "required_nvdiffrast": NVDIFFRAST_VERSION,
               "nvdiffrast_release_revision": NVDIFFRAST_REVISION,
               "scorer_sha256": digest(Path(__file__).with_name("bench_appearance_controls.py")),
+              "preflight_script_sha256": digest(Path(__file__).with_name("preflight_appearance_meshes.py")),
               "inputs": {k: receipt["obj_exports_sha256"][k]
                          for k in ("reference.obj", INITIALIZER, "neutral.mtl")},
               "source_faces": len(reference[1]), "fitted_faces": len(initial[1]),

@@ -1,23 +1,34 @@
 """Check that a placement experiment has legal meshes at a common face count."""
 
 import argparse
+import hashlib
 import importlib.metadata
 import json
 from pathlib import Path
 import subprocess
+import sys
 
 import numpy as np
 from scipy.spatial import cKDTree
 
-from score_mmgeo_obj_diagnostic_controls import (
-    MESHOPT_HELPER, ROOT, boundary, compact, digest, load_binary_ply, load_obj,
-    meshopt_simplify_raw, normalize, qem_simplify, source_frame,
-)
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "tools/mmgeo"))
+from audit_target_budget_visibility import load_obj
+from cluster_decoder import Mesh, topology
 
 
 TARGET = 0.30
 RATIO_TOLERANCE = 0.01
 BOUNDARY_TOLERANCE = float(np.finfo(np.float32).eps)
+
+
+def digest(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def boundary(positions, triangles):
+    mesh = Mesh(positions, triangles, np.zeros(len(triangles), dtype=np.int64)).checked()
+    return topology(mesh)[1]
 
 
 def same_boundary(reference, candidate):
@@ -87,6 +98,11 @@ def main():
     parser.add_argument("--export-obj-dir", type=Path,
                         help="Export all four audited meshes when the exact-face gate passes")
     args = parser.parse_args()
+    from score_mmgeo_obj_diagnostic_controls import (
+        MESHOPT_HELPER, ROOT, compact, load_binary_ply, meshopt_simplify_raw,
+        normalize, qem_simplify, source_frame,
+    )
+
     if not RATIO_TOLERANCE < args.target_ratio <= 1:
         parser.error("Target ratio must be greater than the band tolerance and at most 1")
     if digest(args.source) != args.source_sha256:

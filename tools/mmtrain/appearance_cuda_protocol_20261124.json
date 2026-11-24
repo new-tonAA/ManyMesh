@@ -1,8 +1,8 @@
 {
-  "status": "frozen training inputs and CPU preflight; CUDA run pending",
+  "status": "frozen inputs and CPU preflight passed 2026-11-25; CUDA run pending",
   "protocol": {
     "manifest_sha256": "a1f9fbcc5bcea1fcfb3b0af369a0452fc5b55f072b13ae50013062c7e1350723",
-    "script_sha256": "effbc8efa363fa8d7ff1bd80d1a62b021509fd291b2b1f65131986360d3d58db",
+    "script_sha256": "34981dee06fd7e7c577aeb0382eec9c8e78a71aa00d0f989e4c7fe4c60215849",
     "scorer_sha256": "9354ae2a6d672e6afd0c6a11bb15339fa10197feb5d32f1f059e257a120b55c7",
     "nvdiffmodeling_revision": "9b2ba2eff83c7d90127f78c20773b06ddc3ae1db",
     "nvdiffmodeling_src_sha256": "92a6f21a63bb608b834a83e8dfe579e35e48f05c8d52a9bb4380718a60904ffc",
@@ -183,7 +183,8 @@
       "msaa": false,
       "nvdiffrast_edge_antialias": true,
       "resolve": "2x2 box average after edge antialiasing"
-    }
+    },
+    "preflight_script_sha256": "514dbb4baa1e066643d0568773d99c18e3fd0a4b411ddc8be48fa5df1b067bd4"
   },
   "assets": {
     "BarramundiFish": {

@@ -1,6 +1,6 @@
 # ManyMesh research status
 
-Updated 2026-11-24. **No SIGGRAPH-ready contribution is established.** The
+Updated 2026-11-25. **No SIGGRAPH-ready contribution is established.** The
 project has no validated mobile-performance or user-preference claim.
 
 ## Current question
@@ -62,6 +62,10 @@ This host has PyTorch 2.7.1+CPU and no CUDA runtime, so that experiment cannot
 run here. The earlier CPU projective fit is a separate negative control, not a
 substitute. If the CUDA baseline does not show repeatable held-out gains at
 matched face count, stop this geometry-optimization direction.
+
+The frozen CPU input preflight was rerun successfully for both assets on
+2026-11-25: BarramundiFish has 1,932 comparison faces and Corset has 9,162;
+their boundary checks pass. No CUDA fit or quality result was produced.
 
 ## Project documents
 

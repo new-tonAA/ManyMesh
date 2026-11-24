@@ -10,6 +10,19 @@ sampling and 4x MSAA. The current research question is whether a specific final
 reconstruction pipeline can change that result under legal cluster-DAG
 constraints. This is untested and has close prior art.
 
+## The open problem
+
+Fixed-view Monkey analyses found that silhouette XOR occupied 0.11–0.19% of
+pixels but contributed 66.7–68.3% of squared image error. This is a useful
+diagnostic, not evidence that a silhouette method generalizes: contour-weighted
+geometry has not shown a repeatable quality/cost win, and antialiasing is a
+strong baseline. The research problem is to improve image quality after the
+same AA or upscaler at matched geometry and total cost, while keeping cluster
+boundaries and topology valid. Report image metrics such as LDR-FLIP, PSNR,
+SSIM, and silhouette error alongside geometry and topology checks. The cited
+Monkey measurements and failed screens are in the [dated history](MANYMESH_HISTORY.md)
+and [research status](MANYMESH.md).
+
 ![Khronos Suzanne at 3,936 and 982 triangles beside a silhouette-difference map.](docs/manymesh/suzanne-lod.png)
 
 *Flat-shaded CPU reference render, 384 x 384 pixels per panel. Center: depth-2
