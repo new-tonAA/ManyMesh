@@ -31,7 +31,7 @@ SETTINGS = (
 )
 
 
-def grid_transforms(count):
+def grid_transforms(count, assets):
     # Keep the scene's world-space footprint fixed across counts. This makes
     # per-instance projected size shrink with density, as in a packed scene.
     columns = math.ceil(math.sqrt(count * 18.0 / 13.0))
@@ -41,15 +41,15 @@ def grid_transforms(count):
     pitch_x = 18.0 / max(columns - 1, 1)
     pitch_y = 13.0 / max(rows - 1, 1)
     scale = 0.72 * min(pitch_x, pitch_y)
-    records = {asset: [] for asset in ASSETS}
+    records = {asset: [] for asset in assets}
     for index in range(count):
         row, column = divmod(index, columns)
         angle = (index * 0.6180339887498949 % 1.0) * (2.0 * math.pi)
-        asset = ASSETS[index % len(ASSETS)]
+        asset = assets[index % len(assets)]
         records[asset].append((xs[column], ys[row], 0.0, scale,
                                math.cos(angle), math.sin(angle)))
     return {asset: np.asarray(records[asset], dtype=np.float32)
-            for asset in ASSETS}, columns, rows, scale
+            for asset in assets}, columns, rows, scale
 
 
 def main():
@@ -59,6 +59,8 @@ def main():
     parser.add_argument("--stock", type=Path, required=True)
     parser.add_argument("--shader-root", type=Path, required=True)
     parser.add_argument("--source-lists", type=Path, nargs="+", required=True)
+    parser.add_argument("--assets", nargs="+", choices=ASSETS, default=ASSETS,
+                        help="Subset of the frozen asset set to instance")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--captures", type=Path)
     parser.add_argument("--frames", type=int, default=12)
@@ -66,6 +68,9 @@ def main():
     args = parser.parse_args()
     if args.frames < 1 or args.batches < 1:
         parser.error("Frames and batches must be positive")
+    assets = tuple(args.assets)
+    if len(set(assets)) != len(assets):
+        parser.error("Asset names must be unique")
 
     manifest_bytes = args.manifest.read_bytes()
     manifest = json.loads(manifest_bytes)
@@ -73,11 +78,11 @@ def main():
     stock = json.loads(stock_bytes)
     if stock["manifest_sha256"] != sha(manifest_bytes):
         raise ValueError("Stock cluster cuts do not match the geometry manifest")
-    if not set(ASSETS) <= manifest["assets"].keys():
+    if not set(assets) <= manifest["assets"].keys():
         raise ValueError("The frozen geometry manifest is missing a selected asset")
     sources = {row["name"]: row for path in args.source_lists
                for row in json.loads(path.read_bytes())}
-    if not set(ASSETS) <= sources.keys():
+    if not set(assets) <= sources.keys():
         raise ValueError("Missing source provenance for selected assets")
 
     buffers = None
@@ -85,14 +90,18 @@ def main():
     device = adapter.request_device_sync(required_features=["timestamp-query"])
     raster = SceneRaster(device, WIDTH, HEIGHT, args.shader_root)
     reference = SceneReference(device, 2 * WIDTH, 2 * HEIGHT, 1, False)
-    buffers = load_asset_buffers(device, args.meshes, manifest, args.stock, stock)
+    selected_manifest = {**manifest, "assets": {
+        name: manifest["assets"][name] for name in assets}}
+    buffers = load_asset_buffers(device, args.meshes, selected_manifest, args.stock, stock)
     retries = []
     scripts = ("bench_instance_scale.py", "bench_mixed_scenes.py",
                "bench_component_gpu.py", "bench_bevy_smaa.py",
                "bench_silhouette_guide_fusion.py",
                "bench_sparse_silhouette_guide.py", "gray_flip.py")
     report = {
-        "protocol": "five fixed licensed Khronos meshes; identical fixed-footprint layouts; source versus stock cluster depth 2; both 4x MSAA",
+        "protocol": (f"{len(assets)} fixed licensed Khronos asset(s); identical fixed-footprint layouts; "
+                     "source versus stock cluster depth 2; both 4x MSAA"),
+        "selected_assets": list(assets),
         "size": [WIDTH, HEIGHT],
         "reference_size": [2 * WIDTH, 2 * HEIGHT],
         "reference": "full source, 4x MSAA at 2x resolution, linear-light 2x box downsample",
@@ -104,7 +113,7 @@ def main():
         "assets": {name: {"provenance": sources[name],
                           "geometry": manifest["assets"][name]["exports"],
                           "stock": stock["assets"][name]}
-                   for name in ASSETS},
+                   for name in assets},
         "manifest_sha256": sha(manifest_bytes),
         "stock_manifest_sha256": sha(stock_bytes),
         "stock_commit": stock["upstream_commit"],
@@ -116,7 +125,7 @@ def main():
     }
 
     for count in COUNTS:
-        groups, columns, rows, scale = grid_transforms(count)
+        groups, columns, rows, scale = grid_transforms(count, assets)
         transform_buffers = {
             name: device.create_buffer_with_data(
                 data=values, usage=wgpu.BufferUsage.VERTEX)
@@ -124,7 +133,7 @@ def main():
         }
         plans = {
             kind: [(*buffers[name][kind], transform_buffers[name], len(groups[name]))
-                   for name in ASSETS]
+                   for name in assets]
             for kind in ("source", "cluster2")
         }
         source_triangles = sum(draw[2] // 3 * draw[4] for draw in plans["source"])
@@ -145,13 +154,13 @@ def main():
             for name, values in result["modes"].items()
         }
         report["workloads"][str(count)] = {
-            "asset_order": list(ASSETS),
+            "asset_order": list(assets),
             "instance_transform_sha256": {
                 name: sha(values.tobytes()) for name, values in groups.items()
             },
             "grid": {"columns": columns, "rows": rows, "scale": scale,
                      "world_bounds_xy": [-9.0, -6.5, 9.0, 6.5]},
-            "indexed_draws": len(ASSETS),
+            "indexed_draws": len(assets),
             "instance_count": count,
             "triangles": {"source": source_triangles, "cluster2": coarse_triangles},
             "source_reference_sha256": result["reference_srgb_sha256"],

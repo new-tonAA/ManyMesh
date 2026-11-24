@@ -50,6 +50,16 @@ and [SIGGRAPH direction](SIGGRAPH_2027_DIRECTION.md).
   not geometry-eligible: four assets have changed boundary-edge counts and one
   cut has duplicate/nonmanifold faces. Treat image deltas as diagnostic only;
   timing applies to the submitted buffers. See the [report and receipt](tools/mmtrain/INSTANCE_SCALE_SCREEN_20261124.md).
+- **Closed-mesh instance follow-up:** On the single reused BarramundiFish asset,
+  stock depth-2 rendering reduced the 10,000-instance GPU raster p50 from
+  26.15 ms to 6.66 ms on Iris Xe / D3D12 (3.93x), while PSNR fell by 0.015 dB
+  and LDR-FLIP worsened by 0.00013 against the supersampled source reference.
+  Source and cut pass the recorded basic topology and boundary-edge count
+  checks. This is a one-view desktop diagnostic at unequal face counts, not a
+  held-out result, full-frame timing, mobile result, or ManyMesh method claim.
+  See the [protocol and results](tools/mmtrain/INSTANCE_SCALE_BARRAMUNDIFISH_SCREEN_20261125.md)
+  and [raw run receipts](tools/mmtrain/instance_scale_barramundifish_20261125_a.json),
+  [run B](tools/mmtrain/instance_scale_barramundifish_20261125_b.json).
 
 No physical-phone test, equal-frame-time quality comparison, LPIPS evaluation,
 moving-camera temporal evaluation, user study, or positive held-out optimized
