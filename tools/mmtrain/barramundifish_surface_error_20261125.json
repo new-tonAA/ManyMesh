@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "asset": "BarramundiFish",
+  "trimesh_version": "4.5.3",
+  "manifest_sha256": "328f1efeecfb5b6e0221a2f0665aed1a7e180f50b000f3da5f44a609563ea825",
+  "stock_manifest_sha256": "f54ed747e3265b44dc5df4f78ad7b87dd5998839e1752499edca3d5daf584788",
+  "source_mesh_sha256": "0b9165dbda260456c3e7fccdb544fe0ff2169923510a0031390f1e839852a1ab",
+  "cluster2_indices_sha256": "b5e4662579b4a79ac7cc0a7883107c3ba53a9fe95147a90bc64b4ded3f8f071e",
+  "analysis_script_sha256": "851c5278b4ef6e1efd85dd65385cd3db4c08d190d90c90eb89775ded467256bf",
+  "mesh_loader_sha256": "4dc3634e24429f408e4a22d0a0d4c87ca562ddbf6b5bf68423d512ddd829305e",
+  "source_faces": 3864,
+  "cluster2_faces": 966,
+  "source_bbox_diagonal": 2.2246636503994774,
+  "sampling": {
+    "distribution": "independent area-weighted surface samples",
+    "samples_per_direction": 4096,
+    "seed": 20261125,
+    "nearest_point": "exact closest point to triangles via trimesh.closest_point_naive",
+    "query_batch_size": 256
+  },
+  "directions": {
+    "source_to_cluster2": {
+      "sample_count": 4096,
+      "distance_over_source_bbox_diagonal": {
+        "mean": 0.0009822986258660404,
+        "median": 0.0006988378397147947,
+        "p95": 0.0029818399432198907,
+        "p99": 0.004299732221386372,
+        "max_sampled": 0.006011588958851498
+      },
+      "normal_angle_degrees": {
+        "mean": 6.848318422240393,
+        "median": 4.719228643429121,
+        "p95": 18.582587679232663,
+        "p99": 44.92531504778466
+      }
+    },
+    "cluster2_to_source": {
+      "sample_count": 4096,
+      "distance_over_source_bbox_diagonal": {
+        "mean": 0.0009765176682649475,
+        "median": 0.0006684443670422598,
+        "p95": 0.0030947715972267937,
+        "p99": 0.004742980021772603,
+        "max_sampled": 0.006098274047141904
+      },
+      "normal_angle_degrees": {
+        "mean": 7.053649181120664,
+        "median": 4.765558259916479,
+        "p95": 18.406079142673896,
+        "p99": 45.32504819614289
+      }
+    }
+  },
+  "limitations": [
+    "Single development asset; samples are not independent asset observations.",
+    "Finite random samples do not bound worst-case Hausdorff distance.",
+    "Does not evaluate attributes, rendered appearance, or self-intersections."
+  ]
+}

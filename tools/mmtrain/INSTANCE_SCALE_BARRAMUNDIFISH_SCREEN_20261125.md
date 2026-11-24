@@ -127,6 +127,16 @@ The audit implementation and output are available as
 [`audit_instance_scale_topology.py`](audit_instance_scale_topology.py) and
 [`topology receipt`](barramundifish_topology_20261125.json).
 
+As a post-hoc geometry diagnostic, 4,096 deterministic area-weighted surface
+samples per direction were measured against the exact nearest triangle and
+normalized by the source bounding-box diagonal. The source-to-cut mean distance
+is 0.000982, with p95 0.002982 and p99 0.004300; cut-to-source is 0.000977,
+with p95 0.003095 and p99 0.004743. Mean nearest-face normal differences are
+6.85 and 7.05 degrees, respectively. This is a finite-sample diagnostic, not a
+Hausdorff bound or a preregistered acceptance threshold. The full sampling
+protocol and raw values are in the [surface-error receipt](barramundifish_surface_error_20261125.json)
+and can be reproduced with [`measure_instance_scale_surface_error.py`](measure_instance_scale_surface_error.py).
+
 The raw receipts are
 [`run A`](instance_scale_barramundifish_20261125_a.json) and
 [`run B`](instance_scale_barramundifish_20261125_b.json). Their exact hashes,
