@@ -21,13 +21,13 @@ silhouette visibility gradients while matching a supersampled target; it does
 not state that MSAA is used for every simplification experiment. Reported 1-spp
 results are rendered without AA unless noted. Thus differentiable fitting,
 scale-specific appearance fitting, and MSAA-assisted silhouette gradients are
-already established. The remaining
-testable distinction is optimization against a *different final reconstruction
-operator*, measured against that same operator without geometry optimization,
-plus the constraints of legal cluster-DAG cuts. That is a hypothesis, not a
-novelty claim. [Full paper](https://users.aalto.fi/~laines9/publications/hasselgren2021egsr_paper.pdf) ·
-[Luebke and Erikson](https://dl.acm.org/doi/10.1145/258734.258847) ·
-[Luebke's detailed dissertation treatment](https://www.luebke.us/publications/pdf/dissertation.pdf) ·
+already established. The remaining experiment question is whether fitting a
+hierarchy for a specified final reconstruction operator improves quality over
+applying that same operator to unoptimized geometry, while retaining legal
+cluster-DAG cuts and boundaries. This is an untested question, not a novelty
+claim. [Full paper](https://users.aalto.fi/~laines9/publications/hasselgren2021egsr_paper.pdf) |
+[Luebke and Erikson](https://dl.acm.org/doi/10.1145/258734.258847) |
+[Luebke's detailed dissertation treatment](https://www.luebke.us/publications/pdf/dissertation.pdf) |
 [Sander et al.](https://hhoppe.com/silclip.pdf)
 
 Hierarchy-level fitting also overlaps conceptually with [V3DG (SIGGRAPH
@@ -39,8 +39,16 @@ boundary PMs and compares against Quick-VDR's locked-boundary construction.
 The full methods and quantitative results remain unavailable in the reviewed
 sources. Triangle-mesh controls must also address
 [Quick-VDR](https://diglib.eg.org/server/api/core/bitstreams/c7622379-a7d8-4af9-ae6e-977df7a26ea3/content).
-The possible distinction is narrow: a measured algorithmic gain for legal
-triangle-mesh DAG cuts under real reconstruction operators. It is unproven.
+Adaptive HLOD construction, parent-child vertex interpolation, and crack- and
+popping-free view-dependent transitions are also described by Li's SIGGRAPH
+Asia 2022 poster and CVMP 2023 paper ([2022 poster abstract](https://www.siggraph.org/wp-content/uploads/2023/01/SA-22-SIGGRAPH-Asia-2022-Posters.html),
+[2023 proceedings abstract](https://www.siggraph.org/wp-content/uploads/2023/12/CVMP-23-Proceedings-of-the-20th-ACM-SIGGRAPH-European-Conference-on-Visual-Media-Production.html)).
+The CVMP paper's ACM full text was inaccessible during this review; see the
+[prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md) for
+review scope. The remaining experiment question is narrow: does fitting a
+triangle-mesh hierarchy to a specified final reconstruction operator improve
+quality over using that same operator on unoptimized geometry, while retaining
+legal cuts and boundaries? This is unproven and is not yet a novelty claim.
 
 ## Gate 1: evaluate the frozen placement control
 

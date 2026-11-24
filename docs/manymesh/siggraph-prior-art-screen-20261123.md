@@ -20,6 +20,8 @@ a paper is not evidence that none exists.
 | Mason and Blake, [A Predictive Incremental Hierarchical Level of Detail Optimization Algorithm](https://people.cs.uct.ac.za/~edwin/MyBib/1999-mason.pdf), UCT Technical Report CS99-04-00 | Formulates shared-representation hierarchical LOD selection as a Hierarchical Multiple Choice Knapsack Problem; greedily refines by relative benefit per added cost, uses an incremental version for frame-to-frame coherence, and targets a predicted frame-time limit while maximizing estimated perceptual benefit. It proves a half-optimal guarantee for a stated diminishing-returns subproblem and explicitly identifies/corrects a flaw in the 1997 paper. | **Full report inspected** (Sections 2–9). Hierarchical, budgeted, predictive, perceptual-benefit LOD selection is established prior art. It selects among existing scene representations; it does not optimize mesh vertex positions against a specified final AA/upscaler operator. |
 | Lindstrom and Turk, [Image-Driven Simplification](https://faculty.cc.gatech.edu/~turk/my_papers/image_simp_tog2000.pdf), TOG 2000 | Uses rendered image differences from multiple camera views to guide edge-collapse costs; discusses silhouette, hidden geometry, shading, and texture effects. | **Full paper text inspected.** Image-driven mesh simplification is direct prior art. The paper uses a fixed set of views and image-difference costs; differentiability or a cluster-DAG application would need measured algorithmic differences beyond replacing its objective. |
 | Yoon et al., [Quick-VDR: Interactive View-Dependent Rendering of Massive Models](https://diglib.eg.org/server/api/core/bitstreams/c7622379-a7d8-4af9-ae6e-977df7a26ea3/content), 2004 | Uses a clustered hierarchy of progressive meshes, cluster selection, local refinement, and dependency constraints for crack-free refinement. | **Paper text inspected.** Clustered view-dependent refinement and crack-free dependency mechanisms are established. |
+| Li, [Adaptive real-time interactive rendering of gigantic multi-resolution models](https://doi.org/10.1145/3550082.3564170), SIGGRAPH Asia 2022 poster | Describes parent-child vertex interpolation to avoid cracks and popping while interactively rendering scanned models with tens of millions of triangles. | **Official SIGGRAPH Asia poster abstract inspected; full paper not located.** Crack-free, popping-free transitions in adaptive multiresolution mesh rendering predate this work. |
+| Li, [View-dependent Adaptive HLOD: real-time interactive rendering of multi-resolution models](https://doi.org/10.1145/3626495.3626507), CVMP 2023 | Partitions a surface with a Euclidean cubic grid, builds an octree-like HLOD by merging and simplifying neighboring elements, requires child-parent vertex relations, and traverses coarse-to-fine by viewpoint. Child-parent vertex interpolation is used for crack- and popping-free transitions. The author-associated [3DViewer repository](https://github.com/BigRayLee/3DViewer) lists this publication and describes HLOD construction and real-time rendering. | **Official SIGGRAPH/CVMP proceedings abstract and conference brochure inspected; ACM full text returned HTTP 403.** The paper directly covers view-dependent adaptive HLOD construction, parent-child mapping, crack-free boundaries, and transition stability. The repository is associated with the author and lists the publication; implementation correspondence has not been audited. |
 | Ladeuil et al., [Construction of Clustered HLOD with As-Simplified-As-Possible Boundaries](https://doi.org/10.1111/cgf.70380) ([preview](https://www.researchgate.net/publication/403799777_Construction_of_clustered_HLOD_with_As-Simplified-As-Possible_boundaries)), CGF 2026 | The abstract and publisher preview describe a binary hierarchy of progressive meshes. Each node has an internal PM and neighbor-indexed boundary PMs; the hierarchy is built by edge-collapse simplification and recursive node merges. Preview figures/captions show SDF-weighted targeted simplification and construction-time components including SDF computation and internal/targeted simplification. It compares against Quick-VDR's locked boundaries and claims better triangle distribution and less boundary-driven popping. | **Publisher record and partial Wiley preview hosted on ResearchGate checked; full paper unavailable.** Wiley PDF/ePDF and supplement routes were inaccessible in this review environment; DBLP labels the item closed access, and ResearchGate offers an author-copy request. These sources establish direct prior art for simplified boundaries and crack-free neighboring cuts, but are insufficient to audit its full algorithm or quantitative results. A DAG instead of their binary tree is not a contribution without a measured distinction. Recheck the full article before finalizing related work. |
 | Potamias et al., [Neural Mesh Simplification](https://openaccess.thecvf.com/content/CVPR2022/html/Potamias_Neural_Mesh_Simplification_CVPR_2022_paper.html), CVPR 2022 | A learned one-pass method samples input vertices, predicts candidate triangles from graph connectivity, and classifies output faces. It is differentiable and reports up to 10× faster simplification than traditional methods. | **Full paper text inspected.** Learned topology simplification is established. Its objective is geometric/structural (Chamfer, normal, Laplacian, curvature), not rendered appearance; it does not build a multilevel cluster DAG. The authors note QEM gives smoother watertight surfaces and their learned topology/manifold losses do not guarantee those properties. |
 | Zhan et al., [Learned Localized Mesh Refinement](https://arxiv.org/html/2609.31946), SIGGRAPH Asia 2026 | Builds a progressive vertex-split forest and trains a locally conditioned autoregressive model for adaptive upsampling. It demonstrates view-dependent refinement with a face-count budget; the paper reports training on eight B200 GPUs. | **Full arXiv HTML paper inspected.** This is learned refinement of coarse inputs toward higher-detail shapes, not simplification of a fixed authored asset to preserve its rendered appearance. It occupies local learned refinement and view-dependent allocation; the task difference alone does not establish novelty. |
@@ -49,19 +51,24 @@ a paper is not evidence that none exists.
 
 ## Candidate gap and required test
 
-The working hypothesis is narrowly phrased as **offline optimization of a
-triangle-mesh cluster DAG for quality after a specified antialiasing or
-upscaling pipeline, while respecting legal cuts and shared-boundary constraints**.
-No novelty is established. “LOD for upscalers,” “silhouette aware,”
-“differentiable LOD,” “cluster hierarchy optimization,” and “temporal
-stability” are not novelty claims by themselves.
+The remaining experiment question is narrowly phrased as **whether offline
+optimization of a triangle-mesh cluster hierarchy for quality after a specified
+antialiasing or upscaling pipeline yields a measurable gain over applying the
+same final reconstruction operator to unoptimized geometry**. This is not an
+established gap or novelty claim. HLOD, parent-child vertex relations,
+view-dependent selection, crack-free cuts, and crack-/popping-free transitions
+are established mechanisms; see Quick-VDR, Li (2022, 2023), and HLOD ASAP.
+“LOD for upscalers,” “silhouette aware,” “differentiable LOD,” “cluster
+hierarchy optimization,” and “temporal stability” are not novelty claims by
+themselves.
 
 Before investing in a custom method:
 
 1. Reproduce Hasselgren et al.'s fixed-topology mesh-placement baseline against
    QEM, ManyMesh placement, and meshoptimizer at identical face counts.
-2. Verify the original Luebke–Erikson proceedings paper and HLOD ASAP; inspect
-   references and citing work for additional mesh-level predecessors. The
+2. Verify the original Luebke–Erikson proceedings paper and HLOD ASAP; obtain
+   and inspect the full Li (2023) and HLOD ASAP papers, then inspect references
+   and citing work for additional mesh-level predecessors. The
    Luebke–Erikson author dissertation and the complete Funkhouser–Séquin paper
    have been inspected for the claims above. Mason–Blake's corrected 1999
    report has also been read; the 1997 proceedings paper is represented here

@@ -63,14 +63,29 @@ for simplified, crack-free cluster boundaries, so boundary consistency and a
 binary-tree-to-DAG change alone are not a distinction. Quick-VDR
 already provides clustered progressive meshes and dependency-constrained,
 crack-free refinement ([full paper](https://diglib.eg.org/server/api/core/bitstreams/c7622379-a7d8-4af9-ae6e-977df7a26ea3/content)).
-Therefore hierarchy fitting, per-level differentiable fitting, scale-aware
-appearance, boundary consistency, and transition stability are not contributions
+Li's SIGGRAPH Asia 2022 poster already describes parent-child vertex
+interpolation for crack- and popping-free adaptive multiresolution rendering
+([official poster abstract](https://www.siggraph.org/wp-content/uploads/2023/01/SA-22-SIGGRAPH-Asia-2022-Posters.html)).
+Li's CVMP 2023 paper describes view-dependent adaptive HLOD construction by
+grid partition, neighboring-node merges and simplification, child-parent vertex
+relations, and coarse-to-fine traversal with interpolated crack-/popping-free
+transitions ([official proceedings abstract](https://www.siggraph.org/wp-content/uploads/2023/12/CVMP-23-Proceedings-of-the-20th-ACM-SIGGRAPH-European-Conference-on-Visual-Media-Production.html),
+[author-associated implementation repository](https://github.com/BigRayLee/3DViewer)).
+The ACM full paper returned HTTP 403 during this review, so these method details
+are limited to the official abstract and conference brochure; correspondence
+between the public repository and paper has not been audited. Together with
+Quick-VDR and HLOD ASAP, this closes hierarchy construction, parent-child
+mapping, view-dependent selection, crack-free boundaries, and transition
+stability as standalone contributions. Hierarchy fitting, per-level
+differentiable fitting, and scale-aware appearance likewise are not contributions
 on their own. Novelty is not established.
 
-The only plausible distinction left to test is a measurable advantage from
-fitting the hierarchy to a specified final reconstruction operator beyond the
-MSAA-assisted optimization already used by Hasselgren, while retaining legal
-cluster-DAG cuts and boundary constraints. That claim is still much
+The remaining experiment question is whether fitting a hierarchy to a specified
+final reconstruction operator gives a measurable advantage over applying the
+same operator to unoptimized geometry, beyond the MSAA-assisted optimization
+already used by Hasselgren. A useful method would also need to retain legal cuts
+and boundary constraints. This is a narrow, untested comparison, not a located
+research gap or novelty claim. It is much
 narrower than “LOD for upscalers”: classic silhouette-aware simplification,
 silhouette clipping, budgeted/predictive LOD selection, perceptual silhouette
 and transition models, and neural prediction of image error for shading-rate
