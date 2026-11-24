@@ -12,12 +12,13 @@ without breaking topology or cluster boundaries? This is an open experiment,
 not a novelty claim. Differentiable mesh fitting and adaptive geometry LOD have
 close prior art.
 
-![Mean PSNR difference between ManyMesh and matched-face QEM and meshoptimizer controls.](docs/manymesh/polyhaven-psnr-delta.svg)
+![Direction-adjusted comparison of ManyMesh against matched-face QEM and meshoptimizer across five image-quality metrics.](docs/manymesh/polyhaven-quality-metrics.svg)
 
-*ManyMesh minus each control across 21 models at matched face counts; negative
-values favor the control. Bars show 95% bootstrap intervals over 16 source
-collection groups. Data: [per-view metrics](tools/mmtrain/polyhaven_quality_metrics_20261124.json),
-[protocol](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md).*
+*Positive values favor ManyMesh; negative values favor the control. Each panel
+uses its metric's native units. Intervals bootstrap 16 source groups across 21
+models. LPIPS is a post-hoc supplement on the same cohort, not independent
+confirmation. Data and reproduction: [quality screen](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md),
+[plot script](tools/mmtrain/plot_polyhaven_multimetric.py).*
 
 ## Measured snapshots
 
