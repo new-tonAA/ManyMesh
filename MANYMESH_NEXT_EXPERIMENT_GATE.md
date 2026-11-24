@@ -31,10 +31,12 @@ novelty claim. [Full paper](https://users.aalto.fi/~laines9/publications/hasselg
 
 Hierarchy-level fitting also overlaps conceptually with [V3DG (SIGGRAPH
 2025)](https://arxiv.org/html/2505.06523), which differentiably fits cluster
-levels in a Gaussian representation, and boundary handling overlaps directly
-with [HLOD ASAP (2026)](https://doi.org/10.1111/cgf.70380), which progressively
-simplifies cluster interfaces. HLOD ASAP's full text and quantitative results
-remain to be verified. Triangle-mesh controls must also address
+levels in a Gaussian representation. Boundary simplification overlaps directly
+with [HLOD ASAP (2026)](https://doi.org/10.1111/cgf.70380): its publisher
+preview describes a binary progressive-mesh hierarchy with per-neighbor
+boundary PMs and compares against Quick-VDR's locked-boundary construction.
+The full methods and quantitative results remain unavailable in the reviewed
+sources. Triangle-mesh controls must also address
 [Quick-VDR](https://diglib.eg.org/server/api/core/bitstreams/c7622379-a7d8-4af9-ae6e-977df7a26ea3/content).
 The possible distinction is narrow: a measured algorithmic gain for legal
 triangle-mesh DAG cuts under real reconstruction operators. It is unproven.
