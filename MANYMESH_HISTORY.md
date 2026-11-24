@@ -2333,24 +2333,24 @@ and protocol (`tools/mmmetrics/TEMPORAL_QUALITY_PROTOCOL.md`).
 
 ## 12. 2026-11-23: original-source and asset-feasibility follow-up
 
-A current-source Monkey diagnostic now uses the original 15,744-triangle OBJ
-as reference, addressing the mismatch in the historical silhouette still. Across
-eight orthographic views, the 30%, 50%, and 70% cuts attributed 34.75%, 25.84%,
-and 25.88% of squared image error to silhouette-XOR pixels. This does not
-confirm the historical 68.3% value as a general property. Exact directed-edge
-matching flagged every cut, but a retrospective one-to-one coordinate map
-matched all 168 oriented boundary edges within 0.52 float32 epsilon at unit
-radius. Maximum sampled curve deviation was 6.08e-8 normalized units and
-relative length error was 3.3e-9, consistent with small coordinate-rounding
-differences. At exact
-face counts, eligible QEM and meshoptimizer controls beat its image metrics at 30% and 50%;
-at 70%, the QEM output was rejected for duplicate geometric triangles and the
-eligible meshoptimizer control beat it. This is a reference-corrected diagnostic,
-not a held-out result. The geometric-boundary audit was retrospective; freeze
-its tolerance before confirmation scoring. The detailed report and image/boundary
-receipts cited in the original working notes are not tracked in this repository
-revision. The values above are an archival summary and cannot be independently
-reproduced from the checked-in artifacts.
+A Monkey source-reference diagnostic uses the original 15,744-face OBJ rather
+than the 11,250-face DAG cut used by the historical still. Its frozen DAG and
+three candidate PLYs, scoring script, dated report, and raw JSON receipt are now
+checked in. Across eight orthographic views, the 30%, 50%, and 70% cuts attributed
+34.75%, 25.84%, and 25.88% of squared image error to silhouette-XOR pixels.
+This does not confirm the historical 68.3% value as a general property. Exact
+directed-edge matching flagged every cut, but a retrospective one-to-one
+coordinate map matched all 168 oriented boundary edges within 0.52 float32
+epsilon at unit radius. Maximum sampled curve deviation was 6.08e-8 normalized
+units and relative length error was 3.3e-9, consistent with small coordinate
+rounding differences. At exact face counts, eligible QEM and meshoptimizer
+controls beat the candidate on the reported image metrics at 30% and 50%; at
+70%, QEM was ineligible due to duplicate geometric triangles and the eligible
+meshoptimizer control beat it. This is a reproducible re-scoring of frozen
+inputs, not a reproducible candidate-generation pipeline or held-out result.
+The geometric-boundary tolerance was chosen retrospectively, and the original
+candidate generator binary is not pinned. See the [report](tools/mmtrain/MONKEY_SOURCE_REFERENCE_DIAGNOSTIC_20261125.md)
+and [receipt](tools/mmtrain/monkey_source_reference_diagnostic_20261125/receipt.json).
 
 Asset screening also found a local DamagedHelmet GLB with 15,452 triangles and
 no exact/name match in the bounded text scan. The extractor applies default-scene

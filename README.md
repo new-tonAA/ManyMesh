@@ -15,11 +15,15 @@ constraints. This is untested and has close prior art.
 One fixed 960x720 Monkey view at 45.25% retention measured silhouette XOR at
 0.11% of pixels and 68.3% of squared error, but used an 11,250-face DAG cut as
 the reference rather than the 15,744-face source mesh. A later eight-view
-diagnostic against the original source attributed 34.75%, 25.84%, and 25.88%
-of squared error to silhouette XOR at 30%, 50%, and 70% retention, respectively.
-Both diagnostics are summarized in the history, but their source images and raw
-receipts are not tracked here; treat these figures as archival, not reproducible
-evidence. They do not establish a general silhouette-error share.
+diagnostic uses the original source and checked-in candidate meshes:
+silhouette-XOR pixels account for 34.75%, 25.84%, and 25.88% of squared image
+error at 30%, 50%, and 70% retention. At all three budgets the candidate loses
+to eligible exact-face QEM and/or meshoptimizer controls on the reported image
+metrics. This remains a single-asset exploratory result: its boundary tolerance
+was selected retrospectively, the candidate generator binary is unpinned, and
+it is not held-out evidence. See the [protocol and results](tools/mmtrain/MONKEY_SOURCE_REFERENCE_DIAGNOSTIC_20261125.md)
+and [machine-readable receipt](tools/mmtrain/monkey_source_reference_diagnostic_20261125/receipt.json).
+These measurements do not establish a general silhouette-error share.
 Silhouette error is important, but its share depends on view and reference;
 contour-weighted geometry has not shown a repeatable quality/cost win, and
 antialiasing remains a strong baseline. The open question is whether offline
