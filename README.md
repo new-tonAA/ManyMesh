@@ -15,7 +15,8 @@ constraints. This is untested and has close prior art.
 One fixed 960x720 Monkey view at 45.25% retention measured silhouette XOR at
 0.11% of pixels and 68.3% of squared error, but used an 11,250-face DAG cut as
 the reference rather than the 15,744-face source mesh. A later eight-view
-diagnostic against the original source found 25.84–34.75% across three budgets.
+diagnostic against the original source attributed 34.75%, 25.84%, and 25.88%
+of squared error to silhouette XOR at 30%, 50%, and 70% retention, respectively.
 Silhouette error is important, but its share depends on view and reference;
 contour-weighted geometry has not shown a repeatable quality/cost win, and
 antialiasing remains a strong baseline. The open question is whether offline
