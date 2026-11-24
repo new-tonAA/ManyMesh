@@ -13,8 +13,9 @@ positive held-out result.
   DAG cut, not the source mesh; a source-referenced Monkey diagnostic measured
   25.84%-34.75% at three budgets on one asset. This is not a general result.
   [Diagnostic](tools/mmtrain/MONKEY_SOURCE_REFERENCE_DIAGNOSTIC_20261125.md).
-- Contour-priority and fixed-topology fitting screens showed no repeatable
-  quality gain. [Contour](tools/mmtrain/CONTOUR_IMPORTANCE_QEM_20261123.md) ·
+- Prior contour-priority and contour-guided fixed-topology fitting screens
+  showed no repeatable quality gain; the separate frozen appearance-placement
+  control remains unrun. [Contour](tools/mmtrain/CONTOUR_IMPORTANCE_QEM_20261123.md) ·
   [AA follow-up](tools/mmtrain/CONTOUR_PRIORITY_AA_20261123.md) ·
   [fit report](tools/mmtrain/VISIBLE_CONTOUR_FIT_20261124.md).
 - A 10,000-instance desktop screen shows a raster-time reduction from coarse
