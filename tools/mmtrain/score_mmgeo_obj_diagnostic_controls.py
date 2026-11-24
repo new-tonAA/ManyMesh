@@ -113,8 +113,12 @@ def main():
         "script_sha256": digest(__file__),
         "python_version": platform.python_version(),
         "numpy_version": np.__version__,
+        "scipy_version": importlib.metadata.version("scipy"),
         "fast_simplification_version": importlib.metadata.version("fast-simplification"),
         "scikit_image_version": importlib.metadata.version("scikit-image"),
+        "pillow_version": importlib.metadata.version("Pillow"),
+        "trimesh_version": importlib.metadata.version("trimesh"),
+        "flip_evaluator_version": importlib.metadata.version("flip-evaluator"),
         "node_version": subprocess.check_output(["node", "--version"], text=True).strip(),
         "meshoptimizer_helper_sha256": digest(MESHOPT_HELPER),
         "meshoptimizer_module_sha256": digest(
