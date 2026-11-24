@@ -1208,7 +1208,9 @@ Silhouette XOR: 736 pixels, 0.11%, 68.3% of squared error; common-coverage PSNR
 | Roughness 0.40 / 0.60 | 36.25 / 36.62 | -0.99 / -0.62 |
 
 Full-image PSNR in order: 42.50/42.57/42.71/42.67/42.35/42.49 dB.
-Artifacts: out/shade-detail-check/. Seam repair is the stable local shading gain;
+The rendered images and receipts were stored under `out/shade-detail-check/`,
+which is not tracked in this repository revision. Seam repair is the stable
+local shading gain;
 AO depends on view/cavity exposure. More shading strength cannot remove dominant
 coverage error at 30-45% budgets.
 
@@ -2345,9 +2347,10 @@ face counts, eligible QEM and meshoptimizer controls beat its image metrics at 3
 at 70%, the QEM output was rejected for duplicate geometric triangles and the
 eligible meshoptimizer control beat it. This is a reference-corrected diagnostic,
 not a held-out result. The geometric-boundary audit was retrospective; freeze
-its tolerance before confirmation scoring. See the report (`tools/mmtrain/MONKEY_ORIGINAL_SOURCE_DIAGNOSTIC_20261123.md`),
-image receipt (`tools/mmtrain/monkey_source_reference_diagnostic_20261123.json`),
-and curve receipt (`tools/mmtrain/monkey_boundary_curve_audit_20261123.json`).
+its tolerance before confirmation scoring. The detailed report and image/boundary
+receipts cited in the original working notes are not tracked in this repository
+revision. The values above are an archival summary and cannot be independently
+reproduced from the checked-in artifacts.
 
 Asset screening also found a local DamagedHelmet GLB with 15,452 triangles and
 no exact/name match in the bounded text scan. The extractor applies default-scene
