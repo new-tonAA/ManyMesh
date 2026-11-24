@@ -182,6 +182,12 @@ SciPy 1.15.3), which emitted SciPy's NumPy-version warning; rerun in the pinned
 isolated environment for fitting. No CUDA rendering or quality scoring was
 performed. See the [repeat receipt](tools/mmtrain/appearance_cuda_preflight_repeat_20261125.json).
 
+DEODR was checked as a possible CPU-only fitting backend. Cython is absent and
+fetching the public source failed; compatibility of the available MinGW
+compiler was not tested. No CPU fit or image scoring was run. This closes only
+that local fallback for now, not the frozen CUDA experiment. See the
+[CPU-backend preflight](tools/mmtrain/DEODR_CPU_BACKEND_PREFLIGHT_20261125.md).
+
 Stop if the matched-face baseline loses, if a result depends on tuned views or
 assets, if the surrogate fails to rank real-pipeline results, if boundary or
 topology checks fail, or if total cost removes the quality gain. A mobile claim

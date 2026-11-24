@@ -40,6 +40,8 @@ reproduction and does not optimize through final hardware MSAA or an upscaler.
 A failure on reserved views closes this configuration. A pass only opens a
 separate asset-held-out cluster-DAG study; it proves neither generalization nor
 novelty.
+The DEODR CPU fallback could not be built because Cython and source access are
+unavailable on this host; no fitting or scoring occurred. [CPU-backend preflight](tools/mmtrain/DEODR_CPU_BACKEND_PREFLIGHT_20261125.md).
 
 - [Frozen protocol and inputs](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md)
 - [Protocol JSON](tools/mmtrain/appearance_cuda_protocol_20261124.json) ·
