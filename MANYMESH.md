@@ -13,10 +13,11 @@ hypothesis with close prior art, not a novelty claim.
   beat all eligible controls together; it does not mean every metric regressed.
   A cheaper winning mode was selected after seeing results, so this is
   exploratory and post-hoc. [Report](tools/mmtrain/SILHOUETTE_GUIDE_FUSION_20261122.md) · [verified repeat](tools/mmtrain/silhouette_guide_fusion_720p_repeat_20261123.json)
-- A 48-frame, three-scene moving-camera screen found that per-instance area
-  allocation used more faces and was slower on GPU. A face-budget-matched
-  offline oracle improved the temporal metric in one scene only and incurred
-  CPU selection cost. [Report](tools/mmtrain/DYNAMIC_INSTANCE_LOD_MOVING_20261123.md)
+- For group-area LOD in three million-face, 48-frame desktop scenes, the
+  contour band contains 57–86% of squared image error at matched 4× MSAA.
+  The instance policies have no equal-cost LPIPS or temporal quality win.
+  [Quality replay](tools/mmmetrics/MOVING_SCENE_EDGE_QUALITY_20261124.md) ·
+  [timing and motion](tools/mmtrain/DYNAMIC_INSTANCE_LOD_MOVING_20261123.md)
 - A seven-asset Khronos screen compares current cuts with the original source
   meshes. Under a retrospective one-float32-ULP boundary rule, 15 of 21 cuts
   were eligible. Across 18 exact-face pairs, ManyMesh lost all five image
@@ -29,10 +30,10 @@ hypothesis with close prior art, not a novelty claim.
   targets (381, 491, and 569), so it supplied no eligible exact-face pair.
   [Report](tools/mmtrain/KHRONOS_EQUAL_FACE_QUALITY_SCREEN_20261123.md) ·
   [metrics and hashes](tools/mmtrain/khronos_equal_face_quality_screen_20261123.json)
-- Khronos geometry preflight has nine provisional candidates across several
-  object classes, including many disconnected components and a low-detail
-  window case. The pool is unfrozen and is not held out. [Expanded screen](docs/manymesh/khronos-expanded-candidate-screen-20261123.md) and
-  [earlier screens](docs/manymesh/khronos-followup-candidates-20261123.md)
+- Of twelve Poly Haven source topology passes, three also supply legal
+  exact-face controls near 50% retention. The independent split remains pending.
+  [Poly Haven screen](tools/mmtrain/POLYHAVEN_CANDIDATE_TOPOLOGY_20261124.md) ·
+  [Khronos screen](docs/manymesh/khronos-expanded-candidate-screen-20261123.md)
 - Four assets now supply boundary-preserving exact-face inputs around 50%
   retention. The 30% preflights found no complete set. BarramundiFish and
   Corset are the first CUDA pair. [Geometry receipts](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md)

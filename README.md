@@ -39,26 +39,20 @@ physical-phone or user-preference result is available.
   control selected after scoring dominated both prototypes on all three metrics
   for each asset. The exploratory comparison uses fixed-view grayscale Iris Xe
   desktop captures and times the tested GPU work. [Report](tools/mmtrain/SILHOUETTE_GUIDE_FUSION_20261122.md) · [verified repeat](tools/mmtrain/silhouette_guide_fusion_720p_repeat_20261123.json)
-- **Moving-camera allocation did not pass equal cost.** In a three-scene,
-  48-frame screen, per-instance allocation used more faces and ran slower on
-  GPU. A face-budget-matched offline oracle improved the temporal metric in one
-  scene only and added CPU selection cost. [Report](tools/mmtrain/DYNAMIC_INSTANCE_LOD_MOVING_20261123.md)
-- **One seven-asset source-reference screen found a narrow exception.** Under a
-  retrospective one-float32-ULP boundary rule, 15 of 21 cuts were eligible.
-  Across 18 exact-face comparisons, ManyMesh lost all five image metrics in 15,
-  won all five in two meshoptimizer comparisons on the 987-face
-  GlassBrokenWindow, and had one mixed result. It did not beat an eligible QEM
-  pair. This is reused development data, the boundary rule was chosen after an
-  initial run, and the broken-window hierarchy missed the requested 30% and 70%
-  cuts. The two wins are meshoptimizer-only: border-preserving QEM returned 859
-  faces for requested cuts of 381, 491, and 569 faces, so no QEM pair passed the
-  exact-face gate. [Full report](tools/mmtrain/KHRONOS_EQUAL_FACE_QUALITY_SCREEN_20261123.md) ·
-  [metrics and hashes](tools/mmtrain/khronos_equal_face_quality_screen_20261123.json)
-- **No independent confirmation set exists yet.** Geometry preflight now has
-  nine provisional candidates across several object classes; the pool is
-  unfrozen and includes low-detail models and assets with excluded marks.
-  [Expanded candidate screen](docs/manymesh/khronos-expanded-candidate-screen-20261123.md) and
-  [earlier source screens](docs/manymesh/khronos-followup-candidates-20261123.md)
+- **Contour neighborhoods concentrate image error.** In three million-face
+  moving scenes on Iris Xe at 720p with 4× MSAA, group-area LOD's binary
+  coverage mismatch accounts for 35–58% of squared error against the full source
+  at matched sampling. Adding the two-pixel contour band brings this to
+  57–86%. LPIPS does not show an equal-cost allocation win.
+  [Error and LPIPS replay](tools/mmmetrics/MOVING_SCENE_EDGE_QUALITY_20261124.md)
+- **Current geometry cuts trail matched controls.** Across 18 eligible
+  exact-face pairs on seven reused assets, ManyMesh lost all five image
+  metrics in 15 and won two meshoptimizer comparisons on GlassBrokenWindow.
+  The QEM counts did not match the broken-window cuts. The screen used a
+  retrospective boundary tolerance. [Full report](tools/mmtrain/KHRONOS_EQUAL_FACE_QUALITY_SCREEN_20261123.md)
+- **The confirmation pool is provisional.** Twelve Poly Haven assets pass
+  source topology across five classes. Three supply legal equal-face controls
+  near 50% retention. [Geometry preflight](tools/mmtrain/POLYHAVEN_CANDIDATE_TOPOLOGY_20261124.md)
 
 | Works in the measured scope | Does not pass | Not measured |
 |---|---|---|

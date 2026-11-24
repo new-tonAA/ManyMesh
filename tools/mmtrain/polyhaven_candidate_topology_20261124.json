@@ -1,0 +1,1114 @@
+{
+  "source": "Poly Haven Public API",
+  "catalog_url": "https://api.polyhaven.com/assets?t=models",
+  "catalog_sha256": "4639038ef32946ec562b03a56086c53c8edde0179a8d7140ffd79232ea4a0c23",
+  "license": "CC0-1.0",
+  "acquisition": "1k glTF and its declared binary geometry buffer, no textures",
+  "selection": {
+    "furniture": [
+      "ArmChair_01",
+      "ClassicConsole_01",
+      "GothicCabinet_01",
+      "CoffeeTable_01"
+    ],
+    "botanical": [
+      "anthurium_botany_01",
+      "calathea_orbifolia_01",
+      "dandelion_01",
+      "crystalline_iceplant"
+    ],
+    "rock": [
+      "boulder_01",
+      "moon_rock_01",
+      "rock_09",
+      "stone_01"
+    ],
+    "food": [
+      "bananas",
+      "carrot_cake",
+      "food_apple_01",
+      "food_ginger_01"
+    ],
+    "tools": [
+      "adjustable_wrench",
+      "bench_vice_01",
+      "bolt_cutters_01",
+      "bunsen_burner"
+    ]
+  },
+  "quality_scored": false,
+  "public_prior_use_scan": {
+    "revision": "7e01941e942d69c91715b92aa6578bdf59ec5d49",
+    "paths": [
+      "README.md",
+      "MANYMESH.md",
+      "MANYMESH_HISTORY.md",
+      "docs/manymesh",
+      "tools/mmgeo",
+      "tools/mmmetrics",
+      "tools/mmtrain",
+      "tools/mmtemporal"
+    ],
+    "terms": "asset slug, glTF SHA-256, BIN SHA-256, and exported OBJ SHA-256",
+    "scope": "literal text matches in recorded public sources only"
+  },
+  "assets": [
+    {
+      "asset": "ArmChair_01",
+      "class": "furniture",
+      "credit": {
+        "Kirill Sannikov": "All"
+      },
+      "catalog_polycount": 5626,
+      "catalog_files_hash": "8a04a102d4a1e1a480bc4288384d4a2dfd649608",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/ArmChair_01/ArmChair_01_1k.gltf",
+          "md5": "39d1e4b0ffdde688c98335c9621e3aae",
+          "bytes": 2643,
+          "sha256": "91e39d5b35f36c8074b7b6432f6fd77f5f1a257c4d6af3924c0b263eb674286b"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/ArmChair_01/ArmChair_01.bin",
+          "md5": "fbd842795fdec75d94f1335c28acfc0e",
+          "bytes": 154012,
+          "sha256": "42a4206ea8bb3f7c3c1500ca3e408e084e8687cd3cc9cbf095b3344e215e0db6"
+        },
+        "files_json_sha256": "cb73da530292cad49b3d68521284f365ea80cf35df35e9afdf2f30c8d2d2b37d"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "b1398d9d39b3f3c8ef5e19670b8a4a0a6368291dcbf9fc6553a38fc2be822dd0",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 3758,
+        "used_vertices": 3758,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 3229,
+        "triangles": 5626,
+        "connected_components_by_exact_welded_vertex": 14,
+        "boundary_edges": 839,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 1,
+        "nonmanifold_edges": 2,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 0.0,
+        "edge_incidence_histogram": {
+          "2": 8016,
+          "1": 839,
+          "3": 1,
+          "4": 1
+        },
+        "topology_status": "fail",
+        "topology_errors": [
+          "1 degenerate faces",
+          "2 nonmanifold edges"
+        ],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0
+      },
+      "status": "fail"
+    },
+    {
+      "asset": "ClassicConsole_01",
+      "class": "furniture",
+      "credit": {
+        "Kirill Sannikov": "All"
+      },
+      "catalog_polycount": 7566,
+      "catalog_files_hash": "acd2b694a1823478102c4fde925d1db6220acdcd",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/ClassicConsole_01/ClassicConsole_01_1k.gltf",
+          "md5": "654dc8fdce43f534ffd3e6bdb5b988c3",
+          "bytes": 2729,
+          "sha256": "6c7f79026ad7c388c5d40c56a0988f2a28dc0fc6e489e110332d06792ecd5833"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/ClassicConsole_01/ClassicConsole_01.bin",
+          "md5": "e42b6689e5036e1f2aa0008461094297",
+          "bytes": 221588,
+          "sha256": "f1781fbd65be7ea34a653ed1eaf06a47a4ee3e98dcc5a5627f5479019d87b025"
+        },
+        "files_json_sha256": "bd54755827ffceba4ed0b22222f9c86a1fb0ee20b57018cc34161be1d87153df"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "1955c3db2fb0347e347a4d1dcba4e9512003c8101790bd90640face912151047",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 5506,
+        "used_vertices": 5506,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 4424,
+        "triangles": 7566,
+        "connected_components_by_exact_welded_vertex": 15,
+        "boundary_edges": 1346,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 2,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 3.144161752914233e-06,
+        "edge_incidence_histogram": {
+          "2": 10672,
+          "1": 1346,
+          "4": 2
+        },
+        "topology_status": "fail",
+        "topology_errors": [
+          "2 nonmanifold edges"
+        ],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0
+      },
+      "status": "fail"
+    },
+    {
+      "asset": "GothicCabinet_01",
+      "class": "furniture",
+      "credit": {
+        "Kirill Sannikov": "All"
+      },
+      "catalog_polycount": 12170,
+      "catalog_files_hash": "d00370c71bc0545009b85e8ba406b74c04efab65",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/GothicCabinet_01/GothicCabinet_01_1k.gltf",
+          "md5": "d6ec468ab981336f76f35f10d566e460",
+          "bytes": 8968,
+          "sha256": "1b3506f78e263c66e90d4a84b9efa883fe0bb02a13ff8ead2b3a265024e045ce"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/GothicCabinet_01/GothicCabinet_01.bin",
+          "md5": "4c2f20b4b5fbf8c33b86b04dcf805c5f",
+          "bytes": 486532,
+          "sha256": "f1019b130872cad82d5bf5e27528a980fabbd69a9128340e5eb7530ea2d7c17b"
+        },
+        "files_json_sha256": "4777ef61dcc5ce27d4ec913f4b45b453abe62a1d9fb9660ff1b2bccad3437938"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "0c070aff756350be699b07953efdccf6ff5a08ad295aea709bf2e02d0bdd77eb",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 12922,
+        "used_vertices": 12922,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 7616,
+        "triangles": 12170,
+        "connected_components_by_exact_welded_vertex": 53,
+        "boundary_edges": 2974,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 0,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 6.39395415779971e-07,
+        "edge_incidence_histogram": {
+          "2": 16768,
+          "1": 2974
+        },
+        "topology_status": "pass",
+        "topology_errors": [],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 5,
+        "triangle_primitives": 5,
+        "animation_count_ignored": 0
+      },
+      "status": "pass",
+      "recorded_prior_use_matches": []
+    },
+    {
+      "asset": "CoffeeTable_01",
+      "class": "furniture",
+      "credit": {
+        "Fernando Quinn": "All"
+      },
+      "catalog_polycount": 10404,
+      "catalog_files_hash": "edc6d675027952fdddc0cf03be30f8354abc2338",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/CoffeeTable_01/CoffeeTable_01_1k.gltf",
+          "md5": "5a981114987ebd1d7033dee542803988",
+          "bytes": 3182,
+          "sha256": "c0b7ce378fc13886c220236941b4d258389d252e337297dc89505b80e43617fb"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/CoffeeTable_01/CoffeeTable_01.bin",
+          "md5": "a8815aecc367e1efd401cd644d679899",
+          "bytes": 394920,
+          "sha256": "1b047e37723ad62b6a204465b22b9fd40936957cee255f20ee65312db227fb11"
+        },
+        "files_json_sha256": "d4950efbc0021af039eb58f75c9a985ce10429b0ae1b691b7f989ad67d5a2a66"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "15c63814e9424a89e32da27f7a317017d3c44c1316ff81f7d6000ba3cf555680",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 6927,
+        "used_vertices": 6927,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 5629,
+        "triangles": 10404,
+        "connected_components_by_exact_welded_vertex": 26,
+        "boundary_edges": 790,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 0,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 8.189856545449439e-07,
+        "edge_incidence_histogram": {
+          "2": 15211,
+          "1": 790
+        },
+        "topology_status": "pass",
+        "topology_errors": [],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0
+      },
+      "status": "pass",
+      "recorded_prior_use_matches": []
+    },
+    {
+      "asset": "anthurium_botany_01",
+      "class": "botanical",
+      "credit": {
+        "Rob Tuytel": "scanning",
+        "Rico Cilliers": "modeling"
+      },
+      "catalog_polycount": 4134,
+      "catalog_files_hash": "9a9818247596717d5d754411c5e63f1d8655f2cc",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/anthurium_botany_01/anthurium_botany_01_1k.gltf",
+          "md5": "2a55f9ff4645ec45971e4796acad5d1f",
+          "bytes": 10675,
+          "sha256": "6b3f6b8eda6cc0edfefd6a58f6758ef6538c35b2ca2a76189383f23b246dd8c6"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/anthurium_botany_01/anthurium_botany_01.bin",
+          "md5": "121f1e490c98ea71ebb1a61a2246c585",
+          "bytes": 1744256,
+          "sha256": "6a23daf128e297ad99e984bec11bdea3c6eab64e52d07cbdc948ace5a05b2e25"
+        },
+        "files_json_sha256": "c967aafc078db9ccf55f9041501ee20df59be334d81249140df56d7b57032e14"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "7a947519bf90cb787a5260a357ac0afcac581597c5b62306fbf09e11f638710a",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 41917,
+        "used_vertices": 41917,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 36491,
+        "triangles": 67152,
+        "connected_components_by_exact_welded_vertex": 43,
+        "boundary_edges": 5744,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 0,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 4.313812378976473e-09,
+        "edge_incidence_histogram": {
+          "2": 97856,
+          "1": 5744
+        },
+        "topology_status": "pass",
+        "topology_errors": [],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 6,
+        "triangle_primitives": 6,
+        "animation_count_ignored": 0
+      },
+      "status": "pass",
+      "recorded_prior_use_matches": []
+    },
+    {
+      "asset": "calathea_orbifolia_01",
+      "class": "botanical",
+      "credit": {
+        "Rob Tuytel": "scanning",
+        "Rico Cilliers": "modeling"
+      },
+      "catalog_polycount": 16688,
+      "catalog_files_hash": "5b3ad0b0352b1429f1f11e3de6f5b360ea6ef35a",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/calathea_orbifolia_01/calathea_orbifolia_01_1k.gltf",
+          "md5": "7ff4de041509fbaa45f8f3dd52b3113d",
+          "bytes": 9309,
+          "sha256": "399130c01bfff6b493f885652112c3c841c3814b024a3d3c87773e0c5ab4f156"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/calathea_orbifolia_01/calathea_orbifolia_01.bin",
+          "md5": "71dd2ea7aaba98bbd675db12ae382bbd",
+          "bytes": 407968,
+          "sha256": "df1668bcb44914abac046217bbdae9867a3702198f7c374135f2b4456df8b038"
+        },
+        "files_json_sha256": "6f8877bdb7f359d4f8801fdf9b46700a05b138980c3d754d088c72bdad35bb52"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "f3f0f5b1aa9803fcc94c6c9210a945f196edf498184ec87acd89d9f717093733",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 9620,
+        "used_vertices": 9620,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 9218,
+        "triangles": 16688,
+        "connected_components_by_exact_welded_vertex": 46,
+        "boundary_edges": 1704,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 0,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 5.183757002896387e-07,
+        "edge_incidence_histogram": {
+          "2": 24180,
+          "1": 1704
+        },
+        "topology_status": "pass",
+        "topology_errors": [],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 5,
+        "triangle_primitives": 5,
+        "animation_count_ignored": 0
+      },
+      "status": "pass",
+      "recorded_prior_use_matches": []
+    },
+    {
+      "asset": "dandelion_01",
+      "class": "botanical",
+      "credit": {
+        "Rob Tuytel": "Photography",
+        "Rico Cilliers": "Modeling"
+      },
+      "catalog_polycount": 64099,
+      "catalog_files_hash": "1aaae5d9ce759a84e3b9d381821c8647cefa7a85",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/dandelion_01/dandelion_01_1k.gltf",
+          "md5": "9e470fe32469a68b70f6a7ecc01e2af4",
+          "bytes": 8915,
+          "sha256": "68f804fe29f641f37b03c470cf9065d34aacd1b4f580ed6f35385626c2bb42b7"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/dandelion_01/dandelion_01.bin",
+          "md5": "a44fda5ce48c4f194791dc0d2e2b1312",
+          "bytes": 1676648,
+          "sha256": "ccff5a564f56a69374c09c25ae86c3684c46329309b4eef4569255b1ad54bdd0"
+        },
+        "files_json_sha256": "051928b3dd73311002fb3733fbc96c7817c9c593f34dac5e7f287718b83b71c8"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "02c5bc354c5d2f7cae5f34eac53e1cefe8f7884afbc9998dcb9725565bb34c00",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 42127,
+        "used_vertices": 42127,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 35926,
+        "triangles": 54764,
+        "connected_components_by_exact_welded_vertex": 1268,
+        "boundary_edges": 14560,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 0,
+        "inconsistently_oriented_edges": 64,
+        "minimum_double_area": 1.5087199431789102e-08,
+        "edge_incidence_histogram": {
+          "2": 74866,
+          "1": 14560
+        },
+        "topology_status": "fail",
+        "topology_errors": [
+          "64 inconsistently oriented edges"
+        ],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 5,
+        "triangle_primitives": 5,
+        "animation_count_ignored": 0
+      },
+      "status": "fail"
+    },
+    {
+      "asset": "crystalline_iceplant",
+      "class": "botanical",
+      "credit": {
+        "James Ray Cock": "modeling",
+        "Jenelle van Heerden": "Photography"
+      },
+      "catalog_polycount": 23487,
+      "catalog_files_hash": "0344e1f831a707e73f4bde5e29c2fa8a7cb14563",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/crystalline_iceplant/crystalline_iceplant_1k.gltf",
+          "md5": "290f5e514fcdd5205642c04d065aa286",
+          "bytes": 13607,
+          "sha256": "46983341146dfacc96116e7468562b9e3b0a5be15d15940a98d9bab045c39910"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/crystalline_iceplant/crystalline_iceplant.bin",
+          "md5": "4074e1d087458162c160b8312163acea",
+          "bytes": 330436,
+          "sha256": "f51b43e9235e1765eb44495edf4f68e53c693a4ea1bab93830ac2e9f8e0d183a"
+        },
+        "files_json_sha256": "2098ed6e484869a5fe3c6b3a8168e8e04fb47bd3541bd7a6e4e00c126e338bb4"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "d22864c599b17ceef8730c603c3f38a3d298c00d926e15a10af9645654c41dec",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 7871,
+        "used_vertices": 7871,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 7747,
+        "triangles": 13094,
+        "connected_components_by_exact_welded_vertex": 51,
+        "boundary_edges": 2298,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 0,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 8.817930061294739e-07,
+        "edge_incidence_histogram": {
+          "2": 18492,
+          "1": 2298
+        },
+        "topology_status": "pass",
+        "topology_errors": [],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 8,
+        "triangle_primitives": 8,
+        "animation_count_ignored": 0
+      },
+      "status": "pass",
+      "recorded_prior_use_matches": []
+    },
+    {
+      "asset": "boulder_01",
+      "class": "rock",
+      "credit": {
+        "Rico Cilliers": "All"
+      },
+      "catalog_polycount": 123976,
+      "catalog_files_hash": "83e2b16d6a089f8077d3eebe0462615c2ba0e7f6",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/boulder_01/boulder_01_1k.gltf",
+          "md5": "26e2eef4a1f68c9557c65cd375b21d6c",
+          "bytes": 2773,
+          "sha256": "51487934db898b4c24072780a451e34eca5c02e3ada24a62bbc600bbc4019e92"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/boulder_01/boulder_01.bin",
+          "md5": "27a19fa031d8b4c3a09261f19c444dc5",
+          "bytes": 2938808,
+          "sha256": "7f5b06503d62bd95bfe9c6b8a354a5cc8ff04a4d271a8cf87a3e3125db4232d7"
+        },
+        "files_json_sha256": "c2b21c87241cbe9a46c190c6cd231cd943c4ff5dbd28b634cf19613a21a75167"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "fd36902ead2622d75a441eb3c1d977841840bec871288a730d83bf67edbd4794",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 67042,
+        "used_vertices": 67042,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 33063,
+        "triangles": 66122,
+        "connected_components_by_exact_welded_vertex": 1,
+        "boundary_edges": 0,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 0,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 3.469782775015297e-06,
+        "edge_incidence_histogram": {
+          "2": 99183
+        },
+        "topology_status": "pass",
+        "topology_errors": [],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0
+      },
+      "status": "pass",
+      "recorded_prior_use_matches": []
+    },
+    {
+      "asset": "moon_rock_01",
+      "class": "rock",
+      "credit": {
+        "Greg Zaal": "Photography",
+        "Rico Cilliers": "Photography",
+        "Jenelle van Heerden": "Processing",
+        "Dario Barresi": "Processing"
+      },
+      "catalog_polycount": 18668,
+      "catalog_files_hash": "8aac337ef1b7cd03ee522258ce658dbc1bffe554",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/moon_rock_01/moon_rock_01_1k.gltf",
+          "md5": "86c6b4f7792f9600ae33cb3b4d42bb20",
+          "bytes": 7088,
+          "sha256": "004cc353fa0c29572a9ba40535f3716c297466fdf2c650d36deaf9e27eed5ce7"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/moon_rock_01/moon_rock_01.bin",
+          "md5": "5dc30dc1be5e8dd5fff64dd824cad828",
+          "bytes": 448168,
+          "sha256": "c6671327046efd27ab1a97c4c716412f209a063184e65f0376e3be6583e8f52a"
+        },
+        "files_json_sha256": "3e24c85d47695b43f5aa2f69114c7c63a062fd530a530a0ffee681fe78a11783"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "b089fb53c80702552484aae2b82da595bbfbee80d3a02425295a82f8beb32445",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 10505,
+        "used_vertices": 10505,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 7996,
+        "triangles": 18668,
+        "connected_components_by_exact_welded_vertex": 1,
+        "boundary_edges": 0,
+        "duplicate_geometric_triangles": 318,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 1154,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 3.645162629206103e-07,
+        "edge_incidence_histogram": {
+          "2": 25649,
+          "4": 1110,
+          "6": 43,
+          "8": 1
+        },
+        "topology_status": "fail",
+        "topology_errors": [
+          "318 duplicate geometric faces",
+          "1154 nonmanifold edges"
+        ],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 4,
+        "triangle_primitives": 4,
+        "animation_count_ignored": 0
+      },
+      "status": "fail"
+    },
+    {
+      "asset": "rock_09",
+      "class": "rock",
+      "credit": {
+        "Jenelle van Heerden": "All"
+      },
+      "catalog_polycount": 23280,
+      "catalog_files_hash": "1560e10c5800cc570d6e0a692fb5300443f72156",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/rock_09/rock_09_1k.gltf",
+          "md5": "d12ac6e8433fe1346fe6945154269f66",
+          "bytes": 2745,
+          "sha256": "636e57eb0090889627da18edaec202ff9f65f83101b94f91b7da4d21dc080ab9"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/rock_09/rock_09.bin",
+          "md5": "6f2f71c9ca594566c1a3b29da27293a1",
+          "bytes": 286592,
+          "sha256": "780c37d6fc11ca3a01c3763535ef883908b6007271a46bd446d2289ded820751"
+        },
+        "files_json_sha256": "8cd1e314602910d6f768683e2adda86b72853c9e4a5fb85f5e6aeff131cb3a87"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "d730ce70302472b927d0f128fff2569bffeee22da1f04273c571cde04ff723f1",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 6628,
+        "used_vertices": 6628,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 6210,
+        "triangles": 12416,
+        "connected_components_by_exact_welded_vertex": 1,
+        "boundary_edges": 0,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 0,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 3.5493108424084866e-08,
+        "edge_incidence_histogram": {
+          "2": 18624
+        },
+        "topology_status": "pass",
+        "topology_errors": [],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0
+      },
+      "status": "pass",
+      "recorded_prior_use_matches": []
+    },
+    {
+      "asset": "stone_01",
+      "class": "rock",
+      "credit": {
+        "Dario Barresi": "Photography",
+        "Rico Cilliers": "photography, processing"
+      },
+      "catalog_polycount": 71916,
+      "catalog_files_hash": "3b541260ddde766b6bcfae56be426b81ce1a1e81",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/stone_01/stone_01_1k.gltf",
+          "md5": "3dd857c5c56ce0194869ba53ad003c88",
+          "bytes": 2750,
+          "sha256": "e06d59972ef910acde1cc64f9450ddb9c12dcd052031bc9982a7c46e108f6111"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/stone_01/stone_01.bin",
+          "md5": "f64c71f0097f1536c030d397b9783078",
+          "bytes": 1213536,
+          "sha256": "ad037d15be3619be6aa3ddb144d450aea43b5efb66b670ba756272bf839418e3"
+        },
+        "files_json_sha256": "bb3aa9357d35a5c98bccaabe460ae5f425b60285fd322c892c143e4c602686e6"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "3c716f670c052a5e9c3fc826f115c4be5a0a9491a804ea27cde2f09022b5a26d",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 27888,
+        "used_vertices": 27888,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 26762,
+        "triangles": 53520,
+        "connected_components_by_exact_welded_vertex": 1,
+        "boundary_edges": 0,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 0,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 2.4652634438532665e-08,
+        "edge_incidence_histogram": {
+          "2": 80280
+        },
+        "topology_status": "pass",
+        "topology_errors": [],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0
+      },
+      "status": "pass",
+      "recorded_prior_use_matches": []
+    },
+    {
+      "asset": "bananas",
+      "class": "food",
+      "credit": {
+        "Alexander Shulha": "All"
+      },
+      "catalog_polycount": 46868,
+      "catalog_files_hash": "e0a8d2e4bad29eafcbff7fc2f6c6654fad7b2830",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/bananas/bananas_1k.gltf",
+          "md5": "b710301bd65174db1d3a6dccccb299e0",
+          "bytes": 8796,
+          "sha256": "4709a758c91cbfb5df7df23fb6d9ed21778ed0030c260b11f9171ed28659e700"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/bananas/bananas.bin",
+          "md5": "1e1c9dfb934eb50a8edbd6ab848dc11a",
+          "bytes": 1088376,
+          "sha256": "c98b7dbabd8ceb70c9b8ea92611c7c7833dd86c118c8013b941eb379bee26774"
+        },
+        "files_json_sha256": "f37c5c9d3d73cf7d438f602c258d78b138484b62672ff1fbabf63042452f4f2f"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "2b6e0fe6507d7441e3748587814227dc18b9db6f10c9070472362efdae0d9b48",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 25224,
+        "used_vertices": 25224,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 23452,
+        "triangles": 46868,
+        "connected_components_by_exact_welded_vertex": 9,
+        "boundary_edges": 0,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 0,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 6.569765006431426e-08,
+        "edge_incidence_histogram": {
+          "2": 70302
+        },
+        "topology_status": "pass",
+        "topology_errors": [],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 5,
+        "triangle_primitives": 5,
+        "animation_count_ignored": 0
+      },
+      "status": "pass",
+      "recorded_prior_use_matches": []
+    },
+    {
+      "asset": "carrot_cake",
+      "class": "food",
+      "credit": {
+        "Greg Zaal": "photography",
+        "James Ray Cock": "processing"
+      },
+      "catalog_polycount": 13790,
+      "catalog_files_hash": "b1fa5ea224d02682e75f74b2f0e5b1cc52f3e4c5",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/carrot_cake/carrot_cake_1k.gltf",
+          "md5": "043edc5a13142cd57fe84d0ffa2e639d",
+          "bytes": 2682,
+          "sha256": "b0a743a0283bb2aea67d6d88bfb92b0afc5a2b5199f48ca4b9240330a28a87f6"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/carrot_cake/carrot_cake.bin",
+          "md5": "085b7ba8dc8de57f5e8aadb9ed68dfe5",
+          "bytes": 377492,
+          "sha256": "4390df681a8e7d1c1ec8640addb94e422073ccb88d0b1e73971e13cd48bb12cb"
+        },
+        "files_json_sha256": "b97046d5bf81b07d541342da3162084b0131408171cb9c5133800037c152a66a"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "aa5b31a1eed5a3d37dc11af8e688dbbbd87a7f573c26bcdc742408a94845e0b3",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 9211,
+        "used_vertices": 9211,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 6895,
+        "triangles": 13790,
+        "connected_components_by_exact_welded_vertex": 1,
+        "boundary_edges": 0,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 0,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 4.1955145178033756e-08,
+        "edge_incidence_histogram": {
+          "2": 20685
+        },
+        "topology_status": "pass",
+        "topology_errors": [],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0
+      },
+      "status": "pass",
+      "recorded_prior_use_matches": []
+    },
+    {
+      "asset": "food_apple_01",
+      "class": "food",
+      "credit": {
+        "Oliver Harries": "All"
+      },
+      "catalog_polycount": 7012,
+      "catalog_files_hash": "caabd8553fb0598968bd2fc19e0dd012f80e9546",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/food_apple_01/food_apple_01_1k.gltf",
+          "md5": "222a8e136b40f36c1acb87a6036c1106",
+          "bytes": 2705,
+          "sha256": "6a7dc1cda1271c8b08e36e2b9fd44371b7149cca6262c71bc36d971cdac4325f"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/food_apple_01/food_apple_01.bin",
+          "md5": "26b23e40de43097b0185a0d93cd72d3b",
+          "bytes": 170680,
+          "sha256": "f14ff9647fdd9f5a59ef325f94154e91f1f14cc2563cd3fb572c4fe9ce5756ca"
+        },
+        "files_json_sha256": "4c249f909fe1f409542b1f2ec215eabc8036a150325efe634190e2624d83a111"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "dfaab2fb03ca861cd850ca3928345c376c55e91ca20ccee4c8559a4a6254c19e",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 4019,
+        "used_vertices": 4019,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 3504,
+        "triangles": 7012,
+        "connected_components_by_exact_welded_vertex": 1,
+        "boundary_edges": 0,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 0,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 3.9220294549075606e-08,
+        "edge_incidence_histogram": {
+          "2": 10518
+        },
+        "topology_status": "pass",
+        "topology_errors": [],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0
+      },
+      "status": "pass",
+      "recorded_prior_use_matches": []
+    },
+    {
+      "asset": "food_ginger_01",
+      "class": "food",
+      "credit": {
+        "Oliver Harries": "All"
+      },
+      "catalog_polycount": 7205,
+      "catalog_files_hash": "e1d57e6942f5bb05eecd5902a89a1e365863825c",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/food_ginger_01/food_ginger_01_1k.gltf",
+          "md5": "fcd801cc9d49fe6e757d44b037fd92a8",
+          "bytes": 2715,
+          "sha256": "d08d23765047a58ba29dcebd72a4aa481690cc7774179e42a4af5cb66b2c9ffb"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/food_ginger_01/food_ginger_01.bin",
+          "md5": "527a57b696cb4d40c8b3f286b587006a",
+          "bytes": 175232,
+          "sha256": "b1967c29b2f38dbc63ca2374486c9eb1d90870795b40bc1c2728ffcc760ebcd4"
+        },
+        "files_json_sha256": "b0b23e8062be7624c3591b4b7788cbbd67caac52550867176846953f3f2997d2"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "ac2dc9d04b347e01a613598009ffbd71617bf25d98e79aeaf021f00c8a557b0e",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 4125,
+        "used_vertices": 4125,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 3605,
+        "triangles": 7205,
+        "connected_components_by_exact_welded_vertex": 1,
+        "boundary_edges": 2,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 1,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 2.3503763422788674e-07,
+        "edge_incidence_histogram": {
+          "2": 10805,
+          "3": 1,
+          "1": 2
+        },
+        "topology_status": "fail",
+        "topology_errors": [
+          "1 nonmanifold edges"
+        ],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0
+      },
+      "status": "fail"
+    },
+    {
+      "asset": "adjustable_wrench",
+      "class": "tools",
+      "credit": {
+        "Mateusz Sadek": "All"
+      },
+      "catalog_polycount": 5390,
+      "catalog_files_hash": "bab4c5d35fe7fb348027053305302a497ab625c3",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/adjustable_wrench/adjustable_wrench_1k.gltf",
+          "md5": "3d0d76e90c269a2715ecc262a6bd623d",
+          "bytes": 5659,
+          "sha256": "1fc7df249bd4aa5f8cad48eb0b23381bad305b17a3095d06758d76ac1605fea1"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/adjustable_wrench/adjustable_wrench.bin",
+          "md5": "b1d05a421b7e7194fd80187075923a67",
+          "bytes": 189556,
+          "sha256": "6a61050c0eb32f4139c49168fe403f04d255e9ca9255bc293e4cd4f503bd5883"
+        },
+        "files_json_sha256": "53574c57c23b2a9f71a93f27c0130734e75d41b9fd59aa69fbfb59d59f87ec02"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "f9c0c03df958d6816cc2dae8af42afab82927a3feda3592c3afe2bb0f6742de3",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 4913,
+        "used_vertices": 4913,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 2868,
+        "triangles": 5390,
+        "connected_components_by_exact_welded_vertex": 16,
+        "boundary_edges": 328,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 2,
+        "nonmanifold_edges": 2,
+        "inconsistently_oriented_edges": 1,
+        "minimum_double_area": 0.0,
+        "edge_incidence_histogram": {
+          "2": 7917,
+          "1": 328,
+          "4": 2
+        },
+        "topology_status": "fail",
+        "topology_errors": [
+          "2 degenerate faces",
+          "2 nonmanifold edges",
+          "1 inconsistently oriented edges"
+        ],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 3,
+        "triangle_primitives": 3,
+        "animation_count_ignored": 0
+      },
+      "status": "fail"
+    },
+    {
+      "asset": "bench_vice_01",
+      "class": "tools",
+      "credit": {
+        "Yann Kervran": "Rigging",
+        "Antanas Kep": "Modeling & Texturing"
+      },
+      "catalog_polycount": 2864,
+      "catalog_files_hash": "e1b894759ca8b4ed6359bd7503a34c974494a620",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/bench_vice_01/bench_vice_01_1k.gltf",
+          "md5": "732cc8a08f98136922ddc5ef0fad7bba",
+          "bytes": 13222,
+          "sha256": "52e61b473f1a7840ddbdabf024cca8dd32e07f694bd247e3a74e8ef5d9a101e2"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/bench_vice_01/bench_vice_01.bin",
+          "md5": "0f8ba7b2c41f23b4e7461c68c5aca898",
+          "bytes": 131404,
+          "sha256": "47b80c649a7791a7f3ea95d3dca929506a8c2e89506d3982a1a3380dcd3333ee"
+        },
+        "files_json_sha256": "db934ee744217f3c3f4f2f2b6cbf04d9438e1f49470f591d45f553bf5665d0ad"
+      },
+      "status": "unsupported",
+      "error": "ValueError: Skinned meshes require a skinning-aware extractor"
+    },
+    {
+      "asset": "bolt_cutters_01",
+      "class": "tools",
+      "credit": {
+        "Yann Kervran": "Rigging",
+        "Antanas Kep": "Modeling & Texturing"
+      },
+      "catalog_polycount": 6719,
+      "catalog_files_hash": "dea97258bc813e50c679be6bba2590fa6971838b",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/bolt_cutters_01/bolt_cutters_01_1k.gltf",
+          "md5": "4757574f29683f2d7fff9f8d4602207e",
+          "bytes": 2797,
+          "sha256": "eedd7c98341e85013c753af0406bac3b58d4e485a2730e611c08dcb4cc2f3a81"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/bolt_cutters_01/bolt_cutters_01.bin",
+          "md5": "49f0bcf68de79fb119f272473177d9a0",
+          "bytes": 94700,
+          "sha256": "ca59727481d2edca3a3177966d816c2e074f7ee182cef94b7fc4b67d6ded8aa2"
+        },
+        "files_json_sha256": "e62b2ec76416dda98900a166a81117c8bae5f3ee59b2d8b4567bbee58cb54ca9"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "8169f8546f1ee2854394bd259e6a10e8e9b1fb96b53498a32b2191fada6cab28",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 2320,
+        "used_vertices": 2320,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 1867,
+        "triangles": 3410,
+        "connected_components_by_exact_welded_vertex": 28,
+        "boundary_edges": 264,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 12,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 1.4092261139912564e-06,
+        "edge_incidence_histogram": {
+          "2": 4965,
+          "1": 264,
+          "3": 12
+        },
+        "topology_status": "fail",
+        "topology_errors": [
+          "12 nonmanifold edges"
+        ],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0
+      },
+      "status": "fail"
+    },
+    {
+      "asset": "bunsen_burner",
+      "class": "tools",
+      "credit": {
+        "BKS": "All"
+      },
+      "catalog_polycount": 8434,
+      "catalog_files_hash": "8cfa0fa389cd410b0391534b3c9a9515d1bc5421",
+      "assets": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/bunsen_burner/bunsen_burner_1k.gltf",
+          "md5": "f3445637eac771cdd1f41765b1f018ea",
+          "bytes": 4182,
+          "sha256": "7c65775950cc7070513c4ce96d3d5f0035a3be5086f83cdba651a0ffc03b8a73"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/bunsen_burner/bunsen_burner.bin",
+          "md5": "b0c62ffca9e4c995429d8b76111c0c46",
+          "bytes": 268876,
+          "sha256": "088fb944f12617341aa521359e1655df10d07643b584ee6dc808eb3df01a6e06"
+        },
+        "files_json_sha256": "677561af57be74866e2fe9967c5d5874c49703b76b5b08ab8f442ce270792ec8"
+      },
+      "topology": {
+        "schema": 1,
+        "input_sha256": "795c41e95d2ad3a3c35b83fda71107050edeb0cc82c7ac3228e9a62769f61be9",
+        "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+        "exported_vertices": 6821,
+        "used_vertices": 6821,
+        "unused_exported_vertices": 0,
+        "welded_vertices": 4452,
+        "triangles": 8434,
+        "connected_components_by_exact_welded_vertex": 17,
+        "boundary_edges": 480,
+        "duplicate_geometric_triangles": 0,
+        "degenerate_triangles": 0,
+        "nonmanifold_edges": 0,
+        "inconsistently_oriented_edges": 0,
+        "minimum_double_area": 1.5086216991358144e-07,
+        "edge_incidence_histogram": {
+          "2": 12411,
+          "1": 480
+        },
+        "topology_status": "pass",
+        "topology_errors": [],
+        "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams",
+        "mesh_instances": 2,
+        "triangle_primitives": 2,
+        "animation_count_ignored": 0
+      },
+      "status": "pass",
+      "recorded_prior_use_matches": []
+    }
+  ]
+}

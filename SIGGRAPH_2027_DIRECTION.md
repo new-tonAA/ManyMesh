@@ -107,14 +107,12 @@ For that asset, the border-preserving fast-simplification QEM control returned
 eligible wins are meshoptimizer-only; the QEM scores are not equal-face results.
 This result does not test differentiable fitting or post-upscaler quality.
 
-1. Select two source meshes with pinned provenance that supply legal matched
-   geometry near 30% retention. CommercialRefrigerator and ScatterPlant failed
-   this input gate. The current host has a CPU build of PyTorch. The baseline
-   requires a CUDA workstation and a frozen camera split.
-   [Input preflight](tools/mmtrain/APPEARANCE_INPUT_PREFLIGHT_20261123.md)
-2. Compare nvdiffmodeling/Hasselgren placement against QEM, current ManyMesh
-   placement, and meshoptimizer at identical face counts. Freeze training and
-   held-out views before scoring; include no-AA and equal 4x MSAA arms.
+1. Use the pinned 50% BarramundiFish and Corset inputs. The 30% screens
+   supplied no complete matched set. [Geometry receipts](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md)
+2. Run the frozen placement-only NVIDIA control on CUDA and score with the
+   reserved camera split. Compare with QEM, ManyMesh, and meshoptimizer
+   at identical face counts, without AA and with hardware 4× MSAA.
+   [Training protocol](tools/mmtrain/appearance_cuda_protocol_20261124.json)
 3. If that baseline has a repeatable held-out signal, test DAG-level fitting
    against legal mixed-cut and progressive-boundary controls. Evaluate real AA
    and available upscalers, not only the training surrogate.

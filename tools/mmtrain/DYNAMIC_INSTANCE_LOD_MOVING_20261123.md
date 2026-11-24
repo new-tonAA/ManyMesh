@@ -33,4 +33,4 @@ The positive CGVQM-5 values for `instance-area` accompany higher triangle counts
 
 ## Reproduction records
 
-The measurement receipt is [mixed_scene_dynamic_instance_lod_validated_720p_20261123.json](mixed_scene_dynamic_instance_lod_validated_720p_20261123.json). The CGVQM-5 scores and paired scene bootstrap are in [mixed_scene_dynamic_cgvqm_validated_20261123.json](../mmmetrics/mixed_scene_dynamic_cgvqm_validated_20261123.json). Lossless frame videos and prepared geometry are local research outputs and are not checked into this report bundle, so the receipt describes the run but is not a standalone reproduction package.
+The measurement receipt is [mixed_scene_dynamic_instance_lod_validated_720p_20261123.json](mixed_scene_dynamic_instance_lod_validated_720p_20261123.json). The CGVQM-5 scores and paired scene bootstrap are in [mixed_scene_dynamic_cgvqm_validated_20261123.json](../mmmetrics/mixed_scene_dynamic_cgvqm_validated_20261123.json). A [validated replay](../mmmetrics/MOVING_SCENE_EDGE_QUALITY_20261124.md) adds LPIPS and spatial error attribution for these clips. Lossless videos and prepared geometry remain local.

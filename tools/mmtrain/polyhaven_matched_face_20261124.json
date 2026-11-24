@@ -1,0 +1,601 @@
+{
+  "source_receipt_sha256": "4c0dce7e528708325a727f1b82d9e7b72bf3d6fff64372f1131b60911827eb8f",
+  "rows": [
+    {
+      "asset": "GothicCabinet_01",
+      "class": "furniture",
+      "eligibility": {
+        "source_sha256": "0c070aff756350be699b07953efdccf6ff5a08ad295aea709bf2e02d0bdd77eb",
+        "source_faces": 12170,
+        "source_boundary_edges": 2974,
+        "candidate_sha256": "9109be289c344be003fa4f991d6d5ecd12284b8c97c6b104490bba18287fdd32",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "1c319914f6a035b06ca789b95cb6cf740388fc78c6724dc745adb50285eaf156",
+        "source_revision": "7e01941e942d69c91715b92aa6578bdf59ec5d49",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.5,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.49991783073130647,
+        "candidate_in_band": true,
+        "manymesh": {
+          "faces": 6084,
+          "topology_error": "Nonmanifold or inconsistently oriented edge",
+          "boundary_preserved": false
+        },
+        "control_target_faces": 6084,
+        "control_indexing": "original",
+        "control_input_vertices": 12922,
+        "controls": {
+          "qem_preserve_border": {
+            "faces": 11144,
+            "topology_error": null,
+            "boundary_edges": 2974,
+            "boundary_preserved": true,
+            "eligible": false
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 6084,
+            "topology_error": null,
+            "boundary_edges": 2974,
+            "boundary_preserved": true,
+            "eligible": true
+          }
+        },
+        "matched_inputs_ready": false
+      }
+    },
+    {
+      "asset": "CoffeeTable_01",
+      "class": "furniture",
+      "eligibility": {
+        "source_sha256": "15c63814e9424a89e32da27f7a317017d3c44c1316ff81f7d6000ba3cf555680",
+        "source_faces": 10404,
+        "source_boundary_edges": 790,
+        "candidate_sha256": "37cf47c4374ca8f5cffe14442270f18eb7cfd290d819e113b8b12455211b9a9f",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "1c319914f6a035b06ca789b95cb6cf740388fc78c6724dc745adb50285eaf156",
+        "source_revision": "7e01941e942d69c91715b92aa6578bdf59ec5d49",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.5,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.5,
+        "candidate_in_band": true,
+        "manymesh": {
+          "faces": 5202,
+          "topology_error": null,
+          "boundary_edges": 790,
+          "boundary_preserved": true
+        },
+        "control_target_faces": 5202,
+        "control_indexing": "original",
+        "control_input_vertices": 6927,
+        "controls": {
+          "qem_preserve_border": {
+            "error": "Duplicate geometric triangle",
+            "eligible": false
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 5202,
+            "topology_error": null,
+            "boundary_edges": 790,
+            "boundary_preserved": true,
+            "eligible": true
+          }
+        },
+        "matched_inputs_ready": false
+      }
+    },
+    {
+      "asset": "anthurium_botany_01",
+      "class": "botanical",
+      "eligibility": {
+        "source_sha256": "7a947519bf90cb787a5260a357ac0afcac581597c5b62306fbf09e11f638710a",
+        "source_faces": 67152,
+        "source_boundary_edges": 5744,
+        "candidate_sha256": "a5576ac6b2b86559ad9bccfadd520d790c0d9566c1d9671adc8ccbc3306c5a32",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "1c319914f6a035b06ca789b95cb6cf740388fc78c6724dc745adb50285eaf156",
+        "source_revision": "7e01941e942d69c91715b92aa6578bdf59ec5d49",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.5,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.5,
+        "candidate_in_band": true,
+        "manymesh": {
+          "faces": 33576,
+          "topology_error": "Nonmanifold or inconsistently oriented edge",
+          "boundary_preserved": false
+        },
+        "control_target_faces": 33576,
+        "control_indexing": "original",
+        "control_input_vertices": 41917,
+        "controls": {
+          "qem_preserve_border": {
+            "faces": 33576,
+            "topology_error": null,
+            "boundary_edges": 5744,
+            "boundary_preserved": true,
+            "eligible": true
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 33576,
+            "topology_error": "Duplicate geometric triangle",
+            "boundary_preserved": false,
+            "eligible": false
+          }
+        },
+        "matched_inputs_ready": false
+      }
+    },
+    {
+      "asset": "calathea_orbifolia_01",
+      "class": "botanical",
+      "eligibility": {
+        "source_sha256": "f3f0f5b1aa9803fcc94c6c9210a945f196edf498184ec87acd89d9f717093733",
+        "source_faces": 16688,
+        "source_boundary_edges": 1704,
+        "candidate_sha256": "ab27dd45a1c6d97180b4e828bfa2cd24c8f6b3d21b427b6463d05813bb0b62c6",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "1c319914f6a035b06ca789b95cb6cf740388fc78c6724dc745adb50285eaf156",
+        "source_revision": "7e01941e942d69c91715b92aa6578bdf59ec5d49",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.5,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.5,
+        "candidate_in_band": true,
+        "manymesh": {
+          "faces": 8344,
+          "topology_error": null,
+          "boundary_edges": 1704,
+          "boundary_preserved": true
+        },
+        "control_target_faces": 8344,
+        "control_indexing": "original",
+        "control_input_vertices": 9620,
+        "controls": {
+          "qem_preserve_border": {
+            "faces": 8344,
+            "topology_error": null,
+            "boundary_edges": 1704,
+            "boundary_preserved": true,
+            "eligible": true
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 8344,
+            "topology_error": "Duplicate geometric triangle",
+            "boundary_preserved": false,
+            "eligible": false
+          }
+        },
+        "matched_inputs_ready": false
+      }
+    },
+    {
+      "asset": "crystalline_iceplant",
+      "class": "botanical",
+      "eligibility": {
+        "source_sha256": "d22864c599b17ceef8730c603c3f38a3d298c00d926e15a10af9645654c41dec",
+        "source_faces": 13094,
+        "source_boundary_edges": 2298,
+        "candidate_sha256": "9ed6b1acf70fb0fa1493ffaf1a922f89606ff8414120b1e10a9ed11eca5ac51d",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "1c319914f6a035b06ca789b95cb6cf740388fc78c6724dc745adb50285eaf156",
+        "source_revision": "7e01941e942d69c91715b92aa6578bdf59ec5d49",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.5,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.499923629143119,
+        "candidate_in_band": true,
+        "manymesh": {
+          "faces": 6546,
+          "topology_error": null,
+          "boundary_edges": 2298,
+          "boundary_preserved": true
+        },
+        "control_target_faces": 6546,
+        "control_indexing": "original",
+        "control_input_vertices": 7871,
+        "controls": {
+          "qem_preserve_border": {
+            "faces": 6546,
+            "topology_error": null,
+            "boundary_edges": 2298,
+            "boundary_preserved": true,
+            "eligible": true
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 6546,
+            "topology_error": null,
+            "boundary_edges": 2298,
+            "boundary_preserved": true,
+            "eligible": true
+          }
+        },
+        "matched_inputs_ready": true
+      },
+      "export_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "c9dbd3d248ae5a4f0b62c056f05f4cccfc0c792f344f1f00cb8b9a0d2efdcd49",
+        "manymesh.obj": "7789583b17436746330cc2b0e639250a464567530afe8f1a35ab4d4e3affb07f",
+        "qem_preserve_border.obj": "07e1459b62ff31f3203336395f2aad19f8246e944c2b7a50d1439bd3b1447380",
+        "meshoptimizer_lock_border.obj": "16d221a3f69d04db47b670e87a0f59286cad06af4f1e1bfe5ae31c20c902bea1"
+      }
+    },
+    {
+      "asset": "boulder_01",
+      "class": "rock",
+      "eligibility": {
+        "source_sha256": "fd36902ead2622d75a441eb3c1d977841840bec871288a730d83bf67edbd4794",
+        "source_faces": 66122,
+        "source_boundary_edges": 0,
+        "candidate_sha256": "f3d39c947abf00a535280db0c3ffd6929b9ebfdd8b60e0122dbd952793c5979e",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "1c319914f6a035b06ca789b95cb6cf740388fc78c6724dc745adb50285eaf156",
+        "source_revision": "7e01941e942d69c91715b92aa6578bdf59ec5d49",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.5,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.49998487644051903,
+        "candidate_in_band": true,
+        "manymesh": {
+          "faces": 33060,
+          "topology_error": null,
+          "boundary_edges": 0,
+          "boundary_preserved": true
+        },
+        "control_target_faces": 33060,
+        "control_indexing": "original",
+        "control_input_vertices": 67042,
+        "controls": {
+          "qem_preserve_border": {
+            "faces": 65604,
+            "topology_error": null,
+            "boundary_edges": 0,
+            "boundary_preserved": true,
+            "eligible": false
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 63602,
+            "topology_error": null,
+            "boundary_edges": 0,
+            "boundary_preserved": true,
+            "eligible": false
+          }
+        },
+        "matched_inputs_ready": false
+      }
+    },
+    {
+      "asset": "rock_09",
+      "class": "rock",
+      "eligibility": {
+        "source_sha256": "d730ce70302472b927d0f128fff2569bffeee22da1f04273c571cde04ff723f1",
+        "source_faces": 12416,
+        "source_boundary_edges": 0,
+        "candidate_sha256": "042fa5115ad0f76d7acf37dc0368c0ad82a19d7041a1e6edecd4ad05e99491a6",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "1c319914f6a035b06ca789b95cb6cf740388fc78c6724dc745adb50285eaf156",
+        "source_revision": "7e01941e942d69c91715b92aa6578bdf59ec5d49",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.5,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.5,
+        "candidate_in_band": true,
+        "manymesh": {
+          "faces": 6208,
+          "topology_error": null,
+          "boundary_edges": 0,
+          "boundary_preserved": true
+        },
+        "control_target_faces": 6208,
+        "control_indexing": "original",
+        "control_input_vertices": 6628,
+        "controls": {
+          "qem_preserve_border": {
+            "faces": 6208,
+            "topology_error": null,
+            "boundary_edges": 0,
+            "boundary_preserved": true,
+            "eligible": true
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 6208,
+            "topology_error": null,
+            "boundary_edges": 0,
+            "boundary_preserved": true,
+            "eligible": true
+          }
+        },
+        "matched_inputs_ready": true
+      },
+      "export_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "36c462629961d37637046ac93c7ec5027d1dc9e1e6aa23239f94ecf2c2d2c0ba",
+        "manymesh.obj": "3f24038c4c948ec974f5745db61a10b3db4d18140f1b13405dc87e65ae255502",
+        "qem_preserve_border.obj": "2bab8a0f3b403a536e26f49ac22075652bd658c2a2d16629d3a30a63dfb88d8a",
+        "meshoptimizer_lock_border.obj": "9e01135d9a395653e4683169d2b6a9b6ab7440bbafd68bca5bea5e6af43f0db3"
+      }
+    },
+    {
+      "asset": "stone_01",
+      "class": "rock",
+      "eligibility": {
+        "source_sha256": "3c716f670c052a5e9c3fc826f115c4be5a0a9491a804ea27cde2f09022b5a26d",
+        "source_faces": 53520,
+        "source_boundary_edges": 0,
+        "candidate_sha256": "6741a6e47d14dcf28ab9378411ce10c73f8c1d635bfa8e12c22afda70c0006d5",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "1c319914f6a035b06ca789b95cb6cf740388fc78c6724dc745adb50285eaf156",
+        "source_revision": "7e01941e942d69c91715b92aa6578bdf59ec5d49",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.5,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.5,
+        "candidate_in_band": true,
+        "manymesh": {
+          "faces": 26760,
+          "topology_error": null,
+          "boundary_edges": 0,
+          "boundary_preserved": true
+        },
+        "control_target_faces": 26760,
+        "control_indexing": "original",
+        "control_input_vertices": 27888,
+        "controls": {
+          "qem_preserve_border": {
+            "error": "Duplicate geometric triangle",
+            "eligible": false
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 26760,
+            "topology_error": "Duplicate geometric triangle",
+            "boundary_preserved": false,
+            "eligible": false
+          }
+        },
+        "matched_inputs_ready": false
+      }
+    },
+    {
+      "asset": "bananas",
+      "class": "food",
+      "eligibility": {
+        "source_sha256": "2b6e0fe6507d7441e3748587814227dc18b9db6f10c9070472362efdae0d9b48",
+        "source_faces": 46868,
+        "source_boundary_edges": 0,
+        "candidate_sha256": "68705ab8d8b52e28b5131d628c0443c0b834a90fff04bdac8bcd742c2b5a4a2a",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "1c319914f6a035b06ca789b95cb6cf740388fc78c6724dc745adb50285eaf156",
+        "source_revision": "7e01941e942d69c91715b92aa6578bdf59ec5d49",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.5,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.5,
+        "candidate_in_band": true,
+        "manymesh": {
+          "faces": 23434,
+          "topology_error": null,
+          "boundary_edges": 0,
+          "boundary_preserved": true
+        },
+        "control_target_faces": 23434,
+        "control_indexing": "original",
+        "control_input_vertices": 25224,
+        "controls": {
+          "qem_preserve_border": {
+            "faces": 23434,
+            "topology_error": null,
+            "boundary_edges": 0,
+            "boundary_preserved": true,
+            "eligible": true
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 23434,
+            "topology_error": "Duplicate geometric triangle",
+            "boundary_preserved": false,
+            "eligible": false
+          }
+        },
+        "matched_inputs_ready": false
+      }
+    },
+    {
+      "asset": "carrot_cake",
+      "class": "food",
+      "eligibility": {
+        "source_sha256": "aa5b31a1eed5a3d37dc11af8e688dbbbd87a7f573c26bcdc742408a94845e0b3",
+        "source_faces": 13790,
+        "source_boundary_edges": 0,
+        "candidate_sha256": "f415e18193859c24d5b902617f9a1af9882c92aa1410300df7524813585456db",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "1c319914f6a035b06ca789b95cb6cf740388fc78c6724dc745adb50285eaf156",
+        "source_revision": "7e01941e942d69c91715b92aa6578bdf59ec5d49",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.5,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.4999274836838289,
+        "candidate_in_band": true,
+        "manymesh": {
+          "faces": 6894,
+          "topology_error": null,
+          "boundary_edges": 0,
+          "boundary_preserved": true
+        },
+        "control_target_faces": 6894,
+        "control_indexing": "original",
+        "control_input_vertices": 9211,
+        "controls": {
+          "qem_preserve_border": {
+            "error": "Duplicate geometric triangle",
+            "eligible": false
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 6892,
+            "topology_error": "Duplicate geometric triangle",
+            "boundary_preserved": false,
+            "eligible": false
+          }
+        },
+        "matched_inputs_ready": false
+      }
+    },
+    {
+      "asset": "food_apple_01",
+      "class": "food",
+      "eligibility": {
+        "source_sha256": "dfaab2fb03ca861cd850ca3928345c376c55e91ca20ccee4c8559a4a6254c19e",
+        "source_faces": 7012,
+        "source_boundary_edges": 0,
+        "candidate_sha256": "2bad590e57136d12e27ea476ce67d2d04ceaeb750d48727c366ed0ff7ee9d317",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "1c319914f6a035b06ca789b95cb6cf740388fc78c6724dc745adb50285eaf156",
+        "source_revision": "7e01941e942d69c91715b92aa6578bdf59ec5d49",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.5,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.5,
+        "candidate_in_band": true,
+        "manymesh": {
+          "faces": 3506,
+          "topology_error": null,
+          "boundary_edges": 0,
+          "boundary_preserved": true
+        },
+        "control_target_faces": 3506,
+        "control_indexing": "original",
+        "control_input_vertices": 4019,
+        "controls": {
+          "qem_preserve_border": {
+            "faces": 3506,
+            "topology_error": null,
+            "boundary_edges": 0,
+            "boundary_preserved": true,
+            "eligible": true
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 3506,
+            "topology_error": null,
+            "boundary_edges": 0,
+            "boundary_preserved": true,
+            "eligible": true
+          }
+        },
+        "matched_inputs_ready": true
+      },
+      "export_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "99440712b1f6dc9659adde64cecf5f18b01126400a37c2d924d1b9a71cd626af",
+        "manymesh.obj": "550093dfdf11f854406a719cd43755c633804c7b8c1cfbeec778f83f35351ce9",
+        "qem_preserve_border.obj": "6fa7b0b82fc2bdcfba9242fafe1011c5fb7fc35563f48818c472a38519b2e295",
+        "meshoptimizer_lock_border.obj": "5cd99f69bb05b9e1d9d0381abe06a7e980b9504e3c72063e757b154706a3507f"
+      }
+    },
+    {
+      "asset": "bunsen_burner",
+      "class": "tools",
+      "eligibility": {
+        "source_sha256": "795c41e95d2ad3a3c35b83fda71107050edeb0cc82c7ac3228e9a62769f61be9",
+        "source_faces": 8434,
+        "source_boundary_edges": 480,
+        "candidate_sha256": "ca3d82221cbcf035a486022cc55294ecf0b7d00d2995220d05924d69c277f985",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "1c319914f6a035b06ca789b95cb6cf740388fc78c6724dc745adb50285eaf156",
+        "source_revision": "7e01941e942d69c91715b92aa6578bdf59ec5d49",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.5,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.49988143229784204,
+        "candidate_in_band": true,
+        "manymesh": {
+          "faces": 4216,
+          "topology_error": null,
+          "boundary_edges": 480,
+          "boundary_preserved": true
+        },
+        "control_target_faces": 4216,
+        "control_indexing": "original",
+        "control_input_vertices": 6821,
+        "controls": {
+          "qem_preserve_border": {
+            "faces": 5308,
+            "topology_error": null,
+            "boundary_edges": 480,
+            "boundary_preserved": true,
+            "eligible": false
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 4216,
+            "topology_error": null,
+            "boundary_edges": 480,
+            "boundary_preserved": true,
+            "eligible": true
+          }
+        },
+        "matched_inputs_ready": false
+      }
+    }
+  ],
+  "requested_retention": 0.5,
+  "qualification": "49-51% ManyMesh cut, exact face counts, directed boundary and triangle/edge topology",
+  "quality_scored": false
+}

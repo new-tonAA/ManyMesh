@@ -74,8 +74,11 @@ The reserved-view scorer passed an identity check on a separate development
 asset in native sampling and hardware 4× MSAA. The training inputs and camera
 schedule are frozen for the [placement-only CUDA control](tools/mmtrain/appearance_cuda_protocol_20261124.json).
 Both inputs passed CPU preparation. The NVIDIA extension and full fit still
-need a CUDA-capable host. These two assets are a falsification pair. The
-separate category-balanced confirmation set is pending.
+need a CUDA-capable host. These two assets are a falsification pair. A
+[Poly Haven preflight](tools/mmtrain/POLYHAVEN_CANDIDATE_TOPOLOGY_20261124.md)
+adds twelve source topology passes across five categories to the provisional
+pool. Three pass the exact-face check at the 50% request. The final
+confirmation split remains pending.
 
 Stop if the matched-face baseline loses, if a result depends on tuned views or
 assets, if the surrogate fails to rank real-pipeline results, if boundary or
