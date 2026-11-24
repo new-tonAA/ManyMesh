@@ -244,7 +244,10 @@ This result does not test differentiable fitting or post-upscaler quality.
 3. If this two-asset reserved-view control has a signal, test it on a fresh
    asset-held-out cohort before asking whether cluster-DAG constraints add a
    repeatable benefit after actual MSAA or an available upscaler, at both
-   matched faces and matched complete frame time.
+   matched faces and matched complete frame time. A pre-score candidate pool
+   now contains 30 exact-face eligible Poly Haven models across 25 family
+   groups and nine categories; it is not yet the frozen test split. See the
+   [pool protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md).
 4. Report LDR-FLIP, PSNR, SSIM, silhouette/coverage error, sampled surface and
    normal deviation, topology/boundary failures, and camera-motion transitions.
    Treat objective metrics as complementary; a “perceptual” claim needs ratings

@@ -1,0 +1,1691 @@
+{
+  "schema": 1,
+  "purpose": "Broad pre-score candidate pool for independent geometry confirmation; not a frozen test set or quality result.",
+  "source": "Poly Haven Public API pinned catalog snapshot",
+  "catalog_sha256": "4639038ef32946ec562b03a56086c53c8edde0179a8d7140ffd79232ea4a0c23",
+  "selector_sha256": "94c1cb741a2e724982bb01c6fad7fa5677a6d3bcc3d975fd3372617b61c750a0",
+  "previous_selection_sha256": {
+    "out\\polyhaven-candidate-intake-20261124\\selection.json": "38d8518fadbff5cfa1b7fce44eba2b539ba938ff02f6983f0466b9c2340f2030",
+    "tools\\mmtrain\\polyhaven_expansion_selection_20261124.json": "90fec83b24e5377c2442cfa3e3fb07c92204f7a54194ba95f8f228d76e041384",
+    "out\\polyhaven-fresh-asset-pool-20261125\\selection.json": "9a06579563db7ba5138d31420729bdb1d8efb35c70e84df3200f0e1c210ae563"
+  },
+  "asset_api": "https://api.polyhaven.com/files/{asset}",
+  "asset_terms": "CC0 under the pinned catalog source; acquisition records must verify current per-asset API metadata and credits.",
+  "selection": {
+    "previously_selected_slugs_excluded": [
+      "ArmChair_01",
+      "BarberShopChair_01",
+      "ClassicConsole_01",
+      "ClassicNightstand_01",
+      "CoffeeCart_01",
+      "CoffeeTable_01",
+      "Drill_01",
+      "GothicBed_01",
+      "GothicCabinet_01",
+      "GothicCommode_01",
+      "GreenChair_01",
+      "Megaphone_01",
+      "Ottoman_01",
+      "Rockingchair_01",
+      "SchoolChair_01",
+      "SchoolDesk_01",
+      "Sofa_01",
+      "WoodenChair_01",
+      "WoodenTable_01",
+      "WoodenTable_02",
+      "WoodenTable_03",
+      "adjustable_wrench",
+      "ammo_box",
+      "anthurium_botany_01",
+      "antique_ceramic_vase_01",
+      "bananas",
+      "bar_chair_round_01",
+      "bench_vice_01",
+      "binoculars",
+      "bolt_cutters_01",
+      "boulder_01",
+      "brass_blowtorch",
+      "brass_vase_01",
+      "brass_vase_02",
+      "brass_vase_03",
+      "brass_vase_04",
+      "bronze_ray_statue",
+      "bronze_shark_statue",
+      "bronze_whale_statue",
+      "bull_head",
+      "bunsen_burner",
+      "calathea_orbifolia_01",
+      "carrot_cake",
+      "carved_wooden_elephant",
+      "ceramic_vase_01",
+      "ceramic_vase_02",
+      "ceramic_vase_03",
+      "ceramic_vase_04",
+      "cheiridopsis_succulent",
+      "chemistry_set",
+      "chinese_armchair",
+      "chinese_cabinet",
+      "chinese_commode",
+      "chinese_console_table",
+      "chinese_screen_panels",
+      "cleaner_tin_01",
+      "combination_wrench",
+      "concrete_cat_statue",
+      "croissant",
+      "cross_pein_hammer",
+      "crowbar_01",
+      "crystalline_iceplant",
+      "dandelion_01",
+      "dead_quiver_branch_01",
+      "dead_quiver_branch_02",
+      "dead_tree_trunk",
+      "dead_tree_trunk_02",
+      "drain_cleaner",
+      "drill_press_01",
+      "dry_branches_medium_01",
+      "dry_quiver_leaf",
+      "dustpan",
+      "fancy_picture_frame_01",
+      "fancy_picture_frame_02",
+      "fern_02",
+      "flathead_screwdriver",
+      "flower_empodium",
+      "flower_gazania",
+      "flower_stinkkruid",
+      "flower_ursinia",
+      "food_apple_01",
+      "food_avocado_01",
+      "food_ginger_01",
+      "food_kiwi_01",
+      "food_lime_01",
+      "food_lychee_01",
+      "food_pears_asian_01",
+      "food_pomegranate_01",
+      "garden_gnome",
+      "garden_hose_wall_mounted_01",
+      "garden_sprinkler_01",
+      "gothic_statue",
+      "hamburger_buns",
+      "hand_plane_no4",
+      "handsaw_wood",
+      "hatchet",
+      "industrial_microscope",
+      "ladder_sectioned_01",
+      "lemon",
+      "long_life_food",
+      "moon_rock_01",
+      "moon_rock_02",
+      "moon_rock_03",
+      "moon_rock_04",
+      "moon_rock_05",
+      "moon_rock_06",
+      "moon_rock_07",
+      "moss_01",
+      "namaqualand_boulder_02",
+      "namaqualand_boulder_03",
+      "namaqualand_boulder_04",
+      "namaqualand_boulder_05",
+      "namaqualand_boulder_06",
+      "namaqualand_boulders_01",
+      "namaqualand_cliff_01",
+      "namaqualand_rocks_01",
+      "namaqualand_stones_01",
+      "nettle_plant",
+      "pachira_aquatica_01",
+      "periwinkle_plant",
+      "pine_roots",
+      "potted_plant_01",
+      "potted_plant_02",
+      "rock_07",
+      "rock_09",
+      "rock_face_01",
+      "rock_face_02",
+      "russian_food_cans_01",
+      "stone_01",
+      "strawberry_chocolate_cake",
+      "sweet_potato",
+      "wooden_cutting_board",
+      "yellow_onion"
+    ],
+    "candidate_type": 2,
+    "catalog_polycount_inclusive_range": [
+      250,
+      250000
+    ],
+    "assets_per_top_level_category": 6,
+    "ordering": "ascending asset slug within category",
+    "quality_or_render_data_used": false,
+    "classes": [
+      {
+        "name": "Furniture",
+        "selection_rule": "top-level catalog category match",
+        "catalog_pool_size": 57,
+        "selected": [
+          {
+            "asset": "chinese_sofa",
+            "candidate_class": "Furniture",
+            "catalog_category": "Furniture/Seating/Sofas & Couches",
+            "catalog_tags": [
+              "furniture",
+              "seating"
+            ],
+            "catalog_polycount": 704,
+            "catalog_files_hash": "e526d4fda894dd044639fe0517c0074290b31f41",
+            "authors": {
+              "Kirill Sannikov": "All"
+            },
+            "description": "Free 8K model of a vintage Chinese wooden sofa, antique and ornate traditional seating with elegant carved legs and a warm lacquered finish."
+          },
+          {
+            "asset": "chinese_stool",
+            "candidate_class": "Furniture",
+            "catalog_category": "Furniture/Seating/Stools & Bar Seating",
+            "catalog_tags": [
+              "seating",
+              "furniture"
+            ],
+            "catalog_polycount": 1090,
+            "catalog_files_hash": "996baf2756a969c5bd141d2867c92acaf2039b43",
+            "authors": {
+              "Kirill Sannikov": "All"
+            },
+            "description": "Free 8K model of a vintage Chinese wooden stool - antique, ornate joinery with rounded legs and traditional Asian design, ideal for period interiors."
+          },
+          {
+            "asset": "chinese_tea_table",
+            "candidate_class": "Furniture",
+            "catalog_category": "Furniture/Tables/Coffee Tables",
+            "catalog_tags": [
+              "table",
+              "furniture"
+            ],
+            "catalog_polycount": 2508,
+            "catalog_files_hash": "232962e125d74cee5faec1913585cd78d5f5d616",
+            "authors": {
+              "Kirill Sannikov": "All"
+            },
+            "description": "Free 8K 3D model of a vintage Chinese wooden tea table - antique, ornate, traditional with realistic wood grain."
+          },
+          {
+            "asset": "coffee_table_round_01",
+            "candidate_class": "Furniture",
+            "catalog_category": "Furniture/Tables/Coffee Tables",
+            "catalog_tags": [
+              "furniture",
+              "table"
+            ],
+            "catalog_polycount": 4044,
+            "catalog_files_hash": "111d2440084dcd01332ef4f7a4008fc5a41e413b",
+            "authors": {
+              "Ulan Cabanilla": "All"
+            },
+            "description": "Free 8K model - round coffee table with white marble top and looping metal legs; sleek contemporary silhouette with subtle veining and matte metallic finish."
+          },
+          {
+            "asset": "dining_chair_02",
+            "candidate_class": "Furniture",
+            "catalog_category": "Furniture/Seating/Chairs",
+            "catalog_tags": [
+              "furniture",
+              "seating"
+            ],
+            "catalog_polycount": 22013,
+            "catalog_files_hash": "b99b2f907424bbc55b77541f9616fa9da770dcde",
+            "authors": {
+              "James Ray Cock": "All"
+            },
+            "description": "Free 8K model: modern dining chair with tufted brown leather, high cushioned back and seat, dark wooden legs - fancy, comfy and ideal for elegant interior scenes."
+          },
+          {
+            "asset": "dining_table",
+            "candidate_class": "Furniture",
+            "catalog_category": "Furniture/Tables/Dining Tables",
+            "catalog_tags": [
+              "collection: project_lighthouse",
+              "furniture",
+              "table"
+            ],
+            "catalog_polycount": 1048,
+            "catalog_files_hash": "5d15c817890f7babe434f57fc9d78c9a9a6ed9e1",
+            "authors": {
+              "Aron \u0141yczek": "All"
+            },
+            "description": "Free 8K rustic wooden dining table with worn grain and tapered legs, draped in a blue-beige gingham cloth with realistic folds and subtle frays."
+          }
+        ]
+      },
+      {
+        "name": "Containers & Storage",
+        "selection_rule": "top-level catalog category match",
+        "catalog_pool_size": 46,
+        "selected": [
+          {
+            "asset": "Barrel_01",
+            "candidate_class": "Containers & Storage",
+            "catalog_category": "Containers & Storage/Barrels & Drums/Metal Drums",
+            "catalog_tags": [
+              "industrial",
+              "containers"
+            ],
+            "catalog_polycount": 2682,
+            "catalog_files_hash": "45ce352c4416845813a00e478950b500796b0a60",
+            "authors": {
+              "Jorge Camacho": "All"
+            },
+            "description": "Free worn red metal oil drum with explosive hazard marking - realistic, scratched, rusty industrial barrel ideal for games, VFX, and environment scenes."
+          },
+          {
+            "asset": "Barrel_02",
+            "candidate_class": "Containers & Storage",
+            "catalog_category": "Containers & Storage/Barrels & Drums/Plastic Drums",
+            "catalog_tags": [
+              "industrial",
+              "containers",
+              "collection: the_shed"
+            ],
+            "catalog_polycount": 2688,
+            "catalog_files_hash": "354f0b9ffcebf4f331533ef183b3eb2fc37ab69e",
+            "authors": {
+              "Jorge Camacho": "All"
+            },
+            "description": "Free plastic barrel model: realistic blue industrial drum with subtle wear and detailed lid. Cylindrical storage prop for warehouses, garages, VFX, games, archviz."
+          },
+          {
+            "asset": "CheeseBox_01",
+            "candidate_class": "Containers & Storage",
+            "catalog_category": "Containers & Storage/Boxes & Crates/Wooden Crates",
+            "catalog_tags": [
+              "props",
+              "containers",
+              "collection: the_shed"
+            ],
+            "catalog_polycount": 884,
+            "catalog_files_hash": "2bbc42bb8b45c087b98a46d205691999e440daaa",
+            "authors": {
+              "Gabriel Radi\u0107": "All"
+            },
+            "description": "Free 4K model - weathered wooden cheese crate with dovetail joints, interior divider and distressed red stamp; aged, farmhouse-style finish."
+          },
+          {
+            "asset": "all_purpose_cleaner",
+            "candidate_class": "Containers & Storage",
+            "catalog_category": "Containers & Storage/Cans, Tins & Bottles/Cleaning & Chemical Bottles",
+            "catalog_tags": [
+              "props",
+              "containers",
+              "collection: the_shed"
+            ],
+            "catalog_polycount": 4624,
+            "catalog_files_hash": "f72353a9465549c60a007a752a43ff66fd78ee64",
+            "authors": {
+              "Kuutti Siitonen": "All"
+            },
+            "description": "Free 4K model of a pink plastic all-purpose cleaner bottle with red screw cap, integrated handle, glossy scuffed label."
+          },
+          {
+            "asset": "barrel_03",
+            "candidate_class": "Containers & Storage",
+            "catalog_category": "Containers & Storage/Barrels & Drums/Metal Drums",
+            "catalog_tags": [
+              "industrial",
+              "containers"
+            ],
+            "catalog_polycount": 1473,
+            "catalog_files_hash": "c57f576af2df8ce2cfefe1190365213b5cb4f1ea",
+            "authors": {
+              "Serhii Khromov": "All"
+            },
+            "description": "Free 4K model: weathered blue painted steel barrel with subtle rust, dents, scuffs and detailed surface imperfections; industrial oil/fuel container."
+          },
+          {
+            "asset": "bleach_bottle",
+            "candidate_class": "Containers & Storage",
+            "catalog_category": "Containers & Storage/Cans, Tins & Bottles/Cleaning & Chemical Bottles",
+            "catalog_tags": [
+              "props",
+              "containers",
+              "collection: the_shed"
+            ],
+            "catalog_polycount": 4052,
+            "catalog_files_hash": "44cfdd8c3a68cec45595b8f4791bd9e923cb51bf",
+            "authors": {
+              "James Ray Cock": "All"
+            },
+            "description": "Free 8K model of a purple plastic bleach bottle with angled spout, screw cap and worn label. Realistic PBR wear, ideal for shed, garage or janitorial scenes."
+          }
+        ]
+      },
+      {
+        "name": "Tools & Equipment",
+        "selection_rule": "top-level catalog category match",
+        "catalog_pool_size": 35,
+        "selected": [
+          {
+            "asset": "measuring_tape_01",
+            "candidate_class": "Tools & Equipment",
+            "catalog_category": "Tools & Equipment/Hand Tools/Measuring Tools",
+            "catalog_tags": [
+              "industrial",
+              "tools",
+              "props",
+              "collection: the_shed"
+            ],
+            "catalog_polycount": 2868,
+            "catalog_files_hash": "750ca1a82e79da1feaa5fb4809ebc31c52a1a949",
+            "authors": {
+              "Kuutti Siitonen": "All"
+            },
+            "description": "Free 4K model of a 3m tape measure with worn dark-gray rubberized casing, glossy yellow lock button, metal belt clip and scuffed decal."
+          },
+          {
+            "asset": "metal_detector",
+            "candidate_class": "Tools & Equipment",
+            "catalog_category": "Tools & Equipment/Hand Tools/Measuring Tools",
+            "catalog_tags": [
+              "props",
+              "electronics"
+            ],
+            "catalog_polycount": 15518,
+            "catalog_files_hash": "554df4e1073ad058fcb816d9ef745b6754d45a64",
+            "authors": {
+              "Kuutti Siitonen": "All"
+            },
+            "description": "Free 4K model: realistic metal detector with weathered control box, tactile knobs, coiled cable and search coil - ideal for exploration, archaeology and adventure props."
+          },
+          {
+            "asset": "metal_tool_chest",
+            "candidate_class": "Tools & Equipment",
+            "catalog_category": "Tools & Equipment/Workshop Equipment/Tool Chests",
+            "catalog_tags": [
+              "props",
+              "tools",
+              "industrial",
+              "containers",
+              "rigged",
+              "collection: the_shed"
+            ],
+            "catalog_polycount": 14576,
+            "catalog_files_hash": "8fdd3f7409ad7cfd5a4fc3091933d1e1d3785b0e",
+            "authors": {
+              "Yann Kervran": "Rigging",
+              "John Hutcheson": "Modeling & Texturing"
+            },
+            "description": "Free 8K model of a worn red steel tool chest - rusted scratches, metal handles and lock; rigged lid and drawers, ideal for garage, workshop or industrial scenes."
+          },
+          {
+            "asset": "metal_toolbox",
+            "candidate_class": "Tools & Equipment",
+            "catalog_category": "Tools & Equipment/Workshop Equipment/Tool Chests",
+            "catalog_tags": [
+              "collection: project_lighthouse",
+              "containers",
+              "tools",
+              "industrial"
+            ],
+            "catalog_polycount": 14228,
+            "catalog_files_hash": "df0982cb97ade9651921bf5d76047a33a388118a",
+            "authors": {
+              "Mateusz Sadek": "All"
+            },
+            "description": "Free 4K model of a vintage metal toolbox with chipped olive paint, brass latches, a wood handle with red band, rusted edges and a round badge."
+          },
+          {
+            "asset": "mousetrap",
+            "candidate_class": "Tools & Equipment",
+            "catalog_category": "Tools & Equipment/Hand Tools",
+            "catalog_tags": [
+              "props"
+            ],
+            "catalog_polycount": 5136,
+            "catalog_files_hash": "52446c00c1e638500cd5d919d0b443dee4c98382",
+            "authors": {
+              "GreenPixel": "All"
+            },
+            "description": "Free 4K model of an old wooden mousetrap with rusted spring steel, weathered green-painted bait plate, wood grain detail and grime."
+          },
+          {
+            "asset": "old_drill_press",
+            "candidate_class": "Tools & Equipment",
+            "catalog_category": "Tools & Equipment/Power Tools/Workshop Machines",
+            "catalog_tags": [
+              "collection: project_lighthouse",
+              "tools",
+              "industrial"
+            ],
+            "catalog_polycount": 21842,
+            "catalog_files_hash": "a96e5cf7bda67039ae79e04d97d814f147c78936",
+            "authors": {
+              "Harsh Vardhan Singh": "All"
+            },
+            "description": "Free 8K model of an old green drill press with chipped paint, rusted steel column, worn slotted table, power cord and labels, realistic grime and dents."
+          }
+        ]
+      },
+      {
+        "name": "Lighting",
+        "selection_rule": "top-level catalog category match",
+        "catalog_pool_size": 32,
+        "selected": [
+          {
+            "asset": "Chandelier_01",
+            "candidate_class": "Lighting",
+            "catalog_category": "Lighting/Ceiling/Chandeliers",
+            "catalog_tags": [
+              "lighting",
+              "decorative"
+            ],
+            "catalog_polycount": 26860,
+            "catalog_files_hash": "4de97a301043c23293772a3f8d5498a088141ddf",
+            "authors": {
+              "Kirill Sannikov": "All"
+            },
+            "description": "Free 4K model of an ornate vintage brass chandelier with six fabric shades, decorative beads and hanging ceiling mount, detailed for archviz and games."
+          },
+          {
+            "asset": "Chandelier_02",
+            "candidate_class": "Lighting",
+            "catalog_category": "Lighting/Ceiling/Chandeliers",
+            "catalog_tags": [
+              "lighting"
+            ],
+            "catalog_polycount": 21514,
+            "catalog_files_hash": "92f4825de2702b09d11b990655bdbd24ba504a09",
+            "authors": {
+              "Kirill Sannikov": "All"
+            },
+            "description": "Free 4K model of an elegant vintage hanging ceiling chandelier, an ornate brass six-arm fixture with pleated fabric shades - ideal for classic interior scenes."
+          },
+          {
+            "asset": "Chandelier_03",
+            "candidate_class": "Lighting",
+            "catalog_category": "Lighting/Ceiling/Chandeliers",
+            "catalog_tags": [
+              "lighting",
+              "decorative"
+            ],
+            "catalog_polycount": 29301,
+            "catalog_files_hash": "69e7cbdf2f16db6a22efd043f6d584a58ee9a5f8",
+            "authors": {
+              "Kirill Sannikov": "All"
+            },
+            "description": "Free 4K model of an ornate hanging chandelier: elegant brass fixture with crystal dishes and multiple candle-style bulbs, perfect for classic interiors."
+          },
+          {
+            "asset": "Lantern_01",
+            "candidate_class": "Lighting",
+            "catalog_category": "Lighting/Portable/Lanterns",
+            "catalog_tags": [
+              "props",
+              "lighting"
+            ],
+            "catalog_polycount": 33902,
+            "catalog_files_hash": "e8a56bd66bee21140aa3272268bd207bac37a7e1",
+            "authors": {
+              "Rajil Jose Macatangay": "All"
+            },
+            "description": "Free 4K model of an antique brass/bronze hurricane lantern with textured glass globe, worn patina, metal handle and detailed rivets for vintage character."
+          },
+          {
+            "asset": "brass_candleholders",
+            "candidate_class": "Lighting",
+            "catalog_category": "Lighting/Portable/Candles & Candlesticks",
+            "catalog_tags": [
+              "decorative",
+              "lighting"
+            ],
+            "catalog_polycount": 41936,
+            "catalog_files_hash": "4f01be71cd89efe0a7c1f678354a80b22943ff38",
+            "authors": {
+              "Tina": "All"
+            },
+            "description": "Free 4K model of ornate antique brass candleholders - classic engraved bases, scrolling arms, and lit taper candles with a warm, aged patina."
+          },
+          {
+            "asset": "brass_diya_lantern",
+            "candidate_class": "Lighting",
+            "catalog_category": "Lighting/Portable/Oil Lamps",
+            "catalog_tags": [
+              "decorative",
+              "lighting"
+            ],
+            "catalog_polycount": 12742,
+            "catalog_files_hash": "c8a70bbd5dd2708135a561576d895436844aaa25",
+            "authors": {
+              "Bhargav Kubal": "All"
+            },
+            "description": "Free 8K model of a hanging brass diya lantern featuring aged patina, hexagonal glass panels, star-shaped vents, a chain suspension, and a lit oil bowl."
+          }
+        ]
+      },
+      {
+        "name": "Electronics & Appliances",
+        "selection_rule": "top-level catalog category match",
+        "catalog_pool_size": 30,
+        "selected": [
+          {
+            "asset": "Camera_01",
+            "candidate_class": "Electronics & Appliances",
+            "catalog_category": "Electronics & Appliances/Audio & Video/Cameras",
+            "catalog_tags": [
+              "props",
+              "electronics"
+            ],
+            "catalog_polycount": 26987,
+            "catalog_files_hash": "6db4d73f8b708eb87597df841c1f6e9beea70778",
+            "authors": {
+              "Rajil Jose Macatangay": "All"
+            },
+            "description": "Free vintage rangefinder camera model with ornate wear, leather strap and detailed lens - high-res prop for retro scenes, stills, animations, and product shots."
+          },
+          {
+            "asset": "CashRegister_01",
+            "candidate_class": "Electronics & Appliances",
+            "catalog_category": "Electronics & Appliances/Devices & Instruments/Retail Machines",
+            "catalog_tags": [
+              "appliances",
+              "props"
+            ],
+            "catalog_polycount": 9927,
+            "catalog_files_hash": "a28caf40c20cabd1ee08e639d41982066d7340c6",
+            "authors": {
+              "Joe Seabuhr": "All"
+            },
+            "description": "Free 8K vintage cash register model with worn cream finish, metal base and open coin drawer, featuring detailed keys, levers, decals, scratches & grime."
+          },
+          {
+            "asset": "Television_01",
+            "candidate_class": "Electronics & Appliances",
+            "catalog_category": "Electronics & Appliances/Audio & Video/Televisions",
+            "catalog_tags": [
+              "props",
+              "electronics",
+              "collection: the_shed"
+            ],
+            "catalog_polycount": 1918,
+            "catalog_files_hash": "c00ac1c3a4f0cf9e01639ba242ce3748fb690ae7",
+            "authors": {
+              "Gabriel Radi\u0107": "All"
+            },
+            "description": "Free 4K model of a vintage tabletop CRT TV with wood casing, scratched metal bezel, worn knobs and speaker grille, smudged glass and realistic weathering."
+          },
+          {
+            "asset": "alarm_clock_01",
+            "candidate_class": "Electronics & Appliances",
+            "catalog_category": "Electronics & Appliances/Clocks & Timepieces/Alarm Clocks",
+            "catalog_tags": [
+              "props",
+              "decorative",
+              "rigged"
+            ],
+            "catalog_polycount": 13006,
+            "catalog_files_hash": "286437d3c3b7a8a0cac2022b3d8647ac26026416",
+            "authors": {
+              "Yann Kervran": "Rigging",
+              "James Ray Cock": "Modeling & Texturing"
+            },
+            "description": "Free 8K rigged model of a retro aqua twin-bell bedside alarm clock with worn metal, Roman numerals, and animatable parts."
+          },
+          {
+            "asset": "barrel_stove",
+            "candidate_class": "Electronics & Appliances",
+            "catalog_category": "Electronics & Appliances/Home Appliances/Stoves & Heaters",
+            "catalog_tags": [
+              "industrial",
+              "containers",
+              "collection: hidden_alley"
+            ],
+            "catalog_polycount": 11404,
+            "catalog_files_hash": "317d4401f290899072044a82841d94f4a8440c2f",
+            "authors": {
+              "MP": "All"
+            },
+            "description": "Free 8K model of a dented, heavily rusted barrel stove with burn marks, charred lower rim and perforated base - gritty urban, weathered metal detail."
+          },
+          {
+            "asset": "boombox",
+            "candidate_class": "Electronics & Appliances",
+            "catalog_category": "Electronics & Appliances/Audio & Video/Radios & Portable Audio",
+            "catalog_tags": [
+              "appliances",
+              "electronics",
+              "collection: hidden_alley"
+            ],
+            "catalog_polycount": 10168,
+            "catalog_files_hash": "480c7f057f485ec818a8f1c7c790248ef993b734",
+            "authors": {
+              "Thomas Paul Mouilleron": "All"
+            },
+            "description": "Free 4K model of a vintage 80s portable boombox with dual speakers, cassette deck, tuner knobs, telescoping antenna and worn stickers, gritty urban wear."
+          }
+        ]
+      },
+      {
+        "name": "Industrial & Infrastructure",
+        "selection_rule": "top-level catalog category match",
+        "catalog_pool_size": 22,
+        "selected": [
+          {
+            "asset": "concrete_road_barrier",
+            "candidate_class": "Industrial & Infrastructure",
+            "catalog_category": "Industrial & Infrastructure/Traffic & Safety/Road Barriers",
+            "catalog_tags": [
+              "industrial",
+              "structures",
+              "collection: hidden_alley"
+            ],
+            "catalog_polycount": 80776,
+            "catalog_files_hash": "bc3dfafc1abfc83dfa19710745d6f0beba9d2368",
+            "authors": {
+              "Amal Kumar": "All"
+            },
+            "description": "Free 8K model, weathered concrete road barrier with chipped black-and-white checker paint, dirt streaks, eroded rough edges and rusted metal lifting loops."
+          },
+          {
+            "asset": "concrete_road_barrier_02",
+            "candidate_class": "Industrial & Infrastructure",
+            "catalog_category": "Industrial & Infrastructure/Traffic & Safety/Road Barriers",
+            "catalog_tags": [
+              "industrial",
+              "structures",
+              "collection: hidden_alley"
+            ],
+            "catalog_polycount": 42578,
+            "catalog_files_hash": "fbcefc03483cf10e19d91653f3f1b10112be436d",
+            "authors": {
+              "Amal Kumar": "All"
+            },
+            "description": "Free 8K model of a weathered concrete road barrier with chipped edges, exposed rebar, rusted lifting hooks and a rough, gritty surface texture."
+          },
+          {
+            "asset": "exterior_aircon_unit",
+            "candidate_class": "Industrial & Infrastructure",
+            "catalog_category": "Industrial & Infrastructure/Utility Equipment/Aircon Units",
+            "catalog_tags": [
+              "appliances",
+              "industrial",
+              "electronics",
+              "collection: hidden_alley"
+            ],
+            "catalog_polycount": 18986,
+            "catalog_files_hash": "afd5b9eb4b3cfc2544044a00f4acb2a92d2f310e",
+            "authors": {
+              "Monsta3D": "All"
+            },
+            "description": "Free 4K exterior aircon unit model with clean and heavily weathered variants, detailed grille and fan, mounting brackets and realistic rust and chipped paint."
+          },
+          {
+            "asset": "fire_alarm",
+            "candidate_class": "Industrial & Infrastructure",
+            "catalog_category": "Industrial & Infrastructure/Traffic & Safety/Hydrants & Fire Safety",
+            "catalog_tags": [
+              "collection: project_lighthouse",
+              "industrial",
+              "office",
+              "wall decoration"
+            ],
+            "catalog_polycount": 2705,
+            "catalog_files_hash": "6b0ddd79634cb983d93b7a29f3c0b96aeeaf9c4e",
+            "authors": {
+              "Slinc": "All"
+            },
+            "description": "Free 4K model of a red fire alarm pull station with raised lettering, metal key lock, and realistic wear: scuffs, chips, and grime for a used look."
+          },
+          {
+            "asset": "fire_hydrant",
+            "candidate_class": "Industrial & Infrastructure",
+            "catalog_category": "Industrial & Infrastructure/Traffic & Safety/Hydrants & Fire Safety",
+            "catalog_tags": [
+              "industrial",
+              "structures",
+              "collection: hidden_alley"
+            ],
+            "catalog_polycount": 86316,
+            "catalog_files_hash": "392eed954362d55b55022af83c0b7150bf977853",
+            "authors": {
+              "Gon\u00e7alo Fel\u00edcio": "All"
+            },
+            "description": "Free 8K model: red street fire hydrant with clean and worn variants. Chipped paint, rusted metal caps and chain, realistic urban wear and detailed base."
+          },
+          {
+            "asset": "korean_fire_extinguisher_01",
+            "candidate_class": "Industrial & Infrastructure",
+            "catalog_category": "Industrial & Infrastructure/Traffic & Safety/Hydrants & Fire Safety",
+            "catalog_tags": [
+              "industrial",
+              "props"
+            ],
+            "catalog_polycount": 9913,
+            "catalog_files_hash": "bf286ac62105374e5c583367e80ce77dcbe6881c",
+            "authors": {
+              "UM JOORIN": "All"
+            },
+            "description": "Free 8K model of a red Korean fire extinguisher with weathered paint, pressure gauge, hose and yellow strap, mounted on a scuffed base."
+          }
+        ]
+      },
+      {
+        "name": "Apparel & Personal Items",
+        "selection_rule": "top-level catalog category match",
+        "catalog_pool_size": 18,
+        "selected": [
+          {
+            "asset": "cigarette_case",
+            "candidate_class": "Apparel & Personal Items",
+            "catalog_category": "Apparel & Personal Items/Accessories/Smoking Accessories",
+            "catalog_tags": [
+              "collection: project_lighthouse",
+              "props"
+            ],
+            "catalog_polycount": 16912,
+            "catalog_files_hash": "9615ca36a0f9301a9812b2d66ad2c6e13a573ae8",
+            "authors": {
+              "Micha\u0142 Wi\u015bniewski": "All"
+            },
+            "description": "Free 4K vintage metal cigarette case with ornate engraved lid, worn edges, hinged clamshell interior, spring straps, three cigarettes and a folded note."
+          },
+          {
+            "asset": "cigarette_pack",
+            "candidate_class": "Apparel & Personal Items",
+            "catalog_category": "Apparel & Personal Items/Accessories/Smoking Accessories",
+            "catalog_tags": [
+              "containers",
+              "props",
+              "collection: project_lighthouse"
+            ],
+            "catalog_polycount": 7582,
+            "catalog_files_hash": "182aeda41e6afdc9c13ea42c4f8f38c16cb0b53e",
+            "authors": {
+              "Ulrich B\u00fcch": "All"
+            },
+            "description": "Free 8K model of an open flip-top cigarette pack with gold foil liner, detailed filters, crisp printing, and subtle cardboard wear."
+          },
+          {
+            "asset": "digital_wrist_watch",
+            "candidate_class": "Apparel & Personal Items",
+            "catalog_category": "Apparel & Personal Items/Accessories/Watches & Timepieces",
+            "catalog_tags": [
+              "collection: project_lighthouse",
+              "props",
+              "electronics"
+            ],
+            "catalog_polycount": 10390,
+            "catalog_files_hash": "6f9042911f618186b294485af7ef8f081a3a4494",
+            "authors": {
+              "Adrian C": "All"
+            },
+            "description": "Free 4K vintage digital wristwatch with brushed steel bracelet, octagonal case, scuffed edges, electroluminescent text, side buttons and LCD readout."
+          },
+          {
+            "asset": "fishermans_hat",
+            "candidate_class": "Apparel & Personal Items",
+            "catalog_category": "Apparel & Personal Items/Headwear",
+            "catalog_tags": [
+              "collection: project_lighthouse",
+              "props"
+            ],
+            "catalog_polycount": 10304,
+            "catalog_files_hash": "a1b99c79405e31ff8a3e74b7b0d51783007e4b45",
+            "authors": {
+              "PierreB3D": "All"
+            },
+            "description": "Free 4K model of a khaki fisherman's hat with wide stitched brim, canvas texture, metal eyelets, fabric band, and subtle wear."
+          },
+          {
+            "asset": "garden_gloves_01",
+            "candidate_class": "Apparel & Personal Items",
+            "catalog_category": "Apparel & Personal Items/Clothing & Footwear/Gloves & Workwear",
+            "catalog_tags": [
+              "props",
+              "collection: the_shed"
+            ],
+            "catalog_polycount": 6822,
+            "catalog_files_hash": "e335f5f05c89b0ade5f59cac51b860b3c9b055f6",
+            "authors": {
+              "Satyaki Mandal": "All"
+            },
+            "description": "Free 8K model of worn green garden gloves with knitted fabric backs, black rubber-coated palms, scuffs, dirt and realistic frayed edges."
+          },
+          {
+            "asset": "life_jacket",
+            "candidate_class": "Apparel & Personal Items",
+            "catalog_category": "Apparel & Personal Items/Clothing & Footwear/Safety Gear",
+            "catalog_tags": [
+              "collection: project_lighthouse",
+              "props"
+            ],
+            "catalog_polycount": 8968,
+            "catalog_files_hash": "94cef5a5cde9afe795c7cf940b7916f2cd3ea2d1",
+            "authors": {
+              "PierreB3D": "All"
+            },
+            "description": "Free 4K model of an orange horse-collar life jacket with weathered vinyl, soft creases, stitched seams, white webbing straps and a metal buckle."
+          }
+        ]
+      },
+      {
+        "name": "Nature",
+        "selection_rule": "top-level catalog category match",
+        "catalog_pool_size": 17,
+        "selected": [
+          {
+            "asset": "dead_quiver_trunk",
+            "candidate_class": "Nature",
+            "catalog_category": "Nature/Logs, Branches & Roots/Fallen Logs & Stumps",
+            "catalog_tags": [
+              "collection: namaqualand",
+              "nature",
+              "trees"
+            ],
+            "catalog_polycount": 33706,
+            "catalog_files_hash": "5e1897094f635d4f7a0903be28a8ebe54dd1bdcf",
+            "authors": {
+              "James Ray Cock": "Photography",
+              "Dario Barresi": "Photography",
+              "Rico Cilliers": "modeling"
+            },
+            "description": "Free 8K model of a dried, decayed quiver-tree trunk from South Africa's Karoo, with weathered bark, knotted stump and debris, ideal for arid nature scenes."
+          },
+          {
+            "asset": "grass_bermuda_01",
+            "candidate_class": "Nature",
+            "catalog_category": "Nature/Ground Cover & Moss/Grass Tufts",
+            "catalog_tags": [
+              "grass",
+              "nature",
+              "ground cover",
+              "collection: smugglers_cove"
+            ],
+            "catalog_polycount": 223596,
+            "catalog_files_hash": "2db18033b751b1c846f98e2797539d39f155a8dc",
+            "authors": {
+              "Rico Cilliers": "All"
+            },
+            "description": "Free 8K model of dense Bermuda grass tuft with fine blades, varied green-yellow tones and a natural, slightly wild groundcover look. Geometry nodes scatter system."
+          },
+          {
+            "asset": "potted_plant_04",
+            "candidate_class": "Nature",
+            "catalog_category": "Nature/Plants/Potted Plants",
+            "catalog_tags": [
+              "decorative",
+              "plants",
+              "potted plants",
+              "succulent",
+              "nature"
+            ],
+            "catalog_polycount": 6097,
+            "catalog_files_hash": "c71ad499bc2ad1a95b689fc8895447eff788408b",
+            "authors": {
+              "James Ray Cock": "All"
+            },
+            "description": "Free 8K potted succulent model - small zebra haworthia in a weathered ceramic pot. Realistic textures and natural detail; ideal for interior decor scenes."
+          },
+          {
+            "asset": "quiver_tree_02",
+            "candidate_class": "Nature",
+            "catalog_category": "Nature/Trees/Desert Trees",
+            "catalog_tags": [
+              "nature",
+              "trees",
+              "plants",
+              "collection: namaqualand"
+            ],
+            "catalog_polycount": 153887,
+            "catalog_files_hash": "0587f20a8675f71008bafe89b42256c1ffda2cf7",
+            "authors": {
+              "Dario Barresi": "photography",
+              "Rico Cilliers": "modeling"
+            },
+            "description": "Free 8K model of a realistic Quiver Tree: weathered, sculpted trunk and dense rosette of long aloe-like succulent leaves with natural color variation."
+          },
+          {
+            "asset": "rock_moss_set_01",
+            "candidate_class": "Nature",
+            "catalog_category": "Nature/Rocks & Stone/Stone Sets",
+            "catalog_tags": [
+              "rocks",
+              "nature",
+              "collection: pine_forest"
+            ],
+            "catalog_polycount": 63127,
+            "catalog_files_hash": "3d61828e10ef81512a639c8064c9a51a75165b5a",
+            "authors": {
+              "Kless Gyzen": "All"
+            },
+            "description": "Free 8K set of mossy forest rocks: six weathered stones with varied silhouettes, earthy textures, subtle green moss, dirt and realistic erosion."
+          },
+          {
+            "asset": "rock_moss_set_02",
+            "candidate_class": "Nature",
+            "catalog_category": "Nature/Rocks & Stone/Stone Sets",
+            "catalog_tags": [
+              "rocks",
+              "nature",
+              "collection: pine_forest"
+            ],
+            "catalog_polycount": 57647,
+            "catalog_files_hash": "b67decad66a9030c0c8c8c730c06194af880eebf",
+            "authors": {
+              "Kless Gyzen": "All"
+            },
+            "description": "Free 8K set of weathered moss-covered rocks and stones, with varied shapes, earthy tones, dirt-streaked surfaces and detailed, realistic crevices."
+          }
+        ]
+      },
+      {
+        "name": "Food & Kitchen",
+        "selection_rule": "top-level catalog category match",
+        "catalog_pool_size": 16,
+        "selected": [
+          {
+            "asset": "brass_goblets",
+            "candidate_class": "Food & Kitchen",
+            "catalog_category": "Food & Kitchen/Tableware/Cups & Goblets",
+            "catalog_tags": [
+              "props",
+              "dishes",
+              "decorative",
+              "containers"
+            ],
+            "catalog_polycount": 9600,
+            "catalog_files_hash": "5b9625f91aafb878f745d78543e395020b35b8ca",
+            "authors": {
+              "Tina": "All"
+            },
+            "description": "Free 4K model of three ornate vintage brass goblets, engraved rims and bases, warm aged patina and polished golden interiors."
+          },
+          {
+            "asset": "brass_pan_01",
+            "candidate_class": "Food & Kitchen",
+            "catalog_category": "Food & Kitchen/Cookware/Pots & Pans",
+            "catalog_tags": [
+              "props",
+              "containers",
+              "decorative",
+              "dishes"
+            ],
+            "catalog_polycount": 4340,
+            "catalog_files_hash": "3ec9abfb8af6f1cd8a8188f2869476420e4d54f5",
+            "authors": {
+              "Rico Cilliers": "All"
+            },
+            "description": "Free 8K model of a worn brass pan with warm aged patina, subtle dents and hammer marks, polished inner surface and a carved wooden handle."
+          },
+          {
+            "asset": "brass_pot_01",
+            "candidate_class": "Food & Kitchen",
+            "catalog_category": "Food & Kitchen/Cookware/Pots & Pans",
+            "catalog_tags": [
+              "props",
+              "containers",
+              "decorative"
+            ],
+            "catalog_polycount": 3760,
+            "catalog_files_hash": "a2b74ef3895196b2e372fa43f1abfe896ee35ffe",
+            "authors": {
+              "Rico Cilliers": "All"
+            },
+            "description": "Free 8K model of an aged brass cooking pot with lid - cylindrical body, ornate embossed rim, worn patina, subtle verdigris and a dark wooden knob."
+          },
+          {
+            "asset": "brass_pot_02",
+            "candidate_class": "Food & Kitchen",
+            "catalog_category": "Food & Kitchen/Cookware/Pots & Pans",
+            "catalog_tags": [
+              "props",
+              "dishes",
+              "containers",
+              "decorative"
+            ],
+            "catalog_polycount": 3344,
+            "catalog_files_hash": "58dc4f40584611a092d1cfdf8efcba2795412de2",
+            "authors": {
+              "Rico Cilliers": "All"
+            },
+            "description": "Free 8K model of a worn brass pot with warm copper interior, subtle patina, rolled rim detailing and wooden side handles."
+          },
+          {
+            "asset": "carved_wooden_plate",
+            "candidate_class": "Food & Kitchen",
+            "catalog_category": "Food & Kitchen/Tableware/Plates",
+            "catalog_tags": [
+              "props",
+              "decorative",
+              "dishes"
+            ],
+            "catalog_polycount": 2112,
+            "catalog_files_hash": "39a0c6ebce60b891533dad0fc0ed42be6b255bf1",
+            "authors": {
+              "Jan Martens": "All"
+            },
+            "description": "Free 8K model, hand-carved antique wooden plate with shallow bowl, visible tool marks, knotty grain and carved geometric border."
+          },
+          {
+            "asset": "ceramic_pot",
+            "candidate_class": "Food & Kitchen",
+            "catalog_category": "Food & Kitchen/Cookware/Pots & Pans",
+            "catalog_tags": [
+              "containers",
+              "props",
+              "decorative",
+              "dishes",
+              "collection: project_lighthouse"
+            ],
+            "catalog_polycount": 3592,
+            "catalog_files_hash": "fa63130e7ddf8a865a1d4c3ec745382d0163ab31",
+            "authors": {
+              "Aron \u0141yczek": "All"
+            },
+            "description": "Free 4K model of a lidded ceramic pot with twin side handles, aged beige glaze, chipped rim, and rich patina, showing stains, scratches, and hand-thrown form."
+          }
+        ]
+      },
+      {
+        "name": "Decor & Art",
+        "selection_rule": "top-level catalog category match",
+        "catalog_pool_size": 16,
+        "selected": [
+          {
+            "asset": "hanging_picture_frame_01",
+            "candidate_class": "Decor & Art",
+            "catalog_category": "Decor & Art/Wall Decor/Picture Frames & Art",
+            "catalog_tags": [
+              "decorative",
+              "wall decoration"
+            ],
+            "catalog_polycount": 2586,
+            "catalog_files_hash": "ac600318c079d4548e7cd0cc0f9b7c3a5183a93b",
+            "authors": {
+              "James Ray Cock": "All"
+            },
+            "description": "Free, 8K modern minimalist hanging picture frame with slim black metal frame, white mat and subtle patterned inlay - clean, simple wall decoration model."
+          },
+          {
+            "asset": "hanging_picture_frame_02",
+            "candidate_class": "Decor & Art",
+            "catalog_category": "Decor & Art/Wall Decor/Picture Frames & Art",
+            "catalog_tags": [
+              "decorative",
+              "wall decoration"
+            ],
+            "catalog_polycount": 3678,
+            "catalog_files_hash": "f03e795394b46309121f238f59e712801a0e6e90",
+            "authors": {
+              "James Ray Cock": "All"
+            },
+            "description": "Free 8K model of a vintage wooden hanging picture frame with distressed white finish and faded painted artwork - perfect for decorative wall scenes and period interiors."
+          },
+          {
+            "asset": "hanging_picture_frame_03",
+            "candidate_class": "Decor & Art",
+            "catalog_category": "Decor & Art/Wall Decor/Picture Frames & Art",
+            "catalog_tags": [
+              "wall decoration",
+              "decorative"
+            ],
+            "catalog_polycount": 24348,
+            "catalog_files_hash": "6861338cad64c7960760adaeb8df7d112daa8208",
+            "authors": {
+              "James Ray Cock": "All"
+            },
+            "description": "Free 8K - ornate oval wooden hanging picture frame with varnished vintage finish, carved floral details and antique photo insert; decorative wall prop."
+          },
+          {
+            "asset": "horse_head",
+            "candidate_class": "Decor & Art",
+            "catalog_category": "Decor & Art/Sculptures & Figurines/Animal Figures",
+            "catalog_tags": [
+              "decorative"
+            ],
+            "catalog_polycount": 12068,
+            "catalog_files_hash": "e57f384475e832c0bcbd230230ad778073b959bf",
+            "authors": {
+              "Tina": "All"
+            },
+            "description": "Free 8K model of an antique bronze horse head bust with flowing mane, ornate sculptural details and worn patina on a square plinth."
+          },
+          {
+            "asset": "horse_statue_01",
+            "candidate_class": "Decor & Art",
+            "catalog_category": "Decor & Art/Sculptures & Figurines/Animal Figures",
+            "catalog_tags": [
+              "props",
+              "decorative"
+            ],
+            "catalog_polycount": 22388,
+            "catalog_files_hash": "1d826b7fbcaca3f5aaa48ea4b27a74b44e593971",
+            "authors": {
+              "Rico Cilliers": "All"
+            },
+            "description": "Free 8K model - glossy white porcelain horse figurine rearing on a round wooden base, with detailed mane, musculature and an elegant sculptural finish."
+          },
+          {
+            "asset": "katana_stand_01",
+            "candidate_class": "Decor & Art",
+            "catalog_category": "Decor & Art/Ornaments/Display Pieces",
+            "catalog_tags": [
+              "props",
+              "decorative"
+            ],
+            "catalog_polycount": 3780,
+            "catalog_files_hash": "001350ae4d6dbccca937aa2358f2210959d92121",
+            "authors": {
+              "Rico Cilliers": "All"
+            },
+            "description": "Free 8K model of a simple painted wooden katana stand with worn brown finish, curved base, slotted uprights and a small decorative central crest."
+          }
+        ]
+      },
+      {
+        "name": "Architecture",
+        "selection_rule": "top-level catalog category match",
+        "catalog_pool_size": 14,
+        "selected": [
+          {
+            "asset": "gate_latch_01",
+            "candidate_class": "Architecture",
+            "catalog_category": "Architecture/Gates/Gate Hardware",
+            "catalog_tags": [
+              "industrial",
+              "buildings",
+              "structures",
+              "collection: the_shed"
+            ],
+            "catalog_polycount": 5480,
+            "catalog_files_hash": "bfe033e15d12c2513652457660c429e5ede95e1a",
+            "authors": {
+              "Desktoy": "All"
+            },
+            "description": "Free 4K model. Weathered metal gate latch with bent bolt, mounting plates and screw holes - scratched, rusted finish with hand-forged farmhouse character."
+          },
+          {
+            "asset": "large_castle_door",
+            "candidate_class": "Architecture",
+            "catalog_category": "Architecture/Doors",
+            "catalog_tags": [
+              "structures",
+              "buildings",
+              "collection: hidden_alley"
+            ],
+            "catalog_polycount": 12640,
+            "catalog_files_hash": "194bbdcfc45ec659005f36661f327a127a2e7a20",
+            "authors": {
+              "Tina": "All"
+            },
+            "description": "Free 4K model - arched medieval double wooden door with weathered wood, iron straps, rivets, ring handles and small barred windows; fortified character."
+          },
+          {
+            "asset": "large_iron_gate",
+            "candidate_class": "Architecture",
+            "catalog_category": "Architecture/Gates/Gates",
+            "catalog_tags": [
+              "structures",
+              "buildings",
+              "collection: hidden_alley"
+            ],
+            "catalog_polycount": 38140,
+            "catalog_files_hash": "93b045958194b830c41c9a16d3f3aa7a5cb8bced",
+            "authors": {
+              "Josh Dean": "All"
+            },
+            "description": "Free 8K model - large cast-iron double gate with arched tops, ring motifs, spear finials and weathered rust; ornate, sturdy entrance panels."
+          },
+          {
+            "asset": "modular_chainlink_fence",
+            "candidate_class": "Architecture",
+            "catalog_category": "Architecture/Fences & Barriers",
+            "catalog_tags": [
+              "structures",
+              "industrial",
+              "buildings",
+              "collection: hidden_alley"
+            ],
+            "catalog_polycount": 89232,
+            "catalog_files_hash": "a876696fcfd57a434e5d1dd68baa03e15475b97e",
+            "authors": {
+              "James Ray Cock": "All",
+              "Amal Kumar": "Fence Wire Material"
+            },
+            "description": "Free 8K modular chainlink fence kit with rusted posts, gate and configurable panels - gritty urban/industrial barrier ideal for city, alley & security scenes."
+          },
+          {
+            "asset": "modular_factory_facade",
+            "candidate_class": "Architecture",
+            "catalog_category": "Architecture/Facades & Modules/Building Facades",
+            "catalog_tags": [
+              "collection: hidden_alley",
+              "structures",
+              "buildings"
+            ],
+            "catalog_polycount": 175014,
+            "catalog_files_hash": "4716a794d840f5d4ebf75b1db1d8a8b7e8d57a61",
+            "authors": {
+              "James Ray Cock": "All"
+            },
+            "description": "Free 8K modular factory facade model with brick panels, varied windows, doors and loading bays - industrial warehouse exterior tiles for flexible assembly."
+          },
+          {
+            "asset": "modular_fire_escape",
+            "candidate_class": "Architecture",
+            "catalog_category": "Architecture/Outdoor Structures/Fire Escapes",
+            "catalog_tags": [
+              "industrial",
+              "structures",
+              "collection: hidden_alley"
+            ],
+            "catalog_polycount": 11322,
+            "catalog_files_hash": "e093c9b1a65b153f392b8c239fa2a411c432806d",
+            "authors": {
+              "Juniix": "All"
+            },
+            "description": "Free 8K modular fire escape model with grated platforms, straight ladder and angled stair sections, welded railings and subtle weathered metal detail."
+          }
+        ]
+      },
+      {
+        "name": "Vehicles & Transport",
+        "selection_rule": "top-level catalog category match",
+        "catalog_pool_size": 11,
+        "selected": [
+          {
+            "asset": "covered_car",
+            "candidate_class": "Vehicles & Transport",
+            "catalog_category": "Vehicles & Transport/Road Vehicles/Cars",
+            "catalog_tags": [
+              "props",
+              "industrial",
+              "collection: hidden_alley"
+            ],
+            "catalog_polycount": 12592,
+            "catalog_files_hash": "22592d3c2b16533339ed1bf4e4320e25e5a76cf2",
+            "authors": {
+              "MP": "All"
+            },
+            "description": "Free 8K model of a car under a worn, dusty fabric cover with natural folds and visible wheels- aged garage/industrial character."
+          },
+          {
+            "asset": "dutch_ship_large_01",
+            "candidate_class": "Vehicles & Transport",
+            "catalog_category": "Vehicles & Transport/Watercraft/Sailing Ships",
+            "catalog_tags": [
+              "ships",
+              "collection: smugglers_cove"
+            ],
+            "catalog_polycount": 110616,
+            "catalog_files_hash": "60c7a7b6a4173e1f4f1cb0873e5f57ca1b4cd99e",
+            "authors": {
+              "James Ray Cock": "model, textures, cleanup",
+              "Rico Cilliers": "sails model, textures",
+              "Nicol\u00f2 Zubbini": "original model"
+            },
+            "description": "Free 4K model of a large Dutch wooden sailing ship - ornate, weathered hull, detailed rigging and sails, perfect for maritime, pirate, or historical scenes."
+          },
+          {
+            "asset": "dutch_ship_large_02",
+            "candidate_class": "Vehicles & Transport",
+            "catalog_category": "Vehicles & Transport/Watercraft/Sailing Ships",
+            "catalog_tags": [
+              "ships",
+              "collection: smugglers_cove"
+            ],
+            "catalog_polycount": 96506,
+            "catalog_files_hash": "c0612d345014f54e097ca15b0e4d291549ee3348",
+            "authors": {
+              "James Ray Cock": "model, textures, cleanup",
+              "Rico Cilliers": "sails model, textures",
+              "Nicol\u00f2 Zubbini": "original model"
+            },
+            "description": "Free 4K model of a large, old Dutch wooden sailing ship - ornate, weathered hull, detailed rigging and sails, perfect for maritime, pirate, or historical scenes."
+          },
+          {
+            "asset": "dutch_ship_medium",
+            "candidate_class": "Vehicles & Transport",
+            "catalog_category": "Vehicles & Transport/Watercraft/Sailing Ships",
+            "catalog_tags": [
+              "ships",
+              "collection: smugglers_cove"
+            ],
+            "catalog_polycount": 69162,
+            "catalog_files_hash": "7a79ab7160d0290b23b54a966bc1b33f140bcf28",
+            "authors": {
+              "James Ray Cock": "model, textures, cleanup",
+              "Rico Cilliers": "sails model, textures",
+              "Nicol\u00f2 Zubbini": "original model"
+            },
+            "description": "Free 4K medium Dutch wooden ship model, - ornate, weathered hull, detailed rigging and sails, perfect for maritime, pirate, or historical scenes."
+          },
+          {
+            "asset": "lateral_sea_marker",
+            "candidate_class": "Vehicles & Transport",
+            "catalog_category": "Vehicles & Transport/Watercraft/Buoys & Markers",
+            "catalog_tags": [
+              "props"
+            ],
+            "catalog_polycount": 13014,
+            "catalog_files_hash": "162937f0d3a623b8446237e8a6c51b3717f5e32a",
+            "authors": {
+              "James Ray Cock": "Additional texture wear",
+              "Kuutti Siitonen": "All"
+            },
+            "description": "Free 8K lateral sea marker: realistic weathered red buoy with stacked column, top daymark, handrail ring and dock-ready wear for harbors, docks, and ships."
+          },
+          {
+            "asset": "lifebuoy",
+            "candidate_class": "Vehicles & Transport",
+            "catalog_category": "Vehicles & Transport/Watercraft/Buoys & Markers",
+            "catalog_tags": [
+              "collection: project_lighthouse",
+              "wall decoration",
+              "industrial"
+            ],
+            "catalog_polycount": 10728,
+            "catalog_files_hash": "623799ae1de57723ec238ea1aac86b5b061fa92b",
+            "authors": {
+              "Hank Kaamura": "All"
+            },
+            "description": "Free 8K weathered red lifebuoy with cracked paint, salt stains, faded stencils, and a loose pale rope; crisp scuffs and surface detail."
+          }
+        ]
+      },
+      {
+        "name": "Office & Stationery",
+        "selection_rule": "top-level catalog category match",
+        "catalog_pool_size": 9,
+        "selected": [
+          {
+            "asset": "binder_notebook",
+            "candidate_class": "Office & Stationery",
+            "catalog_category": "Office & Stationery/Stationery & Supplies/Notebooks & Pads",
+            "catalog_tags": [
+              "collection: project_lighthouse",
+              "books",
+              "props"
+            ],
+            "catalog_polycount": 18077,
+            "catalog_files_hash": "19b74a17100b8c852b8ce520b3029609fc601fbb",
+            "authors": {
+              "DaDrood": "All"
+            },
+            "description": "Free 8K leather binder notebook with worn patina, brass rings, stitched pockets, snap strap and pen, embossed logo, realistic paper stack and metal details."
+          },
+          {
+            "asset": "book_encyclopedia_set_01",
+            "candidate_class": "Office & Stationery",
+            "catalog_category": "Office & Stationery/Books & Documents/Books",
+            "catalog_tags": [
+              "props",
+              "decorative",
+              "books"
+            ],
+            "catalog_polycount": 67306,
+            "catalog_files_hash": "e9912207a0e5af455662c910d23d34ccbabb26ac",
+            "authors": {
+              "John Malcolm": "All"
+            },
+            "description": "Free 8K set of vintage leather-bound encyclopedia volumes with gold-embossed spines, alphabetic labels and realistic wear, warm brown tones."
+          },
+          {
+            "asset": "clipboard",
+            "candidate_class": "Office & Stationery",
+            "catalog_category": "Office & Stationery/Stationery & Supplies/Clipboards & Boards",
+            "catalog_tags": [
+              "collection: project_lighthouse",
+              "office",
+              "props"
+            ],
+            "catalog_polycount": 6176,
+            "catalog_files_hash": "d67455f77731d7d7927333d699907dd6451e581c",
+            "authors": {
+              "ProgrammerOnCoffee": "All"
+            },
+            "description": "Free 8K model of a worn masonite clipboard with a shiny chrome clip, engraved logo, rounded corners, scuffs and edge wear, showing a lived-in look."
+          },
+          {
+            "asset": "decorative_book_set_01",
+            "candidate_class": "Office & Stationery",
+            "catalog_category": "Office & Stationery/Books & Documents/Books",
+            "catalog_tags": [
+              "props",
+              "decorative",
+              "books"
+            ],
+            "catalog_polycount": 112560,
+            "catalog_files_hash": "17b60199f281591c470612a06a05afa38780b4eb",
+            "authors": {
+              "James Ray Cock": "All"
+            },
+            "description": "Free model - a realistic decorative book set with varied paperback and hardcover spines, colors and sizes. Ideal for bookshelves, libraries, and scene dressing. All covers are CC0 and free to use."
+          },
+          {
+            "asset": "office_notepads",
+            "candidate_class": "Office & Stationery",
+            "catalog_category": "Office & Stationery/Stationery & Supplies/Notebooks & Pads",
+            "catalog_tags": [
+              "collection: project_lighthouse",
+              "props",
+              "office"
+            ],
+            "catalog_polycount": 666,
+            "catalog_files_hash": "41a4f25b547807cd4c1dea9ec782319f8c996a8a",
+            "authors": {
+              "Ulan Cabanilla": "All"
+            },
+            "description": "Free 4K model of assorted office notepads: blank sheets, lined legal pads with red glue, index cards, and sticky notes. Realistic paper grain and crisp edges."
+          },
+          {
+            "asset": "postcard_set_01",
+            "candidate_class": "Office & Stationery",
+            "catalog_category": "Office & Stationery/Books & Documents/Cards & Postcards",
+            "catalog_tags": [
+              "props"
+            ],
+            "catalog_polycount": 2720,
+            "catalog_files_hash": "fe10db91a4160ae11259ba78041a5520ab63e3f8",
+            "authors": {
+              "James Ray Cock": "Model And Textures",
+              "Jurita Burger": "graphic design"
+            },
+            "description": "Free 8K model: scatter-ready travel postcard set with weathered paper edges, varied destination images and realistic card props for scenes."
+          }
+        ]
+      },
+      {
+        "name": "Weapons",
+        "selection_rule": "top-level catalog category match",
+        "catalog_pool_size": 13,
+        "selected": [
+          {
+            "asset": "antique_estoc",
+            "candidate_class": "Weapons",
+            "catalog_category": "Weapons/Bladed/Swords & Sabres",
+            "catalog_tags": [
+              "props"
+            ],
+            "catalog_polycount": 8246,
+            "catalog_files_hash": "94a121852cda667882e2a287dbda377b06652134",
+            "authors": {
+              "James Ray Cock": "Texturing",
+              "Ulan Cabanilla": "modeling"
+            },
+            "description": "Free 8K model: Antique estoc - a slender historic thrusting sword with ornamental hilt, worn metal patina and traditional details, perfect for medieval or historical scenes."
+          },
+          {
+            "asset": "antique_katana_01",
+            "candidate_class": "Weapons",
+            "catalog_category": "Weapons/Bladed/Swords & Sabres",
+            "catalog_tags": [
+              "props"
+            ],
+            "catalog_polycount": 6670,
+            "catalog_files_hash": "0dfd31f5d7a964c579c45d90e450d8942d7a5599",
+            "authors": {
+              "Tal Swicegood": "All"
+            },
+            "description": "Free 8K model of an antique Japanese katana with a dark, worn blade, ornate tsuba, brown tsuka wrap and aged brass fittings."
+          },
+          {
+            "asset": "bolt_action_rifle_7_62",
+            "candidate_class": "Weapons",
+            "catalog_category": "Weapons/Firearms/Rifles",
+            "catalog_tags": [
+              "collection: project_lighthouse",
+              "weapons",
+              "firearms"
+            ],
+            "catalog_polycount": 19985,
+            "catalog_files_hash": "151d4108d40bfd38a062ac462e8b4ad7e3df2e98",
+            "authors": {
+              "Mateusz Sadek": "All"
+            },
+            "description": "Free 8K model of a classic bolt-action 7.62 rifle with long barrel, worn wood stock, cloth-wrapped butt, detachable magazine, small scope, and weathered metal."
+          },
+          {
+            "asset": "cannon_01",
+            "candidate_class": "Weapons",
+            "catalog_category": "Weapons/Artillery/Cannons",
+            "catalog_tags": [
+              "props",
+              "rigged",
+              "collection: smugglers_cove"
+            ],
+            "catalog_polycount": 41444,
+            "catalog_files_hash": "a77ed3ae7c896f6480082c7c94ab1b47128a9cf8",
+            "authors": {
+              "Yann Kervran": "Rigging",
+              "James Ray Cock": "Modeling & Texturing"
+            },
+            "description": "Free rigged, high-detail colonial ship cannon with cast-iron barrel and weathered wooden carriage, ideal for maritime/pirate scenes, games, films, and VR."
+          },
+          {
+            "asset": "fish_knife",
+            "candidate_class": "Weapons",
+            "catalog_category": "Weapons/Bladed/Daggers & Knives",
+            "catalog_tags": [
+              "collection: project_lighthouse",
+              "props"
+            ],
+            "catalog_polycount": 2736,
+            "catalog_files_hash": "951440e825e223bfa94c128370cb28de3112ab97",
+            "authors": {
+              "Mateusz Sadek": "All"
+            },
+            "description": "Free 4K model of a folding knife with a fish-shaped carved wooden handle, textured grip and metal rivets, and a weathered steel blade with crisp facets."
+          },
+          {
+            "asset": "kite_shield",
+            "candidate_class": "Weapons",
+            "catalog_category": "Weapons/Shields",
+            "catalog_tags": [
+              "props",
+              "collection: the_shed"
+            ],
+            "catalog_polycount": 10306,
+            "catalog_files_hash": "4ab42d2666ed24a7e420e0950bf1d148666fa6ba",
+            "authors": {
+              "Ulan Cabanilla": "All"
+            },
+            "description": "Free 4K model - weathered wooden kite shield with chipped white-and-red paint, faded sword motif and rusted iron rim and brackets; battle-worn medieval vibe."
+          }
+        ]
+      },
+      {
+        "name": "Leisure",
+        "selection_rule": "top-level catalog category match",
+        "catalog_pool_size": 11,
+        "selected": [
+          {
+            "asset": "Ukulele_01",
+            "candidate_class": "Leisure",
+            "catalog_category": "Leisure/Musical Instruments/String Instruments",
+            "catalog_tags": [
+              "props",
+              "instrument"
+            ],
+            "catalog_polycount": 8912,
+            "catalog_files_hash": "b4e3018d389e983dde250c867172db7ab1214945",
+            "authors": {
+              "Joseph Burgan": "All"
+            },
+            "description": "Free 4K model of a worn wooden ukulele with scuffed varnish, detailed fretboard, metal tuners and visible wood grain."
+          },
+          {
+            "asset": "american_football",
+            "candidate_class": "Leisure",
+            "catalog_category": "Leisure/Sports/Balls",
+            "catalog_tags": [
+              "props"
+            ],
+            "catalog_polycount": 4480,
+            "catalog_files_hash": "630730f427030fafc03ea9dd612b9ed5afd2f233",
+            "authors": {
+              "Riley Queen": "All"
+            },
+            "description": "Free 4K model of a weathered American football with detailed pebbled leather, aged laces, stamped branding, and realistic scuffs."
+          },
+          {
+            "asset": "baseball_01",
+            "candidate_class": "Leisure",
+            "catalog_category": "Leisure/Sports/Balls",
+            "catalog_tags": [
+              "props"
+            ],
+            "catalog_polycount": 2712,
+            "catalog_files_hash": "2570badfc665299a65e2d65140a8e7f66b9ef413",
+            "authors": {
+              "Rico Cilliers": "All"
+            },
+            "description": "Free 8K model: realistic baseball with red stitching, worn white leather, subtle scuffs and visible grain for a high-resolution prop."
+          },
+          {
+            "asset": "baseball_bat",
+            "candidate_class": "Leisure",
+            "catalog_category": "Leisure/Sports/Bats & Rackets",
+            "catalog_tags": [
+              "props",
+              "collection: hidden_alley"
+            ],
+            "catalog_polycount": 2672,
+            "catalog_files_hash": "bb924159d456d825d56e81ca0efd769db1e504d2",
+            "authors": {
+              "Enrique Mart\u00edn": "All"
+            },
+            "description": "Free 8K model of a worn wooden baseball bat with visible grain, scratches, scuffs and a tape-wrapped grip - realistic, game-ready prop."
+          },
+          {
+            "asset": "chess_set",
+            "candidate_class": "Leisure",
+            "catalog_category": "Leisure/Games & Toys/Board Games",
+            "catalog_tags": [
+              "decorative",
+              "props"
+            ],
+            "catalog_polycount": 76920,
+            "catalog_files_hash": "fe02fd16e17017a92c414b79d7f81047708e89ee",
+            "authors": {
+              "Riley Queen": "All"
+            },
+            "description": "Free 8K model: elegant vintage marble chess set with polished black and white pieces on a beveled, high-gloss checkered board."
+          },
+          {
+            "asset": "dartboard",
+            "candidate_class": "Leisure",
+            "catalog_category": "Leisure/Games & Toys/Board Games",
+            "catalog_tags": [
+              "props",
+              "decorative",
+              "wall decoration",
+              "collection: the_shed"
+            ],
+            "catalog_polycount": 6800,
+            "catalog_files_hash": "5e28b6807f86ea1c78ac3198ac93d24bb8130e1f",
+            "authors": {
+              "Satyaki Mandal": "All"
+            },
+            "description": "Free 8K model. Weathered dartboard with chipped paint, visible metal wiring, scuffed bullseye and rustic wood edge - vintage pub/shed wall decoration."
+          }
+        ]
+      }
+    ]
+  },
+  "selected_count": 90
+}

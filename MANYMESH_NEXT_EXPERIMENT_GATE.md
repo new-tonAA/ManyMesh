@@ -124,10 +124,17 @@ SSAA for thin-geometry meshes. Static-frame or jitter-only scoring cannot
 support a temporal-reconstruction claim.
 
 Use a fresh, licensed, category-balanced confirmation set with at least 20
-assets from five or more declared categories. Split by asset; keep every view
-and camera path from an asset in the same partition. Freeze practical-effect
-margins and exclusions before the final test. Report paired uncertainty over
-assets, not frames. A development win is not held-out evidence.
+assets from five or more declared categories. A pre-score Poly Haven candidate
+pool now has 30 exact-face eligible models across 25 slug-family groups and
+nine categories. Its source and matched-face checks used no rendered images or
+quality scores. This satisfies the candidate-count preflight only; it does not
+freeze the final camera split, renderer, lighting, full-source reference,
+metrics, exclusions, or practical-effect margins. Before scoring, reserve the
+asset-level test split and keep every view and camera path from an asset in one
+partition. Report paired uncertainty over family groups, not frames. A
+development win is not held-out evidence. See the
+[candidate-pool report](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md)
+and [manifest](tools/mmtrain/polyhaven_confirmation_pool_20261125.json).
 
 ## Current blockers and stop conditions
 
@@ -140,10 +147,12 @@ asset in native sampling and hardware 4× MSAA. The training inputs and camera
 schedule are frozen for the [placement-only CUDA control](tools/mmtrain/appearance_cuda_protocol_20261124.json).
 Both inputs passed CPU preparation. The NVIDIA extension and full fit still
 need a CUDA-capable host. These two assets screen this configuration only. A
-[Poly Haven preflight](tools/mmtrain/POLYHAVEN_CANDIDATE_TOPOLOGY_20261124.md)
-adds twelve source topology passes across five categories to the provisional
-pool. Three pass the exact-face check at the 50% request. The final
-confirmation split remains pending.
+[Earlier Poly Haven preflight](tools/mmtrain/POLYHAVEN_CANDIDATE_TOPOLOGY_20261124.md)
+adds twelve source topology passes across five categories; three pass the
+exact-face check at the 50% request. A subsequent catalog-only expansion
+reserves 30 eligible models across nine categories, but the final confirmation
+split and quality-scoring protocol remain pending. Details and exclusions are
+in the [expanded-pool report](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md).
 
 Stop if the matched-face baseline loses, if a result depends on tuned views or
 assets, if the surrogate fails to rank real-pipeline results, if boundary or

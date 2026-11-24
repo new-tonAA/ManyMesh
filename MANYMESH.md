@@ -66,6 +66,16 @@ and [SIGGRAPH direction](SIGGRAPH_2027_DIRECTION.md).
   [run B](tools/mmtrain/instance_scale_barramundifish_20261125_b.json), and
   [topology audit](tools/mmtrain/barramundifish_topology_20261125.json).
 
+- **Reserved confirmation candidates:** Two catalog-only Poly Haven batches
+  produced 30 unscored, exact-face eligible models across 25 slug-family groups
+  and nine categories. Each model has ManyMesh, QEM, and meshoptimizer outputs
+  at the same face count, passing the recorded topology and source-boundary
+  checks. No renders or quality metrics were used to select the pool. This
+  prepares a candidate cohort; the final camera split and scoring protocol
+  remain unfrozen, and the pool is not held-out result evidence. See the
+  [selection and eligibility report](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md)
+  and [machine-readable manifest](tools/mmtrain/polyhaven_confirmation_pool_20261125.json).
+
 No physical-phone test, equal-frame-time quality comparison, LPIPS evaluation,
 moving-camera temporal evaluation, user study, or positive held-out optimized
 method is available.

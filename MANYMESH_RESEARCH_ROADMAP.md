@@ -85,6 +85,8 @@ The per-instance comparison (`tools/mmtrain/MIXED_SCENE_INSTANCE_LOD_20261122.md
 
 Do not change the production format or rendering API until a frozen method improves the held-out quality/cost Pareto frontier over strong deterministic baselines, with topology and boundary constraints satisfied. A fresh licensed confirmation set is required for a publication claim. No mobile-device result or user study exists.
 
+The pre-score Poly Haven candidate pool now contains 30 eligible models across 25 slug-family groups and nine categories. This is a reserved candidate cohort, not a frozen test split or quality result; freeze the split and scoring protocol only after the current CUDA gate resolves. See the [pool report](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md).
+
 The prior-art screen covers learned local refinement, split-and-rewire mesh generation, crack-free clustered HLOD boundaries, and GPU out-of-core rendering. See the updated prior-art table in [the learned-LOD research notes](MANYMESH_LEARNED_LOD_RESEARCH.md). No active method is presently supported by both a novelty gap and positive held-out results.
 
 ## Closed or unproven branches

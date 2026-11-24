@@ -1,0 +1,4449 @@
+{
+  "schema": 1,
+  "started_utc": "2026-11-24T20:34:20.960247+00:00",
+  "source": "Poly Haven Public API",
+  "terms_url": "https://github.com/Poly-Haven/Public-API/blob/master/ToS.md",
+  "user_agent": "ManyMesh-Research/1.0",
+  "selection_sha256": "9a06579563db7ba5138d31420729bdb1d8efb35c70e84df3200f0e1c210ae563",
+  "catalog_sha256": "4639038ef32946ec562b03a56086c53c8edde0179a8d7140ffd79232ea4a0c23",
+  "script_sha256": {
+    "screen_polyhaven_expansion.py": "9564a29fbac407d693eff7b85ca72ae9d4fa852111cff5a6a116a0f7e2010630",
+    "select_polyhaven_expansion.py": "8f14d7e196f3a89736f61b55f8b2569d1b8780c40b83d74ca01a1c4ccaabac23",
+    "extract_static_gltf_geometry.py": "1b304e26b07e78564108c3e7d57c26ced82667fe6887706645664420699fc280",
+    "audit_static_obj_topology.py": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40"
+  },
+  "quality_scored": false,
+  "image_or_render_data_used": false,
+  "request_counters": {
+    "requests": 171,
+    "retries": 0
+  },
+  "assets": [
+    {
+      "asset": "ClassicNightstand_01",
+      "candidate_class": "furniture",
+      "catalog_category": "Furniture/Tables/Side & End Tables",
+      "catalog_tags": [
+        "furniture",
+        "table"
+      ],
+      "catalog_polycount": 2002,
+      "catalog_files_hash": "7128adabb43129d3a868602cc864cb0c1222767e",
+      "authors": {
+        "Kirill Sannikov": "All"
+      },
+      "description": "Free 4K model of a vintage Victorian Gothic wooden nightstand - ornate carved details, cabriole legs and open shelf; perfect decorative table/furniture prop.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/ClassicNightstand_01",
+        "files_json_sha256": "406914cfe6ca2ecf3a1174e8ce25bb7bc2ffecf50a5a98bcc9d11060c6c6c292",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Kirill Sannikov": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/ClassicNightstand_01/ClassicNightstand_01_1k.gltf",
+          "api_md5": "8c2c91db450dd05773d052450e5b5816",
+          "bytes": 2754,
+          "sha256": "e8218ceead6c07d2641a0bd54974a67b13dd7ebc110e07e9738e17c206c7b892"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/ClassicNightstand_01/ClassicNightstand_01.bin",
+          "api_md5": "a97360812af4796a6abf592b4f893b51",
+          "bytes": 68684,
+          "sha256": "1ac0f3065df040e5a85c3807fa07947de7185ad40ed064f3399fa9fc93387a7f",
+          "declared_byte_length": 68684
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\ClassicNightstand_01",
+      "extraction": {
+        "status": "pass",
+        "vertices": 1771,
+        "triangles": 2002,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "df1bd7316e4780a8d3448644fa08ddbb4489e0922c20f6f6108fee38ff322f99",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\ClassicNightstand_01\\geometry.obj",
+          "input_sha256": "df1bd7316e4780a8d3448644fa08ddbb4489e0922c20f6f6108fee38ff322f99",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 1771,
+          "used_vertices": 1771,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 1255,
+          "triangles": 2002,
+          "connected_components_by_exact_welded_vertex": 25,
+          "boundary_edges": 470,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 9.97156163303968e-07,
+          "edge_incidence_histogram": {
+            "2": 2768,
+            "1": 470
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "WoodenChair_01",
+      "candidate_class": "furniture",
+      "catalog_category": "Furniture/Seating/Chairs",
+      "catalog_tags": [
+        "furniture",
+        "seating"
+      ],
+      "catalog_polycount": 19992,
+      "catalog_files_hash": "62044fc04038e8a8192783c6c0db8cb879935209",
+      "authors": {
+        "Jake Mobley": "All"
+      },
+      "description": "Free 4K model: ornate Victorian Gothic wooden chair with pointed tracery back, carved floral motif, turned legs, armrests and worn dark-stained finish.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/WoodenChair_01",
+        "files_json_sha256": "fb992191ba915c48e469c458a9b4dcf0a5132d39d181054a6337cdf93c7a2bd1",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Jake Mobley": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/WoodenChair_01/WoodenChair_01_1k.gltf",
+          "api_md5": "a540903a19cd0fd5afaaa21c4b772204",
+          "bytes": 2705,
+          "sha256": "d7139c63be77bb91ceb25cb38733008156bf93d2299a6ca4673ea3c49f5fdec6"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/WoodenChair_01/WoodenChair_01.bin",
+          "api_md5": "37afa90d1d47ab37dfd8edb72aaefb44",
+          "bytes": 546416,
+          "sha256": "d36a4fb77139769e17301904dd9fe45a19e29f01273e587bf4e7478d687a016e",
+          "declared_byte_length": 546416
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\WoodenChair_01",
+      "extraction": {
+        "status": "pass",
+        "vertices": 13327,
+        "triangles": 19992,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "92cfe67e41e0de16a5d435c6cab8f65b26496cd8e13002954c0e02c017ff25af",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\WoodenChair_01\\geometry.obj",
+          "input_sha256": "92cfe67e41e0de16a5d435c6cab8f65b26496cd8e13002954c0e02c017ff25af",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 13327,
+          "used_vertices": 13327,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 10100,
+          "triangles": 19992,
+          "connected_components_by_exact_welded_vertex": 21,
+          "boundary_edges": 212,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 8.125232718818696e-09,
+          "edge_incidence_histogram": {
+            "2": 29882,
+            "1": 212
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "WoodenTable_01",
+      "candidate_class": "furniture",
+      "catalog_category": "Furniture/Tables/Coffee Tables",
+      "catalog_tags": [
+        "furniture"
+      ],
+      "catalog_polycount": 952,
+      "catalog_files_hash": "acee43a6468dd85f1da716a4c6d77793e6c7c02f",
+      "authors": {
+        "Ethan Place": "All"
+      },
+      "description": "Free 4K model: vintage wooden coffee table with warm worn patina, visible grain, rounded corners, stretcher base and scuffed edges.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/WoodenTable_01",
+        "files_json_sha256": "e497033d89a6d260176b8f81653abf6ad6388092a969a31220681f58b4c149e0",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Ethan Place": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/WoodenTable_01/WoodenTable_01_1k.gltf",
+          "api_md5": "585f78ec50d4b57dc239f9a9a2259fea",
+          "bytes": 2688,
+          "sha256": "413804e054055c397b4cfbd0916027097d2a20853b165b533007a46d131e1d17"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/WoodenTable_01/WoodenTable_01.bin",
+          "api_md5": "b764ee635684db5cc2c06288d51a3c14",
+          "bytes": 42064,
+          "sha256": "1083a3442969d27e18e6a7a454bc164407439e3908bf8f17f5fb24d58cd0172e",
+          "declared_byte_length": 42064
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\WoodenTable_01",
+      "extraction": {
+        "status": "pass",
+        "vertices": 1136,
+        "triangles": 952,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "d99f0665b141dccf4a1c30d18aa5c7c49f57b8a4f1c36649c1df06f7ac665a8c",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\WoodenTable_01\\geometry.obj",
+          "input_sha256": "d99f0665b141dccf4a1c30d18aa5c7c49f57b8a4f1c36649c1df06f7ac665a8c",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 1136,
+          "used_vertices": 1136,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 472,
+          "triangles": 952,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 0.00011962742496763262,
+          "edge_incidence_histogram": {
+            "2": 1428
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "WoodenTable_02",
+      "candidate_class": "furniture",
+      "catalog_category": "Furniture/Tables/Side & End Tables",
+      "catalog_tags": [
+        "furniture",
+        "table"
+      ],
+      "catalog_polycount": 1514,
+      "catalog_files_hash": "53c8cd1ced8a04f15a4cda5ded07812386a38133",
+      "authors": {
+        "Fran Calvente": "All"
+      },
+      "description": "Free 4K model: small vintage wooden side table with a dark, worn finish, scalloped apron and curved legs showing scratches, chips, and aged patina.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/WoodenTable_02",
+        "files_json_sha256": "419574f91bd9e69d13df4eb226bc6e0a86a39888a2e7b591234a89cc005b558c",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Fran Calvente": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/WoodenTable_02/WoodenTable_02_1k.gltf",
+          "api_md5": "5d7716dcf8cc006e0ae3357e037504ea",
+          "bytes": 2692,
+          "sha256": "3a54261d3757fd78561f1f4bedb7304e0f7b98dae433998e280bc2843cf3fb24"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/WoodenTable_02/WoodenTable_02.bin",
+          "api_md5": "e36320501a385c756b842bcb73139292",
+          "bytes": 49564,
+          "sha256": "740bca56c0c6eff1209bb046825f5a8467badef1aebe38aab80d309884d4352e",
+          "declared_byte_length": 49564
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\WoodenTable_02",
+      "extraction": {
+        "status": "pass",
+        "vertices": 1265,
+        "triangles": 1514,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "16d0ad9490cbc4a83e1bfacd98d0851a697d23ea0e4638fd48e45d3daa53f6c2",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\WoodenTable_02\\geometry.obj",
+          "input_sha256": "16d0ad9490cbc4a83e1bfacd98d0851a697d23ea0e4638fd48e45d3daa53f6c2",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 1265,
+          "used_vertices": 1265,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 759,
+          "triangles": 1514,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 3.849863085356699e-05,
+          "edge_incidence_histogram": {
+            "2": 2271
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "WoodenTable_03",
+      "candidate_class": "furniture",
+      "catalog_category": "Furniture/Storage Furniture/Sideboards",
+      "catalog_tags": [
+        "furniture",
+        "collection: the_shed"
+      ],
+      "catalog_polycount": 2298,
+      "catalog_files_hash": "fda4446b0ce06f3bdd7fd51cc50d83257341bbbc",
+      "authors": {
+        "Gabriel Radi\u0107": "All"
+      },
+      "description": "Free 4K model. Vintage wooden sideboard with worn planks, metal trim, riveted mesh cabinet door and three drawers, showing aged industrial detailing.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/WoodenTable_03",
+        "files_json_sha256": "0e26d384cc595518c0cd570dc4bf6800464c3c8073638e7c7c31303b6e65d206",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Gabriel Radi\u0107": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/WoodenTable_03/WoodenTable_03_1k.gltf",
+          "api_md5": "7edc11c61cfdf9e47441c6a2b3059db7",
+          "bytes": 9950,
+          "sha256": "d7e7fc5f8941a45c5135cdad7b449ef47447dafe093a1fa6ad4f0d1c5d5046b1"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/WoodenTable_03/WoodenTable_03.bin",
+          "api_md5": "6178a4601d760a85a4e9dcc62909704c",
+          "bytes": 118172,
+          "sha256": "16464ee143ae686f3a53c30b810ba9a5c3715964b597bbed40bad2b1df52d66d",
+          "declared_byte_length": 118172
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\WoodenTable_03",
+      "extraction": {
+        "status": "pass",
+        "vertices": 3262,
+        "triangles": 2298,
+        "mesh_instances": 6,
+        "triangle_primitives": 6,
+        "animation_count_ignored": 0,
+        "obj_sha256": "b9ee24242e64fc6d440a8adaf22ff52be88e57198e309a1681119cfc13ab47f9",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\WoodenTable_03\\geometry.obj",
+          "input_sha256": "b9ee24242e64fc6d440a8adaf22ff52be88e57198e309a1681119cfc13ab47f9",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 3262,
+          "used_vertices": 3262,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 1494,
+          "triangles": 2298,
+          "connected_components_by_exact_welded_vertex": 75,
+          "boundary_edges": 544,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 4.367968122715877e-06,
+          "edge_incidence_histogram": {
+            "2": 3175,
+            "1": 544
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "bar_chair_round_01",
+      "candidate_class": "furniture",
+      "catalog_category": "Furniture/Seating/Stools & Bar Seating",
+      "catalog_tags": [
+        "seating",
+        "furniture"
+      ],
+      "catalog_polycount": 14373,
+      "catalog_files_hash": "3a4411b06fb8509e297c299acac13b2e6d5d71b0",
+      "authors": {
+        "Dairon Sanchez": "All"
+      },
+      "description": "Free 4K model, vintage wooden bar stool with round seat, carved beaded trim, hexagonal legs, circular footrest and worn finish.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/bar_chair_round_01",
+        "files_json_sha256": "1716b3228c13f7a7b70b7010e9bdfa142c1baca707b66eb8b981be42e5d3fc17",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Dairon Sanchez": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/bar_chair_round_01/bar_chair_round_01_1k.gltf",
+          "api_md5": "86fccd0ffcf70b942d1b2ff70445c2b9",
+          "bytes": 2833,
+          "sha256": "6a8f92123245268cbb69fc96f305ee710b32a7a06761b143d3049eaabfcbdd32"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/bar_chair_round_01/bar_chair_round_01.bin",
+          "api_md5": "3b9777a403670ddbde5cda533a5359ae",
+          "bytes": 1017152,
+          "sha256": "2bda85d89beb91097998b25293f10e72686b972aecffd2c14d1b5412cc1da276",
+          "declared_byte_length": 1017152
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\bar_chair_round_01",
+      "extraction": {
+        "status": "pass",
+        "vertices": 29091,
+        "triangles": 14373,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "c2d779cd60982f4ea1a870ec8cbe3f40fbd251a50608c225bdc8d8c32fa78168",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\bar_chair_round_01\\geometry.obj",
+          "input_sha256": "c2d779cd60982f4ea1a870ec8cbe3f40fbd251a50608c225bdc8d8c32fa78168",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 29091,
+          "used_vertices": 29091,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 8282,
+          "triangles": 14373,
+          "connected_components_by_exact_welded_vertex": 13,
+          "boundary_edges": 2167,
+          "duplicate_geometric_triangles": 1,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 7,
+          "inconsistently_oriented_edges": 3,
+          "minimum_double_area": 6.023834574951668e-08,
+          "edge_incidence_histogram": {
+            "2": 20465,
+            "3": 6,
+            "1": 2167,
+            "4": 1
+          },
+          "topology_status": "fail",
+          "topology_errors": [
+            "1 duplicate geometric faces",
+            "7 nonmanifold edges",
+            "3 inconsistently oriented edges"
+          ],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "fail"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "chinese_armchair",
+      "candidate_class": "furniture",
+      "catalog_category": "Furniture/Seating/Chairs",
+      "catalog_tags": [
+        "furniture",
+        "seating"
+      ],
+      "catalog_polycount": 2675,
+      "catalog_files_hash": "1e3819b180ab7c6918200d3e39eada53031579c6",
+      "authors": {
+        "Kirill Sannikov": "All"
+      },
+      "description": "Free 8K model: varnished antique Chinese wooden armchair with ornate carved back, elegant curved crest rail and traditional Ming-style silhouette.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/chinese_armchair",
+        "files_json_sha256": "d6cc7973045c61ed17d88e790d1c2dacd57e51bd3f391a59a4b8ace0dd27310d",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Kirill Sannikov": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/chinese_armchair/chinese_armchair_1k.gltf",
+          "api_md5": "ecad26c95dbf2c7e631f848711700678",
+          "bytes": 2816,
+          "sha256": "e0649ac9e63135627b824035e9a45a7c06411062589b971e633e5ab5f9e17f04"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/chinese_armchair/chinese_armchair.bin",
+          "api_md5": "7575b1f0e7de094e7c1cbebf610e5da0",
+          "bytes": 81428,
+          "sha256": "7e72b5360513057bdc453d6c03d5a837d32a8c9a2e6185f1b016c1bc62dc5b27",
+          "declared_byte_length": 81428
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\chinese_armchair",
+      "extraction": {
+        "status": "pass",
+        "vertices": 2043,
+        "triangles": 2675,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "31ed6ab5cfe394f7607e8a19abc37764514c1a3abfbbd2ac54b080d64d26cd23",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\chinese_armchair\\geometry.obj",
+          "input_sha256": "31ed6ab5cfe394f7607e8a19abc37764514c1a3abfbbd2ac54b080d64d26cd23",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 2043,
+          "used_vertices": 2043,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 1451,
+          "triangles": 2675,
+          "connected_components_by_exact_welded_vertex": 23,
+          "boundary_edges": 199,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 3.621049892527299e-05,
+          "edge_incidence_histogram": {
+            "2": 3913,
+            "1": 199
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "chinese_cabinet",
+      "candidate_class": "furniture",
+      "catalog_category": "Furniture/Storage Furniture/Cabinets & Cupboards",
+      "catalog_tags": [
+        "shelves",
+        "furniture"
+      ],
+      "catalog_polycount": 15668,
+      "catalog_files_hash": "68eb3f19ce1eef5021e2dda705ad67d43f063cd0",
+      "authors": {
+        "Kirill Sannikov": "All"
+      },
+      "description": "Free 8K model of an antique Chinese wooden cabinet: elegant traditional shelving with ornate carved panels, drawers, brass hardware and vintage character.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/chinese_cabinet",
+        "files_json_sha256": "fe8a09dd854af598d06c830cbc3a94a7f161c514e3aeb3be4f8c86fdda3c3831",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Kirill Sannikov": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/chinese_cabinet/chinese_cabinet_1k.gltf",
+          "api_md5": "d805bdf4ffa5df0e8b5bd40d2b463d4c",
+          "bytes": 8975,
+          "sha256": "f7875e583eb73798eed01e1b466bb4c3bc76a46c6bbade39091a01e5ba561293"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/chinese_cabinet/chinese_cabinet.bin",
+          "api_md5": "392eda89aa40550e7c193efd4075235a",
+          "bytes": 492960,
+          "sha256": "e0fa721a1536b426e70d2427f5068cd6b7467aac77cea92617862d05d981918f",
+          "declared_byte_length": 492960
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\chinese_cabinet",
+      "extraction": {
+        "status": "pass",
+        "vertices": 12467,
+        "triangles": 15668,
+        "mesh_instances": 5,
+        "triangle_primitives": 5,
+        "animation_count_ignored": 0,
+        "obj_sha256": "570d8a1a774a982b9ea057250b8a8781d6c09f3180060ec6a504c400996d1697",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\chinese_cabinet\\geometry.obj",
+          "input_sha256": "570d8a1a774a982b9ea057250b8a8781d6c09f3180060ec6a504c400996d1697",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 12467,
+          "used_vertices": 12467,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 8389,
+          "triangles": 15668,
+          "connected_components_by_exact_welded_vertex": 60,
+          "boundary_edges": 1112,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 7.687271895163433e-07,
+          "edge_incidence_histogram": {
+            "2": 22946,
+            "1": 1112
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "chinese_commode",
+      "candidate_class": "furniture",
+      "catalog_category": "Furniture/Storage Furniture/Cabinets & Cupboards",
+      "catalog_tags": [
+        "furniture",
+        "shelves"
+      ],
+      "catalog_polycount": 6775,
+      "catalog_files_hash": "2147126f22f7db5b928dc5e9911f766f50a89b58",
+      "authors": {
+        "Kirill Sannikov": "All"
+      },
+      "description": "Free 8K model of a vintage Chinese wooden commode with ornate carvings, round brass hardware and warm aged patina - traditional cabinet.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/chinese_commode",
+        "files_json_sha256": "89cf2e92f91ddac8e74c2373144389c03511f80ee0d6f20b5de33b043a3d40e6",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Kirill Sannikov": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/chinese_commode/chinese_commode_1k.gltf",
+          "api_md5": "2b275c68179e0cf25f6b545d903650de",
+          "bytes": 7067,
+          "sha256": "40319d26c1bde03d4f3cd42908541aee9cfc3b918a2e74609d0ce9d523e23a16"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/chinese_commode/chinese_commode.bin",
+          "api_md5": "f304e851e0c3e35a0e6fc135633c16a2",
+          "bytes": 215792,
+          "sha256": "90d1bd352c559418fc070546d02dafeee9f14889bc7538abbfd517ab28b81b9a",
+          "declared_byte_length": 215792
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\chinese_commode",
+      "extraction": {
+        "status": "pass",
+        "vertices": 5473,
+        "triangles": 6775,
+        "mesh_instances": 4,
+        "triangle_primitives": 4,
+        "animation_count_ignored": 0,
+        "obj_sha256": "abd12fabece4793dd78d4ed63550ec70b0d33a14b4ec47872c5290e57e4dbdca",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\chinese_commode\\geometry.obj",
+          "input_sha256": "abd12fabece4793dd78d4ed63550ec70b0d33a14b4ec47872c5290e57e4dbdca",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 5473,
+          "used_vertices": 5473,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 3781,
+          "triangles": 6775,
+          "connected_components_by_exact_welded_vertex": 26,
+          "boundary_edges": 735,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 5.215662490944358e-06,
+          "edge_incidence_histogram": {
+            "2": 9795,
+            "1": 735
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "chinese_console_table",
+      "candidate_class": "furniture",
+      "catalog_category": "Furniture/Tables/Console Tables",
+      "catalog_tags": [
+        "table",
+        "furniture"
+      ],
+      "catalog_polycount": 13648,
+      "catalog_files_hash": "d2f88e4753957bff4fcf282db5d86af5073eff45",
+      "authors": {
+        "Kirill Sannikov": "All"
+      },
+      "description": "Free 8K model of a vintage Chinese wooden console table with ornate carvings and traditional Asian styling; antique patina, ideal for period interiors.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/chinese_console_table",
+        "files_json_sha256": "d82960a421325ed32a273d4169a6f89e319821b171b55e9f4ae5b4eb5203f6cd",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Kirill Sannikov": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/chinese_console_table/chinese_console_table_1k.gltf",
+          "api_md5": "7afbbc2473741124afb17b8b7a92f1dd",
+          "bytes": 2861,
+          "sha256": "d028085b14277ce3772445d5991572c95e8c80630bcb401f90129d3c972c5425"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/chinese_console_table/chinese_console_table.bin",
+          "api_md5": "08e53d44d181263d5d4e731f7cd713c3",
+          "bytes": 505184,
+          "sha256": "70be61585b2b44f8496116cb3665a0f2d121dd2dddac6778aec1c01d2ca9d338",
+          "declared_byte_length": 505184
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\chinese_console_table",
+      "extraction": {
+        "status": "pass",
+        "vertices": 13228,
+        "triangles": 13648,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "197c76b8cad846483977d520afde8731383a9344f2990dace281aedfd089a738",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\chinese_console_table\\geometry.obj",
+          "input_sha256": "197c76b8cad846483977d520afde8731383a9344f2990dace281aedfd089a738",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 13228,
+          "used_vertices": 13228,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 6784,
+          "triangles": 13648,
+          "connected_components_by_exact_welded_vertex": 5,
+          "boundary_edges": 122,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 2,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 8.910707975216045e-07,
+          "edge_incidence_histogram": {
+            "1": 122,
+            "2": 20408,
+            "3": 2
+          },
+          "topology_status": "fail",
+          "topology_errors": [
+            "2 nonmanifold edges"
+          ],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "fail"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "cheiridopsis_succulent",
+      "candidate_class": "botanical",
+      "catalog_category": "Nature/Plants/Succulents & Cacti",
+      "catalog_tags": [
+        "collection: namaqualand",
+        "nature",
+        "plants",
+        "ground cover"
+      ],
+      "catalog_polycount": 198888,
+      "catalog_files_hash": "982ded4019c28843e7468de66ac90f0406286184",
+      "authors": {
+        "James Ray Cock": "modeling",
+        "Jenelle van Heerden": "Photography"
+      },
+      "description": "Free 8K Cheiridopsis model: tiny Karoo groundcover with fleshy blue-green leaves, quartz-strewn base and delicate pale-pink flowers - ideal for desert scenes.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/cheiridopsis_succulent",
+        "files_json_sha256": "d8fbb232f7f88a8d89a098bbdddbcaf68ac5b8fa2e2d3653f25d4f0e6e4c2f0c",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "James Ray Cock": "modeling",
+          "Jenelle van Heerden": "Photography"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/cheiridopsis_succulent/cheiridopsis_succulent_1k.gltf",
+          "api_md5": "57d2405eaab419e2f786153776cd6d8a",
+          "bytes": 21966,
+          "sha256": "4db4005db3e8fea6fc7b99cddbd0904fd3f5f5ddceccbabe05b7fa04ede9bcd8"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/cheiridopsis_succulent/cheiridopsis_succulent.bin",
+          "api_md5": "2cebafe46a5d6a949c11e75471d56328",
+          "bytes": 2504328,
+          "sha256": "9f6dcd10acd9799d0cfe17edbaf3350f10028f2ecde152aafde86bd95513d347",
+          "declared_byte_length": 2504328
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\cheiridopsis_succulent",
+      "extraction": {
+        "status": "pass",
+        "vertices": 62938,
+        "triangles": 82438,
+        "mesh_instances": 9,
+        "triangle_primitives": 14,
+        "animation_count_ignored": 0,
+        "obj_sha256": "a34ae50efb4228a37b1ade5a461cd968a827b2816934f63acfafe48b5fe4d5b9",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\cheiridopsis_succulent\\geometry.obj",
+          "input_sha256": "a34ae50efb4228a37b1ade5a461cd968a827b2816934f63acfafe48b5fe4d5b9",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 62938,
+          "used_vertices": 62938,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 45123,
+          "triangles": 82438,
+          "connected_components_by_exact_welded_vertex": 915,
+          "boundary_edges": 4728,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 6.765739978842584e-08,
+          "edge_incidence_histogram": {
+            "2": 121293,
+            "1": 4728
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "dead_tree_trunk",
+      "candidate_class": "botanical",
+      "catalog_category": "Nature/Logs, Branches & Roots/Fallen Logs & Stumps",
+      "catalog_tags": [
+        "nature",
+        "plants",
+        "ground cover",
+        "collection: pine_forest",
+        "collection: verdant_trail"
+      ],
+      "catalog_polycount": 101802,
+      "catalog_files_hash": "1e56e4393417d157e43e26bd8b7b019189d313ed",
+      "authors": {
+        "Rob Tuytel": "All"
+      },
+      "description": "Free 8K dead tree trunk model, a long weathered log with cracked, decayed bark, pronounced wood grain, broken ends and subtle mossy-green patches.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/dead_tree_trunk",
+        "files_json_sha256": "dac1e380d64f41032fd2344807e412d7b372f097d9e8b55df67a593d924159c0",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Rob Tuytel": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/dead_tree_trunk/dead_tree_trunk_1k.gltf",
+          "api_md5": "7bbf9fc9fdf61b50ed0495a29c03ecab",
+          "bytes": 2812,
+          "sha256": "8baaf1ff66ba1f79acdceed0dc3797a882990a3abb10b18abe56762f34c26e39"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/dead_tree_trunk/dead_tree_trunk.bin",
+          "api_md5": "2a2b05e67a5c51fba5fc7591a7857957",
+          "bytes": 2293788,
+          "sha256": "c1ac6b3195246e8647a28eee2fbfdd4712a045c7cf2dcb4f5abcc2d40a446ca6",
+          "declared_byte_length": 2293788
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\dead_tree_trunk",
+      "extraction": {
+        "status": "pass",
+        "vertices": 52593,
+        "triangles": 101802,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "e7f8757c780ac07026e389d69b97daf9ec80ca65e07dcc7cf41edc6ab3103283",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\dead_tree_trunk\\geometry.obj",
+          "input_sha256": "e7f8757c780ac07026e389d69b97daf9ec80ca65e07dcc7cf41edc6ab3103283",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 52593,
+          "used_vertices": 52593,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 50900,
+          "triangles": 101802,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 1.277296235114191e-06,
+          "edge_incidence_histogram": {
+            "2": 152703
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "dead_tree_trunk_02",
+      "candidate_class": "botanical",
+      "catalog_category": "Nature/Logs, Branches & Roots/Fallen Logs & Stumps",
+      "catalog_tags": [
+        "nature",
+        "plants",
+        "trees",
+        "collection: verdant_trail"
+      ],
+      "catalog_polycount": 155864,
+      "catalog_files_hash": "0f6fb24c57fc368a36a02efe96bd2e838320575b",
+      "authors": {
+        "Jenelle van Heerden": "Photography",
+        "Rico Cilliers": "processing"
+      },
+      "description": "Free 8K 3D model of a dead tree trunk - decayed, dry log with rough bark, lichen and broken stub; great for woodland debris, stump or forest-floor ground cover.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/dead_tree_trunk_02",
+        "files_json_sha256": "6ec0a78c5f70554d1ec7592b6e9f42adae87cb0643e0100957346d18f04a9402",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Jenelle van Heerden": "Photography",
+          "Rico Cilliers": "processing"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/dead_tree_trunk_02/dead_tree_trunk_02_1k.gltf",
+          "api_md5": "c16595a5951634914898e1eb6bb0ed3d",
+          "bytes": 2849,
+          "sha256": "b486ab1f0c7f4972e0eec97b19de53b26a34d09f07da5f9c2a70f8621f9e574c"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/dead_tree_trunk_02/dead_tree_trunk_02.bin",
+          "api_md5": "7848170c88b67d9e1d5e7d111db7b7ff",
+          "bytes": 1974352,
+          "sha256": "2b1b7ca07d98396ddc1987e367dcff9734df16b62e997c14837512d134687ded",
+          "declared_byte_length": 1974352
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\dead_tree_trunk_02",
+      "extraction": {
+        "status": "pass",
+        "vertices": 46112,
+        "triangles": 83128,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "b75f667710103bf50d3b1d14b39eca046d6bb58675b291ca7bac696c227cf752",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\dead_tree_trunk_02\\geometry.obj",
+          "input_sha256": "b75f667710103bf50d3b1d14b39eca046d6bb58675b291ca7bac696c227cf752",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 46112,
+          "used_vertices": 46112,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 41538,
+          "triangles": 83128,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 2.5978660626597794e-06,
+          "edge_incidence_histogram": {
+            "2": 124692
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "dry_quiver_leaf",
+      "candidate_class": "botanical",
+      "catalog_category": "Nature/Logs, Branches & Roots/Deadwood & Debris",
+      "catalog_tags": [
+        "nature",
+        "plants",
+        "ground cover",
+        "collection: namaqualand"
+      ],
+      "catalog_polycount": 147596,
+      "catalog_files_hash": "ad69fbdafc6c8ba947ad3110d76faed9ce875420",
+      "authors": {
+        "Greg Zaal": "photography",
+        "Rico Cilliers": "modeling"
+      },
+      "description": "Free 8K model of a dried quiver leaf from Namaqualand - realistic desert debris with curled fibrous texture and brittle edges for ground-cover scenes.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/dry_quiver_leaf",
+        "files_json_sha256": "6d559f8e77bffc186eb9ba488fa5f8604c56ebb62382a3034f7f122e583a1d07",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Greg Zaal": "photography",
+          "Rico Cilliers": "modeling"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/dry_quiver_leaf/dry_quiver_leaf_1k.gltf",
+          "api_md5": "038fe7b176581a32befb2c9fb8ee646e",
+          "bytes": 4517,
+          "sha256": "80ae8cad2fe7f3f79e78495c50696ada21740df965e03aa9de78fe53adf767af"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/dry_quiver_leaf/dry_quiver_leaf.bin",
+          "api_md5": "3be2bae40fb596b169434a99150f9cf2",
+          "bytes": 1836000,
+          "sha256": "a750ec4a371d2b1c0cbcdd0d94d885cd12dc26c38730683176c5a2ad471cd6f1",
+          "declared_byte_length": 1836000
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\dry_quiver_leaf",
+      "extraction": {
+        "status": "pass",
+        "vertices": 42615,
+        "triangles": 78720,
+        "mesh_instances": 2,
+        "triangle_primitives": 2,
+        "animation_count_ignored": 0,
+        "obj_sha256": "ee4505528b8f923671c1eaa4ec183758d45aa273a31190f66f0ee76775c0671b",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\dry_quiver_leaf\\geometry.obj",
+          "input_sha256": "ee4505528b8f923671c1eaa4ec183758d45aa273a31190f66f0ee76775c0671b",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 42615,
+          "used_vertices": 42615,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 39363,
+          "triangles": 78720,
+          "connected_components_by_exact_welded_vertex": 2,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 2.6401295146151658e-08,
+          "edge_incidence_histogram": {
+            "2": 118080
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "flower_stinkkruid",
+      "candidate_class": "botanical",
+      "catalog_category": "Nature/Plants/Wildflowers",
+      "catalog_tags": [
+        "nature",
+        "plants",
+        "flowers",
+        "collection: namaqualand"
+      ],
+      "catalog_polycount": 103778,
+      "catalog_files_hash": "03082af6c21b6b6f146a8bec83808a8efafb3e7b",
+      "authors": {
+        "Jenelle van Heerden": "Photography",
+        "Rico Cilliers": "modeling"
+      },
+      "description": "Free 4K Flower Stinkkruid model - a detailed Namaqualand wildflower with grey-green leaves, thin stems and yellow button blooms.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/flower_stinkkruid",
+        "files_json_sha256": "0ae95bb8b60f8373ecc1e9426ea20942fd3b0929b6115d40898bba7b0e1e766a",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Jenelle van Heerden": "Photography",
+          "Rico Cilliers": "modeling"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/flower_stinkkruid/flower_stinkkruid_1k.gltf",
+          "api_md5": "819470db7e2fc539e0ee01f52809f5ca",
+          "bytes": 7539,
+          "sha256": "92f1b86573d38d4a71a5ae875f52f2a201f932694a4e5e423f5098892f337ed3"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/flower_stinkkruid/flower_stinkkruid.bin",
+          "api_md5": "eb7cd1b1e4237be592107bd14a2791ff",
+          "bytes": 3299376,
+          "sha256": "d3b304eb985d1bf7492e8241a4e36af5bc7950d79882ada234093c0ba686e44b",
+          "declared_byte_length": 3299376
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\flower_stinkkruid",
+      "extraction": {
+        "status": "pass",
+        "vertices": 87971,
+        "triangles": 80716,
+        "mesh_instances": 4,
+        "triangle_primitives": 4,
+        "animation_count_ignored": 0,
+        "obj_sha256": "ec161c5d2f749ffea9bdfc14e8085af0b7682f3277e12ab9dee5cd43eeda7b38",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\flower_stinkkruid\\geometry.obj",
+          "input_sha256": "ec161c5d2f749ffea9bdfc14e8085af0b7682f3277e12ab9dee5cd43eeda7b38",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 87971,
+          "used_vertices": 87971,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 87971,
+          "triangles": 80716,
+          "connected_components_by_exact_welded_vertex": 7839,
+          "boundary_edges": 79654,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 9.421278559880559e-08,
+          "edge_incidence_histogram": {
+            "2": 81247,
+            "1": 79654
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "moss_01",
+      "candidate_class": "botanical",
+      "catalog_category": "Nature/Ground Cover & Moss/Moss",
+      "catalog_tags": [
+        "nature",
+        "plants",
+        "ground cover",
+        "collection: pine_forest"
+      ],
+      "catalog_polycount": 246170,
+      "catalog_files_hash": "2b55f8db1e0e00e0aa2681ef0bccc7d1aec5bfab",
+      "authors": {
+        "Rob Tuytel": "All"
+      },
+      "description": "Free 4K model - dense, lush ground-cover moss clump with fine fronds, varied green tones and realistic undergrowth geometry.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/moss_01",
+        "files_json_sha256": "7b7863306f87d0f3a9ce40a44e0b4456329bb550baff7ba4586b83dc81e06a7a",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Rob Tuytel": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/moss_01/moss_01_1k.gltf",
+          "api_md5": "1baba498fd3936673609dda5ecfe960a",
+          "bytes": 18481,
+          "sha256": "36fe6cb9889abb33f4dbee402928e260a3e7dfaec043d39b80b1e3afff684f65"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/moss_01/moss_01.bin",
+          "api_md5": "cdb092878a81b3208a162d79546892fe",
+          "bytes": 7260,
+          "sha256": "440e3cadbd93ad383cdbb9b4c17c3236774924c33ff62ac409ab00b8ed622861",
+          "declared_byte_length": 7260
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\moss_01",
+      "extraction": {
+        "status": "pass",
+        "vertices": 204,
+        "triangles": 204,
+        "mesh_instances": 12,
+        "triangle_primitives": 12,
+        "animation_count_ignored": 0,
+        "obj_sha256": "0f170929521b590bb3c1ede32716df67420661180429d95ab5db83639cc5afc6",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\moss_01\\geometry.obj",
+          "input_sha256": "0f170929521b590bb3c1ede32716df67420661180429d95ab5db83639cc5afc6",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 204,
+          "used_vertices": 204,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 204,
+          "triangles": 204,
+          "connected_components_by_exact_welded_vertex": 23,
+          "boundary_edges": 158,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 8.197313106994645e-06,
+          "edge_incidence_histogram": {
+            "2": 227,
+            "1": 158
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "periwinkle_plant",
+      "candidate_class": "botanical",
+      "catalog_category": "Nature/Plants/Wildflowers",
+      "catalog_tags": [
+        "nature",
+        "ground cover",
+        "plants",
+        "flowers"
+      ],
+      "catalog_polycount": 67388,
+      "catalog_files_hash": "914403d31fda1dc15ff457e71e96ab7476134019",
+      "authors": {
+        "Amal Kumar": "All"
+      },
+      "description": "Free 4K periwinkle plant model with small pink flowers, realistic leaves and branch variations, perfect for gardens, meadows, groundcover and botanical scenes.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/periwinkle_plant",
+        "files_json_sha256": "42a5696a46c9f77a1271edcf05494da138beac99f96b6afb0c420f6ce5836fd4",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Amal Kumar": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/periwinkle_plant/periwinkle_plant_1k.gltf",
+          "api_md5": "7a736c4dc3906ea9dbed2baacf6c0b7d",
+          "bytes": 15189,
+          "sha256": "df781eea76123fc6eee97e6e8d466743e3a5fb08e1a2c3f5025a57e090d2cc55"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/periwinkle_plant/periwinkle_plant.bin",
+          "api_md5": "dd2ff3280b0d69c3b03fed2753a6ee84",
+          "bytes": 1859752,
+          "sha256": "f039855d84d59f764838285c2b041a5cf255d103afc856e219a62482826d9655",
+          "declared_byte_length": 1859752
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\periwinkle_plant",
+      "extraction": {
+        "status": "pass",
+        "vertices": 31801,
+        "triangles": 34350,
+        "mesh_instances": 6,
+        "triangle_primitives": 6,
+        "animation_count_ignored": 0,
+        "obj_sha256": "569d0ada45a00281130538db2b524973c22fdd4cc67b85c3f9739547c57bead4",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\periwinkle_plant\\geometry.obj",
+          "input_sha256": "569d0ada45a00281130538db2b524973c22fdd4cc67b85c3f9739547c57bead4",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 31801,
+          "used_vertices": 31801,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 21799,
+          "triangles": 34350,
+          "connected_components_by_exact_welded_vertex": 458,
+          "boundary_edges": 8442,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 1.5361670712946252e-07,
+          "edge_incidence_histogram": {
+            "1": 8442,
+            "2": 47304
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "pine_roots",
+      "candidate_class": "botanical",
+      "catalog_category": "Nature/Logs, Branches & Roots/Root Clusters",
+      "catalog_tags": [
+        "plants",
+        "nature",
+        "ground cover",
+        "collection: pine_forest"
+      ],
+      "catalog_polycount": 162693,
+      "catalog_files_hash": "8a16347883d31284122bea6c1638f4feca7966ef",
+      "authors": {
+        "Rob Tuytel": "All"
+      },
+      "description": "Free 8K model of exposed pine roots and forest floor - gnarled, weathered root network, scattered needles, mossy patches and rich, compacted soil detail.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/pine_roots",
+        "files_json_sha256": "a15b775f7f014b8778dc3908148a1f5ba786d80025141cb92291ea557bf8e8a1",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Rob Tuytel": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/pine_roots/pine_roots_1k.gltf",
+          "api_md5": "d03fc8f8b617a1f82ee91c55ffb8eac7",
+          "bytes": 5161,
+          "sha256": "3f25ab982be6dee9328e012fcff9b82f21284fe8af8abdaafa6f316c819297aa"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/pine_roots/pine_roots.bin",
+          "api_md5": "55ca478cc9135baa10be976931ee57a7",
+          "bytes": 3753376,
+          "sha256": "d9839cb9e62922c737ba3a564356a1956d17e8f0a673c83685320236a4fdbe98",
+          "declared_byte_length": 3753376
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\pine_roots",
+      "extraction": {
+        "status": "pass",
+        "vertices": 86788,
+        "triangles": 162693,
+        "mesh_instances": 2,
+        "triangle_primitives": 2,
+        "animation_count_ignored": 0,
+        "obj_sha256": "5ee5cfdec3fec51249a91fbc5c1a6335026d9bb24915ffb93e7d271924614270",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\pine_roots\\geometry.obj",
+          "input_sha256": "5ee5cfdec3fec51249a91fbc5c1a6335026d9bb24915ffb93e7d271924614270",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 86788,
+          "used_vertices": 86788,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 81978,
+          "triangles": 162693,
+          "connected_components_by_exact_welded_vertex": 2,
+          "boundary_edges": 1427,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 26,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 1.823115717767981e-07,
+          "edge_incidence_histogram": {
+            "2": 243274,
+            "1": 1427,
+            "4": 26
+          },
+          "topology_status": "fail",
+          "topology_errors": [
+            "26 nonmanifold edges"
+          ],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "fail"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "potted_plant_01",
+      "candidate_class": "botanical",
+      "catalog_category": "Nature/Plants/Potted Plants",
+      "catalog_tags": [
+        "decorative",
+        "plants",
+        "potted plants",
+        "nature"
+      ],
+      "catalog_polycount": 96030,
+      "catalog_files_hash": "9fa70d49cb125b1b74e3aeddef22253ba2db060b",
+      "authors": {
+        "Rico Cilliers": "All"
+      },
+      "description": "Free 8K model of a medium potted plant with lush scalloped green leaves in a weathered terracotta pedestal pot, detailed trunk and gravel-filled soil.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/potted_plant_01",
+        "files_json_sha256": "26431ac0c2b7b18afab85735b061610bd3bcfb3520fdc966ad1c77588450f3ec",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Rico Cilliers": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/potted_plant_01/potted_plant_01_1k.gltf",
+          "api_md5": "199e9e3d68f5447142db4066d60ae3f0",
+          "bytes": 7969,
+          "sha256": "23b30294407684b02f14800d6685bd8938da5d2111e17753ac8dd3c37d8c88a0"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/potted_plant_01/potted_plant_01.bin",
+          "api_md5": "18377bd8d99b20a8d5fc5cf03cbf94b2",
+          "bytes": 5345188,
+          "sha256": "a8dd1f7ce75f50dc25bbedc20809da02ee4193815c155b883a329925fa5548f7",
+          "declared_byte_length": 5345188
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\potted_plant_01",
+      "extraction": {
+        "status": "pass",
+        "vertices": 113951,
+        "triangles": 176226,
+        "mesh_instances": 4,
+        "triangle_primitives": 4,
+        "animation_count_ignored": 0,
+        "obj_sha256": "98cd7f70356dabedd9c64404dc91d014e058d69bc35398804ec7053036c39858",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\potted_plant_01\\geometry.obj",
+          "input_sha256": "98cd7f70356dabedd9c64404dc91d014e058d69bc35398804ec7053036c39858",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 113951,
+          "used_vertices": 113951,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 93501,
+          "triangles": 176226,
+          "connected_components_by_exact_welded_vertex": 692,
+          "boundary_edges": 8692,
+          "duplicate_geometric_triangles": 131,
+          "degenerate_triangles": 132,
+          "nonmanifold_edges": 1,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 0.0,
+          "edge_incidence_histogram": {
+            "2": 259795,
+            "1": 8692,
+            "396": 1
+          },
+          "topology_status": "fail",
+          "topology_errors": [
+            "132 degenerate faces",
+            "131 duplicate geometric faces",
+            "1 nonmanifold edges"
+          ],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "fail"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "potted_plant_02",
+      "candidate_class": "botanical",
+      "catalog_category": "Nature/Plants/Potted Plants",
+      "catalog_tags": [
+        "decorative",
+        "plants",
+        "potted plants",
+        "nature"
+      ],
+      "catalog_polycount": 69806,
+      "catalog_files_hash": "155661c96a28b9eb143e866daeb41f5a076d6677",
+      "authors": {
+        "Rico Cilliers": "All"
+      },
+      "description": "Free 8K model. Realistic terracotta pot with weathered rim, textured soil, and variegated green, heart-shaped leaves with pronounced veins.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/potted_plant_02",
+        "files_json_sha256": "c2a31d1b47ca92eeed88a492f70e567145f23b34edac2accb56def39b6b9af07",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Rico Cilliers": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/potted_plant_02/potted_plant_02_1k.gltf",
+          "api_md5": "9999d7e6c51018a85551840e1bdae656",
+          "bytes": 6653,
+          "sha256": "c533dcce0d1aa4379eb7db04601a04983f8df2422b28578de922655a416e64a9"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/potted_plant_02/potted_plant_02.bin",
+          "api_md5": "cdbd4619b2596c9c469ad34676085fa8",
+          "bytes": 1852244,
+          "sha256": "9c9812482c78a59789ed32fa842b4cbd9365e09c900c31ebb998e5efe627fe97",
+          "declared_byte_length": 1852244
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\potted_plant_02",
+      "extraction": {
+        "status": "pass",
+        "vertices": 44794,
+        "triangles": 69806,
+        "mesh_instances": 3,
+        "triangle_primitives": 3,
+        "animation_count_ignored": 0,
+        "obj_sha256": "56ea721bebcb06778d47a43d810092bd6190a46c7f7f53e878bf116af9c6e1c2",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\potted_plant_02\\geometry.obj",
+          "input_sha256": "56ea721bebcb06778d47a43d810092bd6190a46c7f7f53e878bf116af9c6e1c2",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 44794,
+          "used_vertices": 44794,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 36717,
+          "triangles": 69806,
+          "connected_components_by_exact_welded_vertex": 521,
+          "boundary_edges": 1672,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 9.909783432245262e-07,
+          "edge_incidence_histogram": {
+            "2": 103873,
+            "1": 1672
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "namaqualand_boulder_02",
+      "candidate_class": "rock",
+      "catalog_category": "Nature/Rocks & Stone/Desert Boulders",
+      "catalog_tags": [
+        "nature",
+        "rocks",
+        "collection: namaqualand"
+      ],
+      "catalog_polycount": 183681,
+      "catalog_files_hash": "a8226fbda59ed50a4686c9354fdb3d4eea061706",
+      "authors": {
+        "Greg Zaal": "Photography",
+        "Rico Cilliers": "modeling"
+      },
+      "description": "Free 8K model of Namaqualand boulders - realistic Karoo sandstone rocks with layered, weathered surfaces, perfect for desert, geological, and landscaping scenes.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/namaqualand_boulder_02",
+        "files_json_sha256": "58eac151036434bd7965a8145e5b0ee9b5a6b495d8637db4ebed2e669f4ec67c",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Greg Zaal": "Photography",
+          "Rico Cilliers": "modeling"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/namaqualand_boulder_02/namaqualand_boulder_02_1k.gltf",
+          "api_md5": "0730814e31f50e85defd7b8833a02070",
+          "bytes": 2818,
+          "sha256": "3c41b5946cd5b208673ec481a3969047665688b2fab1de99b57a7b4eedde099b"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/namaqualand_boulder_02/namaqualand_boulder_02.bin",
+          "api_md5": "aa8f2212633a07a7e9a805e90977f4fd",
+          "bytes": 2297768,
+          "sha256": "0f6daa7ec9b1a92207c0b09b737ff1eec904aebc1c1eada778afa6e5eacd55c0",
+          "declared_byte_length": 2297768
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\namaqualand_boulder_02",
+      "extraction": {
+        "status": "pass",
+        "vertices": 53437,
+        "triangles": 97964,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "d8de2de0873c52d6d174eccd198fd48bfafd6792fc865ef5f78077a3c200e752",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\namaqualand_boulder_02\\geometry.obj",
+          "input_sha256": "d8de2de0873c52d6d174eccd198fd48bfafd6792fc865ef5f78077a3c200e752",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 53437,
+          "used_vertices": 53437,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 49173,
+          "triangles": 97964,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 396,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 7.655585104165877e-07,
+          "edge_incidence_histogram": {
+            "2": 146748,
+            "1": 396
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "namaqualand_boulder_03",
+      "candidate_class": "rock",
+      "catalog_category": "Nature/Rocks & Stone/Desert Boulders",
+      "catalog_tags": [
+        "nature",
+        "rocks",
+        "collection: namaqualand"
+      ],
+      "catalog_polycount": 121546,
+      "catalog_files_hash": "d45a977057ab8e8538e1747b7a5d89013da6743e",
+      "authors": {
+        "Jenelle van Heerden": "modeling",
+        "Dario Barresi": "Photography"
+      },
+      "description": "Free 8K model: rough brown boulder from the Karoo, detailed geological rock with weathered facets - perfect for desert scenes and landscaping.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/namaqualand_boulder_03",
+        "files_json_sha256": "5f0ed9ea7e3939d23ac0b5e4dbf1412d6e0c3e852bf1d38ce4479c2f6adb5a90",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Jenelle van Heerden": "modeling",
+          "Dario Barresi": "Photography"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/namaqualand_boulder_03/namaqualand_boulder_03_1k.gltf",
+          "api_md5": "419d98b4512f1bc06245555c84f6effc",
+          "bytes": 2823,
+          "sha256": "14560936aaad68da0c0fc549b54c67bba4cd573dfe5b07f92835b9ca044a0092"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/namaqualand_boulder_03/namaqualand_boulder_03.bin",
+          "api_md5": "ded61ea310a66144546eac2a891b6dba",
+          "bytes": 1450268,
+          "sha256": "d24151021ed310fe3207f1b5964bff22b583e77d2617427a88b5dcbc0447a475",
+          "declared_byte_length": 1450268
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\namaqualand_boulder_03",
+      "extraction": {
+        "status": "pass",
+        "vertices": 33166,
+        "triangles": 64826,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "5e95a295af89ead2fb07912b111cc6a565617e352d8e9033366c8bb4e792b223",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\namaqualand_boulder_03\\geometry.obj",
+          "input_sha256": "5e95a295af89ead2fb07912b111cc6a565617e352d8e9033366c8bb4e792b223",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 33166,
+          "used_vertices": 33166,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 32414,
+          "triangles": 64826,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 7.772294119801301e-06,
+          "edge_incidence_histogram": {
+            "2": 97239
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "namaqualand_boulder_04",
+      "candidate_class": "rock",
+      "catalog_category": "Nature/Rocks & Stone/Desert Boulders",
+      "catalog_tags": [
+        "nature",
+        "rocks",
+        "collection: namaqualand"
+      ],
+      "catalog_polycount": 110746,
+      "catalog_files_hash": "96945b21625a362af6541ea0b8347455f0052282",
+      "authors": {
+        "Jenelle van Heerden": "All"
+      },
+      "description": "Free 8K Namaqualand boulder model - rugged Karoo rock from South Africa with brown, weathered surfaces and lichen patches for landscaping.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/namaqualand_boulder_04",
+        "files_json_sha256": "3109690bfd763fdf78b3cb9e034cd96be537d96689713eb462bff470e6089cab",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Jenelle van Heerden": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/namaqualand_boulder_04/namaqualand_boulder_04_1k.gltf",
+          "api_md5": "7cc9f708bf5792f89af6638465cac3b4",
+          "bytes": 2818,
+          "sha256": "04c858a3bdb22873efa988633e0c0d9d1468055f34c94d47742f75165a192078"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/namaqualand_boulder_04/namaqualand_boulder_04.bin",
+          "api_md5": "bd83376dfe39432568dc13a8fb738953",
+          "bytes": 1319676,
+          "sha256": "99ba28ddc8da9ba24e1a419e69ed05f14c4b483bf06268a8a77495545985318a",
+          "declared_byte_length": 1319676
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\namaqualand_boulder_04",
+      "extraction": {
+        "status": "pass",
+        "vertices": 30165,
+        "triangles": 59066,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "6699fe746e443f82ce45e6d645ddc3c7e3a1110a6d7c96e826978acb00d983b9",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\namaqualand_boulder_04\\geometry.obj",
+          "input_sha256": "6699fe746e443f82ce45e6d645ddc3c7e3a1110a6d7c96e826978acb00d983b9",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 30165,
+          "used_vertices": 30165,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 29535,
+          "triangles": 59066,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 9.59212196639054e-06,
+          "edge_incidence_histogram": {
+            "2": 88599
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "namaqualand_boulder_05",
+      "candidate_class": "rock",
+      "catalog_category": "Nature/Rocks & Stone/Desert Boulders",
+      "catalog_tags": [
+        "collection: namaqualand",
+        "nature",
+        "rocks"
+      ],
+      "catalog_polycount": 117622,
+      "catalog_files_hash": "db0437675da1e8fcd3fdd7b0d933cac1c9462456",
+      "authors": {
+        "Jenelle van Heerden": "modeling",
+        "Dario Barresi": "Photography"
+      },
+      "description": "Free 8K model of a weathered Namaqualand boulder - dry Karoo sandstone with layered, eroded surface and warm desert tones, perfect for natural rock scenes.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/namaqualand_boulder_05",
+        "files_json_sha256": "7265c5843d4b5a06c8b41ac365322b76cc0577ad5f54ff009c68c6d372e956bf",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Jenelle van Heerden": "modeling",
+          "Dario Barresi": "Photography"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/namaqualand_boulder_05/namaqualand_boulder_05_1k.gltf",
+          "api_md5": "93b2f39714f9b4d19197335eb22d9283",
+          "bytes": 2872,
+          "sha256": "f8e5fd8fd981e889d621ba4e53170a52c47cd3053b8748ee7025ed1083f36a5f"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/namaqualand_boulder_05/namaqualand_boulder_05.bin",
+          "api_md5": "64bca194605dee7e361d43beabb3d4b7",
+          "bytes": 2015628,
+          "sha256": "a60ade71de8612c873f9112159ed5d93dcba58979007a0915bc10d551a9ed03c",
+          "declared_byte_length": 2015628
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\namaqualand_boulder_05",
+      "extraction": {
+        "status": "pass",
+        "vertices": 46185,
+        "triangles": 89618,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "bc3399637f4030c22ac1f69a749d7945cc5c70b5f670f9cf2acc5013ce475741",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\namaqualand_boulder_05\\geometry.obj",
+          "input_sha256": "bc3399637f4030c22ac1f69a749d7945cc5c70b5f670f9cf2acc5013ce475741",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 46185,
+          "used_vertices": 46185,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 44811,
+          "triangles": 89618,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 2.1559111427090134e-07,
+          "edge_incidence_histogram": {
+            "2": 134427
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "namaqualand_boulder_06",
+      "candidate_class": "rock",
+      "catalog_category": "Nature/Rocks & Stone/Desert Boulders",
+      "catalog_tags": [
+        "nature",
+        "rocks",
+        "collection: namaqualand"
+      ],
+      "catalog_polycount": 204584,
+      "catalog_files_hash": "f388f7ae4d491b48aa800289d7e71c43cecea93b",
+      "authors": {
+        "Greg Zaal": "Photography",
+        "Jenelle van Heerden": "modeling"
+      },
+      "description": "Free 8K model, rugged brown Namaqualand boulder from the Karoo with a rough geological surface - perfect for desert scenes.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/namaqualand_boulder_06",
+        "files_json_sha256": "9dea4c1992a5cddc2d874ec13be5c618f590701635d7811dc90b0baba9211022",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Greg Zaal": "Photography",
+          "Jenelle van Heerden": "modeling"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/namaqualand_boulder_06/namaqualand_boulder_06_1k.gltf",
+          "api_md5": "64791b0352526beffa233116758ef9a6",
+          "bytes": 2880,
+          "sha256": "4331febbf2e4b20ebdee384522dd5cb9056a22450285ec45cada819dcb6d49db"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/namaqualand_boulder_06/namaqualand_boulder_06.bin",
+          "api_md5": "1643b528fa072dc3bf5bc5ad6add1933",
+          "bytes": 2463356,
+          "sha256": "c74e1f84fd9b48ba86420263804da0899d4d2d2f470276be801ef450ac5e08f3",
+          "declared_byte_length": 2463356
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\namaqualand_boulder_06",
+      "extraction": {
+        "status": "pass",
+        "vertices": 56521,
+        "triangles": 109114,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "75b0c09214d90a9c1891c0807572843cb8bcbdff794dac69822fc62e8d971bf4",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\namaqualand_boulder_06\\geometry.obj",
+          "input_sha256": "75b0c09214d90a9c1891c0807572843cb8bcbdff794dac69822fc62e8d971bf4",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 56521,
+          "used_vertices": 56521,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 54559,
+          "triangles": 109114,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 4.960427241370061e-07,
+          "edge_incidence_histogram": {
+            "2": 163671
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "namaqualand_cliff_01",
+      "candidate_class": "rock",
+      "catalog_category": "Nature/Rocks & Stone/Cliffs & Rock Faces",
+      "catalog_tags": [
+        "nature",
+        "rocks",
+        "collection: namaqualand"
+      ],
+      "catalog_polycount": 176938,
+      "catalog_files_hash": "92420ba154192b67e304f16a1559b17804ec0854",
+      "authors": {
+        "Jenelle van Heerden": "Photography",
+        "Rico Cilliers": "modeling"
+      },
+      "description": "Free 8K model of a Namaqualand cliff: weathered Karoo boulders, eroded rock faces and cracks with desert tones - high-detail, natural cliffside asset.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/namaqualand_cliff_01",
+        "files_json_sha256": "744d49671214b3b6b27a5dc6fade1aa08b222da0f9d32fa8325afc32789093ca",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Jenelle van Heerden": "Photography",
+          "Rico Cilliers": "modeling"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/namaqualand_cliff_01/namaqualand_cliff_01_1k.gltf",
+          "api_md5": "2b1155ba7a88786d8cfd4e40265a8d3c",
+          "bytes": 2848,
+          "sha256": "cd225f3d1e088bd358fe5c426963d335eda9d8b78f084c555abf809b32b8cc85"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/namaqualand_cliff_01/namaqualand_cliff_01.bin",
+          "api_md5": "2aa51d08780691ff8e748b308d575964",
+          "bytes": 2179752,
+          "sha256": "401ecb3bcd3cdb655fa971a3db3a460055911fb35a3b18eaaeae0d860358ddda",
+          "declared_byte_length": 2179752
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\namaqualand_cliff_01",
+      "extraction": {
+        "status": "pass",
+        "vertices": 50423,
+        "triangles": 94369,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "09875c0f1be1c8d58ae72c89eb5ab8023dda734f0931263ad044602684e530d7",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\namaqualand_cliff_01\\geometry.obj",
+          "input_sha256": "09875c0f1be1c8d58ae72c89eb5ab8023dda734f0931263ad044602684e530d7",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 50423,
+          "used_vertices": 50423,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 47472,
+          "triangles": 94369,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 577,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 5.030343105018602e-06,
+          "edge_incidence_histogram": {
+            "2": 141265,
+            "1": 577
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "namaqualand_rocks_01",
+      "candidate_class": "rock",
+      "catalog_category": "Nature/Rocks & Stone/Stone Sets",
+      "catalog_tags": [
+        "nature",
+        "rocks",
+        "collection: namaqualand"
+      ],
+      "catalog_polycount": 160716,
+      "catalog_files_hash": "b3db262e3bbee2c87c984ee85daad2baaaeeebee",
+      "authors": {
+        "Greg Zaal": "Photography",
+        "Jenelle van Heerden": "modeling"
+      },
+      "description": "Free 8K model of quartz-rich Namaqualand rocks (Karoo, South Africa). Realistic desert stones with high-detail geological texture for nature and landscape scenes.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/namaqualand_rocks_01",
+        "files_json_sha256": "720891333ab65107305242ea900943b3ed5016d12dbb09f7902d530373122bfc",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Greg Zaal": "Photography",
+          "Jenelle van Heerden": "modeling"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/namaqualand_rocks_01/namaqualand_rocks_01_1k.gltf",
+          "api_md5": "0426d6445f947a872f67dffba7ab5dbd",
+          "bytes": 7463,
+          "sha256": "b13a569b72c9f2131d4a27e7b7861d8bd207f6caf3552998fd39f6c0cc69feb2"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/namaqualand_rocks_01/namaqualand_rocks_01.bin",
+          "api_md5": "26f7ff48dc3d03e0c3f98b0a3d2c1b72",
+          "bytes": 1952600,
+          "sha256": "3369a32902e3c59ac92475f5ed08a64b3a993322e0f8649ddda462bdbe4a0cab",
+          "declared_byte_length": 1952600
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\namaqualand_rocks_01",
+      "extraction": {
+        "status": "pass",
+        "vertices": 44947,
+        "triangles": 85716,
+        "mesh_instances": 4,
+        "triangle_primitives": 4,
+        "animation_count_ignored": 0,
+        "obj_sha256": "3d5d995d2a1269b0f8cfd5bdad038c3c178652f02308deee504370afc393bc37",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\namaqualand_rocks_01\\geometry.obj",
+          "input_sha256": "3d5d995d2a1269b0f8cfd5bdad038c3c178652f02308deee504370afc393bc37",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 44947,
+          "used_vertices": 44947,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 42865,
+          "triangles": 85716,
+          "connected_components_by_exact_welded_vertex": 4,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 2,
+          "nonmanifold_edges": 2,
+          "inconsistently_oriented_edges": 1,
+          "minimum_double_area": 0.0,
+          "edge_incidence_histogram": {
+            "2": 128570,
+            "4": 2
+          },
+          "topology_status": "fail",
+          "topology_errors": [
+            "2 degenerate faces",
+            "2 nonmanifold edges",
+            "1 inconsistently oriented edges"
+          ],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "fail"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "namaqualand_stones_01",
+      "candidate_class": "rock",
+      "catalog_category": "Nature/Rocks & Stone/Stone Sets",
+      "catalog_tags": [
+        "nature",
+        "rocks",
+        "collection: namaqualand"
+      ],
+      "catalog_polycount": 106602,
+      "catalog_files_hash": "56a5d069e1b0eb31d342e677d39a23649a5265dd",
+      "authors": {
+        "Greg Zaal": "Photography",
+        "Jenelle van Heerden": "modeling"
+      },
+      "description": "Free 8K model of weathered Namaqualand quartz stones, varied Karoo desert rocks from South Africa, realistic, high-detail assets for nature and geological scenes.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/namaqualand_stones_01",
+        "files_json_sha256": "49bac268b5b5cefcc4b5df1585ddd2eca4ebfff579c8aee3f1000f5781fbcb99",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Greg Zaal": "Photography",
+          "Jenelle van Heerden": "modeling"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/namaqualand_stones_01/namaqualand_stones_01_1k.gltf",
+          "api_md5": "54f6b6211437fa4798ad6513e0371064",
+          "bytes": 8681,
+          "sha256": "680f5de5895379682d5c08b4e768c91b8225ffc88ddbb979c052df4b452889cd"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/namaqualand_stones_01/namaqualand_stones_01.bin",
+          "api_md5": "65f3ea82d94ebf1113eae180aa85d68a",
+          "bytes": 1599304,
+          "sha256": "435e06e2dbe6f9d1a7eceffb2f95abd24f330714bcc9cc7502519ac592881e77",
+          "declared_byte_length": 1599304
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\namaqualand_stones_01",
+      "extraction": {
+        "status": "pass",
+        "vertices": 36830,
+        "triangles": 70124,
+        "mesh_instances": 5,
+        "triangle_primitives": 5,
+        "animation_count_ignored": 0,
+        "obj_sha256": "dd3e457d22acc374be2fc614f82fe5c0ce3795c944f375db366a3338fdf87288",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\namaqualand_stones_01\\geometry.obj",
+          "input_sha256": "dd3e457d22acc374be2fc614f82fe5c0ce3795c944f375db366a3338fdf87288",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 36830,
+          "used_vertices": 36830,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 35072,
+          "triangles": 70124,
+          "connected_components_by_exact_welded_vertex": 5,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 4.07170691222436e-08,
+          "edge_incidence_histogram": {
+            "2": 105186
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "rock_face_01",
+      "candidate_class": "rock",
+      "catalog_category": "Nature/Rocks & Stone/Cliffs & Rock Faces",
+      "catalog_tags": [
+        "rocks",
+        "nature",
+        "collection: verdant_trail"
+      ],
+      "catalog_polycount": 20174,
+      "catalog_files_hash": "a39e6911cc84e0ceef097a98b1146885afb4afb3",
+      "authors": {
+        "Dario Barresi": "All"
+      },
+      "description": "Free 8K model of a weathered rock face with layered sedimentary strata, rugged cracks, lichen patches and subtle blue-red mineral tones.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/rock_face_01",
+        "files_json_sha256": "de3af343b27ed530d83d8acd36cd4ea64f308019700a2463352e050746b215b2",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Dario Barresi": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/rock_face_01/rock_face_01_1k.gltf",
+          "api_md5": "b4855bc7e841a17a94332561a9b301c0",
+          "bytes": 2793,
+          "sha256": "96c332c01d173a2431115f3bac29be101fba341e5500e2a08e384f4edd17299e"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/rock_face_01/rock_face_01.bin",
+          "api_md5": "06caed23e725af568b64f8cbee210c1c",
+          "bytes": 476436,
+          "sha256": "873eac0319333e92bc96ddeedf8ebf69dc3c68ff1dfe32d8c14ddc165cdb20ac",
+          "declared_byte_length": 476436
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\rock_face_01",
+      "extraction": {
+        "status": "pass",
+        "vertices": 11106,
+        "triangles": 20174,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "86659f2ccaa6022a73dd2f98e2685b775fc8336437dee57c4ebf5a6eb831e122",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\rock_face_01\\geometry.obj",
+          "input_sha256": "86659f2ccaa6022a73dd2f98e2685b775fc8336437dee57c4ebf5a6eb831e122",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 11106,
+          "used_vertices": 11106,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 10530,
+          "triangles": 20174,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 886,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 2,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 4.182882183484726e-08,
+          "edge_incidence_histogram": {
+            "2": 29815,
+            "3": 2,
+            "1": 886
+          },
+          "topology_status": "fail",
+          "topology_errors": [
+            "2 nonmanifold edges"
+          ],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "fail"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "rock_face_02",
+      "candidate_class": "rock",
+      "catalog_category": "Nature/Rocks & Stone/Cliffs & Rock Faces",
+      "catalog_tags": [
+        "rocks",
+        "nature",
+        "collection: verdant_trail"
+      ],
+      "catalog_polycount": 29566,
+      "catalog_files_hash": "18e36d9aade0f369471717db252fdfd3c1c28ca1",
+      "authors": {
+        "Dario Barresi": "All",
+        "Rico Cilliers": "processing"
+      },
+      "description": "Free 8K rock face model, weathered sandstone cliff with layered strata, moss and lichen patches, rugged fissures and realistic geological detail.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/rock_face_02",
+        "files_json_sha256": "bd4f19021e89dc4e19f9fc8fa524d0eeb0f4c21259494bbbfc2c33baa2d502f6",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Dario Barresi": "All",
+          "Rico Cilliers": "processing"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/rock_face_02/rock_face_02_1k.gltf",
+          "api_md5": "f4c7eefa474143b14312409cad4fb4b8",
+          "bytes": 2794,
+          "sha256": "ebeab82d463c89eb5f894b85807da111280a73b552d694257118f3f2d47bf760"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/rock_face_02/rock_face_02.bin",
+          "api_md5": "add01c9b573fdddd688acb6378c78c3b",
+          "bytes": 702068,
+          "sha256": "cfa3dea8f0f91525b5dfe93d889acacf961d20f7174aae100eae2c6e101edf31",
+          "declared_byte_length": 702068
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\rock_face_02",
+      "extraction": {
+        "status": "pass",
+        "vertices": 16396,
+        "triangles": 29566,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "e722d1e937c22b719015e033e62423558784827aef653d23b733480bcd4dc3bf",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\rock_face_02\\geometry.obj",
+          "input_sha256": "e722d1e937c22b719015e033e62423558784827aef653d23b733480bcd4dc3bf",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 16396,
+          "used_vertices": 16396,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 15151,
+          "triangles": 29566,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 754,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 2,
+          "nonmanifold_edges": 10,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 0.0,
+          "edge_incidence_histogram": {
+            "2": 43956,
+            "4": 2,
+            "3": 8,
+            "1": 754
+          },
+          "topology_status": "fail",
+          "topology_errors": [
+            "2 degenerate faces",
+            "10 nonmanifold edges"
+          ],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "fail"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "croissant",
+      "candidate_class": "food",
+      "catalog_category": "Food & Kitchen/Prepared Food/Cakes & Pastries",
+      "catalog_tags": [
+        "props",
+        "food"
+      ],
+      "catalog_polycount": 1990,
+      "catalog_files_hash": "16023b7dcc7d8c5660c4d128e079e878fc08ab23",
+      "authors": {
+        "Greg Zaal": "Processing",
+        "Dario Barresi": "Scanning"
+      },
+      "description": "Free 8K croissant model with realistic golden-brown crust, flaky layered dough, subtle sheen and high-detail baked texture.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/croissant",
+        "files_json_sha256": "86d7d2b22a20d2da4b28d317b07eb44c264579b9292f721dfadb86e200597815",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Greg Zaal": "Processing",
+          "Dario Barresi": "Scanning"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/croissant/croissant_1k.gltf",
+          "api_md5": "03127b1168ad97dd71f52032a286248f",
+          "bytes": 2680,
+          "sha256": "b6e1eb36f776e6b79500c51b57c0e29cd17598c2d8a20d0ec0513955a6cc3a2f"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/croissant/croissant.bin",
+          "api_md5": "8d343f5c5ea635334c05bd74a7f13fab",
+          "bytes": 44932,
+          "sha256": "d770a5ab7e3bcf3572343d74c7941e87eda87349fe414dd4ab206fa5e1e1524a",
+          "declared_byte_length": 44932
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\croissant",
+      "extraction": {
+        "status": "pass",
+        "vertices": 1031,
+        "triangles": 1990,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "8d76d199a053f63d46c9ac0f9f2da39c6f79f02561606dc31a795b45b6cf7948",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\croissant\\geometry.obj",
+          "input_sha256": "8d76d199a053f63d46c9ac0f9f2da39c6f79f02561606dc31a795b45b6cf7948",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 1031,
+          "used_vertices": 1031,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 997,
+          "triangles": 1990,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 5.039764348974513e-06,
+          "edge_incidence_histogram": {
+            "2": 2985
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "long_life_food",
+      "candidate_class": "food",
+      "catalog_category": "Food & Kitchen/Packaged & Pantry",
+      "catalog_tags": [
+        "collection: project_lighthouse",
+        "food",
+        "containers",
+        "props"
+      ],
+      "catalog_polycount": 4712,
+      "catalog_files_hash": "9b0c4e65bdd4d8c0f09f15dde7728afa7a8cb2c4",
+      "authors": {
+        "Mia Pecina Zorko": "All"
+      },
+      "description": "Free 4K model of pantry staples: milk carton, tomato and bean cans, and sardines. Realistic wear, dents, pull-tab tin, crisp labels, clean topology.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/long_life_food",
+        "files_json_sha256": "c019bb5d1ae7a6dc11443c873a817acdfa9a1e78adccb4bc65335fd09dca4712",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Mia Pecina Zorko": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/long_life_food/long_life_food_1k.gltf",
+          "api_md5": "fbdae30e5d57523abf1582a9c794ee79",
+          "bytes": 7394,
+          "sha256": "c96276210b99df049253fdb4541215439eff7e5e1fb960a0f20fe68f6bc12b07"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/long_life_food/long_life_food.bin",
+          "api_md5": "c2920566fe14cea54121ba23450af26b",
+          "bytes": 158640,
+          "sha256": "efd51e3ea3aa7cb047c33792a484466e105f9ffd88cc1c508bf73dcafabed42e",
+          "declared_byte_length": 158640
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\long_life_food",
+      "extraction": {
+        "status": "pass",
+        "vertices": 4074,
+        "triangles": 4712,
+        "mesh_instances": 4,
+        "triangle_primitives": 4,
+        "animation_count_ignored": 0,
+        "obj_sha256": "4b6404ff3bc8ac44a261208cb69d7b6295d9b9e190dda01a652fc1fde978209e",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\long_life_food\\geometry.obj",
+          "input_sha256": "4b6404ff3bc8ac44a261208cb69d7b6295d9b9e190dda01a652fc1fde978209e",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 4074,
+          "used_vertices": 4074,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 2362,
+          "triangles": 4712,
+          "connected_components_by_exact_welded_vertex": 5,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 4.316850286795081e-07,
+          "edge_incidence_histogram": {
+            "2": 7068
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "russian_food_cans_01",
+      "candidate_class": "food",
+      "catalog_category": "Food & Kitchen/Packaged & Pantry",
+      "catalog_tags": [
+        "containers",
+        "props",
+        "food"
+      ],
+      "catalog_polycount": 1348,
+      "catalog_files_hash": "4d4d5761308fe3c436c571802068d033dcaabc60",
+      "authors": {
+        "Kosan Aziz": "All"
+      },
+      "description": "Free 4K model: three Russian pantry items - two dented metal cans and a salt carton with worn, faded labels and realistic scratched-metal textures.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/russian_food_cans_01",
+        "files_json_sha256": "65c938c0c270a0484f28edf72820d6b17703856f882f7f34a85a23948d716423",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Kosan Aziz": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/russian_food_cans_01/russian_food_cans_01_1k.gltf",
+          "api_md5": "a9bc79ca5c80203ebc5e602aa31075fb",
+          "bytes": 5587,
+          "sha256": "13ac2f451403a95fda749d822e6911abc0ae2db682467b97a2da1adbaf18fada"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/russian_food_cans_01/russian_food_cans_01.bin",
+          "api_md5": "0abf139e24697f4ae88224df21a4015c",
+          "bytes": 32144,
+          "sha256": "8d2470449464756e656401478e16987cfd1a4aaa3635194cff56191adf9015cf",
+          "declared_byte_length": 32144
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\russian_food_cans_01",
+      "extraction": {
+        "status": "pass",
+        "vertices": 874,
+        "triangles": 1348,
+        "mesh_instances": 3,
+        "triangle_primitives": 3,
+        "animation_count_ignored": 0,
+        "obj_sha256": "e55094a3c8752ab4b38a4305641cf1f3a1bd873aadcebae730ddd157f90d3906",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\russian_food_cans_01\\geometry.obj",
+          "input_sha256": "e55094a3c8752ab4b38a4305641cf1f3a1bd873aadcebae730ddd157f90d3906",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 874,
+          "used_vertices": 874,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 728,
+          "triangles": 1348,
+          "connected_components_by_exact_welded_vertex": 5,
+          "boundary_edges": 96,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 5.061902225867675e-07,
+          "edge_incidence_histogram": {
+            "2": 1974,
+            "1": 96
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "strawberry_chocolate_cake",
+      "candidate_class": "food",
+      "catalog_category": "Food & Kitchen/Prepared Food/Cakes & Pastries",
+      "catalog_tags": [
+        "props",
+        "food"
+      ],
+      "catalog_polycount": 27054,
+      "catalog_files_hash": "a441726fcf88501501868c20037cfbf7a88f82bd",
+      "authors": {
+        "Kuutti Siitonen": "All"
+      },
+      "description": "Free 8K model of a rustic chocolate cake topped with glossy strawberry slices and chocolate shavings. Rich texture and hand-made look.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/strawberry_chocolate_cake",
+        "files_json_sha256": "badd5cde4ca837c07e4a459e1661c87496d9ef00da85b3b87dda13aa809ff6f2",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Kuutti Siitonen": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/strawberry_chocolate_cake/strawberry_chocolate_cake_1k.gltf",
+          "api_md5": "060570af2cd543750b34d5a520dcc695",
+          "bytes": 2933,
+          "sha256": "cae0a3cf0c83d04606d04badfcf06f6f5408df456e4d0c4e13d6f0ba52b085c2"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/strawberry_chocolate_cake/strawberry_chocolate_cake.bin",
+          "api_md5": "4d0586780a0c750d3be11676476faf11",
+          "bytes": 661780,
+          "sha256": "c7245b0f1aaefc170631d7fd2c4a32321334df0ae72a0adddf55a2b008776d61",
+          "declared_byte_length": 661780
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\strawberry_chocolate_cake",
+      "extraction": {
+        "status": "pass",
+        "vertices": 15608,
+        "triangles": 27054,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "1c5e6f278726e5db139e19589e0d8bc0c3db5bdf099194324b50d3f8cb820036",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\strawberry_chocolate_cake\\geometry.obj",
+          "input_sha256": "1c5e6f278726e5db139e19589e0d8bc0c3db5bdf099194324b50d3f8cb820036",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 15608,
+          "used_vertices": 15608,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 13533,
+          "triangles": 27054,
+          "connected_components_by_exact_welded_vertex": 7,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 2.2596521651219528e-07,
+          "edge_incidence_histogram": {
+            "2": 40581
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "sweet_potato",
+      "candidate_class": "food",
+      "catalog_category": "Food & Kitchen/Produce/Vegetables",
+      "catalog_tags": [
+        "food",
+        "nature"
+      ],
+      "catalog_polycount": 2042,
+      "catalog_files_hash": "98f8a5cf6ad2b618876a46b404caaf53568a84d7",
+      "authors": {
+        "Jan Martens": "All"
+      },
+      "description": "Free 8K model - realistic oblong sweet potato with dusty red skin, dirt, scuffs, root scars and tiny lenticels; organic, raw tuber detail.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/sweet_potato",
+        "files_json_sha256": "15a51755aad7dd86dd9c922c88f844d01d2c58051e1dd7e701ce32ae9e62556f",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Jan Martens": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/sweet_potato/sweet_potato_1k.gltf",
+          "api_md5": "b98aed418751d30349734b63b9c2803e",
+          "bytes": 2778,
+          "sha256": "36a226b95a63b2e22711d75e17818f33f99a17e54737e5469a8c7d2a41896097"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/sweet_potato/sweet_potato.bin",
+          "api_md5": "99cf4fdf834236f7bac73f432b42fb6e",
+          "bytes": 50044,
+          "sha256": "37608ecca6f9a9c2d25bc166819fb56f2a61076247e732852239662d75295f82",
+          "declared_byte_length": 50044
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\sweet_potato",
+      "extraction": {
+        "status": "pass",
+        "vertices": 1181,
+        "triangles": 2042,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "3df03f3c453f77167aadc7706a01d94421f68fa7f48893f71bc5eb574cf96337",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\sweet_potato\\geometry.obj",
+          "input_sha256": "3df03f3c453f77167aadc7706a01d94421f68fa7f48893f71bc5eb574cf96337",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 1181,
+          "used_vertices": 1181,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 1023,
+          "triangles": 2042,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 2.7474792415110814e-06,
+          "edge_incidence_histogram": {
+            "2": 3063
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "wooden_cutting_board",
+      "candidate_class": "food",
+      "catalog_category": "Food & Kitchen/Utensils/Cutting Boards",
+      "catalog_tags": [
+        "props",
+        "food"
+      ],
+      "catalog_polycount": 3520,
+      "catalog_files_hash": "bf62fd6c3b52e068d9f8f47a30ede3363c206b75",
+      "authors": {
+        "Kuutti Siitonen": "All"
+      },
+      "description": "Free 8K wooden cutting board model: thick, worn hardwood planks with scratched surface, juice groove, rounded edges and realistic weathered patina.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/wooden_cutting_board",
+        "files_json_sha256": "0834a5c098f2de05ca8b6a3818a6def04d0470f64e65153a10e493eebf61ed66",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Kuutti Siitonen": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wooden_cutting_board/wooden_cutting_board_1k.gltf",
+          "api_md5": "557750a30841a91f5d9a8f734bd9ee20",
+          "bytes": 2852,
+          "sha256": "89fa89f6987c5087c0c7a8ac8ccbe451cfa8976ae46377d83a423e658cff9de4"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/wooden_cutting_board/wooden_cutting_board.bin",
+          "api_md5": "ce582ea49488bb7def153bdf37082016",
+          "bytes": 94688,
+          "sha256": "d7fa7549afcae99eb4739dfb13039f1e56f03327c2936cb021bfd05c3afad839",
+          "declared_byte_length": 94688
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\wooden_cutting_board",
+      "extraction": {
+        "status": "pass",
+        "vertices": 2299,
+        "triangles": 3520,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "a09dd84e1ca0104a29674f7f3c61480f14b77f4036429de3999161a64bd92a6f",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\wooden_cutting_board\\geometry.obj",
+          "input_sha256": "a09dd84e1ca0104a29674f7f3c61480f14b77f4036429de3999161a64bd92a6f",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 2299,
+          "used_vertices": 2299,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 1762,
+          "triangles": 3520,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 1.3761074730327604e-06,
+          "edge_incidence_histogram": {
+            "2": 5280
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "yellow_onion",
+      "candidate_class": "food",
+      "catalog_category": "Food & Kitchen/Produce/Vegetables",
+      "catalog_tags": [
+        "props",
+        "food"
+      ],
+      "catalog_polycount": 5444,
+      "catalog_files_hash": "f46b76af3140503b588d8569bb3e12285b78e4c9",
+      "authors": {
+        "Kuutti Siitonen": "All"
+      },
+      "description": "Free 8K model of a yellow onion with realistic papery skin, warm golden-brown tones, fine surface detail, and natural blemishes.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/yellow_onion",
+        "files_json_sha256": "7d4527e6c1182e2a9dd63ff4cde23fe5bab3bcbcefdf8bda17fc9111c03be13d",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Kuutti Siitonen": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/yellow_onion/yellow_onion_1k.gltf",
+          "api_md5": "dae6fea89c74167e9140866b0b16201d",
+          "bytes": 2785,
+          "sha256": "0d4aaa4046c5b471ea7f9197c453f3d48699bc85e06fd13606c8ea09a1dce699"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/yellow_onion/yellow_onion.bin",
+          "api_md5": "d85feec8c46d2aa13479cabbaf6a27cc",
+          "bytes": 139832,
+          "sha256": "586c1e459e31e0647d090df4497e88c4e905e598607e9632590fb74cce7ef5f5",
+          "declared_byte_length": 139832
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\yellow_onion",
+      "extraction": {
+        "status": "pass",
+        "vertices": 3349,
+        "triangles": 5444,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "52755ebe1898c30c7ce585c122f6f34a6dd5a01b329dd06dc6e2624c3d235c5a",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\yellow_onion\\geometry.obj",
+          "input_sha256": "52755ebe1898c30c7ce585c122f6f34a6dd5a01b329dd06dc6e2624c3d235c5a",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 3349,
+          "used_vertices": 3349,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 2720,
+          "triangles": 5444,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 4.039910305245884e-08,
+          "edge_incidence_histogram": {
+            "2": 8166
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "Drill_01",
+      "candidate_class": "tools",
+      "catalog_category": "Tools & Equipment/Power Tools/Drills",
+      "catalog_tags": [
+        "props",
+        "tools",
+        "electronics",
+        "collection: the_shed"
+      ],
+      "catalog_polycount": 2926,
+      "catalog_files_hash": "09a08d9e60a537490591e142ddef14428a140950",
+      "authors": {
+        "Fernando Quinn": "All"
+      },
+      "description": "Free 4K model of a cordless drill with lime plastic body, black rubber grip, metal chuck and 18V lithium-ion battery details.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/Drill_01",
+        "files_json_sha256": "3b1d71d5c6b98990de97a63715059ee3928bb555735e10434e28dd4a39b4816c",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Fernando Quinn": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/Drill_01/Drill_01_1k.gltf",
+          "api_md5": "688cb0d5c1856bc6c45fdd19c68eb234",
+          "bytes": 2637,
+          "sha256": "b162c83a8e35c869aef4f50e2cd80a750be248389e829f6cf9ced73ba094b9db"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/Drill_01/Drill_01.bin",
+          "api_md5": "ddba74e02f045bcfaacb687bccf5a855",
+          "bytes": 90100,
+          "sha256": "0353e743c05051546945fd2d79e9c96bfad7ad387e0d47bc5d408d78ae7b9fe8",
+          "declared_byte_length": 90100
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\Drill_01",
+      "extraction": {
+        "status": "pass",
+        "vertices": 2267,
+        "triangles": 2926,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "82aa59557fc3e8d4a8f341a006ed6540b72e89d99e7384ca7eb377292d24f375",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\Drill_01\\geometry.obj",
+          "input_sha256": "82aa59557fc3e8d4a8f341a006ed6540b72e89d99e7384ca7eb377292d24f375",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 2267,
+          "used_vertices": 2267,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 1662,
+          "triangles": 2926,
+          "connected_components_by_exact_welded_vertex": 22,
+          "boundary_edges": 362,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 4.8821645944021547e-11,
+          "edge_incidence_histogram": {
+            "2": 4208,
+            "1": 362
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "combination_wrench",
+      "candidate_class": "tools",
+      "catalog_category": "Tools & Equipment/Hand Tools/Wrenches & Spanners",
+      "catalog_tags": [
+        "collection: project_lighthouse",
+        "tools",
+        "industrial"
+      ],
+      "catalog_polycount": 1986,
+      "catalog_files_hash": "66f73753979a340ab6fa34460f7e4085ca7c861a",
+      "authors": {
+        "BKS": "All"
+      },
+      "description": "Free 4K model of a steel combination wrench with open and 12\u2011point box ends, crisp chamfers, brushed metal, and realistic wear, scratches, and grime.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/combination_wrench",
+        "files_json_sha256": "e578361ce526e7df66cdc71e8f60f7124e7a2a56fcdf700fc0d580de5427fe80",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "BKS": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/combination_wrench/combination_wrench_1k.gltf",
+          "api_md5": "0db7a2ced7322780480923a532c860fa",
+          "bytes": 2828,
+          "sha256": "9a04c36b03f25550495c32e36522b603b23b30ad4eb5f55c1bb20cfc41d64444"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/combination_wrench/combination_wrench.bin",
+          "api_md5": "3091a90fc9d13c3faf92abfa6a815070",
+          "bytes": 65676,
+          "sha256": "799674a7f462991b17badd71e32d51fe92b3f8d88156ad38663c1da8d441e8c3",
+          "declared_byte_length": 65676
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\combination_wrench",
+      "extraction": {
+        "status": "pass",
+        "vertices": 1680,
+        "triangles": 1986,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "4fbf983701c87f9aa6e7b477f2095cc9dd33769b25051c86ca56239b9a4483a9",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\combination_wrench\\geometry.obj",
+          "input_sha256": "4fbf983701c87f9aa6e7b477f2095cc9dd33769b25051c86ca56239b9a4483a9",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 1680,
+          "used_vertices": 1680,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 993,
+          "triangles": 1986,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 3.2209164415499345e-07,
+          "edge_incidence_histogram": {
+            "2": 2979
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "cross_pein_hammer",
+      "candidate_class": "tools",
+      "catalog_category": "Tools & Equipment/Hand Tools/Hammers & Mallets",
+      "catalog_tags": [
+        "collection: project_lighthouse",
+        "props",
+        "tools"
+      ],
+      "catalog_polycount": 2124,
+      "catalog_files_hash": "a92f2d9be69db49e6aacc1cef8c38d88f80a14a5",
+      "authors": {
+        "Tics": "All"
+      },
+      "description": "Free 8k model of a weathered cross-pein hammer - scuffed steel head and knotted wooden handle with realistic wear, dents, and grain.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/cross_pein_hammer",
+        "files_json_sha256": "92ada6ca0c23e50b1857fbd189814141c3f41419bc855a9f9b95cdc815cdb526",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Tics": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/cross_pein_hammer/cross_pein_hammer_1k.gltf",
+          "api_md5": "40fb1bea51971e9bfed6dd5a1900e4d7",
+          "bytes": 2819,
+          "sha256": "c198c0d9213a7ee9d6872f8c1edd7e2c0cad3814d173d31127ff2812c8895a6c"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/cross_pein_hammer/cross_pein_hammer.bin",
+          "api_md5": "0eac8ed75a04d4e522ec8364152ba212",
+          "bytes": 58568,
+          "sha256": "dbf5c3691425c75ae60cbba13455125daddc51b05ebe7dad93e4a05875394c9c",
+          "declared_byte_length": 58568
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\cross_pein_hammer",
+      "extraction": {
+        "status": "pass",
+        "vertices": 1432,
+        "triangles": 2124,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "c9a360d361e1e0d4f21332d15bea9ce928b4c37cc237775906011656d06a6fc6",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\cross_pein_hammer\\geometry.obj",
+          "input_sha256": "c9a360d361e1e0d4f21332d15bea9ce928b4c37cc237775906011656d06a6fc6",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 1432,
+          "used_vertices": 1432,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 1064,
+          "triangles": 2124,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 2.3204918242173653e-08,
+          "edge_incidence_histogram": {
+            "2": 3186
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "crowbar_01",
+      "candidate_class": "tools",
+      "catalog_category": "Tools & Equipment/Hand Tools/Pry Bars",
+      "catalog_tags": [
+        "tools",
+        "industrial",
+        "props",
+        "collection: the_shed"
+      ],
+      "catalog_polycount": 2300,
+      "catalog_files_hash": "6298bc964de4bce459d682181cb7ef9e827cf380",
+      "authors": {
+        "Alexander Otterbeck": "All"
+      },
+      "description": "Free 8K model - weathered metal crowbar with chipped paint, rust and grime; bent shaft and worn pry/nail-puller ends.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/crowbar_01",
+        "files_json_sha256": "880c575e5045c79f4b629b9025f83fdf8aeeba3b562048d2220982ce928b0da1",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Alexander Otterbeck": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/crowbar_01/crowbar_01_1k.gltf",
+          "api_md5": "b3cc9d75cecb82956227a4449c02921a",
+          "bytes": 2741,
+          "sha256": "bb1d8974df16b2d75a786b2e019a0382a38aacab9850efe94df40899c7d0bab3"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/crowbar_01/crowbar_01.bin",
+          "api_md5": "5fe50025f7bdc916bc704db503a8ca79",
+          "bytes": 58664,
+          "sha256": "85e90d3ac56ace801b3036c806f9578aed78cce85724aa01b7c5b32e8606996d",
+          "declared_byte_length": 58664
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\crowbar_01",
+      "extraction": {
+        "status": "pass",
+        "vertices": 1402,
+        "triangles": 2300,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "59da15c75d108ebe76788d1dda0e928ee21937b780a45a38c7c760d266ca1921",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\crowbar_01\\geometry.obj",
+          "input_sha256": "59da15c75d108ebe76788d1dda0e928ee21937b780a45a38c7c760d266ca1921",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 1402,
+          "used_vertices": 1402,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 1152,
+          "triangles": 2300,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 1.5131562523550027e-07,
+          "edge_incidence_histogram": {
+            "2": 3450
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "flathead_screwdriver",
+      "candidate_class": "tools",
+      "catalog_category": "Tools & Equipment/Hand Tools/Screwdrivers",
+      "catalog_tags": [
+        "tools",
+        "props",
+        "industrial",
+        "collection: the_shed"
+      ],
+      "catalog_polycount": 2300,
+      "catalog_files_hash": "a14b91cd2546247ebc1b8b12c2c8ac5efefcb9e6",
+      "authors": {
+        "Dylan Detwiller": "All"
+      },
+      "description": "Free 4K model: weathered flathead screwdriver with carved wooden handle, corroded ferrule and worn steel shaft bearing paint marks and realistic workshop wear.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/flathead_screwdriver",
+        "files_json_sha256": "c477077f345276a03ccb0d0016ce4aed247ee4fe66ed6d97e12e0819f7b8b90d",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Dylan Detwiller": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/flathead_screwdriver/flathead_screwdriver_1k.gltf",
+          "api_md5": "779dda3407d12f626d6b4c328fee1074",
+          "bytes": 2848,
+          "sha256": "68518d28dcd55f26ba68fbdeec7b7a6b2b2fa688f96519f65fceac32b230d60a"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/flathead_screwdriver/flathead_screwdriver.bin",
+          "api_md5": "69b4ed86011a6b42627a3ee947dd55e1",
+          "bytes": 63656,
+          "sha256": "d6cf744aa352c7ed92532c2aaa98e84baf2936361aa07025a6665a8d9ca0b9b0",
+          "declared_byte_length": 63656
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\flathead_screwdriver",
+      "extraction": {
+        "status": "pass",
+        "vertices": 1558,
+        "triangles": 2300,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "8765cf08da70457bc560a91a30c47583770c947e88a0a79280414f9c69946b95",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\flathead_screwdriver\\geometry.obj",
+          "input_sha256": "8765cf08da70457bc560a91a30c47583770c947e88a0a79280414f9c69946b95",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 1558,
+          "used_vertices": 1558,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 1179,
+          "triangles": 2300,
+          "connected_components_by_exact_welded_vertex": 3,
+          "boundary_edges": 52,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 8.375156601682415e-08,
+          "edge_incidence_histogram": {
+            "2": 3424,
+            "1": 52
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "hand_plane_no4",
+      "candidate_class": "tools",
+      "catalog_category": "Tools & Equipment/Hand Tools",
+      "catalog_tags": [
+        "tools",
+        "collection: the_shed"
+      ],
+      "catalog_polycount": 8220,
+      "catalog_files_hash": "73089c692d816133d2c9be2553498a9deac54bf2",
+      "authors": {
+        "Satyaki Mandal": "All"
+      },
+      "description": "Free 8K model of a vintage No.4 wooden hand plane, worn wood handles, patinated steel body, brass adjustment knobs and chips, with richly detailed workshop-worn textures.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/hand_plane_no4",
+        "files_json_sha256": "98ebfd1c9b71f1ade5f11a0f7f36ca66181cc2e96f439a91aadb938ae19f1aa5",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Satyaki Mandal": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/hand_plane_no4/hand_plane_no4_1k.gltf",
+          "api_md5": "b55927f3de30b83c6dd1761f92a1206d",
+          "bytes": 2917,
+          "sha256": "2c16b27d3ad132d46bee11fca83ceb63ec957fc042af4343fb4830fe3da7e22e"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/hand_plane_no4/hand_plane_no4.bin",
+          "api_md5": "100169419da665726938e1a5bcc24121",
+          "bytes": 229256,
+          "sha256": "5c4b28d2a931f0e66de91dd976c04f109419a8d0bda527096d2b4d4d0e00b9f7",
+          "declared_byte_length": 229256
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\hand_plane_no4",
+      "extraction": {
+        "status": "pass",
+        "vertices": 5623,
+        "triangles": 8220,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "bdb0a76ed8f633b092d4f0378a52372f9486eb77365750c14be3d1741e806484",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\hand_plane_no4\\geometry.obj",
+          "input_sha256": "bdb0a76ed8f633b092d4f0378a52372f9486eb77365750c14be3d1741e806484",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 5623,
+          "used_vertices": 5623,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 4362,
+          "triangles": 8220,
+          "connected_components_by_exact_welded_vertex": 22,
+          "boundary_edges": 468,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 1.0777667972945149e-11,
+          "edge_incidence_histogram": {
+            "2": 12096,
+            "1": 468
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "handsaw_wood",
+      "candidate_class": "tools",
+      "catalog_category": "Tools & Equipment/Hand Tools/Saws & Cutting",
+      "catalog_tags": [
+        "props",
+        "tools",
+        "industrial",
+        "collection: the_shed"
+      ],
+      "catalog_polycount": 2548,
+      "catalog_files_hash": "657045bf8621c94eab8bf63f46781d5e0c92441c",
+      "authors": {
+        "Konrad Sza\u0142ankiewicz": "All"
+      },
+      "description": "Free 4K model of a worn handsaw with scuffed wooden handle, rust-speckled scratched steel blade and aged rivets, full of rustic workshop character.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/handsaw_wood",
+        "files_json_sha256": "8c5e5a47960a4a2f5f4a02a4b0eb9a5fbe0ef799b0dde2024c78066ef7aa01da",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Konrad Sza\u0142ankiewicz": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/handsaw_wood/handsaw_wood_1k.gltf",
+          "api_md5": "2b685f9c8f55c9d7b6c1268be3357eae",
+          "bytes": 2762,
+          "sha256": "b2815ea7de69c2cec56f16cbdf65822aa0380673c76039edac1f92b9a6c4da79"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/handsaw_wood/handsaw_wood.bin",
+          "api_md5": "a6c9236ed8f9201bbd13f1ef984b21ca",
+          "bytes": 89624,
+          "sha256": "15563872e8c8e55bf24b00f1aafb9722d38d06f8c395bc7441914543761fc58b",
+          "declared_byte_length": 89624
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\handsaw_wood",
+      "extraction": {
+        "status": "pass",
+        "vertices": 2323,
+        "triangles": 2548,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "56b6ed41681417ad9a50677c5f0a4f3ee65da2be929a6582cf915bb66b260288",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\handsaw_wood\\geometry.obj",
+          "input_sha256": "56b6ed41681417ad9a50677c5f0a4f3ee65da2be929a6582cf915bb66b260288",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 2323,
+          "used_vertices": 2323,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 1329,
+          "triangles": 2548,
+          "connected_components_by_exact_welded_vertex": 8,
+          "boundary_edges": 100,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 7.3121731880009166e-09,
+          "edge_incidence_histogram": {
+            "2": 3772,
+            "1": 100
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "hatchet",
+      "candidate_class": "tools",
+      "catalog_category": "Tools & Equipment/Hand Tools/Axes & Hatchets",
+      "catalog_tags": [
+        "tools"
+      ],
+      "catalog_polycount": 5250,
+      "catalog_files_hash": "ec44e3d885af1f2f12aea3535a8700930f52f265",
+      "authors": {
+        "James Ray Cock": "Texturing",
+        "Ulan Cabanilla": "modeling"
+      },
+      "description": "Free 8K hatchet model: This realistic compact tool has a worn steel head and a rubberised wood grip. It is ideal for camping, chopping firewood, forestry, or as a weapon.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/hatchet",
+        "files_json_sha256": "876d685a43e0b1eb52515f7b2a4c90b1544f42b73c3b7bc765d20b467f5705f2",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "James Ray Cock": "Texturing",
+          "Ulan Cabanilla": "modeling"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/hatchet/hatchet_1k.gltf",
+          "api_md5": "df2b0ec1772498e34029564dd4a69629",
+          "bytes": 2718,
+          "sha256": "db11c85ef102708ca71a4a53a6367703fd325be6a7bc7d06522d37eaab7dbf61"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/hatchet/hatchet.bin",
+          "api_md5": "8bd5390cfa607c765015987b4ca08560",
+          "bytes": 164524,
+          "sha256": "f4dc3fe12fc317eadae59d1c3ebd2ce8475bbfe0743c91a3bb754648781fda4b",
+          "declared_byte_length": 164524
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\hatchet",
+      "extraction": {
+        "status": "pass",
+        "vertices": 4157,
+        "triangles": 5250,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "6782ce14504000ba43ec4fb4029eb88c93da36d1a1c732e043dadec8f00d43b5",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\hatchet\\geometry.obj",
+          "input_sha256": "6782ce14504000ba43ec4fb4029eb88c93da36d1a1c732e043dadec8f00d43b5",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 4157,
+          "used_vertices": 4157,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 2680,
+          "triangles": 5250,
+          "connected_components_by_exact_welded_vertex": 5,
+          "boundary_edges": 108,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 1.575801352935159e-07,
+          "edge_incidence_histogram": {
+            "2": 7821,
+            "1": 108
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "industrial_microscope",
+      "candidate_class": "tools",
+      "catalog_category": "Electronics & Appliances/Devices & Instruments/Optical Instruments",
+      "catalog_tags": [
+        "collection: project_lighthouse",
+        "industrial",
+        "tools",
+        "appliances"
+      ],
+      "catalog_polycount": 16598,
+      "catalog_files_hash": "8a478e01a8143546913bb0c48712bdd06dcac2ee",
+      "authors": {
+        "Lukas Walzer": "All"
+      },
+      "description": "Free 4K model of a vintage industrial microscope with binocular head, triple objective turret, textured cast-metal body, worn paint, and detailed knobs.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/industrial_microscope",
+        "files_json_sha256": "45aaa386c242cb1a1328e87fc96bc281084abbd41c77023f7cb53aae28399107",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Lukas Walzer": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/industrial_microscope/industrial_microscope_1k.gltf",
+          "api_md5": "472c893cc84e3f7e9f76454aba612e42",
+          "bytes": 4270,
+          "sha256": "91151cd484cf8f991c822f53a48487b8fa0a228cd7ccf63fbba625e1d70abb2a"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/industrial_microscope/industrial_microscope.bin",
+          "api_md5": "be2a9782f02eabcc9a02f67dd7c6fd33",
+          "bytes": 602404,
+          "sha256": "a99e95a04673b96f7d6eb8cd68e204a76abde77c7dad3bcaea79e55219aeea40",
+          "declared_byte_length": 602404
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\industrial_microscope",
+      "extraction": {
+        "status": "pass",
+        "vertices": 15713,
+        "triangles": 16598,
+        "mesh_instances": 2,
+        "triangle_primitives": 2,
+        "animation_count_ignored": 0,
+        "obj_sha256": "8847d0f80870b636efce8cae743cf0b289423676e34d7dfb98036651fb8d66be",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\industrial_microscope\\geometry.obj",
+          "input_sha256": "8847d0f80870b636efce8cae743cf0b289423676e34d7dfb98036651fb8d66be",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 15713,
+          "used_vertices": 15713,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 8770,
+          "triangles": 16598,
+          "connected_components_by_exact_welded_vertex": 77,
+          "boundary_edges": 811,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 19,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 3.675510412955188e-08,
+          "edge_incidence_histogram": {
+            "2": 24463,
+            "1": 811,
+            "3": 19
+          },
+          "topology_status": "fail",
+          "topology_errors": [
+            "19 nonmanifold edges"
+          ],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "fail"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "ladder_sectioned_01",
+      "candidate_class": "tools",
+      "catalog_category": "Tools & Equipment/Workshop Equipment/Ladders",
+      "catalog_tags": [
+        "industrial",
+        "tools",
+        "collection: the_shed"
+      ],
+      "catalog_polycount": 29140,
+      "catalog_files_hash": "13918cbf2df2d0f0321d29546ed2da162b44887a",
+      "authors": {
+        "MP": "All"
+      },
+      "description": "Free 4K sectioned folding metal ladder with flat treads, orange safety caps and straps, telescoping industrial finish with light wear.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/ladder_sectioned_01",
+        "files_json_sha256": "4101f9563c4707244f915c053d68add92443b2f1ec308963b31859210902e572",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "MP": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/ladder_sectioned_01/ladder_sectioned_01_1k.gltf",
+          "api_md5": "32b611a28cddb9bc4e4d1081a93e3f64",
+          "bytes": 7585,
+          "sha256": "68df434461bc1ed2dff4ec10bd34c14a3b319706da512a520f4291abe6fb5132"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/ladder_sectioned_01/ladder_sectioned_01.bin",
+          "api_md5": "9e60e756a893539f19495ea497ad825c",
+          "bytes": 914488,
+          "sha256": "e5d5265fa87cec63bb60a5ec54b787235d257b4e6c45ab7edcc68e7cbb515206",
+          "declared_byte_length": 914488
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\ladder_sectioned_01",
+      "extraction": {
+        "status": "pass",
+        "vertices": 23114,
+        "triangles": 29140,
+        "mesh_instances": 4,
+        "triangle_primitives": 4,
+        "animation_count_ignored": 0,
+        "obj_sha256": "2a8fc141725d0873fff98e469fd57925eec458148be7c290a8414378ba17aa7c",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\ladder_sectioned_01\\geometry.obj",
+          "input_sha256": "2a8fc141725d0873fff98e469fd57925eec458148be7c290a8414378ba17aa7c",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 23114,
+          "used_vertices": 23114,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 16751,
+          "triangles": 29140,
+          "connected_components_by_exact_welded_vertex": 139,
+          "boundary_edges": 4504,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 16,
+          "minimum_double_area": 7.73626944423039e-08,
+          "edge_incidence_histogram": {
+            "2": 41458,
+            "1": 4504
+          },
+          "topology_status": "fail",
+          "topology_errors": [
+            "16 inconsistently oriented edges"
+          ],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "fail"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "brass_vase_03",
+      "candidate_class": "decor",
+      "catalog_category": "Decor & Art/Vases & Vessels/Metal Vases",
+      "catalog_tags": [
+        "containers",
+        "props",
+        "decorative",
+        "vases"
+      ],
+      "catalog_polycount": 2616,
+      "catalog_files_hash": "48ebe6ee6497bab25b1a3bb3f242d629e1549cbf",
+      "authors": {
+        "Rico Cilliers": "All"
+      },
+      "description": "Free 8K brass vase model: ornate engraved swirls, warm aged copper-gold patina, polished highlights and pedestal base with subtle tool marks.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/brass_vase_03",
+        "files_json_sha256": "9572671838d6a12a223d4c21900897fe9f8bfff625a3164343cb8505cdedcae6",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Rico Cilliers": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/brass_vase_03/brass_vase_03_1k.gltf",
+          "api_md5": "b1baf4963d22a4ddb28373055c379f8f",
+          "bytes": 2668,
+          "sha256": "b65379454ee1c8a608e757b513dc72013cfc5b4156deaf33a46e4f58338b5e8c"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/brass_vase_03/brass_vase_03.bin",
+          "api_md5": "be8d72f282ef5de9fdc735e45edf8a00",
+          "bytes": 65136,
+          "sha256": "55332659811893d1903cbff6aebee7ea4b2824d330171bd9cb20f80f305c4aeb",
+          "declared_byte_length": 65136
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\brass_vase_03",
+      "extraction": {
+        "status": "pass",
+        "vertices": 1545,
+        "triangles": 2616,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "a0c6fe97076772275a6b47681ffdc41a79e41b9b195d9a113937db17e9669576",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\brass_vase_03\\geometry.obj",
+          "input_sha256": "a0c6fe97076772275a6b47681ffdc41a79e41b9b195d9a113937db17e9669576",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 1545,
+          "used_vertices": 1545,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 1321,
+          "triangles": 2616,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 24,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 1.8236924762549305e-06,
+          "edge_incidence_histogram": {
+            "2": 3912,
+            "1": 24
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "brass_vase_04",
+      "candidate_class": "decor",
+      "catalog_category": "Decor & Art/Vases & Vessels/Metal Vases",
+      "catalog_tags": [
+        "containers",
+        "props",
+        "vases",
+        "dishes"
+      ],
+      "catalog_polycount": 2760,
+      "catalog_files_hash": "22ad897a42006662ee32937fe64fa0b6fdf50a6a",
+      "authors": {
+        "Rico Cilliers": "All"
+      },
+      "description": "Free 8K brass vase model with tall pitcher form, ornate handle and subtle engraved patterns; aged copper-brass patina, scratches and wear for vintage character.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/brass_vase_04",
+        "files_json_sha256": "15758f37cf6518ac3eddf361f8c8ff5bd2ee558d96e005cf7da515d815380418",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Rico Cilliers": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/brass_vase_04/brass_vase_04_1k.gltf",
+          "api_md5": "c0ae37b9e614a0125d249213424d2577",
+          "bytes": 2677,
+          "sha256": "62d32bf08cac959ef4b07d3c36261ec34ec73a48fd635360f9fc2d2076728204"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/brass_vase_04/brass_vase_04.bin",
+          "api_md5": "870b9b1d2a6cb2f236afc98fb80c9215",
+          "bytes": 68208,
+          "sha256": "d28d50c37cf772eca34c76359bb8a092b4a2cf407be9f9e4951a9ce15ee4184f",
+          "declared_byte_length": 68208
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\brass_vase_04",
+      "extraction": {
+        "status": "pass",
+        "vertices": 1614,
+        "triangles": 2760,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "dbe28cd080bb6cfbf62c9747461bc09ca01aa1027cf4d8583fc3dae0565b7052",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\brass_vase_04\\geometry.obj",
+          "input_sha256": "dbe28cd080bb6cfbf62c9747461bc09ca01aa1027cf4d8583fc3dae0565b7052",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 1614,
+          "used_vertices": 1614,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 1400,
+          "triangles": 2760,
+          "connected_components_by_exact_welded_vertex": 2,
+          "boundary_edges": 38,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 5.076642443762365e-07,
+          "edge_incidence_histogram": {
+            "2": 4121,
+            "1": 38
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "bronze_ray_statue",
+      "candidate_class": "decor",
+      "catalog_category": "Decor & Art/Sculptures & Figurines/Animal Figures",
+      "catalog_tags": [
+        "decorative",
+        "collection: project_lighthouse"
+      ],
+      "catalog_polycount": 1844,
+      "catalog_files_hash": "b9b7e66c03fea3184df98729b621995efe1b09d9",
+      "authors": {
+        "Tina": "All"
+      },
+      "description": "Free 4K model of a bronze manta ray statue on a dark wood base, with polished patina, detailed speckled surface, sharp fins and an elegant flowing pose.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/bronze_ray_statue",
+        "files_json_sha256": "34c5ebe7c78cc52ba64ba40fbbd8655e07d05bc9dcf69671bdc55747d731e555",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Tina": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/bronze_ray_statue/bronze_ray_statue_1k.gltf",
+          "api_md5": "e3c7100fa8a5da46ab51dcfe9ac3ee2e",
+          "bytes": 3088,
+          "sha256": "bb2cab3316b05935fd311e132298d15076af9d6ddd88980abca1dea790c6305e"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/bronze_ray_statue/bronze_ray_statue.bin",
+          "api_md5": "d08f1f1432e217201b3bc0e4347f0e88",
+          "bytes": 57080,
+          "sha256": "205a534ad4505442c95221e524b9cde889a715adc52c410d4140ded92ff1cb35",
+          "declared_byte_length": 57080
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\bronze_ray_statue",
+      "extraction": {
+        "status": "pass",
+        "vertices": 1438,
+        "triangles": 1844,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "7cc46b4acb7b695fbe1e2b2c24d3ce653e83a2a1c6fe0a3fff6dd3f2741f12ec",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\bronze_ray_statue\\geometry.obj",
+          "input_sha256": "7cc46b4acb7b695fbe1e2b2c24d3ce653e83a2a1c6fe0a3fff6dd3f2741f12ec",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 1438,
+          "used_vertices": 1438,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 935,
+          "triangles": 1844,
+          "connected_components_by_exact_welded_vertex": 3,
+          "boundary_edges": 20,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 1.19564378416931e-07,
+          "edge_incidence_histogram": {
+            "2": 2756,
+            "1": 20
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "carved_wooden_elephant",
+      "candidate_class": "decor",
+      "catalog_category": "Decor & Art/Sculptures & Figurines/Animal Figures",
+      "catalog_tags": [
+        "props",
+        "decorative"
+      ],
+      "catalog_polycount": 2752,
+      "catalog_files_hash": "bb045a04b923530a3e12f3fbac4662567f021633",
+      "authors": {
+        "Greg Zaal": "All"
+      },
+      "description": "Free 4K carved wooden elephant model with warm hand-carved grain, stylized form, smooth worn edges and subtle surface wear.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/carved_wooden_elephant",
+        "files_json_sha256": "cb0f692905b61d5ffd94466fc54a4f4edb95f95d24d5a2b14ba21b60113b1793",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Greg Zaal": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/carved_wooden_elephant/carved_wooden_elephant_1k.gltf",
+          "api_md5": "7111471b835ce5ca81e7e54cfb4599d5",
+          "bytes": 2791,
+          "sha256": "c2378354ecd283c5c8d9459b6829ef7e61bdefd6d0f7a6b2d628362bd9bbef25"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/carved_wooden_elephant/carved_wooden_elephant.bin",
+          "api_md5": "5cd91fb8045cc4bbfa0248b8d2f96b5d",
+          "bytes": 69760,
+          "sha256": "b732bc38c4e57c8630acfe8c9f1bd7623e1ba49b0c488863e13546171f283618",
+          "declared_byte_length": 69760
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\carved_wooden_elephant",
+      "extraction": {
+        "status": "pass",
+        "vertices": 1664,
+        "triangles": 2752,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "76d4e40d1f31ff2492136ca737349fe8e7826210c433f476b11605900c5a643e",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\carved_wooden_elephant\\geometry.obj",
+          "input_sha256": "76d4e40d1f31ff2492136ca737349fe8e7826210c433f476b11605900c5a643e",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 1664,
+          "used_vertices": 1664,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 1374,
+          "triangles": 2752,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 8.649834372429301e-07,
+          "edge_incidence_histogram": {
+            "2": 4128
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "ceramic_vase_01",
+      "candidate_class": "decor",
+      "catalog_category": "Decor & Art/Vases & Vessels/Ceramic Vases",
+      "catalog_tags": [
+        "vases",
+        "containers",
+        "decorative"
+      ],
+      "catalog_polycount": 2548,
+      "catalog_files_hash": "989b1a754be36032e5d643c9c333a08e218c65cf",
+      "authors": {
+        "James Ray Cock": "All"
+      },
+      "description": "Free 8K Ceramic Vase 01 - a tall, modern glossy white pot with an elegant fluted rim and clean lines; a fancy decorative vase/container for stylish interiors.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/ceramic_vase_01",
+        "files_json_sha256": "1affe5e08e1906bfaa8b3b19acb61c738c96e4d55f0d5ea4ab3fd69693b98f0a",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "James Ray Cock": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/ceramic_vase_01/ceramic_vase_01_1k.gltf",
+          "api_md5": "8f11b5472424578c2c505dee271a0868",
+          "bytes": 2706,
+          "sha256": "4e2c69eb5bbccf86e9fbf92af438464669d804c1f0eae041ee28651a5b57d91e"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/ceramic_vase_01/ceramic_vase_01.bin",
+          "api_md5": "73f8a0f911f2d377e3b925b0ae9c7d4c",
+          "bytes": 272656,
+          "sha256": "56ffadcafff3f56538d04b0b43c06c9704baeec2ac3ec286ef01c313c82906f0",
+          "declared_byte_length": 272656
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\ceramic_vase_01",
+      "extraction": {
+        "status": "pass",
+        "vertices": 6590,
+        "triangles": 10296,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "ef2ab56f9340e6dadf0747bc79b56a2be306d3c9de94ad7e7cd5c6cab4086851",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\ceramic_vase_01\\geometry.obj",
+          "input_sha256": "ef2ab56f9340e6dadf0747bc79b56a2be306d3c9de94ad7e7cd5c6cab4086851",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 6590,
+          "used_vertices": 6590,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 5150,
+          "triangles": 10296,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 6.346447924911641e-06,
+          "edge_incidence_histogram": {
+            "2": 15444
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "ceramic_vase_02",
+      "candidate_class": "decor",
+      "catalog_category": "Decor & Art/Vases & Vessels/Ceramic Vases",
+      "catalog_tags": [
+        "decorative",
+        "containers",
+        "vases"
+      ],
+      "catalog_polycount": 2756,
+      "catalog_files_hash": "0643acdbc6d663ccbc2df4d00ba30a7126f3daac",
+      "authors": {
+        "James Ray Cock": "All"
+      },
+      "description": "Free 8K model: modern painted ceramic vase with tactile clay texture, worn rim detail and classic pot silhouette - perfect for decorative interiors and props.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/ceramic_vase_02",
+        "files_json_sha256": "5768d5b85b624f829cd099bd294d92fd8338ea654fd0925c6a07a736c46b6e65",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "James Ray Cock": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/ceramic_vase_02/ceramic_vase_02_1k.gltf",
+          "api_md5": "2f49a3853a20857a2f0169a764689aa9",
+          "bytes": 2716,
+          "sha256": "1bda047833b68c2c1b190ee53a55b1aa42d30748c84739909b6ca65b2f2d76c9"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/ceramic_vase_02/ceramic_vase_02.bin",
+          "api_md5": "39b375411e2dd303ac86c17cb1ded216",
+          "bytes": 293776,
+          "sha256": "b8e13a9fc140b563526afd11bb233d3a838f03abc779824504d89186dfaacd3a",
+          "declared_byte_length": 293776
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\ceramic_vase_02",
+      "extraction": {
+        "status": "pass",
+        "vertices": 7094,
+        "triangles": 11128,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "036c9f7b75ad59857e551af15d5f111981034f6cdf00d823a1c89e49a887c83d",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\ceramic_vase_02\\geometry.obj",
+          "input_sha256": "036c9f7b75ad59857e551af15d5f111981034f6cdf00d823a1c89e49a887c83d",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 7094,
+          "used_vertices": 7094,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 5566,
+          "triangles": 11128,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 8.266210856685421e-06,
+          "edge_incidence_histogram": {
+            "2": 16692
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "ceramic_vase_03",
+      "candidate_class": "decor",
+      "catalog_category": "Decor & Art/Vases & Vessels/Ceramic Vases",
+      "catalog_tags": [
+        "containers",
+        "decorative",
+        "vases"
+      ],
+      "catalog_polycount": 2784,
+      "catalog_files_hash": "df64b230fb44e0aceff07e3dc0aa97b7ebcb1143",
+      "authors": {
+        "James Ray Cock": "All"
+      },
+      "description": "Free 8K model - tall modern painted ceramic vase: rectangular clay pot with subtle exterior texture and fancy decorative style.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/ceramic_vase_03",
+        "files_json_sha256": "3af1ed751582a42052cbc4fa18e52f952d3f7fabefa904c7f1dd888797115af0",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "James Ray Cock": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/ceramic_vase_03/ceramic_vase_03_1k.gltf",
+          "api_md5": "5c5ad889be3b7464bc87d29f0d85cd73",
+          "bytes": 2690,
+          "sha256": "72ea418ae3a761a651ea6bc4ce6daced649a2bd6c1c570227ba73af9e25d07f4"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/ceramic_vase_03/ceramic_vase_03.bin",
+          "api_md5": "4ad56bfebd58d98eb20f13a5e4fb6476",
+          "bytes": 299232,
+          "sha256": "19ced3c9a4231e0e0f0d2693661e40db15590ad99b3c84feecaa19067311fa6b",
+          "declared_byte_length": 299232
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\ceramic_vase_03",
+      "extraction": {
+        "status": "pass",
+        "vertices": 7263,
+        "triangles": 11136,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "cba450668b589cce16cdf8287072984023e117d4bcc4ed4cecfdc4adb42e8669",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\ceramic_vase_03\\geometry.obj",
+          "input_sha256": "cba450668b589cce16cdf8287072984023e117d4bcc4ed4cecfdc4adb42e8669",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 7263,
+          "used_vertices": 7263,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 5570,
+          "triangles": 11136,
+          "connected_components_by_exact_welded_vertex": 1,
+          "boundary_edges": 0,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 4.774600959690285e-07,
+          "edge_incidence_histogram": {
+            "2": 16704
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "ceramic_vase_04",
+      "candidate_class": "decor",
+      "catalog_category": "Decor & Art/Vases & Vessels/Ceramic Vases",
+      "catalog_tags": [
+        "containers",
+        "decorative",
+        "vases"
+      ],
+      "catalog_polycount": 2224,
+      "catalog_files_hash": "2f4fd4e62ce5609ec0b712f7f97a8f1cd7796c7f",
+      "authors": {
+        "James Ray Cock": "All"
+      },
+      "description": "Free 8K model: painted clay vase with modern, elegant jug silhouette, single-handle and subtle rough texture - fancy decorative pot for interiors and props.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/ceramic_vase_04",
+        "files_json_sha256": "6969d1050ab15e043a558674da14e4e135baf4116db593a215d49f1aea575f5a",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "James Ray Cock": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/ceramic_vase_04/ceramic_vase_04_1k.gltf",
+          "api_md5": "184ebeafbbf0e36534282394700d1464",
+          "bytes": 2716,
+          "sha256": "ca6461229bd6379b621396581e32400f93884fe77f7fa8abe6ddbeb64d57421b"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/ceramic_vase_04/ceramic_vase_04.bin",
+          "api_md5": "1abf7cc9d6a6b5db009320dda7738235",
+          "bytes": 239728,
+          "sha256": "00d6b5743358cba4bc78d25010b1bfc262d6cb313de8cbeffa570bb95387dfc7",
+          "declared_byte_length": 239728
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\ceramic_vase_04",
+      "extraction": {
+        "status": "pass",
+        "vertices": 5804,
+        "triangles": 9000,
+        "mesh_instances": 1,
+        "triangle_primitives": 1,
+        "animation_count_ignored": 0,
+        "obj_sha256": "7a85c49b3590061d31ed12103a6edc04da0f2add90ef8c437d283ded63b70983",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\ceramic_vase_04\\geometry.obj",
+          "input_sha256": "7a85c49b3590061d31ed12103a6edc04da0f2add90ef8c437d283ded63b70983",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 5804,
+          "used_vertices": 5804,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 4520,
+          "triangles": 9000,
+          "connected_components_by_exact_welded_vertex": 2,
+          "boundary_edges": 36,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 5.635105132311214e-07,
+          "edge_incidence_histogram": {
+            "2": 13482,
+            "1": 36
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "chinese_screen_panels",
+      "candidate_class": "decor",
+      "catalog_category": "Decor & Art/Ornaments/Room Dividers & Screens",
+      "catalog_tags": [
+        "furniture"
+      ],
+      "catalog_polycount": 784,
+      "catalog_files_hash": "b500116411a2532f0c1d870f964c7375f8df40df",
+      "authors": {
+        "Kirill Sannikov": "All"
+      },
+      "description": "Free 8K Chinese screen panels - ornate antique wooden room divider with painted peacocks, floral Asian motifs and vintage patina.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/chinese_screen_panels",
+        "files_json_sha256": "8706b7373e69931c7c78e744f0afa69cd73fe03d5d3be7823106b63dacf4c653",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Kirill Sannikov": "All"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/chinese_screen_panels/chinese_screen_panels_1k.gltf",
+          "api_md5": "757c0dbdcbb0eae54e6dfa8ea812caaa",
+          "bytes": 4225,
+          "sha256": "80eea5b87ed1355f4628c791dc14d7c45ce77888ee9314aa97d92438d43b61a2"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/chinese_screen_panels/chinese_screen_panels.bin",
+          "api_md5": "f3ec2d7d0c14165e764e930112a31616",
+          "bytes": 35936,
+          "sha256": "34a2f03180313ed4dbf6ac8dd6c0277b1b873929daf6bf8f06a209af6c9b2fc3",
+          "declared_byte_length": 35936
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\chinese_screen_panels",
+      "extraction": {
+        "status": "pass",
+        "vertices": 976,
+        "triangles": 784,
+        "mesh_instances": 2,
+        "triangle_primitives": 2,
+        "animation_count_ignored": 0,
+        "obj_sha256": "fdf0d35224508cf4786140a28c0fa4bcbb3efd830966cec9b8413303c1b27d9f",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\chinese_screen_panels\\geometry.obj",
+          "input_sha256": "fdf0d35224508cf4786140a28c0fa4bcbb3efd830966cec9b8413303c1b27d9f",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 976,
+          "used_vertices": 976,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 412,
+          "triangles": 784,
+          "connected_components_by_exact_welded_vertex": 4,
+          "boundary_edges": 32,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 2.608374898348577e-06,
+          "edge_incidence_histogram": {
+            "2": 1160,
+            "1": 32
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    },
+    {
+      "asset": "fancy_picture_frame_01",
+      "candidate_class": "decor",
+      "catalog_category": "Decor & Art/Wall Decor/Picture Frames & Art",
+      "catalog_tags": [
+        "decorative",
+        "wall decoration"
+      ],
+      "catalog_polycount": 938,
+      "catalog_files_hash": "f8fc816a4ab84e0b88d024cd7ae23bc7bbe6963f",
+      "authors": {
+        "Rob Tuytel": "Scan & Painting",
+        "Rico Cilliers": "modeling"
+      },
+      "description": "Free 8K model - ornate antique gilt picture frame with beaded and rope molding around a warm Dutch oil landscape of a mill, bridge, river and distant riders.",
+      "asset_license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "catalog_api_record": {
+        "url": "https://api.polyhaven.com/files/fancy_picture_frame_01",
+        "files_json_sha256": "4652389d8c40e76494d7ce60d8feec9f30e050fb6ad032e48a812840464561ad",
+        "files_hash_matches_catalog": false,
+        "authors": {
+          "Rob Tuytel": "Scan & Painting",
+          "Rico Cilliers": "modeling"
+        }
+      },
+      "source_files": {
+        "gltf": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/fancy_picture_frame_01/fancy_picture_frame_01_1k.gltf",
+          "api_md5": "40491160e255225326cb1c1146dd5d48",
+          "bytes": 5059,
+          "sha256": "c54803abf9e43c28a6b3fe76b38a60e827647a4f9a10747e6d4efba842289578"
+        },
+        "bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/fancy_picture_frame_01/fancy_picture_frame_01.bin",
+          "api_md5": "aeaeb6fcb58e4fa3cdd8a084d7757072",
+          "bytes": 25948,
+          "sha256": "5d5a01ce8b89f1fbea87bac0ca9ab24771f0d2827ab0308f19878007e45f442f",
+          "declared_byte_length": 25948
+        }
+      },
+      "local_asset_directory": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\fancy_picture_frame_01",
+      "extraction": {
+        "status": "pass",
+        "vertices": 635,
+        "triangles": 938,
+        "mesh_instances": 2,
+        "triangle_primitives": 2,
+        "animation_count_ignored": 0,
+        "obj_sha256": "07ab03b4189bb8195c29116f2dfa279f903dbb7d60b14b1b7ab53403293fb9fe",
+        "topology": {
+          "schema": 1,
+          "input_path": "out\\polyhaven-fresh-asset-pool-20261125\\assets\\fancy_picture_frame_01\\geometry.obj",
+          "input_sha256": "07ab03b4189bb8195c29116f2dfa279f903dbb7d60b14b1b7ab53403293fb9fe",
+          "audit_script_sha256": "4f5320ec098a712deb862071a8aeb84355d41dcd68cc92d21bae1349e144eb40",
+          "exported_vertices": 635,
+          "used_vertices": 635,
+          "unused_exported_vertices": 0,
+          "welded_vertices": 485,
+          "triangles": 938,
+          "connected_components_by_exact_welded_vertex": 2,
+          "boundary_edges": 28,
+          "duplicate_geometric_triangles": 0,
+          "degenerate_triangles": 0,
+          "nonmanifold_edges": 0,
+          "inconsistently_oriented_edges": 0,
+          "minimum_double_area": 1.2559318455522321e-06,
+          "edge_incidence_histogram": {
+            "2": 1393,
+            "1": 28
+          },
+          "topology_status": "pass",
+          "topology_errors": [],
+          "scope": "exact-coordinate welding; static geometry only; does not check semantic correctness, silhouettes, visual quality, or near-coincident seams"
+        },
+        "topology_status": "pass"
+      },
+      "acquisition_status": "pass"
+    }
+  ],
+  "completed_utc": "2026-11-24T20:37:55.694572+00:00"
+}

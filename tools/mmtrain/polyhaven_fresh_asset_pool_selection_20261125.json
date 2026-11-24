@@ -1,0 +1,1067 @@
+{
+  "schema": 1,
+  "purpose": "Fresh pre-score source pool for licensing, topology, and matched-face eligibility only; not a frozen held-out test set.",
+  "source": "Poly Haven Public API pinned catalog snapshot",
+  "catalog_sha256": "4639038ef32946ec562b03a56086c53c8edde0179a8d7140ffd79232ea4a0c23",
+  "selector_sha256": "52d31db0b6915cfdcce7e91899de5542681c5081f78ea5d46a2eab63748c21b4",
+  "previous_selection_sha256": {
+    "out\\polyhaven-candidate-intake-20261124\\selection.json": "38d8518fadbff5cfa1b7fce44eba2b539ba938ff02f6983f0466b9c2340f2030",
+    "tools\\mmtrain\\polyhaven_expansion_selection_20261124.json": "90fec83b24e5377c2442cfa3e3fb07c92204f7a54194ba95f8f228d76e041384"
+  },
+  "asset_api": "https://api.polyhaven.com/files/{asset}",
+  "asset_terms": "CC0 under the pinned catalog source; acquisition records must verify current per-asset API metadata and credits.",
+  "selection": {
+    "previously_selected_slugs_excluded": [
+      "ArmChair_01",
+      "BarberShopChair_01",
+      "ClassicConsole_01",
+      "CoffeeCart_01",
+      "CoffeeTable_01",
+      "GothicBed_01",
+      "GothicCabinet_01",
+      "GothicCommode_01",
+      "GreenChair_01",
+      "Megaphone_01",
+      "Ottoman_01",
+      "Rockingchair_01",
+      "SchoolChair_01",
+      "SchoolDesk_01",
+      "Sofa_01",
+      "adjustable_wrench",
+      "ammo_box",
+      "anthurium_botany_01",
+      "antique_ceramic_vase_01",
+      "bananas",
+      "bench_vice_01",
+      "binoculars",
+      "bolt_cutters_01",
+      "boulder_01",
+      "brass_blowtorch",
+      "brass_vase_01",
+      "brass_vase_02",
+      "bronze_shark_statue",
+      "bronze_whale_statue",
+      "bull_head",
+      "bunsen_burner",
+      "calathea_orbifolia_01",
+      "carrot_cake",
+      "chemistry_set",
+      "cleaner_tin_01",
+      "concrete_cat_statue",
+      "crystalline_iceplant",
+      "dandelion_01",
+      "dead_quiver_branch_01",
+      "dead_quiver_branch_02",
+      "drain_cleaner",
+      "drill_press_01",
+      "dry_branches_medium_01",
+      "dustpan",
+      "fancy_picture_frame_02",
+      "fern_02",
+      "flower_empodium",
+      "flower_gazania",
+      "flower_ursinia",
+      "food_apple_01",
+      "food_avocado_01",
+      "food_ginger_01",
+      "food_kiwi_01",
+      "food_lime_01",
+      "food_lychee_01",
+      "food_pears_asian_01",
+      "food_pomegranate_01",
+      "garden_gnome",
+      "garden_hose_wall_mounted_01",
+      "garden_sprinkler_01",
+      "gothic_statue",
+      "hamburger_buns",
+      "lemon",
+      "moon_rock_01",
+      "moon_rock_02",
+      "moon_rock_03",
+      "moon_rock_04",
+      "moon_rock_05",
+      "moon_rock_06",
+      "moon_rock_07",
+      "namaqualand_boulders_01",
+      "nettle_plant",
+      "pachira_aquatica_01",
+      "rock_07",
+      "rock_09",
+      "stone_01"
+    ],
+    "candidate_type": 2,
+    "catalog_polycount_inclusive_range": [
+      250,
+      250000
+    ],
+    "ordering": "ascending asset slug within each class",
+    "quality_or_render_data_used": false,
+    "classes": [
+      {
+        "name": "furniture",
+        "selection_rule": "top-level category is Furniture",
+        "catalog_pool_size": 67,
+        "selected": [
+          {
+            "asset": "ClassicNightstand_01",
+            "candidate_class": "furniture",
+            "catalog_category": "Furniture/Tables/Side & End Tables",
+            "catalog_tags": [
+              "furniture",
+              "table"
+            ],
+            "catalog_polycount": 2002,
+            "catalog_files_hash": "7128adabb43129d3a868602cc864cb0c1222767e",
+            "authors": {
+              "Kirill Sannikov": "All"
+            },
+            "description": "Free 4K model of a vintage Victorian Gothic wooden nightstand - ornate carved details, cabriole legs and open shelf; perfect decorative table/furniture prop."
+          },
+          {
+            "asset": "WoodenChair_01",
+            "candidate_class": "furniture",
+            "catalog_category": "Furniture/Seating/Chairs",
+            "catalog_tags": [
+              "furniture",
+              "seating"
+            ],
+            "catalog_polycount": 19992,
+            "catalog_files_hash": "62044fc04038e8a8192783c6c0db8cb879935209",
+            "authors": {
+              "Jake Mobley": "All"
+            },
+            "description": "Free 4K model: ornate Victorian Gothic wooden chair with pointed tracery back, carved floral motif, turned legs, armrests and worn dark-stained finish."
+          },
+          {
+            "asset": "WoodenTable_01",
+            "candidate_class": "furniture",
+            "catalog_category": "Furniture/Tables/Coffee Tables",
+            "catalog_tags": [
+              "furniture"
+            ],
+            "catalog_polycount": 952,
+            "catalog_files_hash": "acee43a6468dd85f1da716a4c6d77793e6c7c02f",
+            "authors": {
+              "Ethan Place": "All"
+            },
+            "description": "Free 4K model: vintage wooden coffee table with warm worn patina, visible grain, rounded corners, stretcher base and scuffed edges."
+          },
+          {
+            "asset": "WoodenTable_02",
+            "candidate_class": "furniture",
+            "catalog_category": "Furniture/Tables/Side & End Tables",
+            "catalog_tags": [
+              "furniture",
+              "table"
+            ],
+            "catalog_polycount": 1514,
+            "catalog_files_hash": "53c8cd1ced8a04f15a4cda5ded07812386a38133",
+            "authors": {
+              "Fran Calvente": "All"
+            },
+            "description": "Free 4K model: small vintage wooden side table with a dark, worn finish, scalloped apron and curved legs showing scratches, chips, and aged patina."
+          },
+          {
+            "asset": "WoodenTable_03",
+            "candidate_class": "furniture",
+            "catalog_category": "Furniture/Storage Furniture/Sideboards",
+            "catalog_tags": [
+              "furniture",
+              "collection: the_shed"
+            ],
+            "catalog_polycount": 2298,
+            "catalog_files_hash": "fda4446b0ce06f3bdd7fd51cc50d83257341bbbc",
+            "authors": {
+              "Gabriel Radi\u0107": "All"
+            },
+            "description": "Free 4K model. Vintage wooden sideboard with worn planks, metal trim, riveted mesh cabinet door and three drawers, showing aged industrial detailing."
+          },
+          {
+            "asset": "bar_chair_round_01",
+            "candidate_class": "furniture",
+            "catalog_category": "Furniture/Seating/Stools & Bar Seating",
+            "catalog_tags": [
+              "seating",
+              "furniture"
+            ],
+            "catalog_polycount": 14373,
+            "catalog_files_hash": "3a4411b06fb8509e297c299acac13b2e6d5d71b0",
+            "authors": {
+              "Dairon Sanchez": "All"
+            },
+            "description": "Free 4K model, vintage wooden bar stool with round seat, carved beaded trim, hexagonal legs, circular footrest and worn finish."
+          },
+          {
+            "asset": "chinese_armchair",
+            "candidate_class": "furniture",
+            "catalog_category": "Furniture/Seating/Chairs",
+            "catalog_tags": [
+              "furniture",
+              "seating"
+            ],
+            "catalog_polycount": 2675,
+            "catalog_files_hash": "1e3819b180ab7c6918200d3e39eada53031579c6",
+            "authors": {
+              "Kirill Sannikov": "All"
+            },
+            "description": "Free 8K model: varnished antique Chinese wooden armchair with ornate carved back, elegant curved crest rail and traditional Ming-style silhouette."
+          },
+          {
+            "asset": "chinese_cabinet",
+            "candidate_class": "furniture",
+            "catalog_category": "Furniture/Storage Furniture/Cabinets & Cupboards",
+            "catalog_tags": [
+              "shelves",
+              "furniture"
+            ],
+            "catalog_polycount": 15668,
+            "catalog_files_hash": "68eb3f19ce1eef5021e2dda705ad67d43f063cd0",
+            "authors": {
+              "Kirill Sannikov": "All"
+            },
+            "description": "Free 8K model of an antique Chinese wooden cabinet: elegant traditional shelving with ornate carved panels, drawers, brass hardware and vintage character."
+          },
+          {
+            "asset": "chinese_commode",
+            "candidate_class": "furniture",
+            "catalog_category": "Furniture/Storage Furniture/Cabinets & Cupboards",
+            "catalog_tags": [
+              "furniture",
+              "shelves"
+            ],
+            "catalog_polycount": 6775,
+            "catalog_files_hash": "2147126f22f7db5b928dc5e9911f766f50a89b58",
+            "authors": {
+              "Kirill Sannikov": "All"
+            },
+            "description": "Free 8K model of a vintage Chinese wooden commode with ornate carvings, round brass hardware and warm aged patina - traditional cabinet."
+          },
+          {
+            "asset": "chinese_console_table",
+            "candidate_class": "furniture",
+            "catalog_category": "Furniture/Tables/Console Tables",
+            "catalog_tags": [
+              "table",
+              "furniture"
+            ],
+            "catalog_polycount": 13648,
+            "catalog_files_hash": "d2f88e4753957bff4fcf282db5d86af5073eff45",
+            "authors": {
+              "Kirill Sannikov": "All"
+            },
+            "description": "Free 8K model of a vintage Chinese wooden console table with ornate carvings and traditional Asian styling; antique patina, ideal for period interiors."
+          }
+        ]
+      },
+      {
+        "name": "botanical",
+        "selection_rule": "category tags include plants or flowers",
+        "catalog_pool_size": 22,
+        "selected": [
+          {
+            "asset": "cheiridopsis_succulent",
+            "candidate_class": "botanical",
+            "catalog_category": "Nature/Plants/Succulents & Cacti",
+            "catalog_tags": [
+              "collection: namaqualand",
+              "nature",
+              "plants",
+              "ground cover"
+            ],
+            "catalog_polycount": 198888,
+            "catalog_files_hash": "982ded4019c28843e7468de66ac90f0406286184",
+            "authors": {
+              "James Ray Cock": "modeling",
+              "Jenelle van Heerden": "Photography"
+            },
+            "description": "Free 8K Cheiridopsis model: tiny Karoo groundcover with fleshy blue-green leaves, quartz-strewn base and delicate pale-pink flowers - ideal for desert scenes."
+          },
+          {
+            "asset": "dead_tree_trunk",
+            "candidate_class": "botanical",
+            "catalog_category": "Nature/Logs, Branches & Roots/Fallen Logs & Stumps",
+            "catalog_tags": [
+              "nature",
+              "plants",
+              "ground cover",
+              "collection: pine_forest",
+              "collection: verdant_trail"
+            ],
+            "catalog_polycount": 101802,
+            "catalog_files_hash": "1e56e4393417d157e43e26bd8b7b019189d313ed",
+            "authors": {
+              "Rob Tuytel": "All"
+            },
+            "description": "Free 8K dead tree trunk model, a long weathered log with cracked, decayed bark, pronounced wood grain, broken ends and subtle mossy-green patches."
+          },
+          {
+            "asset": "dead_tree_trunk_02",
+            "candidate_class": "botanical",
+            "catalog_category": "Nature/Logs, Branches & Roots/Fallen Logs & Stumps",
+            "catalog_tags": [
+              "nature",
+              "plants",
+              "trees",
+              "collection: verdant_trail"
+            ],
+            "catalog_polycount": 155864,
+            "catalog_files_hash": "0f6fb24c57fc368a36a02efe96bd2e838320575b",
+            "authors": {
+              "Jenelle van Heerden": "Photography",
+              "Rico Cilliers": "processing"
+            },
+            "description": "Free 8K 3D model of a dead tree trunk - decayed, dry log with rough bark, lichen and broken stub; great for woodland debris, stump or forest-floor ground cover."
+          },
+          {
+            "asset": "dry_quiver_leaf",
+            "candidate_class": "botanical",
+            "catalog_category": "Nature/Logs, Branches & Roots/Deadwood & Debris",
+            "catalog_tags": [
+              "nature",
+              "plants",
+              "ground cover",
+              "collection: namaqualand"
+            ],
+            "catalog_polycount": 147596,
+            "catalog_files_hash": "ad69fbdafc6c8ba947ad3110d76faed9ce875420",
+            "authors": {
+              "Greg Zaal": "photography",
+              "Rico Cilliers": "modeling"
+            },
+            "description": "Free 8K model of a dried quiver leaf from Namaqualand - realistic desert debris with curled fibrous texture and brittle edges for ground-cover scenes."
+          },
+          {
+            "asset": "flower_stinkkruid",
+            "candidate_class": "botanical",
+            "catalog_category": "Nature/Plants/Wildflowers",
+            "catalog_tags": [
+              "nature",
+              "plants",
+              "flowers",
+              "collection: namaqualand"
+            ],
+            "catalog_polycount": 103778,
+            "catalog_files_hash": "03082af6c21b6b6f146a8bec83808a8efafb3e7b",
+            "authors": {
+              "Jenelle van Heerden": "Photography",
+              "Rico Cilliers": "modeling"
+            },
+            "description": "Free 4K Flower Stinkkruid model - a detailed Namaqualand wildflower with grey-green leaves, thin stems and yellow button blooms."
+          },
+          {
+            "asset": "moss_01",
+            "candidate_class": "botanical",
+            "catalog_category": "Nature/Ground Cover & Moss/Moss",
+            "catalog_tags": [
+              "nature",
+              "plants",
+              "ground cover",
+              "collection: pine_forest"
+            ],
+            "catalog_polycount": 246170,
+            "catalog_files_hash": "2b55f8db1e0e00e0aa2681ef0bccc7d1aec5bfab",
+            "authors": {
+              "Rob Tuytel": "All"
+            },
+            "description": "Free 4K model - dense, lush ground-cover moss clump with fine fronds, varied green tones and realistic undergrowth geometry."
+          },
+          {
+            "asset": "periwinkle_plant",
+            "candidate_class": "botanical",
+            "catalog_category": "Nature/Plants/Wildflowers",
+            "catalog_tags": [
+              "nature",
+              "ground cover",
+              "plants",
+              "flowers"
+            ],
+            "catalog_polycount": 67388,
+            "catalog_files_hash": "914403d31fda1dc15ff457e71e96ab7476134019",
+            "authors": {
+              "Amal Kumar": "All"
+            },
+            "description": "Free 4K periwinkle plant model with small pink flowers, realistic leaves and branch variations, perfect for gardens, meadows, groundcover and botanical scenes."
+          },
+          {
+            "asset": "pine_roots",
+            "candidate_class": "botanical",
+            "catalog_category": "Nature/Logs, Branches & Roots/Root Clusters",
+            "catalog_tags": [
+              "plants",
+              "nature",
+              "ground cover",
+              "collection: pine_forest"
+            ],
+            "catalog_polycount": 162693,
+            "catalog_files_hash": "8a16347883d31284122bea6c1638f4feca7966ef",
+            "authors": {
+              "Rob Tuytel": "All"
+            },
+            "description": "Free 8K model of exposed pine roots and forest floor - gnarled, weathered root network, scattered needles, mossy patches and rich, compacted soil detail."
+          },
+          {
+            "asset": "potted_plant_01",
+            "candidate_class": "botanical",
+            "catalog_category": "Nature/Plants/Potted Plants",
+            "catalog_tags": [
+              "decorative",
+              "plants",
+              "potted plants",
+              "nature"
+            ],
+            "catalog_polycount": 96030,
+            "catalog_files_hash": "9fa70d49cb125b1b74e3aeddef22253ba2db060b",
+            "authors": {
+              "Rico Cilliers": "All"
+            },
+            "description": "Free 8K model of a medium potted plant with lush scalloped green leaves in a weathered terracotta pedestal pot, detailed trunk and gravel-filled soil."
+          },
+          {
+            "asset": "potted_plant_02",
+            "candidate_class": "botanical",
+            "catalog_category": "Nature/Plants/Potted Plants",
+            "catalog_tags": [
+              "decorative",
+              "plants",
+              "potted plants",
+              "nature"
+            ],
+            "catalog_polycount": 69806,
+            "catalog_files_hash": "155661c96a28b9eb143e866daeb41f5a076d6677",
+            "authors": {
+              "Rico Cilliers": "All"
+            },
+            "description": "Free 8K model. Realistic terracotta pot with weathered rim, textured soil, and variegated green, heart-shaped leaves with pronounced veins."
+          }
+        ]
+      },
+      {
+        "name": "rock",
+        "selection_rule": "category tags include rocks",
+        "catalog_pool_size": 12,
+        "selected": [
+          {
+            "asset": "namaqualand_boulder_02",
+            "candidate_class": "rock",
+            "catalog_category": "Nature/Rocks & Stone/Desert Boulders",
+            "catalog_tags": [
+              "nature",
+              "rocks",
+              "collection: namaqualand"
+            ],
+            "catalog_polycount": 183681,
+            "catalog_files_hash": "a8226fbda59ed50a4686c9354fdb3d4eea061706",
+            "authors": {
+              "Greg Zaal": "Photography",
+              "Rico Cilliers": "modeling"
+            },
+            "description": "Free 8K model of Namaqualand boulders - realistic Karoo sandstone rocks with layered, weathered surfaces, perfect for desert, geological, and landscaping scenes."
+          },
+          {
+            "asset": "namaqualand_boulder_03",
+            "candidate_class": "rock",
+            "catalog_category": "Nature/Rocks & Stone/Desert Boulders",
+            "catalog_tags": [
+              "nature",
+              "rocks",
+              "collection: namaqualand"
+            ],
+            "catalog_polycount": 121546,
+            "catalog_files_hash": "d45a977057ab8e8538e1747b7a5d89013da6743e",
+            "authors": {
+              "Jenelle van Heerden": "modeling",
+              "Dario Barresi": "Photography"
+            },
+            "description": "Free 8K model: rough brown boulder from the Karoo, detailed geological rock with weathered facets - perfect for desert scenes and landscaping."
+          },
+          {
+            "asset": "namaqualand_boulder_04",
+            "candidate_class": "rock",
+            "catalog_category": "Nature/Rocks & Stone/Desert Boulders",
+            "catalog_tags": [
+              "nature",
+              "rocks",
+              "collection: namaqualand"
+            ],
+            "catalog_polycount": 110746,
+            "catalog_files_hash": "96945b21625a362af6541ea0b8347455f0052282",
+            "authors": {
+              "Jenelle van Heerden": "All"
+            },
+            "description": "Free 8K Namaqualand boulder model - rugged Karoo rock from South Africa with brown, weathered surfaces and lichen patches for landscaping."
+          },
+          {
+            "asset": "namaqualand_boulder_05",
+            "candidate_class": "rock",
+            "catalog_category": "Nature/Rocks & Stone/Desert Boulders",
+            "catalog_tags": [
+              "collection: namaqualand",
+              "nature",
+              "rocks"
+            ],
+            "catalog_polycount": 117622,
+            "catalog_files_hash": "db0437675da1e8fcd3fdd7b0d933cac1c9462456",
+            "authors": {
+              "Jenelle van Heerden": "modeling",
+              "Dario Barresi": "Photography"
+            },
+            "description": "Free 8K model of a weathered Namaqualand boulder - dry Karoo sandstone with layered, eroded surface and warm desert tones, perfect for natural rock scenes."
+          },
+          {
+            "asset": "namaqualand_boulder_06",
+            "candidate_class": "rock",
+            "catalog_category": "Nature/Rocks & Stone/Desert Boulders",
+            "catalog_tags": [
+              "nature",
+              "rocks",
+              "collection: namaqualand"
+            ],
+            "catalog_polycount": 204584,
+            "catalog_files_hash": "f388f7ae4d491b48aa800289d7e71c43cecea93b",
+            "authors": {
+              "Greg Zaal": "Photography",
+              "Jenelle van Heerden": "modeling"
+            },
+            "description": "Free 8K model, rugged brown Namaqualand boulder from the Karoo with a rough geological surface - perfect for desert scenes."
+          },
+          {
+            "asset": "namaqualand_cliff_01",
+            "candidate_class": "rock",
+            "catalog_category": "Nature/Rocks & Stone/Cliffs & Rock Faces",
+            "catalog_tags": [
+              "nature",
+              "rocks",
+              "collection: namaqualand"
+            ],
+            "catalog_polycount": 176938,
+            "catalog_files_hash": "92420ba154192b67e304f16a1559b17804ec0854",
+            "authors": {
+              "Jenelle van Heerden": "Photography",
+              "Rico Cilliers": "modeling"
+            },
+            "description": "Free 8K model of a Namaqualand cliff: weathered Karoo boulders, eroded rock faces and cracks with desert tones - high-detail, natural cliffside asset."
+          },
+          {
+            "asset": "namaqualand_rocks_01",
+            "candidate_class": "rock",
+            "catalog_category": "Nature/Rocks & Stone/Stone Sets",
+            "catalog_tags": [
+              "nature",
+              "rocks",
+              "collection: namaqualand"
+            ],
+            "catalog_polycount": 160716,
+            "catalog_files_hash": "b3db262e3bbee2c87c984ee85daad2baaaeeebee",
+            "authors": {
+              "Greg Zaal": "Photography",
+              "Jenelle van Heerden": "modeling"
+            },
+            "description": "Free 8K model of quartz-rich Namaqualand rocks (Karoo, South Africa). Realistic desert stones with high-detail geological texture for nature and landscape scenes."
+          },
+          {
+            "asset": "namaqualand_stones_01",
+            "candidate_class": "rock",
+            "catalog_category": "Nature/Rocks & Stone/Stone Sets",
+            "catalog_tags": [
+              "nature",
+              "rocks",
+              "collection: namaqualand"
+            ],
+            "catalog_polycount": 106602,
+            "catalog_files_hash": "56a5d069e1b0eb31d342e677d39a23649a5265dd",
+            "authors": {
+              "Greg Zaal": "Photography",
+              "Jenelle van Heerden": "modeling"
+            },
+            "description": "Free 8K model of weathered Namaqualand quartz stones, varied Karoo desert rocks from South Africa, realistic, high-detail assets for nature and geological scenes."
+          },
+          {
+            "asset": "rock_face_01",
+            "candidate_class": "rock",
+            "catalog_category": "Nature/Rocks & Stone/Cliffs & Rock Faces",
+            "catalog_tags": [
+              "rocks",
+              "nature",
+              "collection: verdant_trail"
+            ],
+            "catalog_polycount": 20174,
+            "catalog_files_hash": "a39e6911cc84e0ceef097a98b1146885afb4afb3",
+            "authors": {
+              "Dario Barresi": "All"
+            },
+            "description": "Free 8K model of a weathered rock face with layered sedimentary strata, rugged cracks, lichen patches and subtle blue-red mineral tones."
+          },
+          {
+            "asset": "rock_face_02",
+            "candidate_class": "rock",
+            "catalog_category": "Nature/Rocks & Stone/Cliffs & Rock Faces",
+            "catalog_tags": [
+              "rocks",
+              "nature",
+              "collection: verdant_trail"
+            ],
+            "catalog_polycount": 29566,
+            "catalog_files_hash": "18e36d9aade0f369471717db252fdfd3c1c28ca1",
+            "authors": {
+              "Dario Barresi": "All",
+              "Rico Cilliers": "processing"
+            },
+            "description": "Free 8K rock face model, weathered sandstone cliff with layered strata, moss and lichen patches, rugged fissures and realistic geological detail."
+          }
+        ]
+      },
+      {
+        "name": "food",
+        "selection_rule": "category tags include food",
+        "catalog_pool_size": 7,
+        "selected": [
+          {
+            "asset": "croissant",
+            "candidate_class": "food",
+            "catalog_category": "Food & Kitchen/Prepared Food/Cakes & Pastries",
+            "catalog_tags": [
+              "props",
+              "food"
+            ],
+            "catalog_polycount": 1990,
+            "catalog_files_hash": "16023b7dcc7d8c5660c4d128e079e878fc08ab23",
+            "authors": {
+              "Greg Zaal": "Processing",
+              "Dario Barresi": "Scanning"
+            },
+            "description": "Free 8K croissant model with realistic golden-brown crust, flaky layered dough, subtle sheen and high-detail baked texture."
+          },
+          {
+            "asset": "long_life_food",
+            "candidate_class": "food",
+            "catalog_category": "Food & Kitchen/Packaged & Pantry",
+            "catalog_tags": [
+              "collection: project_lighthouse",
+              "food",
+              "containers",
+              "props"
+            ],
+            "catalog_polycount": 4712,
+            "catalog_files_hash": "9b0c4e65bdd4d8c0f09f15dde7728afa7a8cb2c4",
+            "authors": {
+              "Mia Pecina Zorko": "All"
+            },
+            "description": "Free 4K model of pantry staples: milk carton, tomato and bean cans, and sardines. Realistic wear, dents, pull-tab tin, crisp labels, clean topology."
+          },
+          {
+            "asset": "russian_food_cans_01",
+            "candidate_class": "food",
+            "catalog_category": "Food & Kitchen/Packaged & Pantry",
+            "catalog_tags": [
+              "containers",
+              "props",
+              "food"
+            ],
+            "catalog_polycount": 1348,
+            "catalog_files_hash": "4d4d5761308fe3c436c571802068d033dcaabc60",
+            "authors": {
+              "Kosan Aziz": "All"
+            },
+            "description": "Free 4K model: three Russian pantry items - two dented metal cans and a salt carton with worn, faded labels and realistic scratched-metal textures."
+          },
+          {
+            "asset": "strawberry_chocolate_cake",
+            "candidate_class": "food",
+            "catalog_category": "Food & Kitchen/Prepared Food/Cakes & Pastries",
+            "catalog_tags": [
+              "props",
+              "food"
+            ],
+            "catalog_polycount": 27054,
+            "catalog_files_hash": "a441726fcf88501501868c20037cfbf7a88f82bd",
+            "authors": {
+              "Kuutti Siitonen": "All"
+            },
+            "description": "Free 8K model of a rustic chocolate cake topped with glossy strawberry slices and chocolate shavings. Rich texture and hand-made look."
+          },
+          {
+            "asset": "sweet_potato",
+            "candidate_class": "food",
+            "catalog_category": "Food & Kitchen/Produce/Vegetables",
+            "catalog_tags": [
+              "food",
+              "nature"
+            ],
+            "catalog_polycount": 2042,
+            "catalog_files_hash": "98f8a5cf6ad2b618876a46b404caaf53568a84d7",
+            "authors": {
+              "Jan Martens": "All"
+            },
+            "description": "Free 8K model - realistic oblong sweet potato with dusty red skin, dirt, scuffs, root scars and tiny lenticels; organic, raw tuber detail."
+          },
+          {
+            "asset": "wooden_cutting_board",
+            "candidate_class": "food",
+            "catalog_category": "Food & Kitchen/Utensils/Cutting Boards",
+            "catalog_tags": [
+              "props",
+              "food"
+            ],
+            "catalog_polycount": 3520,
+            "catalog_files_hash": "bf62fd6c3b52e068d9f8f47a30ede3363c206b75",
+            "authors": {
+              "Kuutti Siitonen": "All"
+            },
+            "description": "Free 8K wooden cutting board model: thick, worn hardwood planks with scratched surface, juice groove, rounded edges and realistic weathered patina."
+          },
+          {
+            "asset": "yellow_onion",
+            "candidate_class": "food",
+            "catalog_category": "Food & Kitchen/Produce/Vegetables",
+            "catalog_tags": [
+              "props",
+              "food"
+            ],
+            "catalog_polycount": 5444,
+            "catalog_files_hash": "f46b76af3140503b588d8569bb3e12285b78e4c9",
+            "authors": {
+              "Kuutti Siitonen": "All"
+            },
+            "description": "Free 8K model of a yellow onion with realistic papery skin, warm golden-brown tones, fine surface detail, and natural blemishes."
+          }
+        ]
+      },
+      {
+        "name": "tools",
+        "selection_rule": "category tags include tools",
+        "catalog_pool_size": 56,
+        "selected": [
+          {
+            "asset": "Drill_01",
+            "candidate_class": "tools",
+            "catalog_category": "Tools & Equipment/Power Tools/Drills",
+            "catalog_tags": [
+              "props",
+              "tools",
+              "electronics",
+              "collection: the_shed"
+            ],
+            "catalog_polycount": 2926,
+            "catalog_files_hash": "09a08d9e60a537490591e142ddef14428a140950",
+            "authors": {
+              "Fernando Quinn": "All"
+            },
+            "description": "Free 4K model of a cordless drill with lime plastic body, black rubber grip, metal chuck and 18V lithium-ion battery details."
+          },
+          {
+            "asset": "combination_wrench",
+            "candidate_class": "tools",
+            "catalog_category": "Tools & Equipment/Hand Tools/Wrenches & Spanners",
+            "catalog_tags": [
+              "collection: project_lighthouse",
+              "tools",
+              "industrial"
+            ],
+            "catalog_polycount": 1986,
+            "catalog_files_hash": "66f73753979a340ab6fa34460f7e4085ca7c861a",
+            "authors": {
+              "BKS": "All"
+            },
+            "description": "Free 4K model of a steel combination wrench with open and 12\u2011point box ends, crisp chamfers, brushed metal, and realistic wear, scratches, and grime."
+          },
+          {
+            "asset": "cross_pein_hammer",
+            "candidate_class": "tools",
+            "catalog_category": "Tools & Equipment/Hand Tools/Hammers & Mallets",
+            "catalog_tags": [
+              "collection: project_lighthouse",
+              "props",
+              "tools"
+            ],
+            "catalog_polycount": 2124,
+            "catalog_files_hash": "a92f2d9be69db49e6aacc1cef8c38d88f80a14a5",
+            "authors": {
+              "Tics": "All"
+            },
+            "description": "Free 8k model of a weathered cross-pein hammer - scuffed steel head and knotted wooden handle with realistic wear, dents, and grain."
+          },
+          {
+            "asset": "crowbar_01",
+            "candidate_class": "tools",
+            "catalog_category": "Tools & Equipment/Hand Tools/Pry Bars",
+            "catalog_tags": [
+              "tools",
+              "industrial",
+              "props",
+              "collection: the_shed"
+            ],
+            "catalog_polycount": 2300,
+            "catalog_files_hash": "6298bc964de4bce459d682181cb7ef9e827cf380",
+            "authors": {
+              "Alexander Otterbeck": "All"
+            },
+            "description": "Free 8K model - weathered metal crowbar with chipped paint, rust and grime; bent shaft and worn pry/nail-puller ends."
+          },
+          {
+            "asset": "flathead_screwdriver",
+            "candidate_class": "tools",
+            "catalog_category": "Tools & Equipment/Hand Tools/Screwdrivers",
+            "catalog_tags": [
+              "tools",
+              "props",
+              "industrial",
+              "collection: the_shed"
+            ],
+            "catalog_polycount": 2300,
+            "catalog_files_hash": "a14b91cd2546247ebc1b8b12c2c8ac5efefcb9e6",
+            "authors": {
+              "Dylan Detwiller": "All"
+            },
+            "description": "Free 4K model: weathered flathead screwdriver with carved wooden handle, corroded ferrule and worn steel shaft bearing paint marks and realistic workshop wear."
+          },
+          {
+            "asset": "hand_plane_no4",
+            "candidate_class": "tools",
+            "catalog_category": "Tools & Equipment/Hand Tools",
+            "catalog_tags": [
+              "tools",
+              "collection: the_shed"
+            ],
+            "catalog_polycount": 8220,
+            "catalog_files_hash": "73089c692d816133d2c9be2553498a9deac54bf2",
+            "authors": {
+              "Satyaki Mandal": "All"
+            },
+            "description": "Free 8K model of a vintage No.4 wooden hand plane, worn wood handles, patinated steel body, brass adjustment knobs and chips, with richly detailed workshop-worn textures."
+          },
+          {
+            "asset": "handsaw_wood",
+            "candidate_class": "tools",
+            "catalog_category": "Tools & Equipment/Hand Tools/Saws & Cutting",
+            "catalog_tags": [
+              "props",
+              "tools",
+              "industrial",
+              "collection: the_shed"
+            ],
+            "catalog_polycount": 2548,
+            "catalog_files_hash": "657045bf8621c94eab8bf63f46781d5e0c92441c",
+            "authors": {
+              "Konrad Sza\u0142ankiewicz": "All"
+            },
+            "description": "Free 4K model of a worn handsaw with scuffed wooden handle, rust-speckled scratched steel blade and aged rivets, full of rustic workshop character."
+          },
+          {
+            "asset": "hatchet",
+            "candidate_class": "tools",
+            "catalog_category": "Tools & Equipment/Hand Tools/Axes & Hatchets",
+            "catalog_tags": [
+              "tools"
+            ],
+            "catalog_polycount": 5250,
+            "catalog_files_hash": "ec44e3d885af1f2f12aea3535a8700930f52f265",
+            "authors": {
+              "James Ray Cock": "Texturing",
+              "Ulan Cabanilla": "modeling"
+            },
+            "description": "Free 8K hatchet model: This realistic compact tool has a worn steel head and a rubberised wood grip. It is ideal for camping, chopping firewood, forestry, or as a weapon."
+          },
+          {
+            "asset": "industrial_microscope",
+            "candidate_class": "tools",
+            "catalog_category": "Electronics & Appliances/Devices & Instruments/Optical Instruments",
+            "catalog_tags": [
+              "collection: project_lighthouse",
+              "industrial",
+              "tools",
+              "appliances"
+            ],
+            "catalog_polycount": 16598,
+            "catalog_files_hash": "8a478e01a8143546913bb0c48712bdd06dcac2ee",
+            "authors": {
+              "Lukas Walzer": "All"
+            },
+            "description": "Free 4K model of a vintage industrial microscope with binocular head, triple objective turret, textured cast-metal body, worn paint, and detailed knobs."
+          },
+          {
+            "asset": "ladder_sectioned_01",
+            "candidate_class": "tools",
+            "catalog_category": "Tools & Equipment/Workshop Equipment/Ladders",
+            "catalog_tags": [
+              "industrial",
+              "tools",
+              "collection: the_shed"
+            ],
+            "catalog_polycount": 29140,
+            "catalog_files_hash": "13918cbf2df2d0f0321d29546ed2da162b44887a",
+            "authors": {
+              "MP": "All"
+            },
+            "description": "Free 4K sectioned folding metal ladder with flat treads, orange safety caps and straps, telescoping industrial finish with light wear."
+          }
+        ]
+      },
+      {
+        "name": "decor",
+        "selection_rule": "top-level category is Decor & Art",
+        "catalog_pool_size": 26,
+        "selected": [
+          {
+            "asset": "brass_vase_03",
+            "candidate_class": "decor",
+            "catalog_category": "Decor & Art/Vases & Vessels/Metal Vases",
+            "catalog_tags": [
+              "containers",
+              "props",
+              "decorative",
+              "vases"
+            ],
+            "catalog_polycount": 2616,
+            "catalog_files_hash": "48ebe6ee6497bab25b1a3bb3f242d629e1549cbf",
+            "authors": {
+              "Rico Cilliers": "All"
+            },
+            "description": "Free 8K brass vase model: ornate engraved swirls, warm aged copper-gold patina, polished highlights and pedestal base with subtle tool marks."
+          },
+          {
+            "asset": "brass_vase_04",
+            "candidate_class": "decor",
+            "catalog_category": "Decor & Art/Vases & Vessels/Metal Vases",
+            "catalog_tags": [
+              "containers",
+              "props",
+              "vases",
+              "dishes"
+            ],
+            "catalog_polycount": 2760,
+            "catalog_files_hash": "22ad897a42006662ee32937fe64fa0b6fdf50a6a",
+            "authors": {
+              "Rico Cilliers": "All"
+            },
+            "description": "Free 8K brass vase model with tall pitcher form, ornate handle and subtle engraved patterns; aged copper-brass patina, scratches and wear for vintage character."
+          },
+          {
+            "asset": "bronze_ray_statue",
+            "candidate_class": "decor",
+            "catalog_category": "Decor & Art/Sculptures & Figurines/Animal Figures",
+            "catalog_tags": [
+              "decorative",
+              "collection: project_lighthouse"
+            ],
+            "catalog_polycount": 1844,
+            "catalog_files_hash": "b9b7e66c03fea3184df98729b621995efe1b09d9",
+            "authors": {
+              "Tina": "All"
+            },
+            "description": "Free 4K model of a bronze manta ray statue on a dark wood base, with polished patina, detailed speckled surface, sharp fins and an elegant flowing pose."
+          },
+          {
+            "asset": "carved_wooden_elephant",
+            "candidate_class": "decor",
+            "catalog_category": "Decor & Art/Sculptures & Figurines/Animal Figures",
+            "catalog_tags": [
+              "props",
+              "decorative"
+            ],
+            "catalog_polycount": 2752,
+            "catalog_files_hash": "bb045a04b923530a3e12f3fbac4662567f021633",
+            "authors": {
+              "Greg Zaal": "All"
+            },
+            "description": "Free 4K carved wooden elephant model with warm hand-carved grain, stylized form, smooth worn edges and subtle surface wear."
+          },
+          {
+            "asset": "ceramic_vase_01",
+            "candidate_class": "decor",
+            "catalog_category": "Decor & Art/Vases & Vessels/Ceramic Vases",
+            "catalog_tags": [
+              "vases",
+              "containers",
+              "decorative"
+            ],
+            "catalog_polycount": 2548,
+            "catalog_files_hash": "989b1a754be36032e5d643c9c333a08e218c65cf",
+            "authors": {
+              "James Ray Cock": "All"
+            },
+            "description": "Free 8K Ceramic Vase 01 - a tall, modern glossy white pot with an elegant fluted rim and clean lines; a fancy decorative vase/container for stylish interiors."
+          },
+          {
+            "asset": "ceramic_vase_02",
+            "candidate_class": "decor",
+            "catalog_category": "Decor & Art/Vases & Vessels/Ceramic Vases",
+            "catalog_tags": [
+              "decorative",
+              "containers",
+              "vases"
+            ],
+            "catalog_polycount": 2756,
+            "catalog_files_hash": "0643acdbc6d663ccbc2df4d00ba30a7126f3daac",
+            "authors": {
+              "James Ray Cock": "All"
+            },
+            "description": "Free 8K model: modern painted ceramic vase with tactile clay texture, worn rim detail and classic pot silhouette - perfect for decorative interiors and props."
+          },
+          {
+            "asset": "ceramic_vase_03",
+            "candidate_class": "decor",
+            "catalog_category": "Decor & Art/Vases & Vessels/Ceramic Vases",
+            "catalog_tags": [
+              "containers",
+              "decorative",
+              "vases"
+            ],
+            "catalog_polycount": 2784,
+            "catalog_files_hash": "df64b230fb44e0aceff07e3dc0aa97b7ebcb1143",
+            "authors": {
+              "James Ray Cock": "All"
+            },
+            "description": "Free 8K model - tall modern painted ceramic vase: rectangular clay pot with subtle exterior texture and fancy decorative style."
+          },
+          {
+            "asset": "ceramic_vase_04",
+            "candidate_class": "decor",
+            "catalog_category": "Decor & Art/Vases & Vessels/Ceramic Vases",
+            "catalog_tags": [
+              "containers",
+              "decorative",
+              "vases"
+            ],
+            "catalog_polycount": 2224,
+            "catalog_files_hash": "2f4fd4e62ce5609ec0b712f7f97a8f1cd7796c7f",
+            "authors": {
+              "James Ray Cock": "All"
+            },
+            "description": "Free 8K model: painted clay vase with modern, elegant jug silhouette, single-handle and subtle rough texture - fancy decorative pot for interiors and props."
+          },
+          {
+            "asset": "chinese_screen_panels",
+            "candidate_class": "decor",
+            "catalog_category": "Decor & Art/Ornaments/Room Dividers & Screens",
+            "catalog_tags": [
+              "furniture"
+            ],
+            "catalog_polycount": 784,
+            "catalog_files_hash": "b500116411a2532f0c1d870f964c7375f8df40df",
+            "authors": {
+              "Kirill Sannikov": "All"
+            },
+            "description": "Free 8K Chinese screen panels - ornate antique wooden room divider with painted peacocks, floral Asian motifs and vintage patina."
+          },
+          {
+            "asset": "fancy_picture_frame_01",
+            "candidate_class": "decor",
+            "catalog_category": "Decor & Art/Wall Decor/Picture Frames & Art",
+            "catalog_tags": [
+              "decorative",
+              "wall decoration"
+            ],
+            "catalog_polycount": 938,
+            "catalog_files_hash": "f8fc816a4ab84e0b88d024cd7ae23bc7bbe6963f",
+            "authors": {
+              "Rob Tuytel": "Scan & Painting",
+              "Rico Cilliers": "modeling"
+            },
+            "description": "Free 8K model - ornate antique gilt picture frame with beaded and rope molding around a warm Dutch oil landscape of a mill, bridge, river and distant riders."
+          }
+        ]
+      }
+    ]
+  },
+  "selected_count": 57
+}
