@@ -12,15 +12,18 @@ constraints. This is untested and has close prior art.
 
 ## The open problem
 
-Fixed-view Monkey analyses found that silhouette XOR occupied 0.11–0.19% of
-pixels but contributed 66.7–68.3% of squared image error. This is a useful
-diagnostic, not evidence that a silhouette method generalizes: contour-weighted
-geometry has not shown a repeatable quality/cost win, and antialiasing is a
-strong baseline. The research problem is to improve image quality after the
-same AA or upscaler at matched geometry and total cost, while keeping cluster
-boundaries and topology valid. Report image metrics such as LDR-FLIP, PSNR,
-SSIM, and silhouette error alongside geometry and topology checks. The cited
-Monkey measurements and failed screens are in the [dated history](MANYMESH_HISTORY.md)
+One fixed 960x720 Monkey view at 45.25% retention measured silhouette XOR at
+0.11% of pixels and 68.3% of squared error, but used an 11,250-face DAG cut as
+the reference rather than the 15,744-face source mesh. A later eight-view
+diagnostic against the original source found 25.84–34.75% across three budgets.
+Silhouette error is important, but its share depends on view and reference;
+contour-weighted geometry has not shown a repeatable quality/cost win, and
+antialiasing remains a strong baseline. The open question is whether offline
+geometry optimization improves image quality after the same AA or upscaler at
+matched face count and complete cost, while preserving cluster boundaries and
+topology. Report LDR-FLIP, PSNR, SSIM, silhouette, surface, and topology metrics
+together. See the [historical decomposition](MANYMESH_HISTORY.md#fixed-camera-4525-error-decomposition),
+[source-reference follow-up](MANYMESH_HISTORY.md#12-2026-11-23-original-source-and-asset-feasibility-follow-up),
 and [research status](MANYMESH.md).
 
 ![Khronos Suzanne at 3,936 and 982 triangles beside a silhouette-difference map.](docs/manymesh/suzanne-lod.png)
@@ -37,20 +40,20 @@ Asset: UX3D / Norbert Nopper, CC0 1.0. [Figure receipt](docs/manymesh/suzanne-lo
 
 The 21-model result is fixed-view Iris Xe evidence, not mobile or equal-time
 evidence. The earlier seven-asset Khronos screen used a retrospective boundary
-tolerance and reused development assets; its two all-metric wins were against
-meshoptimizer only, not QEM. [Reports and raw metrics](MANYMESH.md#evidence).
-The 21-model scoring replay matches byte-for-byte, but its geometry receipts
-record a different `main.cpp` hash from the Khronos run despite sharing the
-same `mmgeo` binary hash. Checksums in the retained compiler objects identify
-the actual inputs: `main.cpp` matches the Khronos receipt, while
-`Simplifier.cpp` and `Simplifier.h` match the Poly Haven pin. The Poly Haven
-`main.cpp` pin is inconsistent with the compiled object. Current `main` also
-builds cleanly, but Windows application control blocks running the new binary.
-The archived binary regenerated all 18 expanded-cohort candidate PLYs
-byte-for-byte at their recorded face counts; the initial three models were not
-included. See the [compiled-source audit](tools/mmtrain/mmgeo_compiled_source_audit_20261125.json),
-[geometry replay receipt](tools/mmtrain/polyhaven_geometry_replay_20261125.json),
-and [clean rebuild attempt](tools/mmtrain/MMGEO_CLEAN_REBUILD_ATTEMPT_20261125.json).
+tolerance and reused development assets; it beat meshoptimizer on two pairs
+from one asset and beat no eligible QEM pair. [Reports and raw metrics](MANYMESH.md#evidence-snapshot).
+Retained compiler checksums resolve the archived executable's source set:
+`main.cpp` matches the Khronos receipt, while `Simplifier.cpp` and
+`Simplifier.h` match the Poly Haven pin. A clean Release rebuild from the
+reconstructed source commit matches every PE byte except the duplicated build
+timestamp fields; `.text` is identical. `Grouper.cpp` lacks an individual
+retained source checksum, and the rebuilt executable was not run because
+Windows application control blocked it. The archived executable replayed 18
+expanded-cohort candidate meshes byte-for-byte at the recorded face counts;
+the initial three were not replayed. See the [clean rebuild receipt](tools/mmtrain/mmgeo_clean_rebuild_489_20261125.json),
+[compiled-source audit](tools/mmtrain/mmgeo_compiled_source_audit_20261125.json),
+[rebuild verifier](tools/mmtrain/verify_mmgeo_clean_rebuild_489_20261125.py),
+and [geometry replay receipt](tools/mmtrain/polyhaven_geometry_replay_20261125.json).
 
 ## Research documents
 
