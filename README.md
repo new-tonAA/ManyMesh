@@ -24,7 +24,10 @@ collection groups. Data: [per-view metrics](tools/mmtrain/polyhaven_quality_metr
 - **21 models, 24 views each.** On Intel Iris Xe / D3D12 at 640 x 360, the
   50%-retention ManyMesh cut lost to border-preserving QEM and meshoptimizer on
   LDR-FLIP, PSNR, SSIM, and silhouette XOR, with native sampling and 4x MSAA.
-  [Protocol and results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md).
+  In the post-hoc LPIPS supplement, ManyMesh-minus-control deltas are +0.00127
+  to +0.00267; all four 95% intervals favor the controls. This reuses the same
+  cohort, not independent confirmation. [Original protocol and results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md) ·
+  [LPIPS supplement](tools/mmtrain/POLYHAVEN_LPIPS_SUPPLEMENT_RESULTS_20261125.md).
 - **25.84%-34.75% silhouette-error share.** Source-referenced Monkey diagnostic
   across three face budgets and eight 192 x 192 views. One asset only; the
   historical 68.3% used a DAG cut as reference, not the original mesh.
@@ -40,11 +43,12 @@ collection groups. Data: [per-view metrics](tools/mmtrain/polyhaven_quality_metr
 
 | Works in measured scope | Does not pass | Not measured |
 |---|---|---|
-| Fixed-view desktop quality and topology audits; separate three-scene LPIPS and temporal diagnostics. | Current ManyMesh cuts lose to matched-face controls; prior contour-priority and contour-guided fitting screens show no repeatable gain. | Physical-phone performance, power, equal-frame-time quality, human preference, and a held-out optimized method with a validated temporal-quality gain. |
+| Fixed-view desktop quality and topology audits; post-hoc 21-model LPIPS and separate three-scene LPIPS/temporal diagnostics. | Current ManyMesh cuts lose to matched-face controls; prior contour-priority and contour-guided fitting screens show no repeatable gain. | Physical-phone performance, power, equal-frame-time quality, human preference, and a held-out optimized method with a validated temporal-quality gain. |
 
 The moving-camera LPIPS screen uses three reused synthetic scenes and did not
-establish an equal-time quality gain. LPIPS has not been measured on the
-21-model matched-face cohort. Desktop evidence does not support mobile claims.
+establish an equal-time quality gain. The 21-model LPIPS supplement is
+post-hoc on an already-scored cohort and is not independent confirmation.
+Desktop evidence does not support mobile claims.
 The fresh 30-model Poly Haven pool is unscored and is not a frozen test split.
 [LPIPS and temporal results](tools/mmmetrics/MOVING_SCENE_EDGE_QUALITY_20261124.md) ·
 [pool protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md)

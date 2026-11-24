@@ -96,6 +96,14 @@ comparison. The pinned scorer did not emit the predeclared coverage-MAE
 field, so it is unavailable; it was not reconstructed from other metrics.
 LPIPS, temporal behavior, GPU frame time, mobile-device performance, and
 human preference were not measured.
+
+**Supplement added 2026-11-25:** LPIPS was later scored by re-rendering this
+same 21-model cohort with the frozen geometry, views, reference, and sampling
+protocol. It favors both deterministic controls in native and 4x MSAA, with
+all four paired 95% source-group intervals excluding zero. This is a post-hoc
+metric addition on the already-examined cohort, not independent confirmation
+or a human-preference result. See the [LPIPS protocol and results](POLYHAVEN_LPIPS_SUPPLEMENT_RESULTS_20261125.md).
+
 The Poly Haven geometry receipts use the same `mmgeo` executable hash as the
 Khronos receipt, but their recorded `main.cpp` SHA-256 values differ. Retained
 MSVC CodeView checksums resolve which inputs were compiled: `main.obj` records

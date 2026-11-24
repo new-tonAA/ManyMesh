@@ -62,8 +62,9 @@ comparison is not evidence of anything.
 - **LPIPS** is optional because it needs the `lpips` package and downloads AlexNet weights on
   first use. It is a learned feature-space metric that complements pixel metrics; its agreement
   with human judgments depends on the data and task. Do not use it alone to claim user
-  preference. ManyMesh has not yet measured LPIPS on its confirmation cohort. On a CPU-only
-  machine it is slow but workable.
+  preference. ManyMesh has a post-hoc LPIPS supplement for its 21-model matched-face screen;
+  the separate 30-model confirmation pool remains unscored. On a CPU-only machine it is slow
+  but workable. See the [LPIPS protocol and results](../mmtrain/POLYHAVEN_LPIPS_SUPPLEMENT_RESULTS_20261125.md).
 - `pixels_over_1_255_percent` counts pixels where any channel moved by more than one 8-bit
   step. It is a blunt "did anything change at all" figure, useful for catching a render that
   silently did not load the mesh it was supposed to.

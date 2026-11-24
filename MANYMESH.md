@@ -9,6 +9,11 @@ positive held-out result.
 - In a frozen 21-model screen, ManyMesh lost to border-preserving QEM and
   meshoptimizer on LDR-FLIP, PSNR, SSIM, and silhouette XOR, with native
   sampling and 4x MSAA. [Protocol and results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md).
+- A post-hoc LPIPS supplement re-rendered the same 21 models. ManyMesh scored
+  worse than both controls in native and 4x MSAA: the ManyMesh-minus-control
+  deltas are +0.00127 to +0.00267, and all four paired 95% group intervals
+  exclude zero. This reuses the previously examined cohort and is descriptive,
+  not independent confirmation. [Protocol and results](tools/mmtrain/POLYHAVEN_LPIPS_SUPPLEMENT_RESULTS_20261125.md).
 - Silhouette error depends on view and reference. The historical 68.3% used a
   DAG cut, not the source mesh; a source-referenced Monkey diagnostic measured
   25.84%-34.75% at three budgets on one asset. This is not a general result.
@@ -41,12 +46,11 @@ novelty.
 ## Evidence gaps
 
 No physical-phone test, equal-complete-frame-time comparison, user study, or
-positive held-out optimized-method result is available. LPIPS has been measured
-on a separate three-scene moving-camera screen, but not on the 21-model
-matched-face cohort; the temporal comparison did not establish an equal-time
-quality gain. The 30-model Poly Haven pool is unscored and is not a frozen test
-split ([pool report](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md)).
-See the [LPIPS and temporal screen](tools/mmmetrics/MOVING_SCENE_EDGE_QUALITY_20261124.md).
+positive held-out optimized-method result is available. A separate three-scene
+moving-camera screen measured LPIPS and temporal metrics but did not establish
+an equal-time quality gain. The newer 30-model Poly Haven pool is unscored and
+is not a frozen test split ([pool report](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md)).
+See the [moving-camera LPIPS and temporal screen](tools/mmmetrics/MOVING_SCENE_EDGE_QUALITY_20261124.md).
 Desktop results do not support mobile claims.
 
 ## Research index
