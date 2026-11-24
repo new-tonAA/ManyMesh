@@ -247,8 +247,9 @@ This result does not test differentiable fitting or post-upscaler quality.
 
 1. The frozen two-asset input gate uses legal matched geometry at 50%
    retention; lower targets failed eligibility. The current host has a CPU
-   build of PyTorch. The placement control requires a CUDA workstation and a
-   frozen camera split.
+   build of PyTorch. The placement control requires a CUDA workstation before
+   the candidate fit and scoring can run. The separate 30-model confirmation
+   cameras are frozen, but scoring stays disabled until a method passes this gate.
    [Input preflight](tools/mmtrain/APPEARANCE_INPUT_PREFLIGHT_20261123.md)
 2. Compare the nvdiffmodeling-based placement control against QEM, current
    ManyMesh placement, and meshoptimizer at identical face counts. Freeze
@@ -259,8 +260,11 @@ This result does not test differentiable fitting or post-upscaler quality.
    repeatable benefit after actual MSAA or an available upscaler, at both
    matched faces and matched complete frame time. A pre-score candidate pool
    now contains 30 exact-face eligible Poly Haven models across 25 family
-   groups and nine categories; it is not yet the frozen test split. See the
-   [pool protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md).
+   groups and nine categories. Its asset inputs, camera split, renderer,
+   metrics, and project-specific pass margins are frozen; quality scoring is
+   disabled until a method configuration passes Gate 1. See the
+   [confirmation protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md)
+   and [pool provenance](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md).
 4. Report LDR-FLIP, PSNR, SSIM, silhouette/coverage error, sampled surface and
    normal deviation, topology/boundary failures, and camera-motion transitions.
    Treat objective metrics as complementary; a “perceptual” claim needs ratings

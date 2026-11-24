@@ -1,0 +1,1358 @@
+{
+  "schema": 1,
+  "status": "frozen confirmation inputs and protocol; method pending",
+  "quality_scored": false,
+  "scoring_enabled": false,
+  "study_role": "Unseen-asset confirmation of a single method configuration after it passes the two-asset development gate. The algorithm may fit each asset using its frozen training views; no settings may be tuned from confirmation scores.",
+  "pool_sha256": "879fd9ac68d1116b5623ed63666595e1108cf94190f442c2253c71b043322846",
+  "matched_face_receipts": {
+    "tools/mmtrain/polyhaven_fresh_asset_matched_face_screen_20261125.json": "bd5e7b3444124662ebfe3eadde58e20be4029d3795ea09c333ef59af9b7dc5ba",
+    "tools/mmtrain/polyhaven_category_pool_matched_face_screen_20261125.json": "2b86bd5e0604323092ead7229b06890824221d56d4f245cd79554b0e0ff0aed8"
+  },
+  "pilot_metrics_sha256": "e3c15f56f13ea6c0b8f21a131f1d76ed648884e8ff69aca72346a0620e4fd9ad",
+  "freeze_script_sha256": "e4088f36e607f2779391865617bfde9aea36221842b280f9bc099ac65d833cbe",
+  "protocol_source_sha256": {
+    "tools/mmtrain/fit_appearance_cuda.py": "a15c489a3d1e95273d2d77da39bd5ebffa0a0d6f13baa89cdf486732bdb9e389",
+    "tools/mmtrain/bench_appearance_controls.py": "9354ae2a6d672e6afd0c6a11bb15339fa10197feb5d32f1f059e257a120b55c7",
+    "tools/mmtrain/score_polyhaven_quality_cohort.py": "cb559baad2b6517c8dfbeda33cf441ca4b13a0c9ad264028ee084de4816dc405",
+    "tools/mmtrain/score_polyhaven_lpips_supplement.py": "fa6316c7a153f934cbbe1129d78d4896b0965170728246cdcd3200507c0edc29",
+    "tools/mmtrain/audit_polyhaven_multiplicity.py": "c5cad551575e893ea7b5a806c897f01e5ca586715227ee38a03a36991d717350"
+  },
+  "assets": {
+    "croissant": {
+      "category": "Food & Kitchen",
+      "source_family": "croissant",
+      "uncertainty_group": "croissant",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Greg Zaal": "Processing",
+        "Dario Barresi": "Scanning"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/croissant/croissant_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/croissant/croissant.bin",
+      "source_file_sha256": {
+        "gltf": "b6e1eb36f776e6b79500c51b57c0e29cd17598c2d8a20d0ec0513955a6cc3a2f",
+        "buffer": "d770a5ab7e3bcf3572343d74c7941e87eda87349fe414dd4ab206fa5e1e1524a"
+      },
+      "source_geometry_sha256": "8d76d199a053f63d46c9ac0f9f2da39c6f79f02561606dc31a795b45b6cf7948",
+      "source_faces": 1990,
+      "matched_faces": 992,
+      "retention": 0.4984924623115578,
+      "geometry_dir": "out/polyhaven-fresh-asset-pool-20261125/matched/croissant/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_fresh_asset_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "2e1e06ca840ca30c2cc339b9cf62b9c0cd906048cb2f361389fcfdf4547ddb61",
+        "manymesh.obj": "5f60d8103e58106b848d6bc4f98ec949b47222e552f64f122458978a7511e942",
+        "qem_preserve_border.obj": "1744afba08c7127ec012de24c8cd9aa0e57d12e9604a09f29ab4d674c204c764",
+        "meshoptimizer_lock_border.obj": "e2d2918fb94615569256a97f171a2cb269757711a1f08adb1f9813ae612ea484"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "sweet_potato": {
+      "category": "Food & Kitchen",
+      "source_family": "sweet_potato",
+      "uncertainty_group": "sweet_potato",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Jan Martens": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/sweet_potato/sweet_potato_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/sweet_potato/sweet_potato.bin",
+      "source_file_sha256": {
+        "gltf": "36a226b95a63b2e22711d75e17818f33f99a17e54737e5469a8c7d2a41896097",
+        "buffer": "37608ecca6f9a9c2d25bc166819fb56f2a61076247e732852239662d75295f82"
+      },
+      "source_geometry_sha256": "3df03f3c453f77167aadc7706a01d94421f68fa7f48893f71bc5eb574cf96337",
+      "source_faces": 2042,
+      "matched_faces": 1014,
+      "retention": 0.49657198824681686,
+      "geometry_dir": "out/polyhaven-fresh-asset-pool-20261125/matched/sweet_potato/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_fresh_asset_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "705b9a62d8744e0c729f6ee1811210859ec66ca53abeca7c561bf05ad1d6e31a",
+        "manymesh.obj": "fb96371de0cdf66acaa8aeb9af535f09c7def4f80318264ae64eb195389d589a",
+        "qem_preserve_border.obj": "5a3f3cec7b3973bb467c0ce8a99c6147e054bc705785ee3b6b1768c7a125b8d8",
+        "meshoptimizer_lock_border.obj": "42b03d7ffabf632f0368a7a738fb07575616831d43027c267a75d10afa2b7cee"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "wooden_cutting_board": {
+      "category": "Food & Kitchen",
+      "source_family": "wooden_cutting_board",
+      "uncertainty_group": "wooden_cutting_board",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Kuutti Siitonen": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wooden_cutting_board/wooden_cutting_board_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/wooden_cutting_board/wooden_cutting_board.bin",
+      "source_file_sha256": {
+        "gltf": "89fa89f6987c5087c0c7a8ac8ccbe451cfa8976ae46377d83a423e658cff9de4",
+        "buffer": "d7fa7549afcae99eb4739dfb13039f1e56f03327c2936cb021bfd05c3afad839"
+      },
+      "source_geometry_sha256": "a09dd84e1ca0104a29674f7f3c61480f14b77f4036429de3999161a64bd92a6f",
+      "source_faces": 3520,
+      "matched_faces": 1748,
+      "retention": 0.4965909090909091,
+      "geometry_dir": "out/polyhaven-fresh-asset-pool-20261125/matched/wooden_cutting_board/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_fresh_asset_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "ff63a3d8e6298c1fa6fef246063cd7dd3e51fc24a54d11c0001186d3b497d652",
+        "manymesh.obj": "983eb8a88672abc7bfa4538b7d916cbba31cee988906bb1a7f5cc5191b4b59ab",
+        "qem_preserve_border.obj": "837c9cc5f717ffdd58a9cc967a3fe5c5d814a948fcec1ec34ba1e125dffb7755",
+        "meshoptimizer_lock_border.obj": "0cff345246f6be9f2c128b437188e7b4674f7732357c28ceb767e2e76c795909"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "Drill_01": {
+      "category": "Tools & Equipment",
+      "source_family": "Drill",
+      "uncertainty_group": "Drill",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Fernando Quinn": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/Drill_01/Drill_01_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/Drill_01/Drill_01.bin",
+      "source_file_sha256": {
+        "gltf": "b162c83a8e35c869aef4f50e2cd80a750be248389e829f6cf9ced73ba094b9db",
+        "buffer": "0353e743c05051546945fd2d79e9c96bfad7ad387e0d47bc5d408d78ae7b9fe8"
+      },
+      "source_geometry_sha256": "82aa59557fc3e8d4a8f341a006ed6540b72e89d99e7384ca7eb377292d24f375",
+      "source_faces": 2926,
+      "matched_faces": 1462,
+      "retention": 0.49965823650034175,
+      "geometry_dir": "out/polyhaven-fresh-asset-pool-20261125/matched/Drill_01/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_fresh_asset_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "ec89cadcecf84a59d9a04f778ffd14c7101e4eba3fa68130945e46e6ef208648",
+        "manymesh.obj": "9131190ec51265617b88880944f907a8cb0c70864717795bd56d01edec17e131",
+        "qem_preserve_border.obj": "5a0e9291c3f081680eaf34c970a1d7dc827efeffa997922c2ed7e9b69caf2ca8",
+        "meshoptimizer_lock_border.obj": "70500b71eed7efb51b14004d78a6260515666a38619632db5a7c790ca0803692"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "cross_pein_hammer": {
+      "category": "Tools & Equipment",
+      "source_family": "cross_pein_hammer",
+      "uncertainty_group": "cross_pein_hammer",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Tics": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/cross_pein_hammer/cross_pein_hammer_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/cross_pein_hammer/cross_pein_hammer.bin",
+      "source_file_sha256": {
+        "gltf": "c198c0d9213a7ee9d6872f8c1edd7e2c0cad3814d173d31127ff2812c8895a6c",
+        "buffer": "dbf5c3691425c75ae60cbba13455125daddc51b05ebe7dad93e4a05875394c9c"
+      },
+      "source_geometry_sha256": "c9a360d361e1e0d4f21332d15bea9ce928b4c37cc237775906011656d06a6fc6",
+      "source_faces": 2124,
+      "matched_faces": 1060,
+      "retention": 0.4990583804143126,
+      "geometry_dir": "out/polyhaven-fresh-asset-pool-20261125/matched/cross_pein_hammer/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_fresh_asset_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "861fbeaacf8c64823c3b669fd097ab23e9e53696eaa08116fa9ba5752b573f6f",
+        "manymesh.obj": "7a2f9b73ce2b84dc5f85e7a1f4c479606af2afee0cacb1341eeacd31e038bcb6",
+        "qem_preserve_border.obj": "17c84025b8d42ba9df6bcf0820dda7ddda6a39ed7ca7a619c3c2287069588811",
+        "meshoptimizer_lock_border.obj": "bfe45bf5498687e3a4e8201543d20ec705e0f3b4803f98b8d77f02c421f6e1b0"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "crowbar_01": {
+      "category": "Tools & Equipment",
+      "source_family": "crowbar",
+      "uncertainty_group": "crowbar",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Alexander Otterbeck": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/crowbar_01/crowbar_01_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/crowbar_01/crowbar_01.bin",
+      "source_file_sha256": {
+        "gltf": "bb1d8974df16b2d75a786b2e019a0382a38aacab9850efe94df40899c7d0bab3",
+        "buffer": "85e90d3ac56ace801b3036c806f9578aed78cce85724aa01b7c5b32e8606996d"
+      },
+      "source_geometry_sha256": "59da15c75d108ebe76788d1dda0e928ee21937b780a45a38c7c760d266ca1921",
+      "source_faces": 2300,
+      "matched_faces": 1142,
+      "retention": 0.4965217391304348,
+      "geometry_dir": "out/polyhaven-fresh-asset-pool-20261125/matched/crowbar_01/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_fresh_asset_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "3e319875ddfc16040011c8c2e2a2fe5ae5182f09e887bd75c6e0f6a0520bf47f",
+        "manymesh.obj": "ecba74bfe81d675c1634dc0dfe83bef156041cfbc80129a87f475451f8635131",
+        "qem_preserve_border.obj": "907d2548e4015f7db1e7ff9a2ea765ff38ddeeffaa90e1b9ec86ff299ba8ee3a",
+        "meshoptimizer_lock_border.obj": "5e01545679b4d222ed80ca6e2c88846cc9e5391cb41620eaa7e29dd5dd145d53"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "brass_vase_03": {
+      "category": "Decor & Art",
+      "source_family": "brass_vase",
+      "uncertainty_group": "brass_vase",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Rico Cilliers": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/brass_vase_03/brass_vase_03_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/brass_vase_03/brass_vase_03.bin",
+      "source_file_sha256": {
+        "gltf": "b65379454ee1c8a608e757b513dc72013cfc5b4156deaf33a46e4f58338b5e8c",
+        "buffer": "55332659811893d1903cbff6aebee7ea4b2824d330171bd9cb20f80f305c4aeb"
+      },
+      "source_geometry_sha256": "a0c6fe97076772275a6b47681ffdc41a79e41b9b195d9a113937db17e9669576",
+      "source_faces": 2616,
+      "matched_faces": 1302,
+      "retention": 0.49770642201834864,
+      "geometry_dir": "out/polyhaven-fresh-asset-pool-20261125/matched/brass_vase_03/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_fresh_asset_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "0c6a5e289645bc8f4ad95731f529e811932115229dbb6508b69522b55920a8fc",
+        "manymesh.obj": "b248160784d904b69a71b4e80070dfe7adcea4535ed2b05037971fc024e5f054",
+        "qem_preserve_border.obj": "e7761aeb661b108e32b3bd45adeea3034382f7f0faaa555de1609d3313919700",
+        "meshoptimizer_lock_border.obj": "fcbf088bad3891299cb9aaaf4639d867a8d5d5d85803a42dc01ddc033e6e560d"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "brass_vase_04": {
+      "category": "Decor & Art",
+      "source_family": "brass_vase",
+      "uncertainty_group": "brass_vase",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Rico Cilliers": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/brass_vase_04/brass_vase_04_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/brass_vase_04/brass_vase_04.bin",
+      "source_file_sha256": {
+        "gltf": "62d32bf08cac959ef4b07d3c36261ec34ec73a48fd635360f9fc2d2076728204",
+        "buffer": "d28d50c37cf772eca34c76359bb8a092b4a2cf407be9f9e4951a9ce15ee4184f"
+      },
+      "source_geometry_sha256": "dbe28cd080bb6cfbf62c9747461bc09ca01aa1027cf4d8583fc3dae0565b7052",
+      "source_faces": 2760,
+      "matched_faces": 1378,
+      "retention": 0.49927536231884057,
+      "geometry_dir": "out/polyhaven-fresh-asset-pool-20261125/matched/brass_vase_04/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_fresh_asset_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "ca5fc222e5ce755819341fc6477ed36a3e7b64b47c910a7a07439c8bdb902810",
+        "manymesh.obj": "329477d4beb5bfdde458265f36f67d3f3660956ad44f9a0746e21c1699f389d3",
+        "qem_preserve_border.obj": "0863bcb55a8ea7e4d14906da8fe4722e31fbc18dead1a242266a89c9f5a4e89d",
+        "meshoptimizer_lock_border.obj": "e2052a693a32944545fc59cc16bb59803bd6c327bb31a7c88df77ef5c324b8d3"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "bronze_ray_statue": {
+      "category": "Decor & Art",
+      "source_family": "bronze_ray_statue",
+      "uncertainty_group": "bronze_ray_statue",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Tina": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/bronze_ray_statue/bronze_ray_statue_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/bronze_ray_statue/bronze_ray_statue.bin",
+      "source_file_sha256": {
+        "gltf": "bb2cab3316b05935fd311e132298d15076af9d6ddd88980abca1dea790c6305e",
+        "buffer": "205a534ad4505442c95221e524b9cde889a715adc52c410d4140ded92ff1cb35"
+      },
+      "source_geometry_sha256": "7cc46b4acb7b695fbe1e2b2c24d3ce653e83a2a1c6fe0a3fff6dd3f2741f12ec",
+      "source_faces": 1844,
+      "matched_faces": 922,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-fresh-asset-pool-20261125/matched/bronze_ray_statue/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_fresh_asset_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "f4cd130c727956fedbfe6870d76c2bc8fdee49375522a8919a194722905d1fb2",
+        "manymesh.obj": "befce3fb852b11458a6dee448b8e9219200770ae1fdbbfa47a063ab16ef851be",
+        "qem_preserve_border.obj": "06eea93d532070a888bc5116cd0ef707af25870ff208de3addca8c409cb8c569",
+        "meshoptimizer_lock_border.obj": "1a4e7e89a9f7c711528f3eeb4072fff25baa795aceaebdbaf066e83a10de12b3"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "carved_wooden_elephant": {
+      "category": "Decor & Art",
+      "source_family": "carved_wooden_elephant",
+      "uncertainty_group": "carved_wooden_elephant",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Greg Zaal": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/carved_wooden_elephant/carved_wooden_elephant_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/carved_wooden_elephant/carved_wooden_elephant.bin",
+      "source_file_sha256": {
+        "gltf": "c2378354ecd283c5c8d9459b6829ef7e61bdefd6d0f7a6b2d628362bd9bbef25",
+        "buffer": "b732bc38c4e57c8630acfe8c9f1bd7623e1ba49b0c488863e13546171f283618"
+      },
+      "source_geometry_sha256": "76d4e40d1f31ff2492136ca737349fe8e7826210c433f476b11605900c5a643e",
+      "source_faces": 2752,
+      "matched_faces": 1376,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-fresh-asset-pool-20261125/matched/carved_wooden_elephant/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_fresh_asset_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "3fc4aa87c5dc9de3509ca79be47b644b8de429e57a4621db7d3c9cb751445155",
+        "manymesh.obj": "5b5c2fe53f00c5bc58e6a0fddfb365cadab6960f9bf7cb6086c8968204fea8e3",
+        "qem_preserve_border.obj": "8bd5242896bff2a8635b22424305629908b03104f617508826f2a2ac8f69561f",
+        "meshoptimizer_lock_border.obj": "2445385bac52c787fe13fdaf79aba793f1b0f0702bd5d0fb7a2c2961c5909354"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "ceramic_vase_01": {
+      "category": "Decor & Art",
+      "source_family": "ceramic_vase",
+      "uncertainty_group": "ceramic_vase",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "James Ray Cock": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/ceramic_vase_01/ceramic_vase_01_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/ceramic_vase_01/ceramic_vase_01.bin",
+      "source_file_sha256": {
+        "gltf": "4e2c69eb5bbccf86e9fbf92af438464669d804c1f0eae041ee28651a5b57d91e",
+        "buffer": "56ffadcafff3f56538d04b0b43c06c9704baeec2ac3ec286ef01c313c82906f0"
+      },
+      "source_geometry_sha256": "ef2ab56f9340e6dadf0747bc79b56a2be306d3c9de94ad7e7cd5c6cab4086851",
+      "source_faces": 10296,
+      "matched_faces": 5148,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-fresh-asset-pool-20261125/matched/ceramic_vase_01/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_fresh_asset_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "16eb6be8148fbb77df39c8745e20ed70b7a0f05655a0e62c6c1b97cdd78dfbdb",
+        "manymesh.obj": "fd99f2d0407e619470137d2cfb10df56354db7af6c79edb953abc74d67e863ca",
+        "qem_preserve_border.obj": "17aa300f35d095a33131c1e622c0cfacc0de6da9195c797a77c776929ab8fc5b",
+        "meshoptimizer_lock_border.obj": "560036c95ceab3afe965cf87cf7c8d9577c557b9498e5ec4cf89535d8295873c"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "ceramic_vase_02": {
+      "category": "Decor & Art",
+      "source_family": "ceramic_vase",
+      "uncertainty_group": "ceramic_vase",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "James Ray Cock": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/ceramic_vase_02/ceramic_vase_02_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/ceramic_vase_02/ceramic_vase_02.bin",
+      "source_file_sha256": {
+        "gltf": "1bda047833b68c2c1b190ee53a55b1aa42d30748c84739909b6ca65b2f2d76c9",
+        "buffer": "b8e13a9fc140b563526afd11bb233d3a838f03abc779824504d89186dfaacd3a"
+      },
+      "source_geometry_sha256": "036c9f7b75ad59857e551af15d5f111981034f6cdf00d823a1c89e49a887c83d",
+      "source_faces": 11128,
+      "matched_faces": 5564,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-fresh-asset-pool-20261125/matched/ceramic_vase_02/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_fresh_asset_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "495bd05c8f555cd3dc458f73ed6c7f42c2cb977d707680176ad8952adaea51d2",
+        "manymesh.obj": "98f120f2cd0fadefd234087e52c668b94a3d9a52e8c5ee27491db1cce3ce7ca8",
+        "qem_preserve_border.obj": "046e1ae310aabab957a0aa53283a28acf28482f425068e717bb858e5558932ec",
+        "meshoptimizer_lock_border.obj": "d9cc5788ed80e3dc28fa94b335b2d189190295f1964b22e70a1ecfe767d34052"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "ceramic_vase_03": {
+      "category": "Decor & Art",
+      "source_family": "ceramic_vase",
+      "uncertainty_group": "ceramic_vase",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "James Ray Cock": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/ceramic_vase_03/ceramic_vase_03_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/ceramic_vase_03/ceramic_vase_03.bin",
+      "source_file_sha256": {
+        "gltf": "72ea418ae3a761a651ea6bc4ce6daced649a2bd6c1c570227ba73af9e25d07f4",
+        "buffer": "19ced3c9a4231e0e0f0d2693661e40db15590ad99b3c84feecaa19067311fa6b"
+      },
+      "source_geometry_sha256": "cba450668b589cce16cdf8287072984023e117d4bcc4ed4cecfdc4adb42e8669",
+      "source_faces": 11136,
+      "matched_faces": 5568,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-fresh-asset-pool-20261125/matched/ceramic_vase_03/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_fresh_asset_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "d6c657eea2dd7fc6ed7092260d88c9a9a06a67615b7a78e33a944c2640d7fbdf",
+        "manymesh.obj": "28a5239b896cb74e3fc89b20105e48ee28a583d61e7a480fd806a28ca6c2b11d",
+        "qem_preserve_border.obj": "22c5c379ee94fa12114542b43d32c53bf1654f4a22aeac5522865c69c69faac3",
+        "meshoptimizer_lock_border.obj": "ac2d64803b6e79b4ee4af5de5eb013f8a079624a9d0742aad7fd884e2ed0efc4"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "ceramic_vase_04": {
+      "category": "Decor & Art",
+      "source_family": "ceramic_vase",
+      "uncertainty_group": "ceramic_vase",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "James Ray Cock": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/ceramic_vase_04/ceramic_vase_04_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/ceramic_vase_04/ceramic_vase_04.bin",
+      "source_file_sha256": {
+        "gltf": "ca6461229bd6379b621396581e32400f93884fe77f7fa8abe6ddbeb64d57421b",
+        "buffer": "00d6b5743358cba4bc78d25010b1bfc262d6cb313de8cbeffa570bb95387dfc7"
+      },
+      "source_geometry_sha256": "7a85c49b3590061d31ed12103a6edc04da0f2add90ef8c437d283ded63b70983",
+      "source_faces": 9000,
+      "matched_faces": 4500,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-fresh-asset-pool-20261125/matched/ceramic_vase_04/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_fresh_asset_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "18b0b0c48b6b703d2f2bb8bdec6bc13798dccfbad0e94a6e40ae5d35f4c2b07b",
+        "manymesh.obj": "e70bd7ca9db4705fc9f1893fc2dfee4da0248571819e92009b994430f87a9d37",
+        "qem_preserve_border.obj": "f2a6bf8e9dc0c42eeab768414263647df71422298722540fd2a1bbd9757ffe91",
+        "meshoptimizer_lock_border.obj": "eb05ac71eb03b2797e0acc2019f2da5031f6d8d131e5e9af7d9c4b17177e3cb0"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "all_purpose_cleaner": {
+      "category": "Containers & Storage",
+      "source_family": "all_purpose_cleaner",
+      "uncertainty_group": "all_purpose_cleaner",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Kuutti Siitonen": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/all_purpose_cleaner/all_purpose_cleaner_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/all_purpose_cleaner/all_purpose_cleaner.bin",
+      "source_file_sha256": {
+        "gltf": "935c5a4ea198cb5d2731a211e483c27fc21fe213f8f7f1421521e7d6cc012535",
+        "buffer": "d6778f2b88314bce956824f419a31a3333b988ddf6a0360b5045a06c6c20c3a2"
+      },
+      "source_geometry_sha256": "f29ad08b4d44cad7cf088b6e170390b98df320f6e2cac3abf7fb986c57b89ff7",
+      "source_faces": 4624,
+      "matched_faces": 2312,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-category-pool-20261125/matched/all_purpose_cleaner/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_category_pool_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "b20fc38580e43919b5dd57a74c5dc173c5cbe0cb8b406f13ad6aac3def40ce54",
+        "manymesh.obj": "2be23e9128ca75711b9a8110d5ecc6f01cd342593d01137fdc579e1b0465f834",
+        "qem_preserve_border.obj": "f4ac1e29eca2dbda0d9238625ef9ab2dcc6500a70a23b6ae760f0ecaf8dd2637",
+        "meshoptimizer_lock_border.obj": "fea48045186b5735bcb2a7a27e442faaeda27d2af510d5ef738b5d05e4bc48b4"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "bleach_bottle": {
+      "category": "Containers & Storage",
+      "source_family": "bleach_bottle",
+      "uncertainty_group": "bleach_bottle",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "James Ray Cock": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/bleach_bottle/bleach_bottle_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/bleach_bottle/bleach_bottle.bin",
+      "source_file_sha256": {
+        "gltf": "0a0dc6e370afd86f5fc1b2c3fded4edf8e4b0fc8ab1947e0454752fb3e62c80f",
+        "buffer": "2b223425b640f6da3924698a5b94ed4ad31e7fef08fa9cfa0004a096b0b5727e"
+      },
+      "source_geometry_sha256": "507e28b614d9cd8eaffec5127242fb3d8519df7e3ef93336a8f2fc90eb43aef0",
+      "source_faces": 4052,
+      "matched_faces": 2024,
+      "retention": 0.49950641658440276,
+      "geometry_dir": "out/polyhaven-category-pool-20261125/matched/bleach_bottle/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_category_pool_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "3f26bc633a73ff3d423add63f692a16f1b1f57b0034805be79826fd0631f5014",
+        "manymesh.obj": "426a01c2e0b7551be620b0670d1243f45150994655c4189014b2dc980f4d0aed",
+        "qem_preserve_border.obj": "28f0d631dcf3121427792dc336cc73475e3281cad7e407f7de8b34d1d8ed43f0",
+        "meshoptimizer_lock_border.obj": "87057f633d521caba2099f87af3f11b919bd9f904c4c9226ec3fe6dcbdb21fdc"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "Chandelier_02": {
+      "category": "Lighting",
+      "source_family": "Chandelier",
+      "uncertainty_group": "Chandelier",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Kirill Sannikov": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/Chandelier_02/Chandelier_02_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/Chandelier_02/Chandelier_02.bin",
+      "source_file_sha256": {
+        "gltf": "d52ea299a0831a6851d50901d6719367454ffc61c1fed871cdcfc7db6b775dfd",
+        "buffer": "54190a815836aa2c9883c607372b37400ba8a6ef8449634973eeb370a511e4d9"
+      },
+      "source_geometry_sha256": "aaf0f5359839b77e9409e4f00fd6949002f49cc6b78074c0de8425d7ddf2d9ab",
+      "source_faces": 21514,
+      "matched_faces": 10756,
+      "retention": 0.49995351863902576,
+      "geometry_dir": "out/polyhaven-category-pool-20261125/matched/Chandelier_02/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_category_pool_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "6e991297b3211b3a715b37d1ed4c9614aea7472def70c740f99588359455b780",
+        "manymesh.obj": "b240962eaee646ccfbb0148e4165fbbfb0c7c7f8a9ff4ad27121dde812c128cc",
+        "qem_preserve_border.obj": "ae43ef7c465e99e4d2d6b34bf8f1c7a441c3f05d31ceaf5d6c623c8e116b14fd",
+        "meshoptimizer_lock_border.obj": "b0fc023d5f6490c2bdaf56cc84905240addf21d8557a9d4be036e036ae3bd803"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "Lantern_01": {
+      "category": "Lighting",
+      "source_family": "Lantern",
+      "uncertainty_group": "Lantern",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Rajil Jose Macatangay": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/Lantern_01/Lantern_01_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/Lantern_01/Lantern_01.bin",
+      "source_file_sha256": {
+        "gltf": "d3f8d7a7afec96d55d3b7f20c3e329c909d19d37047902a826bc157f77c27819",
+        "buffer": "cb0c7eaaea361546201ba1c4324581ac7147c221851657b6e23d2f854beabe49"
+      },
+      "source_geometry_sha256": "67fd92910fe5d43a1c8fbde30956f9e94cd9ee9769a42a2752524e56ddd48127",
+      "source_faces": 33902,
+      "matched_faces": 16950,
+      "retention": 0.4999705032151496,
+      "geometry_dir": "out/polyhaven-category-pool-20261125/matched/Lantern_01/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_category_pool_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "2f5b468e20cf187fdb1051b87bfd0c70f26876e0268ac2c7125a21590262e50c",
+        "manymesh.obj": "af6e81d0238e93cf2a7d14b4d5d1aa0f569abfa5c64e129f9dc95a7ab5df0e16",
+        "qem_preserve_border.obj": "6922847bac84c9bf59bde17124251c2757e1417a4cd8f1f032b19763e3e2f71e",
+        "meshoptimizer_lock_border.obj": "a448b01769923086e397bdc03ceceb79d6164573bec70ee91dab130c0e18cdd0"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "barrel_stove": {
+      "category": "Electronics & Appliances",
+      "source_family": "barrel_stove",
+      "uncertainty_group": "barrel_stove",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "MP": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/barrel_stove/barrel_stove_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/barrel_stove/barrel_stove.bin",
+      "source_file_sha256": {
+        "gltf": "33006d0166cda06b377b749553571220c9dcbb6f89d42d123d74d0308cf4df32",
+        "buffer": "09d7eb63b75a4a214fdb9f03349e5ddf990ea9865b3fbfb3fede6e5ccfa19e68"
+      },
+      "source_geometry_sha256": "188211713e2a6df5a099aa3131639cf15b7756380644bf9c3545ecd156e926bf",
+      "source_faces": 9216,
+      "matched_faces": 4608,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-category-pool-20261125/matched/barrel_stove/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_category_pool_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "4bef8d36e9fed30df2a9e289deaba6518c081e89faba156c65e860d94f0165a7",
+        "manymesh.obj": "ab7668c8ceca3c3304c9d5e950e02f90b95c6c23d49afd25b4f0c71117d76329",
+        "qem_preserve_border.obj": "0623b109b35495a5ece548bc4ad9853fa5ae4e5b75e0a34de43186c6b036bafb",
+        "meshoptimizer_lock_border.obj": "e15b13a41bb0d8965a2791acc1b9d8301e31433f16c245cdc64fb87d2f7e52e4"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "garden_gloves_01": {
+      "category": "Apparel & Personal Items",
+      "source_family": "garden_gloves",
+      "uncertainty_group": "garden_gloves",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Satyaki Mandal": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/garden_gloves_01/garden_gloves_01_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/garden_gloves_01/garden_gloves_01.bin",
+      "source_file_sha256": {
+        "gltf": "ab36c016f48b8cecf0658a9e3264592265dd159777ee56f3dbfdd765650f0287",
+        "buffer": "8d4d237eaa5d28fe7d5ba8daa700a6a888963e226a44653fc66067232202395b"
+      },
+      "source_geometry_sha256": "d22dc206a518e555f28ab4c87c9e4ec1dd69ab0c42670dd89d7c8395cef3ce5f",
+      "source_faces": 6822,
+      "matched_faces": 3410,
+      "retention": 0.4998534154206977,
+      "geometry_dir": "out/polyhaven-category-pool-20261125/matched/garden_gloves_01/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_category_pool_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "5303399b444ba7d83756c7ca65991b46fbb1275a405d59c5381b18c296f309cf",
+        "manymesh.obj": "013a093eb70cdd6b318a73095486789b1ccb9f9ed53b70ec0f2f5180b2bc3415",
+        "qem_preserve_border.obj": "3c26e4141b2b68936c7c671a1fae18a6bf3aa7da6a15812edbbbb4479118de7d",
+        "meshoptimizer_lock_border.obj": "10c3a28b67a3c7eabe2762b96e0582f559610edd5f736547d13c0b3caae7d8d6"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "brass_goblets": {
+      "category": "Food & Kitchen",
+      "source_family": "brass_goblets",
+      "uncertainty_group": "brass_goblets",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Tina": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/brass_goblets/brass_goblets_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/brass_goblets/brass_goblets.bin",
+      "source_file_sha256": {
+        "gltf": "f78416e66ef2dc2de3aadfbd3bcd5da78902bc129764bc92bf62436cea6c4c65",
+        "buffer": "a9f5a889632e96a78cf2491b28a9947eff05a7d0507329d20a757dfab1a3c7cd"
+      },
+      "source_geometry_sha256": "7c2be39e0e6d54900c842a038e7c3f065bad327bfc76da6882bfa84648319f0c",
+      "source_faces": 9600,
+      "matched_faces": 4800,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-category-pool-20261125/matched/brass_goblets/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_category_pool_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "d50d569e56096053e4d0dc2921ff473ac889debabf0cb1f89ae363a95340635d",
+        "manymesh.obj": "758d66e2278e827ad42f5b16ff8c515781e524c3f340027c5906de17afc019ae",
+        "qem_preserve_border.obj": "dc9ed7f15c06cbf2899543ca6cd01124983b46ad0601f3fc23608d52c5e32e89",
+        "meshoptimizer_lock_border.obj": "8741b328db29be1b98cb167de02f49714808194dcb9a140da1d41a5496225225"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "brass_pot_01": {
+      "category": "Food & Kitchen",
+      "source_family": "brass_pot",
+      "uncertainty_group": "brass_pot",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Rico Cilliers": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/brass_pot_01/brass_pot_01_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/brass_pot_01/brass_pot_01.bin",
+      "source_file_sha256": {
+        "gltf": "972fa20a81e322159a79cadf3812e1513a0001424198c7d9b423ced4cbf84473",
+        "buffer": "ffa78e52e5138d37b3184ceb5b2f95459f7a7a251bb645b12f935715fa58c654"
+      },
+      "source_geometry_sha256": "7c3bd3331327594952c400c4179ded73dee10d170f28d1134853603a584c66bb",
+      "source_faces": 3760,
+      "matched_faces": 1880,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-category-pool-20261125/matched/brass_pot_01/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_category_pool_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "bd0ecb2097ff4f1e3467f67c43e7f6b9aae9ae13ad0e2cd05898ac57a88e3c21",
+        "manymesh.obj": "4177e7fa3043334a186e2311254f83f63e6cacf089541d89745b406f301c6417",
+        "qem_preserve_border.obj": "9739d059f653892fc80c4ceda0466d4fda92ad94e96db95a631da0a6e5ad7516",
+        "meshoptimizer_lock_border.obj": "3d3637060c93fcfb8bf57b5ed07fe1bcfab40fb933cf39b2e3312a138bd1f8d9"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "brass_pot_02": {
+      "category": "Food & Kitchen",
+      "source_family": "brass_pot",
+      "uncertainty_group": "brass_pot",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Rico Cilliers": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/brass_pot_02/brass_pot_02_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/brass_pot_02/brass_pot_02.bin",
+      "source_file_sha256": {
+        "gltf": "cde8f5999217e71fa6153a7ace0f2c17fb485b9b2b6787993b003b1cc722c06d",
+        "buffer": "11f32d175485d541850f96e7a84fedd057ba564bfbf7c25d471b67db0a7b85d9"
+      },
+      "source_geometry_sha256": "76a82694acf21a67004a1f3ca945578b321e79462f2ad7cd57c5ed95601490ea",
+      "source_faces": 3344,
+      "matched_faces": 1670,
+      "retention": 0.49940191387559807,
+      "geometry_dir": "out/polyhaven-category-pool-20261125/matched/brass_pot_02/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_category_pool_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "86e387f2aa90b484ac6468731ce7bd31eec206f3d12fd3d1293be34743ebe636",
+        "manymesh.obj": "5653fce7def4b820343b5c9227baef0a83eafcc50b05adfebebc747704728708",
+        "qem_preserve_border.obj": "1a75979e4e59b9b9b4d5c954594f395ff65ee71e6d37f68d45c2d2a7569c91f9",
+        "meshoptimizer_lock_border.obj": "42daf0a7d454b76274b3a949bff83eb9fb491e0a5a212526beb47c382d495bce"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "ceramic_pot": {
+      "category": "Food & Kitchen",
+      "source_family": "ceramic_pot",
+      "uncertainty_group": "ceramic_pot",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Aron \u0141yczek": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/ceramic_pot/ceramic_pot_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/ceramic_pot/ceramic_pot.bin",
+      "source_file_sha256": {
+        "gltf": "7d8c28f171f701a422341c82322d439ea5041a6edd4443a85e3c8f88ce12ab0e",
+        "buffer": "f47636aa57f9a258c0ae6874763b9fe5dc87943ea932367e9d5526cdf914ff04"
+      },
+      "source_geometry_sha256": "d1c8a8340deab16b05638333bee49c2669aff78ffc7d6771ecf67fe864d734bd",
+      "source_faces": 3592,
+      "matched_faces": 1794,
+      "retention": 0.4994432071269488,
+      "geometry_dir": "out/polyhaven-category-pool-20261125/matched/ceramic_pot/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_category_pool_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "6470ca487af5c690b81894b561ceaa1d3aa65d52694816f6682532e392d2a40d",
+        "manymesh.obj": "e60a3661ec7eccd058780dc8899e2ecb8d4c33703f3ffaac0f43e0b547fa6194",
+        "qem_preserve_border.obj": "2e22167035556aeffb741949254c09d13a7c4b71befb7aaced7172514333e685",
+        "meshoptimizer_lock_border.obj": "d91c9b89fda64174a2f291c9874c3f007c6f7a6e57b2586348aa9e6fa107ef6d"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "hanging_picture_frame_03": {
+      "category": "Decor & Art",
+      "source_family": "hanging_picture_frame",
+      "uncertainty_group": "hanging_picture_frame",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "James Ray Cock": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/hanging_picture_frame_03/hanging_picture_frame_03_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/hanging_picture_frame_03/hanging_picture_frame_03.bin",
+      "source_file_sha256": {
+        "gltf": "39223fc47a8714cdf4db3b4d68042a02207db5ec3947bf021e47203540e21ddd",
+        "buffer": "e96c6046c6e5b6c8174a53d5956b6147eeec16cb426aa2a8d761216381b75561"
+      },
+      "source_geometry_sha256": "31ca3a8954eaf8344a5600e8d4183445ec43ed0aef6dd21160d4ad55440a9c34",
+      "source_faces": 24348,
+      "matched_faces": 12174,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-category-pool-20261125/matched/hanging_picture_frame_03/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_category_pool_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "25ce3817b58c05ded8eaab2f4326b3c787ad4d336053907010a62517d76bb714",
+        "manymesh.obj": "9380fe366ae7b69ebdd52c8adeb294eb0486bc746903f92f4fd1747747adffab",
+        "qem_preserve_border.obj": "a0126441aea11e05465ec8b573b95aa82fbf20a7152d41df884ae25cc3fd0add",
+        "meshoptimizer_lock_border.obj": "3cd3eea6a9d8f4cf2c5a3a9d123e867590c1c9e58ede68076f97c0ca61071495"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "horse_head": {
+      "category": "Decor & Art",
+      "source_family": "horse_head",
+      "uncertainty_group": "horse_head",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Tina": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/horse_head/horse_head_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/horse_head/horse_head.bin",
+      "source_file_sha256": {
+        "gltf": "bb46cbabf202aa1af209678619f912c5605477fa098a46c238cdc46b3696bb0d",
+        "buffer": "e56c0a19bc3aaf859612634665f17e461156423889e7954d72b949211a37b10b"
+      },
+      "source_geometry_sha256": "34a7b8eb20c717e75649dcdd3733ffbca810016bad9d71b82834fca5ce3248f1",
+      "source_faces": 12068,
+      "matched_faces": 6034,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-category-pool-20261125/matched/horse_head/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_category_pool_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "3b32b2dc06df7c0ab22d3438e34440d8a1baae12f0c07a25c64e1c1c8147a001",
+        "manymesh.obj": "7fae6ce1f596de2f05fee6dfc226eb9326d3d96769aa2fed77ada8d29f8526ef",
+        "qem_preserve_border.obj": "4667a203f7666011eea2636e0552bdac1e296e249237584da8037ec2a070afad",
+        "meshoptimizer_lock_border.obj": "41c34de385e7e08303472422089169a05f232d8177ae729d28be013f6b9b6d3f"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "katana_stand_01": {
+      "category": "Decor & Art",
+      "source_family": "katana_stand",
+      "uncertainty_group": "katana_stand",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Rico Cilliers": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/katana_stand_01/katana_stand_01_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/katana_stand_01/katana_stand_01.bin",
+      "source_file_sha256": {
+        "gltf": "d69057f6c0f06cc28622c3c827f783d32638bfc7488b416dd56c49d01e9aaab4",
+        "buffer": "ce49a8384396db669a90fbe2393d019fa7993953ed07e5f5ccaed870782777e9"
+      },
+      "source_geometry_sha256": "6931728cb84bb6c13d555fe11c9b0e39b5ab95d249bd344282614d4969b768bf",
+      "source_faces": 3780,
+      "matched_faces": 1890,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-category-pool-20261125/matched/katana_stand_01/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_category_pool_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "318afdf58580c0c0bf652ccec78292e3411a8576b0c999aed4a9d650391fece5",
+        "manymesh.obj": "524ccf4e43586aa60ca8771ce33c6d2fcf9f57c5fe6a0c80cfac02c62a27ce9e",
+        "qem_preserve_border.obj": "e1293d1b374660204ed0a94c5fce742f6901b33b6675e9b735ed74fa070296b7",
+        "meshoptimizer_lock_border.obj": "03de551ffd02a71f09d46b51e08932178fa220d8d046bda759288a08b169bcd2"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "lifebuoy": {
+      "category": "Vehicles & Transport",
+      "source_family": "lifebuoy",
+      "uncertainty_group": "lifebuoy",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Hank Kaamura": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/lifebuoy/lifebuoy_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/lifebuoy/lifebuoy.bin",
+      "source_file_sha256": {
+        "gltf": "d9c76a8f2471249f314b3efcffe0d3956ba2d3f0b8ba528cc0f2b861561580f3",
+        "buffer": "aa45c8d43ee11e12a4ab9f46bfb06d1baa6c687d61776ad9b06ea6b5664c0bc2"
+      },
+      "source_geometry_sha256": "72961b840cd7de9f1d009e2569b13b93809576c1e5f48c7b801e5b081d000467",
+      "source_faces": 10728,
+      "matched_faces": 5364,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-category-pool-20261125/matched/lifebuoy/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_category_pool_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "c4384632a67d181374c43df43713dd23a9489506d9c412d9a997c0d4049e1718",
+        "manymesh.obj": "5dc78e5c7edbda6371766b0d1bf313e18a08ed37fbe4ae4d1dcbe59092de8a2d",
+        "qem_preserve_border.obj": "951a4e2addbfda2dd0ac033c8d1c59813c8a8e0d3e29164c77b58603055efc55",
+        "meshoptimizer_lock_border.obj": "0f79a803520da197c1ac0cf0a7ca7a8f5dd77f2bf6919fe2c50e018b1a7bfb09"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "baseball_01": {
+      "category": "Leisure",
+      "source_family": "baseball",
+      "uncertainty_group": "baseball",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Rico Cilliers": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/baseball_01/baseball_01_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/baseball_01/baseball_01.bin",
+      "source_file_sha256": {
+        "gltf": "5a68d6a9655e83c7ce9a8fe0b60998cee87a4e1ccbc7f13afcb4f2c8a7637b8e",
+        "buffer": "14967a62aabf57152ff58f9a3f56daa758e749e4ff8f4a75637265f162062c7c"
+      },
+      "source_geometry_sha256": "ddd51e100de9a0ec089c1b172694c691a20c9ba8e5e91993e8959be52021d3a6",
+      "source_faces": 10848,
+      "matched_faces": 5424,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-category-pool-20261125/matched/baseball_01/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_category_pool_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "46c1575bfb7f832a7918d3627d034afd30a37f5493b3cadb228e0e4a219819ca",
+        "manymesh.obj": "486a7e2d71afc99f5c1491bf921bcfc0b125d1116424be7ba6c5ecd6e3ae0ede",
+        "qem_preserve_border.obj": "1a39beaae070f91bea550798b5127c3d98d4e148edefd362a9b66b1dba5050f8",
+        "meshoptimizer_lock_border.obj": "8c176cdb0fc9e0f6089f7094eca0aa2664d596ecbce805c096b567a9eb394e82"
+      },
+      "quality_scored_before_freeze": false
+    },
+    "baseball_bat": {
+      "category": "Leisure",
+      "source_family": "baseball_bat",
+      "uncertainty_group": "baseball_bat",
+      "license": "CC0 per current Poly Haven policy; preserved as candidate source, with creator credit recorded",
+      "creator_credit": {
+        "Enrique Mart\u00edn": "All"
+      },
+      "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/baseball_bat/baseball_bat_1k.gltf",
+      "source_buffer_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/baseball_bat/baseball_bat.bin",
+      "source_file_sha256": {
+        "gltf": "a55e57c03f986a82713c4751e6e6372d39b5f25eee9bbd31576b62bbebe0fa59",
+        "buffer": "884a4120d81c38e9370861f21c36a6fb3e53ad0d72eb0833ce9f9b9853e5199b"
+      },
+      "source_geometry_sha256": "46017f97a064db17c229493963f22a525ee291bfe7cc393aeaab2391e2fadaf6",
+      "source_faces": 2672,
+      "matched_faces": 1336,
+      "retention": 0.5,
+      "geometry_dir": "out/polyhaven-category-pool-20261125/matched/baseball_bat/controls",
+      "matched_face_receipt": "tools/mmtrain/polyhaven_category_pool_matched_face_screen_20261125.json",
+      "geometry_exports_sha256": {
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+        "reference.obj": "d5da8d5a8ab0e8412d81dad58548d88ace3587a7fbdb6f486e45b928953631a4",
+        "manymesh.obj": "b690acc0aac96d710a86c443c09d4295810905482638c87cf260675056813699",
+        "qem_preserve_border.obj": "84812d611fcf6ba19b70ccae54a3b1edbdc7f3b18cdd51e33a882de0638e0b94",
+        "meshoptimizer_lock_border.obj": "a67b82e7645328268391f162df03c2d292bdfbe3f39fe0bd35f8ec65958be86a"
+      },
+      "quality_scored_before_freeze": false
+    }
+  },
+  "counts": {
+    "assets": 30,
+    "source_families": 25,
+    "categories": 9
+  },
+  "camera_protocol": {
+    "training_source": "fit_appearance_cuda.py training_eyes(), frozen 2026-11-24",
+    "training_views": [
+      [
+        0.4585821076026216,
+        3.09375,
+        1.052812133329939
+      ],
+      [
+        4.0949982905520965,
+        1.625,
+        2.7623113510926696
+      ],
+      [
+        3.133595267499613,
+        -1.03125,
+        0.08428604275934887
+      ],
+      [
+        1.5523570122240953,
+        -4.875,
+        -0.9298186417784278
+      ],
+      [
+        -0.6930246963066155,
+        1.4437499999999999,
+        -2.8853600655393294
+      ],
+      [
+        -3.6721835155416906,
+        -0.9750000000000001,
+        -3.55027368356073
+      ],
+      [
+        -1.88466952378278,
+        -2.68125,
+        -0.3859005359213566
+      ],
+      [
+        -2.0834713866225063,
+        2.9250000000000003,
+        3.760787415040272
+      ],
+      [
+        0.19961946829315586,
+        -0.20625,
+        3.2874934228646535
+      ],
+      [
+        2.216154637013322,
+        -3.575,
+        3.0574554166568566
+      ],
+      [
+        2.2722870808768594,
+        2.26875,
+        -0.7612390292018137
+      ],
+      [
+        3.267296643733907,
+        0.325,
+        -4.032263339843412
+      ],
+      [
+        0.31152950555117653,
+        -1.85625,
+        -2.7105876308784116
+      ],
+      [
+        -2.769946592926677,
+        4.2250000000000005,
+        -1.2315725201277814
+      ],
+      [
+        -3.2059493768498775,
+        0.6187499999999999,
+        0.4785781342433887
+      ],
+      [
+        -3.531569453678751,
+        -2.275,
+        3.0647009958302904
+      ],
+      [
+        0.7226142301617068,
+        4.875,
+        1.6589766949441462
+      ],
+      [
+        2.598748915158061,
+        1.03125,
+        1.7530052805011171
+      ],
+      [
+        4.937786482120602,
+        -1.625,
+        0.13281437040867095
+      ],
+      [
+        0.9851496423729834,
+        -3.09375,
+        -0.5900772149747714
+      ],
+      [
+        -1.0920389153922425,
+        2.275,
+        -4.546627982061974
+      ],
+      [
+        -2.330424154093765,
+        -0.6187499999999999,
+        -2.253058299182771
+      ],
+      [
+        -2.969782279900138,
+        -4.2250000000000005,
+        -0.6080856929669862
+      ],
+      [
+        -1.3222029953565906,
+        1.85625,
+        2.38665355185248
+      ],
+      [
+        0.31455188943163953,
+        -0.325,
+        5.180292666332182
+      ],
+      [
+        1.4064058273353774,
+        -2.26875,
+        1.9403082451860818
+      ],
+      [
+        3.5805735819877786,
+        3.575,
+        -1.1995281672271005
+      ],
+      [
+        2.0734767162157484,
+        0.20625,
+        -2.558936350285242
+      ],
+      [
+        0.49089497844427826,
+        -2.9250000000000003,
+        -4.2712289941114365
+      ],
+      [
+        -1.7578507224342372,
+        2.68125,
+        -0.7815748685426305
+      ],
+      [
+        -5.051799018066474,
+        0.9750000000000001,
+        0.7541231206259459
+      ],
+      [
+        -2.2411883071422842,
+        -1.4437499999999999,
+        1.9449064011999917
+      ]
+    ],
+    "training_count": 32,
+    "training_resolution": [
+      128,
+      128
+    ],
+    "training_render_resolution": [
+      256,
+      256
+    ],
+    "evaluation_source": "bench_appearance_controls.py camera_eyes(), frozen 2026-11-24",
+    "evaluation_views": [
+      {
+        "view": 0,
+        "distance": 3.3,
+        "eye": [
+          1.2296033403785709,
+          3.025,
+          0.4769178391818255
+        ]
+      },
+      {
+        "view": 0,
+        "distance": 5.2,
+        "eye": [
+          1.9375567787783543,
+          4.766666666666667,
+          0.7515068981046948
+        ]
+      },
+      {
+        "view": 1,
+        "distance": 3.3,
+        "eye": [
+          -2.0337438666324794,
+          2.4749999999999996,
+          0.7926290966995666
+        ]
+      },
+      {
+        "view": 1,
+        "distance": 5.2,
+        "eye": [
+          -3.2046873049966345,
+          3.9000000000000004,
+          1.2489913038902263
+        ]
+      },
+      {
+        "view": 2,
+        "distance": 3.3,
+        "eye": [
+          1.1840265334069995,
+          1.9249999999999996,
+          -2.4046738174206093
+        ]
+      },
+      {
+        "view": 2,
+        "distance": 5.2,
+        "eye": [
+          1.8657387799140601,
+          3.033333333333333,
+          -3.789182985026415
+        ]
+      },
+      {
+        "view": 3,
+        "distance": 3.3,
+        "eye": [
+          0.8408285322459195,
+          1.3749999999999998,
+          2.879649697334933
+        ]
+      },
+      {
+        "view": 3,
+        "distance": 5.2,
+        "eye": [
+          1.3249419295996308,
+          2.1666666666666665,
+          4.537629826103531
+        ]
+      },
+      {
+        "view": 4,
+        "distance": 3.3,
+        "eye": [
+          -2.7321881762719613,
+          0.825,
+          -1.6566601249018142
+        ]
+      },
+      {
+        "view": 4,
+        "distance": 5.2,
+        "eye": [
+          -4.305266217155818,
+          1.3,
+          -2.610494742269526
+        ]
+      },
+      {
+        "view": 5,
+        "distance": 3.3,
+        "eye": [
+          3.225202142851199,
+          0.27500000000000013,
+          -0.6422196958580699
+        ]
+      },
+      {
+        "view": 5,
+        "distance": 5.2,
+        "eye": [
+          5.082136709947345,
+          0.4333333333333335,
+          -1.0119825510490799
+        ]
+      },
+      {
+        "view": 6,
+        "distance": 3.3,
+        "eye": [
+          -1.9443505143142688,
+          -0.27499999999999974,
+          2.652145561142118
+        ]
+      },
+      {
+        "view": 6,
+        "distance": 5.2,
+        "eye": [
+          -3.063825052858848,
+          -0.43333333333333296,
+          4.17913845998152
+        ]
+      },
+      {
+        "view": 7,
+        "distance": 3.3,
+        "eye": [
+          -0.3476427421937533,
+          -0.825,
+          -3.176242988784077
+        ]
+      },
+      {
+        "view": 7,
+        "distance": 5.2,
+        "eye": [
+          -0.5478006846689446,
+          -1.3,
+          -5.004988952023395
+        ]
+      },
+      {
+        "view": 8,
+        "distance": 3.3,
+        "eye": [
+          2.2550423004083875,
+          -1.3750000000000002,
+          1.9784234186262675
+        ]
+      },
+      {
+        "view": 8,
+        "distance": 5.2,
+        "eye": [
+          3.5533999885223078,
+          -2.166666666666667,
+          3.117515689956543
+        ]
+      },
+      {
+        "view": 9,
+        "distance": 3.3,
+        "eye": [
+          -2.679750148811414,
+          -1.9249999999999996,
+          0.05756856733673144
+        ]
+      },
+      {
+        "view": 9,
+        "distance": 5.2,
+        "eye": [
+          -4.222636598127077,
+          -3.033333333333333,
+          0.09071410610636471
+        ]
+      },
+      {
+        "view": 10,
+        "distance": 3.3,
+        "eye": [
+          1.5774493940548284,
+          -2.4749999999999996,
+          -1.5086511887099863
+        ]
+      },
+      {
+        "view": 10,
+        "distance": 5.2,
+        "eye": [
+          2.485677833056094,
+          -3.9000000000000004,
+          -2.377268539785433
+        ]
+      },
+      {
+        "view": 11,
+        "distance": 3.3,
+        "eye": [
+          -0.08705745103924314,
+          -3.025,
+          1.315977203533005
+        ]
+      },
+      {
+        "view": 11,
+        "distance": 5.2,
+        "eye": [
+          -0.13718143800123164,
+          -4.7666666666666675,
+          2.073661047991402
+        ]
+      }
+    ],
+    "evaluation_count": 24,
+    "evaluation_resolution": [
+      640,
+      360
+    ],
+    "minimum_train_to_eval_angular_separation_degrees": 16.811584298816538
+  },
+  "render_protocol": {
+    "reference": "full source OBJ at 1280x720, 4x MSAA, linear 2x2 box resolve to 640x360",
+    "candidate_sampling": [
+      "native rasterization",
+      "4x MSAA"
+    ],
+    "lighting": "fixed diffuse material and camera light from the frozen placement control",
+    "equal_face_budget": "ManyMesh, QEM, and meshoptimizer cuts share each asset's exact pre-screened 49%-51% face count"
+  },
+  "metrics": {
+    "primary": [
+      "LDR-FLIP (67 pixels/degree)"
+    ],
+    "guardrails": [
+      "pooled-MSE PSNR",
+      "SSIM",
+      "silhouette XOR"
+    ],
+    "exploratory": [
+      "LPIPS SqueezeNet v0.1 on replicated grayscale 8-bit sRGB",
+      "sampled bidirectional surface distance",
+      "sampled normal consistency"
+    ],
+    "unavailable": [
+      "coverage MAE from the current scorer",
+      "temporal stability",
+      "equal-frame-time cost",
+      "mobile GPU performance",
+      "human preference"
+    ]
+  },
+  "decision_rule": {
+    "familywise_interval": "two-sided 95% max-|t| cluster bootstrap over 25 source-family groups, 200000 draws, seed 20261125, shared resamples over the 16 primary metric/control/mode endpoints",
+    "primary_pass": "Under 4x MSAA, the simultaneous lower bound for LDR-FLIP improvement must exceed the frozen practical margin against both QEM and meshoptimizer.",
+    "practical_margins": {
+      "qem_preserve_border": {
+        "primary_metric": "LDR-FLIP",
+        "minimum_improvement": 0.0007903679830797551,
+        "units": "absolute LDR-FLIP score",
+        "derivation": "50% of the 21-model development-cohort ManyMesh-minus-control mean gap under 4x MSAA",
+        "pilot_gap": 0.0015807359661595102
+      },
+      "meshoptimizer_lock_border": {
+        "primary_metric": "LDR-FLIP",
+        "minimum_improvement": 0.0011448033849003679,
+        "units": "absolute LDR-FLIP score",
+        "derivation": "50% of the 21-model development-cohort ManyMesh-minus-control mean gap under 4x MSAA",
+        "pilot_gap": 0.0022896067698007358
+      }
+    },
+    "guardrail_pass": "Under 4x MSAA, no simultaneous interval may show a PSNR, SSIM, or silhouette-XOR regression against either control; report native-mode effects as secondary.",
+    "integrity_pass": "All 30 assets remain in the report; any missing render, topology failure, boundary change, or face-count mismatch is reported and cannot be silently excluded.",
+    "stop": "Reject this method configuration if the primary margin is missed, a guardrail regression is supported, or any topology/boundary gate fails. Do not tune and rescore this confirmation cohort."
+  },
+  "scope_limits": [
+    "This is equal-face desktop image-quality evidence, not equal-time evidence.",
+    "The protocol compares native and 4x MSAA; it does not establish superiority over SMAA or an upscaler.",
+    "Per-asset fitting with disjoint views tests the frozen procedure across these assets; it is not cross-asset neural-model generalization.",
+    "The final candidate method/configuration is not frozen yet; this manifest deliberately cannot be consumed by the current score runner."
+  ]
+}

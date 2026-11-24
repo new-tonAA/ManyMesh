@@ -107,4 +107,8 @@ does not support every glTF feature: two selected assets could not be extracted
 because of morph targets or skinning, and one asset lacked a 1K glTF. These
 three are absent from the qualifying pool; their failures remain visible in the
 source-screen receipt. The topology preflight also does not test geometric
-self-intersections. No image scoring has been run on this pool.
+self-intersections. No image scoring has been run on this pool. The later
+frozen camera, renderer, metrics, and project-specific decision margins are
+documented in the [confirmation protocol](POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md);
+scoring remains disabled until a method configuration passes the development
+gate.

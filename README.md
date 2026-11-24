@@ -55,9 +55,13 @@ The moving-camera LPIPS screen uses three reused synthetic scenes and did not
 establish an equal-time quality gain. The 21-model LPIPS supplement is
 post-hoc on an already-scored cohort and is not independent confirmation.
 Desktop evidence does not support mobile claims.
-The fresh 30-model Poly Haven pool is unscored and is not a frozen test split.
+The 30-model Poly Haven confirmation set has frozen inputs and an evaluation
+protocol, but remains unscored until the method configuration passes the
+two-asset gate. Scoring is disabled in the manifest. This set tests a frozen
+per-asset procedure on unseen assets, not cross-asset neural-model transfer.
 [LPIPS and temporal results](tools/mmmetrics/MOVING_SCENE_EDGE_QUALITY_20261124.md) ·
 [pool protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md)
+[Frozen confirmation protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md)
 
 ## Next experiment gate
 

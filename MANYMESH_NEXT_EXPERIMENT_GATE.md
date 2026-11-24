@@ -135,17 +135,18 @@ SSAA for thin-geometry meshes. Static-frame or jitter-only scoring cannot
 support a temporal-reconstruction claim.
 
 Use a fresh, licensed, category-balanced confirmation set with at least 20
-assets from five or more declared categories. A pre-score Poly Haven candidate
-pool now has 30 exact-face eligible models across 25 slug-family groups and
-nine categories. Its source and matched-face checks used no rendered images or
-quality scores. This satisfies the candidate-count preflight only; it does not
-freeze the final camera split, renderer, lighting, full-source reference,
-metrics, exclusions, or practical-effect margins. Before scoring, reserve the
-asset-level test split and keep every view and camera path from an asset in one
-partition. Report paired uncertainty over family groups, not frames. A
-development win is not held-out evidence. See the
-[candidate-pool report](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md)
-and [manifest](tools/mmtrain/polyhaven_confirmation_pool_20261125.json).
+assets from five or more declared categories. A 30-model Poly Haven set is now
+frozen across 25 source-family groups and nine categories. The source meshes,
+matched-face exports, cameras, renderer, reference, metrics, and project-
+specific practical margins are hash-pinned in the
+[confirmation protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md)
+and [manifest](tools/mmtrain/polyhaven_confirmation_protocol_20261125.json).
+No image scoring has been run; scoring remains disabled until the method
+configuration passes Gate 1 and is frozen. Views from each asset stay in one
+partition, and paired uncertainty is grouped by source family, not frame. The
+candidate-pool selection history is in the
+[pool report](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md) and
+[original pool manifest](tools/mmtrain/polyhaven_confirmation_pool_20261125.json).
 
 ## Current blockers and stop conditions
 
@@ -161,9 +162,11 @@ need a CUDA-capable host. These two assets screen this configuration only. A
 [Earlier Poly Haven preflight](tools/mmtrain/POLYHAVEN_CANDIDATE_TOPOLOGY_20261124.md)
 adds twelve source topology passes across five categories; three pass the
 exact-face check at the 50% request. A subsequent catalog-only expansion
-reserves 30 eligible models across nine categories, but the final confirmation
-split and quality-scoring protocol remain pending. Details and exclusions are
-in the [expanded-pool report](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md).
+reserved 30 eligible models across nine categories. The final confirmation
+split and quality-scoring protocol are now frozen, but scoring remains gated on
+a frozen method configuration. Details are in the
+[expanded-pool report](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md)
+and [confirmation protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md).
 
 A fresh `--prepare-only` repeat on 2026-11-25 reproduced both frozen per-asset
 protocol files byte-for-byte and verified their input, script, scorer, and

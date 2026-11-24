@@ -51,9 +51,13 @@ novelty.
 No physical-phone test, equal-complete-frame-time comparison, user study, or
 positive held-out optimized-method result is available. A separate three-scene
 moving-camera screen measured LPIPS and temporal metrics but did not establish
-an equal-time quality gain. The newer 30-model Poly Haven pool is unscored and
-is not a frozen test split ([pool report](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md)).
-See the [moving-camera LPIPS and temporal screen](tools/mmmetrics/MOVING_SCENE_EDGE_QUALITY_20261124.md).
+an equal-time quality gain. The fresh 30-model Poly Haven set now has frozen
+inputs and a scoring protocol, but remains unscored until the method
+configuration is frozen. It evaluates a fixed per-asset procedure on unseen
+assets; it does not test cross-asset neural-model transfer. See the
+[confirmation protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md),
+[pool provenance](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md), and
+[moving-camera LPIPS and temporal screen](tools/mmmetrics/MOVING_SCENE_EDGE_QUALITY_20261124.md).
 Desktop results do not support mobile claims.
 
 ## Research index
