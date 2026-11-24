@@ -1,6 +1,6 @@
-# Next experiment gate: differentiable LOD baseline
+# Next experiment gate: fixed-topology placement control
 
-Updated 2026-11-23. **This is a falsification plan, not a contribution claim.**
+Updated 2026-11-25. **This is a falsification plan, not a contribution claim.**
 The SIGGRAPH 2027 Technical Papers page lists 28 January 2027 as the paper
 deadline and says detailed submission instructions are forthcoming. The
 schedule does not relax the evidence gate. [Official dates](https://s2027.siggraph.org/program/technical-papers/)
@@ -10,15 +10,18 @@ schedule does not relax the evidence gate. [Official dates](https://s2027.siggra
 Can offline appearance optimization improve a constrained triangle-mesh cluster
 LOD hierarchy when quality is measured after antialiasing or upscaling? Use one
 comparison at matched face count and a separate comparison at matched complete
-frame time. The first candidate is an existing differentiable simplification
-baseline, not a custom DAG optimizer.
+frame time. The frozen first experiment is a placement control adapted from
+nvdiffmodeling; it is not a custom DAG optimizer or a faithful reproduction of
+Hasselgren et al.'s training protocol.
 
 Close prior art includes Hasselgren et al.'s differentiable mesh and shading
-optimization for simplification and LOD. Their full paper states that MSAA is
-used during optimization to improve silhouette visibility gradients while
-matching a supersampled target; reported 1-spp results are rendered without AA
-unless noted. Thus differentiable fitting, scale-specific appearance fitting,
-and MSAA-assisted silhouette gradients are already established. The remaining
+optimization for simplification and LOD. Their full paper uses MSAA during
+optimization for its shape-and-appearance prefiltering application to improve
+silhouette visibility gradients while matching a supersampled target; it does
+not state that MSAA is used for every simplification experiment. Reported 1-spp
+results are rendered without AA unless noted. Thus differentiable fitting,
+scale-specific appearance fitting, and MSAA-assisted silhouette gradients are
+already established. The remaining
 testable distinction is optimization against a *different final reconstruction
 operator*, measured against that same operator without geometry optimization,
 plus the constraints of legal cluster-DAG cuts. That is a hypothesis, not a
@@ -36,10 +39,15 @@ remain to be verified. Triangle-mesh controls must also address
 The possible distinction is narrow: a measured algorithmic gain for legal
 triangle-mesh DAG cuts under real reconstruction operators. It is unproven.
 
-## Gate 1: reproduce a strong baseline
+## Gate 1: evaluate the frozen placement control
 
-Use NVIDIA's public [nvdiffmodeling](https://github.com/NVlabs/nvdiffmodeling)
-workflow on two hash-pinned, redistribution-cleared meshes. Freeze source
+Use the frozen adapter built on NVIDIA's public
+[nvdiffmodeling](https://github.com/NVlabs/nvdiffmodeling) source on two
+hash-pinned, redistribution-cleared meshes. This is a constrained fixed-
+topology control, not a reproduction of the paper: its training call disables
+MSAA and uses 2x supersampling with nvdiffrast edge antialiasing. Hasselgren et
+al. use MSAA for shape and appearance prefiltering; the paper does not state
+that every simplification experiment uses MSAA. Freeze source
 meshes, held-out views, lighting, renderer, face targets, AA conditions, and
 metrics before scoring. Compare at identical final face counts against current
 ManyMesh placement, QEM, and meshoptimizer. Render all arms against a common
@@ -54,9 +62,14 @@ is a differentiable placement baseline, not optimization through the final
 hardware 4x MSAA or an upscaler. Gate 2 must separately fit and score against
 the same final reconstruction operator before supporting that claim.
 
-**Pass only** if the baseline produces repeatable improvement on held-out views
-at equal face count without topology regressions. If it does not, stop the
-differentiable-geometry branch before building a custom optimizer.
+This two-asset reused-development screen tests the frozen configuration only;
+its held-out views do not establish generalization across assets.
+
+**Pass only** if the control produces repeatable improvement on reserved views
+at equal face count without topology regressions. A pass justifies a new,
+asset-held-out study. If it fails, close this configuration and do not advance
+to a custom DAG optimizer; the result does not falsify differentiable mesh
+fitting in general.
 
 ## Gate 2: test the cluster-DAG distinction
 
@@ -66,8 +79,8 @@ fixed topology, then compare boundary treatments that allow simplification
 without cracks. Check parent/child consistency, legal mixed cuts, manifoldness,
 UV/material seams, transition stability, and displacement bounds.
 
-Compare with QEM, meshoptimizer cluster LOD, the reproduced differentiable
-baseline, and progressive-boundary cluster methods. Use both equal-face and
+Compare with QEM, meshoptimizer cluster LOD, the frozen fixed-topology
+placement control, and progressive-boundary cluster methods. Use both equal-face and
 equal-complete-frame-time comparisons. Count optimization, loading, memory,
 selection, rendering, AA, and upscaling costs. A differentiable surrogate must
 predict outcomes under the actual non-differentiable render pipeline.
@@ -88,7 +101,7 @@ The reserved-view scorer passed an identity check on a separate development
 asset in native sampling and hardware 4× MSAA. The training inputs and camera
 schedule are frozen for the [placement-only CUDA control](tools/mmtrain/appearance_cuda_protocol_20261124.json).
 Both inputs passed CPU preparation. The NVIDIA extension and full fit still
-need a CUDA-capable host. These two assets are a falsification pair. A
+need a CUDA-capable host. These two assets screen this configuration only. A
 [Poly Haven preflight](tools/mmtrain/POLYHAVEN_CANDIDATE_TOPOLOGY_20261124.md)
 adds twelve source topology passes across five categories to the provisional
 pool. Three pass the exact-face check at the 50% request. The final

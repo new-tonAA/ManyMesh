@@ -1,4 +1,4 @@
-# Equal-face inputs for the appearance baseline
+# Equal-face inputs for the placement control
 
 Four Khronos assets have eligible ManyMesh, border-preserving QEM, and
 meshoptimizer LockBorder cuts at the fixed 50% request. All three controls

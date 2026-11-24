@@ -51,17 +51,23 @@ study, or positive held-out optimized method is available.
 ## Next gate
 
 Do not reopen the failed contour selector or build a custom DAG optimizer yet.
-First run the frozen placement-only differentiable baseline on CUDA with
-BarramundiFish and Corset. The inputs, matched controls, scorer, and camera
-protocol are frozen in the [input report](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md)
+Run the frozen, fixed-topology placement control on CUDA with BarramundiFish
+and Corset. The inputs, matched controls, scorer, and camera protocol are
+frozen in the [input report](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md)
 and [protocol receipt](tools/mmtrain/appearance_cuda_protocol_20261124.json).
-This is a baseline replication, not an operator-matched fit: training renders
-at 2x supersampling with nvdiffrast edge antialiasing and its MSAA option off.
-It does not optimize through the final hardware 4x MSAA or an upscaler.
+This nvdiffmodeling-based control is not a faithful reproduction of
+Hasselgren et al.: it renders at 2x supersampling with nvdiffrast edge
+antialiasing and its MSAA option off, unlike their MSAA-assisted shape and
+appearance prefiltering setup. The paper does not state that MSAA is used in
+every simplification experiment. This control also does not optimize through
+the final hardware 4x MSAA or an upscaler, and two reused assets cannot
+establish asset generalization.
 This host has PyTorch 2.7.1+CPU and no CUDA runtime, so that experiment cannot
 run here. The earlier CPU projective fit is a separate negative control, not a
-substitute. If the CUDA baseline does not show repeatable held-out gains at
-matched face count, stop this geometry-optimization direction.
+substitute. If this frozen control does not show repeatable held-out-view gains
+at matched face count, close this configuration and do not advance to a custom
+DAG optimizer. That outcome alone would not falsify differentiable mesh fitting
+more broadly.
 
 The frozen CPU input preflight was rerun successfully for both assets on
 2026-11-25: BarramundiFish has 1,932 comparison faces and Corset has 9,162;

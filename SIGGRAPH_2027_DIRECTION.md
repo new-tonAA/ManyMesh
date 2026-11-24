@@ -1,6 +1,6 @@
 # SIGGRAPH 2027 research direction
 
-Updated 2026-11-24. This is a research plan, not a paper draft or novelty claim.
+Updated 2026-11-25. This is a research plan, not a paper draft or novelty claim.
 The differentiable candidate remains untested; the cited work is a bounded map
 for verification, and a search that finds no paper is not evidence that none exists.
 
@@ -13,11 +13,16 @@ and resolve during optimization, and preserve the hierarchy's legal cuts,
 shared boundaries, and transitions. The result must beat strong alternatives
 after real reconstruction, not only its differentiable surrogate.
 
-The frozen placement-only training baseline currently uses a 2x supersampled
-nvdiffrast render with edge antialiasing enabled and its MSAA option disabled.
-That reproduces differentiable mesh fitting; it does not test optimization
-through the final hardware 4x MSAA or an upscaler. Only a later operator-matched
-fit can test the remaining reconstruction-conditioned hypothesis.
+The frozen experiment is a fixed-topology placement control built on
+nvdiffmodeling, not a faithful reproduction of Hasselgren et al.'s protocol. It
+uses a 2x supersampled nvdiffrast render with edge antialiasing enabled and
+MSAA disabled, unlike Hasselgren et al.'s MSAA-assisted shape and appearance
+prefiltering setup. Their paper does not state that MSAA is used in every
+simplification experiment. The control also does not optimize through the final
+hardware 4x MSAA or an upscaler. A
+result on two reused assets can accept or reject this configuration only; it
+cannot establish asset generalization or falsify differentiable fitting more
+broadly.
 
 The unoptimized 50%-retention ManyMesh cut has now been screened on 21 unique
 Poly Haven meshes across six classes, at exact face counts against
@@ -31,11 +36,13 @@ See the [full protocol and per-model results](tools/mmtrain/POLYHAVEN_QUALITY_SC
 
 This combination has substantial prior art. Hasselgren et al. already optimize
 mesh shape and appearance from image-space references for simplification and
-LOD. Their method uses MSAA during optimization to improve silhouette visibility
-gradients while fitting a supersampled reference, then evaluates final 1-spp
-results without AA unless stated otherwise. Therefore neither differentiable
-image-space simplification, scale-specific fitting, nor MSAA-assisted silhouette
-optimization is a contribution here. A viable distinction would need to show
+LOD. For their shape-and-appearance prefiltering application, they use MSAA
+during optimization to improve silhouette visibility gradients while fitting
+a supersampled reference; the paper does not state that every simplification
+experiment uses MSAA. Their final 1-spp images are un-antialiased unless stated
+otherwise. Therefore neither differentiable image-space simplification,
+scale-specific fitting, nor MSAA-assisted silhouette optimization is a
+contribution here. A viable distinction would need to show
 that optimizing for a specified *final reconstruction operator* (for example,
 temporal accumulation or an upscaler) gives a repeatable gain over the same
 operator used as a baseline, while preserving legal DAG cuts and boundaries.
@@ -71,7 +78,7 @@ review; it is not an exhaustive literature search.
 
 | Priority | Direction | Current disposition |
 |---|---|---|
-| 1 | **A+B: reconstruction-conditioned hierarchy optimization** | Weak, untested hypothesis. First reproduce a matched-face differentiable simplification baseline; distinguish the actual final reconstruction operator from Hasselgren et al.'s MSAA-assisted optimization. |
+| 1 | **A+B: reconstruction-conditioned hierarchy optimization** | Weak, untested hypothesis. First evaluate the frozen nvdiffmodeling-based placement control; if it passes on reserved views, run an asset-held-out study before any custom DAG optimizer. The control is not a reproduction of Hasselgren et al.'s MSAA-assisted protocol. |
 | 2 | **C: tile-GPU cost model and selection** | Systems-analysis fallback if a physical tile-based device and profiling counters are available. A screen-tile count alone is only a proxy. |
 | 3 | **D: rate-aware DAG construction** | Parked. Meshlet compression is crowded; reopen only with full-stream byte and decode comparisons against meshoptimizer, Draco, Kuth et al., and AMD DGF. |
 
@@ -135,17 +142,19 @@ For that asset, the border-preserving fast-simplification QEM control returned
 eligible wins are meshoptimizer-only; the QEM scores are not equal-face results.
 This result does not test differentiable fitting or post-upscaler quality.
 
-1. Select two source meshes with pinned provenance that supply legal matched
-   geometry near 30% retention. CommercialRefrigerator and ScatterPlant failed
-   this input gate. The current host has a CPU build of PyTorch. The baseline
-   requires a CUDA workstation and a frozen camera split.
+1. The frozen two-asset input gate uses legal matched geometry at 50%
+   retention; lower targets failed eligibility. The current host has a CPU
+   build of PyTorch. The placement control requires a CUDA workstation and a
+   frozen camera split.
    [Input preflight](tools/mmtrain/APPEARANCE_INPUT_PREFLIGHT_20261123.md)
-2. Compare nvdiffmodeling/Hasselgren placement against QEM, current ManyMesh
-   placement, and meshoptimizer at identical face counts. Freeze training and
-   held-out views before scoring; include no-AA and equal 4x MSAA arms.
-3. If that baseline has a repeatable held-out signal, test DAG-level fitting
-   against legal mixed-cut and progressive-boundary controls. Evaluate real AA
-   and available upscalers, not only the training surrogate.
+2. Compare the nvdiffmodeling-based placement control against QEM, current
+   ManyMesh placement, and meshoptimizer at identical face counts. Freeze
+   training and reserved views before scoring; include no-AA and equal 4x MSAA
+   arms. Do not describe this as a reproduction of Hasselgren et al.
+3. If this two-asset reserved-view control has a signal, test it on a fresh
+   asset-held-out cohort before asking whether cluster-DAG constraints add a
+   repeatable benefit after actual MSAA or an available upscaler, at both
+   matched faces and matched complete frame time.
 4. Report LDR-FLIP, PSNR, SSIM, silhouette/coverage error, sampled surface and
    normal deviation, topology/boundary failures, and camera-motion transitions.
    Treat objective metrics as complementary; a “perceptual” claim needs ratings
@@ -159,8 +168,8 @@ This result does not test differentiable fitting or post-upscaler quality.
    selection and GPU time. Mobile performance requires measurements on a real
    phone; desktop timings do not establish it.
 
-Stop if the baseline fails on held-out views, the surrogate misranks real
-reconstruction results, the candidate loses to matched controls, or legal
+Stop if this frozen control fails on reserved views, the surrogate misranks
+real reconstruction results, the candidate loses to matched controls, or legal
 boundary/topology constraints fail. Do not change the public `.mmb` format or
 rendering API before this gate passes. For concise status, see [MANYMESH.md](MANYMESH.md)
 and the [next-experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md).

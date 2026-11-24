@@ -217,6 +217,7 @@ def main():
     eyes = training_eyes()
     result = {"asset": args.asset, "manifest_sha256": digest(args.manifest),
               "script_sha256": digest(Path(__file__)), "nvdiffmodeling_revision": NVDIFFMODELING_REVISION,
+              "study_role": "fixed-topology placement control; not a faithful Hasselgren reproduction",
               "nvdiffmodeling_src_sha256": tree_sha, "required_nvdiffrast": NVDIFFRAST_VERSION,
               "nvdiffrast_release_revision": NVDIFFRAST_REVISION,
               "scorer_sha256": digest(Path(__file__).with_name("bench_appearance_controls.py")),
