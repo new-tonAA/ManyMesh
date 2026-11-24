@@ -25,9 +25,11 @@ use MSAA during fitting to improve silhouette gradients. See the
   different `main.cpp` hashes. See the [provenance audit](tools/mmtrain/mmgeo_source_provenance_audit_20261124.json).
   A clean Release build of current `main` succeeded, but Windows application
   control blocked execution before geometry could be regenerated. The archived
-  binary did reproduce the Lemon candidate PLY byte-for-byte, but this does not
-  resolve the source conflict or cover the 21-model cohort. See the
-  [rebuild attempt receipt](tools/mmtrain/MMGEO_CLEAN_REBUILD_ATTEMPT_20261125.json).
+  binary regenerated the 18 expanded-cohort candidate PLYs byte-for-byte at
+  the recorded face counts. The initial three models were not included, and
+  binary replay does not resolve the source conflict. See the
+  [geometry replay receipt](tools/mmtrain/polyhaven_geometry_replay_20261125.json)
+  and [current-source rebuild receipt](tools/mmtrain/MMGEO_CLEAN_REBUILD_ATTEMPT_20261125.json).
   [Protocol and results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md) ·
   [per-view metrics](tools/mmtrain/polyhaven_quality_metrics_20261124.json) ·
   [21/21 exact score replay](tools/mmtrain/POLYHAVEN_SCORE_REPLAY_AUDIT_20261124.md)

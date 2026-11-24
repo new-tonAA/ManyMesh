@@ -46,6 +46,7 @@
     "face_count": 2006,
     "image_quality_retested": false
   },
+  "expanded_cohort_replay_receipt": "tools/mmtrain/polyhaven_geometry_replay_20261125.json",
   "execution_attempt": {
     "input": "out/polyhaven-expansion-20261124/lemon/geometry.obj",
     "arguments": [

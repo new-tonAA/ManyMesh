@@ -118,3 +118,11 @@ exports on the same Iris Xe/D3D12 setup. All 21 score receipts matched
 byte-for-byte and the paired bootstrap values matched. This verifies
 the scoring stage only; it does not resolve the geometry-source
 identity conflict. See the [replay audit](POLYHAVEN_SCORE_REPLAY_AUDIT_20261124.md).
+Separately, the archived `mmgeo` binary regenerated the 18 expanded-cohort
+candidate PLYs byte-for-byte from their retained source OBJs, and every replay
+matched the recorded face count. The initial three cohort assets were not part
+of this geometry replay. No image-quality metrics were recomputed. See the
+[geometry replay script](replay_polyhaven_geometry_20261125.py) and
+[machine-readable receipt](polyhaven_geometry_replay_20261125.json). This
+strengthens archived-binary reproducibility but does not resolve the recorded
+`main.cpp` hash conflict or verify a clean source rebuild.
