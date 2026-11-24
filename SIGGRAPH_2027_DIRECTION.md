@@ -83,6 +83,16 @@ operator used as a baseline, while preserving legal DAG cuts and boundaries.
 This remains untested and may not be novel.
 ([EGSR 2021 full paper](https://users.aalto.fi/~laines9/publications/hasselgren2021egsr_paper.pdf),
 [NVIDIA project page](https://research.nvidia.com/labs/rtr/publication/hasselgren2021diffmodeling/)).
+de La Gorce et al. had already derived image-loss gradients that account for
+changing visibility at triangle-mesh occlusion boundaries, using antialiased
+residuals and occlusion forces for articulated mesh tracking. The CPU C-based
+[DEODR renderer](https://github.com/martinResearch/DEODR) exposes this family
+of vertex-image gradients through PyTorch. This closes silhouette-gradient or
+CPU differentiable mesh fitting as novelty claims; it is only a possible
+exploratory backend, not the frozen Filament/PBR/MSAA comparison. Its documented
+limits include no GPU, multiple lights, Phong shading, or shadows. See the
+[PAMI 2011 paper](https://www.cs.toronto.edu/~fleet/research/Papers/handTrackerPAMI.pdf)
+and the [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
 Dou et al.'s [Differentiable Micro-Mesh Construction (CVPR 2024)](https://openaccess.thecvf.com/content/CVPR2024/papers/Dou_Differentiable_Micro-Mesh_Construction_CVPR_2024_paper.pdf)
 is another direct precedent: it optimizes displacement-based micro-mesh geometry
 against multi-view image loss and uses image-space improvement to select
