@@ -49,6 +49,13 @@ operator used as a baseline, while preserving legal DAG cuts and boundaries.
 This remains untested and may not be novel.
 ([EGSR 2021 full paper](https://users.aalto.fi/~laines9/publications/hasselgren2021egsr_paper.pdf),
 [NVIDIA project page](https://research.nvidia.com/labs/rtr/publication/hasselgren2021diffmodeling/)).
+Dou et al.'s [Differentiable Micro-Mesh Construction (CVPR 2024)](https://openaccess.thecvf.com/content/CVPR2024/papers/Dou_Differentiable_Micro-Mesh_Construction_CVPR_2024_paper.pdf)
+is another direct precedent: it optimizes displacement-based micro-mesh geometry
+against multi-view image loss and uses image-space improvement to select
+per-triangle adaptive subdivision levels. Its representation is not a standard
+cluster-DAG triangle mesh, its evaluation holds out views rather than assets,
+and it does not report fitting through final MSAA or temporal upscaling. This
+leaves only a narrow comparison question; it does not establish novelty.
 V3DG already fits each level of a clustered hierarchy differentiably, although
 it uses 3D Gaussian primitives ([SIGGRAPH 2025 paper](https://arxiv.org/html/2505.06523)).
 HLOD ASAP's abstract and publisher preview describe a binary progressive-mesh
@@ -108,6 +115,14 @@ review; it is not an exhaustive literature search.
 | 1 | **A+B: reconstruction-conditioned hierarchy optimization** | Weak, untested hypothesis. First evaluate the frozen nvdiffmodeling-based placement control; if it passes on reserved views, run an asset-held-out study before any custom DAG optimizer. The control is not a reproduction of Hasselgren et al.'s MSAA-assisted protocol. |
 | 2 | **C: tile-GPU cost model and selection** | Systems-analysis fallback if a physical tile-based device and profiling counters are available. A screen-tile count alone is only a proxy. |
 | 3 | **D: rate-aware DAG construction** | Parked. Meshlet compression is crowded; reopen only with full-stream byte and decode comparisons against meshoptimizer, Draco, Kuth et al., and AMD DGF. |
+
+The existing silhouette controls do not justify reopening silhouette-weighted
+geometry as the main method. A 64-view contour-priority QEM control showed
++0.167 dB mean PSNR on seven reused development assets, but mixed FLIP and no
+reliable gain after AA; fixed-topology contour fitting regressed on two of
+three assets. See the [CPU screen](tools/mmtrain/CONTOUR_IMPORTANCE_QEM_20261123.md),
+[AA follow-up](tools/mmtrain/CONTOUR_PRIORITY_AA_20261123.md), and
+[fixed-topology fit](tools/mmtrain/VISIBLE_CONTOUR_FIT_20261124.md).
 
 Silhouette-aware LOD and clipping have direct precedents in
 [Luebke–Erikson (1997)](https://dl.acm.org/doi/10.1145/258734.258847)

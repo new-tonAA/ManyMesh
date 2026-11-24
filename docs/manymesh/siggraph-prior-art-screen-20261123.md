@@ -27,7 +27,7 @@ a paper is not evidence that none exists.
 | Potamias et al., [Neural Mesh Simplification](https://openaccess.thecvf.com/content/CVPR2022/html/Potamias_Neural_Mesh_Simplification_CVPR_2022_paper.html), CVPR 2022 | A learned one-pass method samples input vertices, predicts candidate triangles from graph connectivity, and classifies output faces. It is differentiable and reports up to 10× faster simplification than traditional methods. | **Full paper text inspected.** Learned topology simplification is established. Its objective is geometric/structural (Chamfer, normal, Laplacian, curvature), not rendered appearance; it does not build a multilevel cluster DAG. The authors note QEM gives smoother watertight surfaces and their learned topology/manifold losses do not guarantee those properties. |
 | Zhan et al., [Learned Localized Mesh Refinement](https://arxiv.org/html/2609.31946), SIGGRAPH Asia 2026 | Builds a progressive vertex-split forest and trains a locally conditioned autoregressive model for adaptive upsampling. It demonstrates view-dependent refinement with a face-count budget; the paper reports training on eight B200 GPUs. | **Full arXiv HTML paper inspected.** This is learned refinement of coarse inputs toward higher-detail shapes, not simplification of a fixed authored asset to preserve its rendered appearance. It occupies local learned refinement and view-dependent allocation; the task difference alone does not establish novelty. |
 | Surace et al., [Gaze-Contingent Perceptual LoD Prediction](https://doi.org/10.2312/sr.20231130), EGSR 2023 | Calibrates spatial silhouette/body distortion and temporal LOD-switch visibility models with observer studies, then predicts gaze-contingent mesh LOD. It reports up to 33% extra speedup over Nanite at 2K in its desktop test. | **Full paper text inspected.** This already combines perceptual LOD selection, temporal transition modeling, gaze-contingent geometry, and a Nanite comparison. Its test uses 15 participants for spatial calibration, five for temporal calibration, and an RTX 3090 scene with 2,184 Suzanne or Dragon instances; it is not a mobile result or a post-upscaler geometry-optimization method. |
-| Dou et al., [Differentiable Micro-Mesh Construction](https://openaccess.thecvf.com/content/CVPR2024/html/Dou_Differentiable_Micro-Mesh_Construction_CVPR_2024_paper.html), CVPR 2024 | Image-guided differentiable mesh subdivision with watertightness constraints. | **Publisher page checked; full paper not reviewed here.** Differentiable topology creation and watertightness are not broad novelty claims. |
+| Dou et al., [Differentiable Micro-Mesh Construction](https://openaccess.thecvf.com/content/CVPR2024/html/Dou_Differentiable_Micro-Mesh_Construction_CVPR_2024_paper.html), CVPR 2024 | End-to-end optimizes a micro-mesh base-vertex offset and per-microvertex displacement with an L1 multi-view rendering loss, Laplacian reparameterization, shell-volume and isotropy terms, and progressive 1-to-4 subdivision. It also assigns per-base-triangle adaptive subdivision levels using the image-space improvement between adjacent subdivision levels; adjacent levels differ by at most one for watertightness. The experiments use nvdiffrast on an RTX 3090, 121 meshes grouped by input size, 24 training views and 16 separate evaluation views per mesh. The optimization is per asset; this is view-held-out evaluation, not asset-generalization testing. Topology modification during optimization is unsupported. | **Full main paper and supplement inspected** (Sections 3.2–4.3, Table 1 and Supplement Sections 1–3). This is direct prior art for differentiable render-guided geometry optimization and image-guided adaptive LOD. It optimizes a displacement-based micro-mesh for compact ray tracing, not a standard triangle-mesh cluster DAG, and does not report fitting through a final MSAA or temporal upscaler. |
 
 ## Adjacent methods that constrain broader claims
 
@@ -57,9 +57,11 @@ The remaining experiment question is narrowly phrased as **whether offline
 optimization of a triangle-mesh cluster hierarchy for quality after a specified
 antialiasing or upscaling pipeline yields a measurable gain over applying the
 same final reconstruction operator to unoptimized geometry**. This is not an
-established gap or novelty claim. HLOD, parent-child vertex relations,
-view-dependent selection, crack-free cuts, and crack-/popping-free transitions
-are established mechanisms; see Quick-VDR, Li (2022, 2023), and HLOD ASAP.
+established gap or novelty claim. Differentiable image-space geometry fitting
+and image-guided adaptive per-triangle LOD already exist in the μ-mesh work;
+HLOD, parent-child vertex relations, view-dependent selection, crack-free cuts,
+and crack-/popping-free transitions are also established mechanisms. See
+Hasselgren et al., Dou et al., Quick-VDR, Li (2022, 2023), and HLOD ASAP.
 “LOD for upscalers,” “silhouette aware,” “differentiable LOD,” “cluster
 hierarchy optimization,” and “temporal stability” are not novelty claims by
 themselves.
@@ -67,7 +69,10 @@ themselves.
 Before investing in a custom method:
 
 1. Reproduce Hasselgren et al.'s fixed-topology mesh-placement baseline against
-   QEM, ManyMesh placement, and meshoptimizer at identical face counts.
+   QEM, ManyMesh placement, and meshoptimizer at identical face counts. Treat
+   the μ-mesh paper's visual-guided per-face subdivision as a close adaptive-LOD
+   control, while keeping its displacement representation and ray-tracing
+   objective distinct from a standard-mesh raster comparison.
 2. Verify the original Luebke–Erikson proceedings paper and obtain the full
    HLOD ASAP and Li CVMP 2023 papers. The related Li i3D 2023 poster paper has
    been inspected in full, but does not substitute for the CVMP paper. Inspect

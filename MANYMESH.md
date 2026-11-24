@@ -8,8 +8,8 @@ performance and user preference have not been measured.
 Can offline optimization improve a triangle-mesh cluster LOD when evaluated
 after the same antialiasing or upscaling pipeline, at matched face count and
 complete runtime cost? This is an untested hypothesis, not a novelty claim.
-Differentiable mesh fitting, neural appearance LOD, and appearance-preserving
-scene aggregation have close prior art. See the [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md)
+Differentiable mesh fitting and image-guided adaptive subdivision have close
+prior art, including per-triangle micro-mesh LOD. See the [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md)
 and [SIGGRAPH direction](SIGGRAPH_2027_DIRECTION.md).
 
 ## Evidence snapshot
@@ -32,8 +32,12 @@ and [SIGGRAPH direction](SIGGRAPH_2027_DIRECTION.md).
 - **Earlier controls:** The seven-asset screen used a retrospective boundary
   tolerance and reused development assets; it beat meshoptimizer on two pairs
   from one asset and beat no eligible QEM pair. Fixed-topology placement and
-  projective silhouette fits did not establish a repeatable gain. See the
-  [dated history](MANYMESH_HISTORY.md) for protocols and negative results.
+  projective silhouette fits did not establish a repeatable gain. A 64-view
+  contour-priority QEM control gained +0.167 dB mean PSNR on seven development
+  assets, but had mixed FLIP results and no reliable AA follow-up gain. A
+  fixed-topology contour fit regressed on two of three assets. See the
+  [CPU screen](tools/mmtrain/CONTOUR_IMPORTANCE_QEM_20261123.md), [AA follow-up](tools/mmtrain/CONTOUR_PRIORITY_AA_20261123.md),
+  [fit report](tools/mmtrain/VISIBLE_CONTOUR_FIT_20261124.md), and [dated history](MANYMESH_HISTORY.md).
 
 No physical-phone test, equal-frame-time quality comparison, LPIPS evaluation,
 moving-camera temporal evaluation, user study, or positive held-out optimized

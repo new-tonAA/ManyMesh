@@ -15,9 +15,14 @@ This page indexes the research; dated reports preserve protocols, numbers,
 failures, and limitations.
 
 The active method hypothesis is offline optimization of a cluster DAG, scored
-after a specified AA or upscaling pipeline. Close prior art covers image-driven
-simplification, differentiable mesh/LOD fitting, local refinement, and crack-free
-cluster boundaries; no novelty or positive held-out result is established.
+after a specified AA or upscaling pipeline. Close prior art includes
+differentiable render-guided geometry optimization and image-guided adaptive
+per-triangle micro-mesh subdivision. No novelty or positive held-out result is
+established. The seven-asset contour-priority control showed +0.167 dB mean
+PSNR but mixed FLIP and no reliable AA gain; fixed-topology contour fitting
+regressed on two of three assets. These remain development controls, not a
+reason to advance a custom DAG optimizer. See the [dated reports](MANYMESH.md#evidence-snapshot)
+and [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
 The frozen two-asset, nvdiffmodeling-based fixed-topology placement control
 remains gated on a CUDA-capable host; it is not a faithful Hasselgren
 reproduction or an asset-generalization test.

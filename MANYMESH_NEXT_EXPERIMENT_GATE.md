@@ -30,6 +30,17 @@ claim. [Full paper](https://users.aalto.fi/~laines9/publications/hasselgren2021e
 [Luebke's detailed dissertation treatment](https://www.luebke.us/publications/pdf/dissertation.pdf) |
 [Sander et al.](https://hhoppe.com/silclip.pdf)
 
+Dou et al.'s [Differentiable Micro-Mesh Construction (CVPR 2024)](https://openaccess.thecvf.com/content/CVPR2024/papers/Dou_Differentiable_Micro-Mesh_Construction_CVPR_2024_paper.pdf)
+is another close precedent. It optimizes displacement-based geometry against
+multi-view image loss and selects adaptive per-triangle subdivision levels
+from image-space improvement. Its representation and compact ray-tracing
+target differ from a standard cluster-DAG triangle mesh, but differentiable
+image-driven geometry fitting and adaptive LOD are not a novelty distinction.
+Its evaluation holds out views of each optimized asset, not transfer to unseen
+assets, and does not report fitting through final MSAA or temporal upscaling.
+Any later comparison must state this overlap and test only the narrower
+final-reconstruction-operator question.
+
 Hierarchy-level fitting also overlaps conceptually with [V3DG (SIGGRAPH
 2025)](https://arxiv.org/html/2505.06523), which differentiably fits cluster
 levels in a Gaussian representation. Boundary simplification overlaps directly
