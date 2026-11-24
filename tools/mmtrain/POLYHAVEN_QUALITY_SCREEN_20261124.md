@@ -38,7 +38,10 @@ quality-improving method on this eligible cohort.
 The [multi-metric figure](../../docs/manymesh/polyhaven-quality-metrics.svg)
 plots direction-adjusted effects for all four primary metrics and the
 post-hoc LPIPS supplement. Positive values favor ManyMesh. LPIPS reuses the
-same already-scored cohort and is not independent confirmation.
+same already-scored cohort and is not independent confirmation. A separate
+familywise max-|t| audit across the 16 original endpoints leaves all
+simultaneous 95% intervals below zero; see the
+[multiplicity audit](POLYHAVEN_MULTIPLICITY_AUDIT_20261125.md).
 
 Delta is ManyMesh minus the named control. Lower FLIP and silhouette XOR
 are better; higher PSNR and SSIM are better. Therefore positive FLIP/XOR

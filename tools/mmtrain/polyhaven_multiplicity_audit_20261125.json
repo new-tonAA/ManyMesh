@@ -1,0 +1,265 @@
+{
+  "schema": 1,
+  "status": "complete",
+  "analysis_role": "post-hoc multiplicity robustness audit; no method or asset selection",
+  "source_metrics_path": "tools/mmtrain/polyhaven_quality_metrics_20261124.json",
+  "source_metrics_sha256": "e3c15f56f13ea6c0b8f21a131f1d76ed648884e8ff69aca72346a0620e4fd9ad",
+  "assets": 21,
+  "groups": 16,
+  "endpoints": 16,
+  "endpoint_family": "four predeclared image metrics x two controls x two sampling modes",
+  "posthoc_lpips_included": false,
+  "bootstrap": {
+    "method": "centered cluster bootstrap max-|t| simultaneous confidence intervals",
+    "resampling_unit": "connected source-collection group",
+    "shared_resamples_across_endpoints": true,
+    "samples": 200000,
+    "seed": 20261125,
+    "familywise_confidence": 0.95,
+    "max_t_critical_value": 2.432700787749982,
+    "direction": "positive improvement favors ManyMesh"
+  },
+  "all_simultaneous_intervals_below_zero": true,
+  "results": [
+    {
+      "mode": "native",
+      "control": "qem_preserve_border",
+      "metric": "psnr_db",
+      "manymesh_improvement_mean": -2.0976781974758882,
+      "unadjusted_bootstrap_95_ci": [
+        -2.5706177386035893,
+        -1.6106587690011438
+      ],
+      "simultaneous_max_t_95_ci": [
+        -2.712221754108613,
+        -1.4831346408431636
+      ],
+      "groups": 16
+    },
+    {
+      "mode": "native",
+      "control": "qem_preserve_border",
+      "metric": "ssim",
+      "manymesh_improvement_mean": -0.003262995048335291,
+      "unadjusted_bootstrap_95_ci": [
+        -0.004348332191683223,
+        -0.0021280091981550706
+      ],
+      "simultaneous_max_t_95_ci": [
+        -0.0046882347122747855,
+        -0.0018377553843957968
+      ],
+      "groups": 16
+    },
+    {
+      "mode": "native",
+      "control": "qem_preserve_border",
+      "metric": "flip",
+      "manymesh_improvement_mean": -0.0014646429237675168,
+      "unadjusted_bootstrap_95_ci": [
+        -0.0019800542827372028,
+        -0.0009195835929479778
+      ],
+      "simultaneous_max_t_95_ci": [
+        -0.0021440228041519085,
+        -0.0007852630433831251
+      ],
+      "groups": 16
+    },
+    {
+      "mode": "native",
+      "control": "qem_preserve_border",
+      "metric": "silhouette_xor_fraction",
+      "manymesh_improvement_mean": -0.0003540104995539159,
+      "unadjusted_bootstrap_95_ci": [
+        -0.00044923316107855913,
+        -0.0002613500430260176
+      ],
+      "simultaneous_max_t_95_ci": [
+        -0.00047467737063927313,
+        -0.0002333436284685587
+      ],
+      "groups": 16
+    },
+    {
+      "mode": "native",
+      "control": "meshoptimizer_lock_border",
+      "metric": "psnr_db",
+      "manymesh_improvement_mean": -2.2702527398387273,
+      "unadjusted_bootstrap_95_ci": [
+        -2.697007144301064,
+        -1.8155601463707285
+      ],
+      "simultaneous_max_t_95_ci": [
+        -2.833863343404887,
+        -1.7066421362725674
+      ],
+      "groups": 16
+    },
+    {
+      "mode": "native",
+      "control": "meshoptimizer_lock_border",
+      "metric": "ssim",
+      "manymesh_improvement_mean": -0.005155024116308784,
+      "unadjusted_bootstrap_95_ci": [
+        -0.006299225921042626,
+        -0.003974761803153352
+      ],
+      "simultaneous_max_t_95_ci": [
+        -0.006649867729555096,
+        -0.0036601805030624717
+      ],
+      "groups": 16
+    },
+    {
+      "mode": "native",
+      "control": "meshoptimizer_lock_border",
+      "metric": "flip",
+      "manymesh_improvement_mean": -0.0020717001539196644,
+      "unadjusted_bootstrap_95_ci": [
+        -0.0025419234922651416,
+        -0.0015837893404902085
+      ],
+      "simultaneous_max_t_95_ci": [
+        -0.0026880377166657275,
+        -0.0014553625911736011
+      ],
+      "groups": 16
+    },
+    {
+      "mode": "native",
+      "control": "meshoptimizer_lock_border",
+      "metric": "silhouette_xor_fraction",
+      "manymesh_improvement_mean": -0.0003153454815899884,
+      "unadjusted_bootstrap_95_ci": [
+        -0.000393583509657118,
+        -0.00023892148335774745
+      ],
+      "simultaneous_max_t_95_ci": [
+        -0.00041426749864092495,
+        -0.00021642346453905182
+      ],
+      "groups": 16
+    },
+    {
+      "mode": "msaa4",
+      "control": "qem_preserve_border",
+      "metric": "psnr_db",
+      "manymesh_improvement_mean": -4.454502787635393,
+      "unadjusted_bootstrap_95_ci": [
+        -5.379730133797248,
+        -3.468347115335916
+      ],
+      "simultaneous_max_t_95_ci": [
+        -5.6787183745976915,
+        -3.2302872006730947
+      ],
+      "groups": 16
+    },
+    {
+      "mode": "msaa4",
+      "control": "qem_preserve_border",
+      "metric": "ssim",
+      "manymesh_improvement_mean": -0.0031701823406523064,
+      "unadjusted_bootstrap_95_ci": [
+        -0.004237323932055562,
+        -0.002053905445170568
+      ],
+      "simultaneous_max_t_95_ci": [
+        -0.004572572220842052,
+        -0.0017677924604625611
+      ],
+      "groups": 16
+    },
+    {
+      "mode": "msaa4",
+      "control": "qem_preserve_border",
+      "metric": "flip",
+      "manymesh_improvement_mean": -0.0015807359661595102,
+      "unadjusted_bootstrap_95_ci": [
+        -0.0021348488671975477,
+        -0.0009882074477038335
+      ],
+      "simultaneous_max_t_95_ci": [
+        -0.0023157765602306378,
+        -0.0008456953720883826
+      ],
+      "groups": 16
+    },
+    {
+      "mode": "msaa4",
+      "control": "qem_preserve_border",
+      "metric": "silhouette_xor_fraction",
+      "manymesh_improvement_mean": -0.0003874818778332369,
+      "unadjusted_bootstrap_95_ci": [
+        -0.0004750249650743273,
+        -0.0002977026951165847
+      ],
+      "simultaneous_max_t_95_ci": [
+        -0.0005014962048317648,
+        -0.00027346755083470896
+      ],
+      "groups": 16
+    },
+    {
+      "mode": "msaa4",
+      "control": "meshoptimizer_lock_border",
+      "metric": "psnr_db",
+      "manymesh_improvement_mean": -5.396363581408149,
+      "unadjusted_bootstrap_95_ci": [
+        -6.234536584571633,
+        -4.440946285780601
+      ],
+      "simultaneous_max_t_95_ci": [
+        -6.548542369408382,
+        -4.244184793407916
+      ],
+      "groups": 16
+    },
+    {
+      "mode": "msaa4",
+      "control": "meshoptimizer_lock_border",
+      "metric": "ssim",
+      "manymesh_improvement_mean": -0.005168633209607363,
+      "unadjusted_bootstrap_95_ci": [
+        -0.006266346900200367,
+        -0.0040153117906288945
+      ],
+      "simultaneous_max_t_95_ci": [
+        -0.006618269028170269,
+        -0.003718997391044458
+      ],
+      "groups": 16
+    },
+    {
+      "mode": "msaa4",
+      "control": "meshoptimizer_lock_border",
+      "metric": "flip",
+      "manymesh_improvement_mean": -0.0022896067698007353,
+      "unadjusted_bootstrap_95_ci": [
+        -0.0027890364683230474,
+        -0.0017662628799323939
+      ],
+      "simultaneous_max_t_95_ci": [
+        -0.0029477975704593315,
+        -0.0016314159691421391
+      ],
+      "groups": 16
+    },
+    {
+      "mode": "msaa4",
+      "control": "meshoptimizer_lock_border",
+      "metric": "silhouette_xor_fraction",
+      "manymesh_improvement_mean": -0.0003784631799768519,
+      "unadjusted_bootstrap_95_ci": [
+        -0.00045557120994285313,
+        -0.00029761392098886
+      ],
+      "simultaneous_max_t_95_ci": [
+        -0.000479513505678219,
+        -0.00027741285427548476
+      ],
+      "groups": 16
+    }
+  ]
+}

@@ -1,5 +1,15 @@
 # mmtrain
 
+## Matched-face quality evidence
+
+The 21-model Poly Haven screen compares ManyMesh with border-preserving QEM
+and meshoptimizer under native sampling and 4x MSAA. A familywise max-|t|
+audit across its 16 predeclared image-quality endpoints leaves every
+simultaneous 95% interval favoring the controls. LPIPS was added post hoc on
+the same cohort. See the [screen](POLYHAVEN_QUALITY_SCREEN_20261124.md),
+[multiplicity audit](POLYHAVEN_MULTIPLICITY_AUDIT_20261125.md), and
+[reproducible figure](../../docs/manymesh/polyhaven-quality-metrics.svg).
+
 ## Equal-triangle LOD experiment
 
 `lod_oracle.py` measures whether an image reconstruction model changes which parts of a mesh

@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1260" height="920" viewBox="0 0 1260 920" role="img" aria-labelledby="title desc">
 <title id="title">Matched-face quality comparison across five image metrics</title>
 <desc id="desc">Direction-adjusted changes for ManyMesh versus QEM and meshoptimizer across 21 models. Positive favors ManyMesh. The four primary metrics and post-hoc LPIPS supplement all favor the controls.</desc>
-<metadata>metrics_sha256=e3c15f56f13ea6c0b8f21a131f1d76ed648884e8ff69aca72346a0620e4fd9ad;lpips_sha256=40a4e4edd0a88cf7e92add80d07020e8d770e2abdc6fdd434715b27daf398bc5</metadata>
+<metadata>metrics_sha256=e3c15f56f13ea6c0b8f21a131f1d76ed648884e8ff69aca72346a0620e4fd9ad;lpips_sha256=40a4e4edd0a88cf7e92add80d07020e8d770e2abdc6fdd434715b27daf398bc5;multiplicity_sha256=cb26f43dbf8168506d6974699c00f9aa75958d4e0e38db982ca72dc5ba71da32</metadata>
 <rect width="100%" height="100%" fill="#f7f8fa"/>
 <text x="40" y="42" font-family="Arial,sans-serif" font-size="25" font-weight="700" fill="#182230">Matched-face image quality favors deterministic controls</text>
-<text x="40" y="72" font-family="Arial,sans-serif" font-size="14" fill="#526071">Direction-adjusted ManyMesh improvement; positive favors ManyMesh. Each panel uses its own metric units.</text>
+<text x="40" y="72" font-family="Arial,sans-serif" font-size="14" fill="#526071">Direction-adjusted change; positive favors ManyMesh. Primary metrics use familywise 95% intervals.</text>
 <circle cx="55" cy="103" r="6" fill="#b45309"/><text x="68" y="108" font-family="Arial,sans-serif" font-size="13" fill="#263445">QEM</text>
 <circle cx="135" cy="103" r="6" fill="#176b87"/><text x="148" y="108" font-family="Arial,sans-serif" font-size="13" fill="#263445">meshoptimizer</text>
 <circle cx="300" cy="103" r="6" fill="#526071"/><text x="313" y="108" font-family="Arial,sans-serif" font-size="13" fill="#263445">Native</text>
@@ -19,29 +19,29 @@
 <line x1="970.00" y1="140" x2="970.00" y2="234" stroke="#d9dee6" stroke-width="1"/>
 <text x="970.00" y="250" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#647184">+</text>
 <text x="430" y="156" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#263445">Native · QEM</text>
-<line x1="632.30" y1="152" x2="665.15" y2="152" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>
-<line x1="632.30" y1="147" x2="632.30" y2="157" stroke="#b45309" stroke-width="1.5"/>
-<line x1="665.15" y1="147" x2="665.15" y2="157" stroke="#b45309" stroke-width="1.5"/>
-<circle cx="648.79" cy="152" r="5.3" fill="#b45309" stroke="#ffffff" stroke-width="1.5"/>
-<text x="990" y="156" font-family="Arial,sans-serif" font-size="10" fill="#263445">-2.1 [-2.58, -1.62]</text>
+<line x1="632.25" y1="152" x2="672.02" y2="152" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>
+<line x1="632.25" y1="147" x2="632.25" y2="157" stroke="#b45309" stroke-width="1.5"/>
+<line x1="672.02" y1="147" x2="672.02" y2="157" stroke="#b45309" stroke-width="1.5"/>
+<circle cx="652.13" cy="152" r="5.3" fill="#b45309" stroke="#ffffff" stroke-width="1.5"/>
+<text x="990" y="156" font-family="Arial,sans-serif" font-size="10" fill="#263445">-2.1 [-2.71, -1.48]</text>
 <text x="430" y="179" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#263445">Native · meshoptimizer</text>
-<line x1="628.61" y1="175" x2="657.83" y2="175" stroke="#176b87" stroke-width="3" stroke-linecap="round"/>
-<line x1="628.61" y1="170" x2="628.61" y2="180" stroke="#176b87" stroke-width="1.5"/>
-<line x1="657.83" y1="170" x2="657.83" y2="180" stroke="#176b87" stroke-width="1.5"/>
-<circle cx="642.93" cy="175" r="5.3" fill="#176b87" stroke="#ffffff" stroke-width="1.5"/>
-<text x="990" y="179" font-family="Arial,sans-serif" font-size="10" fill="#263445">-2.27 [-2.69, -1.83]</text>
+<line x1="628.32" y1="175" x2="664.79" y2="175" stroke="#176b87" stroke-width="3" stroke-linecap="round"/>
+<line x1="628.32" y1="170" x2="628.32" y2="180" stroke="#176b87" stroke-width="1.5"/>
+<line x1="664.79" y1="170" x2="664.79" y2="180" stroke="#176b87" stroke-width="1.5"/>
+<circle cx="646.55" cy="175" r="5.3" fill="#176b87" stroke="#ffffff" stroke-width="1.5"/>
+<text x="990" y="179" font-family="Arial,sans-serif" font-size="10" fill="#263445">-2.27 [-2.83, -1.71]</text>
 <text x="430" y="202" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#263445">4× MSAA · QEM</text>
-<line x1="537.74" y1="198" x2="602.71" y2="198" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>
-<line x1="537.74" y1="193" x2="537.74" y2="203" stroke="#b45309" stroke-width="1.5"/>
-<line x1="602.71" y1="193" x2="602.71" y2="203" stroke="#b45309" stroke-width="1.5"/>
-<rect x="563.99" y="193.2" width="9.6" height="9.6" fill="#b45309" stroke="#ffffff" stroke-width="1.2"/>
-<text x="990" y="202" font-family="Arial,sans-serif" font-size="10" fill="#263445">-4.45 [-5.37, -3.46]</text>
+<line x1="536.28" y1="198" x2="615.49" y2="198" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>
+<line x1="536.28" y1="193" x2="536.28" y2="203" stroke="#b45309" stroke-width="1.5"/>
+<line x1="615.49" y1="193" x2="615.49" y2="203" stroke="#b45309" stroke-width="1.5"/>
+<rect x="571.08" y="193.2" width="9.6" height="9.6" fill="#b45309" stroke="#ffffff" stroke-width="1.2"/>
+<text x="990" y="202" font-family="Arial,sans-serif" font-size="10" fill="#263445">-4.45 [-5.68, -3.23]</text>
 <text x="430" y="225" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#263445">4× MSAA · meshoptimizer</text>
-<line x1="508.14" y1="221" x2="568.51" y2="221" stroke="#176b87" stroke-width="3" stroke-linecap="round"/>
+<line x1="508.14" y1="221" x2="582.69" y2="221" stroke="#176b87" stroke-width="3" stroke-linecap="round"/>
 <line x1="508.14" y1="216" x2="508.14" y2="226" stroke="#176b87" stroke-width="1.5"/>
-<line x1="568.51" y1="216" x2="568.51" y2="226" stroke="#176b87" stroke-width="1.5"/>
-<rect x="532.01" y="216.2" width="9.6" height="9.6" fill="#176b87" stroke="#ffffff" stroke-width="1.2"/>
-<text x="990" y="225" font-family="Arial,sans-serif" font-size="10" fill="#263445">-5.4 [-6.24, -4.46]</text>
+<line x1="582.69" y1="216" x2="582.69" y2="226" stroke="#176b87" stroke-width="1.5"/>
+<rect x="540.61" y="216.2" width="9.6" height="9.6" fill="#176b87" stroke="#ffffff" stroke-width="1.2"/>
+<text x="990" y="225" font-family="Arial,sans-serif" font-size="10" fill="#263445">-5.4 [-6.55, -4.24]</text>
 <text x="470" y="266" font-family="Arial,sans-serif" font-size="10" fill="#647184">worse</text>
 <text x="970" y="266" text-anchor="end" font-family="Arial,sans-serif" font-size="10" fill="#647184">better</text>
 <rect x="20" y="271" width="1220" height="141" rx="7" fill="#ffffff"/>
@@ -54,29 +54,29 @@
 <line x1="970.00" y1="283" x2="970.00" y2="377" stroke="#d9dee6" stroke-width="1"/>
 <text x="970.00" y="393" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#647184">+</text>
 <text x="430" y="299" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#263445">Native · QEM</text>
-<line x1="573.99" y1="295" x2="649.14" y2="295" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>
-<line x1="573.99" y1="290" x2="573.99" y2="300" stroke="#b45309" stroke-width="1.5"/>
-<line x1="649.14" y1="290" x2="649.14" y2="300" stroke="#b45309" stroke-width="1.5"/>
-<circle cx="610.39" cy="295" r="5.3" fill="#b45309" stroke="#ffffff" stroke-width="1.5"/>
-<text x="990" y="299" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.00326 [-0.00435, -0.00211]</text>
+<line x1="570.63" y1="295" x2="661.45" y2="295" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>
+<line x1="570.63" y1="290" x2="570.63" y2="300" stroke="#b45309" stroke-width="1.5"/>
+<line x1="661.45" y1="290" x2="661.45" y2="300" stroke="#b45309" stroke-width="1.5"/>
+<circle cx="616.04" cy="295" r="5.3" fill="#b45309" stroke="#ffffff" stroke-width="1.5"/>
+<text x="990" y="299" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.00326 [-0.00469, -0.00184]</text>
 <text x="430" y="322" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#263445">Native · meshoptimizer</text>
-<line x1="508.78" y1="318" x2="586.39" y2="318" stroke="#176b87" stroke-width="3" stroke-linecap="round"/>
-<line x1="508.78" y1="313" x2="508.78" y2="323" stroke="#176b87" stroke-width="1.5"/>
-<line x1="586.39" y1="313" x2="586.39" y2="323" stroke="#176b87" stroke-width="1.5"/>
-<circle cx="546.84" cy="318" r="5.3" fill="#176b87" stroke="#ffffff" stroke-width="1.5"/>
-<text x="990" y="322" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.00516 [-0.00629, -0.00398]</text>
+<line x1="508.14" y1="318" x2="603.39" y2="318" stroke="#176b87" stroke-width="3" stroke-linecap="round"/>
+<line x1="508.14" y1="313" x2="508.14" y2="323" stroke="#176b87" stroke-width="1.5"/>
+<line x1="603.39" y1="313" x2="603.39" y2="323" stroke="#176b87" stroke-width="1.5"/>
+<circle cx="555.76" cy="318" r="5.3" fill="#176b87" stroke="#ffffff" stroke-width="1.5"/>
+<text x="990" y="322" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.00516 [-0.00665, -0.00366]</text>
 <text x="430" y="345" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#263445">4× MSAA · QEM</text>
-<line x1="577.16" y1="341" x2="651.23" y2="341" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>
-<line x1="577.16" y1="336" x2="577.16" y2="346" stroke="#b45309" stroke-width="1.5"/>
-<line x1="651.23" y1="336" x2="651.23" y2="346" stroke="#b45309" stroke-width="1.5"/>
-<rect x="608.71" y="336.2" width="9.6" height="9.6" fill="#b45309" stroke="#ffffff" stroke-width="1.2"/>
-<text x="990" y="345" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.00317 [-0.00425, -0.00205]</text>
+<line x1="574.32" y1="341" x2="663.68" y2="341" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>
+<line x1="574.32" y1="336" x2="574.32" y2="346" stroke="#b45309" stroke-width="1.5"/>
+<line x1="663.68" y1="336" x2="663.68" y2="346" stroke="#b45309" stroke-width="1.5"/>
+<rect x="614.20" y="336.2" width="9.6" height="9.6" fill="#b45309" stroke="#ffffff" stroke-width="1.2"/>
+<text x="990" y="345" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.00317 [-0.00457, -0.00177]</text>
 <text x="430" y="368" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#263445">4× MSAA · meshoptimizer</text>
-<line x1="508.14" y1="364" x2="584.80" y2="364" stroke="#176b87" stroke-width="3" stroke-linecap="round"/>
-<line x1="508.14" y1="359" x2="508.14" y2="369" stroke="#176b87" stroke-width="1.5"/>
-<line x1="584.80" y1="359" x2="584.80" y2="369" stroke="#176b87" stroke-width="1.5"/>
-<rect x="541.58" y="359.2" width="9.6" height="9.6" fill="#176b87" stroke="#ffffff" stroke-width="1.2"/>
-<text x="990" y="368" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.00517 [-0.00631, -0.00402]</text>
+<line x1="509.14" y1="364" x2="601.51" y2="364" stroke="#176b87" stroke-width="3" stroke-linecap="round"/>
+<line x1="509.14" y1="359" x2="509.14" y2="369" stroke="#176b87" stroke-width="1.5"/>
+<line x1="601.51" y1="359" x2="601.51" y2="369" stroke="#176b87" stroke-width="1.5"/>
+<rect x="550.53" y="359.2" width="9.6" height="9.6" fill="#176b87" stroke="#ffffff" stroke-width="1.2"/>
+<text x="990" y="368" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.00517 [-0.00662, -0.00372]</text>
 <text x="470" y="409" font-family="Arial,sans-serif" font-size="10" fill="#647184">worse</text>
 <text x="970" y="409" text-anchor="end" font-family="Arial,sans-serif" font-size="10" fill="#647184">better</text>
 <rect x="20" y="414" width="1220" height="141" rx="7" fill="#ffffff"/>
@@ -89,29 +89,29 @@
 <line x1="970.00" y1="426" x2="970.00" y2="520" stroke="#d9dee6" stroke-width="1"/>
 <text x="970.00" y="536" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#647184">+</text>
 <text x="430" y="442" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#263445">Native · QEM</text>
-<line x1="570.53" y1="438" x2="650.04" y2="438" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>
-<line x1="570.53" y1="433" x2="570.53" y2="443" stroke="#b45309" stroke-width="1.5"/>
-<line x1="650.04" y1="433" x2="650.04" y2="443" stroke="#b45309" stroke-width="1.5"/>
-<circle cx="609.11" cy="438" r="5.3" fill="#b45309" stroke="#ffffff" stroke-width="1.5"/>
-<text x="990" y="442" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.00146 [-0.00197, -0.000924]</text>
+<line x1="565.90" y1="438" x2="663.56" y2="438" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>
+<line x1="565.90" y1="433" x2="565.90" y2="443" stroke="#b45309" stroke-width="1.5"/>
+<line x1="663.56" y1="433" x2="663.56" y2="443" stroke="#b45309" stroke-width="1.5"/>
+<circle cx="614.73" cy="438" r="5.3" fill="#b45309" stroke="#ffffff" stroke-width="1.5"/>
+<text x="990" y="442" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.00146 [-0.00214, -0.000785]</text>
 <text x="430" y="465" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#263445">Native · meshoptimizer</text>
-<line x1="527.76" y1="461" x2="599.08" y2="461" stroke="#176b87" stroke-width="3" stroke-linecap="round"/>
-<line x1="527.76" y1="456" x2="527.76" y2="466" stroke="#176b87" stroke-width="1.5"/>
-<line x1="599.08" y1="456" x2="599.08" y2="466" stroke="#176b87" stroke-width="1.5"/>
-<circle cx="563.15" cy="461" r="5.3" fill="#176b87" stroke="#ffffff" stroke-width="1.5"/>
-<text x="990" y="465" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.00207 [-0.00254, -0.0016]</text>
+<line x1="526.81" y1="461" x2="615.40" y2="461" stroke="#176b87" stroke-width="3" stroke-linecap="round"/>
+<line x1="526.81" y1="456" x2="526.81" y2="466" stroke="#176b87" stroke-width="1.5"/>
+<line x1="615.40" y1="456" x2="615.40" y2="466" stroke="#176b87" stroke-width="1.5"/>
+<circle cx="571.10" cy="461" r="5.3" fill="#176b87" stroke="#ffffff" stroke-width="1.5"/>
+<text x="990" y="465" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.00207 [-0.00269, -0.00146]</text>
 <text x="430" y="488" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#263445">4× MSAA · QEM</text>
-<line x1="559.36" y1="484" x2="645.48" y2="484" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>
-<line x1="559.36" y1="479" x2="559.36" y2="489" stroke="#b45309" stroke-width="1.5"/>
-<line x1="645.48" y1="479" x2="645.48" y2="489" stroke="#b45309" stroke-width="1.5"/>
-<rect x="595.52" y="479.2" width="9.6" height="9.6" fill="#b45309" stroke="#ffffff" stroke-width="1.2"/>
-<text x="990" y="488" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.00158 [-0.00212, -0.000984]</text>
+<line x1="553.56" y1="484" x2="659.22" y2="484" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>
+<line x1="553.56" y1="479" x2="553.56" y2="489" stroke="#b45309" stroke-width="1.5"/>
+<line x1="659.22" y1="479" x2="659.22" y2="489" stroke="#b45309" stroke-width="1.5"/>
+<rect x="601.59" y="479.2" width="9.6" height="9.6" fill="#b45309" stroke="#ffffff" stroke-width="1.2"/>
+<text x="990" y="488" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.00158 [-0.00232, -0.000846]</text>
 <text x="430" y="511" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#263445">4× MSAA · meshoptimizer</text>
-<line x1="508.14" y1="507" x2="586.28" y2="507" stroke="#176b87" stroke-width="3" stroke-linecap="round"/>
+<line x1="508.14" y1="507" x2="602.75" y2="507" stroke="#176b87" stroke-width="3" stroke-linecap="round"/>
 <line x1="508.14" y1="502" x2="508.14" y2="512" stroke="#176b87" stroke-width="1.5"/>
-<line x1="586.28" y1="502" x2="586.28" y2="512" stroke="#176b87" stroke-width="1.5"/>
-<rect x="541.85" y="502.2" width="9.6" height="9.6" fill="#176b87" stroke="#ffffff" stroke-width="1.2"/>
-<text x="990" y="511" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.00229 [-0.0028, -0.00177]</text>
+<line x1="602.75" y1="502" x2="602.75" y2="512" stroke="#176b87" stroke-width="1.5"/>
+<rect x="550.64" y="502.2" width="9.6" height="9.6" fill="#176b87" stroke="#ffffff" stroke-width="1.2"/>
+<text x="990" y="511" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.00229 [-0.00295, -0.00163]</text>
 <text x="470" y="552" font-family="Arial,sans-serif" font-size="10" fill="#647184">worse</text>
 <text x="970" y="552" text-anchor="end" font-family="Arial,sans-serif" font-size="10" fill="#647184">better</text>
 <rect x="20" y="557" width="1220" height="141" rx="7" fill="#ffffff"/>
@@ -124,29 +124,29 @@
 <line x1="970.00" y1="569" x2="970.00" y2="663" stroke="#d9dee6" stroke-width="1"/>
 <text x="970.00" y="679" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#647184">+</text>
 <text x="430" y="585" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#263445">Native · QEM</text>
-<line x1="521.03" y1="581" x2="603.47" y2="581" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>
-<line x1="521.03" y1="576" x2="521.03" y2="586" stroke="#b45309" stroke-width="1.5"/>
-<line x1="603.47" y1="576" x2="603.47" y2="586" stroke="#b45309" stroke-width="1.5"/>
-<circle cx="562.81" cy="581" r="5.3" fill="#b45309" stroke="#ffffff" stroke-width="1.5"/>
-<text x="990" y="585" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.000354 [-0.000448, -0.000262]</text>
+<line x1="519.47" y1="581" x2="621.42" y2="581" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>
+<line x1="519.47" y1="576" x2="519.47" y2="586" stroke="#b45309" stroke-width="1.5"/>
+<line x1="621.42" y1="576" x2="621.42" y2="586" stroke="#b45309" stroke-width="1.5"/>
+<circle cx="570.44" cy="581" r="5.3" fill="#b45309" stroke="#ffffff" stroke-width="1.5"/>
+<text x="990" y="585" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.000354 [-0.000475, -0.000233]</text>
 <text x="430" y="608" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#263445">Native · meshoptimizer</text>
-<line x1="545.88" y1="604" x2="613.28" y2="604" stroke="#176b87" stroke-width="3" stroke-linecap="round"/>
-<line x1="545.88" y1="599" x2="545.88" y2="609" stroke="#176b87" stroke-width="1.5"/>
-<line x1="613.28" y1="599" x2="613.28" y2="609" stroke="#176b87" stroke-width="1.5"/>
-<circle cx="579.98" cy="604" r="5.3" fill="#176b87" stroke="#ffffff" stroke-width="1.5"/>
-<text x="990" y="608" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.000315 [-0.000392, -0.00024]</text>
+<line x1="544.99" y1="604" x2="628.57" y2="604" stroke="#176b87" stroke-width="3" stroke-linecap="round"/>
+<line x1="544.99" y1="599" x2="544.99" y2="609" stroke="#176b87" stroke-width="1.5"/>
+<line x1="628.57" y1="599" x2="628.57" y2="609" stroke="#176b87" stroke-width="1.5"/>
+<circle cx="586.78" cy="604" r="5.3" fill="#176b87" stroke="#ffffff" stroke-width="1.5"/>
+<text x="990" y="608" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.000315 [-0.000414, -0.000216]</text>
 <text x="430" y="631" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#263445">4× MSAA · QEM</text>
-<line x1="508.14" y1="627" x2="586.56" y2="627" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>
+<line x1="508.14" y1="627" x2="604.47" y2="627" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>
 <line x1="508.14" y1="622" x2="508.14" y2="632" stroke="#b45309" stroke-width="1.5"/>
-<line x1="586.56" y1="622" x2="586.56" y2="632" stroke="#b45309" stroke-width="1.5"/>
-<rect x="543.15" y="622.2" width="9.6" height="9.6" fill="#b45309" stroke="#ffffff" stroke-width="1.2"/>
-<text x="990" y="631" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.000387 [-0.000477, -0.000301]</text>
+<line x1="604.47" y1="622" x2="604.47" y2="632" stroke="#b45309" stroke-width="1.5"/>
+<rect x="551.50" y="622.2" width="9.6" height="9.6" fill="#b45309" stroke="#ffffff" stroke-width="1.2"/>
+<text x="990" y="631" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.000387 [-0.000501, -0.000273]</text>
 <text x="430" y="654" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#263445">4× MSAA · meshoptimizer</text>
-<line x1="517.27" y1="650" x2="587.04" y2="650" stroke="#176b87" stroke-width="3" stroke-linecap="round"/>
-<line x1="517.27" y1="645" x2="517.27" y2="655" stroke="#176b87" stroke-width="1.5"/>
-<line x1="587.04" y1="645" x2="587.04" y2="655" stroke="#176b87" stroke-width="1.5"/>
-<rect x="547.15" y="645.2" width="9.6" height="9.6" fill="#176b87" stroke="#ffffff" stroke-width="1.2"/>
-<text x="990" y="654" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.000378 [-0.000457, -0.000299]</text>
+<line x1="517.42" y1="650" x2="602.80" y2="650" stroke="#176b87" stroke-width="3" stroke-linecap="round"/>
+<line x1="517.42" y1="645" x2="517.42" y2="655" stroke="#176b87" stroke-width="1.5"/>
+<line x1="602.80" y1="645" x2="602.80" y2="655" stroke="#176b87" stroke-width="1.5"/>
+<rect x="555.31" y="645.2" width="9.6" height="9.6" fill="#176b87" stroke="#ffffff" stroke-width="1.2"/>
+<text x="990" y="654" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.000378 [-0.00048, -0.000277]</text>
 <text x="470" y="695" font-family="Arial,sans-serif" font-size="10" fill="#647184">worse</text>
 <text x="970" y="695" text-anchor="end" font-family="Arial,sans-serif" font-size="10" fill="#647184">better</text>
 <rect x="20" y="700" width="1220" height="141" rx="7" fill="#fff8ee"/>
@@ -185,6 +185,6 @@
 <text x="990" y="797" font-family="Arial,sans-serif" font-size="10" fill="#263445">-0.00267 [-0.00348, -0.00195]</text>
 <text x="470" y="838" font-family="Arial,sans-serif" font-size="10" fill="#647184">worse</text>
 <text x="970" y="838" text-anchor="end" font-family="Arial,sans-serif" font-size="10" fill="#647184">better</text>
-<text x="40" y="862" font-family="Arial,sans-serif" font-size="12" fill="#526071">21 models; 16 source-collection groups; paired 95% group-bootstrap intervals. Native units differ across panels.</text>
-<text x="40" y="883" font-family="Arial,sans-serif" font-size="12" fill="#526071">LPIPS is a post-hoc supplement on the same already-scored cohort; it is not independent confirmation or human-preference evidence.</text>
+<text x="40" y="862" font-family="Arial,sans-serif" font-size="12" fill="#526071">21 models; 16 source groups. Primary metric intervals are familywise 95% max-t; native units differ across panels.</text>
+<text x="40" y="883" font-family="Arial,sans-serif" font-size="12" fill="#526071">LPIPS uses an individual 95% interval as a post-hoc metric on this same cohort; it is not independent or human-preference evidence.</text>
 </svg>

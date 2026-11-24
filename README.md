@@ -15,9 +15,11 @@ close prior art.
 ![Direction-adjusted comparison of ManyMesh against matched-face QEM and meshoptimizer across five image-quality metrics.](docs/manymesh/polyhaven-quality-metrics.svg)
 
 *Positive values favor ManyMesh; negative values favor the control. Each panel
-uses its metric's native units. Intervals bootstrap 16 source groups across 21
-models. LPIPS is a post-hoc supplement on the same cohort, not independent
-confirmation. Data and reproduction: [quality screen](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md),
+uses its metric's native units. Primary metric bars show familywise 95%
+simultaneous intervals over 16 source groups and 21 models. LPIPS shows an
+individual interval for the post-hoc supplement on that same cohort. Data and
+reproduction: [quality screen](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md),
+[multiplicity audit](tools/mmtrain/POLYHAVEN_MULTIPLICITY_AUDIT_20261125.md),
 [plot script](tools/mmtrain/plot_polyhaven_multimetric.py).*
 
 ## Measured snapshots
@@ -27,7 +29,10 @@ confirmation. Data and reproduction: [quality screen](tools/mmtrain/POLYHAVEN_QU
   LDR-FLIP, PSNR, SSIM, and silhouette XOR, with native sampling and 4x MSAA.
   In the post-hoc LPIPS supplement, ManyMesh-minus-control deltas are +0.00127
   to +0.00267; all four 95% intervals favor the controls. This reuses the same
-  cohort, not independent confirmation. [Original protocol and results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md) ·
+  cohort, not independent confirmation. A familywise max-t audit across the
+  16 original endpoints leaves every 95% simultaneous interval favoring the
+  controls. [Original protocol and results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md) ·
+  [Multiplicity audit](tools/mmtrain/POLYHAVEN_MULTIPLICITY_AUDIT_20261125.md) ·
   [LPIPS supplement](tools/mmtrain/POLYHAVEN_LPIPS_SUPPLEMENT_RESULTS_20261125.md).
 - **25.84%-34.75% silhouette-error share.** Source-referenced Monkey diagnostic
   across three face budgets and eight 192 x 192 views. One asset only; the

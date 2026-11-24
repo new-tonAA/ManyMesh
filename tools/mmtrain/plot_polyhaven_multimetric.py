@@ -41,29 +41,38 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--metrics", type=Path, default=Path("tools/mmtrain/polyhaven_quality_metrics_20261124.json"))
     parser.add_argument("--lpips", type=Path, default=Path("tools/mmtrain/polyhaven_lpips_supplement_20261125.json"))
+    parser.add_argument("--multiplicity", type=Path, default=Path("tools/mmtrain/polyhaven_multiplicity_audit_20261125.json"))
     parser.add_argument("--output", type=Path, default=Path("docs/manymesh/polyhaven-quality-metrics.svg"))
     args = parser.parse_args()
 
     metrics = json.loads(args.metrics.read_text(encoding="utf-8"))
     lpips = json.loads(args.lpips.read_text(encoding="utf-8"))
-    if metrics["status"] != "complete" or lpips["status"] != "complete":
-        raise SystemExit("Both input receipts must have status=complete")
+    multiplicity = json.loads(args.multiplicity.read_text(encoding="utf-8"))
+    if metrics["status"] != "complete" or lpips["status"] != "complete" or multiplicity["status"] != "complete":
+        raise SystemExit("All input receipts must have status=complete")
     if metrics["assets"] != 21 or metrics["uncertainty_groups"] != 16:
         raise SystemExit("Unexpected baseline cohort size")
     if lpips["original_metrics_sha256"] != sha256(args.metrics):
         raise SystemExit("LPIPS supplement does not reference this metrics receipt")
+    if multiplicity["source_metrics_sha256"] != sha256(args.metrics) or multiplicity["endpoints"] != 16:
+        raise SystemExit("Multiplicity audit does not match this primary metrics receipt")
+    multiplicity_by_endpoint = {
+        (entry["mode"], entry["control"], entry["metric"]): entry
+        for entry in multiplicity["results"]
+    }
 
     # Each panel uses its native metric units. Rows must not be compared by length.
     panel_values = []
     for key, label, unit, higher_is_better, digits in METRICS:
         values = []
         for sampling, baseline, condition, color_key, marker in CONDITIONS:
-            source = lpips if key == "lpips_squeeze" else metrics
-            delta_key = "lpips_squeeze" if key == "lpips_squeeze" else key
-            entry = source["paired_group_deltas_manymesh_minus_control"][sampling][baseline]
-            if delta_key != "lpips_squeeze":
-                entry = entry[delta_key]
-            mean, low, high = effect(entry, not higher_is_better)
+            if key == "lpips_squeeze":
+                entry = lpips["paired_group_deltas_manymesh_minus_control"][sampling][baseline]
+                mean, low, high = effect(entry, True)
+            else:
+                entry = multiplicity_by_endpoint[(sampling, baseline, key)]
+                mean = entry["manymesh_improvement_mean"]
+                low, high = entry["simultaneous_max_t_95_ci"]
             values.append({"condition": condition, "color": COLORS[color_key], "marker": marker,
                            "mean": mean, "low": low, "high": high})
         panel_values.append((key, label, unit, digits, values))
@@ -75,10 +84,10 @@ def main():
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title desc">',
         '<title id="title">Matched-face quality comparison across five image metrics</title>',
         '<desc id="desc">Direction-adjusted changes for ManyMesh versus QEM and meshoptimizer across 21 models. Positive favors ManyMesh. The four primary metrics and post-hoc LPIPS supplement all favor the controls.</desc>',
-        f'<metadata>metrics_sha256={sha256(args.metrics)};lpips_sha256={sha256(args.lpips)}</metadata>',
+        f'<metadata>metrics_sha256={sha256(args.metrics)};lpips_sha256={sha256(args.lpips)};multiplicity_sha256={sha256(args.multiplicity)}</metadata>',
         '<rect width="100%" height="100%" fill="#f7f8fa"/>',
         '<text x="40" y="42" font-family="Arial,sans-serif" font-size="25" font-weight="700" fill="#182230">Matched-face image quality favors deterministic controls</text>',
-        '<text x="40" y="72" font-family="Arial,sans-serif" font-size="14" fill="#526071">Direction-adjusted ManyMesh improvement; positive favors ManyMesh. Each panel uses its own metric units.</text>',
+        '<text x="40" y="72" font-family="Arial,sans-serif" font-size="14" fill="#526071">Direction-adjusted change; positive favors ManyMesh. Primary metrics use familywise 95% intervals.</text>',
     ]
     # Legend: comparator color and sampling marker are encoded independently.
     out += [
@@ -122,8 +131,8 @@ def main():
         out.append(f'<text x="{x1}" y="{bottom + 13}" text-anchor="end" font-family="Arial,sans-serif" font-size="10" fill="#647184">better</text>')
 
     out += [
-        '<text x="40" y="862" font-family="Arial,sans-serif" font-size="12" fill="#526071">21 models; 16 source-collection groups; paired 95% group-bootstrap intervals. Native units differ across panels.</text>',
-        '<text x="40" y="883" font-family="Arial,sans-serif" font-size="12" fill="#526071">LPIPS is a post-hoc supplement on the same already-scored cohort; it is not independent confirmation or human-preference evidence.</text>',
+        '<text x="40" y="862" font-family="Arial,sans-serif" font-size="12" fill="#526071">21 models; 16 source groups. Primary metric intervals are familywise 95% max-t; native units differ across panels.</text>',
+        '<text x="40" y="883" font-family="Arial,sans-serif" font-size="12" fill="#526071">LPIPS uses an individual 95% interval as a post-hoc metric on this same cohort; it is not independent or human-preference evidence.</text>',
         '</svg>',
     ]
     args.output.parent.mkdir(parents=True, exist_ok=True)
