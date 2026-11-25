@@ -188,6 +188,11 @@ compiler was not tested. No CPU fit or image scoring was run. This closes only
 that local fallback for now, not the frozen CUDA experiment. See the
 [CPU-backend preflight](tools/mmtrain/DEODR_CPU_BACKEND_PREFLIGHT_20261125.md).
 
+A second CPU-backend probe found ignored local builds of Mitsuba 3.9.0 and
+Dr.Jit 1.4.0, but the LLVM runtime failed to initialize and Mitsuba's native
+extension could not load. No render, fit, or score ran. This does not change the
+frozen experiment; see the [Mitsuba preflight](tools/mmtrain/MITSUBA_CPU_BACKEND_PREFLIGHT_20261125.md).
+
 Stop if the matched-face baseline loses, if a result depends on tuned views or
 assets, if the surrogate fails to rank real-pipeline results, if boundary or
 topology checks fail, or if total cost removes the quality gain. A mobile claim
