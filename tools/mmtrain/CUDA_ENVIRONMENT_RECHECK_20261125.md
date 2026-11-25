@@ -20,9 +20,11 @@ The machine-readable observations are in
 [`CUDA_ENVIRONMENT_RECHECK_20261125.json`](CUDA_ENVIRONMENT_RECHECK_20261125.json).
 The frozen experiment and its stop criteria remain in
 [`MANYMESH_NEXT_EXPERIMENT_GATE.md`](../../MANYMESH_NEXT_EXPERIMENT_GATE.md).
-Resume only on a host where CUDA-enabled PyTorch imports, a CUDA device is
-visible, and the pinned `nvdiffrast` extension can be built. This preflight is
-not a negative result for the fitting method.
+The frozen CUDA adapter can resume on a host where CUDA-enabled PyTorch
+imports, a CUDA device is visible, and the pinned `nvdiffrast` extension can
+be built. This is a constraint of that adapter, not a negative result for the
+fitting method or proof that an ordinary laptop cannot run a separate CPU
+version.
 
 ## CPU fallback recheck
 
@@ -32,8 +34,16 @@ unavailable. Import probes found none of `nvdiffrast`, PyTorch3D,
 `soft_renderer`, Kaolin, JAX, Mitsuba, Dr.Jit, or DEODR. `nvidia-smi`, `nvcc`,
 and Blender are not available on `PATH`. This rules out an already-installed
 differentiable CPU-renderer fallback in this environment; it does not change
-the frozen CUDA protocol or its result status. The earlier DEODR and Mitsuba
-build/runtime investigations are documented separately.
+the frozen CUDA protocol or its result status. It does not rule out a new CPU
+adapter: PyTorch3D documents CPU implementations for a subset of its
+components, including mesh rasterization, while warning that GPU support is
+needed for all features. That adapter would need separate renderer-equivalence
+checks, a pinned environment, and its own receipt; its timings would measure
+offline fitting cost only. The local Python environment is PyTorch 2.7.1+cpu,
+while PyTorch3D's current installation page lists tested PyTorch versions only
+through 2.4.1, so direct installation into this environment is not established.
+The earlier DEODR and Mitsuba build/runtime investigations are documented
+separately.
 
 ## Android harness preflight
 

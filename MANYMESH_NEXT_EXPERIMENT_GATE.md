@@ -140,6 +140,17 @@ is a differentiable placement baseline, not optimization through the final
 hardware 4x MSAA or an upscaler. Gate 2 must separately fit and score against
 the same final reconstruction operator before supporting that claim.
 
+This experiment does not train a neural network; it optimizes mesh vertex
+positions from image-loss gradients. CUDA is an implementation requirement
+of this frozen adapter, not of the optimization method: the adapter uses
+nvdiffrast, whose rasterization, interpolation, texturing, antialiasing, and
+gradients are CUDA GPU operations. A CPU experiment is possible with a
+different differentiable renderer (for example, PyTorch3D's CPU rasterizer
+and backward pass), but it changes the renderer and therefore must have a
+separate protocol and receipt. Keep it as an exploratory laptop route; do not
+pool its fit timings with the frozen CUDA run or describe it as an exact
+reproduction.
+
 This two-asset reused-development screen tests the frozen configuration only;
 its held-out views do not establish generalization across assets.
 
