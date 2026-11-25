@@ -219,10 +219,22 @@ studied by [Neural Mesh Simplification (CVPR 2022)](https://openaccess.thecvf.co
 image-guided adaptive subdivision with watertightness constraints by
 [Differentiable Micro-Mesh Construction (CVPR 2024)](https://openaccess.thecvf.com/content/CVPR2024/papers/Dou_Differentiable_Micro-Mesh_Construction_CVPR_2024_paper.pdf);
 and local learned topology refinement by
-[Learned Localized Mesh Refinement](https://arxiv.org/html/2609.31946), a SIGGRAPH Asia 2026 paper
-on adaptive learned upsampling of coarse input meshes. It is close prior art for
-view-dependent local refinement, but its task is not render-matched simplification
-of an authored asset. [HLoD (Eurographics 2026)](https://diglib.eg.org/items/429b6aa4-7897-4217-b297-272992d745ae)
+[Learned Localized Mesh Refinement](https://doi.org/10.1145/3829340.3842280), accepted as a
+SIGGRAPH Asia 2026 Conference Paper; the authors' institutional publication
+list says its presentation is deferred to SIGGRAPH 2027
+([full arXiv paper](https://arxiv.org/html/2609.31946),
+[publication list](https://adg.csail.mit.edu/?page_id=13)). It builds a
+progressive vertex-split forest and a locally conditioned autoregressive model
+for geometry and topology updates. It demonstrates view-dependent local
+upsampling under a face budget. Its task is refinement of coarse meshes, not
+render-matched simplification of a fixed authored asset; the paper reports
+mesh-distribution and triangle-quality metrics plus a ship-drag application,
+not post-MSAA or post-upscaler image quality. This closes local refinement and
+view-dependent budget allocation as standalone novelty claims. It does not
+answer the narrower, untested question of optimizing an authored hierarchy for
+a specified final reconstruction operator. That task distinction is a
+comparison to test, not proof of novelty.
+[HLoD (Eurographics 2026)](https://diglib.eg.org/items/429b6aa4-7897-4217-b297-272992d745ae)
 jointly optimizes a hierarchy for 3D Gaussian Splatting, and
 [T²-Splat](https://arxiv.org/html/2611.06974) combines adaptive triangle topology,
 image supervision, and scale-aware residual filtering for scene reconstruction.
