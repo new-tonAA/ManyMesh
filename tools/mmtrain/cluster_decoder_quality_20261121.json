@@ -1,0 +1,2500 @@
+{
+  "scope": "Frozen-model development diagnostic; orthographic flat shading, no PBR",
+  "runtime": {
+    "python": "3.12.3 | packaged by conda-forge | (main, Apr 15 2024, 18:20:11) [MSC v.1938 64 bit (AMD64)]",
+    "numpy": "2.2.6",
+    "versions": {
+      "scipy": "1.15.3",
+      "numba": "0.62.1",
+      "fast-simplification": "0.2.0",
+      "torch": "2.7.1",
+      "torchvision": "0.22.1",
+      "scikit-image": "0.25.2",
+      "flip-evaluator": "1.7",
+      "lpips": "0.1.4"
+    },
+    "OPENBLAS_NUM_THREADS": "1",
+    "torch_threads": 2
+  },
+  "hashes": {
+    "tools/mmtrain/cluster_decoder.py": "46e66127d31083a9e9d81cf4fd7e9dc767676554e2a3dde849c47b25169e2425",
+    "tools/mmtrain/cluster_decoder_pilot.py": "8db32f1897388c06212ecb385daa0c0eb27e83257c7ff9fd8ed3637933782318",
+    "tools/mmtrain/cluster_decoder_pairs.py": "adc0665412ca948b51c1cc78ccb8fc0720bd8ed285d8759bf1e8d8877f84757c",
+    "tools/mmtrain/fit_cluster_decoder.py": "508305687745b556f5f3c88f3b15b5e2ca6e839c93f09e0e300bd77a62a09205",
+    "tools/mmtrain/direct_cluster_control.py": "1767b4d7c78f59209f14db9b9de6b1b9d3d0df7bbd78a89b436257ddbc6f5a8a",
+    "tools/mmtrain/cluster_decoder_quality.py": "c64cf7c5a4dc75351c3182ac92adca61a91816b500ec12934e45453f99756b0a",
+    "tools/mmtrain/make_refinement_pairs.py": "f23cee47bae436740c14fbd3e5745e4212498712434e480ffd04ff73a51ee534",
+    "tools/mmmetrics/perceptual.py": "ef389addc2c69d01babc9fb373f50cbac7b0c3d2e092d089a76b48afffc7cc6b",
+    "tools/mmmetrics/summarize_decoder_quality.py": "76571c81eff9cb97c6332bb95038012d1b9db58431ebf3d449d267a24265a70c",
+    "tools/mmmetrics/build_decoder_quality_gallery.py": "cfd7b42dc09ea57751458ec457459bbf9cea0be50c8bb77e10a96b78d6e496c7"
+  },
+  "metric_weight_hashes": {
+    "out\\quality-torch\\hub\\checkpoints\\squeezenet1_1-b8a52dc0.pth": "b8a52dc049b60e4b6ab68ad0df457362afab8b6304b2febdc1650a5dab4d7e7b",
+    "out\\image-quality-deps\\lpips\\weights\\v0.1\\squeeze.pth": "4a5350f23600cb79923ce65bb07cbf57dca461329894153e05a1346bd531cf76"
+  },
+  "artifacts": {
+    "out\\cluster-decoder-quality\\rank8\\report.json": "e4485ca970de714864955292f916ae5eb0aca264903e3bfc79dd5edb09981444",
+    "out\\cluster-decoder-quality\\rank8\\summary.json": "7cd65d5da5bf260e9ebb6ccee8ed05be9f8187361c039bc47879cde39c218988",
+    "out\\cluster-decoder-quality\\rank8\\all-assets.png": "65c09f5ea2d0d355fa10f10c13de9036a954dc1a550e9c003814a7220d46bedf",
+    "out\\cluster-decoder-quality\\rank8\\validation-errors.png": "b20f58699aa3268474d4b45cfb716acaec2f9fe0927668d6a640763b80951a26"
+  },
+  "settings": {
+    "scope": "Frozen-model development diagnostic; orthographic flat shading, no PBR",
+    "metrics": {
+      "input": "8-bit sRGB, RGB in [0,1]",
+      "ssim": "Gaussian sigma=1.5, population covariance, K1=.01 K2=.03",
+      "flip": "LDR-FLIP",
+      "flip_ppd": 67.0,
+      "lpips": "calibrated SqueezeNet, version 0.1, [-1,1] RGB",
+      "packages": {
+        "flip-evaluator": "1.7",
+        "lpips": "0.1.4",
+        "scikit-image": "0.25.2",
+        "torch": "2.7.1",
+        "torchvision": "0.22.1"
+      }
+    },
+    "views": 12,
+    "size": 256,
+    "box_samples_per_pixel": 4,
+    "psnr_aggregation": "-10 log10(mean per-view MSE), not mean dB",
+    "encoding_refinement_fraction": 0.1,
+    "model_sha256": {
+      "fixed": "a1880ba383ae03ee21e6a6939f85d9560d5ae52cad1c8a8deb4b83452b746aab",
+      "refine": "d740899db0bdbf2d17afa57ec1a1058b086b0806318114e0394cc8986d02e32d"
+    }
+  },
+  "records": [
+    {
+      "file_id": 132057,
+      "split": "train",
+      "input_sha256": "af347392d9380cc917d2cead4c44b9849cf46f466929f77447fdab67626024a5",
+      "preparation_status": "prepared",
+      "variants": {
+        "base": {
+          "triangles": 158,
+          "mean": {
+            "mse": 0.0013123152675528441,
+            "ssim": 0.9737077337237582,
+            "flip": 0.01564180350396782,
+            "lpips_squeeze": 0.014042385038919747,
+            "silhouette_xor_fraction": 0.004540761311848958,
+            "coverage_mae": 0.0045502980550130205,
+            "psnr_db": 28.819618185345497
+          },
+          "views": 12
+        },
+        "fixed": {
+          "triangles": 158,
+          "mean": {
+            "mse": 0.0013093820914356858,
+            "ssim": 0.9736450244600353,
+            "flip": 0.015650117439993966,
+            "lpips_squeeze": 0.013818197301588953,
+            "silhouette_xor_fraction": 0.004533131917317708,
+            "coverage_mae": 0.004530588785807292,
+            "psnr_db": 28.82933603267274
+          },
+          "views": 12
+        },
+        "fixed_direct": {
+          "triangles": 158,
+          "mean": {
+            "mse": 0.0013238233042942719,
+            "ssim": 0.9737209856853721,
+            "flip": 0.01554491623149564,
+            "lpips_squeeze": 0.013744248581739763,
+            "silhouette_xor_fraction": 0.004571278889973958,
+            "coverage_mae": 0.0044918060302734375,
+            "psnr_db": 28.78169977955986
+          },
+          "views": 12
+        },
+        "refine": {
+          "triangles": 188,
+          "mean": {
+            "mse": 0.001343817089393202,
+            "ssim": 0.9732594224094692,
+            "flip": 0.015668482733114313,
+            "lpips_squeeze": 0.013549867202527821,
+            "silhouette_xor_fraction": 0.004627227783203125,
+            "coverage_mae": 0.004643440246582031,
+            "psnr_db": 28.716598402652043
+          },
+          "views": 12
+        },
+        "refine_direct": {
+          "triangles": 188,
+          "mean": {
+            "mse": 0.0014506412258243524,
+            "ssim": 0.9715620795094687,
+            "flip": 0.015865315683186054,
+            "lpips_squeeze": 0.01698978408239782,
+            "silhouette_xor_fraction": 0.004556020100911458,
+            "coverage_mae": 0.00447845458984375,
+            "psnr_db": 28.38439984468636
+          },
+          "views": 12
+        }
+      },
+      "decode_status": {
+        "fixed": "decoded",
+        "fixed_direct": "decoded",
+        "refine": "decoded",
+        "refine_direct": "decoded"
+      }
+    },
+    {
+      "file_id": 59494,
+      "split": "train",
+      "input_sha256": "9c3be26665505629911145b446068f9e3de938b6d2dad4d7ca63b9854f7ec1b6",
+      "preparation_status": "rejected",
+      "reason": "Duplicate geometric triangle"
+    },
+    {
+      "file_id": 53581,
+      "split": "train",
+      "input_sha256": "ef3c07a286e63867598a35237fe2663f679e8cd155de075a010b826636fb7ef7",
+      "preparation_status": "rejected",
+      "reason": "Nonmanifold or inconsistently oriented edge"
+    },
+    {
+      "file_id": 145328,
+      "split": "train",
+      "input_sha256": "8bb9c166a14f7216ab069b877e4800f086a2094c21f883e5ac1d35b05d8a9388",
+      "preparation_status": "prepared",
+      "variants": {
+        "base": {
+          "triangles": 108,
+          "mean": {
+            "mse": 0.029425764287967917,
+            "ssim": 0.8924802675061191,
+            "flip": 0.08550540404394269,
+            "lpips_squeeze": 0.11619898459563653,
+            "silhouette_xor_fraction": 0.06568018595377605,
+            "coverage_mae": 0.06532796223958333,
+            "psnr_db": 15.31272248221609
+          },
+          "views": 12
+        },
+        "fixed": {
+          "triangles": 108,
+          "mean": {
+            "mse": 0.029516502516278534,
+            "ssim": 0.8912585095825548,
+            "flip": 0.08619047421962023,
+            "lpips_squeeze": 0.11678295101349552,
+            "silhouette_xor_fraction": 0.06632232666015625,
+            "coverage_mae": 0.0659929911295573,
+            "psnr_db": 15.299351044326201
+          },
+          "views": 12
+        },
+        "fixed_direct": {
+          "triangles": 108,
+          "mean": {
+            "mse": 0.029601078211886896,
+            "ssim": 0.8910440156697764,
+            "flip": 0.08626059349626303,
+            "lpips_squeeze": 0.11603465971226494,
+            "silhouette_xor_fraction": 0.06645456949869792,
+            "coverage_mae": 0.06609471638997395,
+            "psnr_db": 15.286924695848267
+          },
+          "views": 12
+        },
+        "refine_direct": {
+          "triangles": 128,
+          "mean": {
+            "mse": 0.02953109760765966,
+            "ssim": 0.8871705976025447,
+            "flip": 0.0874568154104054,
+            "lpips_squeeze": 0.12187852927794059,
+            "silhouette_xor_fraction": 0.06553268432617188,
+            "coverage_mae": 0.06522210439046223,
+            "psnr_db": 15.297204109390496
+          },
+          "views": 12
+        }
+      },
+      "decode_status": {
+        "fixed": "decoded",
+        "fixed_direct": "decoded",
+        "refine": "Local triangle flip relative to source",
+        "refine_direct": "decoded"
+      }
+    },
+    {
+      "file_id": 96074,
+      "split": "train",
+      "input_sha256": "f7b74c91b0526fd437c17aebd7694a1cff6c08055668109b5f8f96e560088b99",
+      "preparation_status": "rejected",
+      "reason": "Nonmanifold or inconsistently oriented edge"
+    },
+    {
+      "file_id": 57809,
+      "split": "train",
+      "input_sha256": "3b0fbe2a61dd2799ce7b52697500860c89a3ee14841d42c4f4531c17a205c3b8",
+      "preparation_status": "prepared",
+      "variants": {
+        "base": {
+          "triangles": 572,
+          "mean": {
+            "mse": 0.0006197083896205285,
+            "ssim": 0.96649689922232,
+            "flip": 0.019569601203935843,
+            "lpips_squeeze": 0.027291260892525315,
+            "silhouette_xor_fraction": 0.0026194254557291665,
+            "coverage_mae": 0.0025962193806966147,
+            "psnr_db": 32.07812624325975
+          },
+          "views": 12
+        },
+        "fixed": {
+          "triangles": 572,
+          "mean": {
+            "mse": 0.0006395733657439947,
+            "ssim": 0.9655695977993738,
+            "flip": 0.02076214722668131,
+            "lpips_squeeze": 0.02758809303243955,
+            "silhouette_xor_fraction": 0.002796173095703125,
+            "coverage_mae": 0.0027297337849934897,
+            "psnr_db": 31.941096302154502
+          },
+          "views": 12
+        },
+        "fixed_direct": {
+          "triangles": 572,
+          "mean": {
+            "mse": 0.0006844237436472752,
+            "ssim": 0.9644161125668972,
+            "flip": 0.02043108696428438,
+            "lpips_squeeze": 0.027606948822115857,
+            "silhouette_xor_fraction": 0.0026372273763020835,
+            "coverage_mae": 0.0025676091512044272,
+            "psnr_db": 31.646749325673408
+          },
+          "views": 12
+        },
+        "refine": {
+          "triangles": 686,
+          "mean": {
+            "mse": 0.0006313251132126666,
+            "ssim": 0.9657341154277824,
+            "flip": 0.020541325250330072,
+            "lpips_squeeze": 0.02840396490258475,
+            "silhouette_xor_fraction": 0.0028139750162760415,
+            "coverage_mae": 0.0027290980021158853,
+            "psnr_db": 31.997469347138974
+          },
+          "views": 12
+        },
+        "refine_direct": {
+          "triangles": 686,
+          "mean": {
+            "mse": 0.0006387562588607747,
+            "ssim": 0.9654878581965854,
+            "flip": 0.0192642881302163,
+            "lpips_squeeze": 0.02646356758972009,
+            "silhouette_xor_fraction": 0.00263214111328125,
+            "coverage_mae": 0.002564112345377604,
+            "psnr_db": 31.94664831396753
+          },
+          "views": 12
+        }
+      },
+      "decode_status": {
+        "fixed": "decoded",
+        "fixed_direct": "decoded",
+        "refine": "decoded",
+        "refine_direct": "decoded"
+      }
+    },
+    {
+      "file_id": 84030,
+      "split": "train",
+      "input_sha256": "98735ebb00fea705f77386b3672dfc1023beb49e7c19c233e73f6009af3c1ba6",
+      "preparation_status": "rejected",
+      "reason": "Duplicate geometric triangle"
+    },
+    {
+      "file_id": 148292,
+      "split": "train",
+      "input_sha256": "38eeb83b26b3cdfe95c8ff9df9442fe8e3c1df3e5d762ea66bb2bc390f525471",
+      "preparation_status": "rejected",
+      "reason": "Duplicate geometric triangle"
+    },
+    {
+      "file_id": 84736,
+      "split": "train",
+      "input_sha256": "4de846fb7c6ae5259655d89f2cf9c8ef021c234da02efd81df47efa0744a0da4",
+      "preparation_status": "prepared",
+      "variants": {
+        "base": {
+          "triangles": 3174,
+          "mean": {
+            "mse": 9.767979425481383e-05,
+            "ssim": 0.9874142082223148,
+            "flip": 0.003920581007453923,
+            "lpips_squeeze": 0.01391463500719207,
+            "silhouette_xor_fraction": 8.392333984375e-05,
+            "coverage_mae": 8.900960286458333e-05,
+            "psnr_db": 40.10195263826617
+          },
+          "views": 12
+        },
+        "fixed": {
+          "triangles": 3174,
+          "mean": {
+            "mse": 0.0001005735865437372,
+            "ssim": 0.9872789617758944,
+            "flip": 0.004050370273034787,
+            "lpips_squeeze": 0.01400712115476684,
+            "silhouette_xor_fraction": 0.00011189778645833333,
+            "coverage_mae": 0.00011189778645833333,
+            "psnr_db": 39.97516062267204
+          },
+          "views": 12
+        },
+        "fixed_direct": {
+          "triangles": 3174,
+          "mean": {
+            "mse": 0.00010310782051599745,
+            "ssim": 0.9871038439034711,
+            "flip": 0.004126130376486496,
+            "lpips_squeeze": 0.014122132192521045,
+            "silhouette_xor_fraction": 0.00011571248372395833,
+            "coverage_mae": 0.0001239776611328125,
+            "psnr_db": 39.86708393124487
+          },
+          "views": 12
+        }
+      },
+      "decode_status": {
+        "fixed": "decoded",
+        "fixed_direct": "decoded",
+        "refine": "Local triangle flip relative to source",
+        "refine_direct": "Direct displacement caused local flip"
+      }
+    },
+    {
+      "file_id": 59301,
+      "split": "train",
+      "input_sha256": "71db678a59bc1a4093eca62ae0236ce52725846f2e91b0ddfe9060ea7121a22c",
+      "preparation_status": "prepared",
+      "variants": {
+        "base": {
+          "triangles": 3514,
+          "mean": {
+            "mse": 0.00018340636197991758,
+            "ssim": 0.9910634657280184,
+            "flip": 0.009684239281341434,
+            "lpips_squeeze": 0.006523015676066279,
+            "silhouette_xor_fraction": 0.001224517822265625,
+            "coverage_mae": 0.0012375513712565105,
+            "psnr_db": 37.36585603645001
+          },
+          "views": 12
+        },
+        "fixed": {
+          "triangles": 3514,
+          "mean": {
+            "mse": 0.00020515335319623663,
+            "ssim": 0.9903531798506187,
+            "flip": 0.010469827335327864,
+            "lpips_squeeze": 0.006841901592755069,
+            "silhouette_xor_fraction": 0.0013860066731770833,
+            "coverage_mae": 0.0014327367146809895,
+            "psnr_db": 36.87921380170523
+          },
+          "views": 12
+        },
+        "fixed_direct": {
+          "triangles": 3514,
+          "mean": {
+            "mse": 0.00023073543757333917,
+            "ssim": 0.9895203835347927,
+            "flip": 0.011140846356283873,
+            "lpips_squeeze": 0.00721024409479772,
+            "silhouette_xor_fraction": 0.0015513102213541667,
+            "coverage_mae": 0.0016088485717773438,
+            "psnr_db": 36.368856991042755
+          },
+          "views": 12
+        },
+        "refine": {
+          "triangles": 4216,
+          "mean": {
+            "mse": 0.000180798679319052,
+            "ssim": 0.9911736417556395,
+            "flip": 0.009707618737593293,
+            "lpips_squeeze": 0.006572479653793077,
+            "silhouette_xor_fraction": 0.0011990865071614583,
+            "coverage_mae": 0.0012159347534179688,
+            "psnr_db": 37.42804746241977
+          },
+          "views": 12
+        },
+        "refine_direct": {
+          "triangles": 4216,
+          "mean": {
+            "mse": 0.00022621484287393468,
+            "ssim": 0.9894506681446233,
+            "flip": 0.010686678123117114,
+            "lpips_squeeze": 0.007465986263317366,
+            "silhouette_xor_fraction": 0.00151824951171875,
+            "coverage_mae": 0.0015761057535807292,
+            "psnr_db": 36.45478902652116
+          },
+          "views": 12
+        }
+      },
+      "decode_status": {
+        "fixed": "decoded",
+        "fixed_direct": "decoded",
+        "refine": "decoded",
+        "refine_direct": "decoded"
+      }
+    },
+    {
+      "file_id": 84757,
+      "split": "train",
+      "input_sha256": "a763dce4e69ceb68129abf8a02cc8f2045e53e2da83bf66857b7f4e9ea686ef7",
+      "preparation_status": "prepared",
+      "variants": {
+        "base": {
+          "triangles": 3626,
+          "mean": {
+            "mse": 0.00023103703478429767,
+            "ssim": 0.976332847057126,
+            "flip": 0.015361579833552241,
+            "lpips_squeeze": 0.020137744684082765,
+            "silhouette_xor_fraction": 0.0012194315592447917,
+            "coverage_mae": 0.0008077621459960938,
+            "psnr_db": 36.363183979724745
+          },
+          "views": 12
+        },
+        "fixed": {
+          "triangles": 3626,
+          "mean": {
+            "mse": 0.0002571583490837358,
+            "ssim": 0.9757026371826498,
+            "flip": 0.016269783178965252,
+            "lpips_squeeze": 0.020096786591845255,
+            "silhouette_xor_fraction": 0.0014216105143229167,
+            "coverage_mae": 0.0010162989298502605,
+            "psnr_db": 35.89799371004049
+          },
+          "views": 12
+        },
+        "fixed_direct": {
+          "triangles": 3626,
+          "mean": {
+            "mse": 0.00026110023225742494,
+            "ssim": 0.974402200596078,
+            "flip": 0.017539578800400097,
+            "lpips_squeeze": 0.02239897191369285,
+            "silhouette_xor_fraction": 0.0013720194498697917,
+            "coverage_mae": 0.001018524169921875,
+            "psnr_db": 35.83192741857358
+          },
+          "views": 12
+        },
+        "refine": {
+          "triangles": 4350,
+          "mean": {
+            "mse": 0.00023524048602475606,
+            "ssim": 0.9764384750595329,
+            "flip": 0.01550461445003748,
+            "lpips_squeeze": 0.019670549004028242,
+            "silhouette_xor_fraction": 0.0012448628743489583,
+            "coverage_mae": 0.0008398691813151041,
+            "psnr_db": 36.28487931983605
+          },
+          "views": 12
+        }
+      },
+      "decode_status": {
+        "fixed": "decoded",
+        "fixed_direct": "decoded",
+        "refine": "decoded",
+        "refine_direct": "Direct displacement caused local flip"
+      }
+    },
+    {
+      "file_id": 73858,
+      "split": "train",
+      "input_sha256": "409da0134c25314942808b0048a2c94ab24c0ce1b01daae29522d50ee5bacf4b",
+      "preparation_status": "prepared",
+      "variants": {
+        "base": {
+          "triangles": 2624,
+          "mean": {
+            "mse": 3.8622883394958276e-05,
+            "ssim": 0.9977401962997469,
+            "flip": 0.0024094473580286526,
+            "lpips_squeeze": 0.002091869445090803,
+            "silhouette_xor_fraction": 0.00012079874674479167,
+            "coverage_mae": 0.00012111663818359375,
+            "psnr_db": 44.13155307051311
+          },
+          "views": 12
+        },
+        "fixed": {
+          "triangles": 2624,
+          "mean": {
+            "mse": 3.872576240208093e-05,
+            "ssim": 0.9977396483060176,
+            "flip": 0.0024155122470498704,
+            "lpips_squeeze": 0.0020916408636063957,
+            "silhouette_xor_fraction": 0.00012079874674479167,
+            "coverage_mae": 0.0001220703125,
+            "psnr_db": 44.12000023439448
+          },
+          "views": 12
+        },
+        "fixed_direct": {
+          "triangles": 2624,
+          "mean": {
+            "mse": 3.8604579887893677e-05,
+            "ssim": 0.9977407626908167,
+            "flip": 0.002409461662561322,
+            "lpips_squeeze": 0.0020906483744814373,
+            "silhouette_xor_fraction": 0.00012079874674479167,
+            "coverage_mae": 0.00012111663818359375,
+            "psnr_db": 44.13361169368382
+          },
+          "views": 12
+        },
+        "refine_direct": {
+          "triangles": 3148,
+          "mean": {
+            "mse": 3.7947843796806916e-05,
+            "ssim": 0.9977957337125741,
+            "flip": 0.0023840949458341734,
+            "lpips_squeeze": 0.002053389951470308,
+            "silhouette_xor_fraction": 0.00012079874674479167,
+            "coverage_mae": 0.00012111663818359375,
+            "psnr_db": 44.20812895756698
+          },
+          "views": 12
+        }
+      },
+      "decode_status": {
+        "fixed": "decoded",
+        "fixed_direct": "decoded",
+        "refine": "Local triangle flip relative to source",
+        "refine_direct": "decoded"
+      }
+    },
+    {
+      "file_id": 97859,
+      "split": "train",
+      "input_sha256": "b53d4bc507e41638e67cff2252ce74e6ed202f82e0cd93739147078581f69315",
+      "preparation_status": "rejected",
+      "reason": "Nearest-surface radius-check cap exceeded: 80000000"
+    },
+    {
+      "file_id": 741525,
+      "split": "train",
+      "input_sha256": "b6a751d128a57778977bbc124f061d09c3162a1e21ad534ebec1251ed9845a4e",
+      "preparation_status": "rejected",
+      "reason": "Nearest-surface radius-check cap exceeded: 80000000"
+    },
+    {
+      "file_id": 104559,
+      "split": "train",
+      "input_sha256": "bb821a80e919e004d3192bd1aab5796ffaa8255b9e1d2a4228cc3efe8da501f6",
+      "preparation_status": "prepared",
+      "variants": {
+        "base": {
+          "triangles": 14198,
+          "mean": {
+            "mse": 0.0005193440027761257,
+            "ssim": 0.9897255316238698,
+            "flip": 0.017100953264161944,
+            "lpips_squeeze": 0.0055063141432280345,
+            "silhouette_xor_fraction": 0.0024541219075520835,
+            "coverage_mae": 0.0026623407999674478,
+            "psnr_db": 32.84544879112516
+          },
+          "views": 12
+        }
+      },
+      "decode_status": {
+        "fixed": "Local triangle flip relative to source",
+        "fixed_direct": "Direct displacement caused local flip",
+        "refine": "Local triangle flip relative to source",
+        "refine_direct": "Direct displacement caused local flip"
+      }
+    },
+    {
+      "file_id": 32770,
+      "split": "train",
+      "input_sha256": "05cadafafe14a6b6a5463a46b0fdf6d9bf706fa8d6e3358cff6e8096f7d82e7c",
+      "preparation_status": "prepared",
+      "variants": {
+        "base": {
+          "triangles": 11364,
+          "mean": {
+            "mse": 0.00024409205030817476,
+            "ssim": 0.992798579760537,
+            "flip": 0.00901152843531842,
+            "lpips_squeeze": 0.004667126127363493,
+            "silhouette_xor_fraction": 0.00150299072265625,
+            "coverage_mae": 0.0014969507853190105,
+            "psnr_db": 36.12446364636532
+          },
+          "views": 12
+        },
+        "refine": {
+          "triangles": 13636,
+          "mean": {
+            "mse": 0.0002446525365469411,
+            "ssim": 0.9927928599785648,
+            "flip": 0.009139114757999778,
+            "lpips_squeeze": 0.004816418591265877,
+            "silhouette_xor_fraction": 0.0014979044596354167,
+            "coverage_mae": 0.0015058517456054688,
+            "psnr_db": 36.114502771342536
+          },
+          "views": 12
+        }
+      },
+      "decode_status": {
+        "fixed": "Local triangle flip relative to source",
+        "fixed_direct": "Direct displacement caused local flip",
+        "refine": "decoded",
+        "refine_direct": "Direct displacement exceeds normalized offset cap"
+      }
+    },
+    {
+      "file_id": 90431,
+      "split": "validation",
+      "input_sha256": "b3e7526f62cd64b24cbe07ba1107053786564b655f360033d84981e457fad05c",
+      "preparation_status": "prepared",
+      "variants": {
+        "base": {
+          "triangles": 466,
+          "mean": {
+            "mse": 0.011476619182206813,
+            "ssim": 0.8881420860265186,
+            "flip": 0.06888439226895571,
+            "lpips_squeeze": 0.05894510013361772,
+            "silhouette_xor_fraction": 0.029172261555989582,
+            "coverage_mae": 0.029511769612630207,
+            "psnr_db": 19.401860289027223
+          },
+          "views": 12
+        },
+        "fixed": {
+          "triangles": 466,
+          "mean": {
+            "mse": 0.01162385149795276,
+            "ssim": 0.885505495208494,
+            "flip": 0.07211196391532819,
+            "lpips_squeeze": 0.05977668892592192,
+            "silhouette_xor_fraction": 0.029699961344401043,
+            "coverage_mae": 0.030068715413411457,
+            "psnr_db": 19.346499470610016
+          },
+          "views": 12
+        },
+        "fixed_direct": {
+          "triangles": 466,
+          "mean": {
+            "mse": 0.01201182743685071,
+            "ssim": 0.8855834114326302,
+            "flip": 0.07041238931318124,
+            "lpips_squeeze": 0.06003042093167702,
+            "silhouette_xor_fraction": 0.03075408935546875,
+            "coverage_mae": 0.03106403350830078,
+            "psnr_db": 19.203909155474683
+          },
+          "views": 12
+        }
+      },
+      "decode_status": {
+        "fixed": "decoded",
+        "fixed_direct": "decoded",
+        "refine": "Local triangle flip relative to source",
+        "refine_direct": "Direct displacement exceeds normalized offset cap"
+      }
+    },
+    {
+      "file_id": 263198,
+      "split": "validation",
+      "input_sha256": "8c58c38d8dda6750250670eb9f409b989efc460973641b9bea4add68a7fb8a4d",
+      "preparation_status": "prepared",
+      "variants": {
+        "base": {
+          "triangles": 154,
+          "mean": {
+            "mse": 0.0013765422542874634,
+            "ssim": 0.9731875295302242,
+            "flip": 0.013945917734721055,
+            "lpips_squeeze": 0.015653787413612008,
+            "silhouette_xor_fraction": 0.0025647481282552085,
+            "coverage_mae": 0.002593994140625,
+            "psnr_db": 28.612104529795275
+          },
+          "views": 12
+        },
+        "fixed": {
+          "triangles": 154,
+          "mean": {
+            "mse": 0.001618001650162848,
+            "ssim": 0.9698458463419003,
+            "flip": 0.01725243676143388,
+            "lpips_squeeze": 0.017702859942801297,
+            "silhouette_xor_fraction": 0.0033467610677083335,
+            "coverage_mae": 0.003177642822265625,
+            "psnr_db": 27.91021039796519
+          },
+          "views": 12
+        },
+        "fixed_direct": {
+          "triangles": 154,
+          "mean": {
+            "mse": 0.001563751795620975,
+            "ssim": 0.9694448628383255,
+            "flip": 0.014819800077627102,
+            "lpips_squeeze": 0.01631382868314783,
+            "silhouette_xor_fraction": 0.0029347737630208335,
+            "coverage_mae": 0.002944310506184896,
+            "psnr_db": 28.05832178607663
+          },
+          "views": 12
+        },
+        "refine": {
+          "triangles": 184,
+          "mean": {
+            "mse": 0.0014090627366940697,
+            "ssim": 0.972636016475407,
+            "flip": 0.01556914767328029,
+            "lpips_squeeze": 0.016013851738534868,
+            "silhouette_xor_fraction": 0.0026728312174479165,
+            "coverage_mae": 0.0027233759562174478,
+            "psnr_db": 28.510696700606314
+          },
+          "views": 12
+        },
+        "refine_direct": {
+          "triangles": 184,
+          "mean": {
+            "mse": 0.001229707140288841,
+            "ssim": 0.9732874079921506,
+            "flip": 0.01241302789033701,
+            "lpips_squeeze": 0.014214555538880328,
+            "silhouette_xor_fraction": 0.002407073974609375,
+            "coverage_mae": 0.0024080276489257812,
+            "psnr_db": 29.101983052276076
+          },
+          "views": 12
+        }
+      },
+      "decode_status": {
+        "fixed": "decoded",
+        "fixed_direct": "decoded",
+        "refine": "decoded",
+        "refine_direct": "decoded"
+      }
+    },
+    {
+      "file_id": 44710,
+      "split": "validation",
+      "input_sha256": "af0aa394903a6099da1a542ed6707aceb5130dea9726dc0ba0e7ff74147cbf58",
+      "preparation_status": "prepared",
+      "variants": {
+        "base": {
+          "triangles": 950,
+          "mean": {
+            "mse": 0.0005666892112684024,
+            "ssim": 0.9738490933117885,
+            "flip": 0.016888701007701457,
+            "lpips_squeeze": 0.016987508550907176,
+            "silhouette_xor_fraction": 0.0020281473795572915,
+            "coverage_mae": 0.002047856648763021,
+            "psnr_db": 32.466550554566176
+          },
+          "views": 12
+        },
+        "fixed": {
+          "triangles": 950,
+          "mean": {
+            "mse": 0.0006426506233142,
+            "ssim": 0.9719756395353727,
+            "flip": 0.0181323466822505,
+            "lpips_squeeze": 0.017702825833112,
+            "silhouette_xor_fraction": 0.0023905436197916665,
+            "coverage_mae": 0.0023905436197916665,
+            "psnr_db": 31.920250668952
+          },
+          "views": 12
+        },
+        "fixed_direct": {
+          "triangles": 950,
+          "mean": {
+            "mse": 0.0007204662040916754,
+            "ssim": 0.9698539403185182,
+            "flip": 0.018433574276665848,
+            "lpips_squeeze": 0.017859076460202534,
+            "silhouette_xor_fraction": 0.0028432210286458335,
+            "coverage_mae": 0.0027828216552734375,
+            "psnr_db": 31.423863864263097
+          },
+          "views": 12
+        },
+        "refine": {
+          "triangles": 1140,
+          "mean": {
+            "mse": 0.000566648497698201,
+            "ssim": 0.9740532115084418,
+            "flip": 0.017072283235999446,
+            "lpips_squeeze": 0.016789846665536363,
+            "silhouette_xor_fraction": 0.002048492431640625,
+            "coverage_mae": 0.002060572306315104,
+            "psnr_db": 32.46686258298885
+          },
+          "views": 12
+        },
+        "refine_direct": {
+          "triangles": 1140,
+          "mean": {
+            "mse": 0.0006755970142505786,
+            "ssim": 0.9698616104209621,
+            "flip": 0.017665289458818734,
+            "lpips_squeeze": 0.01854932145215571,
+            "silhouette_xor_fraction": 0.0026257832845052085,
+            "coverage_mae": 0.0025657018025716147,
+            "psnr_db": 31.703122784280914
+          },
+          "views": 12
+        }
+      },
+      "decode_status": {
+        "fixed": "decoded",
+        "fixed_direct": "decoded",
+        "refine": "decoded",
+        "refine_direct": "decoded"
+      }
+    },
+    {
+      "file_id": 191968,
+      "split": "validation",
+      "input_sha256": "4384855f2f404959ae7516298cd5b8a620c4c29ef1e0a1af4329e47c598db784",
+      "preparation_status": "rejected",
+      "reason": "Duplicate geometric triangle"
+    },
+    {
+      "file_id": 383021,
+      "split": "validation",
+      "input_sha256": "0f6734eafb2eae7b152f05225423bebce9d467c1203fb6f9e5be758022fcb397",
+      "preparation_status": "prepared",
+      "variants": {
+        "base": {
+          "triangles": 4136,
+          "mean": {
+            "mse": 5.204637432868368e-05,
+            "ssim": 0.9951875095654011,
+            "flip": 0.004942218346210818,
+            "lpips_squeeze": 0.003939017396381435,
+            "silhouette_xor_fraction": 0.00024159749348958334,
+            "coverage_mae": 0.00027942657470703125,
+            "psnr_db": 42.83609519061996
+          },
+          "views": 12
+        },
+        "fixed": {
+          "triangles": 4136,
+          "mean": {
+            "mse": 5.390701577493231e-05,
+            "ssim": 0.995135073607574,
+            "flip": 0.004999764903914183,
+            "lpips_squeeze": 0.003943132333612691,
+            "silhouette_xor_fraction": 0.00025177001953125,
+            "coverage_mae": 0.0002905527750651042,
+            "psnr_db": 42.68354709506039
+          },
+          "views": 12
+        },
+        "fixed_direct": {
+          "triangles": 4136,
+          "mean": {
+            "mse": 5.6456541779804236e-05,
+            "ssim": 0.9950867607018551,
+            "flip": 0.0049916746793314815,
+            "lpips_squeeze": 0.0040399733795008315,
+            "silhouette_xor_fraction": 0.000278472900390625,
+            "coverage_mae": 0.0003147125244140625,
+            "psnr_db": 42.482857278884616
+          },
+          "views": 12
+        },
+        "refine": {
+          "triangles": 4962,
+          "mean": {
+            "mse": 5.277648088826013e-05,
+            "ssim": 0.9951634868523752,
+            "flip": 0.0049164560380935045,
+            "lpips_squeeze": 0.003992177652738367,
+            "silhouette_xor_fraction": 0.00024286905924479166,
+            "coverage_mae": 0.000278472900390625,
+            "psnr_db": 42.77559571709052
+          },
+          "views": 12
+        }
+      },
+      "decode_status": {
+        "fixed": "decoded",
+        "fixed_direct": "decoded",
+        "refine": "decoded",
+        "refine_direct": "Direct displacement caused local flip"
+      }
+    },
+    {
+      "file_id": 100894,
+      "split": "validation",
+      "input_sha256": "0e6c0419f7b8a0994665315dcbbd9f04dae60df615fe4699c559fd46a3c39bb0",
+      "preparation_status": "prepared",
+      "variants": {
+        "base": {
+          "triangles": 1746,
+          "mean": {
+            "mse": 0.0008848115362968871,
+            "ssim": 0.9608352028330137,
+            "flip": 0.021829200287659962,
+            "lpips_squeeze": 0.023784114125495154,
+            "silhouette_xor_fraction": 0.0017573038736979167,
+            "coverage_mae": 0.0017458597819010417,
+            "psnr_db": 30.531492236101073
+          },
+          "views": 12
+        }
+      },
+      "decode_status": {
+        "fixed": "Predicted displacement exceeds normalized offset cap",
+        "fixed_direct": "Direct displacement exceeds normalized offset cap",
+        "refine": "Local triangle flip relative to source",
+        "refine_direct": "Direct displacement exceeds normalized offset cap"
+      }
+    },
+    {
+      "file_id": 257594,
+      "split": "validation",
+      "input_sha256": "7f97fe7ee1ba78f46b40413d2ff24cdd5d5edb6045dd94da368a02ccc15df388",
+      "preparation_status": "rejected",
+      "reason": "Duplicate geometric triangle"
+    },
+    {
+      "file_id": 94990,
+      "split": "validation",
+      "input_sha256": "c074ee56d1c6d5ea6c5601ae11057b4c43684e63d605d3216ce96366aafa7f4b",
+      "preparation_status": "rejected",
+      "reason": "Degenerate triangle"
+    }
+  ],
+  "summary": {
+    "scope": "Frozen-model development diagnostic; orthographic flat shading, no PBR",
+    "interval_unit": "asset, not view",
+    "delta_convention": "candidate minus comparator; lower FLIP/LPIPS is better",
+    "splits": {
+      "train": {
+        "attempted_assets": 16,
+        "prepared_assets": 9,
+        "preparation_failures": [
+          {
+            "file_id": 59494,
+            "reason": "Duplicate geometric triangle"
+          },
+          {
+            "file_id": 53581,
+            "reason": "Nonmanifold or inconsistently oriented edge"
+          },
+          {
+            "file_id": 96074,
+            "reason": "Nonmanifold or inconsistently oriented edge"
+          },
+          {
+            "file_id": 84030,
+            "reason": "Duplicate geometric triangle"
+          },
+          {
+            "file_id": 148292,
+            "reason": "Duplicate geometric triangle"
+          },
+          {
+            "file_id": 97859,
+            "reason": "Nearest-surface radius-check cap exceeded: 80000000"
+          },
+          {
+            "file_id": 741525,
+            "reason": "Nearest-surface radius-check cap exceeded: 80000000"
+          }
+        ],
+        "comparisons": {
+          "fixed_vs_base": {
+            "paired_assets": 7,
+            "same_triangle_count": true,
+            "metrics": {
+              "psnr_db": {
+                "paired_delta": {
+                  "assets": 7,
+                  "mean_delta": -0.1758372696870989,
+                  "bootstrap_95_percent": [
+                    -0.31435596667665927,
+                    -0.03983996462165081
+                  ],
+                  "negative": 6,
+                  "positive": 1
+                },
+                "comparator_mean": 33.45328751939648,
+                "candidate_mean": 33.27745024970938
+              },
+              "ssim": {
+                "paired_delta": {
+                  "assets": 7,
+                  "mean_delta": -0.0005268655431798537,
+                  "bootstrap_95_percent": [
+                    -0.0008454073026159997,
+                    -0.0002171823091968338
+                  ],
+                  "negative": 7,
+                  "positive": 0
+                },
+                "comparator_mean": 0.969319373965629,
+                "candidate_mean": 0.9687925084224493
+              },
+              "flip": {
+                "paired_delta": {
+                  "assets": 7,
+                  "mean_delta": 0.0005307965269215247,
+                  "bootstrap_95_percent": [
+                    0.0002289082190795199,
+                    0.0008468816799688196
+                  ],
+                  "negative": 0,
+                  "positive": 7
+                },
+                "comparator_mean": 0.021727522318888942,
+                "candidate_mean": 0.022258318845810466
+              },
+              "lpips_squeeze": {
+                "paired_delta": {
+                  "assets": 7,
+                  "mean_delta": 0.00014668517299772449,
+                  "bootstrap_95_percent": [
+                    -3.1155193158027614e-05,
+                    0.0003382132513382029
+                  ],
+                  "negative": 3,
+                  "positive": 4
+                },
+                "comparator_mean": 0.02859998504850193,
+                "candidate_mean": 0.028746670221499654
+              },
+              "silhouette_xor_fraction": {
+                "paired_delta": {
+                  "assets": 7,
+                  "mean_delta": 0.00017184302920386838,
+                  "bootstrap_95_percent": [
+                    4.9046107700892866e-05,
+                    0.00035131545293898617
+                  ],
+                  "negative": 1,
+                  "positive": 5
+                },
+                "comparator_mean": 0.010784149169921877,
+                "candidate_mean": 0.010955992199125743
+              },
+              "coverage_mae": {
+                "paired_delta": {
+                  "assets": 7,
+                  "mean_delta": 0.00017234257289341657,
+                  "bootstrap_95_percent": [
+                    4.067761557442827e-05,
+                    0.0003589448474702421
+                  ],
+                  "negative": 1,
+                  "positive": 6
+                },
+                "comparator_mean": 0.010675702776227676,
+                "candidate_mean": 0.010848045349121094
+              }
+            }
+          },
+          "fixed_direct_vs_base": {
+            "paired_assets": 7,
+            "same_triangle_count": true,
+            "metrics": {
+              "psnr_db": {
+                "paired_delta": {
+                  "assets": 7,
+                  "mean_delta": -0.3223084000212594,
+                  "bootstrap_95_percent": [
+                    -0.575728586792999,
+                    -0.1050862215973339
+                  ],
+                  "negative": 6,
+                  "positive": 1
+                },
+                "comparator_mean": 33.45328751939648,
+                "candidate_mean": 33.130979119375226
+              },
+              "ssim": {
+                "paired_delta": {
+                  "assets": 7,
+                  "mean_delta": -0.0010410447303141732,
+                  "bootstrap_95_percent": [
+                    -0.001631496812024877,
+                    -0.00044867832060585435
+                  ],
+                  "negative": 5,
+                  "positive": 2
+                },
+                "comparator_mean": 0.969319373965629,
+                "candidate_mean": 0.9682783292353149
+              },
+              "flip": {
+                "paired_delta": {
+                  "assets": 7,
+                  "mean_delta": 0.0007657082365074613,
+                  "bootstrap_95_percent": [
+                    0.00024648288897532463,
+                    0.001354503181729731
+                  ],
+                  "negative": 1,
+                  "positive": 6
+                },
+                "comparator_mean": 0.021727522318888942,
+                "candidate_mean": 0.022493230555396402
+              },
+              "lpips_squeeze": {
+                "paired_delta": {
+                  "assets": 7,
+                  "mean_delta": 0.0004297083360143003,
+                  "bootstrap_95_percent": [
+                    -6.131015598796181e-05,
+                    0.001088721726167326
+                  ],
+                  "negative": 3,
+                  "positive": 4
+                },
+                "comparator_mean": 0.02859998504850193,
+                "candidate_mean": 0.029029693384516237
+              },
+              "silhouette_xor_fraction": {
+                "paired_delta": {
+                  "assets": 7,
+                  "mean_delta": 0.000190553211030506,
+                  "bootstrap_95_percent": [
+                    3.520874750046503e-05,
+                    0.00040490286690848213
+                  ],
+                  "negative": 0,
+                  "positive": 6
+                },
+                "comparator_mean": 0.010784149169921877,
+                "candidate_mean": 0.010974702380952382
+              },
+              "coverage_mae": {
+                "paired_delta": {
+                  "assets": 7,
+                  "mean_delta": 0.0001852398826962426,
+                  "bootstrap_95_percent": [
+                    9.309677850632523e-06,
+                    0.0004076912289574031
+                  ],
+                  "negative": 2,
+                  "positive": 4
+                },
+                "comparator_mean": 0.010675702776227676,
+                "candidate_mean": 0.010860942658923919
+              }
+            }
+          },
+          "fixed_vs_fixed_direct": {
+            "paired_assets": 7,
+            "same_triangle_count": true,
+            "metrics": {
+              "psnr_db": {
+                "paired_delta": {
+                  "assets": 7,
+                  "mean_delta": 0.1464711303341605,
+                  "bootstrap_95_percent": [
+                    0.03037264557983375,
+                    0.28562157843787755
+                  ],
+                  "negative": 1,
+                  "positive": 6
+                },
+                "comparator_mean": 33.130979119375226,
+                "candidate_mean": 33.27745024970938
+              },
+              "ssim": {
+                "paired_delta": {
+                  "assets": 7,
+                  "mean_delta": 0.0005141791871343195,
+                  "bootstrap_95_percent": [
+                    0.00015603695700435025,
+                    0.0008968803641187727
+                  ],
+                  "negative": 2,
+                  "positive": 5
+                },
+                "comparator_mean": 0.9682783292353149,
+                "candidate_mean": 0.9687925084224493
+              },
+              "flip": {
+                "paired_delta": {
+                  "assets": 7,
+                  "mean_delta": -0.00023491170958593661,
+                  "bootstrap_95_percent": [
+                    -0.0006341894925017612,
+                    0.0001038849057208385
+                  ],
+                  "negative": 4,
+                  "positive": 3
+                },
+                "comparator_mean": 0.022493230555396402,
+                "candidate_mean": 0.022258318845810466
+              },
+              "lpips_squeeze": {
+                "paired_delta": {
+                  "assets": 7,
+                  "mean_delta": -0.00028302316301657586,
+                  "bootstrap_95_percent": [
+                    -0.0010220630488003636,
+                    0.00027325264887795173
+                  ],
+                  "negative": 4,
+                  "positive": 3
+                },
+                "comparator_mean": 0.029029693384516237,
+                "candidate_mean": 0.028746670221499654
+              },
+              "silhouette_xor_fraction": {
+                "paired_delta": {
+                  "assets": 7,
+                  "mean_delta": -1.8710181826637607e-05,
+                  "bootstrap_95_percent": [
+                    -9.266535441080991e-05,
+                    5.576724097842191e-05
+                  ],
+                  "negative": 4,
+                  "positive": 2
+                },
+                "comparator_mean": 0.010974702380952382,
+                "candidate_mean": 0.010955992199125743
+              },
+              "coverage_mae": {
+                "paired_delta": {
+                  "assets": 7,
+                  "mean_delta": -1.2897309802826019e-05,
+                  "bootstrap_95_percent": [
+                    -8.317743028912965e-05,
+                    5.891550154913164e-05
+                  ],
+                  "negative": 4,
+                  "positive": 3
+                },
+                "comparator_mean": 0.010860942658923919,
+                "candidate_mean": 0.010848045349121094
+              }
+            }
+          },
+          "refine_vs_base": {
+            "paired_assets": 5,
+            "same_triangle_count": false,
+            "metrics": {
+              "psnr_db": {
+                "paired_delta": {
+                  "assets": 5,
+                  "mean_delta": -0.04195015755119087,
+                  "bootstrap_95_percent": [
+                    -0.08913160350343219,
+                    0.014718724038606723
+                  ],
+                  "negative": 4,
+                  "positive": 1
+                },
+                "comparator_mean": 34.15024961822907,
+                "candidate_mean": 34.10829946067787
+              },
+              "ssim": {
+                "paired_delta": {
+                  "assets": 5,
+                  "mean_delta": -0.00020020217215415136,
+                  "bootstrap_95_percent": [
+                    -0.0005262069390989498,
+                    8.426805057391019e-05
+                  ],
+                  "negative": 3,
+                  "positive": 2
+                },
+                "comparator_mean": 0.980079905098352,
+                "candidate_mean": 0.9798797029261979
+              },
+              "flip": {
+                "paired_delta": {
+                  "assets": 5,
+                  "mean_delta": 0.00025848073419183526,
+                  "bootstrap_95_percent": [
+                    4.554073869561213e-05,
+                    0.0006163172423839569
+                  ],
+                  "negative": 0,
+                  "positive": 5
+                },
+                "comparator_mean": 0.013853750451623154,
+                "candidate_mean": 0.014112231185814988
+              },
+              "lpips_squeeze": {
+                "paired_delta": {
+                  "assets": 5,
+                  "mean_delta": 7.034938704843352e-05,
+                  "bootstrap_95_percent": [
+                    -0.0003689281797657396,
+                    0.0005989773315377526
+                  ],
+                  "negative": 2,
+                  "positive": 3
+                },
+                "comparator_mean": 0.014532306483791519,
+                "candidate_mean": 0.014602655870839951
+              },
+              "silhouette_xor_fraction": {
+                "paired_delta": {
+                  "assets": 5,
+                  "mean_delta": 5.5185953776041694e-05,
+                  "bootstrap_95_percent": [
+                    -7.120768229166696e-06,
+                    0.00012969970703125016
+                  ],
+                  "negative": 2,
+                  "positive": 3
+                },
+                "comparator_mean": 0.002221425374348958,
+                "candidate_mean": 0.002276611328125
+              },
+              "coverage_mae": {
+                "paired_delta": {
+                  "assets": 5,
+                  "mean_delta": 4.908243815104163e-05,
+                  "bootstrap_95_percent": [
+                    1.335144042968685e-06,
+                    0.00010013580322265611
+                  ],
+                  "negative": 1,
+                  "positive": 4
+                },
+                "comparator_mean": 0.0021377563476562495,
+                "candidate_mean": 0.0021868387858072916
+              }
+            }
+          },
+          "refine_direct_vs_base": {
+            "paired_assets": 5,
+            "same_triangle_count": false,
+            "metrics": {
+              "psnr_db": {
+                "paired_delta": {
+                  "assets": 5,
+                  "mean_delta": -0.283341153130387,
+                  "bootstrap_95_percent": [
+                    -0.6255578083670222,
+                    -0.006645639484567312
+                  ],
+                  "negative": 4,
+                  "positive": 1
+                },
+                "comparator_mean": 31.541575203556892,
+                "candidate_mean": 31.258234050426502
+              },
+              "ssim": {
+                "paired_delta": {
+                  "assets": 5,
+                  "mean_delta": -0.0020043250628332342,
+                  "bootstrap_95_percent": [
+                    -0.0038167409901494363,
+                    -0.000701656852437416
+                  ],
+                  "negative": 4,
+                  "positive": 1
+                },
+                "comparator_mean": 0.9642977124959925,
+                "candidate_mean": 0.9622933874331592
+              },
+              "flip": {
+                "paired_delta": {
+                  "assets": 5,
+                  "mean_delta": 0.0005693393803085197,
+                  "bootstrap_95_percent": [
+                    -8.756375852196213e-05,
+                    0.001310271973488852
+                  ],
+                  "negative": 2,
+                  "positive": 3
+                },
+                "comparator_mean": 0.02656209907824329,
+                "candidate_mean": 0.027131438458551805
+              },
+              "lpips_squeeze": {
+                "paired_delta": {
+                  "assets": 5,
+                  "mean_delta": 0.0017407483033214984,
+                  "bootstrap_95_percent": [
+                    -0.00015787500112007108,
+                    0.003989510719353949
+                  ],
+                  "negative": 2,
+                  "positive": 3
+                },
+                "comparator_mean": 0.03322950312964774,
+                "candidate_mean": 0.03497025143296924
+              },
+              "silhouette_xor_fraction": {
+                "paired_delta": {
+                  "assets": 5,
+                  "mean_delta": 3.484090169270744e-05,
+                  "bootstrap_95_percent": [
+                    -8.341471354166938e-05,
+                    0.0001787821451822917
+                  ],
+                  "negative": 1,
+                  "positive": 3
+                },
+                "comparator_mean": 0.014837137858072919,
+                "candidate_mean": 0.014871978759765625
+              },
+              "coverage_mae": {
+                "paired_delta": {
+                  "assets": 5,
+                  "mean_delta": 2.574920654296875e-05,
+                  "bootstrap_95_percent": [
+                    -7.788340250651035e-05,
+                    0.000182342529296875
+                  ],
+                  "negative": 3,
+                  "positive": 1
+                },
+                "comparator_mean": 0.014766629536946612,
+                "candidate_mean": 0.014792378743489584
+              }
+            }
+          },
+          "refine_vs_refine_direct": {
+            "paired_assets": 3,
+            "same_triangle_count": true,
+            "metrics": {
+              "psnr_db": {
+                "paired_delta": {
+                  "assets": 3,
+                  "mean_delta": 0.45209267567857836,
+                  "bootstrap_95_percent": [
+                    0.05082103317144515,
+                    0.9732584358986074
+                  ],
+                  "negative": 0,
+                  "positive": 3
+                },
+                "comparator_mean": 32.26194572839168,
+                "candidate_mean": 32.71403840407026
+              },
+              "ssim": {
+                "paired_delta": {
+                  "assets": 3,
+                  "mean_delta": 0.001222191247404525,
+                  "bootstrap_95_percent": [
+                    0.00024625723119697795,
+                    0.001722973611016143
+                  ],
+                  "negative": 0,
+                  "positive": 3
+                },
+                "comparator_mean": 0.9755002019502258,
+                "candidate_mean": 0.9767223931976304
+              },
+              "flip": {
+                "paired_delta": {
+                  "assets": 3,
+                  "mean_delta": 3.371492817273667e-05,
+                  "bootstrap_95_percent": [
+                    -0.0009790593855238203,
+                    0.0012770371201137713
+                  ],
+                  "negative": 2,
+                  "positive": 1
+                },
+                "comparator_mean": 0.015272093978839822,
+                "candidate_mean": 0.01530580890701256
+              },
+              "lpips_squeeze": {
+                "paired_delta": {
+                  "assets": 3,
+                  "mean_delta": -0.0007976753921765419,
+                  "bootstrap_95_percent": [
+                    -0.0034399168798699975,
+                    0.0019403973128646612
+                  ],
+                  "negative": 2,
+                  "positive": 1
+                },
+                "comparator_mean": 0.016973112645145092,
+                "candidate_mean": 0.016175437252968546
+              },
+              "silhouette_xor_fraction": {
+                "paired_delta": {
+                  "assets": 3,
+                  "mean_delta": -2.2040473090277754e-05,
+                  "bootstrap_95_percent": [
+                    -0.00031916300455729174,
+                    0.00018183390299479152
+                  ],
+                  "negative": 1,
+                  "positive": 2
+                },
+                "comparator_mean": 0.0029021369086371525,
+                "candidate_mean": 0.002880096435546875
+              },
+              "coverage_mae": {
+                "paired_delta": {
+                  "assets": 3,
+                  "mean_delta": -1.0066562228732662e-05,
+                  "bootstrap_95_percent": [
+                    -0.0003601710001627605,
+                    0.00016498565673828125
+                  ],
+                  "negative": 1,
+                  "positive": 2
+                },
+                "comparator_mean": 0.0028728908962673606,
+                "candidate_mean": 0.0028628243340386283
+              }
+            }
+          }
+        },
+        "decode_failures": [
+          {
+            "file_id": 145328,
+            "variant": "refine",
+            "reason": "Local triangle flip relative to source"
+          },
+          {
+            "file_id": 84736,
+            "variant": "refine",
+            "reason": "Local triangle flip relative to source"
+          },
+          {
+            "file_id": 84736,
+            "variant": "refine_direct",
+            "reason": "Direct displacement caused local flip"
+          },
+          {
+            "file_id": 84757,
+            "variant": "refine_direct",
+            "reason": "Direct displacement caused local flip"
+          },
+          {
+            "file_id": 73858,
+            "variant": "refine",
+            "reason": "Local triangle flip relative to source"
+          },
+          {
+            "file_id": 104559,
+            "variant": "fixed",
+            "reason": "Local triangle flip relative to source"
+          },
+          {
+            "file_id": 104559,
+            "variant": "fixed_direct",
+            "reason": "Direct displacement caused local flip"
+          },
+          {
+            "file_id": 104559,
+            "variant": "refine",
+            "reason": "Local triangle flip relative to source"
+          },
+          {
+            "file_id": 104559,
+            "variant": "refine_direct",
+            "reason": "Direct displacement caused local flip"
+          },
+          {
+            "file_id": 32770,
+            "variant": "fixed",
+            "reason": "Local triangle flip relative to source"
+          },
+          {
+            "file_id": 32770,
+            "variant": "fixed_direct",
+            "reason": "Direct displacement caused local flip"
+          },
+          {
+            "file_id": 32770,
+            "variant": "refine_direct",
+            "reason": "Direct displacement exceeds normalized offset cap"
+          }
+        ]
+      },
+      "validation": {
+        "attempted_assets": 8,
+        "prepared_assets": 5,
+        "preparation_failures": [
+          {
+            "file_id": 191968,
+            "reason": "Duplicate geometric triangle"
+          },
+          {
+            "file_id": 257594,
+            "reason": "Duplicate geometric triangle"
+          },
+          {
+            "file_id": 94990,
+            "reason": "Degenerate triangle"
+          }
+        ],
+        "comparisons": {
+          "fixed_vs_base": {
+            "paired_assets": 4,
+            "same_triangle_count": true,
+            "metrics": {
+              "psnr_db": {
+                "paired_delta": {
+                  "assets": 4,
+                  "mean_delta": -0.3640257328552581,
+                  "bootstrap_95_percent": [
+                    -0.6240970087221296,
+                    -0.10395445698838657
+                  ],
+                  "negative": 4,
+                  "positive": 0
+                },
+                "comparator_mean": 30.829152641002157,
+                "candidate_mean": 30.4651269081469
+              },
+              "ssim": {
+                "paired_delta": {
+                  "assets": 4,
+                  "mean_delta": -0.0019760409351478603,
+                  "bootstrap_95_percent": [
+                    -0.0029891370031742692,
+                    -0.0006984746728764812
+                  ],
+                  "negative": 4,
+                  "positive": 0
+                },
+                "comparator_mean": 0.9575915546084831,
+                "candidate_mean": 0.9556155136733353
+              },
+              "flip": {
+                "paired_delta": {
+                  "assets": 4,
+                  "mean_delta": 0.0019588207263344292,
+                  "bootstrap_95_percent": [
+                    0.0006505961161262044,
+                    0.0032670453365426537
+                  ],
+                  "negative": 0,
+                  "positive": 4
+                },
+                "comparator_mean": 0.02616530733939726,
+                "candidate_mean": 0.02812412806573169
+              },
+              "lpips_squeeze": {
+                "paired_delta": {
+                  "assets": 4,
+                  "mean_delta": 0.0009000233852323914,
+                  "bootstrap_95_percent": [
+                    0.00021098340099949065,
+                    0.0017156337174431728
+                  ],
+                  "negative": 0,
+                  "positive": 4
+                },
+                "comparator_mean": 0.023881353373629587,
+                "candidate_mean": 0.024781376758861978
+              },
+              "silhouette_xor_fraction": {
+                "paired_delta": {
+                  "assets": 4,
+                  "mean_delta": 0.00042057037353515685,
+                  "bootstrap_95_percent": [
+                    0.00013955434163411513,
+                    0.0006771087646484375
+                  ],
+                  "negative": 0,
+                  "positive": 4
+                },
+                "comparator_mean": 0.008501688639322916,
+                "candidate_mean": 0.008922259012858072
+              },
+              "coverage_mae": {
+                "paired_delta": {
+                  "assets": 4,
+                  "mean_delta": 0.0003736019134521484,
+                  "bootstrap_95_percent": [
+                    0.0001475811004638672,
+                    0.0005702972412109375
+                  ],
+                  "negative": 0,
+                  "positive": 4
+                },
+                "comparator_mean": 0.008608261744181315,
+                "candidate_mean": 0.008981863657633461
+              }
+            }
+          },
+          "fixed_direct_vs_base": {
+            "paired_assets": 4,
+            "same_triangle_count": true,
+            "metrics": {
+              "psnr_db": {
+                "paired_delta": {
+                  "assets": 4,
+                  "mean_delta": -0.5369146198274013,
+                  "bootstrap_95_percent": [
+                    -0.8703244956611442,
+                    -0.27559452264394046
+                  ],
+                  "negative": 4,
+                  "positive": 0
+                },
+                "comparator_mean": 30.829152641002157,
+                "candidate_mean": 30.292238021174754
+              },
+              "ssim": {
+                "paired_delta": {
+                  "assets": 4,
+                  "mean_delta": -0.0025993107856508435,
+                  "bootstrap_95_percent": [
+                    -0.003868909842584478,
+                    -0.0010112283206342165
+                  ],
+                  "negative": 4,
+                  "positive": 0
+                },
+                "comparator_mean": 0.9575915546084831,
+                "candidate_mean": 0.9549922438228322
+              },
+              "flip": {
+                "paired_delta": {
+                  "assets": 4,
+                  "mean_delta": 0.0009990522473041577,
+                  "bootstrap_95_percent": [
+                    0.00041909151089688005,
+                    0.0015364351565949601
+                  ],
+                  "negative": 0,
+                  "positive": 4
+                },
+                "comparator_mean": 0.02616530733939726,
+                "candidate_mean": 0.02716435958670142
+              },
+              "lpips_squeeze": {
+                "paired_delta": {
+                  "assets": 4,
+                  "mean_delta": 0.0006794714900024688,
+                  "bootstrap_95_percent": [
+                    0.0002936089646633868,
+                    0.0009790009159284302
+                  ],
+                  "negative": 0,
+                  "positive": 4
+                },
+                "comparator_mean": 0.023881353373629587,
+                "candidate_mean": 0.024560824863632053
+              },
+              "silhouette_xor_fraction": {
+                "paired_delta": {
+                  "assets": 4,
+                  "mean_delta": 0.0007009506225585941,
+                  "bootstrap_95_percent": [
+                    0.00020345052083333332,
+                    0.0012788772583007821
+                  ],
+                  "negative": 0,
+                  "positive": 4
+                },
+                "comparator_mean": 0.008501688639322916,
+                "candidate_mean": 0.009202639261881512
+              },
+              "coverage_mae": {
+                "paired_delta": {
+                  "assets": 4,
+                  "mean_delta": 0.0006682078043619795,
+                  "bootstrap_95_percent": [
+                    0.00019280115763346361,
+                    0.0012517770131429047
+                  ],
+                  "negative": 0,
+                  "positive": 4
+                },
+                "comparator_mean": 0.008608261744181315,
+                "candidate_mean": 0.009276469548543295
+              }
+            }
+          },
+          "fixed_vs_fixed_direct": {
+            "paired_assets": 4,
+            "same_triangle_count": true,
+            "metrics": {
+              "psnr_db": {
+                "paired_delta": {
+                  "assets": 4,
+                  "mean_delta": 0.17288888697214322,
+                  "bootstrap_95_percent": [
+                    -0.06091108703963499,
+                    0.40793768230051075
+                  ],
+                  "negative": 1,
+                  "positive": 3
+                },
+                "comparator_mean": 30.292238021174754,
+                "candidate_mean": 30.4651269081469
+              },
+              "ssim": {
+                "paired_delta": {
+                  "assets": 4,
+                  "mean_delta": 0.0006232698505029832,
+                  "bootstrap_95_percent": [
+                    -1.480165920864085e-05,
+                    0.0016033526390705766
+                  ],
+                  "negative": 1,
+                  "positive": 3
+                },
+                "comparator_mean": 0.9549922438228322,
+                "candidate_mean": 0.9556155136733353
+              },
+              "flip": {
+                "paired_delta": {
+                  "assets": 4,
+                  "mean_delta": 0.0009597684790302713,
+                  "bootstrap_95_percent": [
+                    -0.000146568684916323,
+                    0.0020661056429768657
+                  ],
+                  "negative": 1,
+                  "positive": 3
+                },
+                "comparator_mean": 0.02716435958670142,
+                "candidate_mean": 0.02812412806573169
+              },
+              "lpips_squeeze": {
+                "paired_delta": {
+                  "assets": 4,
+                  "mean_delta": 0.00022055189522992256,
+                  "bootstrap_95_percent": [
+                    -0.00021450926578836342,
+                    0.0010027107879674677
+                  ],
+                  "negative": 3,
+                  "positive": 1
+                },
+                "comparator_mean": 0.024560824863632053,
+                "candidate_mean": 0.024781376758861978
+              },
+              "silhouette_xor_fraction": {
+                "paired_delta": {
+                  "assets": 4,
+                  "mean_delta": -0.0002803802490234373,
+                  "bootstrap_95_percent": [
+                    -0.0007972717285156241,
+                    0.00019582112630208326
+                  ],
+                  "negative": 3,
+                  "positive": 1
+                },
+                "comparator_mean": 0.009202639261881512,
+                "candidate_mean": 0.008922259012858072
+              },
+              "coverage_mae": {
+                "paired_delta": {
+                  "assets": 4,
+                  "mean_delta": -0.00029460589090983107,
+                  "bootstrap_95_percent": [
+                    -0.0007525285085042327,
+                    0.00010458628336588535
+                  ],
+                  "negative": 3,
+                  "positive": 1
+                },
+                "comparator_mean": 0.009276469548543295,
+                "candidate_mean": 0.008981863657633461
+              }
+            }
+          },
+          "refine_vs_base": {
+            "paired_assets": 3,
+            "same_triangle_count": false,
+            "metrics": {
+              "psnr_db": {
+                "paired_delta": {
+                  "assets": 3,
+                  "mean_delta": -0.05386509143190802,
+                  "bootstrap_95_percent": [
+                    -0.10140782918896107,
+                    0.0003120284226767467
+                  ],
+                  "negative": 2,
+                  "positive": 1
+                },
+                "comparator_mean": 34.63825009166047,
+                "candidate_mean": 34.584385000228565
+              },
+              "ssim": {
+                "paired_delta": {
+                  "assets": 3,
+                  "mean_delta": -0.00012380585706328606,
+                  "bootstrap_95_percent": [
+                    -0.0005515130548172653,
+                    0.00020411819665333564
+                  ],
+                  "negative": 2,
+                  "positive": 1
+                },
+                "comparator_mean": 0.9807413774691379,
+                "candidate_mean": 0.9806175716120746
+              },
+              "flip": {
+                "paired_delta": {
+                  "assets": 3,
+                  "mean_delta": 0.0005936832862466369,
+                  "bootstrap_95_percent": [
+                    -2.5762308117313268e-05,
+                    0.0016232299385592341
+                  ],
+                  "negative": 1,
+                  "positive": 2
+                },
+                "comparator_mean": 0.011925612362877777,
+                "candidate_mean": 0.012519295649124414
+              },
+              "lpips_squeeze": {
+                "paired_delta": {
+                  "assets": 3,
+                  "mean_delta": 7.185423196965958e-05,
+                  "bootstrap_95_percent": [
+                    -0.00019766188537081314,
+                    0.00036006432492285967
+                  ],
+                  "negative": 1,
+                  "positive": 2
+                },
+                "comparator_mean": 0.012193437786966875,
+                "candidate_mean": 0.012265292018936532
+              },
+              "silhouette_xor_fraction": {
+                "paired_delta": {
+                  "assets": 3,
+                  "mean_delta": 4.323323567708328e-05,
+                  "bootstrap_95_percent": [
+                    1.2715657552083153e-06,
+                    0.00010808308919270804
+                  ],
+                  "negative": 0,
+                  "positive": 3
+                },
+                "comparator_mean": 0.0016114976671006943,
+                "candidate_mean": 0.0016547309027777778
+              },
+              "coverage_mae": {
+                "paired_delta": {
+                  "assets": 3,
+                  "mean_delta": 4.7047932942708187e-05,
+                  "bootstrap_95_percent": [
+                    -9.5367431640625e-07,
+                    0.00012938181559244777
+                  ],
+                  "negative": 1,
+                  "positive": 2
+                },
+                "comparator_mean": 0.0016404257880316842,
+                "candidate_mean": 0.0016874737209743923
+              }
+            }
+          },
+          "refine_direct_vs_base": {
+            "paired_assets": 2,
+            "same_triangle_count": false,
+            "metrics": {
+              "psnr_db": {
+                "paired_delta": {
+                  "assets": 2,
+                  "mean_delta": -0.13677462390223027,
+                  "bootstrap_95_percent": [
+                    -0.7634277702852614,
+                    0.4898785224808009
+                  ],
+                  "negative": 1,
+                  "positive": 1
+                },
+                "comparator_mean": 30.539327542180725,
+                "candidate_mean": 30.402552918278495
+              },
+              "ssim": {
+                "paired_delta": {
+                  "assets": 2,
+                  "mean_delta": -0.0019438022144500078,
+                  "bootstrap_95_percent": [
+                    -0.003987482890826399,
+                    9.987846192638372e-05
+                  ],
+                  "negative": 1,
+                  "positive": 1
+                },
+                "comparator_mean": 0.9735183114210064,
+                "candidate_mean": 0.9715745092065564
+              },
+              "flip": {
+                "paired_delta": {
+                  "assets": 2,
+                  "mean_delta": -0.00037815069663338363,
+                  "bootstrap_95_percent": [
+                    -0.0015328898443840444,
+                    0.0007765884511172771
+                  ],
+                  "negative": 1,
+                  "positive": 1
+                },
+                "comparator_mean": 0.015417309371211257,
+                "candidate_mean": 0.015039158674577873
+              },
+              "lpips_squeeze": {
+                "paired_delta": {
+                  "assets": 2,
+                  "mean_delta": 6.129051325842651e-05,
+                  "bootstrap_95_percent": [
+                    -0.0014392318747316803,
+                    0.0015618129012485334
+                  ],
+                  "negative": 1,
+                  "positive": 1
+                },
+                "comparator_mean": 0.016320647982259594,
+                "candidate_mean": 0.016381938495518018
+              },
+              "silhouette_xor_fraction": {
+                "paired_delta": {
+                  "assets": 2,
+                  "mean_delta": 0.00021998087565104174,
+                  "bootstrap_95_percent": [
+                    -0.00015767415364583348,
+                    0.000597635904947917
+                  ],
+                  "negative": 1,
+                  "positive": 1
+                },
+                "comparator_mean": 0.00229644775390625,
+                "candidate_mean": 0.002516428629557292
+              },
+              "coverage_mae": {
+                "paired_delta": {
+                  "assets": 2,
+                  "mean_delta": 0.0001659393310546875,
+                  "bootstrap_95_percent": [
+                    -0.00018596649169921875,
+                    0.0005178451538085938
+                  ],
+                  "negative": 1,
+                  "positive": 1
+                },
+                "comparator_mean": 0.0023209253946940107,
+                "candidate_mean": 0.002486864725748698
+              }
+            }
+          },
+          "refine_vs_refine_direct": {
+            "paired_assets": 2,
+            "same_triangle_count": true,
+            "metrics": {
+              "psnr_db": {
+                "paired_delta": {
+                  "assets": 2,
+                  "mean_delta": 0.08622672351908811,
+                  "bootstrap_95_percent": [
+                    -0.591286351669762,
+                    0.7637397987079382
+                  ],
+                  "negative": 1,
+                  "positive": 1
+                },
+                "comparator_mean": 30.402552918278495,
+                "candidate_mean": 30.488779641797585
+              },
+              "ssim": {
+                "paired_delta": {
+                  "assets": 2,
+                  "mean_delta": 0.001770104785368043,
+                  "bootstrap_95_percent": [
+                    -0.000651391516743649,
+                    0.004191601087479735
+                  ],
+                  "negative": 1,
+                  "positive": 1
+                },
+                "comparator_mean": 0.9715745092065564,
+                "candidate_mean": 0.9733446139919244
+              },
+              "flip": {
+                "paired_delta": {
+                  "assets": 2,
+                  "mean_delta": 0.0012815567800619956,
+                  "bootstrap_95_percent": [
+                    -0.0005930062228192874,
+                    0.0031561197829432786
+                  ],
+                  "negative": 1,
+                  "positive": 1
+                },
+                "comparator_mean": 0.015039158674577873,
+                "candidate_mean": 0.016320715454639867
+              },
+              "lpips_squeeze": {
+                "paired_delta": {
+                  "assets": 2,
+                  "mean_delta": 1.991070651759675e-05,
+                  "bootstrap_95_percent": [
+                    -0.0017594747866193465,
+                    0.00179929619965454
+                  ],
+                  "negative": 1,
+                  "positive": 1
+                },
+                "comparator_mean": 0.016381938495518018,
+                "candidate_mean": 0.016401849202035614
+              },
+              "silhouette_xor_fraction": {
+                "paired_delta": {
+                  "assets": 2,
+                  "mean_delta": -0.00015576680501302098,
+                  "bootstrap_95_percent": [
+                    -0.0005772908528645835,
+                    0.0002657572428385415
+                  ],
+                  "negative": 1,
+                  "positive": 1
+                },
+                "comparator_mean": 0.002516428629557292,
+                "candidate_mean": 0.0023606618245442705
+              },
+              "coverage_mae": {
+                "paired_delta": {
+                  "assets": 2,
+                  "mean_delta": -9.489059448242209e-05,
+                  "bootstrap_95_percent": [
+                    -0.0005051294962565107,
+                    0.0003153483072916665
+                  ],
+                  "negative": 1,
+                  "positive": 1
+                },
+                "comparator_mean": 0.002486864725748698,
+                "candidate_mean": 0.002391974131266276
+              }
+            }
+          }
+        },
+        "decode_failures": [
+          {
+            "file_id": 90431,
+            "variant": "refine",
+            "reason": "Local triangle flip relative to source"
+          },
+          {
+            "file_id": 90431,
+            "variant": "refine_direct",
+            "reason": "Direct displacement exceeds normalized offset cap"
+          },
+          {
+            "file_id": 383021,
+            "variant": "refine_direct",
+            "reason": "Direct displacement caused local flip"
+          },
+          {
+            "file_id": 100894,
+            "variant": "fixed",
+            "reason": "Predicted displacement exceeds normalized offset cap"
+          },
+          {
+            "file_id": 100894,
+            "variant": "fixed_direct",
+            "reason": "Direct displacement exceeds normalized offset cap"
+          },
+          {
+            "file_id": 100894,
+            "variant": "refine",
+            "reason": "Local triangle flip relative to source"
+          },
+          {
+            "file_id": 100894,
+            "variant": "refine_direct",
+            "reason": "Direct displacement exceeds normalized offset cap"
+          }
+        ]
+      }
+    }
+  },
+  "validation_preparation": {
+    "scope": "Geometry residual preparation; no quality/generalization result",
+    "configuration": {
+      "manifest": "out\\thingi10k-metadata\\meshes\\download_manifest.json",
+      "out": "out\\cluster-decoder-pairs\\validation",
+      "split": "validation",
+      "limit": 8,
+      "retention": 0.3,
+      "cluster_faces": 128,
+      "max_candidates": 20000000,
+      "max_input_mib": 24
+    },
+    "records": [
+      {
+        "source": {
+          "file_id": 90431,
+          "thing_id": 31038,
+          "vertices": 362,
+          "faces": 736,
+          "license": "Creative Commons - Attribution - Share Alike",
+          "source_url": "https://thingiverse-production-new.s3.amazonaws.com/assets/ab/40/d4/3f/c2/stool.stl",
+          "mirror_url": "https://huggingface.co/datasets/Thingi10K/Thingi10K/resolve/1e52df627995ba43b7b91143af4bed86f570037a/raw_meshes/90431.stl",
+          "extension": ".stl",
+          "split": "validation",
+          "face_bin": "300-999",
+          "path": "90431.stl",
+          "bytes": 36884,
+          "sha256": "b3e7526f62cd64b24cbe07ba1107053786564b655f360033d84981e457fad05c",
+          "status": "downloaded"
+        },
+        "status": "prepared",
+        "file": "90431.npz",
+        "sha256": "f1b775453cf2365cd593ff99aa0037390edfa36198e5312fb4880a60e143aad3",
+        "source_faces": 736,
+        "coarse_faces": 466,
+        "clusters": 9,
+        "free_vertices": 142,
+        "queries": 608,
+        "closest_triangle_evaluations": 57281,
+        "radius_bound_checks": 210039,
+        "prepare_seconds": 0.2734546000137925,
+        "source_to_unit_scale": 5.941938047776782,
+        "vertex_mse": 1.1982539390923526e-05,
+        "centroid_mse": 0.0005274669402539799,
+        "process_peak_bytes": 68284416
+      },
+      {
+        "source": {
+          "file_id": 263198,
+          "thing_id": 121456,
+          "vertices": 228,
+          "faces": 452,
+          "license": "Creative Commons - Attribution - Share Alike",
+          "source_url": "https://thingiverse-production-new.s3.amazonaws.com/assets/1a/89/a6/fc/c8/axle_v2.stl",
+          "mirror_url": "https://huggingface.co/datasets/Thingi10K/Thingi10K/resolve/1e52df627995ba43b7b91143af4bed86f570037a/raw_meshes/263198.stl",
+          "extension": ".stl",
+          "split": "validation",
+          "face_bin": "300-999",
+          "path": "263198.stl",
+          "bytes": 22684,
+          "sha256": "8c58c38d8dda6750250670eb9f409b989efc460973641b9bea4add68a7fb8a4d",
+          "status": "downloaded"
+        },
+        "status": "prepared",
+        "file": "263198.npz",
+        "sha256": "681f62a94211ee037ae09a6870303728a5392c3451c5604322b9495ec262ce1d",
+        "source_faces": 452,
+        "coarse_faces": 154,
+        "clusters": 3,
+        "free_vertices": 66,
+        "queries": 220,
+        "closest_triangle_evaluations": 15513,
+        "radius_bound_checks": 60201,
+        "prepare_seconds": 0.09137669997289777,
+        "source_to_unit_scale": 29.14463679440317,
+        "vertex_mse": 2.653188582456194e-05,
+        "centroid_mse": 5.1037612298859814e-05,
+        "process_peak_bytes": 68292608
+      },
+      {
+        "source": {
+          "file_id": 44710,
+          "thing_id": 13678,
+          "vertices": 1588,
+          "faces": 3172,
+          "license": "Creative Commons - Attribution - Share Alike",
+          "source_url": "https://thingiverse-production-new.s3.amazonaws.com/assets/f1/08/73/82/0b/Apple_Earbud_Holder.stl",
+          "mirror_url": "https://huggingface.co/datasets/Thingi10K/Thingi10K/resolve/1e52df627995ba43b7b91143af4bed86f570037a/raw_meshes/44710.stl",
+          "extension": ".stl",
+          "split": "validation",
+          "face_bin": "1000-4999",
+          "path": "44710.stl",
+          "bytes": 798571,
+          "sha256": "af0aa394903a6099da1a542ed6707aceb5130dea9726dc0ba0e7ff74147cbf58",
+          "status": "downloaded"
+        },
+        "status": "prepared",
+        "file": "44710.npz",
+        "sha256": "a2b09a8ac3bc8c65b26852f34835a48d133ac6374e90fc052453cd190797d024",
+        "source_faces": 3172,
+        "coarse_faces": 950,
+        "clusters": 17,
+        "free_vertices": 348,
+        "queries": 1298,
+        "closest_triangle_evaluations": 77144,
+        "radius_bound_checks": 2167945,
+        "prepare_seconds": 0.7215247999993153,
+        "source_to_unit_scale": 30.234441420481048,
+        "vertex_mse": 4.026280429174539e-06,
+        "centroid_mse": 3.692535692112667e-06,
+        "process_peak_bytes": 79314944
+      },
+      {
+        "source": {
+          "file_id": 191968,
+          "thing_id": 85125,
+          "vertices": 530,
+          "faces": 1060,
+          "license": "Creative Commons - Attribution - Share Alike",
+          "source_url": "https://thingiverse-production-new.s3.amazonaws.com/assets/27/c0/9b/92/8c/dodeca_vert.stl",
+          "mirror_url": "https://huggingface.co/datasets/Thingi10K/Thingi10K/resolve/1e52df627995ba43b7b91143af4bed86f570037a/raw_meshes/191968.stl",
+          "extension": ".stl",
+          "split": "validation",
+          "face_bin": "1000-4999",
+          "path": "191968.stl",
+          "bytes": 197263,
+          "sha256": "4384855f2f404959ae7516298cd5b8a620c4c29ef1e0a1af4329e47c598db784",
+          "status": "downloaded"
+        },
+        "status": "rejected",
+        "reason": "Duplicate geometric triangle",
+        "process_peak_bytes": 79314944
+      },
+      {
+        "source": {
+          "file_id": 383021,
+          "thing_id": 205265,
+          "vertices": 6894,
+          "faces": 13788,
+          "license": "Creative Commons - Attribution",
+          "source_url": "https://thingiverse-production-new.s3.amazonaws.com/assets/6e/d5/6c/f2/8c/iPhone_Amp_Pipe_Tree.stl",
+          "mirror_url": "https://huggingface.co/datasets/Thingi10K/Thingi10K/resolve/1e52df627995ba43b7b91143af4bed86f570037a/raw_meshes/383021.stl",
+          "extension": ".stl",
+          "split": "validation",
+          "face_bin": "5000-14999",
+          "path": "383021.stl",
+          "bytes": 2519881,
+          "sha256": "0f6734eafb2eae7b152f05225423bebce9d467c1203fb6f9e5be758022fcb397",
+          "status": "downloaded"
+        },
+        "status": "prepared",
+        "file": "383021.npz",
+        "sha256": "1363deeacb1413c1d29f8979b570f6ee1b02c3a25254a11823c450e17197cdc7",
+        "source_faces": 13788,
+        "coarse_faces": 4136,
+        "clusters": 73,
+        "free_vertices": 1309,
+        "queries": 5445,
+        "closest_triangle_evaluations": 259165,
+        "radius_bound_checks": 52083229,
+        "prepare_seconds": 6.418115999957081,
+        "source_to_unit_scale": 25.645925493554397,
+        "vertex_mse": 3.550801734460418e-08,
+        "centroid_mse": 6.511489528085316e-08,
+        "process_peak_bytes": 116129792
+      },
+      {
+        "source": {
+          "file_id": 100894,
+          "thing_id": 35167,
+          "vertices": 2912,
+          "faces": 5820,
+          "license": "Creative Commons - Attribution",
+          "source_url": "https://thingiverse-production-new.s3.amazonaws.com/assets/89/98/4b/81/3a/Light.stl",
+          "mirror_url": "https://huggingface.co/datasets/Thingi10K/Thingi10K/resolve/1e52df627995ba43b7b91143af4bed86f570037a/raw_meshes/100894.stl",
+          "extension": ".stl",
+          "split": "validation",
+          "face_bin": "5000-14999",
+          "path": "100894.stl",
+          "bytes": 291084,
+          "sha256": "0e6c0419f7b8a0994665315dcbbd9f04dae60df615fe4699c559fd46a3c39bb0",
+          "status": "downloaded"
+        },
+        "status": "prepared",
+        "file": "100894.npz",
+        "sha256": "845e6f3b121cbd5dfc7babf3867b1a1067e36562f8581b809a9e8b2a1aacc100",
+        "source_faces": 5820,
+        "coarse_faces": 1746,
+        "clusters": 31,
+        "free_vertices": 542,
+        "queries": 2288,
+        "closest_triangle_evaluations": 378892,
+        "radius_bound_checks": 3038748,
+        "prepare_seconds": 1.339339999947697,
+        "source_to_unit_scale": 14.611360949908741,
+        "vertex_mse": 6.168796436895621e-05,
+        "centroid_mse": 1.2817942523334529e-05,
+        "process_peak_bytes": 116129792
+      },
+      {
+        "source": {
+          "file_id": 257594,
+          "thing_id": 126371,
+          "vertices": 17226,
+          "faces": 34448,
+          "license": "Creative Commons - Attribution",
+          "source_url": "https://thingiverse-production-new.s3.amazonaws.com/assets/4b/2d/60/41/b6/Smaller_breast.stl",
+          "mirror_url": "https://huggingface.co/datasets/Thingi10K/Thingi10K/resolve/1e52df627995ba43b7b91143af4bed86f570037a/raw_meshes/257594.stl",
+          "extension": ".stl",
+          "split": "validation",
+          "face_bin": "15000-50000",
+          "path": "257594.stl",
+          "bytes": 1722484,
+          "sha256": "7f97fe7ee1ba78f46b40413d2ff24cdd5d5edb6045dd94da368a02ccc15df388",
+          "status": "downloaded"
+        },
+        "status": "rejected",
+        "reason": "Duplicate geometric triangle",
+        "process_peak_bytes": 129712128
+      },
+      {
+        "source": {
+          "file_id": 94990,
+          "thing_id": 32884,
+          "vertices": 13602,
+          "faces": 27200,
+          "license": "Creative Commons - Attribution",
+          "source_url": "https://thingiverse-production-new.s3.amazonaws.com/assets/62/96/7e/c1/2a/Alien_Antenna.stl",
+          "mirror_url": "https://huggingface.co/datasets/Thingi10K/Thingi10K/resolve/1e52df627995ba43b7b91143af4bed86f570037a/raw_meshes/94990.stl",
+          "extension": ".stl",
+          "split": "validation",
+          "face_bin": "15000-50000",
+          "path": "94990.stl",
+          "bytes": 1360084,
+          "sha256": "c074ee56d1c6d5ea6c5601ae11057b4c43684e63d605d3216ce96366aafa7f4b",
+          "status": "downloaded"
+        },
+        "status": "rejected",
+        "reason": "Degenerate triangle",
+        "process_peak_bytes": 131579904
+      }
+    ]
+  },
+  "validation_failure_rechecks": [
+    {
+      "file_id": 191968,
+      "reason": "Duplicate geometric triangle",
+      "prepare_call": "coarse = Mesh(positions, faces, np.zeros(len(faces), dtype=np.int64)).checked()"
+    },
+    {
+      "file_id": 257594,
+      "reason": "Duplicate geometric triangle",
+      "prepare_call": "coarse = Mesh(positions, faces, np.zeros(len(faces), dtype=np.int64)).checked()"
+    },
+    {
+      "file_id": 94990,
+      "reason": "Degenerate triangle",
+      "prepare_call": "coarse = Mesh(positions, faces, np.zeros(len(faces), dtype=np.int64)).checked()"
+    }
+  ]
+}

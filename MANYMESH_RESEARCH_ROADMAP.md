@@ -59,7 +59,7 @@ The upstream cluster LOD screen (`tools/mmtrain/UPSTREAM_CLUSTERLOD_SCREEN_20261
 
 Rendered reranking (`tools/mmgeo/SAVED_CUT_VIEW_RERANK_20261122.md`) scores 44 legal cuts under those same caps. Fit-view selection improves held-out LDR-FLIP on two assets. The best measured alternative for each of the five feasible assets still loses to upstream.
 
-The eight-asset geometry codec screen (`tools/mmtrain/GEOMETRY_CODEC_RATE_DISTORTION_20261122.md`) adds Draco and meshoptimizer rate-distortion baselines for full and simplified geometry. It counts headers and streams, renders decoded geometry, and explicitly gates results on topology checks.
+The eight-asset geometry codec screen (`tools/mmtrain/GEOMETRY_CODEC_RATE_DISTORTION_20261122.md`) adds Draco and meshoptimizer rate-distortion baselines for full and simplified geometry. It counts headers and streams, renders decoded geometry, and explicitly gates results on topology checks. It measures static whole-mesh payloads only; it does not measure partial-page streaming, network transfer, or time-to-quality.
 
 The Draco grid origin experiment (`tools/mmtrain/QUANTIZATION_GRID_ORIGIN_20261122.md`) tests whether shifting a uniform grid reduces byte cost while preserving the source face structure. On the eight validation meshes the significant byte reductions each accompany worse LDR-FLIP. The tested grid search is closed.
 

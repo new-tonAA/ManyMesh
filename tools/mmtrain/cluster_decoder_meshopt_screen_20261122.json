@@ -1,0 +1,1837 @@
+{
+  "schema": "manymesh-meshopt-screen-v1",
+  "date": "2026-11-22",
+  "scope": "Development-only, no final test geometry. Same face counts; geometry-only STL models; flat shaded 12-view image quality plus sampled surface metrics.",
+  "implementation": {
+    "meshoptimizer": "vendored meshoptimizer 0.18.1 JS/WASM",
+    "flags": [
+      "LockBorder"
+    ],
+    "target_error": 1000000,
+    "base_target": "each asset's fast-simplification QEM face count",
+    "metrics": {
+      "views": 12,
+      "size": 256,
+      "box_samples_per_pixel": 4,
+      "flat_shading": true,
+      "metrics": {
+        "input": "8-bit sRGB, RGB in [0,1]",
+        "ssim": "Gaussian sigma=1.5, population covariance, K1=.01 K2=.03",
+        "flip": "LDR-FLIP",
+        "flip_ppd": 67.0,
+        "lpips": "calibrated SqueezeNet, version 0.1, [-1,1] RGB",
+        "packages": {
+          "flip-evaluator": "1.7",
+          "lpips": "0.1.4",
+          "scikit-image": "0.25.2",
+          "torch": "2.7.1",
+          "torchvision": "0.22.1"
+        }
+      }
+    },
+    "surface": {
+      "samples_per_direction": 20000,
+      "method": "Area-uniform samples; nearest sampled-point-cloud distances"
+    },
+    "runtime": {
+      "python": "3.12.3",
+      "numpy": "2.2.6",
+      "scipy": "1.15.3",
+      "torch": "2.7.1+cpu"
+    }
+  },
+  "inputs": {
+    "qem_train_manifest_sha256": "2bd0d3efd174cd301ca2f9805d7177a9f5fdd4c1c0682fa436c425505853afec",
+    "qem_validation_manifest_sha256": "4f86431e8db9403fedb6a5773cf250651cec695300e4127ec493214c7e31fe28",
+    "meshoptimizer_manifest_sha256": "dc11cd73b22b817dc606663f8818d576e71a0e68b324eafe86dad2499f5c10a8",
+    "meshoptimizer_quality_report_sha256": "177ea474526e2fae5dc1d5b671aa643249d476ff0d3c9ba937f5d14b2ee79e93",
+    "meshoptimizer_fixed_decoder_quality_report_sha256": "139ab79adf5fd2fc656cfd0467e8dc9cb621a587377b89b36e8a659a9d6445eb",
+    "meshoptimizer_surface_report_sha256": "4adde65b07a35c2545db5eabb7c658531ea10612e83ca7625455c68042fb5052",
+    "meshoptimizer_fit_report_sha256": "9f92253cda36233d3374a7a7f9f91ab55aba38332798e6a7372cae0022555700",
+    "code_sha256": {
+      "tools/mmtrain/cluster_decoder_pairs.py": "accb7b8e65f09ade43c9c20e71609087ac1c83fa7ebdf4b9d8f22c664eb7d8ff",
+      "tools/mmtrain/cluster_decoder_pairs_meshopt.py": "bcd1c743057d52cf24a28f1861c769e95bf4885f6f64711c7b77b12bb06d4c45",
+      "tools/mmtrain/cluster_decoder_meshopt_baseline.py": "621ba01107f3acfcd5aa01882dc0373e1d3f4ce69eca0045ad3f7a56271837f2",
+      "tools/mmtrain/meshopt_simplify.cjs": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+      "tools/mmtrain/fit_cluster_decoder.py": "508305687745b556f5f3c88f3b15b5e2ca6e839c93f09e0e300bd77a62a09205",
+      "tools/mmtrain/cluster_decoder.py": "46e66127d31083a9e9d81cf4fd7e9dc767676554e2a3dde849c47b25169e2425",
+      "tools/mmtrain/cluster_decoder_quality.py": "c64cf7c5a4dc75351c3182ac92adca61a91816b500ec12934e45453f99756b0a",
+      "tools/mmtrain/cluster_decoder_meshopt_quality.py": "23d51bf3d15ae7c96fa442d274f6eace62eb5cebd2258a06617cca4eeaa10651",
+      "tools/mmtrain/cluster_decoder_surface_quality.py": "08d80488efa4e4d3d2b45166f11d76ca230e3127c94f2a4580181f18bda6ea2c",
+      "tools/mmmetrics/perceptual.py": "ef389addc2c69d01babc9fb373f50cbac7b0c3d2e092d089a76b48afffc7cc6b",
+      "tools/mmmetrics/summarize_decoder_quality.py": "76571c81eff9cb97c6332bb95038012d1b9db58431ebf3d449d267a24265a70c"
+    }
+  },
+  "same_face_qem_comparison": {
+    "train": {
+      "paired_assets": 6,
+      "qem_mean": {
+        "mse": 0.005214804271655792,
+        "ssim": 0.9697897864228472,
+        "flip": 0.022087175838047788,
+        "lpips_squeeze": 0.0288181057411647,
+        "silhouette_xor_fraction": 0.012144936455620661,
+        "coverage_mae": 0.01202228334214952,
+        "psnr_db": 33.68248106541927,
+        "chamfer_l1_mean": 0.017217001547846784,
+        "chamfer_l2_squared_mean": 0.0022495593105201855,
+        "bidirectional_distance_p95": 0.070053166868749,
+        "bidirectional_distance_max_sampled": 0.11916868929544845,
+        "normal_consistency_absdot": 0.9279835517213035
+      },
+      "meshoptimizer_mean": {
+        "mse": 0.00039757679648348227,
+        "ssim": 0.9917727892189383,
+        "flip": 0.006618334002066856,
+        "lpips_squeeze": 0.005193942380073067,
+        "silhouette_xor_fraction": 0.0010339948866102432,
+        "coverage_mae": 0.0010228157043457031,
+        "psnr_db": 40.67517853662843,
+        "chamfer_l1_mean": 0.009627155289736176,
+        "chamfer_l2_squared_mean": 0.00012582404410819043,
+        "bidirectional_distance_p95": 0.018704379695026405,
+        "bidirectional_distance_max_sampled": 0.035966155230909264,
+        "normal_consistency_absdot": 0.9466009980224883
+      },
+      "meshoptimizer_minus_qem": {
+        "mse": {
+          "mean": -0.004817227475172309,
+          "bootstrap_95_percentile_ci": [
+            -0.013948948783700144,
+            -9.668253120860122e-05
+          ],
+          "assets_positive": 0,
+          "positive_is_better": false
+        },
+        "ssim": {
+          "mean": 0.021983002796091056,
+          "bootstrap_95_percentile_ci": [
+            0.0071124780522667614,
+            0.04440492967732738
+          ],
+          "assets_positive": 6,
+          "positive_is_better": true
+        },
+        "flip": {
+          "mean": -0.01546884183598094,
+          "bootstrap_95_percentile_ci": [
+            -0.03603880707891626,
+            -0.003206274034204802
+          ],
+          "assets_positive": 0,
+          "positive_is_better": false
+        },
+        "lpips_squeeze": {
+          "mean": -0.023624163361091636,
+          "bootstrap_95_percentile_ci": [
+            -0.054621485200186726,
+            -0.005447963005281053
+          ],
+          "assets_positive": 0,
+          "positive_is_better": false
+        },
+        "silhouette_xor_fraction": {
+          "mean": -0.01111094156901042,
+          "bootstrap_95_percentile_ci": [
+            -0.03147591484917535,
+            -0.00034989251030815975
+          ],
+          "assets_positive": 2,
+          "positive_is_better": false
+        },
+        "coverage_mae": {
+          "mean": -0.010999467637803817,
+          "bootstrap_95_percentile_ci": [
+            -0.03135601679484049,
+            -0.00025871064927842887
+          ],
+          "assets_positive": 2,
+          "positive_is_better": false
+        },
+        "psnr_db": {
+          "mean": 6.992697471209159,
+          "bootstrap_95_percentile_ci": [
+            4.081695729177287,
+            9.623510383514438
+          ],
+          "assets_positive": 6,
+          "positive_is_better": true
+        },
+        "chamfer_l1_mean": {
+          "mean": -0.007589846258110607,
+          "bootstrap_95_percentile_ci": [
+            -0.022524433254589336,
+            2.0597993944217532e-06
+          ],
+          "assets_positive": 3,
+          "positive_is_better": false
+        },
+        "chamfer_l2_squared_mean": {
+          "mean": -0.0021237352664119943,
+          "bootstrap_95_percentile_ci": [
+            -0.006367471294209792,
+            2.2414189430681202e-07
+          ],
+          "assets_positive": 2,
+          "positive_is_better": false
+        },
+        "bidirectional_distance_p95": {
+          "mean": -0.0513487871737226,
+          "bootstrap_95_percentile_ci": [
+            -0.15363712626430476,
+            2.5843253508926745e-05
+          ],
+          "assets_positive": 3,
+          "positive_is_better": false
+        },
+        "bidirectional_distance_max_sampled": {
+          "mean": -0.0832025340645392,
+          "bootstrap_95_percentile_ci": [
+            -0.24575208418992625,
+            -0.000456359541539762
+          ],
+          "assets_positive": 1,
+          "positive_is_better": false
+        },
+        "normal_consistency_absdot": {
+          "mean": 0.018617446301184577,
+          "bootstrap_95_percentile_ci": [
+            0.0012491493135231753,
+            0.04866549747054155
+          ],
+          "assets_positive": 5,
+          "positive_is_better": true
+        }
+      }
+    },
+    "validation": {
+      "paired_assets": 5,
+      "qem_mean": {
+        "mse": 0.00287134171167765,
+        "ssim": 0.9582402842533891,
+        "flip": 0.0252980859290498,
+        "lpips_squeeze": 0.023861905524002698,
+        "silhouette_xor_fraction": 0.007152811686197916,
+        "coverage_mae": 0.007235781351725259,
+        "psnr_db": 30.76962056002194,
+        "chamfer_l1_mean": 0.011684745421898627,
+        "chamfer_l2_squared_mean": 0.0003203594967484275,
+        "bidirectional_distance_p95": 0.030849605690934673,
+        "bidirectional_distance_max_sampled": 0.09208484189849506,
+        "normal_consistency_absdot": 0.9304508622599569
+      },
+      "meshoptimizer_mean": {
+        "mse": 0.000183550775868456,
+        "ssim": 0.9888458552272448,
+        "flip": 0.007749395251933795,
+        "lpips_squeeze": 0.005814206448728024,
+        "silhouette_xor_fraction": 0.00068511962890625,
+        "coverage_mae": 0.0006722768147786459,
+        "psnr_db": 40.49207216576066,
+        "chamfer_l1_mean": 0.00836121373132573,
+        "chamfer_l2_squared_mean": 9.228659520931433e-05,
+        "bidirectional_distance_p95": 0.016058658955987373,
+        "bidirectional_distance_max_sampled": 0.030393082041165774,
+        "normal_consistency_absdot": 0.9699709070083911
+      },
+      "meshoptimizer_minus_qem": {
+        "mse": {
+          "mean": -0.002687790935809194,
+          "bootstrap_95_percentile_ci": [
+            -0.006931864049027367,
+            -0.00030238059323887853
+          ],
+          "assets_positive": 0,
+          "positive_is_better": false
+        },
+        "ssim": {
+          "mean": 0.030605570973855568,
+          "bootstrap_95_percentile_ci": [
+            0.011567634617654666,
+            0.05824547881970734
+          ],
+          "assets_positive": 5,
+          "positive_is_better": true
+        },
+        "flip": {
+          "mean": -0.017548690677116004,
+          "bootstrap_95_percentile_ci": [
+            -0.035360182798467574,
+            -0.00660799044999294
+          ],
+          "assets_positive": 0,
+          "positive_is_better": false
+        },
+        "lpips_squeeze": {
+          "mean": -0.018047699075274676,
+          "bootstrap_95_percentile_ci": [
+            -0.03398505022244839,
+            -0.007141377626612667
+          ],
+          "assets_positive": 0,
+          "positive_is_better": false
+        },
+        "silhouette_xor_fraction": {
+          "mean": -0.006467692057291666,
+          "bootstrap_95_percentile_ci": [
+            -0.01712214152018229,
+            -0.0007448832194010416
+          ],
+          "assets_positive": 0,
+          "positive_is_better": false
+        },
+        "coverage_mae": {
+          "mean": -0.006563504536946614,
+          "bootstrap_95_percentile_ci": [
+            -0.017374293009440104,
+            -0.0007933298746744793
+          ],
+          "assets_positive": 0,
+          "positive_is_better": false
+        },
+        "psnr_db": {
+          "mean": 9.722451605738723,
+          "bootstrap_95_percentile_ci": [
+            6.4782207071390605,
+            12.55109348016167
+          ],
+          "assets_positive": 5,
+          "positive_is_better": true
+        },
+        "chamfer_l1_mean": {
+          "mean": -0.0033235316905728977,
+          "bootstrap_95_percentile_ci": [
+            -0.007758722041880969,
+            -0.0003702135492107194
+          ],
+          "assets_positive": 1,
+          "positive_is_better": false
+        },
+        "chamfer_l2_squared_mean": {
+          "mean": -0.00022807290153911315,
+          "bootstrap_95_percentile_ci": [
+            -0.0006047272619356637,
+            -1.0549121590971722e-05
+          ],
+          "assets_positive": 1,
+          "positive_is_better": false
+        },
+        "bidirectional_distance_p95": {
+          "mean": -0.014790946734947302,
+          "bootstrap_95_percentile_ci": [
+            -0.03574986856484057,
+            -0.0005137980824393221
+          ],
+          "assets_positive": 0,
+          "positive_is_better": false
+        },
+        "bidirectional_distance_max_sampled": {
+          "mean": -0.06169175985732929,
+          "bootstrap_95_percentile_ci": [
+            -0.1352363661936517,
+            -0.008656231028359603
+          ],
+          "assets_positive": 0,
+          "positive_is_better": false
+        },
+        "normal_consistency_absdot": {
+          "mean": 0.03952004474843422,
+          "bootstrap_95_percentile_ci": [
+            0.004163790233385023,
+            0.07487629926348342
+          ],
+          "assets_positive": 5,
+          "positive_is_better": true
+        }
+      }
+    }
+  },
+  "rank8_fixed_comparison_summary": {
+    "train": {
+      "paired_assets": 6,
+      "same_triangle_count": true,
+      "metrics": {
+        "psnr_db": {
+          "paired_delta": {
+            "assets": 6,
+            "mean_delta": 0.0,
+            "bootstrap_95_percent": [
+              0.0,
+              0.0
+            ],
+            "negative": 0,
+            "positive": 0
+          },
+          "comparator_mean": 40.67517853662843,
+          "candidate_mean": 40.67517853662843
+        },
+        "ssim": {
+          "paired_delta": {
+            "assets": 6,
+            "mean_delta": 0.0,
+            "bootstrap_95_percent": [
+              0.0,
+              0.0
+            ],
+            "negative": 0,
+            "positive": 0
+          },
+          "comparator_mean": 0.9917727892189383,
+          "candidate_mean": 0.9917727892189383
+        },
+        "flip": {
+          "paired_delta": {
+            "assets": 6,
+            "mean_delta": 0.0,
+            "bootstrap_95_percent": [
+              0.0,
+              0.0
+            ],
+            "negative": 0,
+            "positive": 0
+          },
+          "comparator_mean": 0.006618334002066856,
+          "candidate_mean": 0.006618334002066856
+        },
+        "lpips_squeeze": {
+          "paired_delta": {
+            "assets": 6,
+            "mean_delta": 0.0,
+            "bootstrap_95_percent": [
+              0.0,
+              0.0
+            ],
+            "negative": 0,
+            "positive": 0
+          },
+          "comparator_mean": 0.005193942380073067,
+          "candidate_mean": 0.005193942380073067
+        },
+        "silhouette_xor_fraction": {
+          "paired_delta": {
+            "assets": 6,
+            "mean_delta": 0.0,
+            "bootstrap_95_percent": [
+              0.0,
+              0.0
+            ],
+            "negative": 0,
+            "positive": 0
+          },
+          "comparator_mean": 0.0010339948866102432,
+          "candidate_mean": 0.0010339948866102432
+        },
+        "coverage_mae": {
+          "paired_delta": {
+            "assets": 6,
+            "mean_delta": 0.0,
+            "bootstrap_95_percent": [
+              0.0,
+              0.0
+            ],
+            "negative": 0,
+            "positive": 0
+          },
+          "comparator_mean": 0.0010228157043457031,
+          "candidate_mean": 0.0010228157043457031
+        }
+      }
+    },
+    "validation": {
+      "paired_assets": 5,
+      "same_triangle_count": true,
+      "metrics": {
+        "psnr_db": {
+          "paired_delta": {
+            "assets": 5,
+            "mean_delta": 0.0,
+            "bootstrap_95_percent": [
+              0.0,
+              0.0
+            ],
+            "negative": 0,
+            "positive": 0
+          },
+          "comparator_mean": 40.49207216576066,
+          "candidate_mean": 40.49207216576066
+        },
+        "ssim": {
+          "paired_delta": {
+            "assets": 5,
+            "mean_delta": 0.0,
+            "bootstrap_95_percent": [
+              0.0,
+              0.0
+            ],
+            "negative": 0,
+            "positive": 0
+          },
+          "comparator_mean": 0.9888458552272448,
+          "candidate_mean": 0.9888458552272448
+        },
+        "flip": {
+          "paired_delta": {
+            "assets": 5,
+            "mean_delta": 0.0,
+            "bootstrap_95_percent": [
+              0.0,
+              0.0
+            ],
+            "negative": 0,
+            "positive": 0
+          },
+          "comparator_mean": 0.007749395251933795,
+          "candidate_mean": 0.007749395251933795
+        },
+        "lpips_squeeze": {
+          "paired_delta": {
+            "assets": 5,
+            "mean_delta": 0.0,
+            "bootstrap_95_percent": [
+              0.0,
+              0.0
+            ],
+            "negative": 0,
+            "positive": 0
+          },
+          "comparator_mean": 0.005814206448728024,
+          "candidate_mean": 0.005814206448728024
+        },
+        "silhouette_xor_fraction": {
+          "paired_delta": {
+            "assets": 5,
+            "mean_delta": 0.0,
+            "bootstrap_95_percent": [
+              0.0,
+              0.0
+            ],
+            "negative": 0,
+            "positive": 0
+          },
+          "comparator_mean": 0.00068511962890625,
+          "candidate_mean": 0.00068511962890625
+        },
+        "coverage_mae": {
+          "paired_delta": {
+            "assets": 5,
+            "mean_delta": 0.0,
+            "bootstrap_95_percent": [
+              0.0,
+              0.0
+            ],
+            "negative": 0,
+            "positive": 0
+          },
+          "comparator_mean": 0.0006722768147786459,
+          "candidate_mean": 0.0006722768147786459
+        }
+      }
+    }
+  },
+  "asset_records": [
+    {
+      "split": "train",
+      "file_id": 132057,
+      "source_sha256": "af347392d9380cc917d2cead4c44b9849cf46f466929f77447fdab67626024a5",
+      "preparation_status": "prepared",
+      "meshoptimizer_status": "usable",
+      "old_qem_base_methods": {
+        "qem": {
+          "mse": 0.0013123152675528441,
+          "ssim": 0.9737077337237582,
+          "flip": 0.01564180350396782,
+          "lpips_squeeze": 0.014042385038919747,
+          "silhouette_xor_fraction": 0.004540761311848958,
+          "coverage_mae": 0.0045502980550130205,
+          "psnr_db": 28.819618185345497,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.006953871002495959,
+          "chamfer_l2_squared_mean": 6.036643691090367e-05,
+          "bidirectional_distance_p95": 0.013048474634050247,
+          "bidirectional_distance_max_sampled": 0.028023368823870274,
+          "normal_consistency_absdot": 0.9435663521420572
+        },
+        "meshoptimizer": {
+          "mse": 0.0003461049456451545,
+          "ssim": 0.9911015151415548,
+          "flip": 0.007440896821208298,
+          "lpips_squeeze": 0.005064828723940688,
+          "silhouette_xor_fraction": 0.001468658447265625,
+          "coverage_mae": 0.0015246073404947917,
+          "psnr_db": 34.607921948374695,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.006276136759370839,
+          "chamfer_l2_squared_mean": 4.872679071228728e-05,
+          "bidirectional_distance_p95": 0.011748292101932442,
+          "bidirectional_distance_max_sampled": 0.021980931449201067,
+          "normal_consistency_absdot": 0.954779617041294
+        },
+        "rank8_fixed": {
+          "mse": 0.0013093820914356858,
+          "ssim": 0.9736450244600353,
+          "flip": 0.015650117439993966,
+          "lpips_squeeze": 0.013818197301588953,
+          "silhouette_xor_fraction": 0.004533131917317708,
+          "coverage_mae": 0.004530588785807292,
+          "psnr_db": 28.82933603267274,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.006960763652226255,
+          "chamfer_l2_squared_mean": 6.0480336562064734e-05,
+          "bidirectional_distance_p95": 0.013062033242059916,
+          "bidirectional_distance_max_sampled": 0.028154795616503067,
+          "normal_consistency_absdot": 0.9432856975142663
+        }
+      },
+      "rank8_fixed_status": "decoded",
+      "rank8_fixed_triangle_count": 158,
+      "rank8_on_meshoptimizer_base": {
+        "base": {
+          "triangles": 158,
+          "mean": {
+            "mse": 0.0003461049456451545,
+            "ssim": 0.9911015151415548,
+            "flip": 0.007440896821208298,
+            "lpips_squeeze": 0.005064828723940688,
+            "silhouette_xor_fraction": 0.001468658447265625,
+            "coverage_mae": 0.0015246073404947917,
+            "psnr_db": 34.607921948374695
+          }
+        },
+        "fixed": {
+          "triangles": 158,
+          "mean": {
+            "mse": 0.0003461049456451545,
+            "ssim": 0.9911015151415548,
+            "flip": 0.007440896821208298,
+            "lpips_squeeze": 0.005064828723940688,
+            "silhouette_xor_fraction": 0.001468658447265625,
+            "coverage_mae": 0.0015246073404947917,
+            "psnr_db": 34.607921948374695
+          }
+        }
+      },
+      "sampled_surface": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.006276136759370839,
+          "chamfer_l2_squared_mean": 4.872679071228728e-05,
+          "bidirectional_distance_p95": 0.011748292101932442,
+          "bidirectional_distance_max_sampled": 0.021980931449201067,
+          "normal_consistency_absdot": 0.954779617041294
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.006276136660144633,
+          "chamfer_l2_squared_mean": 4.872678936573945e-05,
+          "bidirectional_distance_p95": 0.011748292232207986,
+          "bidirectional_distance_max_sampled": 0.021980929492694753,
+          "normal_consistency_absdot": 0.9547796172168053
+        }
+      },
+      "meshoptimizer_reason": null
+    },
+    {
+      "split": "train",
+      "file_id": 59494,
+      "source_sha256": "9c3be26665505629911145b446068f9e3de938b6d2dad4d7ca63b9854f7ec1b6",
+      "preparation_status": "rejected",
+      "meshoptimizer_status": "input_rejected",
+      "old_qem_base_methods": {},
+      "rank8_fixed_status": null,
+      "rank8_fixed_triangle_count": null,
+      "rank8_on_meshoptimizer_base": {},
+      "sampled_surface": {
+        "qem": null,
+        "rank8_fixed": null
+      },
+      "meshoptimizer_reason": "Duplicate geometric triangle"
+    },
+    {
+      "split": "train",
+      "file_id": 53581,
+      "source_sha256": "ef3c07a286e63867598a35237fe2663f679e8cd155de075a010b826636fb7ef7",
+      "preparation_status": "rejected",
+      "meshoptimizer_status": "input_rejected",
+      "old_qem_base_methods": {},
+      "rank8_fixed_status": null,
+      "rank8_fixed_triangle_count": null,
+      "rank8_on_meshoptimizer_base": {},
+      "sampled_surface": {
+        "qem": null,
+        "rank8_fixed": null
+      },
+      "meshoptimizer_reason": "Nonmanifold or inconsistently oriented edge"
+    },
+    {
+      "split": "train",
+      "file_id": 145328,
+      "source_sha256": "8bb9c166a14f7216ab069b877e4800f086a2094c21f883e5ac1d35b05d8a9388",
+      "preparation_status": "prepared",
+      "meshoptimizer_status": "usable",
+      "old_qem_base_methods": {
+        "qem": {
+          "mse": 0.029425764287967917,
+          "ssim": 0.8924802675061191,
+          "flip": 0.08550540404394269,
+          "lpips_squeeze": 0.11619898459563653,
+          "silhouette_xor_fraction": 0.06568018595377605,
+          "coverage_mae": 0.06532796223958333,
+          "psnr_db": 15.31272248221609,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.053310731127639954,
+          "chamfer_l2_squared_mean": 0.012824910740839348,
+          "bidirectional_distance_p95": 0.32377374729171166,
+          "bidirectional_distance_max_sampled": 0.5246192887599327,
+          "normal_consistency_absdot": 0.85047300184826
+        },
+        "meshoptimizer": {
+          "mse": 0.0019076610439544485,
+          "ssim": 0.9687077286528921,
+          "flip": 0.019664852142644424,
+          "lpips_squeeze": 0.016932987608015537,
+          "silhouette_xor_fraction": 0.004046122233072917,
+          "coverage_mae": 0.003959337870279948,
+          "psnr_db": 27.194987888653475,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008475940284852861,
+          "chamfer_l2_squared_mean": 9.388758719717106e-05,
+          "bidirectional_distance_p95": 0.016931483834485835,
+          "bidirectional_distance_max_sampled": 0.03622763958534061,
+          "normal_consistency_absdot": 0.9428469819623191
+        },
+        "rank8_fixed": {
+          "mse": 0.029516502516278534,
+          "ssim": 0.8912585095825548,
+          "flip": 0.08619047421962023,
+          "lpips_squeeze": 0.11678295101349552,
+          "silhouette_xor_fraction": 0.06632232666015625,
+          "coverage_mae": 0.0659929911295573,
+          "psnr_db": 15.299351044326201,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.053480865007110995,
+          "chamfer_l2_squared_mean": 0.01292368486125717,
+          "bidirectional_distance_p95": 0.32438243427576785,
+          "bidirectional_distance_max_sampled": 0.5271375733679647,
+          "normal_consistency_absdot": 0.8535800936257617
+        }
+      },
+      "rank8_fixed_status": "decoded",
+      "rank8_fixed_triangle_count": 108,
+      "rank8_on_meshoptimizer_base": {
+        "base": {
+          "triangles": 108,
+          "mean": {
+            "mse": 0.0019076610439544485,
+            "ssim": 0.9687077286528921,
+            "flip": 0.019664852142644424,
+            "lpips_squeeze": 0.016932987608015537,
+            "silhouette_xor_fraction": 0.004046122233072917,
+            "coverage_mae": 0.003959337870279948,
+            "psnr_db": 27.194987888653475
+          }
+        },
+        "fixed": {
+          "triangles": 108,
+          "mean": {
+            "mse": 0.0019076610439544485,
+            "ssim": 0.9687077286528921,
+            "flip": 0.019664852142644424,
+            "lpips_squeeze": 0.016932987608015537,
+            "silhouette_xor_fraction": 0.004046122233072917,
+            "coverage_mae": 0.003959337870279948,
+            "psnr_db": 27.194987888653475
+          }
+        }
+      },
+      "sampled_surface": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008475940284852861,
+          "chamfer_l2_squared_mean": 9.388758719717106e-05,
+          "bidirectional_distance_p95": 0.016931483834485835,
+          "bidirectional_distance_max_sampled": 0.03622763958534061,
+          "normal_consistency_absdot": 0.9428469819623191
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.00847594040874617,
+          "chamfer_l2_squared_mean": 9.38875903533649e-05,
+          "bidirectional_distance_p95": 0.01693148494812675,
+          "bidirectional_distance_max_sampled": 0.036227641734619634,
+          "normal_consistency_absdot": 0.9428469820838783
+        }
+      },
+      "meshoptimizer_reason": null
+    },
+    {
+      "split": "train",
+      "file_id": 96074,
+      "source_sha256": "f7b74c91b0526fd437c17aebd7694a1cff6c08055668109b5f8f96e560088b99",
+      "preparation_status": "rejected",
+      "meshoptimizer_status": "input_rejected",
+      "old_qem_base_methods": {},
+      "rank8_fixed_status": null,
+      "rank8_fixed_triangle_count": null,
+      "rank8_on_meshoptimizer_base": {},
+      "sampled_surface": {
+        "qem": null,
+        "rank8_fixed": null
+      },
+      "meshoptimizer_reason": "Nonmanifold or inconsistently oriented edge"
+    },
+    {
+      "split": "train",
+      "file_id": 57809,
+      "source_sha256": "3b0fbe2a61dd2799ce7b52697500860c89a3ee14841d42c4f4531c17a205c3b8",
+      "preparation_status": "prepared",
+      "meshoptimizer_status": "rejected",
+      "old_qem_base_methods": {},
+      "rank8_fixed_status": null,
+      "rank8_fixed_triangle_count": null,
+      "rank8_on_meshoptimizer_base": {},
+      "sampled_surface": {
+        "qem": null,
+        "rank8_fixed": null
+      },
+      "meshoptimizer_reason": "Degenerate triangle"
+    },
+    {
+      "split": "train",
+      "file_id": 84030,
+      "source_sha256": "98735ebb00fea705f77386b3672dfc1023beb49e7c19c233e73f6009af3c1ba6",
+      "preparation_status": "rejected",
+      "meshoptimizer_status": "input_rejected",
+      "old_qem_base_methods": {},
+      "rank8_fixed_status": null,
+      "rank8_fixed_triangle_count": null,
+      "rank8_on_meshoptimizer_base": {},
+      "sampled_surface": {
+        "qem": null,
+        "rank8_fixed": null
+      },
+      "meshoptimizer_reason": "Duplicate geometric triangle"
+    },
+    {
+      "split": "train",
+      "file_id": 148292,
+      "source_sha256": "38eeb83b26b3cdfe95c8ff9df9442fe8e3c1df3e5d762ea66bb2bc390f525471",
+      "preparation_status": "rejected",
+      "meshoptimizer_status": "input_rejected",
+      "old_qem_base_methods": {},
+      "rank8_fixed_status": null,
+      "rank8_fixed_triangle_count": null,
+      "rank8_on_meshoptimizer_base": {},
+      "sampled_surface": {
+        "qem": null,
+        "rank8_fixed": null
+      },
+      "meshoptimizer_reason": "Duplicate geometric triangle"
+    },
+    {
+      "split": "train",
+      "file_id": 84736,
+      "source_sha256": "4de846fb7c6ae5259655d89f2cf9c8ef021c234da02efd81df47efa0744a0da4",
+      "preparation_status": "prepared",
+      "meshoptimizer_status": "usable",
+      "old_qem_base_methods": {
+        "qem": {
+          "mse": 9.767979425481383e-05,
+          "ssim": 0.9874142082223148,
+          "flip": 0.003920581007453923,
+          "lpips_squeeze": 0.01391463500719207,
+          "silhouette_xor_fraction": 8.392333984375e-05,
+          "coverage_mae": 8.900960286458333e-05,
+          "psnr_db": 40.10195263826617,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.007633691870650834,
+          "chamfer_l2_squared_mean": 7.36614237700823e-05,
+          "bidirectional_distance_p95": 0.014707563445547807,
+          "bidirectional_distance_max_sampled": 0.028456983551484027,
+          "normal_consistency_absdot": 0.9373226913959667
+        },
+        "meshoptimizer": {
+          "mse": 1.634642021573233e-05,
+          "ssim": 0.9986005023092912,
+          "flip": 0.0014888082866188295,
+          "lpips_squeeze": 0.0018426848206824313,
+          "silhouette_xor_fraction": 9.1552734375e-05,
+          "coverage_mae": 9.632110595703125e-05,
+          "psnr_db": 47.865773409104264,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.007551084387631505,
+          "chamfer_l2_squared_mean": 7.265935988759029e-05,
+          "bidirectional_distance_p95": 0.014783831319025137,
+          "bidirectional_distance_max_sampled": 0.03003275766085161,
+          "normal_consistency_absdot": 0.9434355166838915
+        },
+        "rank8_fixed": {
+          "mse": 0.0001005735865437372,
+          "ssim": 0.9872789617758944,
+          "flip": 0.004050370273034787,
+          "lpips_squeeze": 0.01400712115476684,
+          "silhouette_xor_fraction": 0.00011189778645833333,
+          "coverage_mae": 0.00011189778645833333,
+          "psnr_db": 39.97516062267204,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.007632783374941952,
+          "chamfer_l2_squared_mean": 7.362058789220394e-05,
+          "bidirectional_distance_p95": 0.014696444741206991,
+          "bidirectional_distance_max_sampled": 0.028468054564071917,
+          "normal_consistency_absdot": 0.9368938100811028
+        }
+      },
+      "rank8_fixed_status": "decoded",
+      "rank8_fixed_triangle_count": 3174,
+      "rank8_on_meshoptimizer_base": {
+        "base": {
+          "triangles": 3174,
+          "mean": {
+            "mse": 1.634642021573233e-05,
+            "ssim": 0.9986005023092912,
+            "flip": 0.0014888082866188295,
+            "lpips_squeeze": 0.0018426848206824313,
+            "silhouette_xor_fraction": 9.1552734375e-05,
+            "coverage_mae": 9.632110595703125e-05,
+            "psnr_db": 47.865773409104264
+          }
+        },
+        "fixed": {
+          "triangles": 3174,
+          "mean": {
+            "mse": 1.634642021573233e-05,
+            "ssim": 0.9986005023092912,
+            "flip": 0.0014888082866188295,
+            "lpips_squeeze": 0.0018426848206824313,
+            "silhouette_xor_fraction": 9.1552734375e-05,
+            "coverage_mae": 9.632110595703125e-05,
+            "psnr_db": 47.865773409104264
+          }
+        }
+      },
+      "sampled_surface": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.007551084387631505,
+          "chamfer_l2_squared_mean": 7.265935988759029e-05,
+          "bidirectional_distance_p95": 0.014783831319025137,
+          "bidirectional_distance_max_sampled": 0.03003275766085161,
+          "normal_consistency_absdot": 0.9434355166838915
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.007551115186519772,
+          "chamfer_l2_squared_mean": 7.266005143663994e-05,
+          "bidirectional_distance_p95": 0.014783831752056458,
+          "bidirectional_distance_max_sampled": 0.030032757008494476,
+          "normal_consistency_absdot": 0.9434355173567822
+        }
+      },
+      "meshoptimizer_reason": null
+    },
+    {
+      "split": "train",
+      "file_id": 59301,
+      "source_sha256": "71db678a59bc1a4093eca62ae0236ce52725846f2e91b0ddfe9060ea7121a22c",
+      "preparation_status": "prepared",
+      "meshoptimizer_status": "usable",
+      "old_qem_base_methods": {
+        "qem": {
+          "mse": 0.00018340636197991758,
+          "ssim": 0.9910634657280184,
+          "flip": 0.009684239281341434,
+          "lpips_squeeze": 0.006523015676066279,
+          "silhouette_xor_fraction": 0.001224517822265625,
+          "coverage_mae": 0.0012375513712565105,
+          "psnr_db": 37.36585603645001,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009726056545430477,
+          "chamfer_l2_squared_mean": 0.00012012504655335018,
+          "bidirectional_distance_p95": 0.01897844632305532,
+          "bidirectional_distance_max_sampled": 0.0363942308759644,
+          "normal_consistency_absdot": 0.9427482470907853
+        },
+        "meshoptimizer": {
+          "mse": 1.7466023841240948e-05,
+          "ssim": 0.998910824890034,
+          "flip": 0.0015445322569576092,
+          "lpips_squeeze": 0.0011319213760240625,
+          "silhouette_xor_fraction": 9.663899739583333e-05,
+          "coverage_mae": 8.710225423177083e-05,
+          "psnr_db": 47.57805951362229,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.00974442002823087,
+          "chamfer_l2_squared_mean": 0.00012006571748654515,
+          "bidirectional_distance_p95": 0.018906393767544705,
+          "bidirectional_distance_max_sampled": 0.03568270977462834,
+          "normal_consistency_absdot": 0.940311450871359
+        },
+        "rank8_fixed": {
+          "mse": 0.00020515335319623663,
+          "ssim": 0.9903531798506187,
+          "flip": 0.010469827335327864,
+          "lpips_squeeze": 0.006841901592755069,
+          "silhouette_xor_fraction": 0.0013860066731770833,
+          "coverage_mae": 0.0014327367146809895,
+          "psnr_db": 36.87921380170523,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009734035742819419,
+          "chamfer_l2_squared_mean": 0.00012036610906401831,
+          "bidirectional_distance_p95": 0.018994765350990366,
+          "bidirectional_distance_max_sampled": 0.036499125795377244,
+          "normal_consistency_absdot": 0.9423636785016795
+        }
+      },
+      "rank8_fixed_status": "decoded",
+      "rank8_fixed_triangle_count": 3514,
+      "rank8_on_meshoptimizer_base": {
+        "base": {
+          "triangles": 3514,
+          "mean": {
+            "mse": 1.7466023841240948e-05,
+            "ssim": 0.998910824890034,
+            "flip": 0.0015445322569576092,
+            "lpips_squeeze": 0.0011319213760240625,
+            "silhouette_xor_fraction": 9.663899739583333e-05,
+            "coverage_mae": 8.710225423177083e-05,
+            "psnr_db": 47.57805951362229
+          }
+        },
+        "fixed": {
+          "triangles": 3514,
+          "mean": {
+            "mse": 1.7466023841240948e-05,
+            "ssim": 0.998910824890034,
+            "flip": 0.0015445322569576092,
+            "lpips_squeeze": 0.0011319213760240625,
+            "silhouette_xor_fraction": 9.663899739583333e-05,
+            "coverage_mae": 8.710225423177083e-05,
+            "psnr_db": 47.57805951362229
+          }
+        }
+      },
+      "sampled_surface": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.00974442002823087,
+          "chamfer_l2_squared_mean": 0.00012006571748654515,
+          "bidirectional_distance_p95": 0.018906393767544705,
+          "bidirectional_distance_max_sampled": 0.03568270977462834,
+          "normal_consistency_absdot": 0.940311450871359
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009744419987619131,
+          "chamfer_l2_squared_mean": 0.00012006571670241158,
+          "bidirectional_distance_p95": 0.01890639390142821,
+          "bidirectional_distance_max_sampled": 0.03568270977462834,
+          "normal_consistency_absdot": 0.940311451758964
+        }
+      },
+      "meshoptimizer_reason": null
+    },
+    {
+      "split": "train",
+      "file_id": 84757,
+      "source_sha256": "a763dce4e69ceb68129abf8a02cc8f2045e53e2da83bf66857b7f4e9ea686ef7",
+      "preparation_status": "prepared",
+      "meshoptimizer_status": "usable",
+      "old_qem_base_methods": {
+        "qem": {
+          "mse": 0.00023103703478429767,
+          "ssim": 0.976332847057126,
+          "flip": 0.015361579833552241,
+          "lpips_squeeze": 0.020137744684082765,
+          "silhouette_xor_fraction": 0.0012194315592447917,
+          "coverage_mae": 0.0008077621459960938,
+          "psnr_db": 36.363183979724745,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.013176737040412695,
+          "chamfer_l2_squared_mean": 0.0002206120645583196,
+          "bidirectional_distance_p95": 0.02562849932360201,
+          "bidirectional_distance_max_sampled": 0.053288933565990564,
+          "normal_consistency_absdot": 0.969632472527159
+        },
+        "meshoptimizer": {
+          "mse": 6.649177196345756e-05,
+          "ssim": 0.9950463884317792,
+          "flip": 0.0073165530726934476,
+          "lpips_squeeze": 0.0045754750608466566,
+          "silhouette_xor_fraction": 0.0003306070963541667,
+          "coverage_mae": 0.00030549367268880207,
+          "psnr_db": 41.772320932225064,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.013193880801562644,
+          "chamfer_l2_squared_mean": 0.0002213792861795295,
+          "bidirectional_distance_p95": 0.025657568024170192,
+          "bidirectional_distance_max_sampled": 0.048418039215510814,
+          "normal_consistency_absdot": 0.9714284823472495
+        },
+        "rank8_fixed": {
+          "mse": 0.0002571583490837358,
+          "ssim": 0.9757026371826498,
+          "flip": 0.016269783178965252,
+          "lpips_squeeze": 0.020096786591845255,
+          "silhouette_xor_fraction": 0.0014216105143229167,
+          "coverage_mae": 0.0010162989298502605,
+          "psnr_db": 35.89799371004049,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.013213586044934389,
+          "chamfer_l2_squared_mean": 0.00022152064972022945,
+          "bidirectional_distance_p95": 0.025611440653506127,
+          "bidirectional_distance_max_sampled": 0.0513625349106065,
+          "normal_consistency_absdot": 0.9699659828159235
+        }
+      },
+      "rank8_fixed_status": "decoded",
+      "rank8_fixed_triangle_count": 3626,
+      "rank8_on_meshoptimizer_base": {
+        "base": {
+          "triangles": 3626,
+          "mean": {
+            "mse": 6.649177196345756e-05,
+            "ssim": 0.9950463884317792,
+            "flip": 0.0073165530726934476,
+            "lpips_squeeze": 0.0045754750608466566,
+            "silhouette_xor_fraction": 0.0003306070963541667,
+            "coverage_mae": 0.00030549367268880207,
+            "psnr_db": 41.772320932225064
+          }
+        },
+        "fixed": {
+          "triangles": 3626,
+          "mean": {
+            "mse": 6.649177196345756e-05,
+            "ssim": 0.9950463884317792,
+            "flip": 0.0073165530726934476,
+            "lpips_squeeze": 0.0045754750608466566,
+            "silhouette_xor_fraction": 0.0003306070963541667,
+            "coverage_mae": 0.00030549367268880207,
+            "psnr_db": 41.772320932225064
+          }
+        }
+      },
+      "sampled_surface": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.013193880801562644,
+          "chamfer_l2_squared_mean": 0.0002213792861795295,
+          "bidirectional_distance_p95": 0.025657568024170192,
+          "bidirectional_distance_max_sampled": 0.048418039215510814,
+          "normal_consistency_absdot": 0.9714284823472495
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.013193880786315487,
+          "chamfer_l2_squared_mean": 0.000221379286006541,
+          "bidirectional_distance_p95": 0.02565756739115159,
+          "bidirectional_distance_max_sampled": 0.04841803942147047,
+          "normal_consistency_absdot": 0.9714284823411115
+        }
+      },
+      "meshoptimizer_reason": null
+    },
+    {
+      "split": "train",
+      "file_id": 73858,
+      "source_sha256": "409da0134c25314942808b0048a2c94ab24c0ce1b01daae29522d50ee5bacf4b",
+      "preparation_status": "prepared",
+      "meshoptimizer_status": "usable",
+      "old_qem_base_methods": {
+        "qem": {
+          "mse": 3.8622883394958276e-05,
+          "ssim": 0.9977401962997469,
+          "flip": 0.0024094473580286526,
+          "lpips_squeeze": 0.002091869445090803,
+          "silhouette_xor_fraction": 0.00012079874674479167,
+          "coverage_mae": 0.00012111663818359375,
+          "psnr_db": 44.13155307051311,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.01250092170045078,
+          "chamfer_l2_squared_mean": 0.00019768015048910717,
+          "bidirectional_distance_p95": 0.024182270194526966,
+          "bidirectional_distance_max_sampled": 0.044229330195448835,
+          "normal_consistency_absdot": 0.9241585453235932
+        },
+        "meshoptimizer": {
+          "mse": 3.139057328085953e-05,
+          "ssim": 0.9982697758880784,
+          "flip": 0.002254361432278529,
+          "lpips_squeeze": 0.0016157566909290229,
+          "silhouette_xor_fraction": 0.00017038981119791666,
+          "coverage_mae": 0.000164031982421875,
+          "psnr_db": 45.03200752779079,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.012521469476768344,
+          "chamfer_l2_squared_mean": 0.00019822552318601925,
+          "bidirectional_distance_p95": 0.024198709123000116,
+          "bidirectional_distance_max_sampled": 0.043454853699923135,
+          "normal_consistency_absdot": 0.9268039392288158
+        },
+        "rank8_fixed": {
+          "mse": 3.872576240208093e-05,
+          "ssim": 0.9977396483060176,
+          "flip": 0.0024155122470498704,
+          "lpips_squeeze": 0.0020916408636063957,
+          "silhouette_xor_fraction": 0.00012079874674479167,
+          "coverage_mae": 0.0001220703125,
+          "psnr_db": 44.12000023439448,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.012499339266403071,
+          "chamfer_l2_squared_mean": 0.0001976304219277968,
+          "bidirectional_distance_p95": 0.02417933636319574,
+          "bidirectional_distance_max_sampled": 0.04422989772938324,
+          "normal_consistency_absdot": 0.9240108841887107
+        }
+      },
+      "rank8_fixed_status": "decoded",
+      "rank8_fixed_triangle_count": 2624,
+      "rank8_on_meshoptimizer_base": {
+        "base": {
+          "triangles": 2624,
+          "mean": {
+            "mse": 3.139057328085953e-05,
+            "ssim": 0.9982697758880784,
+            "flip": 0.002254361432278529,
+            "lpips_squeeze": 0.0016157566909290229,
+            "silhouette_xor_fraction": 0.00017038981119791666,
+            "coverage_mae": 0.000164031982421875,
+            "psnr_db": 45.03200752779079
+          }
+        },
+        "fixed": {
+          "triangles": 2624,
+          "mean": {
+            "mse": 3.139057328085953e-05,
+            "ssim": 0.9982697758880784,
+            "flip": 0.002254361432278529,
+            "lpips_squeeze": 0.0016157566909290229,
+            "silhouette_xor_fraction": 0.00017038981119791666,
+            "coverage_mae": 0.000164031982421875,
+            "psnr_db": 45.03200752779079
+          }
+        }
+      },
+      "sampled_surface": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.012521469476768344,
+          "chamfer_l2_squared_mean": 0.00019822552318601925,
+          "bidirectional_distance_p95": 0.024198709123000116,
+          "bidirectional_distance_max_sampled": 0.043454853699923135,
+          "normal_consistency_absdot": 0.9268039392288158
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.012521469455868465,
+          "chamfer_l2_squared_mean": 0.00019822552278285879,
+          "bidirectional_distance_p95": 0.024198709072134995,
+          "bidirectional_distance_max_sampled": 0.043454853699923135,
+          "normal_consistency_absdot": 0.9268039402829992
+        }
+      },
+      "meshoptimizer_reason": null
+    },
+    {
+      "split": "train",
+      "file_id": 97859,
+      "source_sha256": "b53d4bc507e41638e67cff2252ce74e6ed202f82e0cd93739147078581f69315",
+      "preparation_status": "rejected",
+      "meshoptimizer_status": "input_rejected",
+      "old_qem_base_methods": {},
+      "rank8_fixed_status": null,
+      "rank8_fixed_triangle_count": null,
+      "rank8_on_meshoptimizer_base": {},
+      "sampled_surface": {
+        "qem": null,
+        "rank8_fixed": null
+      },
+      "meshoptimizer_reason": "Nearest-surface radius-check cap exceeded: 80000000"
+    },
+    {
+      "split": "train",
+      "file_id": 741525,
+      "source_sha256": "b6a751d128a57778977bbc124f061d09c3162a1e21ad534ebec1251ed9845a4e",
+      "preparation_status": "rejected",
+      "meshoptimizer_status": "input_rejected",
+      "old_qem_base_methods": {},
+      "rank8_fixed_status": null,
+      "rank8_fixed_triangle_count": null,
+      "rank8_on_meshoptimizer_base": {},
+      "sampled_surface": {
+        "qem": null,
+        "rank8_fixed": null
+      },
+      "meshoptimizer_reason": "Nearest-surface radius-check cap exceeded: 80000000"
+    },
+    {
+      "split": "train",
+      "file_id": 104559,
+      "source_sha256": "bb821a80e919e004d3192bd1aab5796ffaa8255b9e1d2a4228cc3efe8da501f6",
+      "preparation_status": "prepared",
+      "meshoptimizer_status": "rejected",
+      "old_qem_base_methods": {},
+      "rank8_fixed_status": null,
+      "rank8_fixed_triangle_count": null,
+      "rank8_on_meshoptimizer_base": {},
+      "sampled_surface": {
+        "qem": null,
+        "rank8_fixed": null
+      },
+      "meshoptimizer_reason": "Duplicate geometric triangle"
+    },
+    {
+      "split": "train",
+      "file_id": 32770,
+      "source_sha256": "05cadafafe14a6b6a5463a46b0fdf6d9bf706fa8d6e3358cff6e8096f7d82e7c",
+      "preparation_status": "prepared",
+      "meshoptimizer_status": "rejected",
+      "old_qem_base_methods": {},
+      "rank8_fixed_status": null,
+      "rank8_fixed_triangle_count": null,
+      "rank8_on_meshoptimizer_base": {},
+      "sampled_surface": {
+        "qem": null,
+        "rank8_fixed": null
+      },
+      "meshoptimizer_reason": "Duplicate geometric triangle"
+    },
+    {
+      "split": "validation",
+      "file_id": 90431,
+      "source_sha256": "b3e7526f62cd64b24cbe07ba1107053786564b655f360033d84981e457fad05c",
+      "preparation_status": "prepared",
+      "meshoptimizer_status": "usable",
+      "old_qem_base_methods": {
+        "qem": {
+          "mse": 0.011476619182206813,
+          "ssim": 0.8881420860265186,
+          "flip": 0.06888439226895571,
+          "lpips_squeeze": 0.05894510013361772,
+          "silhouette_xor_fraction": 0.029172261555989582,
+          "coverage_mae": 0.029511769612630207,
+          "psnr_db": 19.401860289027223,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.02190296041612801,
+          "chamfer_l2_squared_mean": 0.0010915818556798567,
+          "bidirectional_distance_p95": 0.07274525740108108,
+          "bidirectional_distance_max_sampled": 0.24237307097390978,
+          "normal_consistency_absdot": 0.8735792301132483
+        },
+        "meshoptimizer": {
+          "mse": 0.00043237091928785397,
+          "ssim": 0.9706810522142444,
+          "flip": 0.016278054177140195,
+          "lpips_squeeze": 0.009475720561264703,
+          "silhouette_xor_fraction": 0.0014190673828125,
+          "coverage_mae": 0.0013872782389322917,
+          "psnr_db": 33.64143523824949,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009998791717818326,
+          "chamfer_l2_squared_mean": 0.0001251076185097349,
+          "bidirectional_distance_p95": 0.019119953770329292,
+          "bidirectional_distance_max_sampled": 0.03750941157112362,
+          "normal_consistency_absdot": 0.9685308967576353
+        },
+        "rank8_fixed": {
+          "mse": 0.01162385149795276,
+          "ssim": 0.885505495208494,
+          "flip": 0.07211196391532819,
+          "lpips_squeeze": 0.05977668892592192,
+          "silhouette_xor_fraction": 0.029699961344401043,
+          "coverage_mae": 0.030068715413411457,
+          "psnr_db": 19.346499470610016,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.022070868997540398,
+          "chamfer_l2_squared_mean": 0.0011009254718679449,
+          "bidirectional_distance_p95": 0.07308525262765612,
+          "bidirectional_distance_max_sampled": 0.2419521812745127,
+          "normal_consistency_absdot": 0.8736605973992646
+        }
+      },
+      "rank8_fixed_status": "decoded",
+      "rank8_fixed_triangle_count": 466,
+      "rank8_on_meshoptimizer_base": {
+        "base": {
+          "triangles": 466,
+          "mean": {
+            "mse": 0.00043237091928785397,
+            "ssim": 0.9706810522142444,
+            "flip": 0.016278054177140195,
+            "lpips_squeeze": 0.009475720561264703,
+            "silhouette_xor_fraction": 0.0014190673828125,
+            "coverage_mae": 0.0013872782389322917,
+            "psnr_db": 33.64143523824949
+          }
+        },
+        "fixed": {
+          "triangles": 466,
+          "mean": {
+            "mse": 0.00043237091928785397,
+            "ssim": 0.9706810522142444,
+            "flip": 0.016278054177140195,
+            "lpips_squeeze": 0.009475720561264703,
+            "silhouette_xor_fraction": 0.0014190673828125,
+            "coverage_mae": 0.0013872782389322917,
+            "psnr_db": 33.64143523824949
+          }
+        }
+      },
+      "sampled_surface": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009998791717818326,
+          "chamfer_l2_squared_mean": 0.0001251076185097349,
+          "bidirectional_distance_p95": 0.019119953770329292,
+          "bidirectional_distance_max_sampled": 0.03750941157112362,
+          "normal_consistency_absdot": 0.9685308967576353
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009998791764350711,
+          "chamfer_l2_squared_mean": 0.00012510761911236403,
+          "bidirectional_distance_p95": 0.019119953665277783,
+          "bidirectional_distance_max_sampled": 0.03750941153837827,
+          "normal_consistency_absdot": 0.9685308969744637
+        }
+      },
+      "meshoptimizer_reason": null
+    },
+    {
+      "split": "validation",
+      "file_id": 263198,
+      "source_sha256": "8c58c38d8dda6750250670eb9f409b989efc460973641b9bea4add68a7fb8a4d",
+      "preparation_status": "prepared",
+      "meshoptimizer_status": "usable",
+      "old_qem_base_methods": {
+        "qem": {
+          "mse": 0.0013765422542874634,
+          "ssim": 0.9731875295302242,
+          "flip": 0.013945917734721055,
+          "lpips_squeeze": 0.015653787413612008,
+          "silhouette_xor_fraction": 0.0025647481282552085,
+          "coverage_mae": 0.002593994140625,
+          "psnr_db": 28.612104529795275,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.0078676542442507,
+          "chamfer_l2_squared_mean": 0.00015263220629274795,
+          "bidirectional_distance_p95": 0.026714609428306394,
+          "bidirectional_distance_max_sampled": 0.07949518905364794,
+          "normal_consistency_absdot": 0.8938221302092257
+        },
+        "meshoptimizer": {
+          "mse": 0.00011943118535263877,
+          "ssim": 0.9959845358805293,
+          "flip": 0.00445496787627538,
+          "lpips_squeeze": 0.002191465978588288,
+          "silhouette_xor_fraction": 0.0005620320638020834,
+          "coverage_mae": 0.0005292892456054688,
+          "psnr_db": 39.228822573089374,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.004785832247565984,
+          "chamfer_l2_squared_mean": 2.8053083545082318e-05,
+          "bidirectional_distance_p95": 0.008858824776604384,
+          "bidirectional_distance_max_sampled": 0.017974527931306824,
+          "normal_consistency_absdot": 0.9779552084866792
+        },
+        "rank8_fixed": {
+          "mse": 0.001618001650162848,
+          "ssim": 0.9698458463419003,
+          "flip": 0.01725243676143388,
+          "lpips_squeeze": 0.017702859942801297,
+          "silhouette_xor_fraction": 0.0033467610677083335,
+          "coverage_mae": 0.003177642822265625,
+          "psnr_db": 27.91021039796519,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008003357253926497,
+          "chamfer_l2_squared_mean": 0.0001551080966602885,
+          "bidirectional_distance_p95": 0.026967117323067717,
+          "bidirectional_distance_max_sampled": 0.07945206229973394,
+          "normal_consistency_absdot": 0.8939741532555167
+        }
+      },
+      "rank8_fixed_status": "decoded",
+      "rank8_fixed_triangle_count": 154,
+      "rank8_on_meshoptimizer_base": {
+        "base": {
+          "triangles": 154,
+          "mean": {
+            "mse": 0.00011943118535263877,
+            "ssim": 0.9959845358805293,
+            "flip": 0.00445496787627538,
+            "lpips_squeeze": 0.002191465978588288,
+            "silhouette_xor_fraction": 0.0005620320638020834,
+            "coverage_mae": 0.0005292892456054688,
+            "psnr_db": 39.228822573089374
+          }
+        },
+        "fixed": {
+          "triangles": 154,
+          "mean": {
+            "mse": 0.00011943118535263877,
+            "ssim": 0.9959845358805293,
+            "flip": 0.00445496787627538,
+            "lpips_squeeze": 0.002191465978588288,
+            "silhouette_xor_fraction": 0.0005620320638020834,
+            "coverage_mae": 0.0005292892456054688,
+            "psnr_db": 39.228822573089374
+          }
+        }
+      },
+      "sampled_surface": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.004785832247565984,
+          "chamfer_l2_squared_mean": 2.8053083545082318e-05,
+          "bidirectional_distance_p95": 0.008858824776604384,
+          "bidirectional_distance_max_sampled": 0.017974527931306824,
+          "normal_consistency_absdot": 0.9779552084866792
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.004785832147226276,
+          "chamfer_l2_squared_mean": 2.805308241604952e-05,
+          "bidirectional_distance_p95": 0.008858820889970148,
+          "bidirectional_distance_max_sampled": 0.017974527745091062,
+          "normal_consistency_absdot": 0.9779552083851561
+        }
+      },
+      "meshoptimizer_reason": null
+    },
+    {
+      "split": "validation",
+      "file_id": 44710,
+      "source_sha256": "af0aa394903a6099da1a542ed6707aceb5130dea9726dc0ba0e7ff74147cbf58",
+      "preparation_status": "prepared",
+      "meshoptimizer_status": "usable",
+      "old_qem_base_methods": {
+        "qem": {
+          "mse": 0.0005666892112684024,
+          "ssim": 0.9738490933117885,
+          "flip": 0.016888701007701457,
+          "lpips_squeeze": 0.016987508550907176,
+          "silhouette_xor_fraction": 0.0020281473795572915,
+          "coverage_mae": 0.002047856648763021,
+          "psnr_db": 32.466550554566176,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009599859920524647,
+          "chamfer_l2_squared_mean": 0.00011473973203732603,
+          "bidirectional_distance_p95": 0.018183554879373065,
+          "bidirectional_distance_max_sampled": 0.034888730261953035,
+          "normal_consistency_absdot": 0.9683965403020826
+        },
+        "meshoptimizer": {
+          "mse": 0.00024067040912374447,
+          "ssim": 0.9892778950276778,
+          "flip": 0.009126121934968978,
+          "lpips_squeeze": 0.008932717590748021,
+          "silhouette_xor_fraction": 0.0010007222493489583,
+          "coverage_mae": 0.0009298324584960938,
+          "psnr_db": 36.18577303760188,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.00937974205013222,
+          "chamfer_l2_squared_mean": 0.00011093974728053325,
+          "bidirectional_distance_p95": 0.01810585713970466,
+          "bidirectional_distance_max_sampled": 0.03481853862439423,
+          "normal_consistency_absdot": 0.9704118321356864
+        },
+        "rank8_fixed": {
+          "mse": 0.0006426506233142,
+          "ssim": 0.9719756395353727,
+          "flip": 0.0181323466822505,
+          "lpips_squeeze": 0.017702825833112,
+          "silhouette_xor_fraction": 0.0023905436197916665,
+          "coverage_mae": 0.0023905436197916665,
+          "psnr_db": 31.920250668952,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009702403862344826,
+          "chamfer_l2_squared_mean": 0.0001168138717597001,
+          "bidirectional_distance_p95": 0.01833599995108076,
+          "bidirectional_distance_max_sampled": 0.03472323883063098,
+          "normal_consistency_absdot": 0.9683797397212413
+        }
+      },
+      "rank8_fixed_status": "decoded",
+      "rank8_fixed_triangle_count": 950,
+      "rank8_on_meshoptimizer_base": {
+        "base": {
+          "triangles": 950,
+          "mean": {
+            "mse": 0.00024067040912374447,
+            "ssim": 0.9892778950276778,
+            "flip": 0.009126121934968978,
+            "lpips_squeeze": 0.008932717590748021,
+            "silhouette_xor_fraction": 0.0010007222493489583,
+            "coverage_mae": 0.0009298324584960938,
+            "psnr_db": 36.18577303760188
+          }
+        },
+        "fixed": {
+          "triangles": 950,
+          "mean": {
+            "mse": 0.00024067040912374447,
+            "ssim": 0.9892778950276778,
+            "flip": 0.009126121934968978,
+            "lpips_squeeze": 0.008932717590748021,
+            "silhouette_xor_fraction": 0.0010007222493489583,
+            "coverage_mae": 0.0009298324584960938,
+            "psnr_db": 36.18577303760188
+          }
+        }
+      },
+      "sampled_surface": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.00937974205013222,
+          "chamfer_l2_squared_mean": 0.00011093974728053325,
+          "bidirectional_distance_p95": 0.01810585713970466,
+          "bidirectional_distance_max_sampled": 0.03481853862439423,
+          "normal_consistency_absdot": 0.9704118321356864
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009379742176643616,
+          "chamfer_l2_squared_mean": 0.00011093974930727766,
+          "bidirectional_distance_p95": 0.0181058570855683,
+          "bidirectional_distance_max_sampled": 0.03481853827504471,
+          "normal_consistency_absdot": 0.9704118322955968
+        }
+      },
+      "meshoptimizer_reason": null
+    },
+    {
+      "split": "validation",
+      "file_id": 191968,
+      "source_sha256": "4384855f2f404959ae7516298cd5b8a620c4c29ef1e0a1af4329e47c598db784",
+      "preparation_status": "rejected",
+      "meshoptimizer_status": "input_rejected",
+      "old_qem_base_methods": {},
+      "rank8_fixed_status": null,
+      "rank8_fixed_triangle_count": null,
+      "rank8_on_meshoptimizer_base": {},
+      "sampled_surface": {
+        "qem": null,
+        "rank8_fixed": null
+      },
+      "meshoptimizer_reason": "Duplicate geometric triangle"
+    },
+    {
+      "split": "validation",
+      "file_id": 383021,
+      "source_sha256": "0f6734eafb2eae7b152f05225423bebce9d467c1203fb6f9e5be758022fcb397",
+      "preparation_status": "prepared",
+      "meshoptimizer_status": "usable",
+      "old_qem_base_methods": {
+        "qem": {
+          "mse": 5.204637432868368e-05,
+          "ssim": 0.9951875095654011,
+          "flip": 0.004942218346210818,
+          "lpips_squeeze": 0.003939017396381435,
+          "silhouette_xor_fraction": 0.00024159749348958334,
+          "coverage_mae": 0.00027942657470703125,
+          "psnr_db": 42.83609519061996,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008919204154708316,
+          "chamfer_l2_squared_mean": 0.00010067945195145729,
+          "bidirectional_distance_p95": 0.017300347087804827,
+          "bidirectional_distance_max_sampled": 0.032540388785991935,
+          "normal_consistency_absdot": 0.9609755458373067
+        },
+        "meshoptimizer": {
+          "mse": 3.7575574711349004e-06,
+          "ssim": 0.9992688963612889,
+          "flip": 0.0009302962231837834,
+          "lpips_squeeze": 0.00045129310395471595,
+          "silhouette_xor_fraction": 1.0172526041666666e-05,
+          "coverage_mae": 1.811981201171875e-05,
+          "psnr_db": 54.25094368237826,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008919922036917233,
+          "chamfer_l2_squared_mean": 0.00010104497653116968,
+          "bidirectional_distance_p95": 0.017282699807559327,
+          "bidirectional_distance_max_sampled": 0.03140390404327185,
+          "normal_consistency_absdot": 0.9612637263502972
+        },
+        "rank8_fixed": {
+          "mse": 5.390701577493231e-05,
+          "ssim": 0.995135073607574,
+          "flip": 0.004999764903914183,
+          "lpips_squeeze": 0.003943132333612691,
+          "silhouette_xor_fraction": 0.00025177001953125,
+          "coverage_mae": 0.0002905527750651042,
+          "psnr_db": 42.68354709506039,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008921390724709276,
+          "chamfer_l2_squared_mean": 0.00010074963832319668,
+          "bidirectional_distance_p95": 0.01727580949743923,
+          "bidirectional_distance_max_sampled": 0.03361376588360037,
+          "normal_consistency_absdot": 0.9610024974070849
+        }
+      },
+      "rank8_fixed_status": "decoded",
+      "rank8_fixed_triangle_count": 4136,
+      "rank8_on_meshoptimizer_base": {
+        "base": {
+          "triangles": 4136,
+          "mean": {
+            "mse": 3.7575574711349004e-06,
+            "ssim": 0.9992688963612889,
+            "flip": 0.0009302962231837834,
+            "lpips_squeeze": 0.00045129310395471595,
+            "silhouette_xor_fraction": 1.0172526041666666e-05,
+            "coverage_mae": 1.811981201171875e-05,
+            "psnr_db": 54.25094368237826
+          }
+        },
+        "fixed": {
+          "triangles": 4136,
+          "mean": {
+            "mse": 3.7575574711349004e-06,
+            "ssim": 0.9992688963612889,
+            "flip": 0.0009302962231837834,
+            "lpips_squeeze": 0.00045129310395471595,
+            "silhouette_xor_fraction": 1.0172526041666666e-05,
+            "coverage_mae": 1.811981201171875e-05,
+            "psnr_db": 54.25094368237826
+          }
+        }
+      },
+      "sampled_surface": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008919922036917233,
+          "chamfer_l2_squared_mean": 0.00010104497653116968,
+          "bidirectional_distance_p95": 0.017282699807559327,
+          "bidirectional_distance_max_sampled": 0.03140390404327185,
+          "normal_consistency_absdot": 0.9612637263502972
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008919922023010732,
+          "chamfer_l2_squared_mean": 0.00010104497611257933,
+          "bidirectional_distance_p95": 0.017282700810758733,
+          "bidirectional_distance_max_sampled": 0.03140390317101514,
+          "normal_consistency_absdot": 0.9612637262915247
+        }
+      },
+      "meshoptimizer_reason": null
+    },
+    {
+      "split": "validation",
+      "file_id": 100894,
+      "source_sha256": "0e6c0419f7b8a0994665315dcbbd9f04dae60df615fe4699c559fd46a3c39bb0",
+      "preparation_status": "prepared",
+      "meshoptimizer_status": "usable",
+      "old_qem_base_methods": {
+        "qem": {
+          "mse": 0.0008848115362968871,
+          "ssim": 0.9608352028330137,
+          "flip": 0.021829200287659962,
+          "lpips_squeeze": 0.023784114125495154,
+          "silhouette_xor_fraction": 0.0017573038736979167,
+          "coverage_mae": 0.0017458597819010417,
+          "psnr_db": 30.531492236101073,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.010134048373881464,
+          "chamfer_l2_squared_mean": 0.00014216423778074937,
+          "bidirectional_distance_p95": 0.019304259658108006,
+          "bidirectional_distance_max_sampled": 0.07112683041697257,
+          "normal_consistency_absdot": 0.9554808648379209
+        },
+        "meshoptimizer": {
+          "mse": 0.00012152380810690802,
+          "ssim": 0.9890168966524836,
+          "flip": 0.007957536048100641,
+          "lpips_squeeze": 0.008019835009084394,
+          "silhouette_xor_fraction": 0.0004336039225260417,
+          "coverage_mae": 0.0004968643188476562,
+          "psnr_db": 39.15338629748432,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008721780604194885,
+          "chamfer_l2_squared_mean": 9.628755018005155e-05,
+          "bidirectional_distance_p95": 0.016925959285739204,
+          "bidirectional_distance_max_sampled": 0.030259028035732348,
+          "normal_consistency_absdot": 0.9716928713116574
+        }
+      },
+      "rank8_fixed_status": "decoded",
+      "rank8_fixed_triangle_count": 1746,
+      "rank8_on_meshoptimizer_base": {
+        "base": {
+          "triangles": 1746,
+          "mean": {
+            "mse": 0.00012152380810690802,
+            "ssim": 0.9890168966524836,
+            "flip": 0.007957536048100641,
+            "lpips_squeeze": 0.008019835009084394,
+            "silhouette_xor_fraction": 0.0004336039225260417,
+            "coverage_mae": 0.0004968643188476562,
+            "psnr_db": 39.15338629748432
+          }
+        },
+        "fixed": {
+          "triangles": 1746,
+          "mean": {
+            "mse": 0.00012152380810690802,
+            "ssim": 0.9890168966524836,
+            "flip": 0.007957536048100641,
+            "lpips_squeeze": 0.008019835009084394,
+            "silhouette_xor_fraction": 0.0004336039225260417,
+            "coverage_mae": 0.0004968643188476562,
+            "psnr_db": 39.15338629748432
+          }
+        }
+      },
+      "sampled_surface": {
+        "qem": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008721780604194885,
+          "chamfer_l2_squared_mean": 9.628755018005155e-05,
+          "bidirectional_distance_p95": 0.016925959285739204,
+          "bidirectional_distance_max_sampled": 0.030259028035732348,
+          "normal_consistency_absdot": 0.9716928713116574
+        },
+        "rank8_fixed": {
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008721780593442448,
+          "chamfer_l2_squared_mean": 9.628754989147499e-05,
+          "bidirectional_distance_p95": 0.016925959849201422,
+          "bidirectional_distance_max_sampled": 0.030259027980182,
+          "normal_consistency_absdot": 0.9716928715579797
+        }
+      },
+      "meshoptimizer_reason": null
+    },
+    {
+      "split": "validation",
+      "file_id": 257594,
+      "source_sha256": "7f97fe7ee1ba78f46b40413d2ff24cdd5d5edb6045dd94da368a02ccc15df388",
+      "preparation_status": "rejected",
+      "meshoptimizer_status": "input_rejected",
+      "old_qem_base_methods": {},
+      "rank8_fixed_status": null,
+      "rank8_fixed_triangle_count": null,
+      "rank8_on_meshoptimizer_base": {},
+      "sampled_surface": {
+        "qem": null,
+        "rank8_fixed": null
+      },
+      "meshoptimizer_reason": "Duplicate geometric triangle"
+    },
+    {
+      "split": "validation",
+      "file_id": 94990,
+      "source_sha256": "c074ee56d1c6d5ea6c5601ae11057b4c43684e63d605d3216ce96366aafa7f4b",
+      "preparation_status": "rejected",
+      "meshoptimizer_status": "input_rejected",
+      "old_qem_base_methods": {},
+      "rank8_fixed_status": null,
+      "rank8_fixed_triangle_count": null,
+      "rank8_on_meshoptimizer_base": {},
+      "sampled_surface": {
+        "qem": null,
+        "rank8_fixed": null
+      },
+      "meshoptimizer_reason": "Degenerate triangle"
+    }
+  ]
+}

@@ -1,0 +1,2564 @@
+{
+  "schema": "manymesh-qem-meshopt-screen-v1",
+  "scope": "validation-only baseline comparison; no decoder result or final-test geometry",
+  "split": "validation",
+  "target_retention": 0.7,
+  "comparison": "QEM and meshoptimizer are matched to the QEM output's actual face count per asset",
+  "meshoptimizer": {
+    "version": "0.18.1",
+    "flags": [
+      "LockBorder"
+    ],
+    "target_error": 1000000.0
+  },
+  "image_protocol": {
+    "views": 12,
+    "resolution": [
+      256,
+      256
+    ],
+    "box_samples_per_pixel": 4,
+    "flat_shading": true,
+    "input_color": "8-bit sRGB",
+    "ssim": "Gaussian sigma=1.5, population covariance",
+    "flip": "NVIDIA LDR-FLIP",
+    "flip_ppd": 67.0
+  },
+  "surface_protocol": {
+    "samples_per_direction": 20000,
+    "method": "Area-uniform samples; nearest sampled-point-cloud distances; estimates, not Hausdorff bounds",
+    "meshoptimizer_sampling_cleanup": "Only zero-area/sub-threshold and duplicate faces omitted for surface sampling; rendered image metrics use the raw simplifier output and topology is reported separately"
+  },
+  "lpips": "Not measured in this supplemental screen",
+  "uncertainty": "10,000 paired bootstrap resamples over assets; camera views are averaged within each asset and are not independent samples",
+  "runtime": {
+    "python": "3.12.3",
+    "numpy": "2.2.6",
+    "scipy": "1.15.3",
+    "node": "v22.16.0",
+    "fast_simplification": "0.2.0",
+    "flip_evaluator": "1.7",
+    "scikit_image": "0.25.2"
+  },
+  "inputs": {
+    "download_manifest_sha256": "3a7cfbd6e652f5fbeade83110c5027e37d05629303580657d444a5bbcd645742"
+  },
+  "code_sha256": {
+    "tools/mmtrain/compare_qem_meshopt_validation_70pct.py": "67c2d5a5b9d69f16203c796586492843ee24c0be07f93cd15750c34febe2e7ec",
+    "tools/mmtrain/meshopt_simplify.cjs": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+    "tools/mmtrain/cluster_decoder_meshopt_baseline.py": "621ba01107f3acfcd5aa01882dc0373e1d3f4ce69eca0045ad3f7a56271837f2",
+    "tools/mmtrain/cluster_decoder_quality.py": "c64cf7c5a4dc75351c3182ac92adca61a91816b500ec12934e45453f99756b0a",
+    "tools/mmtrain/cluster_decoder_surface_quality.py": "08d80488efa4e4d3d2b45166f11d76ca230e3127c94f2a4580181f18bda6ea2c",
+    "tools/mmtrain/cluster_decoder.py": "46e66127d31083a9e9d81cf4fd7e9dc767676554e2a3dde849c47b25169e2425",
+    "tools/mmtrain/cluster_decoder_pilot.py": "8db32f1897388c06212ecb385daa0c0eb27e83257c7ff9fd8ed3637933782318",
+    "tools/mmtrain/make_refinement_pairs.py": "f23cee47bae436740c14fbd3e5745e4212498712434e480ffd04ff73a51ee534"
+  },
+  "assets_expected": 8,
+  "records": [
+    {
+      "split": "validation",
+      "file_id": 90431,
+      "thing_id": 31038,
+      "source_sha256": "b3e7526f62cd64b24cbe07ba1107053786564b655f360033d84981e457fad05c",
+      "source_faces": 736,
+      "requested_target_faces": 515,
+      "actual_qem_faces": 514,
+      "actual_meshoptimizer_faces": 514,
+      "actual_retention": 0.6983695652173914,
+      "meshoptimizer_error": 0.0030823880806565285,
+      "meshoptimizer_topology_status": "valid",
+      "meshoptimizer_boundary_preserved": true,
+      "methods": {
+        "qem": {
+          "mse": 0.0013242625493537642,
+          "ssim": 0.9639731343668426,
+          "flip": 0.02041005832143128,
+          "silhouette_xor_fraction": 0.004311879475911458,
+          "coverage_mae": 0.004330952962239583,
+          "psnr_db": 28.780259027878586,
+          "silhouette_xor_mse_share": 0.6088275666359221,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.010164813534107801,
+          "chamfer_l2_squared_mean": 0.00013040500121111714,
+          "bidirectional_distance_p95": 0.01970073990101123,
+          "bidirectional_distance_max_sampled": 0.03582104345296607,
+          "normal_consistency_absdot": 0.9642150836114415
+        },
+        "meshoptimizer": {
+          "mse": 0.0003275279419461565,
+          "ssim": 0.9779706520814965,
+          "flip": 0.013932120161674296,
+          "silhouette_xor_fraction": 0.0010388692220052083,
+          "coverage_mae": 0.0010137557983398438,
+          "psnr_db": 34.847516437168245,
+          "silhouette_xor_mse_share": 0.30765321827620434,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.00999323206239901,
+          "chamfer_l2_squared_mean": 0.0001251633789281537,
+          "bidirectional_distance_p95": 0.01913425597062186,
+          "bidirectional_distance_max_sampled": 0.03582104778137519,
+          "normal_consistency_absdot": 0.96822340996324,
+          "degenerate_faces_omitted_for_sampling": 0,
+          "duplicate_faces_omitted_for_sampling": 0,
+          "topology_after_surface_sampling_cleanup": "valid"
+        }
+      },
+      "per_view": {
+        "qem": [
+          {
+            "mse": 0.0021068714087580493,
+            "psnr_db": 26.763619704056815,
+            "ssim": 0.9532428278918496,
+            "flip": 0.022160973399877548,
+            "silhouette_xor_fraction": 0.0062103271484375,
+            "silhouette_xor_mse_share": 0.5596314794628477,
+            "coverage_mae": 0.0056915283203125
+          },
+          {
+            "mse": 0.002230965666750769,
+            "psnr_db": 26.51507113201335,
+            "ssim": 0.9485955329816399,
+            "flip": 0.02913467213511467,
+            "silhouette_xor_fraction": 0.0061187744140625,
+            "silhouette_xor_mse_share": 0.7579721583993289,
+            "coverage_mae": 0.006359100341796875
+          },
+          {
+            "mse": 0.0011384978508866782,
+            "psnr_db": 29.436677848546683,
+            "ssim": 0.9631745117545565,
+            "flip": 0.026188252493739128,
+            "silhouette_xor_fraction": 0.0029296875,
+            "silhouette_xor_mse_share": 0.6041605347751421,
+            "coverage_mae": 0.003116607666015625
+          },
+          {
+            "mse": 0.0008790859998257881,
+            "psnr_db": 30.559686363906067,
+            "ssim": 0.9749792900432136,
+            "flip": 0.01920561119914055,
+            "silhouette_xor_fraction": 0.0017547607421875,
+            "silhouette_xor_mse_share": 0.5105893802956911,
+            "coverage_mae": 0.001728057861328125
+          },
+          {
+            "mse": 0.0010860817691813243,
+            "psnr_db": 29.641374762504952,
+            "ssim": 0.96687663172306,
+            "flip": 0.02175634540617466,
+            "silhouette_xor_fraction": 0.0035858154296875,
+            "silhouette_xor_mse_share": 0.5093023074925341,
+            "coverage_mae": 0.00363922119140625
+          },
+          {
+            "mse": 0.001834523202088739,
+            "psnr_db": 27.36476791144127,
+            "ssim": 0.9629143580760356,
+            "flip": 0.02305503375828266,
+            "silhouette_xor_fraction": 0.00555419921875,
+            "silhouette_xor_mse_share": 0.7398925603057951,
+            "coverage_mae": 0.0057220458984375
+          },
+          {
+            "mse": 0.00037220252013948956,
+            "psnr_db": 34.292206906384365,
+            "ssim": 0.9773220003698423,
+            "flip": 0.007746308576315641,
+            "silhouette_xor_fraction": 0.006378173828125,
+            "silhouette_xor_mse_share": 0.8509607958475108,
+            "coverage_mae": 0.00597381591796875
+          },
+          {
+            "mse": 0.0017129731315779987,
+            "psnr_db": 27.662494490011717,
+            "ssim": 0.9617352784655396,
+            "flip": 0.018473122268915176,
+            "silhouette_xor_fraction": 0.006317138671875,
+            "silhouette_xor_mse_share": 0.6399833255659951,
+            "coverage_mae": 0.00647735595703125
+          },
+          {
+            "mse": 0.0009951407943309062,
+            "psnr_db": 30.021154701334165,
+            "ssim": 0.969781597277462,
+            "flip": 0.017214441671967506,
+            "silhouette_xor_fraction": 0.00311279296875,
+            "silhouette_xor_mse_share": 0.5550710000610739,
+            "coverage_mae": 0.003223419189453125
+          },
+          {
+            "mse": 0.00017835828993055555,
+            "psnr_db": 37.48706700245304,
+            "ssim": 0.987571882105707,
+            "flip": 0.00572609668597579,
+            "silhouette_xor_fraction": 0.0009002685546875,
+            "silhouette_xor_mse_share": 0.43277724420119185,
+            "coverage_mae": 0.00096893310546875
+          },
+          {
+            "mse": 0.0013701169997717224,
+            "psnr_db": 28.632423451168442,
+            "ssim": 0.9543853142355824,
+            "flip": 0.024515407159924507,
+            "silhouette_xor_fraction": 0.00372314453125,
+            "silhouette_xor_mse_share": 0.5011368922387837,
+            "coverage_mae": 0.003993988037109375
+          },
+          {
+            "mse": 0.0019863329590031477,
+            "psnr_db": 27.01947951138918,
+            "ssim": 0.9470983874776233,
+            "flip": 0.029744435101747513,
+            "silhouette_xor_fraction": 0.005157470703125,
+            "silhouette_xor_mse_share": 0.644453120985172,
+            "coverage_mae": 0.005077362060546875
+          }
+        ],
+        "meshoptimizer": [
+          {
+            "mse": 0.00012387320794586217,
+            "psnr_db": 39.0702261533091,
+            "ssim": 0.9931865157511531,
+            "flip": 0.004993521608412266,
+            "silhouette_xor_fraction": 0.0002899169921875,
+            "silhouette_xor_mse_share": 0.08574437896276256,
+            "coverage_mae": 0.000354766845703125
+          },
+          {
+            "mse": 0.0002477961638852845,
+            "psnr_db": 36.05905421189772,
+            "ssim": 0.9815241135046447,
+            "flip": 0.013423419557511806,
+            "silhouette_xor_fraction": 0.0005035400390625,
+            "silhouette_xor_mse_share": 0.20123335902831307,
+            "coverage_mae": 0.000377655029296875
+          },
+          {
+            "mse": 0.0003416180638155998,
+            "psnr_db": 34.664591730883544,
+            "ssim": 0.9784166908913686,
+            "flip": 0.01738676242530346,
+            "silhouette_xor_fraction": 0.0015869140625,
+            "silhouette_xor_mse_share": 0.27137624862790016,
+            "coverage_mae": 0.001522064208984375
+          },
+          {
+            "mse": 0.0008775888668120434,
+            "psnr_db": 30.567088949055016,
+            "ssim": 0.9369656916233474,
+            "flip": 0.03153196722269058,
+            "silhouette_xor_fraction": 0.002166748046875,
+            "silhouette_xor_mse_share": 0.25646219904348494,
+            "coverage_mae": 0.002140045166015625
+          },
+          {
+            "mse": 0.0004211740226114955,
+            "psnr_db": 33.755384232994615,
+            "ssim": 0.971500929516332,
+            "flip": 0.019006025046110153,
+            "silhouette_xor_fraction": 0.0008697509765625,
+            "silhouette_xor_mse_share": 0.21805034922644226,
+            "coverage_mae": 0.00087738037109375
+          },
+          {
+            "mse": 0.00017400651379577566,
+            "psnr_db": 37.594344939437676,
+            "ssim": 0.9887825605341355,
+            "flip": 0.010180503129959106,
+            "silhouette_xor_fraction": 0.000823974609375,
+            "silhouette_xor_mse_share": 0.3412683321533326,
+            "coverage_mae": 0.000782012939453125
+          },
+          {
+            "mse": 2.6138346729623226e-05,
+            "psnr_db": 45.82721885344169,
+            "ssim": 0.9976737118423337,
+            "flip": 0.0014134700177237391,
+            "silhouette_xor_fraction": 0.00054931640625,
+            "silhouette_xor_mse_share": 0.5058175027830645,
+            "coverage_mae": 0.00051116943359375
+          },
+          {
+            "mse": 0.00013616729818459247,
+            "psnr_db": 38.65927179671685,
+            "ssim": 0.9876210942819766,
+            "flip": 0.006819756235927343,
+            "silhouette_xor_fraction": 0.0003814697265625,
+            "silhouette_xor_mse_share": 0.2559118623271075,
+            "coverage_mae": 0.0002899169921875
+          },
+          {
+            "mse": 0.00032753867765703096,
+            "psnr_db": 34.84737408645603,
+            "ssim": 0.974044478666953,
+            "flip": 0.015646107494831085,
+            "silhouette_xor_fraction": 0.0008697509765625,
+            "silhouette_xor_mse_share": 0.33792043123687576,
+            "coverage_mae": 0.00087738037109375
+          },
+          {
+            "mse": 0.0005820806225370049,
+            "psnr_db": 32.35016858137086,
+            "ssim": 0.9812192223859223,
+            "flip": 0.011423738673329353,
+            "silhouette_xor_fraction": 0.0028533935546875,
+            "silhouette_xor_mse_share": 0.7059451954506388,
+            "coverage_mae": 0.0028228759765625
+          },
+          {
+            "mse": 0.00039450815942185697,
+            "psnr_db": 34.03944010058509,
+            "ssim": 0.9728313274644976,
+            "flip": 0.017852814868092537,
+            "silhouette_xor_fraction": 0.0008697509765625,
+            "silhouette_xor_mse_share": 0.3328509363616681,
+            "coverage_mae": 0.00089263916015625
+          },
+          {
+            "mse": 0.00027784535995770853,
+            "psnr_db": 35.56196851574623,
+            "ssim": 0.9718814885152932,
+            "flip": 0.01750735566020012,
+            "silhouette_xor_fraction": 0.000701904296875,
+            "silhouette_xor_mse_share": 0.17925782411286184,
+            "coverage_mae": 0.0007171630859375
+          }
+        ]
+      }
+    },
+    {
+      "split": "validation",
+      "file_id": 263198,
+      "thing_id": 121456,
+      "source_sha256": "8c58c38d8dda6750250670eb9f409b989efc460973641b9bea4add68a7fb8a4d",
+      "source_faces": 452,
+      "requested_target_faces": 316,
+      "actual_qem_faces": 316,
+      "actual_meshoptimizer_faces": 316,
+      "actual_retention": 0.6991150442477876,
+      "meshoptimizer_error": 0.0008832099265418947,
+      "meshoptimizer_topology_status": "valid",
+      "meshoptimizer_boundary_preserved": true,
+      "methods": {
+        "qem": {
+          "mse": 9.817054726046873e-06,
+          "ssim": 0.9996843171037774,
+          "flip": 0.00044225395564960007,
+          "silhouette_xor_fraction": 4.4504801432291664e-05,
+          "coverage_mae": 5.4995218912760414e-05,
+          "psnr_db": 50.08018787985357,
+          "silhouette_xor_mse_share": 0.2558783261069646,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.004357199433910542,
+          "chamfer_l2_squared_mean": 2.4181937937648906e-05,
+          "bidirectional_distance_p95": 0.008495604014260283,
+          "bidirectional_distance_max_sampled": 0.015290085153361013,
+          "normal_consistency_absdot": 0.9844806920814635
+        },
+        "meshoptimizer": {
+          "mse": 1.4979875685083058e-05,
+          "ssim": 0.9996128314094235,
+          "flip": 0.000813970060335123,
+          "silhouette_xor_fraction": 7.120768229166667e-05,
+          "coverage_mae": 7.05718994140625e-05,
+          "psnr_db": 48.24491790742458,
+          "silhouette_xor_mse_share": 0.2779020033351199,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.004384023503983942,
+          "chamfer_l2_squared_mean": 2.4391596449548067e-05,
+          "bidirectional_distance_p95": 0.008547272513053466,
+          "bidirectional_distance_max_sampled": 0.01526992761117426,
+          "normal_consistency_absdot": 0.9841121286270549,
+          "degenerate_faces_omitted_for_sampling": 0,
+          "duplicate_faces_omitted_for_sampling": 0,
+          "topology_after_surface_sampling_cleanup": "valid"
+        }
+      },
+      "per_view": {
+        "qem": [
+          {
+            "mse": 5.348143968065168e-06,
+            "psnr_db": 52.71796910367662,
+            "ssim": 0.99986671192768,
+            "flip": 0.00034012520336546004,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.2508446316528454,
+            "coverage_mae": 4.1961669921875e-05
+          },
+          {
+            "mse": 5.2540451689254135e-06,
+            "psnr_db": 52.79506197912579,
+            "ssim": 0.999810650692175,
+            "flip": 0.00038524495903402567,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 5.340576171875e-05
+          },
+          {
+            "mse": 1.1074325755118222e-05,
+            "psnr_db": 49.55682705713961,
+            "ssim": 0.9996970615916364,
+            "flip": 0.0004400908073876053,
+            "silhouette_xor_fraction": 7.62939453125e-05,
+            "silhouette_xor_mse_share": 0.6383573835102663,
+            "coverage_mae": 3.814697265625e-05
+          },
+          {
+            "mse": 3.025945174331988e-06,
+            "psnr_db": 55.19138945017653,
+            "ssim": 0.9998839004690047,
+            "flip": 0.00026139323017559946,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 3.4332275390625e-05
+          },
+          {
+            "mse": 1.2574509353373702e-05,
+            "psnr_db": 49.00508951741578,
+            "ssim": 0.9995973615535257,
+            "flip": 0.0005941540002822876,
+            "silhouette_xor_fraction": 6.103515625e-05,
+            "silhouette_xor_mse_share": 0.23069458440637475,
+            "coverage_mae": 8.0108642578125e-05
+          },
+          {
+            "mse": 1.868905401468185e-05,
+            "psnr_db": 47.284126807828116,
+            "ssim": 0.9994905097262858,
+            "flip": 0.0006478469003923237,
+            "silhouette_xor_fraction": 0.0001220703125,
+            "silhouette_xor_mse_share": 0.6471127406049496,
+            "coverage_mae": 7.62939453125e-05
+          },
+          {
+            "mse": 1.7843572784505957e-06,
+            "psnr_db": 57.485181832982036,
+            "ssim": 0.999888538964982,
+            "flip": 0.00021245295647531748,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 2.6702880859375e-05
+          },
+          {
+            "mse": 1.2334217158064204e-05,
+            "psnr_db": 49.088884095890755,
+            "ssim": 0.9995346019230474,
+            "flip": 0.0005612139357253909,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.1575472775008561,
+            "coverage_mae": 4.9591064453125e-05
+          },
+          {
+            "mse": 1.0757064965998652e-05,
+            "psnr_db": 49.68306208497701,
+            "ssim": 0.9995480275128251,
+            "flip": 0.0005602512392215431,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.24137780589428673,
+            "coverage_mae": 3.814697265625e-05
+          },
+          {
+            "mse": 3.4872874164984625e-06,
+            "psnr_db": 54.57512257311354,
+            "ssim": 0.9999000579899026,
+            "flip": 0.0001997414365177974,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 3.4332275390625e-05
+          },
+          {
+            "mse": 2.0291314863874468e-05,
+            "psnr_db": 46.92689810057669,
+            "ssim": 0.9993990859835581,
+            "flip": 0.0005895985523238778,
+            "silhouette_xor_fraction": 9.1552734375e-05,
+            "silhouette_xor_mse_share": 0.4274496652056758,
+            "coverage_mae": 9.918212890625e-05
+          },
+          {
+            "mse": 1.318439159517974e-05,
+            "psnr_db": 48.79939906291676,
+            "ssim": 0.9995952969107048,
+            "flip": 0.0005149342468939722,
+            "silhouette_xor_fraction": 0.0001068115234375,
+            "silhouette_xor_mse_share": 0.4771558245083207,
+            "coverage_mae": 8.7738037109375e-05
+          }
+        ],
+        "meshoptimizer": [
+          {
+            "mse": 1.3578620978109379e-05,
+            "psnr_db": 48.67144334032558,
+            "ssim": 0.9996860136357316,
+            "flip": 0.0009301885729655623,
+            "silhouette_xor_fraction": 6.103515625e-05,
+            "silhouette_xor_mse_share": 0.2730320573749244,
+            "coverage_mae": 1.9073486328125e-05
+          },
+          {
+            "mse": 1.979148832480296e-05,
+            "psnr_db": 47.03521545513414,
+            "ssim": 0.9996021723872256,
+            "flip": 0.0010881422786042094,
+            "silhouette_xor_fraction": 0.0001068115234375,
+            "silhouette_xor_mse_share": 0.4494374029238449,
+            "coverage_mae": 0.000133514404296875
+          },
+          {
+            "mse": 1.672048836385044e-05,
+            "psnr_db": 47.767510420508295,
+            "ssim": 0.9995742106146451,
+            "flip": 0.0009150299592874944,
+            "silhouette_xor_fraction": 9.1552734375e-05,
+            "silhouette_xor_mse_share": 0.4932354674825272,
+            "coverage_mae": 0.000110626220703125
+          },
+          {
+            "mse": 1.6876772154940415e-06,
+            "psnr_db": 57.72710612766437,
+            "ssim": 0.999944319551726,
+            "flip": 0.00019118926138617098,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 3.814697265625e-06
+          },
+          {
+            "mse": 1.5817515348663976e-05,
+            "psnr_db": 48.00861735447171,
+            "ssim": 0.9996056073601398,
+            "flip": 0.000987989129498601,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.21541109100080105,
+            "coverage_mae": 6.103515625e-05
+          },
+          {
+            "mse": 2.141885783112264e-05,
+            "psnr_db": 46.69203691807912,
+            "ssim": 0.9995241466728261,
+            "flip": 0.0012422808213159442,
+            "silhouette_xor_fraction": 0.0001068115234375,
+            "silhouette_xor_mse_share": 0.3163263070248477,
+            "coverage_mae": 8.392333984375e-05
+          },
+          {
+            "mse": 1.6848612913302573e-06,
+            "psnr_db": 57.73435847249309,
+            "ssim": 0.9998192842099628,
+            "flip": 0.00021307940187398344,
+            "silhouette_xor_fraction": 6.103515625e-05,
+            "silhouette_xor_mse_share": 0.3766016713091921,
+            "coverage_mae": 2.6702880859375e-05
+          },
+          {
+            "mse": 2.248867435301327e-05,
+            "psnr_db": 46.48036144303788,
+            "ssim": 0.9992696663444646,
+            "flip": 0.0011037223739549518,
+            "silhouette_xor_fraction": 0.0001068115234375,
+            "silhouette_xor_mse_share": 0.1409714613658892,
+            "coverage_mae": 0.00011444091796875
+          },
+          {
+            "mse": 3.265885379121011e-05,
+            "psnr_db": 44.859990615126335,
+            "ssim": 0.9992972321415206,
+            "flip": 0.0011720319744199514,
+            "silhouette_xor_fraction": 0.0001220703125,
+            "silhouette_xor_mse_share": 0.430917909107239,
+            "coverage_mae": 0.000102996826171875
+          },
+          {
+            "mse": 1.0224151318002696e-06,
+            "psnr_db": 59.903727315558555,
+            "ssim": 0.9999615739019939,
+            "flip": 7.749215728836134e-05,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 3.814697265625e-06
+          },
+          {
+            "mse": 1.5445578698697613e-05,
+            "psnr_db": 48.111958153688235,
+            "ssim": 0.9995252216573856,
+            "flip": 0.0008771418360993266,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.13858798863584568,
+            "coverage_mae": 7.62939453125e-05
+          },
+          {
+            "mse": 1.7443476892901768e-05,
+            "psnr_db": 47.583669457278376,
+            "ssim": 0.9995445284354606,
+            "flip": 0.0009693529573269188,
+            "silhouette_xor_fraction": 0.0001220703125,
+            "silhouette_xor_mse_share": 0.5003026837963276,
+            "coverage_mae": 0.000110626220703125
+          }
+        ]
+      }
+    },
+    {
+      "split": "validation",
+      "file_id": 44710,
+      "thing_id": 13678,
+      "source_sha256": "af0aa394903a6099da1a542ed6707aceb5130dea9726dc0ba0e7ff74147cbf58",
+      "source_faces": 3172,
+      "requested_target_faces": 2220,
+      "actual_qem_faces": 2220,
+      "actual_meshoptimizer_faces": 2220,
+      "actual_retention": 0.699873896595208,
+      "meshoptimizer_error": 0.00048688045353628695,
+      "meshoptimizer_topology_status": "valid",
+      "meshoptimizer_boundary_preserved": true,
+      "methods": {
+        "qem": {
+          "mse": 1.4932024529327663e-05,
+          "ssim": 0.9985759593496896,
+          "flip": 0.0015636081540530238,
+          "silhouette_xor_fraction": 4.57763671875e-05,
+          "coverage_mae": 5.53131103515625e-05,
+          "psnr_db": 48.25881305315322,
+          "silhouette_xor_mse_share": 0.22291545165082716,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.009248360476977491,
+          "chamfer_l2_squared_mean": 0.00010875502297595732,
+          "bidirectional_distance_p95": 0.01801260166720092,
+          "bidirectional_distance_max_sampled": 0.03531470758522342,
+          "normal_consistency_absdot": 0.9737935391484925
+        },
+        "meshoptimizer": {
+          "mse": 1.9433905066060334e-05,
+          "ssim": 0.9989185837226193,
+          "flip": 0.002492283958417829,
+          "silhouette_xor_fraction": 0.00014623006184895834,
+          "coverage_mae": 0.00010140736897786458,
+          "psnr_db": 47.11439923114199,
+          "silhouette_xor_mse_share": 0.3546983761232722,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.00927250189176095,
+          "chamfer_l2_squared_mean": 0.00010951146461330994,
+          "bidirectional_distance_p95": 0.018187341124260084,
+          "bidirectional_distance_max_sampled": 0.035604447259336536,
+          "normal_consistency_absdot": 0.9736539850319166,
+          "degenerate_faces_omitted_for_sampling": 0,
+          "duplicate_faces_omitted_for_sampling": 0,
+          "topology_after_surface_sampling_cleanup": "valid"
+        }
+      },
+      "per_view": {
+        "qem": [
+          {
+            "mse": 3.434042983768263e-05,
+            "psnr_db": 44.64194273095738,
+            "ssim": 0.9973666824052025,
+            "flip": 0.0027144195046275854,
+            "silhouette_xor_fraction": 9.1552734375e-05,
+            "silhouette_xor_mse_share": 0.25355163624684807,
+            "coverage_mae": 6.866455078125e-05
+          },
+          {
+            "mse": 2.3194767337081894e-05,
+            "psnr_db": 46.346099794603006,
+            "ssim": 0.9976202549030168,
+            "flip": 0.0025079469196498394,
+            "silhouette_xor_fraction": 9.1552734375e-05,
+            "silhouette_xor_mse_share": 0.2847618469507506,
+            "coverage_mae": 6.866455078125e-05
+          },
+          {
+            "mse": 1.2985399620939066e-05,
+            "psnr_db": 48.86544680574676,
+            "ssim": 0.998375671299717,
+            "flip": 0.001989917829632759,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.16495292480618748,
+            "coverage_mae": 9.918212890625e-05
+          },
+          {
+            "mse": 1.3300783127282782e-05,
+            "psnr_db": 48.761227877663835,
+            "ssim": 0.9975321273066592,
+            "flip": 0.0016076370375230908,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 0.0
+          },
+          {
+            "mse": 1.1829228091359092e-05,
+            "psnr_db": 49.27043594053459,
+            "ssim": 0.9990731705937362,
+            "flip": 0.0011517913080751896,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.20964094425709182,
+            "coverage_mae": 6.866455078125e-05
+          },
+          {
+            "mse": 1.0593037383458284e-05,
+            "psnr_db": 49.74979495063507,
+            "ssim": 0.9997487792508045,
+            "flip": 0.0008366350084543228,
+            "silhouette_xor_fraction": 7.62939453125e-05,
+            "silhouette_xor_mse_share": 0.48737317797173363,
+            "coverage_mae": 7.62939453125e-05
+          },
+          {
+            "mse": 2.2081538650999606e-06,
+            "psnr_db": 56.55970668064353,
+            "ssim": 0.9997512044241575,
+            "flip": 0.0002924604050349444,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.14367693942614237,
+            "coverage_mae": 6.103515625e-05
+          },
+          {
+            "mse": 9.488960450908305e-06,
+            "psnr_db": 50.22781363459259,
+            "ssim": 0.9997110645908384,
+            "flip": 0.0006781543488614261,
+            "silhouette_xor_fraction": 7.62939453125e-05,
+            "silhouette_xor_mse_share": 0.6115933427306676,
+            "coverage_mae": 6.4849853515625e-05
+          },
+          {
+            "mse": 1.1536606638672624e-05,
+            "psnr_db": 49.37921915167898,
+            "ssim": 0.9995092842195857,
+            "flip": 0.0011350730201229453,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.37320749344018894,
+            "coverage_mae": 7.2479248046875e-05
+          },
+          {
+            "mse": 8.854908193363133e-06,
+            "psnr_db": 50.52815937164192,
+            "ssim": 0.9990727130890639,
+            "flip": 0.001070857746526599,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 3.814697265625e-06
+          },
+          {
+            "mse": 1.8678963619761635e-05,
+            "psnr_db": 47.2864722375394,
+            "ssim": 0.9976189257881608,
+            "flip": 0.002296845195814967,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 2.6702880859375e-05
+          },
+          {
+            "mse": 2.2173056186322565e-05,
+            "psnr_db": 46.54174442502142,
+            "ssim": 0.9975316343253319,
+            "flip": 0.0024815595243126154,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.14622711398031535,
+            "coverage_mae": 5.340576171875e-05
+          }
+        ],
+        "meshoptimizer": [
+          {
+            "mse": 1.3106249699634763e-05,
+            "psnr_db": 48.82521562143616,
+            "ssim": 0.9982882270913643,
+            "flip": 0.004251823760569096,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.012103416171309878,
+            "coverage_mae": 1.1444091796875e-05
+          },
+          {
+            "mse": 6.429012992298636e-05,
+            "psnr_db": 41.918556965782344,
+            "ssim": 0.9971794662269541,
+            "flip": 0.005088537931442261,
+            "silhouette_xor_fraction": 0.0003662109375,
+            "silhouette_xor_mse_share": 0.7993145259899771,
+            "coverage_mae": 0.000225067138671875
+          },
+          {
+            "mse": 1.0531556372549014e-05,
+            "psnr_db": 49.77507443243504,
+            "ssim": 0.9988716624305951,
+            "flip": 0.003361705457791686,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.13658645276292342,
+            "coverage_mae": 7.62939453125e-05
+          },
+          {
+            "mse": 1.0545635993367942e-05,
+            "psnr_db": 49.76927223408499,
+            "ssim": 0.9988714677349751,
+            "flip": 0.0018954146653413773,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 3.814697265625e-06
+          },
+          {
+            "mse": 1.7827381220564204e-05,
+            "psnr_db": 47.489124484672956,
+            "ssim": 0.9993938061897584,
+            "flip": 0.0018630421254783869,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.3422621789893512,
+            "coverage_mae": 7.2479248046875e-05
+          },
+          {
+            "mse": 2.0335196348760084e-05,
+            "psnr_db": 46.91751629860262,
+            "ssim": 0.9991040545300717,
+            "flip": 0.0020004534162580967,
+            "silhouette_xor_fraction": 0.000335693359375,
+            "silhouette_xor_mse_share": 0.6662627801241663,
+            "coverage_mae": 0.000202178955078125
+          },
+          {
+            "mse": 2.9968472913062278e-06,
+            "psnr_db": 55.233353865948104,
+            "ssim": 0.9996862643973808,
+            "flip": 0.00030441427952609956,
+            "silhouette_xor_fraction": 9.1552734375e-05,
+            "silhouette_xor_mse_share": 0.501291989664083,
+            "coverage_mae": 6.866455078125e-05
+          },
+          {
+            "mse": 3.387885293516917e-05,
+            "psnr_db": 44.70071302366115,
+            "ssim": 0.9988908386986107,
+            "flip": 0.0015597394667565823,
+            "silhouette_xor_fraction": 0.00042724609375,
+            "silhouette_xor_mse_share": 0.6930195187499137,
+            "coverage_mae": 0.000213623046875
+          },
+          {
+            "mse": 1.258154916378316e-05,
+            "psnr_db": 49.002658810004135,
+            "ssim": 0.9996702784625481,
+            "flip": 0.0013241686392575502,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.49440465532676836,
+            "coverage_mae": 3.814697265625e-05
+          },
+          {
+            "mse": 2.2715121587850827e-06,
+            "psnr_db": 56.43684934183216,
+            "ssim": 0.9998080028534272,
+            "flip": 0.0007931051659397781,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 3.814697265625e-06
+          },
+          {
+            "mse": 1.318439159517974e-05,
+            "psnr_db": 48.79939906291676,
+            "ssim": 0.999170826068213,
+            "flip": 0.0031159999780356884,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 4.9591064453125e-05
+          },
+          {
+            "mse": 3.165755809063821e-05,
+            "psnr_db": 44.99522587536242,
+            "ssim": 0.9980881099875355,
+            "flip": 0.004349002614617348,
+            "silhouette_xor_fraction": 0.000396728515625,
+            "silhouette_xor_mse_share": 0.6111349957007741,
+            "coverage_mae": 0.00025177001953125
+          }
+        ]
+      }
+    },
+    {
+      "split": "validation",
+      "file_id": 191968,
+      "thing_id": 85125,
+      "source_sha256": "4384855f2f404959ae7516298cd5b8a620c4c29ef1e0a1af4329e47c598db784",
+      "source_faces": 1060,
+      "requested_target_faces": 742,
+      "actual_qem_faces": 742,
+      "actual_meshoptimizer_faces": 742,
+      "actual_retention": 0.7,
+      "meshoptimizer_error": 0.00016506198153365403,
+      "meshoptimizer_topology_status": "valid",
+      "meshoptimizer_boundary_preserved": true,
+      "methods": {
+        "qem": {
+          "mse": 2.7591363598135335e-06,
+          "ssim": 0.9992415990457612,
+          "flip": 0.0006386919552217781,
+          "silhouette_xor_fraction": 2.1616617838541668e-05,
+          "coverage_mae": 2.3523966471354168e-05,
+          "psnr_db": 55.59226835638547,
+          "silhouette_xor_mse_share": 0.1327865981031708,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.010562306018396948,
+          "chamfer_l2_squared_mean": 0.0001414788661254693,
+          "bidirectional_distance_p95": 0.020510114040278003,
+          "bidirectional_distance_max_sampled": 0.041437970375933324,
+          "normal_consistency_absdot": 0.9704982916016086
+        },
+        "meshoptimizer": {
+          "mse": 3.894696888916924e-06,
+          "ssim": 0.9998207044738626,
+          "flip": 0.00026788209409763414,
+          "silhouette_xor_fraction": 1.0172526041666666e-05,
+          "coverage_mae": 1.52587890625e-05,
+          "psnr_db": 54.095263363465335,
+          "silhouette_xor_mse_share": 0.21273624071192684,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.01057226747401727,
+          "chamfer_l2_squared_mean": 0.00014161823622591593,
+          "bidirectional_distance_p95": 0.02043225780788051,
+          "bidirectional_distance_max_sampled": 0.03981704860265462,
+          "normal_consistency_absdot": 0.9703790398682417,
+          "degenerate_faces_omitted_for_sampling": 0,
+          "duplicate_faces_omitted_for_sampling": 0,
+          "topology_after_surface_sampling_cleanup": "valid"
+        }
+      },
+      "per_view": {
+        "qem": [
+          {
+            "mse": 1.4387025873462133e-06,
+            "psnr_db": 58.42028975364375,
+            "ssim": 0.9999022070754005,
+            "flip": 0.00021190998086240143,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.11025933779155105,
+            "coverage_mae": 1.1444091796875e-05
+          },
+          {
+            "mse": 6.108208831939632e-07,
+            "psnr_db": 62.14086123382374,
+            "ssim": 0.9998722216559962,
+            "flip": 0.00021078242571093142,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 0.0
+          },
+          {
+            "mse": 3.833880748990772e-06,
+            "psnr_db": 54.16361399768001,
+            "ssim": 0.9998382660780009,
+            "flip": 0.0002759851049631834,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.4908189496878442,
+            "coverage_mae": 3.0517578125e-05
+          },
+          {
+            "mse": 3.975146277873895e-07,
+            "psnr_db": 64.00646885496921,
+            "ssim": 0.999970348408381,
+            "flip": 7.839840691303834e-05,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 3.814697265625e-06
+          },
+          {
+            "mse": 2.2623604052527872e-06,
+            "psnr_db": 56.45438208630499,
+            "ssim": 0.999271707909228,
+            "flip": 0.0005677181761711836,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 2.288818359375e-05
+          },
+          {
+            "mse": 3.746821760260476e-06,
+            "psnr_db": 54.263369662007044,
+            "ssim": 0.9979740169839503,
+            "flip": 0.0013767554191872478,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.04233732072399322,
+            "coverage_mae": 1.52587890625e-05
+          },
+          {
+            "mse": 2.844083405420991e-06,
+            "psnr_db": 55.46057671661342,
+            "ssim": 0.9988182620547753,
+            "flip": 0.0009288512519560754,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.055775577557755744,
+            "coverage_mae": 3.814697265625e-06
+          },
+          {
+            "mse": 4.414195787077085e-06,
+            "psnr_db": 53.55148408065736,
+            "ssim": 0.9978003136336947,
+            "flip": 0.0016139595536515117,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 1.9073486328125e-05
+          },
+          {
+            "mse": 7.251943363129566e-06,
+            "psnr_db": 51.39545596354846,
+            "ssim": 0.9978494732593779,
+            "flip": 0.0016201036050915718,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.3738351022521356,
+            "coverage_mae": 3.814697265625e-05
+          },
+          {
+            "mse": 4.2942843497693196e-08,
+            "psnr_db": 73.6710920176118,
+            "ssim": 0.9999856337149935,
+            "flip": 3.57467943103984e-05,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 0.0
+          },
+          {
+            "mse": 2.654477845059593e-06,
+            "psnr_db": 55.76020895038785,
+            "ssim": 0.9997939547041313,
+            "flip": 0.0003314230707474053,
+            "silhouette_xor_fraction": 6.103515625e-05,
+            "silhouette_xor_mse_share": 0.306665487977369,
+            "coverage_mae": 4.57763671875e-05
+          },
+          {
+            "mse": 3.611892060745867e-06,
+            "psnr_db": 54.42265236797872,
+            "ssim": 0.9998227830712055,
+            "flip": 0.0004126696730963886,
+            "silhouette_xor_fraction": 6.103515625e-05,
+            "silhouette_xor_mse_share": 0.21374740124740121,
+            "coverage_mae": 9.1552734375e-05
+          }
+        ],
+        "meshoptimizer": [
+          {
+            "mse": 9.628818017709535e-06,
+            "psnr_db": 50.164270212754545,
+            "ssim": 0.9997924941844606,
+            "flip": 0.000416223076172173,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.6902249409012258,
+            "coverage_mae": 3.4332275390625e-05
+          },
+          {
+            "mse": 5.918133950884275e-06,
+            "psnr_db": 52.27815209254547,
+            "ssim": 0.9998227380539318,
+            "flip": 0.00034259710810147226,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.3808088818398096,
+            "coverage_mae": 2.6702880859375e-05
+          },
+          {
+            "mse": 1.2785469005310458e-05,
+            "psnr_db": 48.932833362584994,
+            "ssim": 0.9996394798072158,
+            "flip": 0.00037888463702984154,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 0.0
+          },
+          {
+            "mse": 1.1580488123558246e-06,
+            "psnr_db": 59.36273134485954,
+            "ssim": 0.9999304969008233,
+            "flip": 0.00016661474364809692,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 3.814697265625e-06
+          },
+          {
+            "mse": 2.3705388252114572e-06,
+            "psnr_db": 56.251529273152784,
+            "ssim": 0.999830288192665,
+            "flip": 0.00033009485923685133,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.06691744209067507,
+            "coverage_mae": 3.814697265625e-06
+          },
+          {
+            "mse": 1.6674964256535947e-06,
+            "psnr_db": 57.779350883383,
+            "ssim": 0.9998303747769436,
+            "flip": 0.00030266077374108136,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 0.0
+          },
+          {
+            "mse": 3.2552083333333344e-06,
+            "psnr_db": 54.874212113594744,
+            "ssim": 0.9997769149677053,
+            "flip": 0.0002996872062794864,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.16608996539792378,
+            "coverage_mae": 6.103515625e-05
+          },
+          {
+            "mse": 3.576223688004613e-06,
+            "psnr_db": 54.465753244880275,
+            "ssim": 0.9998186619570585,
+            "flip": 0.0002528818731661886,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.5503937007874015,
+            "coverage_mae": 4.1961669921875e-05
+          },
+          {
+            "mse": 6.101169021530181e-07,
+            "psnr_db": 62.14586943520792,
+            "ssim": 0.9998789063292236,
+            "flip": 0.00019910706032533199,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 3.814697265625e-06
+          },
+          {
+            "mse": 0.0,
+            "psnr_db": null,
+            "ssim": 1.0,
+            "flip": 0.0,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": null,
+            "coverage_mae": 0.0
+          },
+          {
+            "mse": 1.1259003448192997e-06,
+            "psnr_db": 59.48500047859798,
+            "ssim": 0.9998414237331609,
+            "flip": 0.0002109162596752867,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 0.0
+          },
+          {
+            "mse": 4.640408361567665e-06,
+            "psnr_db": 53.334437993218955,
+            "ssim": 0.9996866747831629,
+            "flip": 0.00031491753179579973,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.4856637168141593,
+            "coverage_mae": 7.62939453125e-06
+          }
+        ]
+      }
+    },
+    {
+      "split": "validation",
+      "file_id": 383021,
+      "thing_id": 205265,
+      "source_sha256": "0f6734eafb2eae7b152f05225423bebce9d467c1203fb6f9e5be758022fcb397",
+      "source_faces": 13788,
+      "requested_target_faces": 9651,
+      "actual_qem_faces": 9650,
+      "actual_meshoptimizer_faces": 9650,
+      "actual_retention": 0.6998839570641138,
+      "meshoptimizer_error": 0.00010474372538737953,
+      "meshoptimizer_topology_status": "valid",
+      "meshoptimizer_boundary_preserved": true,
+      "methods": {
+        "qem": {
+          "mse": 5.8627932190543694e-06,
+          "ssim": 0.9988618018561711,
+          "flip": 0.001497714946405419,
+          "silhouette_xor_fraction": 2.1616617838541668e-05,
+          "coverage_mae": 2.765655517578125e-05,
+          "psnr_db": 52.31895423128408,
+          "silhouette_xor_mse_share": 0.18415854137096857,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008939103084906256,
+          "chamfer_l2_squared_mean": 0.00010133055258756697,
+          "bidirectional_distance_p95": 0.017442288242349054,
+          "bidirectional_distance_max_sampled": 0.03298697063793337,
+          "normal_consistency_absdot": 0.9611752434698395
+        },
+        "meshoptimizer": {
+          "mse": 7.948141502567122e-07,
+          "ssim": 0.9999161406363367,
+          "flip": 0.00020586404328544935,
+          "silhouette_xor_fraction": 0.0,
+          "coverage_mae": 5.086263020833333e-06,
+          "psnr_db": 60.99734409650165,
+          "silhouette_xor_mse_share": 0.0,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008870393356801773,
+          "chamfer_l2_squared_mean": 9.999164932308305e-05,
+          "bidirectional_distance_p95": 0.017293406182985405,
+          "bidirectional_distance_max_sampled": 0.03163966195904016,
+          "normal_consistency_absdot": 0.9616434301627669,
+          "degenerate_faces_omitted_for_sampling": 0,
+          "duplicate_faces_omitted_for_sampling": 0,
+          "topology_after_surface_sampling_cleanup": "valid"
+        }
+      },
+      "per_view": {
+        "qem": [
+          {
+            "mse": 6.109382133674548e-06,
+            "psnr_db": 52.14002709479899,
+            "ssim": 0.9996642848740566,
+            "flip": 0.0006943476037122309,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.3555214134818514,
+            "coverage_mae": 2.288818359375e-05
+          },
+          {
+            "mse": 4.24218975273933e-06,
+            "psnr_db": 53.72409909434609,
+            "ssim": 0.9993189870374127,
+            "flip": 0.0014272212283685803,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.27884721761256787,
+            "coverage_mae": 3.0517578125e-05
+          },
+          {
+            "mse": 7.258513852845062e-06,
+            "psnr_db": 51.391522899855985,
+            "ssim": 0.9991702880954398,
+            "flip": 0.0014372922014445066,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.4734579076684338,
+            "coverage_mae": 4.1961669921875e-05
+          },
+          {
+            "mse": 6.839879793829294e-06,
+            "psnr_db": 51.64951530638854,
+            "ssim": 0.9991836977714948,
+            "flip": 0.0015007506590336561,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 2.288818359375e-05
+          },
+          {
+            "mse": 4.995684126898308e-06,
+            "psnr_db": 53.01405029521662,
+            "ssim": 0.9991895224124271,
+            "flip": 0.001489380025304854,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.031753487716661165,
+            "coverage_mae": 3.0517578125e-05
+          },
+          {
+            "mse": 4.387679167868128e-06,
+            "psnr_db": 53.57765136046861,
+            "ssim": 0.9994007275892905,
+            "flip": 0.0016329310601577163,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.07230719863086954,
+            "coverage_mae": 3.0517578125e-05
+          },
+          {
+            "mse": 8.13567422986351e-07,
+            "psnr_db": 60.89606449835213,
+            "ssim": 0.9998814727846517,
+            "flip": 0.00022901881311554462,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.19498125180271128,
+            "coverage_mae": 2.6702880859375e-05
+          },
+          {
+            "mse": 4.655191963427526e-06,
+            "psnr_db": 53.32062405565911,
+            "ssim": 0.9992338399055973,
+            "flip": 0.0013455573935061693,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 1.9073486328125e-05
+          },
+          {
+            "mse": 9.086283295487308e-06,
+            "psnr_db": 50.41613726716982,
+            "ssim": 0.9978327702769141,
+            "flip": 0.0023167107719928026,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.3132667028227578,
+            "coverage_mae": 2.288818359375e-05
+          },
+          {
+            "mse": 3.5966391381920417e-06,
+            "psnr_db": 54.441031340896835,
+            "ssim": 0.9990362518264423,
+            "flip": 0.0012114375131204724,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 7.62939453125e-06
+          },
+          {
+            "mse": 1.3025526540272968e-05,
+            "psnr_db": 48.85204711873883,
+            "ssim": 0.997069691057745,
+            "flip": 0.0024623656645417213,
+            "silhouette_xor_fraction": 7.62939453125e-05,
+            "silhouette_xor_mse_share": 0.4600778266195866,
+            "coverage_mae": 5.340576171875e-05
+          },
+          {
+            "mse": 5.34298144043156e-06,
+            "psnr_db": 52.72216334395076,
+            "ssim": 0.9973600886425807,
+            "flip": 0.0022255664225667715,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.02968949009618342,
+            "coverage_mae": 2.288818359375e-05
+          }
+        ],
+        "meshoptimizer": [
+          {
+            "mse": 2.332523849000383e-07,
+            "psnr_db": 66.32173907094297,
+            "ssim": 0.9999834359109302,
+            "flip": 8.785922545939684e-05,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 0.0
+          },
+          {
+            "mse": 3.494092566560936e-07,
+            "psnr_db": 64.56665593739433,
+            "ssim": 0.9999642270452037,
+            "flip": 0.00016799243167042732,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 3.814697265625e-06
+          },
+          {
+            "mse": 4.3670290573337197e-07,
+            "psnr_db": 63.598139183608424,
+            "ssim": 0.9999421803862657,
+            "flip": 0.00024385405413340777,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 0.0
+          },
+          {
+            "mse": 9.39110708621684e-07,
+            "psnr_db": 60.272832071914166,
+            "ssim": 0.9999245695235981,
+            "flip": 0.00023609415802638978,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 1.9073486328125e-05
+          },
+          {
+            "mse": 9.226844843329494e-07,
+            "psnr_db": 60.34946782331511,
+            "ssim": 0.9998745536435255,
+            "flip": 0.0002739873598329723,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 0.0
+          },
+          {
+            "mse": 4.613422421664742e-07,
+            "psnr_db": 63.35976777995492,
+            "ssim": 0.9999367116914525,
+            "flip": 0.000267547438852489,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 7.62939453125e-06
+          },
+          {
+            "mse": 5.655314362264522e-08,
+            "psnr_db": 72.4754324891674,
+            "ssim": 0.9999936299588758,
+            "flip": 5.2656527259387076e-05,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 0.0
+          },
+          {
+            "mse": 1.5217723501778164e-06,
+            "psnr_db": 58.1765031107151,
+            "ssim": 0.999905871371933,
+            "flip": 0.0002271107950946316,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 0.0
+          },
+          {
+            "mse": 7.93855953839869e-07,
+            "psnr_db": 61.00258293703629,
+            "ssim": 0.9998627220702992,
+            "flip": 0.00029312906553968787,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 7.62939453125e-06
+          },
+          {
+            "mse": 2.56906147875817e-06,
+            "psnr_db": 55.90225502753523,
+            "ssim": 0.9999078932119851,
+            "flip": 0.0001859277399489656,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 1.9073486328125e-05
+          },
+          {
+            "mse": 5.873548484957706e-07,
+            "psnr_db": 62.310994418833864,
+            "ssim": 0.9998691903312883,
+            "flip": 0.00021388765890151262,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 3.814697265625e-06
+          },
+          {
+            "mse": 6.666700457756627e-07,
+            "psnr_db": 61.76089057768674,
+            "ssim": 0.9998287024906842,
+            "flip": 0.00022032206470612437,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 0.0
+          }
+        ]
+      }
+    },
+    {
+      "split": "validation",
+      "file_id": 100894,
+      "thing_id": 35167,
+      "source_sha256": "0e6c0419f7b8a0994665315dcbbd9f04dae60df615fe4699c559fd46a3c39bb0",
+      "source_faces": 5820,
+      "requested_target_faces": 4073,
+      "actual_qem_faces": 4072,
+      "actual_meshoptimizer_faces": 4072,
+      "actual_retention": 0.6996563573883161,
+      "meshoptimizer_error": 0.0004527249839156866,
+      "meshoptimizer_topology_status": "valid",
+      "meshoptimizer_boundary_preserved": true,
+      "methods": {
+        "qem": {
+          "mse": 1.8764966636930502e-05,
+          "ssim": 0.9971264732055317,
+          "flip": 0.0021319234025819847,
+          "silhouette_xor_fraction": 6.866455078125e-05,
+          "coverage_mae": 7.883707682291667e-05,
+          "psnr_db": 47.26652203401704,
+          "silhouette_xor_mse_share": 0.18102933760753437,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008700729449762707,
+          "chamfer_l2_squared_mean": 9.610095038096633e-05,
+          "bidirectional_distance_p95": 0.016958345359195697,
+          "bidirectional_distance_max_sampled": 0.03061189953977075,
+          "normal_consistency_absdot": 0.9747174066359924
+        },
+        "meshoptimizer": {
+          "mse": 2.208742471470308e-05,
+          "ssim": 0.9978122370427451,
+          "flip": 0.0025826897423636788,
+          "silhouette_xor_fraction": 4.9591064453125e-05,
+          "coverage_mae": 4.9591064453125e-05,
+          "psnr_db": 46.558549177814896,
+          "silhouette_xor_mse_share": 0.1539291436756658,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008657509566771701,
+          "chamfer_l2_squared_mean": 9.519132537409014e-05,
+          "bidirectional_distance_p95": 0.016759161525831012,
+          "bidirectional_distance_max_sampled": 0.029357290017058606,
+          "normal_consistency_absdot": 0.9743216888753932,
+          "degenerate_faces_omitted_for_sampling": 0,
+          "duplicate_faces_omitted_for_sampling": 0,
+          "topology_after_surface_sampling_cleanup": "valid"
+        }
+      },
+      "per_view": {
+        "qem": [
+          {
+            "mse": 1.1490378550317186e-05,
+            "psnr_db": 49.39665663252035,
+            "ssim": 0.9995758016971262,
+            "flip": 0.0010795036796480417,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.027610995384552525,
+            "coverage_mae": 8.7738037109375e-05
+          },
+          {
+            "mse": 1.9401952148812952e-05,
+            "psnr_db": 47.121545708530554,
+            "ssim": 0.9987694150366799,
+            "flip": 0.001949010998941958,
+            "silhouette_xor_fraction": 0.0001220703125,
+            "silhouette_xor_mse_share": 0.4066835185834715,
+            "coverage_mae": 0.000133514404296875
+          },
+          {
+            "mse": 1.4578978037293347e-05,
+            "psnr_db": 48.36272918289637,
+            "ssim": 0.9977800799502768,
+            "flip": 0.0023405547253787518,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.24341681689415412,
+            "coverage_mae": 7.2479248046875e-05
+          },
+          {
+            "mse": 1.8953046905036502e-05,
+            "psnr_db": 47.22320962599607,
+            "ssim": 0.9953120616407256,
+            "flip": 0.002671125577762723,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.016739302694136295,
+            "coverage_mae": 1.9073486328125e-05
+          },
+          {
+            "mse": 2.5912368815479613e-05,
+            "psnr_db": 45.864928835611806,
+            "ssim": 0.995365537410494,
+            "flip": 0.0031970690470188856,
+            "silhouette_xor_fraction": 6.103515625e-05,
+            "silhouette_xor_mse_share": 0.09669006112746212,
+            "coverage_mae": 6.4849853515625e-05
+          },
+          {
+            "mse": 2.7351071402825834e-05,
+            "psnr_db": 45.63025656708191,
+            "ssim": 0.9960674131299686,
+            "flip": 0.0028897144366055727,
+            "silhouette_xor_fraction": 0.0001220703125,
+            "silhouette_xor_mse_share": 0.08567555509797861,
+            "coverage_mae": 0.000102996826171875
+          },
+          {
+            "mse": 1.242033750540657e-05,
+            "psnr_db": 49.05866602650248,
+            "ssim": 0.9994902610561004,
+            "flip": 0.0007709157653152943,
+            "silhouette_xor_fraction": 6.103515625e-05,
+            "silhouette_xor_mse_share": 0.46201515237393487,
+            "coverage_mae": 6.866455078125e-05
+          },
+          {
+            "mse": 2.1976410815551707e-05,
+            "psnr_db": 46.58043235037277,
+            "ssim": 0.9960644302892133,
+            "flip": 0.0022427409421652555,
+            "silhouette_xor_fraction": 6.103515625e-05,
+            "silhouette_xor_mse_share": 0.028872848417545793,
+            "coverage_mae": 9.5367431640625e-05
+          },
+          {
+            "mse": 2.3181861017997887e-05,
+            "psnr_db": 46.348517022203794,
+            "ssim": 0.9943592133174498,
+            "flip": 0.0029532683547586203,
+            "silhouette_xor_fraction": 9.1552734375e-05,
+            "silhouette_xor_mse_share": 0.06054317788417736,
+            "coverage_mae": 6.866455078125e-05
+          },
+          {
+            "mse": 3.1303690287389465e-06,
+            "psnr_db": 55.04404461911079,
+            "ssim": 0.9996235828228263,
+            "flip": 0.0006660392973572016,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 7.62939453125e-06
+          },
+          {
+            "mse": 1.9627930062956558e-05,
+            "psnr_db": 47.07125498139979,
+            "ssim": 0.9967251439085941,
+            "flip": 0.0022188390139490366,
+            "silhouette_xor_fraction": 6.103515625e-05,
+            "silhouette_xor_mse_share": 0.31312467122567067,
+            "coverage_mae": 9.1552734375e-05
+          },
+          {
+            "mse": 2.7154895352748937e-05,
+            "psnr_db": 45.66151866515664,
+            "ssim": 0.9963847382069247,
+            "flip": 0.0026042989920824766,
+            "silhouette_xor_fraction": 0.0001373291015625,
+            "silhouette_xor_mse_share": 0.4309799516073281,
+            "coverage_mae": 0.000133514404296875
+          }
+        ],
+        "meshoptimizer": [
+          {
+            "mse": 4.017854461024606e-06,
+            "psnr_db": 53.96005798777086,
+            "ssim": 0.9996148671476558,
+            "flip": 0.0007802624604664743,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.0394813689989487,
+            "coverage_mae": 7.62939453125e-06
+          },
+          {
+            "mse": 1.8596832498317955e-05,
+            "psnr_db": 47.3056102060182,
+            "ssim": 0.9981141506615848,
+            "flip": 0.0022614842746406794,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.29398107255520506,
+            "coverage_mae": 5.7220458984375e-05
+          },
+          {
+            "mse": 1.8047257965686273e-05,
+            "psnr_db": 47.435887738599185,
+            "ssim": 0.9976336934115935,
+            "flip": 0.003215242177248001,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.08312529255734122,
+            "coverage_mae": 5.340576171875e-05
+          },
+          {
+            "mse": 3.606354076557094e-05,
+            "psnr_db": 44.42931635920375,
+            "ssim": 0.9951855335713745,
+            "flip": 0.004494588356465101,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 3.814697265625e-06
+          },
+          {
+            "mse": 3.4285753976835835e-05,
+            "psnr_db": 44.64886295538585,
+            "ssim": 0.9968613658261036,
+            "flip": 0.0036223537754267454,
+            "silhouette_xor_fraction": 6.103515625e-05,
+            "silhouette_xor_mse_share": 0.14262737153338617,
+            "coverage_mae": 9.5367431640625e-05
+          },
+          {
+            "mse": 1.4668618289840444e-05,
+            "psnr_db": 48.336107925888065,
+            "ssim": 0.9982823835247041,
+            "flip": 0.002470321487635374,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.021628539433690596,
+            "coverage_mae": 3.4332275390625e-05
+          },
+          {
+            "mse": 9.974472708813919e-06,
+            "psnr_db": 50.011100536066564,
+            "ssim": 0.999572004852778,
+            "flip": 0.0006345228757709265,
+            "silhouette_xor_fraction": 7.62939453125e-05,
+            "silhouette_xor_mse_share": 0.6788453394814848,
+            "coverage_mae": 3.814697265625e-05
+          },
+          {
+            "mse": 1.7168689626585928e-05,
+            "psnr_db": 47.652628504220644,
+            "ssim": 0.9986479349397026,
+            "flip": 0.0016974741593003273,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.23406320048111093,
+            "coverage_mae": 3.4332275390625e-05
+          },
+          {
+            "mse": 3.521453963019032e-05,
+            "psnr_db": 44.53277984891269,
+            "ssim": 0.9969505216286142,
+            "flip": 0.0032126856967806816,
+            "silhouette_xor_fraction": 6.103515625e-05,
+            "silhouette_xor_mse_share": 0.1242786507270135,
+            "coverage_mae": 7.2479248046875e-05
+          },
+          {
+            "mse": 1.64560261528018e-05,
+            "psnr_db": 47.83675031108636,
+            "ssim": 0.9986479082495973,
+            "flip": 0.0023906598798930645,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 3.814697265625e-06
+          },
+          {
+            "mse": 3.19757575211457e-05,
+            "psnr_db": 44.951791580813165,
+            "ssim": 0.9970067268630936,
+            "flip": 0.003154042176902294,
+            "silhouette_xor_fraction": 0.0001068115234375,
+            "silhouette_xor_mse_share": 0.06676011272236247,
+            "coverage_mae": 0.0001068115234375
+          },
+          {
+            "mse": 2.857975297962322e-05,
+            "psnr_db": 45.43941529220702,
+            "ssim": 0.9972297538361419,
+            "flip": 0.0030586395878344774,
+            "silhouette_xor_fraction": 0.0001220703125,
+            "silhouette_xor_mse_share": 0.1623587756174461,
+            "coverage_mae": 8.7738037109375e-05
+          }
+        ]
+      }
+    },
+    {
+      "split": "validation",
+      "file_id": 257594,
+      "thing_id": 126371,
+      "source_sha256": "7f97fe7ee1ba78f46b40413d2ff24cdd5d5edb6045dd94da368a02ccc15df388",
+      "source_faces": 34448,
+      "requested_target_faces": 24113,
+      "actual_qem_faces": 24112,
+      "actual_meshoptimizer_faces": 24112,
+      "actual_retention": 0.699953553181607,
+      "meshoptimizer_error": 0.0002014937053900212,
+      "meshoptimizer_topology_status": "valid",
+      "meshoptimizer_boundary_preserved": true,
+      "methods": {
+        "qem": {
+          "mse": 1.884827106010909e-05,
+          "ssim": 0.9975956209818628,
+          "flip": 0.0025712612356680133,
+          "silhouette_xor_fraction": 9.282430013020833e-05,
+          "coverage_mae": 8.646647135416667e-05,
+          "psnr_db": 47.24728481187179,
+          "silhouette_xor_mse_share": 0.25838642805037343,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.008450119331312192,
+          "chamfer_l2_squared_mean": 9.086838045674719e-05,
+          "bidirectional_distance_p95": 0.016430946877606652,
+          "bidirectional_distance_max_sampled": 0.029714021045354977,
+          "normal_consistency_absdot": 0.9823170845946505
+        },
+        "meshoptimizer": {
+          "mse": 1.0628079995274252e-05,
+          "ssim": 0.9981151780329355,
+          "flip": 0.0022808021603850648,
+          "silhouette_xor_fraction": 4.1961669921875e-05,
+          "coverage_mae": 3.8464864095052086e-05,
+          "psnr_db": 49.735451854082186,
+          "silhouette_xor_mse_share": 0.3053609994041252,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.00843030634248121,
+          "chamfer_l2_squared_mean": 9.045263161753993e-05,
+          "bidirectional_distance_p95": 0.01639257575288094,
+          "bidirectional_distance_max_sampled": 0.029045094679499003,
+          "normal_consistency_absdot": 0.9835392994968065,
+          "degenerate_faces_omitted_for_sampling": 0,
+          "duplicate_faces_omitted_for_sampling": 0,
+          "topology_after_surface_sampling_cleanup": "valid"
+        }
+      },
+      "per_view": {
+        "qem": [
+          {
+            "mse": 2.1192410596285077e-05,
+            "psnr_db": 46.73819640310417,
+            "ssim": 0.9961483814148683,
+            "flip": 0.003399304347112775,
+            "silhouette_xor_fraction": 0.0001068115234375,
+            "silhouette_xor_mse_share": 0.29675233360277264,
+            "coverage_mae": 9.918212890625e-05
+          },
+          {
+            "mse": 1.8818586526215876e-05,
+            "psnr_db": 47.25412999767316,
+            "ssim": 0.9967169350607893,
+            "flip": 0.003707109484821558,
+            "silhouette_xor_fraction": 0.000152587890625,
+            "silhouette_xor_mse_share": 0.28696302762017584,
+            "coverage_mae": 9.918212890625e-05
+          },
+          {
+            "mse": 1.68002728818243e-05,
+            "psnr_db": 47.746836641010404,
+            "ssim": 0.9977593845300022,
+            "flip": 0.0031220330856740475,
+            "silhouette_xor_fraction": 0.0001220703125,
+            "silhouette_xor_mse_share": 0.30041623599742995,
+            "coverage_mae": 0.00012969970703125
+          },
+          {
+            "mse": 1.7519741505670894e-05,
+            "psnr_db": 47.56472305901323,
+            "ssim": 0.9970561298116544,
+            "flip": 0.002503987168893218,
+            "silhouette_xor_fraction": 7.62939453125e-05,
+            "silhouette_xor_mse_share": 0.18320385748727563,
+            "coverage_mae": 4.57763671875e-05
+          },
+          {
+            "mse": 2.3757952169838526e-05,
+            "psnr_db": 46.24190996336779,
+            "ssim": 0.9976762024234388,
+            "flip": 0.0027796111535280943,
+            "silhouette_xor_fraction": 0.0001068115234375,
+            "silhouette_xor_mse_share": 0.29487179487179493,
+            "coverage_mae": 6.103515625e-05
+          },
+          {
+            "mse": 1.954767622428873e-05,
+            "psnr_db": 47.08904862971536,
+            "ssim": 0.9985956377349093,
+            "flip": 0.002554038306698203,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.019651388922234763,
+            "coverage_mae": 8.0108642578125e-05
+          },
+          {
+            "mse": 8.871099757304881e-06,
+            "psnr_db": 50.52022536997772,
+            "ssim": 0.9981154383392298,
+            "flip": 0.0013510844437405467,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.0357634112792297,
+            "coverage_mae": 6.4849853515625e-05
+          },
+          {
+            "mse": 1.9017813160803542e-05,
+            "psnr_db": 47.20839423613016,
+            "ssim": 0.9990573194505754,
+            "flip": 0.0016000184696167707,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.24777898425546618,
+            "coverage_mae": 8.392333984375e-05
+          },
+          {
+            "mse": 2.093921208189158e-05,
+            "psnr_db": 46.79039664344124,
+            "ssim": 0.9983269286848581,
+            "flip": 0.00217525870539248,
+            "silhouette_xor_fraction": 0.0001068115234375,
+            "silhouette_xor_mse_share": 0.24361215707369566,
+            "coverage_mae": 9.1552734375e-05
+          },
+          {
+            "mse": 9.030434132905614e-06,
+            "psnr_db": 50.44291370728218,
+            "ssim": 0.9988701426770293,
+            "flip": 0.0011689377715811133,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.2714445339500559,
+            "coverage_mae": 5.340576171875e-05
+          },
+          {
+            "mse": 2.468368723868224e-05,
+            "psnr_db": 46.075899650681755,
+            "ssim": 0.9965293427878802,
+            "flip": 0.0029031080193817616,
+            "silhouette_xor_fraction": 0.000152587890625,
+            "silhouette_xor_mse_share": 0.462462805046155,
+            "coverage_mae": 0.0001068115234375
+          },
+          {
+            "mse": 2.600036644559785e-05,
+            "psnr_db": 45.85020531099198,
+            "ssim": 0.996295608867118,
+            "flip": 0.003590643871575594,
+            "silhouette_xor_fraction": 0.0001373291015625,
+            "silhouette_xor_mse_share": 0.45771660649819496,
+            "coverage_mae": 0.0001220703125
+          }
+        ],
+        "meshoptimizer": [
+          {
+            "mse": 1.2918521422049208e-05,
+            "psnr_db": 48.887871902876356,
+            "ssim": 0.9972993172094279,
+            "flip": 0.0032049419824033976,
+            "silhouette_xor_fraction": 6.103515625e-05,
+            "silhouette_xor_mse_share": 0.2117634236721645,
+            "coverage_mae": 7.2479248046875e-05
+          },
+          {
+            "mse": 1.2735017030709341e-05,
+            "psnr_db": 48.95000469912134,
+            "ssim": 0.9969292814995074,
+            "flip": 0.003810489783063531,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.29071310116086235,
+            "coverage_mae": 3.0517578125e-05
+          },
+          {
+            "mse": 9.639847054017682e-06,
+            "psnr_db": 50.15929856566369,
+            "ssim": 0.9975443427771387,
+            "flip": 0.003099385416135192,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.10408958130477118,
+            "coverage_mae": 4.1961669921875e-05
+          },
+          {
+            "mse": 1.5628379108996542e-05,
+            "psnr_db": 48.06086062321309,
+            "ssim": 0.9968752764566075,
+            "flip": 0.00257866526953876,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.3133033033033032,
+            "coverage_mae": 3.0517578125e-05
+          },
+          {
+            "mse": 1.2278367995482504e-05,
+            "psnr_db": 49.10859354502519,
+            "ssim": 0.9978009629678916,
+            "flip": 0.002423272468149662,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.24118951150523657,
+            "coverage_mae": 2.288818359375e-05
+          },
+          {
+            "mse": 8.39567789431949e-06,
+            "psnr_db": 50.75944231762227,
+            "ssim": 0.9991561999698821,
+            "flip": 0.0018653040751814842,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.018894292582033637,
+            "coverage_mae": 3.4332275390625e-05
+          },
+          {
+            "mse": 5.890913350634371e-06,
+            "psnr_db": 52.298173652487485,
+            "ssim": 0.9993910665407033,
+            "flip": 0.0008881395333446562,
+            "silhouette_xor_fraction": 6.103515625e-05,
+            "silhouette_xor_mse_share": 0.5154955385595922,
+            "coverage_mae": 3.814697265625e-05
+          },
+          {
+            "mse": 8.522629142036713e-06,
+            "psnr_db": 50.69426409254366,
+            "ssim": 0.9996337128477427,
+            "flip": 0.000953808834310621,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.32561469203447224,
+            "coverage_mae": 4.57763671875e-05
+          },
+          {
+            "mse": 9.736057796280275e-06,
+            "psnr_db": 50.11616856662637,
+            "ssim": 0.9990192566620225,
+            "flip": 0.0016419439343735576,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.2362255965292841,
+            "coverage_mae": 4.57763671875e-05
+          },
+          {
+            "mse": 7.786734293901384e-06,
+            "psnr_db": 51.086446444461686,
+            "ssim": 0.9992284884625254,
+            "flip": 0.0009094802080653608,
+            "silhouette_xor_fraction": 7.62939453125e-05,
+            "silhouette_xor_mse_share": 0.6087755778561311,
+            "coverage_mae": 3.4332275390625e-05
+          },
+          {
+            "mse": 1.2476421328335258e-05,
+            "psnr_db": 49.03909967556974,
+            "ssim": 0.9974413640329738,
+            "flip": 0.002518483204767108,
+            "silhouette_xor_fraction": 6.103515625e-05,
+            "silhouette_xor_mse_share": 0.4994357508275656,
+            "coverage_mae": 1.52587890625e-05
+          },
+          {
+            "mse": 1.1528393526528256e-05,
+            "psnr_db": 49.38231207117498,
+            "ssim": 0.9970628669688014,
+            "flip": 0.003475711215287447,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.29883162351408565,
+            "coverage_mae": 4.9591064453125e-05
+          }
+        ]
+      }
+    },
+    {
+      "split": "validation",
+      "file_id": 94990,
+      "thing_id": 32884,
+      "source_sha256": "c074ee56d1c6d5ea6c5601ae11057b4c43684e63d605d3216ce96366aafa7f4b",
+      "source_faces": 27200,
+      "requested_target_faces": 19040,
+      "actual_qem_faces": 19040,
+      "actual_meshoptimizer_faces": 19040,
+      "actual_retention": 0.7,
+      "meshoptimizer_error": 6.473707617260516e-05,
+      "meshoptimizer_topology_status": "rejected: Degenerate triangle",
+      "meshoptimizer_boundary_preserved": false,
+      "methods": {
+        "qem": {
+          "mse": 8.97835909090454e-06,
+          "ssim": 0.9989771629293518,
+          "flip": 0.0011863983684937314,
+          "silhouette_xor_fraction": 5.4677327473958336e-05,
+          "coverage_mae": 5.0862630208333336e-05,
+          "psnr_db": 50.468030289099,
+          "silhouette_xor_mse_share": 0.37022643945088923,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.00710570981303584,
+          "chamfer_l2_squared_mean": 6.426652791995563e-05,
+          "bidirectional_distance_p95": 0.013880695267194394,
+          "bidirectional_distance_max_sampled": 0.02880497076714429,
+          "normal_consistency_absdot": 0.9732948804754862
+        },
+        "meshoptimizer": {
+          "mse": 3.597558224551054e-06,
+          "ssim": 0.9996116500856825,
+          "flip": 0.0006023368280996996,
+          "silhouette_xor_fraction": 2.1616617838541668e-05,
+          "coverage_mae": 2.3206075032552082e-05,
+          "psnr_db": 54.43992168511133,
+          "silhouette_xor_mse_share": 0.32463584280063007,
+          "samples_per_direction": 20000,
+          "chamfer_l1_mean": 0.007112974895011606,
+          "chamfer_l2_squared_mean": 6.404962907805118e-05,
+          "bidirectional_distance_p95": 0.013735868229899697,
+          "bidirectional_distance_max_sampled": 0.02888784256625971,
+          "normal_consistency_absdot": 0.9699756208991503,
+          "degenerate_faces_omitted_for_sampling": 46,
+          "duplicate_faces_omitted_for_sampling": 1,
+          "topology_after_surface_sampling_cleanup": "still_invalid: Nonmanifold or inconsistently oriented edge"
+        }
+      },
+      "per_view": {
+        "qem": [
+          {
+            "mse": 1.0233303071534987e-05,
+            "psnr_db": 49.899841635308924,
+            "ssim": 0.9987020444327245,
+            "flip": 0.0012833656510338187,
+            "silhouette_xor_fraction": 6.103515625e-05,
+            "silhouette_xor_mse_share": 0.4103740053658649,
+            "coverage_mae": 3.4332275390625e-05
+          },
+          {
+            "mse": 5.305435784914456e-06,
+            "psnr_db": 52.752789376418804,
+            "ssim": 0.9987149988222169,
+            "flip": 0.0015968730440363288,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.05979919501083635,
+            "coverage_mae": 3.814697265625e-05
+          },
+          {
+            "mse": 8.274593155276816e-06,
+            "psnr_db": 50.822533503935674,
+            "ssim": 0.9989391381726898,
+            "flip": 0.0016273566288873553,
+            "silhouette_xor_fraction": 7.62939453125e-05,
+            "silhouette_xor_mse_share": 0.4306619023311212,
+            "coverage_mae": 6.103515625e-05
+          },
+          {
+            "mse": 9.18812588607747e-06,
+            "psnr_db": 50.36773063188128,
+            "ssim": 0.9987686871300417,
+            "flip": 0.0015072037931531668,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.2726599412590984,
+            "coverage_mae": 4.1961669921875e-05
+          },
+          {
+            "mse": 1.1521353716118802e-05,
+            "psnr_db": 49.38496489931869,
+            "ssim": 0.9991336019612854,
+            "flip": 0.0011937873205170035,
+            "silhouette_xor_fraction": 7.62939453125e-05,
+            "silhouette_xor_mse_share": 0.5600635463766346,
+            "coverage_mae": 6.866455078125e-05
+          },
+          {
+            "mse": 4.530587319180122e-06,
+            "psnr_db": 53.438454949086996,
+            "ssim": 0.9994100147214279,
+            "flip": 0.0009503590408712626,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.10503962293468687,
+            "coverage_mae": 3.0517578125e-05
+          },
+          {
+            "mse": 5.523904567954631e-07,
+            "psnr_db": 62.577538329841936,
+            "ssim": 0.9999527704133818,
+            "flip": 5.922072159592062e-05,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.6444350042480883,
+            "coverage_mae": 2.288818359375e-05
+          },
+          {
+            "mse": 5.172852688869667e-06,
+            "psnr_db": 52.86269889138176,
+            "ssim": 0.9996267643152578,
+            "flip": 0.0005816053599119186,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.36712937760841946,
+            "coverage_mae": 4.1961669921875e-05
+          },
+          {
+            "mse": 1.558003907751826e-05,
+            "psnr_db": 48.07431457374028,
+            "ssim": 0.9987924745920612,
+            "flip": 0.0012210396816954017,
+            "silhouette_xor_fraction": 9.1552734375e-05,
+            "silhouette_xor_mse_share": 0.38000421724854655,
+            "coverage_mae": 8.0108642578125e-05
+          },
+          {
+            "mse": 9.82006620049981e-06,
+            "psnr_db": 50.0788558447223,
+            "ssim": 0.9993922183235681,
+            "flip": 0.0009571844129823148,
+            "silhouette_xor_fraction": 6.103515625e-05,
+            "silhouette_xor_mse_share": 0.5547218505065953,
+            "coverage_mae": 5.7220458984375e-05
+          },
+          {
+            "mse": 1.9559878562331796e-05,
+            "psnr_db": 47.08633845860938,
+            "ssim": 0.998120102667829,
+            "flip": 0.0016710421768948436,
+            "silhouette_xor_fraction": 9.1552734375e-05,
+            "silhouette_xor_mse_share": 0.43107709288096546,
+            "coverage_mae": 9.918212890625e-05
+          },
+          {
+            "mse": 8.001683171736833e-06,
+            "psnr_db": 50.96818648594419,
+            "ssim": 0.9981731395997399,
+            "flip": 0.0015877425903454423,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.22675151763981352,
+            "coverage_mae": 3.4332275390625e-05
+          }
+        ],
+        "meshoptimizer": [
+          {
+            "mse": 3.5522883326124572e-06,
+            "psnr_db": 54.49491790590392,
+            "ssim": 0.9989685408570819,
+            "flip": 0.0008151039364747703,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.14513145725987578,
+            "coverage_mae": 1.1444091796875e-05
+          },
+          {
+            "mse": 3.6156466262975784e-06,
+            "psnr_db": 54.4181402171115,
+            "ssim": 0.9992766793713691,
+            "flip": 0.0009801601991057396,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.043873312564901325,
+            "coverage_mae": 2.288818359375e-05
+          },
+          {
+            "mse": 2.966810766892542e-06,
+            "psnr_db": 55.27710153553484,
+            "ssim": 0.9996632429775999,
+            "flip": 0.0007716967957094312,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.3550581349363284,
+            "coverage_mae": 2.6702880859375e-05
+          },
+          {
+            "mse": 2.02441481341311e-06,
+            "psnr_db": 56.93700493453729,
+            "ssim": 0.9996982088312248,
+            "flip": 0.0006187693797983229,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.07835864147444069,
+            "coverage_mae": 1.52587890625e-05
+          },
+          {
+            "mse": 1.4957250516628211e-06,
+            "psnr_db": 58.25148232353896,
+            "ssim": 0.999853986327634,
+            "flip": 0.00045530375791713595,
+            "silhouette_xor_fraction": 0.0,
+            "silhouette_xor_mse_share": 0.0,
+            "coverage_mae": 1.9073486328125e-05
+          },
+          {
+            "mse": 2.6608136744281043e-06,
+            "psnr_db": 55.74985536196786,
+            "ssim": 0.9998770393032252,
+            "flip": 0.00048242745106108487,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.41679160419790096,
+            "coverage_mae": 4.1961669921875e-05
+          },
+          {
+            "mse": 3.207806943242984e-07,
+            "psnr_db": 64.93791776923787,
+            "ssim": 0.9999729138274495,
+            "flip": 4.015134982182644e-05,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.4945135332845645,
+            "coverage_mae": 1.1444091796875e-05
+          },
+          {
+            "mse": 4.941477586745483e-06,
+            "psnr_db": 53.0614317014119,
+            "ssim": 0.9998174923732317,
+            "flip": 0.00038169583422131836,
+            "silhouette_xor_fraction": 3.0517578125e-05,
+            "silhouette_xor_mse_share": 0.46068002659321877,
+            "coverage_mae": 3.814697265625e-05
+          },
+          {
+            "mse": 6.586915939782775e-06,
+            "psnr_db": 51.813178788571705,
+            "ssim": 0.9997891595664156,
+            "flip": 0.0005233081756159663,
+            "silhouette_xor_fraction": 4.57763671875e-05,
+            "silhouette_xor_mse_share": 0.5951549697185607,
+            "coverage_mae": 3.0517578125e-05
+          },
+          {
+            "mse": 2.990042141243752e-06,
+            "psnr_db": 55.24322690745586,
+            "ssim": 0.9998373643360479,
+            "flip": 0.00038171064807102084,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.6077538847904567,
+            "coverage_mae": 1.52587890625e-05
+          },
+          {
+            "mse": 6.103750285346982e-06,
+            "psnr_db": 52.14403242404791,
+            "ssim": 0.9993085113461982,
+            "flip": 0.0008294795406982303,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.3325131675060552,
+            "coverage_mae": 1.9073486328125e-05
+          },
+          {
+            "mse": 5.912032781862744e-06,
+            "psnr_db": 52.28263166470026,
+            "ssim": 0.9992766619107146,
+            "flip": 0.0009482348687015474,
+            "silhouette_xor_fraction": 1.52587890625e-05,
+            "silhouette_xor_mse_share": 0.36580138128125744,
+            "coverage_mae": 2.6702880859375e-05
+          }
+        ]
+      }
+    }
+  ],
+  "simplifier_failures": [],
+  "assets_evaluated": 8,
+  "meshoptimizer_topology_valid_assets": 7,
+  "paired_summary": {
+    "all_raw_outputs": {
+      "mse": {
+        "meshoptimizer_minus_qem_mean": -0.0001251601072881186,
+        "asset_bootstrap_95_percentile_ci": [
+          -0.00037517015955073246,
+          1.8418299973079737e-06
+        ],
+        "assets_better_for_meshoptimizer": 4,
+        "assets_included": 8,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "lower"
+      },
+      "psnr_db": {
+        "meshoptimizer_minus_qem_mean": 2.0026305086459315,
+        "asset_bootstrap_95_percentile_ci": [
+          -0.3947893920751748,
+          4.624540186955735
+        ],
+        "assets_better_for_meshoptimizer": 4,
+        "assets_included": 8,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "higher"
+      },
+      "ssim": {
+        "meshoptimizer_minus_qem_mean": 0.0022177385807641975,
+        "asset_bootstrap_95_percentile_ci": [
+          0.00037014885373375106,
+          0.005655006279209479
+        ],
+        "assets_better_for_meshoptimizer": 7,
+        "assets_included": 8,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "higher"
+      },
+      "flip": {
+        "meshoptimizer_minus_qem_mean": -0.0009079951613557569,
+        "asset_bootstrap_95_percentile_ci": [
+          -0.0026072567924302348,
+          0.0002488106745583233
+        ],
+        "assets_better_for_meshoptimizer": 5,
+        "assets_included": 8,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "lower"
+      },
+      "silhouette_xor_fraction": {
+        "meshoptimizer_minus_qem_mean": -0.0004102389017740885,
+        "asset_bootstrap_95_percentile_ci": [
+          -0.0012383460998535156,
+          2.3051102956136014e-05
+        ],
+        "assets_better_for_meshoptimizer": 6,
+        "assets_included": 8,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "lower"
+      },
+      "coverage_mae": {
+        "meshoptimizer_minus_qem_mean": -0.00042390823364257807,
+        "asset_bootstrap_95_percentile_ci": [
+          -0.0012555122375488281,
+          4.84784444173177e-06
+        ],
+        "assets_better_for_meshoptimizer": 6,
+        "assets_included": 8,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "lower"
+      },
+      "chamfer_l1_mean": {
+        "meshoptimizer_minus_qem_mean": -2.9391506147789185e-05,
+        "asset_bootstrap_95_percentile_ci": [
+          -7.726677591763505e-05,
+          7.88648626444833e-06
+        ],
+        "assets_better_for_meshoptimizer": 4,
+        "assets_included": 8,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "lower"
+      },
+      "chamfer_l2_squared_mean": {
+        "meshoptimizer_minus_qem_mean": -8.771659982171059e-07,
+        "asset_bootstrap_95_percentile_ci": [
+          -2.2210405071434472e-06,
+          8.746369207407262e-08
+        ],
+        "assets_better_for_meshoptimizer": 5,
+        "assets_included": 8,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "lower"
+      },
+      "bidirectional_distance_p95": {
+        "meshoptimizer_minus_qem_mean": -0.00011864953271040679,
+        "asset_bootstrap_95_percentile_ci": [
+          -0.00027215157302096725,
+          9.998564765532824e-06
+        ],
+        "assets_better_for_meshoptimizer": 6,
+        "assets_included": 8,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "lower"
+      },
+      "bidirectional_distance_max_sampled": {
+        "meshoptimizer_minus_qem_mean": -0.0005674135101611417,
+        "asset_bootstrap_95_percentile_ci": [
+          -0.0010562319642352725,
+          -9.982210850614575e-05
+        ],
+        "assets_better_for_meshoptimizer": 5,
+        "assets_included": 8,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "lower"
+      },
+      "normal_consistency_absdot": {
+        "meshoptimizer_minus_qem_mean": 0.00016954766319941805,
+        "asset_bootstrap_95_percentile_ci": [
+          -0.0011041724765836934,
+          0.0015314076498489232
+        ],
+        "assets_better_for_meshoptimizer": 3,
+        "assets_included": 8,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "higher"
+      }
+    },
+    "topology_and_boundary_valid_outputs": {
+      "mse": {
+        "meshoptimizer_minus_qem_mean": -0.00014227143677694224,
+        "asset_bootstrap_95_percentile_ci": [
+          -0.00042812101088584437,
+          2.842694998368017e-06
+        ],
+        "assets_better_for_meshoptimizer": 3,
+        "assets_included": 7,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "lower"
+      },
+      "psnr_db": {
+        "meshoptimizer_minus_qem_mean": 1.7213075247364458,
+        "asset_bootstrap_95_percentile_ci": [
+          -0.9264410931755539,
+          4.710089091502158
+        ],
+        "assets_better_for_meshoptimizer": 3,
+        "assets_included": 7,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "higher"
+      },
+      "ssim": {
+        "meshoptimizer_minus_qem_mean": 0.0024439173556832622,
+        "asset_bootstrap_95_percentile_ci": [
+          0.00032588122131539866,
+          0.006370691026477566
+        ],
+        "assets_better_for_meshoptimizer": 6,
+        "assets_included": 7,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "higher"
+      },
+      "flip": {
+        "meshoptimizer_minus_qem_mean": -0.0009542713929217175,
+        "asset_bootstrap_95_percentile_ci": [
+          -0.0029340870428963433,
+          0.0003575441132852574
+        ],
+        "assets_better_for_meshoptimizer": 4,
+        "assets_included": 7,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "lower"
+      },
+      "silhouette_xor_fraction": {
+        "meshoptimizer_minus_qem_mean": -0.00046412150065104163,
+        "asset_bootstrap_95_percentile_ci": [
+          -0.00141143798828125,
+          3.0699230375744054e-05
+        ],
+        "assets_better_for_meshoptimizer": 5,
+        "assets_included": 7,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "lower"
+      },
+      "coverage_mae": {
+        "meshoptimizer_minus_qem_mean": -0.00048051561628069183,
+        "asset_bootstrap_95_percentile_ci": [
+          -0.0014320101056780135,
+          9.990873790922616e-06
+        ],
+        "assets_better_for_meshoptimizer": 5,
+        "assets_included": 7,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "lower"
+      },
+      "chamfer_l1_mean": {
+        "meshoptimizer_minus_qem_mean": -3.4628161594011326e-05,
+        "asset_bootstrap_95_percentile_ci": [
+          -8.667873071160234e-05,
+          6.979936216007708e-06
+        ],
+        "assets_better_for_meshoptimizer": 4,
+        "assets_included": 7,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "lower"
+      },
+      "chamfer_l2_squared_mean": {
+        "meshoptimizer_minus_qem_mean": -9.714898776903415e-07,
+        "asset_bootstrap_95_percentile_ci": [
+          -2.4752313476763464e-06,
+          1.1415764437875722e-07
+        ],
+        "assets_better_for_meshoptimizer": 4,
+        "assets_included": 7,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "lower"
+      },
+      "bidirectional_distance_p95": {
+        "meshoptimizer_minus_qem_mean": -0.00011490988919836532,
+        "asset_bootstrap_95_percentile_ci": [
+          -0.0002906029014041385,
+          2.7064264645233313e-05
+        ],
+        "assets_better_for_meshoptimizer": 5,
+        "assets_included": 7,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "lower"
+      },
+      "bidirectional_distance_max_sampled": {
+        "meshoptimizer_minus_qem_mean": -0.0006603114114863645,
+        "asset_bootstrap_95_percentile_ci": [
+          -0.0011793300091974897,
+          -0.00014935652699098932
+        ],
+        "assets_better_for_meshoptimizer": 5,
+        "assets_included": 7,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "lower"
+      },
+      "normal_consistency_absdot": {
+        "meshoptimizer_minus_qem_mean": 0.0006679486974187394,
+        "asset_bootstrap_95_percentile_ci": [
+          -0.0001962128856303361,
+          0.0018501570622101449
+        ],
+        "assets_better_for_meshoptimizer": 3,
+        "assets_included": 7,
+        "assets_omitted_nonfinite": [],
+        "preferred_direction": "higher"
+      }
+    }
+  },
+  "meshoptimizer_topology_failures": [
+    {
+      "file_id": 94990,
+      "status": "rejected: Degenerate triangle",
+      "boundary_preserved": false
+    }
+  ],
+  "silhouette_error_attribution": {
+    "definition": "A pixel is a silhouette-XOR pixel when reference and candidate have different nonzero-coverage status. The share is RGB squared error inside those pixels divided by total RGB squared error. This is a raster-space attribution, not a perceptual metric.",
+    "all_raw_outputs": {
+      "qem": {
+        "xor_pixel_fraction": {
+          "mean": 0.0005826950073242188,
+          "asset_bootstrap_95_percentile_ci": [
+            3.8623809814453125e-05,
+            0.0016522407531738281
+          ],
+          "assets": 8
+        },
+        "xor_pixel_squared_error_share": {
+          "mean": 0.27677608612208127,
+          "asset_bootstrap_95_percentile_ci": [
+            0.193621327325068,
+            0.38762320422902796
+          ],
+          "assets": 8
+        }
+      },
+      "meshoptimizer": {
+        "xor_pixel_fraction": {
+          "mean": 0.00017245610555013022,
+          "asset_bootstrap_95_percentile_ci": [
+            2.6698907216389978e-05,
+            0.0004283626874287922
+          ],
+          "assets": 8
+        },
+        "xor_pixel_squared_error_share": {
+          "mean": 0.24211447804086803,
+          "asset_bootstrap_95_percentile_ci": [
+            0.15881222290157687,
+            0.3080776126758498
+          ],
+          "assets": 8
+        }
+      }
+    },
+    "topology_and_boundary_valid_outputs": {
+      "qem": {
+        "xor_pixel_fraction": {
+          "mean": 0.0006581261044456846,
+          "asset_bootstrap_95_percentile_ci": [
+            3.505888439360119e-05,
+            0.001880645751953125
+          ],
+          "assets": 7
+        },
+        "xor_pixel_squared_error_share": {
+          "mean": 0.2634260356465373,
+          "asset_bootstrap_95_percentile_ci": [
+            0.18010721712249536,
+            0.3866576585523881
+          ],
+          "assets": 7
+        }
+      },
+      "meshoptimizer": {
+        "xor_pixel_fraction": {
+          "mean": 0.00019400460379464285,
+          "asset_bootstrap_95_percentile_ci": [
+            2.7974446614583332e-05,
+            0.0004837399437313988
+          ],
+          "assets": 7
+        },
+        "xor_pixel_squared_error_share": {
+          "mean": 0.23032571164661636,
+          "asset_bootstrap_95_percentile_ci": [
+            0.14028168870571447,
+            0.3032849501603149
+          ],
+          "assets": 7
+        }
+      }
+    }
+  }
+}

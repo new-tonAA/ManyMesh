@@ -1,0 +1,735 @@
+{
+  "scope": "Exploratory validation-only render-space oracle; no deployable scale predictor",
+  "split": "validation",
+  "configuration": {
+    "scales": [
+      0.0,
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "views": 12,
+    "size": 256,
+    "box_samples_per_pixel": 4,
+    "model": "frozen rank-8 fixed-topology polynomial residual control",
+    "metrics": {
+      "input": "8-bit sRGB, RGB in [0,1]",
+      "ssim": "Gaussian sigma=1.5, population covariance, K1=.01 K2=.03",
+      "flip": "LDR-FLIP",
+      "flip_ppd": 67.0,
+      "lpips": "calibrated SqueezeNet, version 0.1, [-1,1] RGB",
+      "packages": {
+        "flip-evaluator": "1.7",
+        "lpips": "0.1.4",
+        "scikit-image": "0.25.2",
+        "torch": "2.7.1",
+        "torchvision": "0.22.1"
+      }
+    }
+  },
+  "hashes": {
+    "validation_manifest_sha256": "4f86431e8db9403fedb6a5773cf250651cec695300e4127ec493214c7e31fe28",
+    "model_sha256": "a1880ba383ae03ee21e6a6939f85d9560d5ae52cad1c8a8deb4b83452b746aab",
+    "fit_report_sha256": "9487e0c14f245ad1dacdd30e48a49333bb818cb04f4762a7291679841709937c",
+    "quality_renderer_sha256": "c64cf7c5a4dc75351c3182ac92adca61a91816b500ec12934e45453f99756b0a",
+    "probe_script_sha256": "dec2e186e95e16f40f609665191291177eb3dfcef4fc14c626d53ab13cd6abd6",
+    "full_report_sha256": "07c75c4e495cfb28ab93bdec2cd2e1c735dfaa45c121945b935059a7ff42e9cd"
+  },
+  "assets": [
+    {
+      "file_id": 90431,
+      "preparation_status": "prepared",
+      "input_sha256": "b3e7526f62cd64b24cbe07ba1107053786564b655f360033d84981e457fad05c",
+      "zero_scale_is_identity": true,
+      "scales": {
+        "0": {
+          "status": "decoded",
+          "triangles": 466,
+          "sidecar_bytes": 1266,
+          "decode_seconds": 0.02713870001025498,
+          "mean": {
+            "ssim": 0.8881420860265186,
+            "flip": 0.06888439226895571,
+            "lpips_squeeze": 0.05894510013361772,
+            "silhouette_xor_fraction": 0.029172261555989582,
+            "coverage_mae": 0.029511769612630207,
+            "mse": 0.011476619182206813,
+            "psnr_db": 19.401860289027223
+          }
+        },
+        "0.25": {
+          "status": "decoded",
+          "triangles": 466,
+          "sidecar_bytes": 1266,
+          "decode_seconds": 0.03168720001121983,
+          "mean": {
+            "ssim": 0.8876108962315074,
+            "flip": 0.0699862721376121,
+            "lpips_squeeze": 0.059219159030665956,
+            "silhouette_xor_fraction": 0.029299418131510418,
+            "coverage_mae": 0.029661814371744793,
+            "mse": 0.011517737737057013,
+            "psnr_db": 19.38632814731768
+          }
+        },
+        "0.5": {
+          "status": "decoded",
+          "triangles": 466,
+          "sidecar_bytes": 1266,
+          "decode_seconds": 0.02458150003803894,
+          "mean": {
+            "ssim": 0.8869689927655116,
+            "flip": 0.07078500371426344,
+            "lpips_squeeze": 0.05943316655854384,
+            "silhouette_xor_fraction": 0.02944183349609375,
+            "coverage_mae": 0.029790242513020832,
+            "mse": 0.01155287227706391,
+            "psnr_db": 19.373100279795988
+          }
+        },
+        "0.75": {
+          "status": "decoded",
+          "triangles": 466,
+          "sidecar_bytes": 1266,
+          "decode_seconds": 0.031088099989574403,
+          "mean": {
+            "ssim": 0.8862872946891353,
+            "flip": 0.07148046946773927,
+            "lpips_squeeze": 0.05980941094458103,
+            "silhouette_xor_fraction": 0.029585520426432293,
+            "coverage_mae": 0.029931068420410156,
+            "mse": 0.011592005233833089,
+            "psnr_db": 19.358414314512782
+          }
+        },
+        "1": {
+          "status": "decoded",
+          "triangles": 466,
+          "sidecar_bytes": 1266,
+          "decode_seconds": 0.028480600041802973,
+          "mean": {
+            "ssim": 0.885505495208494,
+            "flip": 0.07211196391532819,
+            "lpips_squeeze": 0.05977668892592192,
+            "silhouette_xor_fraction": 0.029699961344401043,
+            "coverage_mae": 0.030068715413411457,
+            "mse": 0.01162385149795276,
+            "psnr_db": 19.346499470610016
+          }
+        }
+      }
+    },
+    {
+      "file_id": 263198,
+      "preparation_status": "prepared",
+      "input_sha256": "8c58c38d8dda6750250670eb9f409b989efc460973641b9bea4add68a7fb8a4d",
+      "zero_scale_is_identity": true,
+      "scales": {
+        "0": {
+          "status": "decoded",
+          "triangles": 154,
+          "sidecar_bytes": 1074,
+          "decode_seconds": 0.00876649998826906,
+          "mean": {
+            "ssim": 0.9731875295302242,
+            "flip": 0.013945917734721055,
+            "lpips_squeeze": 0.015653787413612008,
+            "silhouette_xor_fraction": 0.0025647481282552085,
+            "coverage_mae": 0.002593994140625,
+            "mse": 0.0013765422542874634,
+            "psnr_db": 28.612104529795275
+          }
+        },
+        "0.25": {
+          "status": "decoded",
+          "triangles": 154,
+          "sidecar_bytes": 1074,
+          "decode_seconds": 0.017440599971450865,
+          "mean": {
+            "ssim": 0.9727967669664191,
+            "flip": 0.015006159451634934,
+            "lpips_squeeze": 0.016204032697714865,
+            "silhouette_xor_fraction": 0.0026461283365885415,
+            "coverage_mae": 0.002689361572265625,
+            "mse": 0.0014059607420122868,
+            "psnr_db": 28.520268057496697
+          }
+        },
+        "0.5": {
+          "status": "decoded",
+          "triangles": 154,
+          "sidecar_bytes": 1074,
+          "decode_seconds": 0.018064000003505498,
+          "mean": {
+            "ssim": 0.9724871684132546,
+            "flip": 0.01564119317724059,
+            "lpips_squeeze": 0.016455582110211253,
+            "silhouette_xor_fraction": 0.0027211507161458335,
+            "coverage_mae": 0.0027672449747721353,
+            "mse": 0.001433307472198694,
+            "psnr_db": 28.436606350350008
+          }
+        },
+        "0.75": {
+          "status": "decoded",
+          "triangles": 154,
+          "sidecar_bytes": 1074,
+          "decode_seconds": 0.013339199998881668,
+          "mean": {
+            "ssim": 0.9714336327872894,
+            "flip": 0.016494877287186682,
+            "lpips_squeeze": 0.017278188567919035,
+            "silhouette_xor_fraction": 0.002956390380859375,
+            "coverage_mae": 0.0029284159342447915,
+            "mse": 0.0015157789489206373,
+            "psnr_db": 28.19364128693238
+          }
+        },
+        "1": {
+          "status": "decoded",
+          "triangles": 154,
+          "sidecar_bytes": 1074,
+          "decode_seconds": 0.012190999987069517,
+          "mean": {
+            "ssim": 0.9698458463419003,
+            "flip": 0.01725243676143388,
+            "lpips_squeeze": 0.017702859942801297,
+            "silhouette_xor_fraction": 0.0033467610677083335,
+            "coverage_mae": 0.003177642822265625,
+            "mse": 0.001618001650162848,
+            "psnr_db": 27.91021039796519
+          }
+        }
+      }
+    },
+    {
+      "file_id": 44710,
+      "preparation_status": "prepared",
+      "input_sha256": "af0aa394903a6099da1a542ed6707aceb5130dea9726dc0ba0e7ff74147cbf58",
+      "zero_scale_is_identity": true,
+      "scales": {
+        "0": {
+          "status": "decoded",
+          "triangles": 950,
+          "sidecar_bytes": 1522,
+          "decode_seconds": 0.053430199972353876,
+          "mean": {
+            "ssim": 0.9738490933117885,
+            "flip": 0.016888701007701457,
+            "lpips_squeeze": 0.016987508550907176,
+            "silhouette_xor_fraction": 0.0020281473795572915,
+            "coverage_mae": 0.002047856648763021,
+            "mse": 0.0005666892112684024,
+            "psnr_db": 32.466550554566176
+          }
+        },
+        "0.25": {
+          "status": "decoded",
+          "triangles": 950,
+          "sidecar_bytes": 1522,
+          "decode_seconds": 0.05692740000085905,
+          "mean": {
+            "ssim": 0.9735236787950501,
+            "flip": 0.017158141631322604,
+            "lpips_squeeze": 0.01725941275556882,
+            "silhouette_xor_fraction": 0.0021146138509114585,
+            "coverage_mae": 0.00211334228515625,
+            "mse": 0.0005776418851886393,
+            "psnr_db": 32.38341323321414
+          }
+        },
+        "0.5": {
+          "status": "decoded",
+          "triangles": 950,
+          "sidecar_bytes": 1522,
+          "decode_seconds": 0.0520935999811627,
+          "mean": {
+            "ssim": 0.9731220684731431,
+            "flip": 0.017436438240110874,
+            "lpips_squeeze": 0.017426942319919664,
+            "silhouette_xor_fraction": 0.0021845499674479165,
+            "coverage_mae": 0.00218963623046875,
+            "mse": 0.0005933287338340923,
+            "psnr_db": 32.26704619059446
+          }
+        },
+        "0.75": {
+          "status": "decoded",
+          "triangles": 950,
+          "sidecar_bytes": 1522,
+          "decode_seconds": 0.052427300019189715,
+          "mean": {
+            "ssim": 0.9726113628026344,
+            "flip": 0.01776822943550845,
+            "lpips_squeeze": 0.017567583825439215,
+            "silhouette_xor_fraction": 0.002269744873046875,
+            "coverage_mae": 0.002281824747721354,
+            "mse": 0.0006143064693229467,
+            "psnr_db": 32.116149110576735
+          }
+        },
+        "1": {
+          "status": "decoded",
+          "triangles": 950,
+          "sidecar_bytes": 1522,
+          "decode_seconds": 0.053298500017262995,
+          "mean": {
+            "ssim": 0.9719756395353727,
+            "flip": 0.0181323466822505,
+            "lpips_squeeze": 0.017702825833112,
+            "silhouette_xor_fraction": 0.0023905436197916665,
+            "coverage_mae": 0.0023905436197916665,
+            "mse": 0.0006426506233142,
+            "psnr_db": 31.920250668952
+          }
+        }
+      }
+    },
+    {
+      "file_id": 191968,
+      "preparation_status": "rejected",
+      "input_sha256": "4384855f2f404959ae7516298cd5b8a620c4c29ef1e0a1af4329e47c598db784",
+      "zero_scale_is_identity": null,
+      "scales": {},
+      "reason": "Duplicate geometric triangle"
+    },
+    {
+      "file_id": 383021,
+      "preparation_status": "prepared",
+      "input_sha256": "0f6734eafb2eae7b152f05225423bebce9d467c1203fb6f9e5be758022fcb397",
+      "zero_scale_is_identity": true,
+      "scales": {
+        "0": {
+          "status": "decoded",
+          "triangles": 4136,
+          "sidecar_bytes": 3314,
+          "decode_seconds": 0.22886589996051043,
+          "mean": {
+            "ssim": 0.9951875095654011,
+            "flip": 0.004942218346210818,
+            "lpips_squeeze": 0.003939017396381435,
+            "silhouette_xor_fraction": 0.00024159749348958334,
+            "coverage_mae": 0.00027942657470703125,
+            "mse": 5.204637432868368e-05,
+            "psnr_db": 42.83609519061996
+          }
+        },
+        "0.25": {
+          "status": "decoded",
+          "triangles": 4136,
+          "sidecar_bytes": 3314,
+          "decode_seconds": 0.3702398000168614,
+          "mean": {
+            "ssim": 0.995166948666213,
+            "flip": 0.004945905714218195,
+            "lpips_squeeze": 0.003963583871761027,
+            "silhouette_xor_fraction": 0.0002454121907552083,
+            "coverage_mae": 0.00028196970621744793,
+            "mse": 5.254074501468786e-05,
+            "psnr_db": 42.79503773318622
+          }
+        },
+        "0.5": {
+          "status": "decoded",
+          "triangles": 4136,
+          "sidecar_bytes": 3314,
+          "decode_seconds": 0.34380079997936264,
+          "mean": {
+            "ssim": 0.9951689745838214,
+            "flip": 0.0049609160438800854,
+            "lpips_squeeze": 0.003943451423159179,
+            "silhouette_xor_fraction": 0.00024286905924479166,
+            "coverage_mae": 0.0002835591634114583,
+            "mse": 5.260293000663807e-05,
+            "psnr_db": 42.78990064776391
+          }
+        },
+        "0.75": {
+          "status": "decoded",
+          "triangles": 4136,
+          "sidecar_bytes": 3314,
+          "decode_seconds": 0.3240438000066206,
+          "mean": {
+            "ssim": 0.9951502299245721,
+            "flip": 0.004974565784020039,
+            "lpips_squeeze": 0.003979475353844464,
+            "silhouette_xor_fraction": 0.0002466837565104167,
+            "coverage_mae": 0.0002867380777994792,
+            "mse": 5.312393464202469e-05,
+            "psnr_db": 42.747097662824174
+          }
+        },
+        "1": {
+          "status": "decoded",
+          "triangles": 4136,
+          "sidecar_bytes": 3314,
+          "decode_seconds": 0.2391395000158809,
+          "mean": {
+            "ssim": 0.995135073607574,
+            "flip": 0.004999764903914183,
+            "lpips_squeeze": 0.003943132333612691,
+            "silhouette_xor_fraction": 0.00025177001953125,
+            "coverage_mae": 0.0002905527750651042,
+            "mse": 5.390701577493231e-05,
+            "psnr_db": 42.68354709506039
+          }
+        }
+      }
+    },
+    {
+      "file_id": 100894,
+      "preparation_status": "prepared",
+      "input_sha256": "0e6c0419f7b8a0994665315dcbbd9f04dae60df615fe4699c559fd46a3c39bb0",
+      "zero_scale_is_identity": true,
+      "scales": {
+        "0": {
+          "status": "decoded",
+          "triangles": 1746,
+          "sidecar_bytes": 1970,
+          "decode_seconds": 0.20901780005078763,
+          "mean": {
+            "ssim": 0.9608352028330137,
+            "flip": 0.021829200287659962,
+            "lpips_squeeze": 0.023784114125495154,
+            "silhouette_xor_fraction": 0.0017573038736979167,
+            "coverage_mae": 0.0017458597819010417,
+            "mse": 0.0008848115362968871,
+            "psnr_db": 30.531492236101073
+          }
+        },
+        "0.25": {
+          "status": "rejected",
+          "reason": "Local triangle flip relative to source",
+          "sidecar_bytes": 1970
+        },
+        "0.5": {
+          "status": "rejected",
+          "reason": "Local triangle flip relative to source",
+          "sidecar_bytes": 1970
+        },
+        "0.75": {
+          "status": "rejected",
+          "reason": "Predicted displacement exceeds normalized offset cap",
+          "sidecar_bytes": 1970
+        },
+        "1": {
+          "status": "rejected",
+          "reason": "Predicted displacement exceeds normalized offset cap",
+          "sidecar_bytes": 1970
+        }
+      }
+    },
+    {
+      "file_id": 257594,
+      "preparation_status": "rejected",
+      "input_sha256": "7f97fe7ee1ba78f46b40413d2ff24cdd5d5edb6045dd94da368a02ccc15df388",
+      "zero_scale_is_identity": null,
+      "scales": {},
+      "reason": "Duplicate geometric triangle"
+    },
+    {
+      "file_id": 94990,
+      "preparation_status": "rejected",
+      "input_sha256": "c074ee56d1c6d5ea6c5601ae11057b4c43684e63d605d3216ce96366aafa7f4b",
+      "zero_scale_is_identity": null,
+      "scales": {},
+      "reason": "Degenerate triangle"
+    }
+  ],
+  "comparisons": {
+    "0.25_vs_zero": {
+      "paired_assets": 4,
+      "metrics": {
+        "psnr_db": {
+          "assets": 4,
+          "mean_delta": -0.05789084819847279,
+          "bootstrap_95_percent": [
+            -0.08748689682530575,
+            -0.028294799571639828
+          ],
+          "negative": 4,
+          "positive": 0
+        },
+        "ssim": {
+          "assets": 4,
+          "mean_delta": -0.00031698194368570687,
+          "bootstrap_95_percent": [
+            -0.0004797459754430078,
+            -0.0001131113153423624
+          ],
+          "negative": 4,
+          "positive": 0
+        },
+        "flip": {
+          "assets": 4,
+          "mean_delta": 0.0006088123942996999,
+          "bootstrap_95_percent": [
+            0.00013656399581426192,
+            0.001081060792785138
+          ],
+          "negative": 0,
+          "positive": 4
+        },
+        "lpips_squeeze": {
+          "assets": 4,
+          "mean_delta": 0.00028019371529808225,
+          "bootstrap_95_percent": [
+            8.693958079675256e-05,
+            0.0004806600142425541
+          ],
+          "negative": 0,
+          "positive": 4
+        },
+        "silhouette_xor_fraction": {
+          "assets": 4,
+          "mean_delta": 7.470448811849016e-05,
+          "bootstrap_95_percent": [
+            2.447764078776047e-05,
+            0.00011571248372396
+          ],
+          "negative": 0,
+          "positive": 4
+        },
+        "coverage_mae": {
+          "assets": 4,
+          "mean_delta": 7.836023966471409e-05,
+          "bootstrap_95_percent": [
+            2.5749206542968764e-05,
+            0.0001289049784342465
+          ],
+          "negative": 0,
+          "positive": 4
+        }
+      }
+    },
+    "0.5_vs_zero": {
+      "paired_assets": 4,
+      "metrics": {
+        "psnr_db": {
+          "assets": 4,
+          "mean_delta": -0.11248927387606589,
+          "bootstrap_95_percent": [
+            -0.18750127170848963,
+            -0.03747727604364215
+          ],
+          "negative": 4,
+          "positive": 0
+        },
+        "ssim": {
+          "assets": 4,
+          "mean_delta": -0.0006547535495504686,
+          "bootstrap_95_percent": [
+            -0.0010549102249976794,
+            -0.00019565744584618128
+          ],
+          "negative": 4,
+          "positive": 0
+        },
+        "flip": {
+          "assets": 4,
+          "mean_delta": 0.0010405804544764883,
+          "bootstrap_95_percent": [
+            0.00028321746503934264,
+            0.001797943443913634
+          ],
+          "negative": 0,
+          "positive": 4
+        },
+        "lpips_squeeze": {
+          "assets": 4,
+          "mean_delta": 0.00043343222932889884,
+          "bootstrap_95_percent": [
+            0.00012534212631483757,
+            0.000711204464702556
+          ],
+          "negative": 0,
+          "positive": 4
+        },
+        "silhouette_xor_fraction": {
+          "assets": 4,
+          "mean_delta": 0.00014591217041015652,
+          "bootstrap_95_percent": [
+            4.0054321289062486e-05,
+            0.00024127960205078212
+          ],
+          "negative": 0,
+          "positive": 4
+        },
+        "coverage_mae": {
+          "assets": 4,
+          "mean_delta": 0.00014940897623697908,
+          "bootstrap_95_percent": [
+            4.641215006510412e-05,
+            0.000244299570719401
+          ],
+          "negative": 0,
+          "positive": 4
+        }
+      }
+    },
+    "0.75_vs_zero": {
+      "paired_assets": 4,
+      "metrics": {
+        "psnr_db": {
+          "assets": 4,
+          "mean_delta": -0.2253270472906399,
+          "bootstrap_95_percent": [
+            -0.38443234342616783,
+            -0.06622175115511197
+          ],
+          "negative": 4,
+          "positive": 0
+        },
+        "ssim": {
+          "assets": 4,
+          "mean_delta": -0.0012209245575753036,
+          "bootstrap_95_percent": [
+            -0.001804344040159056,
+            -0.00046643391635545206
+          ],
+          "negative": 4,
+          "positive": 0
+        },
+        "flip": {
+          "assets": 4,
+          "mean_delta": 0.0015142281542163505,
+          "bootstrap_95_percent": [
+            0.0004559379328081068,
+            0.002572518375624594
+          ],
+          "negative": 0,
+          "positive": 4
+        },
+        "lpips_squeeze": {
+          "assets": 4,
+          "mean_delta": 0.0007773112993163511,
+          "bootstrap_95_percent": [
+            0.00024642117083809923,
+            0.0013633196843632796
+          ],
+          "negative": 0,
+          "positive": 4
+        },
+        "silhouette_xor_fraction": {
+          "assets": 4,
+          "mean_delta": 0.0002628962198893235,
+          "bootstrap_95_percent": [
+            0.00010172526041666663,
+            0.0004024505615234386
+          ],
+          "negative": 0,
+          "positive": 4
+        },
+        "coverage_mae": {
+          "assets": 4,
+          "mean_delta": 0.0002487500508626304,
+          "bootstrap_95_percent": [
+            8.908907572428383e-05,
+            0.0003768603006998703
+          ],
+          "negative": 0,
+          "positive": 4
+        }
+      }
+    },
+    "1_vs_zero": {
+      "paired_assets": 4,
+      "metrics": {
+        "psnr_db": {
+          "assets": 4,
+          "mean_delta": -0.3640257328552581,
+          "bootstrap_95_percent": [
+            -0.6240970087221296,
+            -0.10395445698838657
+          ],
+          "negative": 4,
+          "positive": 0
+        },
+        "ssim": {
+          "assets": 4,
+          "mean_delta": -0.0019760409351478603,
+          "bootstrap_95_percent": [
+            -0.0029891370031742692,
+            -0.0006984746728764812
+          ],
+          "negative": 4,
+          "positive": 0
+        },
+        "flip": {
+          "assets": 4,
+          "mean_delta": 0.0019588207263344292,
+          "bootstrap_95_percent": [
+            0.0006505961161262044,
+            0.0032670453365426537
+          ],
+          "negative": 0,
+          "positive": 4
+        },
+        "lpips_squeeze": {
+          "assets": 4,
+          "mean_delta": 0.0009000233852323914,
+          "bootstrap_95_percent": [
+            0.00021098340099949065,
+            0.0017156337174431728
+          ],
+          "negative": 0,
+          "positive": 4
+        },
+        "silhouette_xor_fraction": {
+          "assets": 4,
+          "mean_delta": 0.00042057037353515685,
+          "bootstrap_95_percent": [
+            0.00013955434163411513,
+            0.0006771087646484375
+          ],
+          "negative": 0,
+          "positive": 4
+        },
+        "coverage_mae": {
+          "assets": 4,
+          "mean_delta": 0.0003736019134521484,
+          "bootstrap_95_percent": [
+            0.0001475811004638672,
+            0.0005702972412109375
+          ],
+          "negative": 0,
+          "positive": 4
+        }
+      }
+    }
+  },
+  "validation_oracle": {
+    "assets_with_zero_scale": 5,
+    "per_asset_best_scale_by_psnr": {
+      "90431": 0.0,
+      "263198": 0.0,
+      "44710": 0.0,
+      "383021": 0.0,
+      "100894": 0.0
+    },
+    "warning": "Per-asset scale selection uses the same validation renders being scored; it is an oracle, not a generalization estimate."
+  },
+  "decode_failures": [
+    {
+      "file_id": 100894,
+      "scale": "0.25",
+      "reason": "Local triangle flip relative to source"
+    },
+    {
+      "file_id": 100894,
+      "scale": "0.5",
+      "reason": "Local triangle flip relative to source"
+    },
+    {
+      "file_id": 100894,
+      "scale": "0.75",
+      "reason": "Predicted displacement exceeds normalized offset cap"
+    },
+    {
+      "file_id": 100894,
+      "scale": "1",
+      "reason": "Predicted displacement exceeds normalized offset cap"
+    }
+  ]
+}

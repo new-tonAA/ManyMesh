@@ -1,0 +1,621 @@
+{
+  "scope": "Exploratory rank sweep; no test split was loaded",
+  "configuration": {
+    "ranks": [
+      8,
+      16,
+      30
+    ],
+    "ridge": 1e-05,
+    "refinement_fraction": 0.1,
+    "training_manifest_sha256": "2bd0d3efd174cd301ca2f9805d7177a9f5fdd4c1c0682fa436c425505853afec",
+    "validation_manifest_sha256": "4f86431e8db9403fedb6a5773cf250651cec695300e4127ec493214c7e31fe28",
+    "script_sha256": {
+      "tools/mmtrain/cluster_decoder.py": "46e66127d31083a9e9d81cf4fd7e9dc767676554e2a3dde849c47b25169e2425",
+      "tools/mmtrain/fit_cluster_decoder.py": "508305687745b556f5f3c88f3b15b5e2ca6e839c93f09e0e300bd77a62a09205",
+      "tools/mmtrain/cluster_decoder_quality.py": "c64cf7c5a4dc75351c3182ac92adca61a91816b500ec12934e45453f99756b0a",
+      "tools/mmmetrics/summarize_decoder_quality.py": "76571c81eff9cb97c6332bb95038012d1b9db58431ebf3d449d267a24265a70c"
+    }
+  },
+  "protocol": {
+    "train_attempted": 16,
+    "train_prepared": 9,
+    "validation_attempted": 8,
+    "validation_prepared": 5,
+    "views_per_asset": 12,
+    "resolution": [
+      256,
+      256
+    ],
+    "box_samples_per_pixel": 4,
+    "quality_metrics": [
+      "psnr_db",
+      "ssim",
+      "flip",
+      "lpips_squeeze",
+      "silhouette_xor_fraction",
+      "coverage_mae"
+    ],
+    "uncertainty_unit": "asset"
+  },
+  "ranks": [
+    {
+      "rank": 8,
+      "model_file_bytes": {
+        "fixed": 1488,
+        "refine": 1488
+      },
+      "model_sha256": {
+        "fixed": "a1880ba383ae03ee21e6a6939f85d9560d5ae52cad1c8a8deb4b83452b746aab",
+        "refine": "d740899db0bdbf2d17afa57ec1a1058b086b0806318114e0394cc8986d02e32d"
+      },
+      "train_decode": {
+        "fixed": {
+          "decoded": 7,
+          "attempted": 9
+        },
+        "refine": {
+          "decoded": 5,
+          "attempted": 9
+        }
+      },
+      "validation_decode": {
+        "fixed": {
+          "decoded": 4,
+          "prepared": 5,
+          "failures": [
+            {
+              "file_id": 100894,
+              "reason": "Predicted displacement exceeds normalized offset cap"
+            }
+          ]
+        },
+        "refine": {
+          "decoded": 3,
+          "prepared": 5,
+          "failures": [
+            {
+              "file_id": 90431,
+              "reason": "Local triangle flip relative to source"
+            },
+            {
+              "file_id": 100894,
+              "reason": "Local triangle flip relative to source"
+            }
+          ]
+        }
+      },
+      "validation_mean_sidecar_bytes": {
+        "fixed": 1829.2,
+        "refine": 3018.0
+      },
+      "validation_metrics_vs_qem": {
+        "fixed": {
+          "paired_assets": 4,
+          "same_triangle_count": true,
+          "metrics": {
+            "psnr_db": {
+              "mean_delta": -0.3640257328552581,
+              "bootstrap_95_percent": [
+                -0.6240970087221296,
+                -0.10395445698838657
+              ],
+              "negative_assets": 4,
+              "positive_assets": 0,
+              "paired_assets": 4
+            },
+            "ssim": {
+              "mean_delta": -0.0019760409351478603,
+              "bootstrap_95_percent": [
+                -0.0029891370031742692,
+                -0.0006984746728764812
+              ],
+              "negative_assets": 4,
+              "positive_assets": 0,
+              "paired_assets": 4
+            },
+            "flip": {
+              "mean_delta": 0.0019588207263344292,
+              "bootstrap_95_percent": [
+                0.0006505961161262044,
+                0.0032670453365426537
+              ],
+              "negative_assets": 0,
+              "positive_assets": 4,
+              "paired_assets": 4
+            },
+            "lpips_squeeze": {
+              "mean_delta": 0.0009000233852323914,
+              "bootstrap_95_percent": [
+                0.00021098340099949065,
+                0.0017156337174431728
+              ],
+              "negative_assets": 0,
+              "positive_assets": 4,
+              "paired_assets": 4
+            },
+            "silhouette_xor_fraction": {
+              "mean_delta": 0.00042057037353515685,
+              "bootstrap_95_percent": [
+                0.00013955434163411513,
+                0.0006771087646484375
+              ],
+              "negative_assets": 0,
+              "positive_assets": 4,
+              "paired_assets": 4
+            },
+            "coverage_mae": {
+              "mean_delta": 0.0003736019134521484,
+              "bootstrap_95_percent": [
+                0.0001475811004638672,
+                0.0005702972412109375
+              ],
+              "negative_assets": 0,
+              "positive_assets": 4,
+              "paired_assets": 4
+            }
+          }
+        },
+        "refine": {
+          "paired_assets": 3,
+          "same_triangle_count": false,
+          "metrics": {
+            "psnr_db": {
+              "mean_delta": -0.05386509143190802,
+              "bootstrap_95_percent": [
+                -0.10140782918896107,
+                0.0003120284226767467
+              ],
+              "negative_assets": 2,
+              "positive_assets": 1,
+              "paired_assets": 3
+            },
+            "ssim": {
+              "mean_delta": -0.00012380585706328606,
+              "bootstrap_95_percent": [
+                -0.0005515130548172653,
+                0.00020411819665333564
+              ],
+              "negative_assets": 2,
+              "positive_assets": 1,
+              "paired_assets": 3
+            },
+            "flip": {
+              "mean_delta": 0.0005936832862466369,
+              "bootstrap_95_percent": [
+                -2.5762308117313268e-05,
+                0.0016232299385592341
+              ],
+              "negative_assets": 1,
+              "positive_assets": 2,
+              "paired_assets": 3
+            },
+            "lpips_squeeze": {
+              "mean_delta": 7.185423196965958e-05,
+              "bootstrap_95_percent": [
+                -0.00019766188537081314,
+                0.00036006432492285967
+              ],
+              "negative_assets": 1,
+              "positive_assets": 2,
+              "paired_assets": 3
+            },
+            "silhouette_xor_fraction": {
+              "mean_delta": 4.323323567708328e-05,
+              "bootstrap_95_percent": [
+                1.2715657552083153e-06,
+                0.00010808308919270804
+              ],
+              "negative_assets": 0,
+              "positive_assets": 3,
+              "paired_assets": 3
+            },
+            "coverage_mae": {
+              "mean_delta": 4.7047932942708187e-05,
+              "bootstrap_95_percent": [
+                -9.5367431640625e-07,
+                0.00012938181559244777
+              ],
+              "negative_assets": 1,
+              "positive_assets": 2,
+              "paired_assets": 3
+            }
+          }
+        }
+      },
+      "artifact_sha256": {
+        "fit_report": "9487e0c14f245ad1dacdd30e48a49333bb818cb04f4762a7291679841709937c",
+        "quality_report": "e4485ca970de714864955292f916ae5eb0aca264903e3bfc79dd5edb09981444",
+        "quality_summary": "7cd65d5da5bf260e9ebb6ccee8ed05be9f8187361c039bc47879cde39c218988"
+      }
+    },
+    {
+      "rank": 16,
+      "model_file_bytes": {
+        "fixed": 2448,
+        "refine": 2448
+      },
+      "model_sha256": {
+        "fixed": "1f3c504af6c0bec4a2ff35aaa8b108c0cb3c4871d094fd6c47394a8a283c3f41",
+        "refine": "9be59736debad0d6f903c5b48a2970b489d334de71590b88aaf7e55247bcad0a"
+      },
+      "train_decode": {
+        "fixed": {
+          "decoded": 7,
+          "attempted": 9
+        },
+        "refine": {
+          "decoded": 3,
+          "attempted": 9
+        }
+      },
+      "validation_decode": {
+        "fixed": {
+          "decoded": 4,
+          "prepared": 5,
+          "failures": [
+            {
+              "file_id": 100894,
+              "reason": "Predicted displacement exceeds normalized offset cap"
+            }
+          ]
+        },
+        "refine": {
+          "decoded": 3,
+          "prepared": 5,
+          "failures": [
+            {
+              "file_id": 90431,
+              "reason": "Local triangle flip relative to source"
+            },
+            {
+              "file_id": 100894,
+              "reason": "Predicted displacement exceeds normalized offset cap"
+            }
+          ]
+        }
+      },
+      "validation_mean_sidecar_bytes": {
+        "fixed": 2680.4,
+        "refine": 3869.2
+      },
+      "validation_metrics_vs_qem": {
+        "fixed": {
+          "paired_assets": 4,
+          "same_triangle_count": true,
+          "metrics": {
+            "psnr_db": {
+              "mean_delta": -0.4265650902451217,
+              "bootstrap_95_percent": [
+                -0.6973912675848766,
+                -0.1557389129053668
+              ],
+              "negative_assets": 4,
+              "positive_assets": 0,
+              "paired_assets": 4
+            },
+            "ssim": {
+              "mean_delta": -0.0026940084546710485,
+              "bootstrap_95_percent": [
+                -0.004108626333852977,
+                -0.000889693218127513
+              ],
+              "negative_assets": 4,
+              "positive_assets": 0,
+              "paired_assets": 4
+            },
+            "flip": {
+              "mean_delta": 0.0024698957483148343,
+              "bootstrap_95_percent": [
+                0.0007851636158496449,
+                0.004154627880780024
+              ],
+              "negative_assets": 0,
+              "positive_assets": 4,
+              "paired_assets": 4
+            },
+            "lpips_squeeze": {
+              "mean_delta": 0.0010364744230173524,
+              "bootstrap_95_percent": [
+                0.0004004597431048755,
+                0.0015800064817691837
+              ],
+              "negative_assets": 0,
+              "positive_assets": 4,
+              "paired_assets": 4
+            },
+            "silhouette_xor_fraction": {
+              "mean_delta": 0.0006615320841471357,
+              "bootstrap_95_percent": [
+                0.00022633870442708326,
+                0.001049359639485678
+              ],
+              "negative_assets": 0,
+              "positive_assets": 4,
+              "paired_assets": 4
+            },
+            "coverage_mae": {
+              "mean_delta": 0.0005941390991210943,
+              "bootstrap_95_percent": [
+                0.00017094612121582026,
+                0.0010400613149007178
+              ],
+              "negative_assets": 0,
+              "positive_assets": 4,
+              "paired_assets": 4
+            }
+          }
+        },
+        "refine": {
+          "paired_assets": 3,
+          "same_triangle_count": false,
+          "metrics": {
+            "psnr_db": {
+              "mean_delta": -0.030335966332100856,
+              "bootstrap_95_percent": [
+                -0.08020996286811766,
+                -0.002371909412275386
+              ],
+              "negative_assets": 3,
+              "positive_assets": 0,
+              "paired_assets": 3
+            },
+            "ssim": {
+              "mean_delta": -0.00022073562985710135,
+              "bootstrap_95_percent": [
+                -0.0006773521778571379,
+                7.560133022355142e-05
+              ],
+              "negative_assets": 2,
+              "positive_assets": 1,
+              "paired_assets": 3
+            },
+            "flip": {
+              "mean_delta": 0.0006295228975229994,
+              "bootstrap_95_percent": [
+                -1.6888715132760794e-05,
+                0.0016513654069664572
+              ],
+              "negative_assets": 1,
+              "positive_assets": 2,
+              "paired_assets": 3
+            },
+            "lpips_squeeze": {
+              "mean_delta": 0.00010414675570144772,
+              "bootstrap_95_percent": [
+                -0.00030159282808502746,
+                0.0007046264363452792
+              ],
+              "negative_assets": 2,
+              "positive_assets": 1,
+              "paired_assets": 3
+            },
+            "silhouette_xor_fraction": {
+              "mean_delta": 8.943345811631949e-05,
+              "bootstrap_95_percent": [
+                -1.1444091796875e-05,
+                0.00019709269205729152
+              ],
+              "negative_assets": 1,
+              "positive_assets": 2,
+              "paired_assets": 3
+            },
+            "coverage_mae": {
+              "mean_delta": 9.494357638888878e-05,
+              "bootstrap_95_percent": [
+                -4.450480143229185e-06,
+                0.00020376841227213527
+              ],
+              "negative_assets": 1,
+              "positive_assets": 2,
+              "paired_assets": 3
+            }
+          }
+        }
+      },
+      "artifact_sha256": {
+        "fit_report": "4b34cac967fc22271d88c803ab62bb7157d76518b7c13d31841e6e2bceb28a07",
+        "quality_report": "beb6e149794ba332c049c3ffde056a0094019d0cae572801413e1a0a00360af5",
+        "quality_summary": "8b159cac726cc8ad27de49e5e0d91447de6704a42f9d40e31b953c29aa1cc5b8"
+      }
+    },
+    {
+      "rank": 30,
+      "model_file_bytes": {
+        "fixed": 4128,
+        "refine": 4128
+      },
+      "model_sha256": {
+        "fixed": "7cb15e420f9748ea5af1920ddce54a44365d5fe675e793620ba487d58b0d7574",
+        "refine": "c68e91864740f121ccd31fe58bd8c6be793d50e9fe673286eaa1e373ca768b53"
+      },
+      "train_decode": {
+        "fixed": {
+          "decoded": 8,
+          "attempted": 9
+        },
+        "refine": {
+          "decoded": 4,
+          "attempted": 9
+        }
+      },
+      "validation_decode": {
+        "fixed": {
+          "decoded": 3,
+          "prepared": 5,
+          "failures": [
+            {
+              "file_id": 263198,
+              "reason": "Local triangle flip relative to source"
+            },
+            {
+              "file_id": 100894,
+              "reason": "Predicted displacement exceeds normalized offset cap"
+            }
+          ]
+        },
+        "refine": {
+          "decoded": 2,
+          "prepared": 5,
+          "failures": [
+            {
+              "file_id": 90431,
+              "reason": "Predicted displacement exceeds normalized offset cap"
+            },
+            {
+              "file_id": 263198,
+              "reason": "Local triangle flip relative to source"
+            },
+            {
+              "file_id": 100894,
+              "reason": "Predicted displacement exceeds normalized offset cap"
+            }
+          ]
+        }
+      },
+      "validation_mean_sidecar_bytes": {
+        "fixed": 4170.0,
+        "refine": 5358.8
+      },
+      "validation_metrics_vs_qem": {
+        "fixed": {
+          "paired_assets": 3,
+          "same_triangle_count": true,
+          "metrics": {
+            "psnr_db": {
+              "mean_delta": -0.42161183038286393,
+              "bootstrap_95_percent": [
+                -0.7743433994534215,
+                -0.17272513763804298
+              ],
+              "negative_assets": 3,
+              "positive_assets": 0,
+              "paired_assets": 3
+            },
+            "ssim": {
+              "mean_delta": -0.002426962550330073,
+              "bootstrap_95_percent": [
+                -0.004409099587471155,
+                -4.168051842778908e-05
+              ],
+              "negative_assets": 3,
+              "positive_assets": 0,
+              "paired_assets": 3
+            },
+            "flip": {
+              "mean_delta": 0.0021533488502932917,
+              "bootstrap_95_percent": [
+                0.00010973451814303738,
+                0.004856727551668882
+              ],
+              "negative_assets": 0,
+              "positive_assets": 3,
+              "paired_assets": 3
+            },
+            "lpips_squeeze": {
+              "mean_delta": 0.0008633038297476645,
+              "bootstrap_95_percent": [
+                7.931301661301404e-05,
+                0.001857966805497803
+              ],
+              "negative_assets": 0,
+              "positive_assets": 3,
+              "paired_assets": 3
+            },
+            "silhouette_xor_fraction": {
+              "mean_delta": 0.0006743537055121529,
+              "bootstrap_95_percent": [
+                2.9246012369791658e-05,
+                0.00140380859375
+              ],
+              "negative_assets": 0,
+              "positive_assets": 3,
+              "paired_assets": 3
+            },
+            "coverage_mae": {
+              "mean_delta": 0.0006565517849392369,
+              "bootstrap_95_percent": [
+                2.6067097981770815e-05,
+                0.0013898213704427106
+              ],
+              "negative_assets": 0,
+              "positive_assets": 3,
+              "paired_assets": 3
+            }
+          }
+        },
+        "refine": {
+          "paired_assets": 2,
+          "same_triangle_count": false,
+          "metrics": {
+            "psnr_db": {
+              "mean_delta": -0.11427053109148133,
+              "bootstrap_95_percent": [
+                -0.19537212461285947,
+                -0.033168937570103196
+              ],
+              "negative_assets": 2,
+              "positive_assets": 0,
+              "paired_assets": 2
+            },
+            "ssim": {
+              "mean_delta": -0.0001923966673934019,
+              "bootstrap_95_percent": [
+                -0.00028793651325909053,
+                -9.685682152771324e-05
+              ],
+              "negative_assets": 2,
+              "positive_assets": 0,
+              "paired_assets": 2
+            },
+            "flip": {
+              "mean_delta": 0.00017945051513379483,
+              "bootstrap_95_percent": [
+                -2.9527533721802543e-06,
+                0.0003618537836397699
+              ],
+              "negative_assets": 1,
+              "positive_assets": 1,
+              "paired_assets": 2
+            },
+            "lpips_squeeze": {
+              "mean_delta": -0.00013056120224064324,
+              "bootstrap_95_percent": [
+                -0.00016014984187980724,
+                -0.00010097256260147925
+              ],
+              "negative_assets": 2,
+              "positive_assets": 0,
+              "paired_assets": 2
+            },
+            "silhouette_xor_fraction": {
+              "mean_delta": 0.00011444091796875015,
+              "bootstrap_95_percent": [
+                1.2715657552083342e-05,
+                0.00021616617838541696
+              ],
+              "negative_assets": 0,
+              "positive_assets": 2,
+              "paired_assets": 2
+            },
+            "coverage_mae": {
+              "mean_delta": 9.775161743164049e-05,
+              "bootstrap_95_percent": [
+                9.218851725260435e-06,
+                0.00018628438313802054
+              ],
+              "negative_assets": 0,
+              "positive_assets": 2,
+              "paired_assets": 2
+            }
+          }
+        }
+      },
+      "artifact_sha256": {
+        "fit_report": "1f95db3397acab4e2e47f38d77171be9d76b8d0ed69207a07307e99abc7fb8a1",
+        "quality_report": "318a26b7dc2a0cc302157842c7b5ed5db0d12474188f17c38819897e94761b10",
+        "quality_summary": "83596c509d61058bc0cfb3ed1bb4cfde31a31ed610d0aff65021870eedc4c36b"
+      }
+    }
+  ]
+}
