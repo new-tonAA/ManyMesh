@@ -108,6 +108,21 @@ evaluate an output through a separate final MSAA/upscaler pipeline, but any
 ManyMesh method must be distinguished from this reconstruction formulation
 ([ICCV 2025 paper](https://openaccess.thecvf.com/content/ICCV2025/html/Son_DMesh_An_Efficient_Differentiable_Mesh_for_Complex_Shapes_ICCV_2025_paper.html),
 [supplement](https://openaccess.thecvf.com/content/ICCV2025/supplemental/Son_DMesh_An_Efficient_ICCV_2025_supplemental.pdf)).
+Choi et al.'s [LTM (CVPR 2024)](https://openaccess.thecvf.com/content/CVPR2024/papers/Choi_LTM_Lightweight_Textured_Mesh_Extraction_and_Refinement_of_Large_Unbounded_CVPR_2024_paper.pdf)
+is a closer simplification-to-rendering precedent than reconstruction-only
+methods. After vertex-clustering and geometry-aware QSlim decimation, LTM uses
+nvdiffrast to optimize per-vertex deformation and a neural appearance field
+through image loss, with Laplacian, normal-consistency, and high-resolution
+normal regularizers. It also subdivides high-displacement faces and re-decimates
+during training. LTM targets meshes extracted from captured unbounded scenes,
+not a supplied authored mesh hierarchy, and does not optimize through a
+specified final MSAA or upscaler. Its 1080p browser result is 212 FPS / 115 MB
+on a 2020 MacBook Pro M1, not a phone result. This closes broad claims to
+render-guided simplification, vertex optimization, and refinement after
+simplification. Any ManyMesh distinction must be narrower than those operations
+and be tested against an LTM-style fixed-LOD control; a cluster DAG and
+post-reconstruction operator are comparison questions, not novelty by
+themselves. See the [full prior-art audit](docs/manymesh/siggraph-prior-art-screen-20261123.md).
 V3DG already fits each level of a clustered hierarchy differentiably, although
 it uses 3D Gaussian primitives ([SIGGRAPH 2025 paper](https://arxiv.org/html/2505.06523)).
 HLOD ASAP's abstract and publisher preview describe a binary progressive-mesh
@@ -285,8 +300,10 @@ operator.
 Together, these methods use different representations
 and tasks, but rule out broad “neural LOD,” “latent mesh compression,” “learned
 residual geometry,” hierarchy optimization, learned refinement, or scale-aware
-image-fitting novelty claims. They do not establish a result for a constrained
-triangle-mesh cluster DAG optimized for actual post-AA/upscaler quality. The
+image-fitting novelty claims, and LTM specifically rules out broad render-guided
+mesh simplification or post-simplification geometry refinement claims. They do
+not establish a result for a constrained triangle-mesh cluster DAG optimized
+for actual post-AA/upscaler quality. The
 HLoD record exposes the paper and supplement, but their full contents were not
 available in this review. For user-preference claims, perceptual
 silhouette and transition modeling has also been tested against observers in

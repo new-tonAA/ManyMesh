@@ -10,7 +10,11 @@ Can offline optimization improve a cluster-DAG mesh after a specified
 antialiasing or upscaling pipeline, at matched face count and complete cost,
 without breaking topology or cluster boundaries? This is an open experiment,
 not a novelty claim. Differentiable mesh fitting and adaptive geometry LOD have
-close prior art.
+close prior art. In particular, LTM (CVPR 2024) already optimizes mesh vertices
+after decimation and selectively refines topology from image supervision. The
+remaining question is whether legal cluster-DAG optimization for a specified
+final reconstruction operator beats an LTM-style fixed-LOD control; this is
+untested, not a novelty claim. See the [prior-art audit](docs/manymesh/siggraph-prior-art-screen-20261123.md).
 
 ![Direction-adjusted comparison of ManyMesh against matched-face QEM and meshoptimizer across five image-quality metrics.](docs/manymesh/polyhaven-quality-metrics.svg)
 

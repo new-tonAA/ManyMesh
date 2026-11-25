@@ -59,6 +59,19 @@ or antialiasing-derived visibility gradients as new by themselves. See the
 [supplement](https://openaccess.thecvf.com/content/ICCV2025/supplemental/Son_DMesh_An_Efficient_ICCV_2025_supplemental.pdf),
 and [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
 
+Choi et al.'s [LTM (CVPR 2024)](https://openaccess.thecvf.com/content/CVPR2024/papers/Choi_LTM_Lightweight_Textured_Mesh_Extraction_and_Refinement_of_Large_Unbounded_CVPR_2024_paper.pdf)
+is a close comparator for the simplify-then-optimize sequence. It applies
+differentiable image loss to per-vertex deformation after geometry-aware QSlim
+decimation, regularizes mesh shape and normals, and selectively subdivides and
+re-decimates during training. Its full system reconstructs neural-SDF scenes
+and optimizes a neural appearance field, so it is not a drop-in baseline for a
+given authored asset. Still, Gate 2 must include an LTM-style fixed-LOD
+render-guided vertex-deformation control on the same authored inputs, face
+budget, training views, and final reconstruction operator, or document a
+specific feasibility reason before scoring. A cluster-DAG result must improve
+on this control as well as QEM and meshoptimizer; the DAG distinction alone is
+not novelty. [Full-paper audit](docs/manymesh/siggraph-prior-art-screen-20261123.md).
+
 The recent [T²-Splat preprint](https://arxiv.org/abs/2611.06974) is a close
 neighbor: it combines QEM edge collapses, gradient-driven vertex splits,
 multi-view image supervision, and scale-adaptive per-face mip-textures to reduce
@@ -145,8 +158,11 @@ without cracks. Check parent/child consistency, legal mixed cuts, manifoldness,
 UV/material seams, transition stability, and displacement bounds.
 
 Compare with QEM, meshoptimizer cluster LOD, the frozen fixed-topology
-placement control, and progressive-boundary cluster methods. Use both equal-face and
-equal-complete-frame-time comparisons. Count optimization, loading, memory,
+placement control, an LTM-style fixed-LOD render-guided deformation control,
+and progressive-boundary cluster methods. Apply the same authored inputs,
+training views, geometry budget, and final reconstruction operator to both
+learned/optimized controls. Use both equal-face and equal-complete-frame-time
+comparisons. Count optimization, loading, memory,
 selection, rendering, AA, and upscaling costs. A differentiable surrogate must
 predict outcomes under the actual non-differentiable render pipeline.
 If TAA or temporal upscaling is the target operator, include a moving-camera
