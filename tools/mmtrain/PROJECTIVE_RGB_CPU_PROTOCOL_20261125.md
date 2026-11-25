@@ -84,5 +84,11 @@ installation all succeeded. `camera_sets()` imported `fit_visible_contours`,
 whose transitive import chain referenced a missing `compact` symbol in
 `preflight_appearance_meshes`; no Mitsuba render, optimization, or image score
 was produced. The current source removes that dependency and generates the
-frozen camera bases locally. A rerun is required before making any algorithmic
-decision.
+frozen camera bases locally.
+
+Corrected run [`45639236184`](https://github.com/new-tonAA/ManyMesh/actions/runs/45639236184)
+completed the fit-and-score and artifact-upload steps for both assets. It
+published `projective-rgb-cpu-GlassHurricaneCandleHolder` (2,786,338 bytes) and
+`projective-rgb-cpu-MaterialsVariantsShoe` (8,356,930 bytes). The JSON metrics
+and geometry archives have not yet been inspected; the per-asset pass/fail
+criteria and algorithmic decision therefore remain **unverified**.

@@ -260,8 +260,10 @@ The [frozen protocol](tools/mmtrain/PROJECTIVE_RGB_CPU_PROTOCOL_20261125.md)
 and [Ubuntu workflow](.github/workflows/manymesh-projective-rgb-cpu.yml) are
 published. The first two runs failed before rendering because the new script
 imported a broken dependency chain from a prior contour experiment; no image
-results were produced. The current source removes that import, but the fix has
-not yet completed a hosted run.
+results were produced. The isolated-helper fix completed both assets and
+uploaded raw artifacts in [run 45639236184](https://github.com/new-tonAA/ManyMesh/actions/runs/45639236184).
+The metric contents have not yet been independently audited, so this does not
+pass the quality gate.
 
 Stop if the matched-face baseline loses, if a result depends on tuned views or
 assets, if the surrogate fails to rank real-pipeline results, if boundary or
