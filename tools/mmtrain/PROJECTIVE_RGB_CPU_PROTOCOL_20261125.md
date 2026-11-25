@@ -76,6 +76,18 @@ and one NPZ geometry archive per asset. The JSON stores the script/input/archive
 hashes, exact camera bases, package versions, raw per-view scores, and fit
 trace. Run the workflow manually or push a change to its path filters.
 
+After downloading and extracting an artifact, independently verify its input
+and geometry hashes, exact camera split, 24 raw view rows, recomputed PSNR/SSIM/
+FLIP means, surface metrics, fixed topology, locked boundaries, displacement,
+and normal constraints with:
+
+```powershell
+python tools/mmtrain/verify_projective_rgb_cpu.py $artifactDirectory
+```
+
+The verifier also checks that the recorded per-asset decision agrees with the
+frozen thresholds below. It cannot test geometric self-intersections.
+
 ## Execution history
 
 The first two workflow runs, `45636675594` and `45637927355`, failed before

@@ -7,7 +7,6 @@ on:
     paths:
       - .github/workflows/manymesh-projective-rgb-cpu.yml
       - tools/mmtrain/fit_projective_rgb_cpu.py
-      - tools/mmtrain/PROJECTIVE_RGB_CPU_PROTOCOL_20261125.md
 
 permissions:
   contents: read
