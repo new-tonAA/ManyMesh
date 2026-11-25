@@ -2,6 +2,11 @@
 
 Updated 2026-11-23. **This is a geometry and source-feasibility screen, not an image-quality experiment.** All eight GLBs are from Khronos glTF Sample Assets commit [`e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea`](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea/Models). The pinned [model catalog](https://github.com/KhronosGroup/glTF-Sample-Assets/blob/e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea/Models/Models.md) carries per-model credits and terms; each model-directory link below points to its pinned LICENSE.md. GLB and extracted OBJ files are not redistributed here.
 
+**Historical status:** this screen predates the current frozen 30-model
+confirmation set. Its eight-model feasibility results remain historical and
+are not the active evaluation cohort; see the [current pool report](../../tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md)
+and [protocol](../../tools/mmtrain/POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md).
+
 The source index lists 153 model directories; 113 carry the `testing` tag and seven carry `issues`. The 16-model screen was preselected from non-issues showcase/extension assets to broaden shape classes. The raw-content service returned 503 during the batch, so only eight complete GLBs were available for this pass. Their sizes and SHA-256 values are recorded in the source manifest. No image render or simplification score was run.
 
 | Model and pinned license | Geometry screen | Bounded prior-use scan | Status and notes |
@@ -31,4 +36,4 @@ The extractor merges default-scene static triangle primitives at default node tr
 - Per-model [extraction](../../tools/mmtrain/asset_reuse_audits/khronos_geometry_candidates_20261123/anisotropybarnlamp-geometry.json) and [topology](../../tools/mmtrain/asset_reuse_audits/khronos_geometry_candidates_20261123/anisotropybarnlamp-topology.json) receipts; the same directory contains receipts for every row.
 - [Earlier Khronos preflight](khronos-followup-candidates-20261123.md) and [initial source/license screen](confirmation-asset-screen-20261123.md)
 
-The next useful step is to finish obtaining per-model source files for the remaining preselected candidates, freeze exclusions and category labels, and verify a broader licensed set before running any quality comparison. Do not use an asset's own renders or candidate-pool results as confirmation evidence.
+At the time of this screen, the next useful step was to finish obtaining per-model source files for the remaining preselected candidates, freeze exclusions and category labels, and verify a broader licensed set before running any quality comparison. That data-screening step has since been completed for the separate 30-model pool; do not use an asset's own renders or candidate-pool results as confirmation evidence.

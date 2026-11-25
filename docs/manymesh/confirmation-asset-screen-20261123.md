@@ -2,6 +2,11 @@
 
 **Status: one candidate passes a geometry preflight; no confirmation set is frozen.** This is a source, provenance, extraction, and topology screen only. No images were scored and no simplifier or differentiable optimizer was run.
 
+**Historical status:** this describes the initial 2026-11-23 screen. The current
+30-model confirmation pool and evaluation protocol were frozen on 2026-11-25;
+see the [current pool report](../../tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md)
+and [protocol](../../tools/mmtrain/POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md).
+
 ## Pinned source and licenses
 
 Both files came from Khronos glTF Sample Assets at commit [`e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea`](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea/Models). The model bytes are not included in this repository.

@@ -181,8 +181,8 @@ The links below preserve the detailed reports referenced by the earlier roadmap.
 - [Spatial-retry local frontier audit](tools/mmgeo/SPATIAL_RETRY_LOCAL_FRONTIER_AUDIT_20261118.md)
 - [Adaptive camera-path ranking screen](tools/mmgeo/ADAPTIVE_CAMERA_PATH_RANKING_SCREEN_20261118.md)
 - Filtered depth-envelope events (`tools/mmgeo/FILTERED_DEPTH_ENVELOPE_EVENTS_20261119.md`)
-- Hybrid learned path-loss screen (`tools/mmgeo/HYBRID_LEARNED_PATH_LOSS_20261119.md`)
-- Path-loss residual hybrid audit script (`tools/mmgeo/audit_path_loss_residual_hybrid.py`)
+- Closed hybrid learned path-loss screen ([report](tools/mmgeo/HYBRID_LEARNED_PATH_LOSS_20261119.md),
+  [audit script](tools/mmgeo/audit_path_loss_residual_hybrid.py))
 - Exact strict cut-frontier oracle (`tools/mmgeo/EXACT_STRICT_CUT_FRONTIER_ORACLE_20261119.md`)
 - Exact cut-frontier audit script (`tools/mmgeo/audit_exact_cut_frontier_oracle.py`)
 - Memory-capped learned DAG synthesis (`tools/mmgeo/LEARNED_MEMORY_CAPPED_DAG_SYNTHESIS_20261119.md`)

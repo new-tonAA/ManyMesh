@@ -2,6 +2,11 @@
 
 Updated 2026-11-23. **This is an asset-feasibility screen, not a quality experiment.** The five model directories were fetched from the pinned Khronos glTF Sample Assets commit [`e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea`](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea/Models). GLB binaries are not redistributed here. The source manifest records each downloaded file's byte size and SHA-256, including the model README, license, and metadata.
 
+**Historical status:** these candidates were screened before the current
+30-model confirmation pool was frozen. For current inclusion, split, and
+scoring status, see the [pool report](../../tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md)
+and [evaluation protocol](../../tools/mmtrain/POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md).
+
 | Model | Source credit and model-file terms | GLB bytes / SHA-256 | Geometry-only static screen | Bounded prior-use scan |
 |---|---|---|---|---|
 | [DiffuseTransmissionPlant](https://github.com/KhronosGroup/glTF-Sample-Assets/blob/e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea/Models/DiffuseTransmissionPlant/LICENSE.md) | Original asset: Rico Cilliers, CC0-1.0. Materials and animation: Eric Chadwick, CC BY 4.0. Preserve both credits. | 5,759,100 / `1748be8847e24bdd5cb6c5ac2bfd0afe8f11efc4f85091148550555e47c7ee83` | 50,369 vertices, 68,409 triangles; 219 components, 1,715 boundary edges, 8 nonmanifold edges. **Fail.** | [0 / 277](../../tools/mmtrain/asset_reuse_audits/khronos_diffusetransmissionplant_20261123.json). |
