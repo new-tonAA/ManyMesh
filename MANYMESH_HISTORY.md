@@ -18,6 +18,16 @@ binary can run on the developer laptop, where Smart App Control still blocks
 it, and it does not cover GPU `compute_test` or the CUDA fitting experiment.
 See the [Actions run](https://github.com/new-tonAA/ManyMesh/actions/runs/45622515351).
 
+## 2026-11-24: CPU projective silhouette fit
+
+Mitsuba 3.9.0 / Dr.Jit 1.4.0 on an Ubuntu 24.04 hosted runner reduced training
+loss on two reused Khronos assets. On 24 reserved camera/scale pairs, LDR-FLIP
+worsened for both; PSNR changed by +0.0429 dB for the candle holder and
+-0.0920 dB for the shoe. Boundary and edge-topology checks passed. This is a
+mixed held-out-view control, not an asset-held-out, final-AA, or phone result.
+See the [report](tools/mmtrain/PROJECTIVE_SILHOUETTE_CPU_20261124.md) and
+[workflow run](https://github.com/new-tonAA/ManyMesh/actions/runs/45217088176).
+
 ## 2026-11-22: cluster-decoder capacity and scale screens
 
 The frozen polynomial residual control was screened at ranks 8, 16, and 30.

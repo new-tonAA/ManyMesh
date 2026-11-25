@@ -241,9 +241,12 @@ only that local fallback for now, not the frozen CUDA experiment. See the
 [CPU-backend preflight](tools/mmtrain/DEODR_CPU_BACKEND_PREFLIGHT_20261125.md).
 
 A second CPU-backend probe found ignored local builds of Mitsuba 3.9.0 and
-Dr.Jit 1.4.0, but the LLVM runtime failed to initialize and Mitsuba's native
-extension could not load. No render, fit, or score ran. This does not change the
-frozen experiment; see the [Mitsuba preflight](tools/mmtrain/MITSUBA_CPU_BACKEND_PREFLIGHT_20261125.md).
+Dr.Jit 1.4.0. On this Windows host, Mitsuba's native extension is blocked by
+Code Integrity; no local render or fit ran. Separately, the Ubuntu hosted
+runner completed a Mitsuba `llvm_ad_rgb` projective-silhouette fit on two reused
+assets. Its held-out-view image results were mixed and it is not an equivalent
+run of the frozen placement protocol. See the [local preflight](tools/mmtrain/MITSUBA_CPU_BACKEND_PREFLIGHT_20261125.md)
+and [CPU fit report](tools/mmtrain/PROJECTIVE_SILHOUETTE_CPU_20261124.md).
 
 Stop if the matched-face baseline loses, if a result depends on tuned views or
 assets, if the surrogate fails to rank real-pipeline results, if boundary or

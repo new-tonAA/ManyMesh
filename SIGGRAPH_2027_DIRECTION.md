@@ -196,6 +196,14 @@ three assets. See the [CPU screen](tools/mmtrain/CONTOUR_IMPORTANCE_QEM_20261123
 [AA follow-up](tools/mmtrain/CONTOUR_PRIORITY_AA_20261123.md), and
 [fixed-topology fit](tools/mmtrain/VISIBLE_CONTOUR_FIT_20261124.md).
 
+A separate Mitsuba CPU projective-silhouette fit lowered training loss on two
+reused Khronos assets, but LDR-FLIP worsened on both 24-pair reserved-view
+sets. PSNR changed by +0.0429 dB for the candle holder and -0.0920 dB for the
+shoe. This is mixed evidence from a silhouette-only objective, not an asset-
+held-out or final-AA result; it does not establish a silhouette method. See the
+[full report](tools/mmtrain/PROJECTIVE_SILHOUETTE_CPU_20261124.md) and
+[pinned CPU workflow](.github/workflows/manymesh-projective-cpu.yml).
+
 A post-hoc attribution on the already-scored 21-model cohort further weakens a
 silhouette-dominance premise: the XOR region contains 31.0% of ManyMesh squared
 grayscale error without AA (95% source-group bootstrap CI 27.4%-34.8%) and

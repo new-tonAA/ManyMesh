@@ -38,7 +38,24 @@ installed or modified during these checks.
 
 ## Decision
 
-This does not provide a runnable CPU differentiable-rendering fallback. It
-does not replace the frozen nvdiffmodeling experiment or imply a quality loss.
-Use the CUDA protocol on a compatible host, or resolve the Mitsuba runtime and
-freeze a separate backend protocol before collecting any fitting results.
+The original check did not provide a runnable CPU fallback on this Windows
+host. It did not replace the frozen nvdiffmodeling experiment or imply a quality
+loss. The follow-up below identifies the local application-control block and
+links a distinct CPU silhouette-fit result from an Ubuntu hosted runner.
+
+## Follow-up check on 2026-11-25
+
+Visual Studio's x64 LLVM runtime was found at its bundled `LLVM-C.dll`. Setting
+`DRJIT_LIBLLVM_PATH` to that file allowed Dr.Jit 1.4.0 to import, but Mitsuba
+still could not load `mitsuba_alias.cp312-win_amd64.pyd`. The extension is
+unsigned. Windows Code Integrity event 3077 explicitly records `python.exe`
+being blocked from loading this file under the active application-control
+policy. This is a policy block, not evidence that the CPU renderer requires
+CUDA or that the fitted method failed. No settings were changed and no policy
+bypass was attempted.
+
+The CPU backend has run on an Ubuntu 24.04 hosted runner in a separate
+projective-silhouette experiment. Training loss fell on two reused assets, but
+held-out-view LDR-FLIP worsened on both. This does not reproduce the frozen
+placement fit. See the [CPU fit report](PROJECTIVE_SILHOUETTE_CPU_20261124.md)
+and [workflow](../../.github/workflows/manymesh-projective-cpu.yml).

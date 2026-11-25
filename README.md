@@ -28,9 +28,14 @@ and [LPIPS supplement](tools/mmtrain/POLYHAVEN_LPIPS_SUPPLEMENT_RESULTS_20261125
   at 640 × 360 on Intel Iris Xe / D3D12. At 50% face retention, ManyMesh lost
   to border-preserving QEM and meshoptimizer across the primary image metrics,
   both without AA and with 4× MSAA.
-- **Silhouette attribution:** XOR regions contained 31.0% of squared grayscale
+- **Silhouette attribution:** In the same 21-model cohort, XOR regions contained 31.0% of squared grayscale
   error without AA and 16.3% with 4× MSAA. The earlier 68.3% Monkey result used
   a DAG cut, not the source mesh, as reference.
+- **CPU silhouette fit:** On two reused Khronos assets, Mitsuba lowered training
+  loss on an Ubuntu 24.04 hosted runner but worsened LDR-FLIP on 24 reserved
+  camera/scale pairs: GlassHurricaneCandleHolder PSNR +0.0429 dB;
+  MaterialsVariantsShoe −0.0920 dB. This is not an asset-held-out or final-AA
+  result. [Report](tools/mmtrain/PROJECTIVE_SILHOUETTE_CPU_20261124.md).
 - **Instance raster time:** With 10,000 BarramundiFish instances at 1280 × 720
   on Iris Xe / D3D12 / 4× MSAA, coarser stock meshoptimizer geometry reduced
   raster time from 26.155 ms to 6.657 ms (3.93×). This is not a ManyMesh or
@@ -44,7 +49,7 @@ and [instance report](tools/mmtrain/INSTANCE_SCALE_BARRAMUNDIFISH_SCREEN_2026112
 
 | Works in measured scope | Does not work in tested scope | Not measured |
 |---|---|---|
-| Fixed-view desktop quality and topology audits; 21-model post-hoc LPIPS; three-scene moving-camera LPIPS/temporal diagnostics; 10,000-instance raster-time diagnostic. | Current ManyMesh cuts lose to matched-face controls. Tested residual decoders, budgeted refinement, and contour-priority variants have no repeatable matched-control win. | Phone performance, power, equal-complete-frame-time comparison with MSAA/SMAA/upscaling, a held-out optimized-method win, user preference, and validated temporal-quality gains. |
+| Fixed-view desktop quality and topology audits; 21-model post-hoc LPIPS; three-scene moving-camera LPIPS/temporal diagnostics; 10,000-instance raster-time diagnostic. | Current ManyMesh cuts lose to matched-face controls. Tested decoder, contour, and CPU projective-silhouette variants have no repeatable matched-control win. | Phone performance, power, equal-complete-frame-time comparison with MSAA/SMAA/upscaling, an asset-held-out optimized-method win, user preference, and validated temporal-quality gains. |
 
 These labels describe only the listed experiments. The LPIPS supplement reuses
 an already-scored cohort; the 30-model confirmation pool is frozen but unscored.
@@ -52,9 +57,11 @@ Desktop measurements do not establish mobile performance.
 
 ## Next gate
 
-The frozen two-asset placement fit requires CUDA and has not run. If it passes,
-the next step is a separate asset-held-out cluster-DAG study; it would not by
-itself establish generalization or novelty. See the [experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md),
+The frozen two-asset placement fit requires CUDA and has not run. A separate
+CPU projective silhouette fit ran on two reused assets with mixed held-out-view
+results; it does not test the final AA pipeline or asset generalization. If the
+CUDA placement control passes, the next step is a separate asset-held-out
+cluster-DAG study. See the [experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md),
 [matched inputs](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md), and
 [confirmation protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md).
 
