@@ -179,6 +179,8 @@ def main():
         "",
         "The historical single-view Monkey result reported 68.3% using a DAG cut as reference. This multi-model screen instead uses the original source reference, 24 views per asset, flat grayscale shading, and the explicitly defined XOR mask. The values are not directly interchangeable. The new diagnostic does not invalidate that individual measurement; it shows that it should not be presented as a general property.",
         "",
+        "The [frozen cohort manifest](polyhaven_quality_cohort_20261124.json) lists the per-asset geometry-export paths. These derived exports and source meshes are not vendored; regenerate them from the licensed CC0 assets using the [topology screen](POLYHAVEN_CANDIDATE_TOPOLOGY_20261124.md) and [matched-face export protocol](POLYHAVEN_MATCHED_FACE_EXPANSION_20261124.md). The checked-in attribution receipt and [primary per-view metrics](polyhaven_quality_metrics_20261124.json) suffice to recompute the reported tables without rerendering. Replaying the renderer requires the regenerated geometry exports.",
+        "",
         "No materials, shadows, temporal accumulation, mobile device, equal-frame-time comparison, or human preference were measured. The analysis does not establish how perceptual metrics such as LDR-FLIP or LPIPS partition error spatially.",
         "",
         "Reproduce from the repository root with the recorded Python dependencies:",

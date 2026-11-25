@@ -62,9 +62,11 @@ Each value is the pooled XOR-region share of squared error. These per-asset valu
 
 ## Reproducibility and limits
 
-The 3,024 candidate/view/mode XOR-area values exactly match the frozen per-view quality metrics. This verifies the rerendered coverage masks; the squared-error attribution itself is newly computed. Source metrics SHA-256: `e3c15f56f13ea6c0b8f21a131f1d76ed648884e8ff69aca72346a0620e4fd9ad`. Diagnostic script SHA-256: `127522519aaa4bfb1907536efa6c0678a9ee1421d422f9d20fffdef170985690`. Summary script SHA-256: `9c44ca7e8ea157f5b68940b712474deb83e500ed7e834e477c2980c45e5967ac`. Receipt SHA-256: `0cf8c53cb41345591aafe4f5baf05b6d86af2b45f05ea3a84898130dbe1ec30a`.
+The 3,024 candidate/view/mode XOR-area values exactly match the frozen per-view quality metrics. This verifies the rerendered coverage masks; the squared-error attribution itself is newly computed. Source metrics SHA-256: `e3c15f56f13ea6c0b8f21a131f1d76ed648884e8ff69aca72346a0620e4fd9ad`. Diagnostic script SHA-256: `127522519aaa4bfb1907536efa6c0678a9ee1421d422f9d20fffdef170985690`. Summary script SHA-256: `8f343086cc036b0a6620abfbc73d33ee5eaff2642ad2d98ac1666ecd93bbf737`. Receipt SHA-256: `0cf8c53cb41345591aafe4f5baf05b6d86af2b45f05ea3a84898130dbe1ec30a`.
 
 The historical single-view Monkey result reported 68.3% using a DAG cut as reference. This multi-model screen instead uses the original source reference, 24 views per asset, flat grayscale shading, and the explicitly defined XOR mask. The values are not directly interchangeable. The new diagnostic does not invalidate that individual measurement; it shows that it should not be presented as a general property.
+
+The [frozen cohort manifest](polyhaven_quality_cohort_20261124.json) lists the per-asset geometry-export paths. These derived exports and source meshes are not vendored; regenerate them from the licensed CC0 assets using the [topology screen](POLYHAVEN_CANDIDATE_TOPOLOGY_20261124.md) and [matched-face export protocol](POLYHAVEN_MATCHED_FACE_EXPANSION_20261124.md). The checked-in attribution receipt and [primary per-view metrics](polyhaven_quality_metrics_20261124.json) suffice to recompute the reported tables without rerendering. Replaying the renderer requires the regenerated geometry exports.
 
 No materials, shadows, temporal accumulation, mobile device, equal-frame-time comparison, or human preference were measured. The analysis does not establish how perceptual metrics such as LDR-FLIP or LPIPS partition error spatially.
 
