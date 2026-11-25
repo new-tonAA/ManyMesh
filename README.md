@@ -45,7 +45,10 @@ reproduction: [quality screen](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.m
   50%. 4x MSAA removes 38.8% of ManyMesh's total squared error, compared with
   58.0% for QEM and 67.1% for meshoptimizer. The old 68.3% Monkey result used a
   DAG cut as reference; a source-mesh Monkey diagnostic found 25.84%-34.75% at
-  three budgets. These protocols are not directly interchangeable.
+  three budgets. These protocols are not directly interchangeable. In paired
+  groups, AA removes 19.2 percentage points more QEM error and 28.3 points more
+  meshoptimizer error than ManyMesh; most of the QEM gap is outside the XOR
+  contour mask. The contrasts are post-hoc and unadjusted.
   [21-model attribution](tools/mmtrain/POLYHAVEN_SILHOUETTE_ATTRIBUTION_20261125.md),
   [Monkey diagnostic](tools/mmtrain/MONKEY_SOURCE_REFERENCE_DIAGNOSTIC_20261125.md).
 - **3.93x raster-time speedup.** Stock meshoptimizer depth-2 geometry at

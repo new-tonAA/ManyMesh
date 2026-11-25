@@ -203,12 +203,15 @@ grayscale error without AA (95% source-group bootstrap CI 27.4%-34.8%) and
 mode. 4x MSAA removes 38.8% of ManyMesh's native squared error, versus 58.0%
 for QEM and 67.1% for meshoptimizer; for ManyMesh the reduction splits into
 20.7 percentage points inside the XOR mask and 18.1 points outside. This
-diagnostic uses flat grayscale and the same fixed-view cohort, so it is not
+diagnostic's paired group contrast finds 19.2 pp more total error removed for
+QEM than ManyMesh (95% unadjusted CI 14.3-23.7) and 28.3 pp more for
+meshoptimizer (23.1-33.0). The QEM difference is almost entirely outside the
+XOR region: -0.3 pp inside (-1.5 to +1.0), +19.5 pp outside (14.8-23.6).
+These are post-hoc results on the same flat-grayscale fixed-view cohort, not
 independent confirmation or a perceptual metric. The historical 68.3% single-
 view Monkey value used a DAG cut as reference. Do not motivate a paper with a
-universal claim that silhouette pixels dominate error. Any contour-aware method
-must show a gain over these strong mesh controls after AA, using a predeclared
-attribution and image-quality evaluation. See the full
+universal claim that silhouette pixels dominate error. Any method should target
+whole-image quality after AA and beat these controls. See the full
 [21-model attribution](tools/mmtrain/POLYHAVEN_SILHOUETTE_ATTRIBUTION_20261125.md).
 
 Silhouette-aware LOD and clipping have direct precedents in

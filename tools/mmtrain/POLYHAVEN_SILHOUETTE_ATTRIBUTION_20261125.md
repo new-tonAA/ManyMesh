@@ -32,6 +32,15 @@ The table below decomposes each arm's change in pooled squared error after enabl
 | Border-preserving QEM | 58.0% (52.0%–64.2%) | 20.4% (17.4%–23.6%) | 37.5% (33.2%–41.9%) |
 | meshoptimizer LockBorder | 67.1% (61.3%–72.6%) | 24.7% (20.8%–28.3%) | 42.4% (37.3%–46.9%) |
 
+### Paired AA gain relative to ManyMesh
+
+These differences compare the fraction of each arm's native total error removed by 4x MSAA, subtracting ManyMesh from the control within each source group. Positive values mean MSAA removes a larger fraction of that control's own native error. Intervals use paired resampling of the same 16 groups (10,000 samples, seed 20261127). They are post-hoc and not multiplicity-corrected across the six contrasts.
+
+| Control minus ManyMesh | Total error removed | XOR-region error removed | Non-XOR error removed | Groups with larger total reduction |
+|---|---:|---:|---:|---:|
+| Border-preserving QEM | +19.2 pp (+14.3 to +23.7) | -0.3 pp (-1.5 to +1.0) | +19.5 pp (+14.8 to +23.6) | 15/16 |
+| meshoptimizer LockBorder | +28.3 pp (+23.1 to +33.0) | +4.0 pp (+2.4 to +5.5) | +24.3 pp (+19.4 to +28.7) | 16/16 |
+
 ### Per-asset error share
 
 Each value is the pooled XOR-region share of squared error. These per-asset values expose the spread hidden by the group mean.
@@ -62,7 +71,7 @@ Each value is the pooled XOR-region share of squared error. These per-asset valu
 
 ## Reproducibility and limits
 
-The 3,024 candidate/view/mode XOR-area values exactly match the frozen per-view quality metrics. This verifies the rerendered coverage masks; the squared-error attribution itself is newly computed. Source metrics SHA-256: `e3c15f56f13ea6c0b8f21a131f1d76ed648884e8ff69aca72346a0620e4fd9ad`. Diagnostic script SHA-256: `127522519aaa4bfb1907536efa6c0678a9ee1421d422f9d20fffdef170985690`. Summary script SHA-256: `8f343086cc036b0a6620abfbc73d33ee5eaff2642ad2d98ac1666ecd93bbf737`. Receipt SHA-256: `0cf8c53cb41345591aafe4f5baf05b6d86af2b45f05ea3a84898130dbe1ec30a`.
+The 3,024 candidate/view/mode XOR-area values exactly match the frozen per-view quality metrics. This verifies the rerendered coverage masks; the squared-error attribution itself is newly computed. Source metrics SHA-256: `e3c15f56f13ea6c0b8f21a131f1d76ed648884e8ff69aca72346a0620e4fd9ad`. Diagnostic script SHA-256: `127522519aaa4bfb1907536efa6c0678a9ee1421d422f9d20fffdef170985690`. Summary script SHA-256: `50ca6a3fdaedb5b4f20887120497a7b969af50f3f30a1f32e40a0f836aef5f31`. Receipt SHA-256: `0cf8c53cb41345591aafe4f5baf05b6d86af2b45f05ea3a84898130dbe1ec30a`.
 
 The historical single-view Monkey result reported 68.3% using a DAG cut as reference. This multi-model screen instead uses the original source reference, 24 views per asset, flat grayscale shading, and the explicitly defined XOR mask. The values are not directly interchangeable. The new diagnostic does not invalidate that individual measurement; it shows that it should not be presented as a general property.
 

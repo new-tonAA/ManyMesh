@@ -31,7 +31,9 @@ ManyMesh group mean is 31.0% without AA and 16.3% with 4x MSAA. Therefore the
 old single-view silhouette finding is not a general premise for the method.
 On the same cohort, 4x MSAA removes 38.8% of ManyMesh's total squared error,
 compared with 58.0% for QEM and 67.1% for meshoptimizer; the contour and
-non-contour error reductions are both material.
+non-contour error reductions are both material. Paired group differences are
+19.2 percentage points for QEM and 28.3 for meshoptimizer, with the QEM gap
+almost entirely outside the XOR mask; the post-hoc intervals are unadjusted.
 Use it only as a scoped diagnostic, and require any contour-specific claim to
 beat equal-cost controls after AA. See the
 [attribution report](tools/mmtrain/POLYHAVEN_SILHOUETTE_ATTRIBUTION_20261125.md).

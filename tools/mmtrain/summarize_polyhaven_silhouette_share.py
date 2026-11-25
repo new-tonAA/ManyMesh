@@ -18,6 +18,7 @@ LABELS = {
     "meshoptimizer_lock_border": "meshoptimizer LockBorder",
 }
 DECOMP_SEED = 20261126
+PAIRED_SEED = 20261127
 BOOTSTRAP_SAMPLES = 10000
 
 
@@ -65,6 +66,54 @@ def aa_error_decomposition(rows, arm):
                 float(value) for value in np.quantile(means, [0.025, 0.975])],
         }
     return result
+
+
+def paired_aa_contrasts(rows):
+    by_group = {}
+    for row in rows:
+        group = row["uncertainty_group"]
+        by_group.setdefault(group, {})
+        for arm in ARMS:
+            native = row["arms"][arm]["native"]
+            aa = row["arms"][arm]["msaa4"]
+            total = native["total_squared_error"]
+            effect = {
+                "total": (total - aa["total_squared_error"]) / total,
+                "xor": (native["xor_squared_error"] - aa["xor_squared_error"]) / total,
+                "non_xor": (native["non_xor_squared_error"]
+                            - aa["non_xor_squared_error"]) / total,
+            }
+            by_group[group].setdefault(arm, []).append(effect)
+
+    groups = sorted(by_group)
+    metrics = ("total", "xor", "non_xor")
+    effects = {arm: {metric: np.asarray([
+        np.mean([asset[metric] for asset in by_group[group][arm]])
+        for group in groups], dtype=np.float64) for metric in metrics}
+        for arm in ARMS}
+    for control in ("qem_preserve_border", "meshoptimizer_lock_border"):
+        total_difference = effects[control]["total"] - effects["manymesh"]["total"]
+        partition_difference = (
+            effects[control]["xor"] - effects["manymesh"]["xor"]
+            + effects[control]["non_xor"] - effects["manymesh"]["non_xor"])
+        if not np.allclose(total_difference, partition_difference, rtol=0.0, atol=1e-12):
+            raise ValueError(f"Paired XOR partitions do not sum to total for {control}")
+    rng = np.random.default_rng(PAIRED_SEED)
+    indices = rng.integers(0, len(groups), size=(BOOTSTRAP_SAMPLES, len(groups)))
+    results = {}
+    for control in ("qem_preserve_border", "meshoptimizer_lock_border"):
+        results[control] = {}
+        for metric in metrics:
+            differences = effects[control][metric] - effects["manymesh"][metric]
+            means = differences[indices].mean(axis=1)
+            results[control][metric] = {
+                "mean_difference": float(differences.mean()),
+                "group_bootstrap_95_percentile_ci": [
+                    float(value) for value in np.quantile(means, [0.025, 0.975])],
+                "groups_positive": int(np.count_nonzero(differences > 0)),
+                "group_count": len(groups),
+            }
+    return results
 
 
 def main():
@@ -153,6 +202,27 @@ def main():
                 f"({100*item['group_bootstrap_95_percentile_ci'][0]:.1f}%–"
                 f"{100*item['group_bootstrap_95_percentile_ci'][1]:.1f}%)")
         lines.append(f"| {LABELS[arm]} | " + " | ".join(cells) + " |")
+
+    lines += [
+        "",
+        "### Paired AA gain relative to ManyMesh",
+        "",
+        "These differences compare the fraction of each arm's native total error removed by 4x MSAA, subtracting ManyMesh from the control within each source group. Positive values mean MSAA removes a larger fraction of that control's own native error. Intervals use paired resampling of the same 16 groups (10,000 samples, seed 20261127). They are post-hoc and not multiplicity-corrected across the six contrasts.",
+        "",
+        "| Control minus ManyMesh | Total error removed | XOR-region error removed | Non-XOR error removed | Groups with larger total reduction |",
+        "|---|---:|---:|---:|---:|",
+    ]
+    paired = paired_aa_contrasts(receipt["assets"])
+    for control in ("qem_preserve_border", "meshoptimizer_lock_border"):
+        cells = []
+        for metric in ("total", "xor", "non_xor"):
+            item = paired[control][metric]
+            ci = item["group_bootstrap_95_percentile_ci"]
+            cells.append(f"{100*item['mean_difference']:+.1f} pp "
+                         f"({100*ci[0]:+.1f} to {100*ci[1]:+.1f})")
+        total_groups = paired[control]["total"]
+        lines.append(f"| {LABELS[control]} | " + " | ".join(cells) +
+                     f" | {total_groups['groups_positive']}/{total_groups['group_count']} |")
 
     lines += [
         "",
