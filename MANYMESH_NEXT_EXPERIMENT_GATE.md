@@ -59,6 +59,20 @@ or antialiasing-derived visibility gradients as new by themselves. See the
 [supplement](https://openaccess.thecvf.com/content/ICCV2025/supplemental/Son_DMesh_An_Efficient_ICCV_2025_supplemental.pdf),
 and [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
 
+The recent [T²-Splat preprint](https://arxiv.org/abs/2611.06974) is a close
+neighbor: it combines QEM edge collapses, gradient-driven vertex splits,
+multi-view image supervision, and scale-adaptive per-face mip-textures to reduce
+aliasing and flicker. This closes broad claims to differentiable adaptive mesh
+topology and scale-filtered appearance recovery. It reconstructs scenes from
+images rather than building a cluster DAG for a supplied authored asset, and
+it does not evaluate a separate final hardware MSAA or upscaler. Because its
+task and renderer differ, it is required prior art but not a direct matched-face
+baseline for the frozen source-mesh experiment. Any Gate 2 paper claim must show
+that legal cluster-DAG optimization improves the output of the same specified
+final reconstruction operator over unoptimized geometry; that distinction is
+still untested and does not itself establish novelty. See the expanded
+[prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
+
 Hierarchy-level fitting also overlaps conceptually with [V3DG (SIGGRAPH
 2025)](https://arxiv.org/html/2505.06523), which differentiably fits cluster
 levels in a Gaussian representation. Boundary simplification overlaps directly
