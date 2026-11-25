@@ -55,9 +55,13 @@ unavailable on this host; no fitting or scoring occurred. [CPU-backend preflight
 ## Evidence gaps
 
 No physical-phone test, equal-complete-frame-time comparison, user study, or
-positive held-out optimized-method result is available. A separate three-scene
-moving-camera screen measured LPIPS and temporal metrics but did not establish
-an equal-time quality gain. The fresh 30-model Poly Haven set now has frozen
+positive held-out optimized-method result is available. A 13-asset moving-camera
+screen scored with CGVQM-5 found a selected-profile minus area-policy mean of
+-0.0590 (95% asset-bootstrap CI [-0.1476, +0.0424]); 4 assets improved and 9
+regressed. This reused-data, flat-shaded desktop screen did not establish a
+temporal-quality gain. A separate three-scene screen measured LPIPS and
+temporal metrics without establishing an equal-time quality gain. The fresh
+30-model Poly Haven set now has frozen
 inputs and a scoring protocol, but remains unscored until the method
 configuration is frozen. It evaluates a fixed per-asset procedure on unseen
 assets; it does not test cross-asset neural-model transfer. See the

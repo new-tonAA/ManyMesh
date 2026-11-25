@@ -53,6 +53,15 @@ comparison is not evidence of anything.
 
 ## Notes on the metrics
 
+- **CGVQM-5** is a full-reference metric designed for computer-graphics video.
+  It complements per-frame metrics when evaluating moving LOD, but it is not a
+  universal or ISO-standard score and cannot replace a task-specific user
+  study. Record the implementation commit, model-weight hashes, decoder,
+  pooling settings, and per-asset paired results. The current ManyMesh screen
+  uses an OpenCV FFmpeg adapter rather than the paper's PyAV path; see the
+  [protocol](TEMPORAL_QUALITY_PROTOCOL.md) and
+  [13-asset results](CGVQM_DYNAMIC_LOD_SCREEN_20261122.md).
+
 - **PSNR** is computed on the 8-bit sRGB values supplied to this tool and is reported as `inf`
   for identical frames. Treat color transfer and quantization as part of the protocol; compare
   images that use the same rendering and display transform.
