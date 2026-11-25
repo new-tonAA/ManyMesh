@@ -1,68 +1,59 @@
 # ManyMesh research status
 
 Updated 2026-11-25. **No SIGGRAPH-ready method is established.** The current
-ManyMesh cut has not beaten matched conventional controls; no optimized
-candidate has a positive held-out result.
+ManyMesh geometry has not beaten matched conventional controls, and no tested
+optimization has produced a positive held-out result.
 
-## Evidence that changes the decision
+## Decision-relevant evidence
 
-- **Matched quality:** a frozen 21-model screen found ManyMesh worse than
-  border-preserving QEM and meshoptimizer on LDR-FLIP, PSNR, SSIM, and silhouette
-  XOR, both natively and with 4x MSAA. Familywise 95% intervals favor controls
-  in all 16 primary comparisons. [Results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md),
-  [multiplicity audit](tools/mmtrain/POLYHAVEN_MULTIPLICITY_AUDIT_20261125.md).
-- **Perceptual metric:** post-hoc LPIPS on the same cohort also favors both
-  controls; it is not independent confirmation. [Report](tools/mmtrain/POLYHAVEN_LPIPS_SUPPLEMENT_RESULTS_20261125.md).
-- **Learned geometry:** rank-8/16/30 residual decoders lost to matched-face QEM;
-  budgeted refinement lost to same-face meshoptimizer on four assets. These
-  close only the tested settings. [Rank sweep](tools/mmtrain/CLUSTER_DECODER_RANK_SWEEP_20261122.md),
-  [baseline comparison](tools/mmtrain/CLUSTER_DECODER_MESHOPT_20261122.md).
-- **Silhouettes:** contour-priority and contour-guided fitting showed no
-  repeatable gain; half-resolution guide fusion lost to a cheaper control on
-  three image metrics across 13 reused assets. [Contour](tools/mmtrain/CONTOUR_IMPORTANCE_QEM_20261123.md),
-  [guide fusion](tools/mmtrain/SILHOUETTE_GUIDE_FUSION_20261122.md),
-  [fitting](tools/mmtrain/VISIBLE_CONTOUR_FIT_20261124.md).
-- **Silhouette attribution:** on the already-scored 21-model cohort, the
-  ManyMesh silhouette-XOR region contains 31.0% (95% group-bootstrap CI
-  27.4%-34.8%) of squared grayscale error without AA and 16.3% (13.7%-19.1%)
-  with 4x MSAA; no source group exceeds half. The same 4x MSAA condition
-  removes 38.8% of ManyMesh's native squared error, versus 58.0% for QEM and
-  67.1% for meshoptimizer. Paired source-group differences are +19.2 pp for
-  QEM (95% CI +14.3 to +23.7) and +28.3 pp for meshoptimizer (+23.1 to +33.0);
-  the QEM gap comes almost entirely from non-XOR pixels. These post-hoc
-  intervals are unadjusted. This is protocol specific, not independent
-  confirmation. The historical 68.3% single-view
-  Monkey result used a DAG cut as reference; the source-mesh Monkey diagnostic
-  found 25.84%-34.75% at three budgets. See [21-model attribution](tools/mmtrain/POLYHAVEN_SILHOUETTE_ATTRIBUTION_20261125.md)
-  and [Monkey diagnostic](tools/mmtrain/MONKEY_SOURCE_REFERENCE_DIAGNOSTIC_20261125.md).
-- A 10,000-instance desktop screen found raster-time savings from coarser
-  geometry, but no ManyMesh, complete-frame, or mobile win. [Report](tools/mmtrain/INSTANCE_SCALE_BARRAMUNDIFISH_SCREEN_20261125.md).
+- A frozen 21-model, six-metric screen found ManyMesh worse than matched-face,
+  border-preserving QEM and meshoptimizer, both natively and with 4x MSAA.
+  Post-hoc LPIPS on the same cohort agrees; it is not independent confirmation.
+  [Quality results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md),
+  [multiplicity audit](tools/mmtrain/POLYHAVEN_MULTIPLICITY_AUDIT_20261125.md),
+  [LPIPS supplement](tools/mmtrain/POLYHAVEN_LPIPS_SUPPLEMENT_RESULTS_20261125.md).
+- Tested rank-8/16/30 residual decoders, budgeted refinement, and contour-aware
+  variants failed against their matched controls. These results close only the
+  tested configurations. [Decoder studies](tools/mmtrain/CLUSTER_DECODER_RANK_SWEEP_20261122.md),
+  [contour study](tools/mmtrain/CONTOUR_IMPORTANCE_QEM_20261123.md).
+- On that same 21-model cohort, silhouette-XOR regions account for 31.0% of
+  ManyMesh squared grayscale error without AA and 16.3% with 4x MSAA. Silhouette
+  error is overrepresented, but is not the majority. The old 68.3% Monkey result
+  used a DAG cut rather than the source mesh as reference. These post-hoc
+  measurements are protocol-specific, not independent confirmation.
+  [Attribution](tools/mmtrain/POLYHAVEN_SILHOUETTE_ATTRIBUTION_20261125.md),
+  [source-reference audit](tools/mmtrain/MONKEY_SOURCE_REFERENCE_DIAGNOSTIC_20261125.md).
+- A 10,000-instance desktop screen found faster rasterization with coarser
+  meshoptimizer geometry, but no ManyMesh, complete-frame, or mobile win.
+  [Instance screen](tools/mmtrain/INSTANCE_SCALE_BARRAMUNDIFISH_SCREEN_20261125.md).
 
-## Active gate
+## Next experiment and local gate
 
-The only active test is a frozen fixed-topology appearance-placement control on
-BarramundiFish and Corset at 1,932 and 9,162 faces. CPU preparation passed;
-fitting and scoring have not run because CUDA and the renderer extension are
-unavailable locally. A pass opens a cluster-DAG study; it proves neither
-generalization nor novelty. [Inputs](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md),
-[gate](MANYMESH_NEXT_EXPERIMENT_GATE.md), [CUDA preflight](tools/mmtrain/CUDA_ENVIRONMENT_RECHECK_20261125.md).
+The frozen fixed-topology placement control covers BarramundiFish and Corset.
+Its current adapter uses CUDA-only nvdiffrast; fitting and quality scoring have
+not run. A CPU renderer would be a separate, unimplemented protocol, not an
+equivalent rerun. The local Python research suite passes 4/4 tests; Windows
+Smart App Control blocks the unsigned native test binaries, so native test
+status remains unverified. [Matched inputs](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md),
+[experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md),
+[environment record](tools/mmtrain/CUDA_ENVIRONMENT_RECHECK_20261125.md).
 
-The fresh 30-model Poly Haven confirmation pool is frozen but unscored. It tests
-per-asset fitting on unseen assets, not transfer of a learned model, and is
-reserved until a method is frozen. [Pool](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md),
+The 30-model Poly Haven confirmation pool is frozen and unscored. It remains
+reserved until a method passes the development gate.
+[Pool](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md),
 [protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md).
 
 ## Claims not established
 
-No on-device mobile measurement, equal-complete-frame-time quality win,
-positive held-out result, or user study exists. A reused-data moving-camera
-screen found no supported temporal-quality gain. [Report](tools/mmmetrics/MOVING_SCENE_EDGE_QUALITY_20261124.md).
+No held-out optimized-method win, equal-complete-frame-time quality win,
+on-device mobile result, supported temporal-quality gain, or user study exists.
+Desktop measurements do not establish mobile performance.
 
 ## Research index
 
-- [SIGGRAPH direction and evidence gate](SIGGRAPH_2027_DIRECTION.md)
+- [SIGGRAPH 2027 direction and evidence gate](SIGGRAPH_2027_DIRECTION.md)
 - [Research roadmap](MANYMESH_RESEARCH_ROADMAP.md)
 - [Dated experimental history](MANYMESH_HISTORY.md)
 - [Prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md)
-- [Learned LOD prior art](MANYMESH_LEARNED_LOD_RESEARCH.md)
+- [Learned LOD research](MANYMESH_LEARNED_LOD_RESEARCH.md)
 - [Filament documentation](filament/README.md)
