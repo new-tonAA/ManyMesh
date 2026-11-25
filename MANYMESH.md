@@ -22,9 +22,14 @@ candidate has a positive held-out result.
   three image metrics across 13 reused assets. [Contour](tools/mmtrain/CONTOUR_IMPORTANCE_QEM_20261123.md),
   [guide fusion](tools/mmtrain/SILHOUETTE_GUIDE_FUSION_20261122.md),
   [fitting](tools/mmtrain/VISIBLE_CONTOUR_FIT_20261124.md).
-- The 68.3% silhouette-error figure used a DAG cut as reference. A source-mesh
-  Monkey diagnostic measured 25.84%-34.75% at three budgets on one asset; neither
-  supports a universal share. [Diagnostic](tools/mmtrain/MONKEY_SOURCE_REFERENCE_DIAGNOSTIC_20261125.md).
+- **Silhouette attribution:** on the already-scored 21-model cohort, the
+  ManyMesh silhouette-XOR region contains 31.0% (95% group-bootstrap CI
+  27.4%-34.8%) of squared grayscale error without AA and 16.3% (13.7%-19.1%)
+  with 4x MSAA; no source group exceeds half. This is post-hoc and protocol
+  specific, not independent confirmation. The historical 68.3% single-view
+  Monkey result used a DAG cut as reference; the source-mesh Monkey diagnostic
+  found 25.84%-34.75% at three budgets. See [21-model attribution](tools/mmtrain/POLYHAVEN_SILHOUETTE_ATTRIBUTION_20261125.md)
+  and [Monkey diagnostic](tools/mmtrain/MONKEY_SOURCE_REFERENCE_DIAGNOSTIC_20261125.md).
 - A 10,000-instance desktop screen found raster-time savings from coarser
   geometry, but no ManyMesh, complete-frame, or mobile win. [Report](tools/mmtrain/INSTANCE_SCALE_BARRAMUNDIFISH_SCREEN_20261125.md).
 

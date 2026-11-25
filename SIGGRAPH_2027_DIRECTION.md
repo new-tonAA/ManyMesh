@@ -196,6 +196,18 @@ three assets. See the [CPU screen](tools/mmtrain/CONTOUR_IMPORTANCE_QEM_20261123
 [AA follow-up](tools/mmtrain/CONTOUR_PRIORITY_AA_20261123.md), and
 [fixed-topology fit](tools/mmtrain/VISIBLE_CONTOUR_FIT_20261124.md).
 
+A post-hoc attribution on the already-scored 21-model cohort further weakens a
+silhouette-dominance premise: the XOR region contains 31.0% of ManyMesh squared
+grayscale error without AA (95% source-group bootstrap CI 27.4%-34.8%) and
+16.3% after 4x MSAA (13.7%-19.1%); none of the 16 groups exceeds 50% in either
+mode. This diagnostic uses flat grayscale and the same fixed-view cohort, so it
+is not independent confirmation or a perceptual metric. The historical 68.3%
+single-view Monkey value used a DAG cut as reference. Do not motivate a paper
+with a universal claim that silhouette pixels dominate error. Any contour-aware
+method must show a gain over these strong mesh controls after AA, using a
+predeclared attribution and image-quality evaluation. See the full
+[21-model attribution](tools/mmtrain/POLYHAVEN_SILHOUETTE_ATTRIBUTION_20261125.md).
+
 Silhouette-aware LOD and clipping have direct precedents in
 [Luebke–Erikson (1997)](https://dl.acm.org/doi/10.1145/258734.258847)
 and [Sander et al. (2000)](https://hhoppe.com/silclip.pdf). Luebke's [1998
