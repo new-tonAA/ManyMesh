@@ -8,6 +8,16 @@ measurements, including failed hypotheses. Early mobile, perceptual, and novelty
 statements describe ambitions, not validated capabilities. The current direction
 and evidence gates are in [MANYMESH.md](MANYMESH.md).
 
+## 2026-11-25: hosted Windows CPU test
+
+The Windows/MSVC presubmit for commit `5c04aef4` completed successfully. Its
+build script invoked `libs/manymesh/Release/test_manymesh.exe`; the test output
+reported 94 passed and one skipped. This establishes the ManyMesh CPU unit-test
+result on the hosted Windows runner. It does not establish that the unsigned
+binary can run on the developer laptop, where Smart App Control still blocks
+it, and it does not cover GPU `compute_test` or the CUDA fitting experiment.
+See the [Actions run](https://github.com/new-tonAA/ManyMesh/actions/runs/45622515351).
+
 ## 2026-11-22: cluster-decoder capacity and scale screens
 
 The frozen polynomial residual control was screened at ranks 8, 16, and 30.
