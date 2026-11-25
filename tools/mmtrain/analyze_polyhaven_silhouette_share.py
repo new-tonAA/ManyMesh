@@ -84,6 +84,9 @@ def score_asset(device, high, raster, manifest, row):
             shares = [entry["xor_error_share"] for entry in item["views"]
                       if entry["xor_error_share"] is not None]
             result["arms"][arm][mode] = {
+                "total_squared_error": item["error_energy"],
+                "xor_squared_error": item["xor_error_energy"],
+                "non_xor_squared_error": item["error_energy"] - item["xor_error_energy"],
                 "pooled_xor_fraction": item["xor_pixels"] / item["pixels"],
                 "pooled_xor_error_share": (item["xor_error_energy"] / item["error_energy"]
                                            if item["error_energy"] else None),

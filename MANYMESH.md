@@ -25,8 +25,10 @@ candidate has a positive held-out result.
 - **Silhouette attribution:** on the already-scored 21-model cohort, the
   ManyMesh silhouette-XOR region contains 31.0% (95% group-bootstrap CI
   27.4%-34.8%) of squared grayscale error without AA and 16.3% (13.7%-19.1%)
-  with 4x MSAA; no source group exceeds half. This is post-hoc and protocol
-  specific, not independent confirmation. The historical 68.3% single-view
+  with 4x MSAA; no source group exceeds half. The same 4x MSAA condition
+  removes 38.8% of ManyMesh's native squared error, versus 58.0% for QEM and
+  67.1% for meshoptimizer. This is post-hoc and protocol specific, not
+  independent confirmation. The historical 68.3% single-view
   Monkey result used a DAG cut as reference; the source-mesh Monkey diagnostic
   found 25.84%-34.75% at three budgets. See [21-model attribution](tools/mmtrain/POLYHAVEN_SILHOUETTE_ATTRIBUTION_20261125.md)
   and [Monkey diagnostic](tools/mmtrain/MONKEY_SOURCE_REFERENCE_DIAGNOSTIC_20261125.md).

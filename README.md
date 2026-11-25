@@ -42,9 +42,11 @@ reproduction: [quality screen](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.m
   post-hoc 21-model attribution, silhouette-XOR pixels account for 31.0%
   (95% group-bootstrap CI 27.4%-34.8%) of ManyMesh squared grayscale error
   without AA, and 16.3% (13.7%-19.1%) with 4x MSAA. No source group exceeds
-  50%. The old 68.3% Monkey result used a DAG cut as reference; a source-mesh
-  Monkey diagnostic found 25.84%-34.75% at three budgets. These protocols are
-  not directly interchangeable. [21-model attribution](tools/mmtrain/POLYHAVEN_SILHOUETTE_ATTRIBUTION_20261125.md),
+  50%. 4x MSAA removes 38.8% of ManyMesh's total squared error, compared with
+  58.0% for QEM and 67.1% for meshoptimizer. The old 68.3% Monkey result used a
+  DAG cut as reference; a source-mesh Monkey diagnostic found 25.84%-34.75% at
+  three budgets. These protocols are not directly interchangeable.
+  [21-model attribution](tools/mmtrain/POLYHAVEN_SILHOUETTE_ATTRIBUTION_20261125.md),
   [Monkey diagnostic](tools/mmtrain/MONKEY_SOURCE_REFERENCE_DIAGNOSTIC_20261125.md).
 - **3.93x raster-time speedup.** Stock meshoptimizer depth-2 geometry at
   10,000 BarramundiFish instances: 26.155 ms to 6.657 ms on Iris Xe / D3D12,

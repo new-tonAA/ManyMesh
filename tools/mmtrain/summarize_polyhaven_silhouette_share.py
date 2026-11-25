@@ -5,6 +5,8 @@ import hashlib
 import json
 from pathlib import Path
 
+import numpy as np
+
 
 ROOT = Path(__file__).resolve().parents[2]
 METRICS_PATH = ROOT / "tools/mmtrain/polyhaven_quality_metrics_20261124.json"
@@ -15,10 +17,54 @@ LABELS = {
     "qem_preserve_border": "Border-preserving QEM",
     "meshoptimizer_lock_border": "meshoptimizer LockBorder",
 }
+DECOMP_SEED = 20261126
+BOOTSTRAP_SAMPLES = 10000
 
 
 def digest(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def aa_error_decomposition(rows, arm):
+    by_group = {}
+    for row in rows:
+        native = row["arms"][arm]["native"]
+        aa = row["arms"][arm]["msaa4"]
+        total = native["total_squared_error"]
+        values = {
+            "total_error_reduction": (total - aa["total_squared_error"]) / total,
+            "xor_error_reduction": (native["xor_squared_error"]
+                                    - aa["xor_squared_error"]) / total,
+            "non_xor_error_reduction": (native["non_xor_squared_error"]
+                                        - aa["non_xor_squared_error"]) / total,
+        }
+        by_group.setdefault(row["uncertainty_group"], []).append(values)
+
+    groups = sorted(by_group)
+    keys = ("total_error_reduction", "xor_error_reduction", "non_xor_error_reduction")
+    group_values = {
+        key: np.asarray([np.mean([asset[key] for asset in by_group[group]])
+                         for group in groups], dtype=np.float64)
+        for key in keys
+    }
+    if not np.allclose(
+            group_values["total_error_reduction"],
+            group_values["xor_error_reduction"] + group_values["non_xor_error_reduction"],
+            rtol=0.0, atol=1e-12):
+        raise ValueError(f"XOR and non-XOR reductions do not add to total for {arm}")
+    rng = np.random.default_rng(DECOMP_SEED)
+    indices = rng.integers(0, len(groups),
+                           size=(BOOTSTRAP_SAMPLES, len(groups)))
+    result = {"group_count": len(groups), "bootstrap_seed": DECOMP_SEED,
+              "bootstrap_samples": BOOTSTRAP_SAMPLES, "metrics": {}}
+    for key, values in group_values.items():
+        means = values[indices].mean(axis=1)
+        result["metrics"][key] = {
+            "group_mean": float(values.mean()),
+            "group_bootstrap_95_percentile_ci": [
+                float(value) for value in np.quantile(means, [0.025, 0.975])],
+        }
+    return result
 
 
 def main():
@@ -34,16 +80,14 @@ def main():
     if receipt["protocol"]["metrics_sha256"] != digest(METRICS_PATH):
         raise ValueError("Diagnostic receipt does not match the current quality metrics")
 
-    raw_by_asset = {}
-    for row in metrics["per_asset"]:
-        raw_by_asset[row["asset"]] = json.loads(
-            (ROOT / row["raw_receipt"]).read_text(encoding="utf-8"))
+    metrics_by_asset = {row["asset"]: row for row in metrics["per_asset"]}
     parity = 0
     for asset in receipt["assets"]:
-        raw = raw_by_asset[asset["asset"]]
-        if len(raw["views"]) != 24:
+        metric_row = metrics_by_asset[asset["asset"]]
+        views = metric_row["per_view_metrics"]
+        if len(views) != 24:
             raise ValueError(f"Unexpected view count for {asset['asset']}")
-        for index, view in enumerate(raw["views"]):
+        for index, view in enumerate(views):
             for arm in ARMS:
                 for mode in MODES:
                     expected = view["quality"][arm][mode]["silhouette_xor_fraction"]
@@ -87,7 +131,30 @@ def main():
 
     lines += [
         "",
-        "The screen's matched-face image-quality result still favors QEM and meshoptimizer over ManyMesh. The lower control shares with MSAA do not mean their total image error is lower because of the attribution alone; see the primary quality metrics for total-error comparisons.",
+        "The screen's matched-face image-quality result still favors QEM and meshoptimizer over ManyMesh. The energy decomposition below shows why contour share alone is insufficient: 4x MSAA removes 38.8% of ManyMesh's native total squared error, versus 58.0% for QEM and 67.1% for meshoptimizer. For ManyMesh, 20.7 percentage points of native total error are removed inside the XOR mask and 18.1 points outside it. The component intervals are descriptive, not multiplicity-corrected.",
+        "",
+        "### What 4x MSAA removes",
+        "",
+        "The table below decomposes each arm's change in pooled squared error after enabling 4x MSAA. Each component is normalized by that arm's native total error; positive values are reductions, negative values are increases. The XOR mask is computed separately for each mode, so this is a descriptive partition rather than a tracked-pixel causal attribution. Intervals resample the 16 source groups; the three related intervals are descriptive and are not multiplicity corrected.",
+        "",
+        "| Candidate | Total error removed | XOR-region error removed | Non-XOR error removed |",
+        "|---|---:|---:|---:|",
+    ]
+    decomposition = {}
+    for arm in ARMS:
+        decomposition[arm] = aa_error_decomposition(receipt["assets"], arm)
+        items = decomposition[arm]["metrics"]
+        cells = []
+        for metric in ("total_error_reduction", "xor_error_reduction",
+                       "non_xor_error_reduction"):
+            item = items[metric]
+            cells.append(
+                f"{100*item['group_mean']:.1f}% "
+                f"({100*item['group_bootstrap_95_percentile_ci'][0]:.1f}%–"
+                f"{100*item['group_bootstrap_95_percentile_ci'][1]:.1f}%)")
+        lines.append(f"| {LABELS[arm]} | " + " | ".join(cells) + " |")
+
+    lines += [
         "",
         "### Per-asset error share",
         "",
@@ -108,7 +175,7 @@ def main():
         "",
         "## Reproducibility and limits",
         "",
-        f"The 3,024 candidate/view/mode XOR-area values exactly match the frozen per-view quality metrics. This verifies the rerendered coverage masks; the squared-error attribution itself is newly computed. Source metrics SHA-256: `{receipt['protocol']['metrics_sha256']}`. Diagnostic script SHA-256: `{receipt['protocol']['script_sha256']}`. Receipt SHA-256: `{digest(receipt_path)}`.",
+        f"The 3,024 candidate/view/mode XOR-area values exactly match the frozen per-view quality metrics. This verifies the rerendered coverage masks; the squared-error attribution itself is newly computed. Source metrics SHA-256: `{receipt['protocol']['metrics_sha256']}`. Diagnostic script SHA-256: `{receipt['protocol']['script_sha256']}`. Summary script SHA-256: `{digest(Path(__file__))}`. Receipt SHA-256: `{digest(receipt_path)}`.",
         "",
         "The historical single-view Monkey result reported 68.3% using a DAG cut as reference. This multi-model screen instead uses the original source reference, 24 views per asset, flat grayscale shading, and the explicitly defined XOR mask. The values are not directly interchangeable. The new diagnostic does not invalidate that individual measurement; it shows that it should not be presented as a general property.",
         "",
@@ -119,13 +186,13 @@ def main():
         "```powershell",
         "$env:PYTHONPATH = 'out/manymesh-research-pydeps-20261123;out/geometry-refinement-pilot/deps;out/geometry-refinement-pilot/deps/wgpu'",
         "python tools/mmtrain/analyze_polyhaven_silhouette_share.py `",
-        "  --out out/polyhaven-silhouette-share-3arms-20261125/receipt.json",
+        "  --out tools/mmtrain/polyhaven_silhouette_attribution_20261125.json",
         "python tools/mmtrain/summarize_polyhaven_silhouette_share.py `",
-        "  --receipt out/polyhaven-silhouette-share-3arms-20261125/receipt.json `",
+        "  --receipt tools/mmtrain/polyhaven_silhouette_attribution_20261125.json `",
         "  --report tools/mmtrain/POLYHAVEN_SILHOUETTE_ATTRIBUTION_20261125.md",
         "```",
         "",
-        f"Mask-parity audit: {parity}/{21*24*len(ARMS)*len(MODES)} exact matches. Raw image buffers were not retained; the machine-readable attribution receipt is in the ignored local `out/` directory.",
+        f"Mask-parity audit: {parity}/{21*24*len(ARMS)*len(MODES)} exact matches. The full machine-readable per-asset and per-view receipt is checked in at [polyhaven_silhouette_attribution_20261125.json](polyhaven_silhouette_attribution_20261125.json). Raw image buffers were not retained.",
         "",
     ]
     args.report.parent.mkdir(parents=True, exist_ok=True)

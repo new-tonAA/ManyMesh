@@ -29,6 +29,9 @@ The post-hoc 21-model attribution also shows that silhouette-XOR pixels do not
 contain a majority of squared grayscale error for any source group: the
 ManyMesh group mean is 31.0% without AA and 16.3% with 4x MSAA. Therefore the
 old single-view silhouette finding is not a general premise for the method.
+On the same cohort, 4x MSAA removes 38.8% of ManyMesh's total squared error,
+compared with 58.0% for QEM and 67.1% for meshoptimizer; the contour and
+non-contour error reductions are both material.
 Use it only as a scoped diagnostic, and require any contour-specific claim to
 beat equal-cost controls after AA. See the
 [attribution report](tools/mmtrain/POLYHAVEN_SILHOUETTE_ATTRIBUTION_20261125.md).

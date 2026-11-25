@@ -20,7 +20,17 @@ No source group assigns more than half of total squared image error to silhouett
 | Border-preserving QEM | 22.32% (19.20%–25.50%) | 4.56% (3.56%–5.66%) | 0 / 0 |
 | meshoptimizer LockBorder | 26.44% (22.37%–30.26%) | 5.66% (4.61%–6.65%) | 0 / 0 |
 
-The screen's matched-face image-quality result still favors QEM and meshoptimizer over ManyMesh. The lower control shares with MSAA do not mean their total image error is lower because of the attribution alone; see the primary quality metrics for total-error comparisons.
+The screen's matched-face image-quality result still favors QEM and meshoptimizer over ManyMesh. The energy decomposition below shows why contour share alone is insufficient: 4x MSAA removes 38.8% of ManyMesh's native total squared error, versus 58.0% for QEM and 67.1% for meshoptimizer. For ManyMesh, 20.7 percentage points of native total error are removed inside the XOR mask and 18.1 points outside it. The component intervals are descriptive, not multiplicity-corrected.
+
+### What 4x MSAA removes
+
+The table below decomposes each arm's change in pooled squared error after enabling 4x MSAA. Each component is normalized by that arm's native total error; positive values are reductions, negative values are increases. The XOR mask is computed separately for each mode, so this is a descriptive partition rather than a tracked-pixel causal attribution. Intervals resample the 16 source groups; the three related intervals are descriptive and are not multiplicity corrected.
+
+| Candidate | Total error removed | XOR-region error removed | Non-XOR error removed |
+|---|---:|---:|---:|
+| ManyMesh | 38.8% (33.0%–45.9%) | 20.7% (17.7%–23.9%) | 18.1% (13.1%–23.5%) |
+| Border-preserving QEM | 58.0% (52.0%–64.2%) | 20.4% (17.4%–23.6%) | 37.5% (33.2%–41.9%) |
+| meshoptimizer LockBorder | 67.1% (61.3%–72.6%) | 24.7% (20.8%–28.3%) | 42.4% (37.3%–46.9%) |
 
 ### Per-asset error share
 
@@ -52,7 +62,7 @@ Each value is the pooled XOR-region share of squared error. These per-asset valu
 
 ## Reproducibility and limits
 
-The 3,024 candidate/view/mode XOR-area values exactly match the frozen per-view quality metrics. This verifies the rerendered coverage masks; the squared-error attribution itself is newly computed. Source metrics SHA-256: `e3c15f56f13ea6c0b8f21a131f1d76ed648884e8ff69aca72346a0620e4fd9ad`. Diagnostic script SHA-256: `5db0ca3453fdbf8998a3bd6764cff3b6566d5ce007cf58d313e705fa051695b2`. Receipt SHA-256: `d541027c05cd8f9c483ab5503f0a3758d2b31dbf2adcff15258a8fa04994d399`.
+The 3,024 candidate/view/mode XOR-area values exactly match the frozen per-view quality metrics. This verifies the rerendered coverage masks; the squared-error attribution itself is newly computed. Source metrics SHA-256: `e3c15f56f13ea6c0b8f21a131f1d76ed648884e8ff69aca72346a0620e4fd9ad`. Diagnostic script SHA-256: `127522519aaa4bfb1907536efa6c0678a9ee1421d422f9d20fffdef170985690`. Summary script SHA-256: `9c44ca7e8ea157f5b68940b712474deb83e500ed7e834e477c2980c45e5967ac`. Receipt SHA-256: `0cf8c53cb41345591aafe4f5baf05b6d86af2b45f05ea3a84898130dbe1ec30a`.
 
 The historical single-view Monkey result reported 68.3% using a DAG cut as reference. This multi-model screen instead uses the original source reference, 24 views per asset, flat grayscale shading, and the explicitly defined XOR mask. The values are not directly interchangeable. The new diagnostic does not invalidate that individual measurement; it shows that it should not be presented as a general property.
 
@@ -63,10 +73,10 @@ Reproduce from the repository root with the recorded Python dependencies:
 ```powershell
 $env:PYTHONPATH = 'out/manymesh-research-pydeps-20261123;out/geometry-refinement-pilot/deps;out/geometry-refinement-pilot/deps/wgpu'
 python tools/mmtrain/analyze_polyhaven_silhouette_share.py `
-  --out out/polyhaven-silhouette-share-3arms-20261125/receipt.json
+  --out tools/mmtrain/polyhaven_silhouette_attribution_20261125.json
 python tools/mmtrain/summarize_polyhaven_silhouette_share.py `
-  --receipt out/polyhaven-silhouette-share-3arms-20261125/receipt.json `
+  --receipt tools/mmtrain/polyhaven_silhouette_attribution_20261125.json `
   --report tools/mmtrain/POLYHAVEN_SILHOUETTE_ATTRIBUTION_20261125.md
 ```
 
-Mask-parity audit: 3024/3024 exact matches. Raw image buffers were not retained; the machine-readable attribution receipt is in the ignored local `out/` directory.
+Mask-parity audit: 3024/3024 exact matches. The full machine-readable per-asset and per-view receipt is checked in at [polyhaven_silhouette_attribution_20261125.json](polyhaven_silhouette_attribution_20261125.json). Raw image buffers were not retained.
