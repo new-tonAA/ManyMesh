@@ -49,6 +49,17 @@
     },
     "interpretation": "No differentiable CPU renderer is available in the active environment. Prior DEODR and Mitsuba CPU fallback probes are recorded separately."
   },
+  "androidHarnessPreflight": {
+    "adbOnPath": false,
+    "gradleOnPath": false,
+    "java": "11.0.16",
+    "androidHomeSet": false,
+    "androidSdkRootSet": false,
+    "standardSdkDirectoriesExist": false,
+    "manymeshAndroidEntryPoint": false,
+    "search": "No .mmb, lod_graph, or ManyMesh references found under android/",
+    "interpretation": "The repository has Filament Android samples but no ManyMesh Android harness. No SDK/adb deployment path is available; connected-device state is unverified."
+  },
   "experiment": {
     "cudaFitRun": false,
     "qualityScored": false,

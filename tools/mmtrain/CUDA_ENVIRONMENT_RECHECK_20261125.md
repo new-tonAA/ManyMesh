@@ -34,3 +34,15 @@ and Blender are not available on `PATH`. This rules out an already-installed
 differentiable CPU-renderer fallback in this environment; it does not change
 the frozen CUDA protocol or its result status. The earlier DEODR and Mitsuba
 build/runtime investigations are documented separately.
+
+## Android harness preflight
+
+The Android workspace contains Filament samples, but a repository search found
+no ManyMesh `.mmb` or `lod_graph` loader under `android/`. The textured-object
+sample loads Filament's static filamesh format; the glTF viewer loads ordinary
+GLB assets. This is not an existing ManyMesh mobile entry point. `adb` and
+system Gradle are absent from `PATH`; `ANDROID_HOME` and `ANDROID_SDK_ROOT` are
+unset; the checked standard SDK directories do not exist. Java 11 is present.
+Device connection state is unverified because `adb` is unavailable. No Android
+build or device run was attempted. Mobile measurements require a buildable
+Android SDK/NDK setup, a physical phone, and a small benchmark harness.
