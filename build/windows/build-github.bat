@@ -137,6 +137,9 @@ set build_flags=-j %NUMBER_OF_PROCESSORS%
 :: cmake --build . --target suzanne-resources --config %config% %build_flags% || exit /b
 
 cmake --build . %INSTALL% --config %config% %build_flags% -- /m || exit /b
+if not "%GITHUB_WORKFLOW%" == "" if "%TARGET%" == "presubmit" if "%variant%" == "mt" (
+    .\libs\manymesh\Release\test_manymesh.exe || exit /b 1
+)
 @echo off
 
 echo Disk info after building variant: %variant%
