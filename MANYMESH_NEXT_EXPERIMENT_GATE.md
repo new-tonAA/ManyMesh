@@ -233,10 +233,11 @@ SciPy 1.15.3), which emitted SciPy's NumPy-version warning; rerun in the pinned
 isolated environment for fitting. No CUDA rendering or quality scoring was
 performed. See the [repeat receipt](tools/mmtrain/appearance_cuda_preflight_repeat_20261125.json).
 
-DEODR was checked as a possible CPU-only fitting backend. Cython is absent and
-fetching the public source failed; compatibility of the available MinGW
-compiler was not tested. No CPU fit or image scoring was run. This closes only
-that local fallback for now, not the frozen CUDA experiment. See the
+DEODR was checked as a possible CPU-only fitting backend. The public source
+could not be fetched and Cython is absent. A later host inventory found a
+Microsoft-signed MSVC compiler outside `PATH`, but no extension build or
+compatibility test has run. No CPU fit or image scoring was run. This closes
+only that local fallback for now, not the frozen CUDA experiment. See the
 [CPU-backend preflight](tools/mmtrain/DEODR_CPU_BACKEND_PREFLIGHT_20261125.md).
 
 A second CPU-backend probe found ignored local builds of Mitsuba 3.9.0 and

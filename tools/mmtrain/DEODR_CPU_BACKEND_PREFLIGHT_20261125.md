@@ -29,15 +29,25 @@ placement screen on the current Windows host when CUDA is unavailable?
 
 ## Decision
 
-The DEODR CPU route is **not currently runnable on this host** because Cython
-is absent and the upstream source could not be fetched; compiler compatibility
-remains untested. Do not treat this as a failed fitting method, a negative
-quality result, or a substitute for the frozen nvdiffmodeling control. Revisit
-when the source and Cython build dependency are available, first checking
-whether the local MinGW toolchain can build the extension, or run the frozen
-control on a CUDA-capable host. DEODR's prior-art relevance and renderer
-limitations remain documented in the
+The DEODR CPU route was not runnable at the time of this preflight: Cython was
+absent, the upstream source could not be fetched, and compiler compatibility
+was unknown. Do not treat this as a failed fitting method, a negative quality
+result, or a substitute for the frozen nvdiffmodeling control. DEODR's
+prior-art relevance and renderer limitations remain documented in the
 [SIGGRAPH direction](../../SIGGRAPH_2027_DIRECTION.md).
+
+## Host recheck on 2026-11-25
+
+A later inventory found Visual Studio 2022 at `D:\visual studio 2022`, with
+Microsoft-signed MSVC `cl.exe` under
+`VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64`. The compiler is not on `PATH`;
+the earlier statement that only TDM-GCC was detected describes the initial
+preflight, not the current inventory. No Cython package or DEODR checkout was
+found in the checked Anaconda environments and package cache. The source fetch
+attempts documented above remain unsuccessful. No extension build, fitting,
+or image scoring has been performed, so MSVC compatibility is not yet
+verified. A compiled extension would still need a policy-compliant loading
+path; this recheck does not try to evade Smart App Control.
 
 ## Reproduction checks
 
