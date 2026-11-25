@@ -27,6 +27,28 @@
     "adb": "not found on PATH",
     "wslDistroEnumeration": "failed with Wsl/EnumerateDistros/Service/E_ACCESSDENIED"
   },
+  "cpuDifferentiableBackendRecheck": {
+    "checkedWith": "default Python 3.12.3 and ManyMesh research PYTHONPATH",
+    "torch": "2.7.1+cpu",
+    "torchCudaRuntime": null,
+    "cudaAvailable": false,
+    "imports": {
+      "nvdiffrast": false,
+      "pytorch3d": false,
+      "soft_renderer": false,
+      "kaolin": false,
+      "jax": false,
+      "mitsuba": false,
+      "drjit": false,
+      "deodr": false
+    },
+    "nativeTools": {
+      "nvidia-smi": false,
+      "nvcc": false,
+      "blender": false
+    },
+    "interpretation": "No differentiable CPU renderer is available in the active environment. Prior DEODR and Mitsuba CPU fallback probes are recorded separately."
+  },
   "experiment": {
     "cudaFitRun": false,
     "qualityScored": false,

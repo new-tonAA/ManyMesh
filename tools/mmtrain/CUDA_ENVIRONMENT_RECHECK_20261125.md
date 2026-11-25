@@ -23,3 +23,14 @@ The frozen experiment and its stop criteria remain in
 Resume only on a host where CUDA-enabled PyTorch imports, a CUDA device is
 visible, and the pinned `nvdiffrast` extension can be built. This preflight is
 not a negative result for the fitting method.
+
+## CPU fallback recheck
+
+Rechecked the default Python 3.12.3 environment with the ManyMesh research
+`PYTHONPATH` active. PyTorch remains `2.7.1+cpu`; CUDA runtime and device are
+unavailable. Import probes found none of `nvdiffrast`, PyTorch3D,
+`soft_renderer`, Kaolin, JAX, Mitsuba, Dr.Jit, or DEODR. `nvidia-smi`, `nvcc`,
+and Blender are not available on `PATH`. This rules out an already-installed
+differentiable CPU-renderer fallback in this environment; it does not change
+the frozen CUDA protocol or its result status. The earlier DEODR and Mitsuba
+build/runtime investigations are documented separately.
