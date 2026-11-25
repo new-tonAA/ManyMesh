@@ -248,6 +248,18 @@ assets. Its held-out-view image results were mixed and it is not an equivalent
 run of the frozen placement protocol. See the [local preflight](tools/mmtrain/MITSUBA_CPU_BACKEND_PREFLIGHT_20261125.md)
 and [CPU fit report](tools/mmtrain/PROJECTIVE_SILHOUETTE_CPU_20261124.md).
 
+A separate CPU full-RGB fitting screen is now frozen to test the ordinary-CPU
+route without re-labeling silhouette-only evidence. It uses the same two reused
+Khronos development assets, fixed topology and exact-face meshoptimizer
+initialization, neutral-material direct illumination, 16 fitting views and 24
+reserved views. Per-asset advancement requires lower reserved-view mean
+LDR-FLIP, no more than 0.10 dB pooled PSNR loss, no more than 0.001 mean SSIM
+loss, and valid topology and boundaries. This is only a renderer/optimizer
+feasibility screen; even a pass requires a new licensed asset-held-out study.
+The [frozen protocol](tools/mmtrain/PROJECTIVE_RGB_CPU_PROTOCOL_20261125.md)
+and [Ubuntu workflow](.github/workflows/manymesh-projective-rgb-cpu.yml) have
+not produced a result yet.
+
 Stop if the matched-face baseline loses, if a result depends on tuned views or
 assets, if the surrogate fails to rank real-pipeline results, if boundary or
 topology checks fail, or if total cost removes the quality gain. A mobile claim

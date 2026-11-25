@@ -46,13 +46,13 @@ links a distinct CPU silhouette-fit result from an Ubuntu hosted runner.
 ## Follow-up check on 2026-11-25
 
 Visual Studio's x64 LLVM runtime was found at its bundled `LLVM-C.dll`. Setting
-`DRJIT_LIBLLVM_PATH` to that file allowed Dr.Jit 1.4.0 to import, but Mitsuba
-still could not load `mitsuba_alias.cp312-win_amd64.pyd`. The extension is
-unsigned. Windows Code Integrity event 3077 explicitly records `python.exe`
-being blocked from loading this file under the active application-control
-policy. This is a policy block, not evidence that the CPU renderer requires
-CUDA or that the fitted method failed. No settings were changed and no policy
-bypass was attempted.
+`DRJIT_LIBLLVM_PATH` to that file, a direct Dr.Jit 1.4.0 LLVM-AD smoke computed
+`sum([2, 3]^2) = 13` with gradient `[4, 6]`. This verifies CPU autodiff for the
+Dr.Jit arrays only; it is not a renderer or geometry-fit result. Mitsuba still
+could not load `mitsuba_alias.cp312-win_amd64.pyd`. The extension is unsigned.
+Windows Code Integrity event 3077 explicitly records `python.exe` being blocked
+from loading this file under the active application-control policy. No settings
+were changed and no policy bypass was attempted.
 
 The CPU backend has run on an Ubuntu 24.04 hosted runner in a separate
 projective-silhouette experiment. Training loss fell on two reused assets, but
