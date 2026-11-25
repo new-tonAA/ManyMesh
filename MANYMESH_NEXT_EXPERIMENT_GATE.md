@@ -165,6 +165,16 @@ learned/optimized controls. Use both equal-face and equal-complete-frame-time
 comparisons. Count optimization, loading, memory,
 selection, rendering, AA, and upscaling costs. A differentiable surrogate must
 predict outcomes under the actual non-differentiable render pipeline.
+For the LTM-style control, optimize vertex offsets on a frozen single-level
+mesh with per-view image loss, a source-normal target, Laplacian smoothness, and
+adjacent-face normal consistency. Keep the authored appearance fixed so this
+control tests geometry optimization rather than a scene-specific appearance
+field. Use the candidate's frozen differentiable approximation of the final
+reconstruction operator during optimization, then score with the actual
+renderer. This is an LTM-inspired control, not a full LTM
+reproduction. If the DAG candidate changes topology, add a fixed-budget
+split-and-redecimate control before scoring; otherwise topology change and
+hierarchy optimization remain confounded.
 If TAA or temporal upscaling is the target operator, include a moving-camera
 history sequence and compare against that same operator without geometry
 optimization; Binary Opacity Grids already reports moving-camera TAA versus
