@@ -55,6 +55,11 @@ The moving-camera LPIPS screen uses three reused synthetic scenes and did not
 establish an equal-time quality gain. The 21-model LPIPS supplement is
 post-hoc on an already-scored cohort and is not independent confirmation.
 Desktop evidence does not support mobile claims.
+The tested rank-8/16/30 fixed-topology residual decoders also lose to
+matched-face QEM on their validation image metrics; budgeted refinement loses
+to meshoptimizer on four paired assets. These results close those configurations,
+not learned decoders generally. [Rank sweep](tools/mmtrain/CLUSTER_DECODER_RANK_SWEEP_20261122.md)
+and [baseline comparison](tools/mmtrain/CLUSTER_DECODER_MESHOPT_20261122.md).
 The 13-asset guide-fusion control was exploratory: its cheaper dominating control
 was selected after inspecting results. [Full report](tools/mmtrain/SILHOUETTE_GUIDE_FUSION_20261122.md).
 The 30-model Poly Haven confirmation set has frozen inputs and an evaluation

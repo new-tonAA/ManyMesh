@@ -12,6 +12,12 @@ positive held-out result.
   comparisons leaves all 95% simultaneous intervals favoring the controls.
   [Protocol and results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md) ·
   [Multiplicity audit](tools/mmtrain/POLYHAVEN_MULTIPLICITY_AUDIT_20261125.md).
+- The rank-8, rank-16, and rank-30 fixed-topology residual decoders all lost
+  to matched-face QEM on their reported validation image metrics; the
+  budgeted-refinement variant lost to same-face meshoptimizer on four paired
+  assets. This closes the tested configurations, not learned decoders in general.
+  [Rank sweep](tools/mmtrain/CLUSTER_DECODER_RANK_SWEEP_20261122.md) and
+  [baseline comparison](tools/mmtrain/CLUSTER_DECODER_MESHOPT_20261122.md).
 - A post-hoc LPIPS supplement re-rendered the same 21 models. ManyMesh scored
   worse than both controls in native and 4x MSAA: the ManyMesh-minus-control
   deltas are +0.00127 to +0.00267, and all four paired 95% group intervals
