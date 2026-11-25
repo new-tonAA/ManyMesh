@@ -38,7 +38,8 @@ matched-face comparator.
 - Fit only vertex positions; keep triangle indices fixed and lock all open
   boundary vertices. Reject degenerate or nonmanifold topology, changed source
   boundary, face-count mismatch, normal reversal below the script's 0.20
-  threshold, or displacement above 0.012 normalized units.
+  threshold, or displacement above 0.012 normalized units. The automated
+  topology audit does not test geometric self-intersections.
 - Use Mitsuba 3.9.0 `direct_projective` with Dr.Jit 1.4.0 `llvm_ad_rgb`, neutral
   diffuse reflectance, one directional light, and a constant background.
   Optimize unweighted full-frame linear-RGB MSE over 16 fixed training camera
@@ -71,4 +72,6 @@ The pinned Ubuntu workflow is
 It downloads the GLBs at Khronos revision
 `e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea`, checks their recorded hashes,
 extracts the original geometry, runs the fit, and uploads one raw JSON receipt
-per asset. Run the workflow manually or push a change to its path filters.
+and one NPZ geometry archive per asset. The JSON stores the script/input/archive
+hashes, exact camera bases, package versions, raw per-view scores, and fit
+trace. Run the workflow manually or push a change to its path filters.

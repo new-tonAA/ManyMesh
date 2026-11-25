@@ -1,6 +1,7 @@
 """Fit fixed-topology mesh positions to CPU-rendered neutral-material RGB images."""
 
 import argparse
+import importlib.metadata
 import json
 import os
 from pathlib import Path
@@ -188,7 +189,8 @@ def score(mi, variants, heldout_views, work_dir):
         sensor = sensor_for(mi, basis, SCORE_SPP)
         reference = linear_to_srgb(mi.render(scenes["source"], sensor=sensor,
                                              seed=SEED + 1000 + view_index).numpy())
-        row = {"view": view_index, "screen_scale": float(np.linalg.norm(basis[:, 0])),
+        row = {"view": view_index, "basis": np.asarray(basis).tolist(),
+               "screen_scale": float(np.linalg.norm(basis[:, 0])),
                "arms": {}}
         for name in ("meshoptimizer", "fitted"):
             candidate = linear_to_srgb(mi.render(scenes[name], sensor=sensor,
@@ -267,11 +269,19 @@ def main():
                     "fitted": (fitted, faces)}
         scored = score(mi, variants, heldout_views, Path(temporary) / "score")
     max_displacement = float(np.linalg.norm(fitted - initial, axis=1).max())
+    geometry_path = args.out.with_suffix(".geometry.npz")
+    with geometry_path.open("wb") as geometry_file:
+        np.savez_compressed(geometry_file, source_positions=source[0],
+                            source_faces=source[1],
+                            meshoptimizer_positions=initial,
+                            meshoptimizer_faces=faces,
+                            fitted_positions=fitted, fitted_faces=faces)
     result = {
         "status": "completed",
         "scope": "two reused development assets; not an asset-held-out test",
         "source_sha256": args.sha256,
         "script_sha256": digest(Path(__file__)),
+        "geometry_sha256": digest(geometry_path),
         "source_faces": len(raw_faces), "target_faces": target_faces,
         "retention": target_faces / len(raw_faces),
         "simplifier": simplify_report,
@@ -284,6 +294,7 @@ def main():
                      "variant": mi.variant(), "drjit": dr.__version__,
                      "resolution": [SIZE, SIZE], "spp_continuous": TRAIN_SPP,
                      "spp_primary_visibility": TRAIN_SPP,
+                     "camera_bases": [np.asarray(basis).tolist() for basis in training_views],
                      "spp_indirect_visibility": 0, "iterations": history,
                      "accepted_steps": sum(row["halvings"] is not None for row in history),
                      "wall_seconds": fit_seconds},
@@ -293,6 +304,8 @@ def main():
         "surface": {name: surface_metrics(source, mesh, 20000, SEED)
                     for name, mesh in variants.items()},
         "peak_rss_bytes": int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024),
+        "package_versions": {name: importlib.metadata.version(name) for name in (
+            "mitsuba", "drjit", "numpy", "scipy", "scikit-image", "flip-evaluator")},
         "platform": platform.platform(), "python": platform.python_version(),
     }
     result["decision"] = (
