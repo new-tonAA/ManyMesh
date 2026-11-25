@@ -37,15 +37,19 @@ positive held-out result.
 ## Next experiment
 
 Run the frozen fixed-topology placement control on BarramundiFish and Corset at
-1,932 and 9,162 faces. CPU preparation passed; fitting and scoring have not run
-because the available host has CPU-only PyTorch. Do not treat preparation as a
-fit result. The pinned nvdiffmodeling adapter is not a faithful Hasselgren
-reproduction and does not optimize through final hardware MSAA or an upscaler.
+1,932 and 9,162 faces. CPU preparation passed; fitting and scoring have not run.
+The default Python has CPU-only PyTorch. A secondary Conda environment contains
+CUDA 11.7 packages, but PyTorch import is blocked by Windows application
+control; this environment cannot currently verify a CUDA device or compile the
+renderer extension. Do not treat preparation as a fit result. The pinned
+nvdiffmodeling adapter is not a faithful Hasselgren reproduction and does not
+optimize through final hardware MSAA or an upscaler.
 A failure on reserved views closes this configuration. A pass only opens a
 separate asset-held-out cluster-DAG study; it proves neither generalization nor
 novelty.
 The DEODR CPU fallback could not be built because Cython and source access are
 unavailable on this host; no fitting or scoring occurred. [CPU-backend preflight](tools/mmtrain/DEODR_CPU_BACKEND_PREFLIGHT_20261125.md).
+[CUDA environment recheck](tools/mmtrain/CUDA_ENVIRONMENT_RECHECK_20261125.md).
 
 - [Frozen protocol and inputs](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md)
 - [Protocol JSON](tools/mmtrain/appearance_cuda_protocol_20261124.json) ·

@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "checkedAt": "2026-11-25",
+  "purpose": "Recheck whether the frozen fixed-topology appearance-placement control can run on this host.",
+  "defaultEnvironment": {
+    "python": "3.12.3",
+    "torch": "2.7.1+cpu",
+    "torchCudaRuntime": null,
+    "cudaAvailable": false,
+    "deviceCount": 0
+  },
+  "secondaryEnvironment": {
+    "name": "chartdet",
+    "condaPackages": {
+      "pytorch": "1.13.1",
+      "pytorch-cuda": "11.7",
+      "torchvision": "0.14.1"
+    },
+    "torchImport": "failed",
+    "error": "WinError 4551 while loading torch/lib/shm.dll or a dependency; Windows reported that application control policy blocked the file.",
+    "cudaDeviceDiscovery": "unavailable because torch could not import"
+  },
+  "tooling": {
+    "nvidiaSmi": "not found on PATH",
+    "nvcc": "not found on PATH or in chartdet environment",
+    "nvdiffrast": "not installed in chartdet",
+    "adb": "not found on PATH",
+    "wslDistroEnumeration": "failed with Wsl/EnumerateDistros/Service/E_ACCESSDENIED"
+  },
+  "experiment": {
+    "cudaFitRun": false,
+    "qualityScored": false,
+    "interpretation": "Environment preflight only; this is neither a method result nor evidence that the machine has no NVIDIA hardware.",
+    "nextAction": "Run the frozen protocol on a host where CUDA-enabled PyTorch imports, a CUDA device is visible, and the pinned nvdiffrast extension can be built."
+  }
+}
