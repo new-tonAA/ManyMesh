@@ -57,13 +57,14 @@ Desktop measurements do not establish mobile performance.
 
 ## Next gate
 
-The frozen two-asset placement fit requires CUDA and has not run. A separate
-CPU projective silhouette fit ran on two reused assets with mixed held-out-view
-results; it does not test the final AA pipeline or asset generalization. If the
-CUDA placement control passes, the next step is a separate asset-held-out
-cluster-DAG study. See the [experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md),
-[matched inputs](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md), and
-[confirmation protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md).
+The CPU full-RGB feasibility fit completed on two reused assets and uploaded
+raw results, but their metrics have not been audited; no quality conclusion is
+available yet ([latest run](https://github.com/new-tonAA/ManyMesh/actions/runs/45640186280)).
+The separate frozen nvdiffmodeling placement control still requires CUDA and
+has not run. The earlier CPU silhouette fit had mixed held-out-view results;
+it does not test the final AA pipeline or asset generalization. See the
+[experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md), [matched inputs](tools/mmtrain/MATCHED_APPEARANCE_INPUTS_20261124.md),
+and [confirmation protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md).
 
 The hosted Windows/MSVC presubmit ran `test_manymesh.exe` (94 passed, 1
 skipped). Smart App Control still blocks the unsigned executable on this
