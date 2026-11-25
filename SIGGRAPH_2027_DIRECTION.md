@@ -234,10 +234,16 @@ view-dependent budget allocation as standalone novelty claims. It does not
 answer the narrower, untested question of optimizing an authored hierarchy for
 a specified final reconstruction operator. That task distinction is a
 comparison to test, not proof of novelty.
-[HLoD (Eurographics 2026)](https://diglib.eg.org/items/429b6aa4-7897-4217-b297-272992d745ae)
-jointly optimizes a hierarchy for 3D Gaussian Splatting, and
-[T²-Splat](https://arxiv.org/html/2611.06974) combines adaptive triangle topology,
-image supervision, and scale-aware residual filtering for scene reconstruction.
+[HLoD (Eurographics 2026)](https://diglib.eg.org/items/429b6aa4-7897-4217-b297-272992d745ae) jointly optimizes a hierarchy for 3D Gaussian Splatting. Its official abstract
+supports broad hierarchy-optimization claims, but the full paper was not
+available in this review. [T²-Splat (arXiv v1, 2026-11-04)](https://arxiv.org/abs/2611.06974)
+combines QEM edge collapse, gradient-driven vertex splits, multi-view image
+supervision, and scale-adaptive per-face mip-textures that reduce aliasing and
+flicker. It reconstructs scenes from images; it does not create a cluster DAG
+for an authored asset or evaluate a separate final hardware MSAA/upscaler. This
+closes broad claims to differentiable adaptive mesh topology and scale-aware
+appearance filtering; the narrower authored-hierarchy/post-reconstruction
+comparison remains untested and is not a novelty claim.
 Reiser et al.'s [Binary Opacity Grids (SIGGRAPH 2024)](https://www.cvlibs.net/publications/Reiser2024SIGGRAPH.pdf)
 extracts and chunk-simplifies a mesh from multi-view images, then uses TAA to
 render thin and subpixel geometry. Its moving-camera TAA result is close to
