@@ -23,7 +23,11 @@ positive held-out result.
   [Diagnostic](tools/mmtrain/MONKEY_SOURCE_REFERENCE_DIAGNOSTIC_20261125.md).
 - Prior contour-priority and contour-guided fixed-topology fitting screens
   showed no repeatable quality gain; the separate frozen appearance-placement
-  control remains unrun. [Contour](tools/mmtrain/CONTOUR_IMPORTANCE_QEM_20261123.md) ·
+  control remains unrun. A post-hoc GPU-budget screen found a cheaper control
+  dominating both half-resolution silhouette-guide fusion variants on LDR-FLIP,
+  PSNR, and SSIM for all 13 reused assets; this is exploratory, not confirmation.
+  [Guide-fusion report](tools/mmtrain/SILHOUETTE_GUIDE_FUSION_20261122.md) ·
+  [Contour](tools/mmtrain/CONTOUR_IMPORTANCE_QEM_20261123.md) ·
   [AA follow-up](tools/mmtrain/CONTOUR_PRIORITY_AA_20261123.md) ·
   [fit report](tools/mmtrain/VISIBLE_CONTOUR_FIT_20261124.md).
 - A 10,000-instance desktop screen shows a raster-time reduction from coarse

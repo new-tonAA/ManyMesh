@@ -49,12 +49,14 @@ reproduction: [quality screen](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.m
 
 | Works in measured scope | Does not pass | Not measured |
 |---|---|---|
-| Fixed-view desktop quality and topology audits; post-hoc 21-model LPIPS and separate three-scene LPIPS/temporal diagnostics. | Current ManyMesh cuts lose to matched-face controls; prior contour-priority and contour-guided fitting screens show no repeatable gain. | Physical-phone performance, power, equal-frame-time quality, human preference, and a held-out optimized method with a validated temporal-quality gain. |
+| Fixed-view desktop quality and topology audits; post-hoc 21-model LPIPS and separate three-scene LPIPS/temporal diagnostics. | Current ManyMesh cuts lose to matched-face controls; contour-priority screens show no repeatable gain. A post-hoc GPU-budget screen found cheaper controls dominating silhouette-guide fusion on all 13 reused assets. | Physical-phone performance, power, a pre-registered equal-complete-frame-time comparison against MSAA/SMAA/upscaling, human preference, and a held-out optimized method with a validated temporal-quality gain. |
 
 The moving-camera LPIPS screen uses three reused synthetic scenes and did not
 establish an equal-time quality gain. The 21-model LPIPS supplement is
 post-hoc on an already-scored cohort and is not independent confirmation.
 Desktop evidence does not support mobile claims.
+The 13-asset guide-fusion control was exploratory: its cheaper dominating control
+was selected after inspecting results. [Full report](tools/mmtrain/SILHOUETTE_GUIDE_FUSION_20261122.md).
 The 30-model Poly Haven confirmation set has frozen inputs and an evaluation
 protocol, but remains unscored until the method configuration passes the
 two-asset gate. Scoring is disabled in the manifest. This set tests a frozen
