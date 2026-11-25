@@ -25,6 +25,13 @@ PSNR but mixed FLIP and no reliable AA gain; fixed-topology contour fitting
 regressed on two of three assets. These remain development controls, not a
 reason to advance a custom DAG optimizer. See the [current evidence summary](MANYMESH.md#evidence-that-changes-the-decision)
 and [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
+The post-hoc 21-model attribution also shows that silhouette-XOR pixels do not
+contain a majority of squared grayscale error for any source group: the
+ManyMesh group mean is 31.0% without AA and 16.3% with 4x MSAA. Therefore the
+old single-view silhouette finding is not a general premise for the method.
+Use it only as a scoped diagnostic, and require any contour-specific claim to
+beat equal-cost controls after AA. See the
+[attribution report](tools/mmtrain/POLYHAVEN_SILHOUETTE_ATTRIBUTION_20261125.md).
 The frozen two-asset, nvdiffmodeling-based fixed-topology placement control
 remains gated on a CUDA-capable host; it is not a faithful Hasselgren
 reproduction or an asset-generalization test.
