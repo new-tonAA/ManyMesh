@@ -75,3 +75,14 @@ extracts the original geometry, runs the fit, and uploads one raw JSON receipt
 and one NPZ geometry archive per asset. The JSON stores the script/input/archive
 hashes, exact camera bases, package versions, raw per-view scores, and fit
 trace. Run the workflow manually or push a change to its path filters.
+
+## Execution history
+
+The first two workflow runs, `45636675594` and `45637927355`, failed before
+rendering either asset. Asset download, hash validation, extraction, and package
+installation all succeeded. `camera_sets()` imported `fit_visible_contours`,
+whose transitive import chain referenced a missing `compact` symbol in
+`preflight_appearance_meshes`; no Mitsuba render, optimization, or image score
+was produced. The current source removes that dependency and generates the
+frozen camera bases locally. A rerun is required before making any algorithmic
+decision.

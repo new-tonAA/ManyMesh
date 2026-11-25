@@ -3,15 +3,18 @@
 import argparse
 import importlib.metadata
 import json
-import os
 from pathlib import Path
 import platform
-import resource
 import sys
 import tempfile
 import time
 
 import numpy as np
+
+try:
+    import resource
+except ImportError:  # Windows fallback: process peak RSS is reported as unavailable.
+    resource = None
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools/mmgeo"))
@@ -78,24 +81,53 @@ def sensor_for(mi, basis, samples=TRAIN_SPP):
 
 
 def camera_sets():
-    from fit_visible_contours import fit_views
-    from make_refinement_pairs import view_basis
-
-    training = fit_views()
+    training = []
+    for index in range(8):
+        y = 1 - (2 * index + 1) / 8
+        phi = index * np.pi * (3 - np.sqrt(5))
+        eye = np.array((np.sqrt(1 - y * y) * np.cos(phi), y,
+                        np.sqrt(1 - y * y) * np.sin(phi)))
+        right = np.cross((0., 1., 0.), eye)
+        right /= np.linalg.norm(right)
+        basis = np.stack((right, -np.cross(eye, right), -eye), axis=1)
+        training.extend(basis * scale for scale in (1.0, 0.55))
     yaw = np.deg2rad(13)
     rotation = np.array([[np.cos(yaw), 0., np.sin(yaw)], [0., 1., 0.],
                          [-np.sin(yaw), 0., np.cos(yaw)]])
-    heldout = [rotation @ view_basis(index, 12) * scale
+    heldout = [rotation @ _view_basis(index, 12) * scale
                for scale in (1., 0.55) for index in range(12)]
     return training, heldout
+
+
+def _view_basis(index, count):
+    yaw = 2 * np.pi * index / count
+    elevation = np.deg2rad((-15, 20, 40)[index % 3])
+    eye = np.array((np.sin(yaw) * np.cos(elevation), np.sin(elevation),
+                    np.cos(yaw) * np.cos(elevation)))
+    right = np.cross((0., 1., 0.), eye)
+    right /= np.linalg.norm(right)
+    return np.stack((right, -np.cross(eye, right), -eye), axis=1).astype(np.float32)
+
+
+def _edge_incidence(faces):
+    sides = np.concatenate((faces[:, [0, 1]], faces[:, [1, 2]], faces[:, [2, 0]]))
+    edges, ids, counts = np.unique(np.sort(sides, axis=1), axis=0,
+                                   return_inverse=True, return_counts=True)
+    owners = np.tile(np.arange(len(faces)), 3)[np.argsort(ids, kind="stable")]
+    starts = np.cumsum(counts) - counts
+    return edges, owners[starts], owners[starts + counts - 1], counts
+
+
+def _face_normals(points, faces):
+    a, b, c = points[faces].transpose(1, 0, 2)
+    return np.cross(b - a, c - a)
 
 
 def fit(mi, dr, source, initial, faces, training_views, work_dir):
     from scipy.sparse import coo_matrix, diags, eye
     from scipy.sparse.linalg import factorized
-    from fit_visible_contours import edge_incidence, normals
 
-    edges, _, _, counts = edge_incidence(faces)
+    edges, _, _, counts = _edge_incidence(faces)
     free = np.ones(len(initial), dtype=bool)
     free[np.unique(edges[counts == 1])] = False
     if not free.any():
@@ -105,7 +137,7 @@ def fit(mi, dr, source, initial, faces, training_views, work_dir):
                            shape=(len(initial), len(initial))).tocsc()
     laplacian = diags(np.asarray(adjacency.sum(axis=1)).ravel()) - adjacency
     solve = factorized((eye(len(initial), format="csc") + 4 * laplacian)[free, :][:, free].tocsc())
-    initial_normals = normals(initial, faces)
+    initial_normals = _face_normals(initial, faces)
     min_dot = 0.2 * np.einsum("ij,ij->i", initial_normals, initial_normals)
 
     target = scene_for(mi, work_dir / "source.ply", *source, differentiable=False)
@@ -156,7 +188,7 @@ def fit(mi, dr, source, initial, faces, training_views, work_dir):
             length = np.linalg.norm(offset, axis=1, keepdims=True)
             offset *= np.minimum(1., MAX_DISPLACEMENT / np.maximum(length, 1e-30))
             candidate = initial + offset
-            orientation = np.einsum("ij,ij->i", normals(candidate, faces), initial_normals)
+            orientation = np.einsum("ij,ij->i", _face_normals(candidate, faces), initial_normals)
             if np.any(orientation < min_dot):
                 continue
             after, _ = loss_at(candidate, False)
@@ -303,7 +335,8 @@ def main():
                     **scored},
         "surface": {name: surface_metrics(source, mesh, 20000, SEED)
                     for name, mesh in variants.items()},
-        "peak_rss_bytes": int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024),
+        "peak_rss_bytes": (None if resource is None else
+                           int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024)),
         "package_versions": {name: importlib.metadata.version(name) for name in (
             "mitsuba", "drjit", "numpy", "scipy", "scikit-image", "flip-evaluator")},
         "platform": platform.platform(), "python": platform.python_version(),

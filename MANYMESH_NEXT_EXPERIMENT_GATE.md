@@ -258,8 +258,10 @@ loss, and valid topology and boundaries. This is only a renderer/optimizer
 feasibility screen; even a pass requires a new licensed asset-held-out study.
 The [frozen protocol](tools/mmtrain/PROJECTIVE_RGB_CPU_PROTOCOL_20261125.md)
 and [Ubuntu workflow](.github/workflows/manymesh-projective-rgb-cpu.yml) are
-published, but no hosted result artifact has been reviewed or checked into the
-repo yet.
+published. The first two runs failed before rendering because the new script
+imported a broken dependency chain from a prior contour experiment; no image
+results were produced. The current source removes that import, but the fix has
+not yet completed a hosted run.
 
 Stop if the matched-face baseline loses, if a result depends on tuned views or
 assets, if the surrogate fails to rank real-pipeline results, if boundary or
