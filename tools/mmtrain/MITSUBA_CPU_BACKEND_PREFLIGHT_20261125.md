@@ -15,6 +15,13 @@ then failed while loading `mitsuba_ext` with a Windows DLL-load error. The
 failure occurred before selecting a variant, rendering, or differentiating.
 The cause of the missing runtime dependency was not isolated.
 
+A follow-up local search found no `LLVM*.dll` in the searched Anaconda,
+Dev-C++, or Program Files trees. The Anaconda package cache contains
+`llvm-openmp`, but not LLVM itself. An LLVM 20.1.8 library is bundled with
+`llvmlite`; its Python FFI handle does not expose the LLVM C API entry points
+checked (`LLVMContextCreate`, `LLVMGetVersion`, and related symbols). It did
+not provide a compatible runtime for this probe.
+
 ## Reproduction
 
 From the repository root in PowerShell:
@@ -27,7 +34,7 @@ Remove-Item Env:PYTHONPATH
 
 The dependency directory is ignored and is not part of the repository; the
 command may not reproduce without that local environment. No dependency was
-installed or modified during this check.
+installed or modified during these checks.
 
 ## Decision
 
