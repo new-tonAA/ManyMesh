@@ -3,7 +3,7 @@
 Some older references are listed as repository paths. Their supporting files
 were retained in development archives.
 
-Updated 2026-11-25. The SIGGRAPH-level goal is **not achieved**: no candidate
+Updated 2026-11-27. The SIGGRAPH-level goal is **not achieved**: no candidate
 has shown both a defensible novelty boundary and repeatable gains over strong
 baselines. SIGGRAPH 2027 lists the submissions form/conflicts deadline as 21
 January 2027 at 22:00 UTC and the paper deadline as 28 January at 22:00 UTC.
@@ -42,6 +42,17 @@ remains gated on a CUDA-capable host; it is not a faithful Hasselgren
 reproduction or an asset-generalization test.
 See the [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md)
 and [next experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md).
+
+A local CPU selected-cut preflight rebuilt node ownership from MMLG v7 and
+locked the 1,109 shared vertices across the 29 nodes of a 5,290-face ManyMesh
+cut. The candidate improved its raw initializer, but the fitted exact-face
+meshoptimizer control scored 1.617 dB higher PSNR and 0.000326 lower mean
+LDR-FLIP on 24 views of the same reused train asset. The frozen gate failed;
+there was no QEM arm, no asset-held-out evaluation, and no final AA/upscaler
+test. Do not advance this one-cut configuration to the unscored confirmation
+pool. See the [protocol](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_PROTOCOL_20261127.md),
+[report](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_20261127.md), and
+[raw receipt](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_20261127.json).
 
 The older cone-weighted selector is closed: silhouette-profile and guide screens
 missed their quality/cost gates, and the later cone-risk screen produced no

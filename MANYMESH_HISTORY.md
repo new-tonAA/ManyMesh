@@ -2383,7 +2383,26 @@ the source, extraction, logs, and rejection. The revised extractor rejects the
 skinned Fox asset rather than using its unposed base geometry for image-quality
 evaluation; see the [asset-screen decision](docs/manymesh/confirmation-asset-screen-20261123.md).
 
-## 13. References
+## 13. 2026-11-27: cluster-boundary-locked CPU fit preflight
+
+A one-asset train-split screen reconstructed the 5,290-face, 29-node ManyMesh
+cut from MMLG v7 and locked 1,109 vertices shared across cluster boundaries.
+The 16-view CPU projective RGB fit improved raw ManyMesh from 39.318 to
+41.390 dB PSNR and reduced mean LDR-FLIP from 0.006564 to 0.005035 on 24
+reserved views. It did not beat the same optimizer applied to an exact-face
+meshoptimizer cut: that control scored 43.008 dB and 0.004710 mean LDR-FLIP.
+All meshes passed the recorded 5,290-face topology and source-boundary checks;
+the lock mask remained unchanged. The frozen gate failed, so this single-cut
+CPU fitting configuration is closed. The asset was reused for development;
+the views are not independent assets, no QEM arm was included, and the result
+does not test joint fitting across all DAG levels or the final MSAA/upscaler
+pipeline. The first diagnostic run used a DAG full-detail PLY as the image
+reference and is excluded; reported metrics use the original source OBJ.
+See the [protocol](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_PROTOCOL_20261127.md),
+[report](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_20261127.md), and
+[per-view receipt](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_20261127.json).
+
+## 14. References
 
 - [Google Filament](https://github.com/google/filament).
 - Upstream build documentation: [BUILDING.md](BUILDING.md).

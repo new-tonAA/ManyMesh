@@ -123,13 +123,19 @@ def _face_normals(points, faces):
     return np.cross(b - a, c - a)
 
 
-def fit(mi, dr, source, initial, faces, training_views, work_dir):
+def fit(mi, dr, source, initial, faces, training_views, work_dir,
+        locked_vertices=None):
     from scipy.sparse import coo_matrix, diags, eye
     from scipy.sparse.linalg import factorized
 
     edges, _, _, counts = _edge_incidence(faces)
     free = np.ones(len(initial), dtype=bool)
     free[np.unique(edges[counts == 1])] = False
+    if locked_vertices is not None:
+        locked_vertices = np.asarray(locked_vertices, dtype=bool)
+        if locked_vertices.shape != (len(initial),):
+            raise ValueError("The explicit vertex lock mask must match the mesh vertex count")
+        free &= ~locked_vertices
     if not free.any():
         raise ValueError("No movable vertices remain after locking open boundaries")
     a, b = np.concatenate((edges, edges[:, ::-1])).T

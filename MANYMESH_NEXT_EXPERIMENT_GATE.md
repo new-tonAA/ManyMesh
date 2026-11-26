@@ -1,6 +1,6 @@
 # Next experiment gate: fixed-topology placement control
 
-Updated 2026-11-25. **This is a falsification plan, not a contribution claim.**
+Updated 2026-11-27. **This is a falsification plan, not a contribution claim.**
 The published SIGGRAPH 2027 schedule lists the submission form for 21 January,
 the paper for 28 January, and checksum upload/conflicts/review commitment for
 29 January 2027, all at 22:00 UTC. Peer-reviewed papers published after 14
@@ -20,6 +20,15 @@ comparison at matched face count and a separate comparison at matched complete
 frame time. The frozen first experiment is a placement control adapted from
 nvdiffmodeling; it is not a custom DAG optimizer or a faithful reproduction of
 Hasselgren et al.'s training protocol.
+
+A separate single-cut CPU feasibility preflight has now tested MMLG node-label
+reconstruction and projective RGB fitting with shared cluster-boundary
+vertices locked. On reused train asset 84736, the fitted ManyMesh cut did not
+beat the same optimizer on an exact-face meshoptimizer control; the frozen
+gate failed. This is not a test of fitting all DAG levels or of the final AA /
+upscaler operator, and it does not replace Gate 1 or advance the confirmation
+pool. See its [protocol](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_PROTOCOL_20261127.md)
+and [report](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_20261127.md).
 
 Close prior art includes Hasselgren et al.'s differentiable mesh and shading
 optimization for simplification and LOD. Their full paper uses MSAA during

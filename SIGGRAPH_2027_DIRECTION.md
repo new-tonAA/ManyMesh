@@ -1,8 +1,10 @@
 # SIGGRAPH 2027 research direction
 
-Updated 2026-11-26. This is a research plan, not a paper draft or novelty claim.
-The differentiable candidate remains untested; the cited work is a bounded map
-for verification, and a search that finds no paper is not evidence that none exists.
+Updated 2026-11-27. This is a research plan, not a paper draft or novelty claim.
+The final-AA/upscaler, multi-level candidate remains untested; a single-cut CPU
+fit preflight failed against its same-optimizer meshoptimizer control. The cited
+work is a bounded map for verification, and a search that finds no paper is not
+evidence that none exists.
 
 ## SIGGRAPH 2027 submission constraints
 
@@ -74,6 +76,17 @@ fitting failed on the shoe by 5.421 dB PSNR, 0.001038 SSIM, and 0.001950 mean
 LDR-FLIP. This variant is closed under the tested configuration and does not
 advance to the unscored 30-model pool. See the [frozen protocol](tools/mmtrain/PROJECTIVE_RGB_QEM_INITIALIZED_FIT_DEV_PROTOCOL_20261127.md)
 and [four-arm result](tools/mmtrain/PROJECTIVE_RGB_QEM_INITIALIZED_FIT_DEV_20261127.md).
+
+A separate CPU preflight reconstructed a 5,290-face ManyMesh cut from its MMLG
+node labels and locked all 1,109 shared cluster-boundary vertices during
+projective RGB fitting. It improved raw ManyMesh, but fitted meshoptimizer was
+better by 1.617 dB PSNR and 0.000326 mean LDR-FLIP on 24 views of the same
+reused train asset. The frozen gate failed. This is one selected cut, not a
+joint multi-level DAG fit; it has no QEM arm and does not evaluate final MSAA or
+upscaling. It does not advance to the confirmation pool. See the
+[protocol](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_PROTOCOL_20261127.md),
+[report](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_20261127.md), and
+[raw receipt](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_20261127.json).
 
 The unoptimized 50%-retention ManyMesh cut has now been screened on 21 unique
 Poly Haven meshes across six classes, at exact face counts against
