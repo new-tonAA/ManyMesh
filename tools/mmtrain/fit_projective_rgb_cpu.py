@@ -211,6 +211,9 @@ def score(mi, variants, heldout_views, work_dir):
     import flip_evaluator
     from skimage.metrics import structural_similarity
 
+    arms = tuple(name for name in variants if name != "source")
+    if not arms:
+        raise ValueError("At least one candidate arm is required")
     work_dir.mkdir(parents=True, exist_ok=True)
     scenes = {
         name: scene_for(mi, work_dir / f"{name}.ply", *mesh, differentiable=False)
@@ -224,7 +227,7 @@ def score(mi, variants, heldout_views, work_dir):
         row = {"view": view_index, "basis": np.asarray(basis).tolist(),
                "screen_scale": float(np.linalg.norm(basis[:, 0])),
                "arms": {}}
-        for name in ("meshoptimizer", "fitted"):
+        for name in arms:
             candidate = linear_to_srgb(mi.render(scenes[name], sensor=sensor,
                                                  seed=SEED + 1000 + view_index).numpy())
             difference = reference.astype(np.float64) - candidate.astype(np.float64)
@@ -242,7 +245,7 @@ def score(mi, variants, heldout_views, work_dir):
             }
         rows.append(row)
     means = {}
-    for name in ("meshoptimizer", "fitted"):
+    for name in arms:
         mse = float(np.mean([row["arms"][name]["mse"] for row in rows]))
         means[name] = {
             "pooled_mse": mse,
