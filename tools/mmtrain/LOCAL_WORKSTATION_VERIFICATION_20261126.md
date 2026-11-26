@@ -161,3 +161,34 @@ reproduced in this run. A plain process in the restricted tool context received
 `Wsl/Service/E_ACCESSDENIED`; invoking the already installed distro through the
 permitted host WSL execution path succeeded. No Windows security setting,
 Defender exclusion, or distro installation was changed.
+
+## Recheck from the managed Codex shell
+
+On 2026-11-27, a normal process could not start WSL and returned
+`Wsl/Service/E_ACCESSDENIED`. The same existing distro ran after the host WSL
+command was approved by the execution boundary. This is a tool-context access
+restriction, not a missing Linux package. No package installation was needed.
+
+The managed PowerShell process had `HTTP_PROXY`, `HTTPS_PROXY`, `ALL_PROXY`,
+`GIT_HTTP_PROXY`, and `GIT_HTTPS_PROXY` set to `http://127.0.0.1:9`, while the
+user and machine environment registries had no proxy values. The repository's
+Git config separately points to `http://127.0.0.1:7890`. With only the current
+command's injected proxy variables cleared, `git ls-remote
+https://github.com/new-tonAA/ManyMesh.git HEAD` succeeded and returned
+`78f0ae55866282a22008de90d331f74096b3d940`. This confirms the injected port-9
+proxy overrode the configured working route; no persistent proxy setting was
+changed. This checked GitHub Git access, not authenticated Actions artifact
+download.
+
+The local tests were run again through the approved WSL command path:
+
+- `/root/ManyMesh-build/libs/manymesh/test_manymesh --gtest_color=no`:
+  94 passed, 1 skipped, exit code 0.
+- `/root/mm-cmake-manymesh/filament/backend/compute_test --api=vulkan --gtest_color=no`:
+  7/7 passed on llvmpipe CPU software Vulkan.
+
+The binaries are unchanged from the hashes above and came from WSL checkout
+`21cef5a92739edd6d1d751417a2c20efe4ec2a2d`. The current Windows HEAD is
+`78f0ae55866282a22008de90d331f74096b3d940`; the intervening commits contain no
+C++, C, header, or shader changes. The Vulkan result remains software-only and
+does not qualify Intel Iris Xe hardware behavior.

@@ -4,6 +4,8 @@ Updated 2026-11-27. **No SIGGRAPH-ready contribution is established.** The 21-mo
 
 ## Evidence
 
+- A frozen progressive-LOD byte/quality pilot on one licensed train asset found the current raw `.mmb` page layout dominated by an exact-face-count static control: at 5,290 faces, the page candidate used 298,612 bytes and mean LDR-FLIP 0.003739, while Draco 1.5.7 encoded from an exact-face meshoptimizer cut used 11,386 bytes and FLIP 0.001009. This closes the tested raw-page representation only; it is not a network or general streaming result: [protocol](tools/mmtrain/STREAM_RATE_DISTORTION_PILOT_PROTOCOL_20261127.md), [report](tools/mmtrain/STREAM_RATE_DISTORTION_PILOT_20261127.md), [per-view and codec receipt](tools/mmtrain/STREAM_RATE_DISTORTION_PILOT_20261127.json).
+
 - Matched-quality protocol and results, post-hoc LPIPS, and multiplicity audit: [screen](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md) · [LPIPS](tools/mmtrain/POLYHAVEN_LPIPS_SUPPLEMENT_RESULTS_20261125.md) · [audit](tools/mmtrain/POLYHAVEN_MULTIPLICITY_AUDIT_20261125.md).
 - Tested residual decoders, budgeted refinement, and contour controls did not beat their controls: [decoder study](tools/mmtrain/CLUSTER_DECODER_RANK_SWEEP_20261122.md) · [contour study](tools/mmtrain/CONTOUR_IMPORTANCE_QEM_20261123.md).
 - A CPU projective silhouette fit lowered training loss on two reused assets, but LDR-FLIP worsened on both reserved-view sets; PSNR changed by +0.043 dB on one asset and −0.092 dB on the other. This is not asset-generalization evidence: [report](tools/mmtrain/PROJECTIVE_SILHOUETTE_CPU_20261124.md).
@@ -20,7 +22,7 @@ On this laptop, the D-drive WSL2 Clang build ran `test_manymesh` (94 passed, 1 s
 
 ## Claims not established
 
-No asset-held-out optimization win, equal-frame-time quality win, on-device result, temporal-quality gain, compression result, or user study. Desktop results do not establish mobile performance.
+No asset-held-out optimization win, equal-frame-time quality win, on-device result, temporal-quality gain, compression gain, or user study. Desktop results do not establish mobile performance.
 
 ## Research index
 
