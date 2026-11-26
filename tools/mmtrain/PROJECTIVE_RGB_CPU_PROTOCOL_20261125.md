@@ -151,3 +151,42 @@ has no asset-held-out evidence, and does not test MSAA, SMAA, upscaling, tempora
 quality, GPU performance, mobile behavior, user preference, or
 self-intersections. Some sampled surface-distance measures worsened after
 fitting; this is an image/geometry tradeoff, not a general geometric win.
+
+### Exact-face QEM development control, 2026-11-26
+
+The original two-asset advancement rule compared the RGB fit with its
+meshoptimizer initializer only. Before scoring any confirmation asset, a
+follow-up added border-preserving QEM at the same target face count on these
+same reused development models. The QEM outputs passed their face-count and
+source-boundary checks, but results were mixed: QEM was better than the fit on
+GlassHurricaneCandleHolder, and the fit was better on MaterialsVariantsShoe.
+The fitted mesh therefore does not show a stable advantage over this stronger
+baseline, and this configuration is **not advanced to the reserved 30-model
+pool**. The original meshoptimizer-only gate remains a historical feasibility
+result; it is not a contribution result. See the [QEM development report](PROJECTIVE_RGB_CPU_QEM_CONTROL_DEV_20261126.md)
+and [machine-readable receipt](PROJECTIVE_RGB_CPU_QEM_CONTROL_DEV_20261126.json).
+
+The QEM workflow run completed on the hosted Ubuntu runner. The local Windows
+attempt initially stopped with `ArrayMemoryError`, and that WSL invocation
+returned `COMMITMENT_LIMIT`; neither was a quality result. On 2026-11-27 the
+existing D-drive WSL virtual environment successfully ran the full independent
+fit-artifact verifier for both assets. The QEM per-view image means were also
+independently re-aggregated from the downloaded receipts. A verifier step has
+been added to the workflow but has not yet run in hosted CI. Raw artifacts and
+their hashes are listed in the [dated report](PROJECTIVE_RGB_CPU_QEM_CONTROL_DEV_20261126.md).
+
+
+### QEM-initialized fit development follow-up, 2026-11-27
+
+The same RGB optimizer was initialized from the saved border-preserving QEM
+mesh. Its narrow QEM-only thresholds passed on both reused assets. Before
+advancing, a same-host pass also scored raw QEM, QEM fit, raw meshoptimizer, and
+meshoptimizer fit together at the exact same face count and on the same views.
+The QEM fit beat the meshoptimizer fit on the candle holder, but lost on the
+shoe by 5.421 dB PSNR, 0.001038 SSIM, and 0.001950 mean LDR-FLIP. Therefore the
+full stronger-baseline gate fails; close this configuration and do not score
+the reserved 30-model pool with it. The two initializers cannot be selected per
+asset after looking at the held-out views. See the [frozen development
+protocol](PROJECTIVE_RGB_QEM_INITIALIZED_FIT_DEV_PROTOCOL_20261127.md),
+[result report](PROJECTIVE_RGB_QEM_INITIALIZED_FIT_DEV_20261127.md), and
+[raw receipt](PROJECTIVE_RGB_QEM_INITIALIZED_FIT_DEV_20261127.json).

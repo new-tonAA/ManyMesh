@@ -7,6 +7,7 @@ on:
     paths:
       - .github/workflows/manymesh-projective-rgb-cpu.yml
       - tools/mmtrain/fit_projective_rgb_cpu.py
+      - tools/mmtrain/verify_projective_rgb_cpu.py
       - tools/mmtrain/score_projective_rgb_cpu_qem_control.py
 
 permissions:
@@ -81,6 +82,10 @@ jobs:
               output.write(f"Decision: **{result['decision']}**\n\n")
               output.write(f"Δ LDR-FLIP: {delta_flip:+.8f}; Δ PSNR: {delta_psnr:+.5f} dB; Δ SSIM: {delta_ssim:+.8f}\n")
           PY
+      - name: Independently verify fit artifact
+        run: |
+          "$RUNNER_TEMP/mm-projective-rgb/bin/python" \
+            tools/mmtrain/verify_projective_rgb_cpu.py "$RUNNER_TEMP/mesh"
       - name: Score exact-face QEM control
         run: |
           run="$RUNNER_TEMP/mesh"

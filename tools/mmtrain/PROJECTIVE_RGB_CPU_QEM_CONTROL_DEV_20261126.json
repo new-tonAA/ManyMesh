@@ -1,0 +1,52 @@
+{
+  "date": "2026-11-26",
+  "scope": "Development-only exact-face QEM control; two reused assets; not a confirmatory result.",
+  "workflow_run": 45852622096,
+  "source_commit": "296eed6650c10db88aa13f1af368873cde4db245",
+  "workflow_conclusion": "success",
+  "fit_script_sha256": "b00100f5b2f1af8fa350386e6269795a0d52f576c41148727fd0ceb9ef02cf43",
+  "qem_scoring_script_sha256": "d38ea42ae4fa745db2272b9ac392e27505cd05f6472e4e056fab4465ed6bd2b0",
+  "metric_audit": "Per-view rows re-aggregated with Python standard library; means matched stored QEM receipts within floating-point rounding.",
+  "assets": [
+    {
+      "name": "GlassHurricaneCandleHolder",
+      "source_sha256": "e6f986bd960e31bbc7a0b1d957f0fdf1be25b22de547fd2a3761615d521eb041",
+      "source_faces": 4126,
+      "target_faces": 2062,
+      "heldout_views": 24,
+      "qem_audit": {"topology_error": null, "boundary_edges": 4, "boundary_preserved": true},
+      "means": {
+        "qem": {"pooled_psnr_db": 42.17881064179963, "mean_ssim": 0.996956430375576, "mean_flip": 0.008627452654764056},
+        "meshoptimizer": {"pooled_psnr_db": 40.01770044126004, "mean_ssim": 0.9962087050080299, "mean_flip": 0.00997334174947658},
+        "fitted": {"pooled_psnr_db": 40.92854793066475, "mean_ssim": 0.9967224026719729, "mean_flip": 0.009085827705954822}
+      },
+      "fit_minus_qem": {"psnr_db": -1.25026271113488, "ssim": -0.00023402770360314573, "mean_flip": 0.0004583750511907656},
+      "fit_result_sha256": "bcee430faac447fac0291882a546dd024922baf42880668b7947214d24999884",
+      "fit_geometry_sha256": "b4de1a0fd85dc9337223e6efce8538e4bfa75ab9505509135c8bf775c6959175",
+      "qem_receipt_sha256": "e076c3d622684fbbf69fb24014cdf150ea989de2af533dd6d639a8fbdf1fe17f"
+    },
+    {
+      "name": "MaterialsVariantsShoe",
+      "source_sha256": "8bd3e8f5ae3dfffe0e7ccbc89f3941aa7c1122a7e8756ddac4c7293df7608c09",
+      "source_faces": 22700,
+      "target_faces": 11350,
+      "heldout_views": 24,
+      "qem_audit": {"topology_error": null, "boundary_edges": 1156, "boundary_preserved": true},
+      "means": {
+        "qem": {"pooled_psnr_db": 45.46495342508523, "mean_ssim": 0.9983512808879217, "mean_flip": 0.00401622317925406},
+        "meshoptimizer": {"pooled_psnr_db": 50.62517320176873, "mean_ssim": 0.9993844827016195, "mean_flip": 0.002125010494637536},
+        "fitted": {"pooled_psnr_db": 51.03785614308863, "mean_ssim": 0.9994676411151886, "mean_flip": 0.0019322952005798772}
+      },
+      "fit_minus_qem": {"psnr_db": 5.572902718003405, "ssim": 0.0011163602272669104, "mean_flip": -0.0020839279786741827},
+      "fit_result_sha256": "979f7871d8efc26f9cd92934d5923eb0d18d87fc54301c5045b1fb7dc99270e7",
+      "fit_geometry_sha256": "bb9add6cf26816ececebdee46815d3c891472b82995d25f64950edacb77ee24d",
+      "qem_receipt_sha256": "b6e33be425313f7613fcbafd9c75badf3884c6a8246dbaea2bd78cf583e1c031"
+    }
+  ],
+  "decision": "Do not score the reserved 30-model pool with the meshoptimizer-initialized RGB fit; the development evidence is mixed against exact-face QEM.",
+  "limitations": [
+    "Two reused assets only; no asset-held-out uncertainty estimate.",
+    "On 2026-11-27 the independent WSL verifier passed for both fit artifacts. The workflow verifier addition has not yet run on a hosted workflow.",
+    "No MSAA, SMAA, upscaler, GPU, mobile, temporal, or human-preference result."
+  ]
+}

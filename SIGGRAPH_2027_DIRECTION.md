@@ -58,13 +58,22 @@ result on two reused assets can accept or reject this configuration only; it
 cannot establish asset generalization or falsify differentiable fitting more
 broadly.
 
-A separate Mitsuba CPU projective-RGB screen has since passed its frozen
-two-asset feasibility gate locally and in CI. That run uses a different
-renderer and optimizer implementation; it is not the nvdiffmodeling placement
-control and does not clear the CUDA gate below. Its two models were reused
-development assets, and some sampled surface-distance measures worsened. See
-the [dated local rerun report](tools/mmtrain/PROJECTIVE_RGB_CPU_LOCAL_RERUN_20261126.md)
-and [protocol and artifact audit](tools/mmtrain/PROJECTIVE_RGB_CPU_PROTOCOL_20261125.md).
+A separate Mitsuba CPU projective-RGB screen passed its two-asset gate against
+meshoptimizer locally and in CI. An exact-face QEM follow-up was mixed: the fit
+lost on the candle holder and won on the shoe. The current configuration is
+not advanced to the unscored 30-model pool. These reused development assets do
+not establish generalization. This renderer and optimizer are distinct from
+the nvdiffmodeling placement control and do not clear the CUDA gate below. See
+the [local rerun report](tools/mmtrain/PROJECTIVE_RGB_CPU_LOCAL_RERUN_20261126.md),
+[QEM control report](tools/mmtrain/PROJECTIVE_RGB_CPU_QEM_CONTROL_DEV_20261126.md),
+and [protocol history](tools/mmtrain/PROJECTIVE_RGB_CPU_PROTOCOL_20261125.md).
+
+A QEM-initialized variant improved raw QEM on both reused assets in a narrow
+screen, but the required same-host comparison against meshoptimizer-initialized
+fitting failed on the shoe by 5.421 dB PSNR, 0.001038 SSIM, and 0.001950 mean
+LDR-FLIP. This variant is closed under the tested configuration and does not
+advance to the unscored 30-model pool. See the [frozen protocol](tools/mmtrain/PROJECTIVE_RGB_QEM_INITIALIZED_FIT_DEV_PROTOCOL_20261127.md)
+and [four-arm result](tools/mmtrain/PROJECTIVE_RGB_QEM_INITIALIZED_FIT_DEV_20261127.md).
 
 The unoptimized 50%-retention ManyMesh cut has now been screened on 21 unique
 Poly Haven meshes across six classes, at exact face counts against

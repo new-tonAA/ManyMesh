@@ -1,4 +1,4 @@
-# Local workstation verification — 2026-11-26
+# Local workstation verification — 2026-11-26; rechecked 2026-11-27
 
 This report records build and test execution on the development laptop after
 Windows Smart App Control blocked the repository's unsigned test binaries.
@@ -123,3 +123,41 @@ recorded, and the Iris Xe compute route remains unverified because the test
 fixture skips at feature level 1. Native Windows execution remains blocked by
 Smart App Control. No algorithmic quality gate has passed, so this run does not
 advance the research method or establish SIGGRAPH readiness.
+
+## Recheck on 2026-11-27
+
+The existing D-drive distro and environments were available; no Linux packages
+needed installation. The compiler is installed as `clang++-17` (there is no
+unversioned `clang++` alias), and the project RGB virtual environment already
+contains the pinned verification stack: NumPy 2.3.4, SciPy 1.15.3,
+scikit-image 0.25.2, Mitsuba 3.9.0, flip-evaluator 1.7, Numba 0.62.1, and
+trimesh 4.5.3.
+
+Re-ran the existing binaries in `ManyMesh-Ubuntu-D`:
+
+- `/root/ManyMesh-build/libs/manymesh/test_manymesh --gtest_color=no`:
+  95 tests, 94 passed, 1 skipped (`ManyMesh.HttpByteRangeFetcherFeedsTheAsyncCache`),
+  exit code 0.
+- `/root/mm-cmake-manymesh/filament/backend/compute_test --api=vulkan --gtest_color=no`:
+  7/7 passed on Mesa llvmpipe, a CPU software Vulkan device. This is not an
+  Iris Xe hardware compute result.
+
+Binary SHA-256 values were `45e241d63349e2791c344a7ff73a70aae0e4db8b22a8e2f9a4a70e8adc7ff969`
+for `test_manymesh` and
+`68cbb0d7db6c81c7bd749cb3b674392894bfb4370ee487bc6a950465132771fa` for
+`compute_test`.
+
+Also re-ran the full independent projective-RGB artifact verifier using the
+existing WSL virtual environment on both downloaded CI assets. Both returned
+`audit: passed`, with exact expected face counts and source boundaries
+preserved: 2,062 faces / 4 boundary edges for GlassHurricaneCandleHolder and
+11,350 faces / 1,156 boundary edges for MaterialsVariantsShoe. The verifier
+recomputed the stored per-view image means. This verifies the fit artifacts
+against their meshoptimizer initialization; it does not overturn the separate
+exact-face QEM follow-up, whose development result remains mixed.
+
+The earlier Windows `ArrayMemoryError` and WSL `COMMITMENT_LIMIT` were not
+reproduced in this run. A plain process in the restricted tool context received
+`Wsl/Service/E_ACCESSDENIED`; invoking the already installed distro through the
+permitted host WSL execution path succeeded. No Windows security setting,
+Defender exclusion, or distro installation was changed.

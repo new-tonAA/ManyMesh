@@ -30,5 +30,9 @@
     "silhouette_xor_fraction": 0.001864963107638889,
     "silhouette_xor_mse_share": 0.15992322466522177,
     "coverage_mae": 0.0019429524739583333
-  }
+  },
+  "license_sources": [
+    "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/main/Models/Models-core.md",
+    "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/main/REUSE.toml"
+  ]
 }
