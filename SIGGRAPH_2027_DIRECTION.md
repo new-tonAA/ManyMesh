@@ -1,6 +1,6 @@
 # SIGGRAPH 2027 research direction
 
-Updated 2026-11-25. This is a research plan, not a paper draft or novelty claim.
+Updated 2026-11-26. This is a research plan, not a paper draft or novelty claim.
 The differentiable candidate remains untested; the cited work is a bounded map
 for verification, and a search that finds no paper is not evidence that none exists.
 
@@ -83,6 +83,20 @@ operator used as a baseline, while preserving legal DAG cuts and boundaries.
 This remains untested and may not be novel.
 ([EGSR 2021 full paper](https://users.aalto.fi/~laines9/publications/hasselgren2021egsr_paper.pdf),
 [NVIDIA project page](https://research.nvidia.com/labs/rtr/publication/hasselgren2021diffmodeling/)).
+An even closer recent lead is Oh's [DiffSimp (arXiv:2611.31018, posted
+2026-11-23)](https://arxiv.org/abs/2611.31018). Its QEM parallel-collapse
+layer propagates gradients through a fixed collapse history and has been
+integrated into explicit-mesh optimization as well as reconstruction and
+inverse-rendering pipelines. It evaluates 79 reconstruction shapes, eight
+NeRF-synthetic scenes, and 15 DTU scans; the experiments use CUDA on an RTX
+5090. This directly closes differentiable optimization through collapses as a
+standalone contribution and overlaps the proposed alternate-fit-and-collapse
+variant. **Full arXiv v1 text has now been inspected** (method, experiments,
+appendices, and limitations). It does not present a coupled multilevel
+cluster-DAG optimization or report locked shared-boundary and legal-cut
+guarantees, nor does it optimize quality after a separate final MSAA/upscaler.
+Those are possible comparison dimensions, not established novelty. See the
+[prior-art audit](docs/manymesh/siggraph-prior-art-screen-20261123.md).
 de La Gorce et al. had already derived image-loss gradients that account for
 changing visibility at triangle-mesh occlusion boundaries, using antialiased
 residuals and occlusion forces for articulated mesh tracking. The CPU C-based

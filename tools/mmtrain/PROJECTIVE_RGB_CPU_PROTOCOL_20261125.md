@@ -104,3 +104,19 @@ published `projective-rgb-cpu-GlassHurricaneCandleHolder` (2,786,338 bytes) and
 `projective-rgb-cpu-MaterialsVariantsShoe` (8,356,930 bytes). The JSON metrics
 and geometry archives have not yet been inspected; the per-asset pass/fail
 criteria and algorithmic decision therefore remain **unverified**.
+
+On 2026-11-26, a local rerun was preflighted in the D-drive WSL2 Ubuntu 26.04
+distro before attempting the fit. The exact pinned OBJ files are already
+present at `out/khronos-curated-screen-20261123/{GlassHurricaneCandleHolder,
+MaterialsVariantsShoe}/geometry.obj`; their SHA-256 hashes match the frozen
+protocol. However, this distro has Python 3.14 without `pip` and none of the
+pinned renderer/metric packages. Both the WSL `curl` request and a Windows
+read-only `curl -I` request to the pinned Khronos raw asset endpoint failed
+with a connection reset, so the Linux dependencies cannot currently be
+installed from the configured environment. The existing Windows CPython 3.12
+Mitsuba package is not a safe fallback: the earlier backend preflight recorded
+Windows Code Integrity blocking its unsigned Mitsuba extension (see
+[`MITSUBA_CPU_BACKEND_PREFLIGHT_20261125.md`](MITSUBA_CPU_BACKEND_PREFLIGHT_20261125.md)).
+No fitting, render, or score was run in this local attempt. This is an
+environment/dependency blocker, not a method result; the CI artifacts remain
+unreviewed.

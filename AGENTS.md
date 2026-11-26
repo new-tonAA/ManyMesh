@@ -2,6 +2,31 @@
 
 This document defines machine-readable instructions and technical guardrails for AI coding assistants, agents, and LLMs working on the Filament repository. All AI-generated code, refactorings, and cleanups must strictly adhere to the standardized skills located under the `skills/` directory.
 
+## ManyMesh Research Continuation
+
+For a ManyMesh research task or a request to continue one, read and follow
+[the research continuation prompt](MANYMESH_RESEARCH_LOOP.md).
+
+## Testing on this machine
+
+- This Windows PC enforces Smart App Control. Do not run locally built Windows
+  `.exe` files, disable Smart App Control or Defender, or add exclusions.
+- Use the WSL2 Ubuntu distro `ManyMesh-Ubuntu-D`. Its virtual disk is stored at
+  `D:\ManyMesh-WSL\ManyMesh-Ubuntu-D\ext4.vhdx`.
+- The Linux-filesystem source and build directories are `/root/ManyMesh` and
+  `/root/ManyMesh-build`. Build and run the ManyMesh CPU tests with:
+
+  ```sh
+  cmake --build /root/ManyMesh-build --target test_manymesh --parallel 2
+  /root/ManyMesh-build/libs/manymesh/test_manymesh --gtest_color=no
+  ```
+
+- From PowerShell, invoke the distro with
+  `wsl -d ManyMesh-Ubuntu-D -u root --exec /bin/bash -lc '<Linux command>'`.
+- If WSL, a hardware GPU test, or Android tooling is unavailable, report that
+  test as not verified and state the observed reason. Do not substitute a
+  software-rendered result for hardware GPU evidence.
+
 ---
 
 ## Core AI Skills & Guidelines

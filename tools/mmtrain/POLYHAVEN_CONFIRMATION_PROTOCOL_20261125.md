@@ -26,6 +26,15 @@ Frozen 2026-11-25 before image-quality scoring. The method configuration is stil
 
 Scoring remains disabled until one method configuration passes the two-asset development gate and is frozen. A candidate must be specified as a single procedure before any confirmation score is observed. Per-asset fitting on disjoint views tests this frozen procedure across assets; it does not test transfer of a cross-asset learned model.
 
+**View-split limitation identified 2026-11-26:** the 16.81-degree nearest
+training/evaluation separation does not hold out contiguous regions of the
+view sphere. This frozen protocol remains usable for its listed sampled-view
+comparison, but it cannot support a claim of generalization to unseen view
+regions. Before Gate 2, create and hash a superseding camera manifest with
+region-blocked directions and multiple distance bands. No image-quality scores
+have been observed from this cohort, so this update does not change or inspect
+its evaluation results.
+
 This protocol does not establish superiority over SMAA or an upscaler, equal-frame-time quality, mobile performance, temporal stability, or human preference. Coverage MAE is unavailable in the current scorer.
 
 ## Reproduction and hashes

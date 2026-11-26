@@ -168,6 +168,23 @@ fixed topology, then compare boundary treatments that allow simplification
 without cracks. Check parent/child consistency, legal mixed cuts, manifoldness,
 UV/material seams, transition stability, and displacement bounds.
 
+Before freezing the Gate-2 method, use one composite image-space objective:
+post-reconstruction RGB and normal terms at multiple scales, a differentiable
+coverage or contour-distance term, and explicit edge-length, Laplacian,
+neighbor-normal, and displacement regularizers. Set weights on development
+assets only, then freeze the complete procedure and report loss-term ablations.
+The contour term is a hypothesis, not a presumed dominant signal: the 21-model
+source-reference diagnostic found a 16.3% mean squared-error share inside the
+silhouette-XOR mask after 4x MSAA. Keep topology fixed for the placement
+comparison.
+
+Partition view directions by contiguous spherical regions, with a guard band
+between fitting and evaluation regions, and include multiple distance bands.
+The currently frozen 30-model camera schedule separates sampled directions
+but does not hold out whole regions of the view sphere; it cannot support that
+generalization claim. Preserve its manifest and scoring rules, but freeze a
+superseding camera manifest before any Gate-2 fitting or scoring.
+
 Compare with QEM, meshoptimizer cluster LOD, the frozen fixed-topology
 placement control, an LTM-style fixed-LOD render-guided deformation control,
 and progressive-boundary cluster methods. Apply the same authored inputs,
@@ -186,6 +203,11 @@ renderer. This is an LTM-inspired control, not a full LTM
 reproduction. If the DAG candidate changes topology, add a fixed-budget
 split-and-redecimate control before scoring; otherwise topology change and
 hierarchy optimization remain confounded.
+Also include smoothing-only and equal-magnitude random-displacement controls;
+they test whether any gain comes from image guidance rather than generic
+regularization or simply moving vertices. Keep all arms at the same face budget
+and report displacement, added storage, offline fitting cost, peak memory, and
+complete runtime cost separately.
 If TAA or temporal upscaling is the target operator, include a moving-camera
 history sequence and compare against that same operator without geometry
 optimization; Binary Opacity Grids already reports moving-camera TAA versus
