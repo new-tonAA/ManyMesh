@@ -12,6 +12,21 @@ its owner and must not be linked in a double-blind submission. See the
 [anonymity policy](https://s2027.siggraph.org/anonymity-policy/). The schedule
 does not relax the evidence gate.
 
+## Local Deliot-style fit result: gate failed
+
+The non-CUDA fixed-topology route has now been run on Iris Xe/D3D12 at an exact
+5,290-face budget. On reused train asset 84736, all four optimizer updates
+were rejected in both the ManyMesh and exact-face meshoptimizer arms; their
+geometry did not change. On 24 previously scored diagnostic views, ManyMesh
+was behind meshoptimizer by 6.686 dB pooled PSNR and 0.001732 mean LDR-FLIP.
+This closes this exact optimizer configuration and does not advance the
+confirmation pool. The raw trace, quality gate, and execution hashes are in the
+[result report](tools/mmtrain/DELIOT_MSAA_PER_PIXEL_FIT_DEV_20261127.md) and
+[machine-readable receipts](tools/mmtrain/deliot_msaa_per_pixel_fit_dev_raw_20261127.json).
+The runner did not log rejection reasons; the render count suggests trials
+were rejected by the normal guard before training-loss evaluation, but this is
+an inference, not a direct rejection counter.
+
 ## Candidate question
 
 Can offline appearance optimization improve a constrained triangle-mesh cluster
@@ -220,13 +235,13 @@ upscaling, so those remain conditions to test, not assumed novelty.
 The frozen nvdiffmodeling Gate 1 still requires CUDA and remains unrun. A
 separate non-CUDA feasibility probe on Iris Xe/D3D12 succeeded with a 4x
 multisampled `r32float` ID attachment and compute-side per-sample reads; the
-same backend rejected `r32uint` multisampling. This clears only the renderer
-plumbing prerequisite for a local stochastic-gradient control. It does not
-clear Gate 1 or Gate 2: the next method step must freeze a fixed-topology
-per-pixel gradient optimizer and first compare it on development assets
-against same-budget, same-renderer fitted controls. A pass can serve as an
-alternative Gate 1 for this non-CUDA route; it is not a pass today. See the
-[probe report and receipts](tools/mmtrain/MSAA_ID_BUFFER_FEASIBILITY_20261127.md).
+same backend rejected `r32uint` multisampling. The subsequent frozen
+Deliot-style optimizer route failed, so there is no active Gate-1 pass. Any
+replacement must change the update mechanism or add direct rejection-reason
+instrumentation under a new frozen protocol before another fit is scored. See
+the [probe report and receipts](tools/mmtrain/MSAA_ID_BUFFER_FEASIBILITY_20261127.md),
+[fit result](tools/mmtrain/DELIOT_MSAA_PER_PIXEL_FIT_DEV_20261127.md), and
+[protocol](tools/mmtrain/DELIOT_MSAA_PER_PIXEL_FIT_DEV_PROTOCOL_20261127.md).
 
 Only after a Gate-1 path passes, optimize geometry across topology-distinct DAG
 levels for post-reconstruction image quality. First isolate vertex placement

@@ -39,9 +39,14 @@ beat equal-cost controls after AA. See the
 [attribution report](tools/mmtrain/POLYHAVEN_SILHOUETTE_ATTRIBUTION_20261125.md).
 The frozen two-asset, nvdiffmodeling-based fixed-topology placement control
 remains gated on a CUDA-capable host; it is not a faithful Hasselgren
-reproduction or an asset-generalization test.
-See the [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md)
-and [next experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md).
+reproduction or an asset-generalization test. A local Deliot-style D3D12
+fixed-topology fit used the non-CUDA ID path, but all updates were rejected
+and the candidate lost to the exact-face meshoptimizer control on one reused
+train asset. That configuration is closed; the failure does not clear the
+CUDA gate or advance to the confirmation cohort. See the
+[fit result](tools/mmtrain/DELIOT_MSAA_PER_PIXEL_FIT_DEV_20261127.md),
+[prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md), and
+[next experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md).
 
 A local CPU selected-cut preflight rebuilt node ownership from MMLG v7 and
 locked the 1,109 shared vertices across the 29 nodes of a 5,290-face ManyMesh
@@ -128,7 +133,7 @@ The per-instance comparison (`tools/mmtrain/MIXED_SCENE_INSTANCE_LOD_20261122.md
 
 Do not change the production format or rendering API until a frozen method improves the held-out quality/cost Pareto frontier over strong deterministic baselines, with topology and boundary constraints satisfied. A fresh licensed confirmation set is required for a publication claim. No mobile-device result or user study exists.
 
-The Poly Haven confirmation set contains 30 eligible models across 25 slug-family groups and nine categories. Its inputs, camera split, renderer, metrics, and project-specific pass margins are frozen, but it remains unscored until a method configuration passes the current CUDA gate. This is not a quality result. See the [confirmation protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md) and [pool report](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md).
+The Poly Haven confirmation set contains 30 eligible models across 25 slug-family groups and nine categories. Its inputs, camera split, renderer, metrics, and project-specific pass margins are frozen, but it remains unscored until a method configuration passes a development gate. This is not a quality result. See the [confirmation protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md) and [pool report](tools/mmtrain/POLYHAVEN_CONFIRMATION_POOL_20261125.md).
 
 The prior-art screen covers learned local refinement, split-and-rewire mesh generation, crack-free clustered HLOD boundaries, and GPU out-of-core rendering. See the updated prior-art table in [the learned-LOD research notes](MANYMESH_LEARNED_LOD_RESEARCH.md). No active method is presently supported by both a novelty gap and positive held-out results.
 

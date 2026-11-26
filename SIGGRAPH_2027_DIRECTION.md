@@ -5,9 +5,11 @@ The final-AA/upscaler candidate remains untested. A single-cut CPU preflight and
 a shared-position three-cut CPU fit both failed against the strongest eligible
 fitted controls on one reused train asset. A post-hoc local Iris Xe D3D12 4x
 MSAA recheck of the three-cut fit preserved that negative ranking; it did not
-score geometry optimized through the final AA operator. The cited work is a
-bounded map for verification, and a search that finds no paper is not evidence
-that none exists.
+score geometry optimized through the final AA operator. A separate frozen
+Deliot-style D3D12 fit also failed: neither arm accepted an update, and
+ManyMesh lost to exact-face meshoptimizer on the reused asset. The cited work
+is a bounded map for verification, and a search that finds no paper is not
+evidence that none exists.
 
 ## SIGGRAPH 2027 submission constraints
 
@@ -113,6 +115,19 @@ that the existing CPU fit already beats its control after hardware MSAA. See
 the [frozen protocol](tools/mmtrain/CLUSTER_DAG_MULTICUT_FINAL_MSAA_RECHECK_PROTOCOL_20261127.md),
 [result](tools/mmtrain/CLUSTER_DAG_MULTICUT_FINAL_MSAA_RECHECK_20261127.md), and
 [per-view metrics](tools/mmtrain/cluster_dag_multicut_final_msaa_quality_20261127.json).
+
+A frozen Deliot-style stochastic-gradient placement control was then run
+through the local hardware 4x-MSAA operator on Thingi10K 84736. The two exact-
+5,290-face arms completed 2,400 low-resolution capture renders in total, but
+every optimizer update was rejected and the output geometry remained unchanged.
+ManyMesh lost to exact-face meshoptimizer by 6.686 dB pooled PSNR and 0.001732
+mean LDR-FLIP on 24 previously examined views. Structural checks pass only
+because neither arm moved; the optimization and quality gates fail. This
+closes this exact local optimizer configuration and does not advance to the
+confirmation pool. Rejection-reason counts were not logged, so the apparent
+normal-guard cause is an inference. See the [frozen protocol](tools/mmtrain/DELIOT_MSAA_PER_PIXEL_FIT_DEV_PROTOCOL_20261127.md),
+[report](tools/mmtrain/DELIOT_MSAA_PER_PIXEL_FIT_DEV_20261127.md), and
+[raw and quality receipts](tools/mmtrain/deliot_msaa_per_pixel_fit_dev_raw_20261127.json).
 
 The unoptimized 50%-retention ManyMesh cut has now been screened on 21 unique
 Poly Haven meshes across six classes, at exact face counts against
@@ -263,7 +278,7 @@ review; it is not an exhaustive literature search.
 
 | Priority | Direction | Current disposition |
 |---|---|---|
-| 1 | **A+B: reconstruction-conditioned hierarchy optimization** | Weak, untested hypothesis. First evaluate the frozen nvdiffmodeling-based placement control; if it passes on reserved views, run an asset-held-out study before any custom DAG optimizer. The control is not a reproduction of Hasselgren et al.'s MSAA-assisted protocol. |
+| 1 | **A+B: reconstruction-conditioned hierarchy optimization** | Weak, untested hypothesis. The local Deliot-style fixed-topology fit failed and is closed. The frozen nvdiffmodeling control remains unrun behind CUDA; do not advance to asset-held-out scoring without a development gate pass. This is not a reproduction of Hasselgren et al.'s MSAA-assisted protocol. |
 | 2 | **C: tile-GPU cost model and selection** | Systems-analysis fallback if a physical tile-based device and profiling counters are available. A screen-tile count alone is only a proxy. |
 | 3 | **D: rate-aware DAG construction** | Parked. Meshlet compression is crowded; reopen only with full-stream byte and decode comparisons against meshoptimizer, Draco, Kuth et al., and AMD DGF. |
 
