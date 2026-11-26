@@ -161,16 +161,19 @@ def linear_gray_to_srgb(image):
     return np.clip(np.rint(srgb * 255.0), 0, 255).astype(np.uint8)
 
 
-def select_adapter(device_name, backend):
+def select_adapter(device_name, backend, allow_software=False):
     adapters = list(wgpu.gpu.enumerate_adapters_sync())
+    allowed_types = ("IntegratedGPU", "DiscreteGPU", "CPU") if allow_software else (
+        "IntegratedGPU", "DiscreteGPU")
     for adapter in adapters:
         info = adapter.info
         if (device_name.casefold() in info["device"].casefold()
                 and info["backend_type"].casefold() == backend.casefold()
-                and info["adapter_type"] in ("IntegratedGPU", "DiscreteGPU")
+                and info["adapter_type"] in allowed_types
                 and "timestamp-query" in adapter.features):
             return adapter
-    raise RuntimeError(f"Timestamp-capable hardware adapter not found: {[dict(a.info) for a in adapters]}")
+    kind = "timestamp-capable adapter" if allow_software else "timestamp-capable hardware adapter"
+    raise RuntimeError(f"{kind} not found: {[dict(a.info) for a in adapters]}")
 
 
 class Offscreen:

@@ -235,6 +235,17 @@ held-out or final-AA result; it does not establish a silhouette method. See the
 [full report](tools/mmtrain/PROJECTIVE_SILHOUETTE_CPU_20261124.md) and
 [pinned CPU workflow](.github/workflows/manymesh-projective-cpu.yml).
 
+A separate CPU implementation using PyTorch3D's soft coverage ran on the local
+WSL2 laptop with `torch 2.4.1+cpu`; it did not train a neural network or use
+CUDA. Training coverage MSE fell by only 0.192% and 0.035% on two reused
+assets. Against the meshoptimizer initializer, FLIP worsened for BarramundiFish
+under native sampling and for both assets under 4× MSAA. The frozen gate fails;
+this configuration is closed and the 30-model pool remains unscored. Scoring
+used a Vulkan llvmpipe CPU adapter, so it supplies no hardware timing result.
+See the [protocol](tools/mmtrain/PYTORCH3D_CPU_SILHOUETTE_PLACEMENT_PROTOCOL_20261127.md),
+[result](tools/mmtrain/PYTORCH3D_CPU_SILHOUETTE_PLACEMENT_20261127.md), and
+[raw per-view receipt](tools/mmtrain/PYTORCH3D_CPU_SILHOUETTE_PLACEMENT_20261127.json).
+
 A post-hoc attribution on the already-scored 21-model cohort further weakens a
 silhouette-dominance premise: the XOR region contains 31.0% of ManyMesh squared
 grayscale error without AA (95% source-group bootstrap CI 27.4%-34.8%) and

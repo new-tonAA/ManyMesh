@@ -37,7 +37,7 @@ and [instance-scale report](tools/mmtrain/INSTANCE_SCALE_BARRAMUNDIFISH_SCREEN_2
 
 | Works in measured scope | Does not work in tested scope | Not measured |
 |---|---|---|
-| CPU quality and topology evaluation; fixed-view desktop comparisons; one raster-only 10,000-instance diagnostic; RGB fitting improves raw QEM on two reused development assets. | QEM-initialized RGB fitting loses to the existing meshoptimizer-initialized fit on the shoe model, so the stronger-baseline gate fails. Current ManyMesh cuts lose to matched-face QEM and meshoptimizer. Tested decoders and contour controls did not beat their controls. | Physical-phone performance, power, equal-complete-frame-time MSAA/SMAA/upscaler comparison, an asset-held-out optimization win, user preference, and a validated temporal-quality gain. |
+| CPU quality and topology evaluation; fixed-view desktop comparisons; one raster-only 10,000-instance diagnostic; RGB fitting improves raw QEM on two reused development assets. | QEM-initialized RGB fitting loses to the existing meshoptimizer-initialized fit on the shoe model. The local [CPU PyTorch3D silhouette fit](tools/mmtrain/PYTORCH3D_CPU_SILHOUETTE_PLACEMENT_20261127.md) fails the reserved-view FLIP gate after 4× MSAA on both reused assets. Current ManyMesh cuts lose to matched-face QEM and meshoptimizer. Tested decoders and contour controls did not beat their controls. | Physical-phone performance, power, equal-complete-frame-time MSAA/SMAA/upscaler comparison, an asset-held-out optimization win, user preference, and a validated temporal-quality gain. |
 
 ## Local verification
 

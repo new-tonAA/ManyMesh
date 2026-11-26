@@ -1,0 +1,4374 @@
+{
+  "status": "failed development gate; close this CPU silhouette-fit configuration",
+  "source_revision": "8930619a4aeab2699060d3ed394575cd4ee79c39",
+  "protocol": "PYTORCH3D_CPU_SILHOUETTE_PLACEMENT_PROTOCOL_20261127.md",
+  "corrected_run": true,
+  "invalidated_attempt": "The first attempt used candidate face indices on source positions for target rasterization; all outputs from that attempt are excluded.",
+  "raw_run_directory": "out/pytorch3d-cpu-silhouette-screen-corrected-20261127/",
+  "assets_are_reused_development_data": true,
+  "cross_asset_generalization_claim": false,
+  "scoring_scope": "24 reserved camera-distance pairs per asset; WGPU Vulkan llvmpipe software adapter",
+  "metrics": {
+    "psnr_db": "higher is better",
+    "ssim": "higher is better",
+    "flip": "lower is better",
+    "silhouette_xor_fraction": "lower is better"
+  },
+  "decision": "The required mean LDR-FLIP improvement is absent on BarramundiFish under native sampling and absent on both assets under 4x MSAA. Do not advance this configuration to the reserved 30-model pool.",
+  "assets": {
+    "BarramundiFish": {
+      "reference_faces": 3864,
+      "candidate_faces": 1932,
+      "inputs_sha256": {
+        "reference.obj": "eab625eba33b0abca1a5b46fd9b0789f3c80e56d16c84e53fae3b191450244fe",
+        "meshoptimizer_lock_border.obj": "86b28e1d16202b6a45edc6a2bfef83b58fb6e15f1bbf2f31c433f8292e9b8664",
+        "qem_preserve_border.obj": "b2a6c7e3da0f4e8525e484505fc0a23e54ff9d6e82c571008fc22ed2b9883b7e",
+        "manymesh.obj": "0308f4b26d7a02076e1107a73264a8a25f6d777da8c59f1440423fcb415f3d57",
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0"
+      },
+      "source_script_sha256": "05578fe166abcc5dac5b2703f8c4244857c3f756cfbe667871c2f867729834ed",
+      "source_manifest_sha256": "a1f9fbcc5bcea1fcfb3b0af369a0452fc5b55f072b13ae50013062c7e1350723",
+      "optimizer_protocol_sha256": "66cf6b712cfda35f9a4c83b890d0560a4c48a2d7bce963e7ee08385a6867bc47",
+      "fitted_sha256": "ca94e11ffc7c44b584298a0bc07af8248a77eb18dfa0a81cc11fcc18bf805c47",
+      "fit_seconds": 242.12589844200002,
+      "target_preprocess_seconds": 18.64824095800077,
+      "fit_plus_target_preprocess_seconds": 260.77413940000076,
+      "peak_rss_bytes": 331759616,
+      "first_gradient_norm": 0.07911062985658646,
+      "maximum_displacement_observed": 0.0013022685569192742,
+      "fit_boundary_audit": {
+        "faces": 1932,
+        "topology_error": null,
+        "boundary_edges": 0,
+        "boundary_preserved": true
+      },
+      "training_coverage_mse": {
+        "initial": 0.046751070593018085,
+        "fitted": 0.04666103204363026
+      },
+      "quality": {
+        "adapter": {
+          "vendor": "llvmpipe",
+          "architecture": "",
+          "device": "llvmpipe (LLVM 21.1.8, 256 bits)",
+          "description": "Mesa 26.0.8-1ubuntu0.3 (LLVM 21.1.8)",
+          "stackgroup_min_size": 4,
+          "stackgroup_max_size": 128,
+          "vendor_id": 65541,
+          "device_id": 0,
+          "adapter_type": "CPU",
+          "backend_type": "Vulkan"
+        },
+        "packages": {
+          "wgpu": "0.33.0",
+          "numpy": "2.3.4",
+          "scikit-image": "0.25.2",
+          "flip-evaluator": "1.7"
+        },
+        "summary": {
+          "reference": {
+            "native": {
+              "mean": {
+                "ssim": 0.9963971614882022,
+                "flip": 0.0015412353313877247,
+                "silhouette_xor_fraction": 0.0011733217592592592,
+                "psnr_db": 38.22665729099559
+              },
+              "worst": {
+                "ssim": 0.9935282980570582,
+                "flip": 0.0031162090599536896,
+                "silhouette_xor_fraction": 0.001775173611111111,
+                "psnr_db": 35.53492469669586
+              }
+            },
+            "msaa4": {
+              "mean": {
+                "ssim": 0.9993564901683741,
+                "flip": 0.0007757520628122924,
+                "silhouette_xor_fraction": 0.00032986111111111107,
+                "psnr_db": 46.295565088807926
+              },
+              "worst": {
+                "ssim": 0.9987633558192761,
+                "flip": 0.0015002562431618571,
+                "silhouette_xor_fraction": 0.0005251736111111111,
+                "psnr_db": 43.203150982768356
+              }
+            }
+          },
+          "manymesh": {
+            "native": {
+              "mean": {
+                "ssim": 0.9910791426526501,
+                "flip": 0.003632163383978574,
+                "silhouette_xor_fraction": 0.0016283275462962963,
+                "psnr_db": 34.48265962645547
+              },
+              "worst": {
+                "ssim": 0.9749671716937472,
+                "flip": 0.011421065777540207,
+                "silhouette_xor_fraction": 0.0030989583333333333,
+                "psnr_db": 29.35759125883174
+              }
+            },
+            "msaa4": {
+              "mean": {
+                "ssim": 0.9941490093791554,
+                "flip": 0.0032651830406393856,
+                "silhouette_xor_fraction": 0.0008863208912037036,
+                "psnr_db": 36.854154352885885
+              },
+              "worst": {
+                "ssim": 0.980568258377197,
+                "flip": 0.010805769823491573,
+                "silhouette_xor_fraction": 0.002109375,
+                "psnr_db": 30.644120557411874
+              }
+            }
+          },
+          "qem_preserve_border": {
+            "native": {
+              "mean": {
+                "ssim": 0.9941500186474864,
+                "flip": 0.002492387897897667,
+                "silhouette_xor_fraction": 0.0011704282407407408,
+                "psnr_db": 37.76534779220475
+              },
+              "worst": {
+                "ssim": 0.9832324955188363,
+                "flip": 0.007378358393907547,
+                "silhouette_xor_fraction": 0.0017404513888888888,
+                "psnr_db": 34.892311963263325
+              }
+            },
+            "msaa4": {
+              "mean": {
+                "ssim": 0.997201162128384,
+                "flip": 0.0020045079497018983,
+                "silhouette_xor_fraction": 0.000350658275462963,
+                "psnr_db": 43.84370884754652
+              },
+              "worst": {
+                "ssim": 0.9890053829161488,
+                "flip": 0.006548636127263308,
+                "silhouette_xor_fraction": 0.0005425347222222222,
+                "psnr_db": 40.34589924240467
+              }
+            }
+          },
+          "meshoptimizer_lock_border": {
+            "native": {
+              "mean": {
+                "ssim": 0.9948961953764065,
+                "flip": 0.00222928681372044,
+                "silhouette_xor_fraction": 0.0012150969328703703,
+                "psnr_db": 37.7095805231279
+              },
+              "worst": {
+                "ssim": 0.9865412058286969,
+                "flip": 0.006519335322082043,
+                "silhouette_xor_fraction": 0.0018185763888888889,
+                "psnr_db": 34.72143142481897
+              }
+            },
+            "msaa4": {
+              "mean": {
+                "ssim": 0.9980497393032799,
+                "flip": 0.0016794985992116078,
+                "silhouette_xor_fraction": 0.00037651909722222226,
+                "psnr_db": 44.332751086592395
+              },
+              "worst": {
+                "ssim": 0.9926576463265889,
+                "flip": 0.0055408235639333725,
+                "silhouette_xor_fraction": 0.0006076388888888889,
+                "psnr_db": 40.52815296901042
+              }
+            }
+          },
+          "fitted": {
+            "native": {
+              "mean": {
+                "ssim": 0.9951818941373899,
+                "flip": 0.0023223671596497297,
+                "silhouette_xor_fraction": 0.0011040581597222222,
+                "psnr_db": 38.11710503846372
+              },
+              "worst": {
+                "ssim": 0.9865659926418815,
+                "flip": 0.00678333779796958,
+                "silhouette_xor_fraction": 0.0017925347222222223,
+                "psnr_db": 34.63845994316528
+              }
+            },
+            "msaa4": {
+              "mean": {
+                "ssim": 0.9980013089783671,
+                "flip": 0.0018905968900071457,
+                "silhouette_xor_fraction": 0.00029604311342592594,
+                "psnr_db": 44.16563917090588
+              },
+              "worst": {
+                "ssim": 0.9925667835044212,
+                "flip": 0.005986979231238365,
+                "silhouette_xor_fraction": 0.0005685763888888889,
+                "psnr_db": 40.214831929914766
+              }
+            }
+          }
+        },
+        "fit_minus_meshoptimizer": {
+          "native": {
+            "psnr_db": 0.40752451533582246,
+            "ssim": 0.0002856987609833883,
+            "flip": 9.308034592928971e-05,
+            "silhouette_xor_fraction": -0.00011103877314814809
+          },
+          "msaa4": {
+            "psnr_db": -0.16711191568651884,
+            "ssim": -4.8430324912751566e-05,
+            "flip": 0.00021109829079553788,
+            "silhouette_xor_fraction": -8.047598379629632e-05
+          }
+        },
+        "views": [
+          {
+            "view": 0,
+            "distance": 3.3,
+            "eye": [
+              1.2296033403785709,
+              3.025,
+              0.4769178391818255
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 37.02395080700235,
+                  "ssim": 0.9958330175700912,
+                  "flip": 0.0019605911802500486,
+                  "silhouette_xor_fraction": 0.0014713541666666666
+                },
+                "msaa4": {
+                  "psnr_db": 45.59603299269735,
+                  "ssim": 0.9993290972815079,
+                  "flip": 0.001135905971750617,
+                  "silhouette_xor_fraction": 0.00037760416666666666
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 33.54607881277538,
+                  "ssim": 0.9892013742642917,
+                  "flip": 0.005157462786883116,
+                  "silhouette_xor_fraction": 0.0018446180555555555
+                },
+                "msaa4": {
+                  "psnr_db": 36.45021335197258,
+                  "ssim": 0.9929639367903762,
+                  "flip": 0.004844438284635544,
+                  "silhouette_xor_fraction": 0.0009288194444444445
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 36.3795576483479,
+                  "ssim": 0.9925732182004825,
+                  "flip": 0.0036892646457999945,
+                  "silhouette_xor_fraction": 0.0014930555555555556
+                },
+                "msaa4": {
+                  "psnr_db": 42.31338833764603,
+                  "ssim": 0.9963638776466419,
+                  "flip": 0.0032833509612828493,
+                  "silhouette_xor_fraction": 0.0004427083333333333
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 36.59295906818731,
+                  "ssim": 0.993620900320358,
+                  "flip": 0.003278604242950678,
+                  "silhouette_xor_fraction": 0.001484375
+                },
+                "msaa4": {
+                  "psnr_db": 42.86239266046642,
+                  "ssim": 0.99727892027204,
+                  "flip": 0.0028042143676429987,
+                  "silhouette_xor_fraction": 0.00043836805555555556
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 37.325922782609396,
+                  "ssim": 0.994180384196662,
+                  "flip": 0.0035504403058439493,
+                  "silhouette_xor_fraction": 0.001267361111111111
+                },
+                "msaa4": {
+                  "psnr_db": 42.53521774607169,
+                  "ssim": 0.9971732804218387,
+                  "flip": 0.0032631196081638336,
+                  "silhouette_xor_fraction": 0.0002777777777777778
+                }
+              }
+            }
+          },
+          {
+            "view": 0,
+            "distance": 5.2,
+            "eye": [
+              1.9375567787783543,
+              4.766666666666667,
+              0.7515068981046948
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 38.602313775803225,
+                  "ssim": 0.9975199112389364,
+                  "flip": 0.0011456698412075639,
+                  "silhouette_xor_fraction": 0.0010112847222222222
+                },
+                "msaa4": {
+                  "psnr_db": 47.84477673149883,
+                  "ssim": 0.9996363257148099,
+                  "flip": 0.0006227436242625117,
+                  "silhouette_xor_fraction": 0.0002517361111111111
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 36.585375049156056,
+                  "ssim": 0.9953358154053702,
+                  "flip": 0.002266170922666788,
+                  "silhouette_xor_fraction": 0.0011631944444444443
+                },
+                "msaa4": {
+                  "psnr_db": 40.65754873971027,
+                  "ssim": 0.9975319099666365,
+                  "flip": 0.0020258771255612373,
+                  "silhouette_xor_fraction": 0.0004991319444444444
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 38.36900783500424,
+                  "ssim": 0.9967564335042387,
+                  "flip": 0.0015283275861293077,
+                  "silhouette_xor_fraction": 0.0010069444444444444
+                },
+                "msaa4": {
+                  "psnr_db": 45.9696142615844,
+                  "ssim": 0.9989484251683531,
+                  "flip": 0.001189486007206142,
+                  "silhouette_xor_fraction": 0.0002560763888888889
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 38.423413161736384,
+                  "ssim": 0.9968868066467125,
+                  "flip": 0.0014509876491501927,
+                  "silhouette_xor_fraction": 0.0010286458333333332
+                },
+                "msaa4": {
+                  "psnr_db": 46.040379907871845,
+                  "ssim": 0.999073905114414,
+                  "flip": 0.001101214555092156,
+                  "silhouette_xor_fraction": 0.00028645833333333333
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 38.89673728160003,
+                  "ssim": 0.9970919472621141,
+                  "flip": 0.0015448260819539428,
+                  "silhouette_xor_fraction": 0.0009461805555555556
+                },
+                "msaa4": {
+                  "psnr_db": 46.24259237694708,
+                  "ssim": 0.9990970872267574,
+                  "flip": 0.0012219344498589635,
+                  "silhouette_xor_fraction": 0.0001779513888888889
+                }
+              }
+            }
+          },
+          {
+            "view": 1,
+            "distance": 3.3,
+            "eye": [
+              -2.0337438666324794,
+              2.4749999999999996,
+              0.7926290966995666
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 36.14589945472758,
+                  "ssim": 0.9943866911909612,
+                  "flip": 0.0021818135865032673,
+                  "silhouette_xor_fraction": 0.001501736111111111
+                },
+                "msaa4": {
+                  "psnr_db": 43.203150982768356,
+                  "ssim": 0.9987633558192761,
+                  "flip": 0.0012155938893556595,
+                  "silhouette_xor_fraction": 0.00043836805555555556
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 33.11878269262721,
+                  "ssim": 0.9863721656001532,
+                  "flip": 0.005176572594791651,
+                  "silhouette_xor_fraction": 0.00203125
+                },
+                "msaa4": {
+                  "psnr_db": 35.56345993392699,
+                  "ssim": 0.9908180871245653,
+                  "flip": 0.004724134225398302,
+                  "silhouette_xor_fraction": 0.0011197916666666667
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 35.54570470711904,
+                  "ssim": 0.9896325980964562,
+                  "flip": 0.004241025075316429,
+                  "silhouette_xor_fraction": 0.0015234375
+                },
+                "msaa4": {
+                  "psnr_db": 40.34589924240467,
+                  "ssim": 0.9941342060674202,
+                  "flip": 0.0036933021619915962,
+                  "silhouette_xor_fraction": 0.0005208333333333333
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 35.58380084151893,
+                  "ssim": 0.9919001003415947,
+                  "flip": 0.0034686189610511065,
+                  "silhouette_xor_fraction": 0.0015885416666666667
+                },
+                "msaa4": {
+                  "psnr_db": 40.77808309647125,
+                  "ssim": 0.9963857056313361,
+                  "flip": 0.0029780755285173655,
+                  "silhouette_xor_fraction": 0.0005555555555555556
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 36.057411444643726,
+                  "ssim": 0.9923047950600956,
+                  "flip": 0.0036501511931419373,
+                  "silhouette_xor_fraction": 0.0014105902777777778
+                },
+                "msaa4": {
+                  "psnr_db": 40.968142642611355,
+                  "ssim": 0.9963019296824256,
+                  "flip": 0.003186638467013836,
+                  "silhouette_xor_fraction": 0.0004730902777777778
+                }
+              }
+            }
+          },
+          {
+            "view": 1,
+            "distance": 5.2,
+            "eye": [
+              -3.2046873049966345,
+              3.9000000000000004,
+              1.2489913038902263
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 38.189261181418445,
+                  "ssim": 0.996520752444289,
+                  "flip": 0.0013543237000703812,
+                  "silhouette_xor_fraction": 0.0009895833333333334
+                },
+                "msaa4": {
+                  "psnr_db": 44.86550686179204,
+                  "ssim": 0.9992753385183762,
+                  "flip": 0.000728091225028038,
+                  "silhouette_xor_fraction": 0.0003125
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 36.30575903955113,
+                  "ssim": 0.9937482365127431,
+                  "flip": 0.0022834872361272573,
+                  "silhouette_xor_fraction": 0.0011762152777777778
+                },
+                "msaa4": {
+                  "psnr_db": 39.64476192034736,
+                  "ssim": 0.9965520465446144,
+                  "flip": 0.0019295909442007542,
+                  "silhouette_xor_fraction": 0.0005815972222222222
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 37.94966304117604,
+                  "ssim": 0.9953148846062673,
+                  "flip": 0.0017980989068746567,
+                  "silhouette_xor_fraction": 0.0009765625
+                },
+                "msaa4": {
+                  "psnr_db": 43.47629705739791,
+                  "ssim": 0.9980787153269699,
+                  "flip": 0.0014235589187592268,
+                  "silhouette_xor_fraction": 0.00032118055555555556
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 38.00499394122297,
+                  "ssim": 0.9958462437231119,
+                  "flip": 0.0016818742733448744,
+                  "silhouette_xor_fraction": 0.0010069444444444444
+                },
+                "msaa4": {
+                  "psnr_db": 44.15749971375411,
+                  "ssim": 0.9987149679920301,
+                  "flip": 0.0011492957128211856,
+                  "silhouette_xor_fraction": 0.0003255208333333333
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 38.19063122030632,
+                  "ssim": 0.9960004304967094,
+                  "flip": 0.001667578355409205,
+                  "silhouette_xor_fraction": 0.0009635416666666667
+                },
+                "msaa4": {
+                  "psnr_db": 44.29838620613495,
+                  "ssim": 0.9987233408881423,
+                  "flip": 0.001214771531522274,
+                  "silhouette_xor_fraction": 0.0002907986111111111
+                }
+              }
+            }
+          },
+          {
+            "view": 2,
+            "distance": 3.3,
+            "eye": [
+              1.1840265334069995,
+              1.9249999999999996,
+              -2.4046738174206093
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 37.66489496327962,
+                  "ssim": 0.9964006021317441,
+                  "flip": 0.0017999084666371346,
+                  "silhouette_xor_fraction": 0.0012413194444444444
+                },
+                "msaa4": {
+                  "psnr_db": 46.89374695266377,
+                  "ssim": 0.9994597721440451,
+                  "flip": 0.0009373206412419677,
+                  "silhouette_xor_fraction": 0.0002951388888888889
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 32.82442103357935,
+                  "ssim": 0.9881449475488939,
+                  "flip": 0.005547836422920227,
+                  "silhouette_xor_fraction": 0.0017317708333333334
+                },
+                "msaa4": {
+                  "psnr_db": 34.76258110284027,
+                  "ssim": 0.9913041535038094,
+                  "flip": 0.005222433712333441,
+                  "silhouette_xor_fraction": 0.0009157986111111112
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 36.88580505585145,
+                  "ssim": 0.9924977296275888,
+                  "flip": 0.0035952331963926554,
+                  "silhouette_xor_fraction": 0.0012543402777777778
+                },
+                "msaa4": {
+                  "psnr_db": 43.36671571473687,
+                  "ssim": 0.9959154416386232,
+                  "flip": 0.0030512018129229546,
+                  "silhouette_xor_fraction": 0.0003689236111111111
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 36.82473826282727,
+                  "ssim": 0.9937772517083994,
+                  "flip": 0.003245501546189189,
+                  "silhouette_xor_fraction": 0.0013237847222222223
+                },
+                "msaa4": {
+                  "psnr_db": 43.936108021541656,
+                  "ssim": 0.9971897467369395,
+                  "flip": 0.002578460145741701,
+                  "silhouette_xor_fraction": 0.00040798611111111114
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 37.29413519168035,
+                  "ssim": 0.994013954585642,
+                  "flip": 0.0034130646381527185,
+                  "silhouette_xor_fraction": 0.0012022569444444444
+                },
+                "msaa4": {
+                  "psnr_db": 43.56237402247528,
+                  "ssim": 0.9970626956121722,
+                  "flip": 0.002959479810670018,
+                  "silhouette_xor_fraction": 0.00029947916666666664
+                }
+              }
+            }
+          },
+          {
+            "view": 2,
+            "distance": 5.2,
+            "eye": [
+              1.8657387799140601,
+              3.033333333333333,
+              -3.789182985026415
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 39.62381732336339,
+                  "ssim": 0.997915070174773,
+                  "flip": 0.0010225529549643397,
+                  "silhouette_xor_fraction": 0.00078125
+                },
+                "msaa4": {
+                  "psnr_db": 48.85906985821288,
+                  "ssim": 0.9996931342781266,
+                  "flip": 0.000558357045520097,
+                  "silhouette_xor_fraction": 0.00016927083333333334
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 36.606777226833,
+                  "ssim": 0.9952636898533259,
+                  "flip": 0.0021628732793033123,
+                  "silhouette_xor_fraction": 0.0009244791666666667
+                },
+                "msaa4": {
+                  "psnr_db": 40.1918148861839,
+                  "ssim": 0.9972320942414499,
+                  "flip": 0.0019345431355759501,
+                  "silhouette_xor_fraction": 0.0003862847222222222
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 39.42018977316192,
+                  "ssim": 0.9970384521161347,
+                  "flip": 0.0013759080320596695,
+                  "silhouette_xor_fraction": 0.0007682291666666666
+                },
+                "msaa4": {
+                  "psnr_db": 47.26380746010147,
+                  "ssim": 0.9989186028444849,
+                  "flip": 0.0010026450036093593,
+                  "silhouette_xor_fraction": 0.00018663194444444445
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 39.14192396042747,
+                  "ssim": 0.9971149186536569,
+                  "flip": 0.0013496738392859697,
+                  "silhouette_xor_fraction": 0.0008116319444444445
+                },
+                "msaa4": {
+                  "psnr_db": 47.28229560132138,
+                  "ssim": 0.9991274970972619,
+                  "flip": 0.0009331331239081919,
+                  "silhouette_xor_fraction": 0.00021701388888888888
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 39.9012606152309,
+                  "ssim": 0.9974159681455078,
+                  "flip": 0.0013566616689786315,
+                  "silhouette_xor_fraction": 0.000703125
+                },
+                "msaa4": {
+                  "psnr_db": 47.37158140805694,
+                  "ssim": 0.9991259884231485,
+                  "flip": 0.0010566829005256295,
+                  "silhouette_xor_fraction": 0.00015625
+                }
+              }
+            }
+          },
+          {
+            "view": 3,
+            "distance": 3.3,
+            "eye": [
+              0.8408285322459195,
+              1.3749999999999998,
+              2.879649697334933
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 37.43863006709992,
+                  "ssim": 0.9962867711254411,
+                  "flip": 0.0017482050461694598,
+                  "silhouette_xor_fraction": 0.001171875
+                },
+                "msaa4": {
+                  "psnr_db": 46.58307521534853,
+                  "ssim": 0.9994230035913775,
+                  "flip": 0.0008325030794367194,
+                  "silhouette_xor_fraction": 0.0002907986111111111
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 34.35363691242574,
+                  "ssim": 0.9913650590165258,
+                  "flip": 0.003913987427949905,
+                  "silhouette_xor_fraction": 0.0015451388888888889
+                },
+                "msaa4": {
+                  "psnr_db": 37.110919021210876,
+                  "ssim": 0.9946042794155912,
+                  "flip": 0.0036162466276437044,
+                  "silhouette_xor_fraction": 0.00078125
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 36.63899335609682,
+                  "ssim": 0.992976482008662,
+                  "flip": 0.0030899581033736467,
+                  "silhouette_xor_fraction": 0.0012022569444444444
+                },
+                "msaa4": {
+                  "psnr_db": 42.60153499082658,
+                  "ssim": 0.9964973988788468,
+                  "flip": 0.0025677569210529327,
+                  "silhouette_xor_fraction": 0.00038194444444444446
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 36.855280279435874,
+                  "ssim": 0.9945185303323884,
+                  "flip": 0.0026639169082045555,
+                  "silhouette_xor_fraction": 0.0012109375
+                },
+                "msaa4": {
+                  "psnr_db": 43.713654457256546,
+                  "ssim": 0.9978433940430887,
+                  "flip": 0.002112830290570855,
+                  "silhouette_xor_fraction": 0.00034722222222222224
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 37.66522692550061,
+                  "ssim": 0.9951118555802888,
+                  "flip": 0.002828367054462433,
+                  "silhouette_xor_fraction": 0.0009678819444444445
+                },
+                "msaa4": {
+                  "psnr_db": 43.795389992407976,
+                  "ssim": 0.9978307663367179,
+                  "flip": 0.0024594776332378387,
+                  "silhouette_xor_fraction": 0.00018229166666666667
+                }
+              }
+            }
+          },
+          {
+            "view": 3,
+            "distance": 5.2,
+            "eye": [
+              1.3249419295996308,
+              2.1666666666666665,
+              4.537629826103531
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 40.028384938656494,
+                  "ssim": 0.9981849245022214,
+                  "flip": 0.0009442669106647372,
+                  "silhouette_xor_fraction": 0.0006163194444444444
+                },
+                "msaa4": {
+                  "psnr_db": 48.431445573573164,
+                  "ssim": 0.9996684786216472,
+                  "flip": 0.0004926418187096715,
+                  "silhouette_xor_fraction": 0.00018229166666666667
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 37.49508050063349,
+                  "ssim": 0.996569723781477,
+                  "flip": 0.0016533003654330969,
+                  "silhouette_xor_fraction": 0.0008116319444444445
+                },
+                "msaa4": {
+                  "psnr_db": 41.8365924286513,
+                  "ssim": 0.9983472857377291,
+                  "flip": 0.0013557031052187085,
+                  "silhouette_xor_fraction": 0.00034288194444444443
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 39.38347191729374,
+                  "ssim": 0.9973926840300192,
+                  "flip": 0.0012705479748547077,
+                  "silhouette_xor_fraction": 0.0006510416666666666
+                },
+                "msaa4": {
+                  "psnr_db": 46.909270737973685,
+                  "ssim": 0.9991690638595158,
+                  "flip": 0.0008687967201694846,
+                  "silhouette_xor_fraction": 0.0001779513888888889
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 39.48280438281517,
+                  "ssim": 0.9976542534361553,
+                  "flip": 0.0011686127400025725,
+                  "silhouette_xor_fraction": 0.0006423611111111111
+                },
+                "msaa4": {
+                  "psnr_db": 46.999352120304046,
+                  "ssim": 0.9993037163722002,
+                  "flip": 0.0007883502985350788,
+                  "silhouette_xor_fraction": 0.0001953125
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 40.20324587460098,
+                  "ssim": 0.9979486446220454,
+                  "flip": 0.0011984342709183693,
+                  "silhouette_xor_fraction": 0.0005512152777777777
+                },
+                "msaa4": {
+                  "psnr_db": 47.2924161274533,
+                  "ssim": 0.9993390590195753,
+                  "flip": 0.0009074330446310341,
+                  "silhouette_xor_fraction": 0.00013020833333333333
+                }
+              }
+            }
+          },
+          {
+            "view": 4,
+            "distance": 3.3,
+            "eye": [
+              -2.7321881762719613,
+              0.825,
+              -1.6566601249018142
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 37.13527677659283,
+                  "ssim": 0.9945036509897298,
+                  "flip": 0.0019638659432530403,
+                  "silhouette_xor_fraction": 0.00171875
+                },
+                "msaa4": {
+                  "psnr_db": 45.40893126637055,
+                  "ssim": 0.999058892667699,
+                  "flip": 0.0010015355655923486,
+                  "silhouette_xor_fraction": 0.00045138888888888887
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 32.328252105410236,
+                  "ssim": 0.9854316983386268,
+                  "flip": 0.00497501390054822,
+                  "silhouette_xor_fraction": 0.0028862847222222224
+                },
+                "msaa4": {
+                  "psnr_db": 33.89972974055689,
+                  "ssim": 0.9892691489185753,
+                  "flip": 0.004566424526274204,
+                  "silhouette_xor_fraction": 0.0019053819444444444
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 37.160340248550774,
+                  "ssim": 0.9924868353962087,
+                  "flip": 0.003024447476491332,
+                  "silhouette_xor_fraction": 0.0016102430555555555
+                },
+                "msaa4": {
+                  "psnr_db": 43.32159946477297,
+                  "ssim": 0.9967059517894743,
+                  "flip": 0.0024138607550412416,
+                  "silhouette_xor_fraction": 0.00042100694444444444
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 36.58264621367375,
+                  "ssim": 0.9929194820681059,
+                  "flip": 0.002756841015070677,
+                  "silhouette_xor_fraction": 0.0017925347222222223
+                },
+                "msaa4": {
+                  "psnr_db": 43.191813660842925,
+                  "ssim": 0.9975027100405995,
+                  "flip": 0.002056683646515012,
+                  "silhouette_xor_fraction": 0.0005555555555555556
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 36.71288683601773,
+                  "ssim": 0.9930105305002525,
+                  "flip": 0.002879743231460452,
+                  "silhouette_xor_fraction": 0.0017230902777777778
+                },
+                "msaa4": {
+                  "psnr_db": 42.71283390257103,
+                  "ssim": 0.9972926965245044,
+                  "flip": 0.0023185573518276215,
+                  "silhouette_xor_fraction": 0.0005338541666666666
+                }
+              }
+            }
+          },
+          {
+            "view": 4,
+            "distance": 5.2,
+            "eye": [
+              -4.305266217155818,
+              1.3,
+              -2.610494742269526
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 39.28503508816428,
+                  "ssim": 0.9965313607357493,
+                  "flip": 0.001222166232764721,
+                  "silhouette_xor_fraction": 0.0010980902777777777
+                },
+                "msaa4": {
+                  "psnr_db": 46.274830948909354,
+                  "ssim": 0.9993097113311425,
+                  "flip": 0.0006734899943694472,
+                  "silhouette_xor_fraction": 0.0003515625
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 36.30010900624203,
+                  "ssim": 0.9934254143610766,
+                  "flip": 0.00221963319927454,
+                  "silhouette_xor_fraction": 0.0014322916666666666
+                },
+                "msaa4": {
+                  "psnr_db": 38.78658601568239,
+                  "ssim": 0.9960631312303533,
+                  "flip": 0.001895122928544879,
+                  "silhouette_xor_fraction": 0.0008029513888888889
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 39.24825013888428,
+                  "ssim": 0.9959679591139766,
+                  "flip": 0.0014650975354015827,
+                  "silhouette_xor_fraction": 0.0010807291666666667
+                },
+                "msaa4": {
+                  "psnr_db": 45.44982388266875,
+                  "ssim": 0.998600399711505,
+                  "flip": 0.0010791175300255418,
+                  "silhouette_xor_fraction": 0.00031684027777777776
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 39.31834412528519,
+                  "ssim": 0.9964673228892339,
+                  "flip": 0.0013797444989904761,
+                  "silhouette_xor_fraction": 0.0010850694444444445
+                },
+                "msaa4": {
+                  "psnr_db": 45.609397432434484,
+                  "ssim": 0.998892371229574,
+                  "flip": 0.0009287769789807498,
+                  "silhouette_xor_fraction": 0.0003732638888888889
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 39.290792500159846,
+                  "ssim": 0.9964917655734519,
+                  "flip": 0.001386072370223701,
+                  "silhouette_xor_fraction": 0.0010807291666666667
+                },
+                "msaa4": {
+                  "psnr_db": 45.5714963230092,
+                  "ssim": 0.998815514373536,
+                  "flip": 0.001043145079165697,
+                  "silhouette_xor_fraction": 0.0003298611111111111
+                }
+              }
+            }
+          },
+          {
+            "view": 5,
+            "distance": 3.3,
+            "eye": [
+              3.225202142851199,
+              0.27500000000000013,
+              -0.6422196958580699
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 35.53492469669586,
+                  "ssim": 0.9935282980570582,
+                  "flip": 0.0031162090599536896,
+                  "silhouette_xor_fraction": 0.001775173611111111
+                },
+                "msaa4": {
+                  "psnr_db": 43.79376458554505,
+                  "ssim": 0.9989017513837674,
+                  "flip": 0.0015002562431618571,
+                  "silhouette_xor_fraction": 0.0005251736111111111
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 29.35759125883174,
+                  "ssim": 0.9749671716937472,
+                  "flip": 0.011421065777540207,
+                  "silhouette_xor_fraction": 0.0030989583333333333
+                },
+                "msaa4": {
+                  "psnr_db": 30.644120557411874,
+                  "ssim": 0.980568258377197,
+                  "flip": 0.010805769823491573,
+                  "silhouette_xor_fraction": 0.002109375
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 34.892311963263325,
+                  "ssim": 0.9832324955188363,
+                  "flip": 0.007378358393907547,
+                  "silhouette_xor_fraction": 0.0017404513888888888
+                },
+                "msaa4": {
+                  "psnr_db": 40.38785203880564,
+                  "ssim": 0.9890053829161488,
+                  "flip": 0.006548636127263308,
+                  "silhouette_xor_fraction": 0.0005078125
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 34.72143142481897,
+                  "ssim": 0.9865412058286969,
+                  "flip": 0.006519335322082043,
+                  "silhouette_xor_fraction": 0.0018185763888888889
+                },
+                "msaa4": {
+                  "psnr_db": 40.52815296901042,
+                  "ssim": 0.9926576463265889,
+                  "flip": 0.0055408235639333725,
+                  "silhouette_xor_fraction": 0.0006076388888888889
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 34.63845994316528,
+                  "ssim": 0.9865659926418815,
+                  "flip": 0.00678333779796958,
+                  "silhouette_xor_fraction": 0.0017925347222222223
+                },
+                "msaa4": {
+                  "psnr_db": 40.214831929914766,
+                  "ssim": 0.9925667835044212,
+                  "flip": 0.005986979231238365,
+                  "silhouette_xor_fraction": 0.0005685763888888889
+                }
+              }
+            }
+          },
+          {
+            "view": 5,
+            "distance": 5.2,
+            "eye": [
+              5.082136709947345,
+              0.4333333333333335,
+              -1.0119825510490799
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 37.409723514428435,
+                  "ssim": 0.9962495386661315,
+                  "flip": 0.0018152963602915406,
+                  "silhouette_xor_fraction": 0.0011848958333333334
+                },
+                "msaa4": {
+                  "psnr_db": 45.77986078222298,
+                  "ssim": 0.999361376039025,
+                  "flip": 0.0008655301644466817,
+                  "silhouette_xor_fraction": 0.00034722222222222224
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 33.17691346864583,
+                  "ssim": 0.9894937725197561,
+                  "flip": 0.004743014927953482,
+                  "silhouette_xor_fraction": 0.0016493055555555556
+                },
+                "msaa4": {
+                  "psnr_db": 35.27959141353043,
+                  "ssim": 0.9928131351822141,
+                  "flip": 0.0042776307091116905,
+                  "silhouette_xor_fraction": 0.0009548611111111111
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 37.06820513816471,
+                  "ssim": 0.9932434958142489,
+                  "flip": 0.0029086393769830465,
+                  "silhouette_xor_fraction": 0.001171875
+                },
+                "msaa4": {
+                  "psnr_db": 43.90074958905022,
+                  "ssim": 0.9966016631541339,
+                  "flip": 0.002289621625095606,
+                  "silhouette_xor_fraction": 0.00034722222222222224
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 36.790633826205365,
+                  "ssim": 0.9939463391789909,
+                  "flip": 0.0026910079177469015,
+                  "silhouette_xor_fraction": 0.0012456597222222222
+                },
+                "msaa4": {
+                  "psnr_db": 44.0109183462377,
+                  "ssim": 0.9975422769582191,
+                  "flip": 0.002028459683060646,
+                  "silhouette_xor_fraction": 0.00036458333333333335
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 36.88297843813774,
+                  "ssim": 0.9940614400622255,
+                  "flip": 0.0027968112844973803,
+                  "silhouette_xor_fraction": 0.0012109375
+                },
+                "msaa4": {
+                  "psnr_db": 43.75244482997555,
+                  "ssim": 0.9974918971098199,
+                  "flip": 0.0021675550378859043,
+                  "silhouette_xor_fraction": 0.00034288194444444443
+                }
+              }
+            }
+          },
+          {
+            "view": 6,
+            "distance": 3.3,
+            "eye": [
+              -1.9443505143142688,
+              -0.27499999999999974,
+              2.652145561142118
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 37.64782712146399,
+                  "ssim": 0.9956362498440608,
+                  "flip": 0.0017033409094437957,
+                  "silhouette_xor_fraction": 0.001306423611111111
+                },
+                "msaa4": {
+                  "psnr_db": 44.82128710248649,
+                  "ssim": 0.999142577780077,
+                  "flip": 0.0008583526941947639,
+                  "silhouette_xor_fraction": 0.0003689236111111111
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 34.023544233491855,
+                  "ssim": 0.9893901502796261,
+                  "flip": 0.0038808465469628572,
+                  "silhouette_xor_fraction": 0.0019097222222222222
+                },
+                "msaa4": {
+                  "psnr_db": 36.34793008522298,
+                  "ssim": 0.992851826548458,
+                  "flip": 0.0034707675222307444,
+                  "silhouette_xor_fraction": 0.0010763888888888889
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 37.078378258263335,
+                  "ssim": 0.9928479687292213,
+                  "flip": 0.002880506217479706,
+                  "silhouette_xor_fraction": 0.0012847222222222223
+                },
+                "msaa4": {
+                  "psnr_db": 42.536054356457385,
+                  "ssim": 0.9963533284657111,
+                  "flip": 0.002277998486533761,
+                  "silhouette_xor_fraction": 0.0003862847222222222
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 37.222819421895,
+                  "ssim": 0.9941320459913808,
+                  "flip": 0.0023143019061535597,
+                  "silhouette_xor_fraction": 0.0013324652777777777
+                },
+                "msaa4": {
+                  "psnr_db": 43.447804554535914,
+                  "ssim": 0.9978973511112791,
+                  "flip": 0.001787412678822875,
+                  "silhouette_xor_fraction": 0.000390625
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 37.76269401202063,
+                  "ssim": 0.9946220227593805,
+                  "flip": 0.0025571025907993317,
+                  "silhouette_xor_fraction": 0.0011631944444444443
+                },
+                "msaa4": {
+                  "psnr_db": 42.65397485197625,
+                  "ssim": 0.9977826093525843,
+                  "flip": 0.002171497093513608,
+                  "silhouette_xor_fraction": 0.0003081597222222222
+                }
+              }
+            }
+          },
+          {
+            "view": 6,
+            "distance": 5.2,
+            "eye": [
+              -3.063825052858848,
+              -0.43333333333333296,
+              4.17913845998152
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 39.50794928936879,
+                  "ssim": 0.9971140560388836,
+                  "flip": 0.001067484263330698,
+                  "silhouette_xor_fraction": 0.0008723958333333333
+                },
+                "msaa4": {
+                  "psnr_db": 47.028399923910264,
+                  "ssim": 0.9994063717239028,
+                  "flip": 0.0005387778510339558,
+                  "silhouette_xor_fraction": 0.00024739583333333335
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 37.179006936469214,
+                  "ssim": 0.9949747862744224,
+                  "flip": 0.0017107452731579542,
+                  "silhouette_xor_fraction": 0.0010894097222222223
+                },
+                "msaa4": {
+                  "psnr_db": 40.450662968618104,
+                  "ssim": 0.9972560302698964,
+                  "flip": 0.0014088317984715104,
+                  "silhouette_xor_fraction": 0.0005598958333333334
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 39.340282864454835,
+                  "ssim": 0.9964373884347021,
+                  "flip": 0.0013388575753197074,
+                  "silhouette_xor_fraction": 0.0008680555555555555
+                },
+                "msaa4": {
+                  "psnr_db": 46.09650083718903,
+                  "ssim": 0.9988065084514974,
+                  "flip": 0.0008719961042515934,
+                  "silhouette_xor_fraction": 0.00026475694444444447
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 39.273440062802976,
+                  "ssim": 0.9966819264998917,
+                  "flip": 0.0012173744617030025,
+                  "silhouette_xor_fraction": 0.0009027777777777777
+                },
+                "msaa4": {
+                  "psnr_db": 46.10610462749969,
+                  "ssim": 0.9990392589021703,
+                  "flip": 0.00073916872497648,
+                  "silhouette_xor_fraction": 0.0002777777777777778
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 39.809413729705085,
+                  "ssim": 0.9969102197252299,
+                  "flip": 0.0012320197420194745,
+                  "silhouette_xor_fraction": 0.0008463541666666667
+                },
+                "msaa4": {
+                  "psnr_db": 46.51969798745699,
+                  "ssim": 0.9991015701739967,
+                  "flip": 0.0008104192093014717,
+                  "silhouette_xor_fraction": 0.00022569444444444443
+                }
+              }
+            }
+          },
+          {
+            "view": 7,
+            "distance": 3.3,
+            "eye": [
+              -0.3476427421937533,
+              -0.825,
+              -3.176242988784077
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 40.86786208543011,
+                  "ssim": 0.9972270775025017,
+                  "flip": 0.0009715326596051455,
+                  "silhouette_xor_fraction": 0.0010503472222222223
+                },
+                "msaa4": {
+                  "psnr_db": 49.21096907280042,
+                  "ssim": 0.999584872254709,
+                  "flip": 0.00037865707417950034,
+                  "silhouette_xor_fraction": 0.0002734375
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 36.906559549164406,
+                  "ssim": 0.994026710660785,
+                  "flip": 0.001854656613431871,
+                  "silhouette_xor_fraction": 0.0015928819444444445
+                },
+                "msaa4": {
+                  "psnr_db": 40.319735029429395,
+                  "ssim": 0.9969683612154294,
+                  "flip": 0.0015172217972576618,
+                  "silhouette_xor_fraction": 0.0007682291666666666
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 40.911885305346004,
+                  "ssim": 0.9972173531092904,
+                  "flip": 0.0009941448224708438,
+                  "silhouette_xor_fraction": 0.001032986111111111
+                },
+                "msaa4": {
+                  "psnr_db": 46.8392800274045,
+                  "ssim": 0.999142648820704,
+                  "flip": 0.0006548601668328047,
+                  "silhouette_xor_fraction": 0.00034288194444444443
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 40.8807385495698,
+                  "ssim": 0.9972046231148551,
+                  "flip": 0.0010005722288042307,
+                  "silhouette_xor_fraction": 0.0010503472222222223
+                },
+                "msaa4": {
+                  "psnr_db": 48.15623028327062,
+                  "ssim": 0.999365728879867,
+                  "flip": 0.000549140153452754,
+                  "silhouette_xor_fraction": 0.00031684027777777776
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 41.75423418497907,
+                  "ssim": 0.9975969647059709,
+                  "flip": 0.00101579783950001,
+                  "silhouette_xor_fraction": 0.0008984375
+                },
+                "msaa4": {
+                  "psnr_db": 47.484793598497305,
+                  "ssim": 0.9992468423629834,
+                  "flip": 0.0007307349587790668,
+                  "silhouette_xor_fraction": 0.0001996527777777778
+                }
+              }
+            }
+          },
+          {
+            "view": 7,
+            "distance": 5.2,
+            "eye": [
+              -0.5478006846689446,
+              -1.3,
+              -5.004988952023395
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 42.718782472254745,
+                  "ssim": 0.9982080412855426,
+                  "flip": 0.0006378156831488013,
+                  "silhouette_xor_fraction": 0.0006206597222222222
+                },
+                "msaa4": {
+                  "psnr_db": 51.69769046687975,
+                  "ssim": 0.9997146079759208,
+                  "flip": 0.0002523193834349513,
+                  "silhouette_xor_fraction": 0.0001388888888888889
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 41.248768734055545,
+                  "ssim": 0.9975612952627596,
+                  "flip": 0.000807219825219363,
+                  "silhouette_xor_fraction": 0.0007291666666666667
+                },
+                "msaa4": {
+                  "psnr_db": 45.901280192017715,
+                  "ssim": 0.9989772824334349,
+                  "flip": 0.0005824104882776737,
+                  "silhouette_xor_fraction": 0.0003298611111111111
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 42.23507891018562,
+                  "ssim": 0.9980113234287994,
+                  "flip": 0.0006730094901286066,
+                  "silhouette_xor_fraction": 0.0006684027777777777
+                },
+                "msaa4": {
+                  "psnr_db": 51.82241221323587,
+                  "ssim": 0.9997161403297027,
+                  "flip": 0.00029444959363900125,
+                  "silhouette_xor_fraction": 0.00013020833333333333
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 42.37601321636856,
+                  "ssim": 0.9980988181160378,
+                  "flip": 0.0006544918869622052,
+                  "silhouette_xor_fraction": 0.0006467013888888889
+                },
+                "msaa4": {
+                  "psnr_db": 51.5568663831095,
+                  "ssim": 0.9996737103881209,
+                  "flip": 0.0002935929223895073,
+                  "silhouette_xor_fraction": 0.00014322916666666667
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 42.961549453313495,
+                  "ssim": 0.9982309563020012,
+                  "flip": 0.0006414637318812311,
+                  "silhouette_xor_fraction": 0.0005859375
+                },
+                "msaa4": {
+                  "psnr_db": 52.0920513610728,
+                  "ssim": 0.9996948626801,
+                  "flip": 0.00032016722252592444,
+                  "silhouette_xor_fraction": 0.00010416666666666667
+                }
+              }
+            }
+          },
+          {
+            "view": 8,
+            "distance": 3.3,
+            "eye": [
+              2.255042300408388,
+              -1.3750000000000002,
+              1.9784234186262675
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 36.34889042735698,
+                  "ssim": 0.9946326338074375,
+                  "flip": 0.002519048750400543,
+                  "silhouette_xor_fraction": 0.0014800347222222222
+                },
+                "msaa4": {
+                  "psnr_db": 44.757476250005126,
+                  "ssim": 0.9990739364445616,
+                  "flip": 0.0012236048933118582,
+                  "silhouette_xor_fraction": 0.0004427083333333333
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 31.934595001384828,
+                  "ssim": 0.9828658348518655,
+                  "flip": 0.0072316015139222145,
+                  "silhouette_xor_fraction": 0.0020703125
+                },
+                "msaa4": {
+                  "psnr_db": 33.69056501840031,
+                  "ssim": 0.9873413345642698,
+                  "flip": 0.00670482125133276,
+                  "silhouette_xor_fraction": 0.0011892361111111112
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 35.67841188016904,
+                  "ssim": 0.9877541047545856,
+                  "flip": 0.005382026080042124,
+                  "silhouette_xor_fraction": 0.00140625
+                },
+                "msaa4": {
+                  "psnr_db": 41.067478728418294,
+                  "ssim": 0.9923048399439475,
+                  "flip": 0.004592541605234146,
+                  "silhouette_xor_fraction": 0.00040364583333333333
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 35.58753751215124,
+                  "ssim": 0.990218219085041,
+                  "flip": 0.004472975619137287,
+                  "silhouette_xor_fraction": 0.0015538194444444445
+                },
+                "msaa4": {
+                  "psnr_db": 41.86829995812916,
+                  "ssim": 0.9950348602961792,
+                  "flip": 0.003644483396783471,
+                  "silhouette_xor_fraction": 0.0005034722222222222
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 35.91249235959758,
+                  "ssim": 0.9906266052970946,
+                  "flip": 0.004689469933509827,
+                  "silhouette_xor_fraction": 0.001388888888888889
+                },
+                "msaa4": {
+                  "psnr_db": 40.9888669267528,
+                  "ssim": 0.9948599580413495,
+                  "flip": 0.004077578894793987,
+                  "silhouette_xor_fraction": 0.000390625
+                }
+              }
+            }
+          },
+          {
+            "view": 8,
+            "distance": 5.2,
+            "eye": [
+              3.553399988522308,
+              -2.166666666666667,
+              3.117515689956543
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 38.551871802696276,
+                  "ssim": 0.9970828274784445,
+                  "flip": 0.0014161430299282074,
+                  "silhouette_xor_fraction": 0.0009548611111111111
+                },
+                "msaa4": {
+                  "psnr_db": 46.616330759930975,
+                  "ssim": 0.999426304760974,
+                  "flip": 0.0007246964378282428,
+                  "silhouette_xor_fraction": 0.0002777777777777778
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 35.59913614466486,
+                  "ssim": 0.9932257619764563,
+                  "flip": 0.0029141437262296677,
+                  "silhouette_xor_fraction": 0.001171875
+                },
+                "msaa4": {
+                  "psnr_db": 38.4064606662945,
+                  "ssim": 0.9957090737437766,
+                  "flip": 0.0026190460193902254,
+                  "silhouette_xor_fraction": 0.0005381944444444444
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 38.41586649736587,
+                  "ssim": 0.9955047240691121,
+                  "flip": 0.002050242852419615,
+                  "silhouette_xor_fraction": 0.0009071180555555555
+                },
+                "msaa4": {
+                  "psnr_db": 44.63458010018579,
+                  "ssim": 0.997761324021281,
+                  "flip": 0.0016149369766935706,
+                  "silhouette_xor_fraction": 0.0002690972222222222
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 38.18043030041374,
+                  "ssim": 0.9958202036489435,
+                  "flip": 0.0018882988952100277,
+                  "silhouette_xor_fraction": 0.0009722222222222222
+                },
+                "msaa4": {
+                  "psnr_db": 44.87727189304384,
+                  "ssim": 0.9983462287985008,
+                  "flip": 0.0013795924605801702,
+                  "silhouette_xor_fraction": 0.0003298611111111111
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 38.40378012804845,
+                  "ssim": 0.9959592041397581,
+                  "flip": 0.0019414433045312762,
+                  "silhouette_xor_fraction": 0.0009201388888888889
+                },
+                "msaa4": {
+                  "psnr_db": 44.98055320718413,
+                  "ssim": 0.9983565206114127,
+                  "flip": 0.0014875890919938684,
+                  "silhouette_xor_fraction": 0.0002734375
+                }
+              }
+            }
+          },
+          {
+            "view": 9,
+            "distance": 3.3,
+            "eye": [
+              -2.679750148811414,
+              -1.9249999999999996,
+              0.05756856733673144
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 38.39987581139348,
+                  "ssim": 0.995643667124026,
+                  "flip": 0.0016139937797561288,
+                  "silhouette_xor_fraction": 0.0016710069444444444
+                },
+                "msaa4": {
+                  "psnr_db": 45.938110616382104,
+                  "ssim": 0.9991890219436481,
+                  "flip": 0.0008177213021554053,
+                  "silhouette_xor_fraction": 0.0004991319444444444
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 33.955160310456606,
+                  "ssim": 0.9890839140804183,
+                  "flip": 0.0035808349493891,
+                  "silhouette_xor_fraction": 0.0026085069444444445
+                },
+                "msaa4": {
+                  "psnr_db": 35.978358917643206,
+                  "ssim": 0.992876657776278,
+                  "flip": 0.0030848945025354624,
+                  "silhouette_xor_fraction": 0.0016362847222222221
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 38.05817217128493,
+                  "ssim": 0.9948397444302803,
+                  "flip": 0.001973256003111601,
+                  "silhouette_xor_fraction": 0.0016970486111111112
+                },
+                "msaa4": {
+                  "psnr_db": 44.509338947000245,
+                  "ssim": 0.9984790928006984,
+                  "flip": 0.0013836013386026025,
+                  "silhouette_xor_fraction": 0.0005425347222222222
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 37.9389298509883,
+                  "ssim": 0.9948240596370902,
+                  "flip": 0.0018704497488215566,
+                  "silhouette_xor_fraction": 0.001736111111111111
+                },
+                "msaa4": {
+                  "psnr_db": 44.68840749298685,
+                  "ssim": 0.9986916930753899,
+                  "flip": 0.0012167311506345868,
+                  "silhouette_xor_fraction": 0.0005164930555555555
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 38.49217325445734,
+                  "ssim": 0.9951013865623615,
+                  "flip": 0.0018931712256744504,
+                  "silhouette_xor_fraction": 0.0015972222222222223
+                },
+                "msaa4": {
+                  "psnr_db": 44.9428807609097,
+                  "ssim": 0.9986177670240672,
+                  "flip": 0.0014441290404647589,
+                  "silhouette_xor_fraction": 0.0004296875
+                }
+              }
+            }
+          },
+          {
+            "view": 9,
+            "distance": 5.2,
+            "eye": [
+              -4.222636598127077,
+              -3.033333333333333,
+              0.09071410610636471
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 40.41260093709313,
+                  "ssim": 0.9971932513516506,
+                  "flip": 0.000995188602246344,
+                  "silhouette_xor_fraction": 0.0010633680555555555
+                },
+                "msaa4": {
+                  "psnr_db": 47.970013880554234,
+                  "ssim": 0.9994768103799041,
+                  "flip": 0.00048642224282957613,
+                  "silhouette_xor_fraction": 0.0003125
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 37.420104232149605,
+                  "ssim": 0.9947259391721258,
+                  "flip": 0.0017062131082639098,
+                  "silhouette_xor_fraction": 0.0013932291666666667
+                },
+                "msaa4": {
+                  "psnr_db": 40.52454352510129,
+                  "ssim": 0.9972006014026704,
+                  "flip": 0.0013639491517096758,
+                  "silhouette_xor_fraction": 0.0007508680555555555
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 40.358722778450584,
+                  "ssim": 0.9970182606379191,
+                  "flip": 0.0010962000815197825,
+                  "silhouette_xor_fraction": 0.0010546875
+                },
+                "msaa4": {
+                  "psnr_db": 47.67438207083909,
+                  "ssim": 0.9993280692760096,
+                  "flip": 0.000645435182377696,
+                  "silhouette_xor_fraction": 0.0003255208333333333
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 40.081010335645864,
+                  "ssim": 0.9968033553393655,
+                  "flip": 0.0010547931306064129,
+                  "silhouette_xor_fraction": 0.0010980902777777777
+                },
+                "msaa4": {
+                  "psnr_db": 47.54637161611312,
+                  "ssim": 0.9992811264625482,
+                  "flip": 0.0005856602219864726,
+                  "silhouette_xor_fraction": 0.0003298611111111111
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 40.58991265649742,
+                  "ssim": 0.9971489569920531,
+                  "flip": 0.0010817984584718943,
+                  "silhouette_xor_fraction": 0.0010069444444444444
+                },
+                "msaa4": {
+                  "psnr_db": 47.90382085994868,
+                  "ssim": 0.9993409922047267,
+                  "flip": 0.00064247683621943,
+                  "silhouette_xor_fraction": 0.0002734375
+                }
+              }
+            }
+          },
+          {
+            "view": 10,
+            "distance": 3.3,
+            "eye": [
+              1.5774493940548284,
+              -2.4749999999999996,
+              -1.5086511887099863
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 37.27856055664363,
+                  "ssim": 0.9954718621202877,
+                  "flip": 0.0021313431207090616,
+                  "silhouette_xor_fraction": 0.0014105902777777778
+                },
+                "msaa4": {
+                  "psnr_db": 44.8266744587628,
+                  "ssim": 0.999052123415362,
+                  "flip": 0.001174458651803434,
+                  "silhouette_xor_fraction": 0.0004947916666666667
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 33.48984197127051,
+                  "ssim": 0.9872495118594188,
+                  "flip": 0.005580128636211157,
+                  "silhouette_xor_fraction": 0.0019618055555555556
+                },
+                "msaa4": {
+                  "psnr_db": 36.24389094828731,
+                  "ssim": 0.9912536071220666,
+                  "flip": 0.00502964248880744,
+                  "silhouette_xor_fraction": 0.0010807291666666667
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 36.36402123860104,
+                  "ssim": 0.9911129354738595,
+                  "flip": 0.003787041176110506,
+                  "silhouette_xor_fraction": 0.0014409722222222222
+                },
+                "msaa4": {
+                  "psnr_db": 41.72227675256166,
+                  "ssim": 0.9950529713657708,
+                  "flip": 0.003315432695671916,
+                  "silhouette_xor_fraction": 0.0005121527777777778
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 36.21779270356868,
+                  "ssim": 0.9924010173957499,
+                  "flip": 0.0032733564730733633,
+                  "silhouette_xor_fraction": 0.0015451388888888889
+                },
+                "msaa4": {
+                  "psnr_db": 42.612127780766436,
+                  "ssim": 0.9967116536480499,
+                  "flip": 0.0026495184283703566,
+                  "silhouette_xor_fraction": 0.0005772569444444445
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 36.48073789599118,
+                  "ssim": 0.992432093585024,
+                  "flip": 0.0035306119825690985,
+                  "silhouette_xor_fraction": 0.0014192708333333334
+                },
+                "msaa4": {
+                  "psnr_db": 42.28304603216138,
+                  "ssim": 0.9964969464249892,
+                  "flip": 0.0029719818849116564,
+                  "silhouette_xor_fraction": 0.0005208333333333333
+                }
+              }
+            }
+          },
+          {
+            "view": 10,
+            "distance": 5.2,
+            "eye": [
+              2.485677833056094,
+              -3.9000000000000004,
+              -2.377268539785433
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 39.13302332956552,
+                  "ssim": 0.9973971880577048,
+                  "flip": 0.0012169757392257452,
+                  "silhouette_xor_fraction": 0.0009375
+                },
+                "msaa4": {
+                  "psnr_db": 46.97913492420969,
+                  "ssim": 0.9994717401443155,
+                  "flip": 0.0006931803072802722,
+                  "silhouette_xor_fraction": 0.00029947916666666664
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 37.17313964885358,
+                  "ssim": 0.9950359915550291,
+                  "flip": 0.002212913939729333,
+                  "silhouette_xor_fraction": 0.0011024305555555555
+                },
+                "msaa4": {
+                  "psnr_db": 40.53084800610855,
+                  "ssim": 0.9971887401853626,
+                  "flip": 0.0019990867003798485,
+                  "silhouette_xor_fraction": 0.0005381944444444444
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 38.95719587795202,
+                  "ssim": 0.9965430111971572,
+                  "flip": 0.0015484994510188699,
+                  "silhouette_xor_fraction": 0.0009157986111111112
+                },
+                "msaa4": {
+                  "psnr_db": 45.12741730229554,
+                  "ssim": 0.998645824072853,
+                  "flip": 0.0012027601478621364,
+                  "silhouette_xor_fraction": 0.00031684027777777776
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 38.73154818641637,
+                  "ssim": 0.9966558045472552,
+                  "flip": 0.0014579369453713298,
+                  "silhouette_xor_fraction": 0.0009635416666666667
+                },
+                "msaa4": {
+                  "psnr_db": 45.680981421531655,
+                  "ssim": 0.9989541030066624,
+                  "flip": 0.0010301743168383837,
+                  "silhouette_xor_fraction": 0.0003385416666666667
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 38.93869637252345,
+                  "ssim": 0.996715769926707,
+                  "flip": 0.0014988132752478123,
+                  "silhouette_xor_fraction": 0.0009157986111111112
+                },
+                "msaa4": {
+                  "psnr_db": 45.70367696875492,
+                  "ssim": 0.9989325853934904,
+                  "flip": 0.00112982839345932,
+                  "silhouette_xor_fraction": 0.00028211805555555553
+                }
+              }
+            }
+          },
+          {
+            "view": 11,
+            "distance": 3.3,
+            "eye": [
+              -0.08705745103924314,
+              -3.025,
+              1.315977203533005
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 38.78439439714314,
+                  "ssim": 0.9963003121553635,
+                  "flip": 0.0015154608990997076,
+                  "silhouette_xor_fraction": 0.001388888888888889
+                },
+                "msaa4": {
+                  "psnr_db": 47.83395425874241,
+                  "ssim": 0.9994758285500295,
+                  "flip": 0.0005586378974840045,
+                  "silhouette_xor_fraction": 0.0003385416666666667
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 35.52200308909314,
+                  "ssim": 0.9922668959622403,
+                  "flip": 0.0027451724745333195,
+                  "silhouette_xor_fraction": 0.0020572916666666665
+                },
+                "msaa4": {
+                  "psnr_db": 38.73341662134222,
+                  "ssim": 0.9956635240673799,
+                  "flip": 0.002303773071616888,
+                  "silhouette_xor_fraction": 0.0009895833333333334
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 38.100733259599835,
+                  "ssim": 0.9956804543323392,
+                  "flip": 0.001761111430823803,
+                  "silhouette_xor_fraction": 0.0014583333333333334
+                },
+                "msaa4": {
+                  "psnr_db": 44.54357489556068,
+                  "ssim": 0.998818692680254,
+                  "flip": 0.001247038715519011,
+                  "silhouette_xor_fraction": 0.00043836805555555556
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 38.322631477684745,
+                  "ssim": 0.9958214432436322,
+                  "flip": 0.001684993621893227,
+                  "silhouette_xor_fraction": 0.0014670138888888888
+                },
+                "msaa4": {
+                  "psnr_db": 45.81122733713179,
+                  "ssim": 0.9991068629223744,
+                  "flip": 0.0009796072263270617,
+                  "silhouette_xor_fraction": 0.00040364583333333333
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 39.51501070190285,
+                  "ssim": 0.9968184964567626,
+                  "flip": 0.0016679894179105759,
+                  "silhouette_xor_fraction": 0.0011675347222222222
+                },
+                "msaa4": {
+                  "psnr_db": 46.10750015763231,
+                  "ssim": 0.9991448861090234,
+                  "flip": 0.0012397532118484378,
+                  "silhouette_xor_fraction": 0.0001996527777777778
+                }
+              }
+            }
+          },
+          {
+            "view": 11,
+            "distance": 5.2,
+            "eye": [
+              -0.13718143800123164,
+              -4.7666666666666675,
+              2.073661047991402
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 41.008264376145505,
+                  "ssim": 0.9977641201238243,
+                  "flip": 0.0009264512336812913,
+                  "silhouette_xor_fraction": 0.0008420138888888889
+                },
+                "msaa4": {
+                  "psnr_db": 49.65517318181763,
+                  "ssim": 0.9996613312767747,
+                  "flip": 0.00034725150908343494,
+                  "silhouette_xor_fraction": 0.0002300347222222222
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 38.682816212145546,
+                  "ssim": 0.9961735628324639,
+                  "flip": 0.001427025767043233,
+                  "silhouette_xor_fraction": 0.0010980902777777777
+                },
+                "msaa4": {
+                  "psnr_db": 42.82513255903039,
+                  "ssim": 0.9982217187375979,
+                  "flip": 0.0010820330353453755,
+                  "silhouette_xor_fraction": 0.0004861111111111111
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 40.563933928877475,
+                  "ssim": 0.9975199109092862,
+                  "flip": 0.0009675080655142665,
+                  "silhouette_xor_fraction": 0.0008767361111111111
+                },
+                "msaa4": {
+                  "psnr_db": 47.953497535717744,
+                  "ssim": 0.9994793218506707,
+                  "flip": 0.0005958052352070808,
+                  "silhouette_xor_fraction": 0.000234375
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 40.80652020253537,
+                  "ssim": 0.9976538172871077,
+                  "flip": 0.0009586196974851191,
+                  "silhouette_xor_fraction": 0.0008550347222222222
+                },
+                "msaa4": {
+                  "psnr_db": 49.2443094343761,
+                  "ssim": 0.9995783079732843,
+                  "flip": 0.00045256680459715426,
+                  "silhouette_xor_fraction": 0.000234375
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 41.4924899573961,
+                  "ssim": 0.9980050741181352,
+                  "flip": 0.0009316420764662325,
+                  "silhouette_xor_fraction": 0.0007682291666666666
+                },
+                "msaa4": {
+                  "psnr_db": 49.617582626934286,
+                  "ssim": 0.9996348359790248,
+                  "flip": 0.0005623953766189516,
+                  "silhouette_xor_fraction": 0.0001345486111111111
+                }
+              }
+            }
+          }
+        ],
+        "scorer_script_sha256": {
+          "bench_appearance_controls.py": "456b2434c4910cc82a1c37f878bac98a223b70e9cdbdfb9f0cb9b2bf8d60252c",
+          "bench_component_gpu.py": "1815a0a9f60a339adf869879006c7492a2d484797a22efcc7543f9c84bcbce47",
+          "bench_contour_priority_aa.py": "6266a4b16e428bbb291a0ce7f162b05c8b07bc1cc13db4e0cabef8c8b2da8bbe",
+          "bench_bevy_smaa.py": "6e5b7fbccd135ac29cf87cd601fa24d891a9ae3981ddef575cd7280b8d8143a6",
+          "cluster_decoder_surface_quality.py": "08d80488efa4e4d3d2b45166f11d76ca230e3127c94f2a4580181f18bda6ea2c"
+        }
+      },
+      "raw_receipt_sha256": {
+        "protocol": "47ae8e15f5bee150f1c73c37e2408ab71ac441a36ea4a05c4298af9394489daf",
+        "training": "b423fff20341c237b15678a3b0561b374b71cc385468cea50a506f93cfe66d8d",
+        "training_diagnostics": "510c291613a80d7cc200d3e58bb88a1d853c3ac3a23b7d3e094b1f21d84ce0e3",
+        "quality": "0410052c00522186fa9aa2b772b2302308007ec2b111a99cef545fe4b15c966e"
+      },
+      "preparation_protocol_sha256": "05578fe166abcc5dac5b2703f8c4244857c3f756cfbe667871c2f867729834ed"
+    },
+    "Corset": {
+      "reference_faces": 18324,
+      "candidate_faces": 9162,
+      "inputs_sha256": {
+        "reference.obj": "1e0cd2ea26af6a015a7b39d3c4bbf2e7de9e4cd22722204e14bc937119c2bac4",
+        "meshoptimizer_lock_border.obj": "64d4e13db46809cc110fd0a201c4b89b4b6d02caca23cba2dce59adf90bec728",
+        "qem_preserve_border.obj": "3329f09fe1983d4b1b97c4bef673af159a0fe594736f87d70fcc9ff527284227",
+        "manymesh.obj": "adde70e0e047edee3015c0ea92922340cc37cfc9cb13e202683ec25997e8753e",
+        "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0"
+      },
+      "source_script_sha256": "05578fe166abcc5dac5b2703f8c4244857c3f756cfbe667871c2f867729834ed",
+      "source_manifest_sha256": "a1f9fbcc5bcea1fcfb3b0af369a0452fc5b55f072b13ae50013062c7e1350723",
+      "optimizer_protocol_sha256": "66cf6b712cfda35f9a4c83b890d0560a4c48a2d7bce963e7ee08385a6867bc47",
+      "fitted_sha256": "266f45b0edebd057bec17e14b7813776a038767d87c9122fd16b791befed22b3",
+      "fit_seconds": 965.804140085,
+      "target_preprocess_seconds": 91.37088458599919,
+      "fit_plus_target_preprocess_seconds": 1057.1750246709992,
+      "peak_rss_bytes": 336867328,
+      "first_gradient_norm": 0.08505576103925705,
+      "maximum_displacement_observed": 0.00019260696193323324,
+      "fit_boundary_audit": {
+        "faces": 9162,
+        "topology_error": null,
+        "boundary_edges": 1144,
+        "boundary_preserved": true
+      },
+      "training_coverage_mse": {
+        "initial": 0.07457263802643865,
+        "fitted": 0.07454841217258945
+      },
+      "quality": {
+        "adapter": {
+          "vendor": "llvmpipe",
+          "architecture": "",
+          "device": "llvmpipe (LLVM 21.1.8, 256 bits)",
+          "description": "Mesa 26.0.8-1ubuntu0.3 (LLVM 21.1.8)",
+          "stackgroup_min_size": 4,
+          "stackgroup_max_size": 128,
+          "vendor_id": 65541,
+          "device_id": 0,
+          "adapter_type": "CPU",
+          "backend_type": "Vulkan"
+        },
+        "packages": {
+          "wgpu": "0.33.0",
+          "numpy": "2.3.4",
+          "scikit-image": "0.25.2",
+          "flip-evaluator": "1.7"
+        },
+        "summary": {
+          "reference": {
+            "native": {
+              "mean": {
+                "ssim": 0.9937551602590527,
+                "flip": 0.002528048304763312,
+                "silhouette_xor_fraction": 0.0013565176504629628,
+                "psnr_db": 36.57810519871973
+              },
+              "worst": {
+                "ssim": 0.9893834565909507,
+                "flip": 0.004317482002079487,
+                "silhouette_xor_fraction": 0.0018359375,
+                "psnr_db": 34.235141307519086
+              }
+            },
+            "msaa4": {
+              "mean": {
+                "ssim": 0.9987449310274564,
+                "flip": 0.001158929548788971,
+                "silhouette_xor_fraction": 0.0003676576967592592,
+                "psnr_db": 44.987649476897204
+              },
+              "worst": {
+                "ssim": 0.9976530359907756,
+                "flip": 0.0019384461920708418,
+                "silhouette_xor_fraction": 0.0005034722222222222,
+                "psnr_db": 42.76221181803464
+              }
+            }
+          },
+          "manymesh": {
+            "native": {
+              "mean": {
+                "ssim": 0.9934623005431517,
+                "flip": 0.002643491985509172,
+                "silhouette_xor_fraction": 0.0013633897569444444,
+                "psnr_db": 36.482127305814906
+              },
+              "worst": {
+                "ssim": 0.988588520812877,
+                "flip": 0.0046091447584331036,
+                "silhouette_xor_fraction": 0.0018532986111111111,
+                "psnr_db": 34.03304197337434
+              }
+            },
+            "msaa4": {
+              "mean": {
+                "ssim": 0.9983980395513298,
+                "flip": 0.001352030085399747,
+                "silhouette_xor_fraction": 0.00038122106481481487,
+                "psnr_db": 44.379121890703324
+              },
+              "worst": {
+                "ssim": 0.996845674369687,
+                "flip": 0.002589482581242919,
+                "silhouette_xor_fraction": 0.0005208333333333333,
+                "psnr_db": 41.71101712910601
+              }
+            }
+          },
+          "qem_preserve_border": {
+            "native": {
+              "mean": {
+                "ssim": 0.991775536995037,
+                "flip": 0.0035200247317940616,
+                "silhouette_xor_fraction": 0.0013702618634259258,
+                "psnr_db": 36.15205696110075
+              },
+              "worst": {
+                "ssim": 0.9845028275012159,
+                "flip": 0.007071278523653746,
+                "silhouette_xor_fraction": 0.0018923611111111112,
+                "psnr_db": 33.434195598746456
+              }
+            },
+            "msaa4": {
+              "mean": {
+                "ssim": 0.9966778386815269,
+                "flip": 0.002504554109085196,
+                "silhouette_xor_fraction": 0.0004054542824074075,
+                "psnr_db": 42.7060116447005
+              },
+              "worst": {
+                "ssim": 0.9927755468136329,
+                "flip": 0.005588667467236519,
+                "silhouette_xor_fraction": 0.0006206597222222222,
+                "psnr_db": 39.743449229111064
+              }
+            }
+          },
+          "meshoptimizer_lock_border": {
+            "native": {
+              "mean": {
+                "ssim": 0.9935913646450731,
+                "flip": 0.0026422879503419003,
+                "silhouette_xor_fraction": 0.0013642939814814813,
+                "psnr_db": 36.535004983520786
+              },
+              "worst": {
+                "ssim": 0.9884646182846016,
+                "flip": 0.004785726312547922,
+                "silhouette_xor_fraction": 0.0018402777777777777,
+                "psnr_db": 34.09083559345419
+              }
+            },
+            "msaa4": {
+              "mean": {
+                "ssim": 0.9985325762050357,
+                "flip": 0.0013831945495136704,
+                "silhouette_xor_fraction": 0.00038049768518518516,
+                "psnr_db": 44.68862738080457
+              },
+              "worst": {
+                "ssim": 0.997004030176166,
+                "flip": 0.002767783822491765,
+                "silhouette_xor_fraction": 0.0005164930555555555,
+                "psnr_db": 42.05601125346263
+              }
+            }
+          },
+          "fitted": {
+            "native": {
+              "mean": {
+                "ssim": 0.9936576056331888,
+                "flip": 0.002642836232553236,
+                "silhouette_xor_fraction": 0.0013509114583333335,
+                "psnr_db": 36.58899966786564
+              },
+              "worst": {
+                "ssim": 0.9884661416098509,
+                "flip": 0.004788420628756285,
+                "silhouette_xor_fraction": 0.0018272569444444445,
+                "psnr_db": 34.16902033255797
+              }
+            },
+            "msaa4": {
+              "mean": {
+                "ssim": 0.9985472067031651,
+                "flip": 0.001409994532878045,
+                "silhouette_xor_fraction": 0.00036584924768518515,
+                "psnr_db": 44.78444059195799
+              },
+              "worst": {
+                "ssim": 0.9970602451695336,
+                "flip": 0.0027803839184343815,
+                "silhouette_xor_fraction": 0.0005034722222222222,
+                "psnr_db": 42.254370917595104
+              }
+            }
+          }
+        },
+        "fit_minus_meshoptimizer": {
+          "native": {
+            "psnr_db": 0.053994684344857546,
+            "ssim": 6.624098811569556e-05,
+            "flip": 5.482822113358522e-07,
+            "silhouette_xor_fraction": -1.3382523148147783e-05
+          },
+          "msaa4": {
+            "psnr_db": 0.09581321115341979,
+            "ssim": 1.463049812944206e-05,
+            "flip": 2.6799983364374615e-05,
+            "silhouette_xor_fraction": -1.4648437500000013e-05
+          }
+        },
+        "views": [
+          {
+            "view": 0,
+            "distance": 3.3,
+            "eye": [
+              1.2296033403785709,
+              3.025,
+              0.4769178391818255
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 35.66276902889388,
+                  "ssim": 0.9926728747293793,
+                  "flip": 0.002829658566042781,
+                  "silhouette_xor_fraction": 0.001267361111111111
+                },
+                "msaa4": {
+                  "psnr_db": 43.90875655242313,
+                  "ssim": 0.9984639746339954,
+                  "flip": 0.0014114966616034508,
+                  "silhouette_xor_fraction": 0.00038194444444444446
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 35.63300854972513,
+                  "ssim": 0.9924320550462962,
+                  "flip": 0.002929332433268428,
+                  "silhouette_xor_fraction": 0.001267361111111111
+                },
+                "msaa4": {
+                  "psnr_db": 43.524983107881695,
+                  "ssim": 0.9980531495328393,
+                  "flip": 0.0016215540235862136,
+                  "silhouette_xor_fraction": 0.00038194444444444446
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 35.051630466402806,
+                  "ssim": 0.9898561264363681,
+                  "flip": 0.004333423916250467,
+                  "silhouette_xor_fraction": 0.0013151041666666667
+                },
+                "msaa4": {
+                  "psnr_db": 41.48873528842046,
+                  "ssim": 0.9956388919570414,
+                  "flip": 0.003329627215862274,
+                  "silhouette_xor_fraction": 0.0004296875
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 35.63889635370836,
+                  "ssim": 0.9925410058357819,
+                  "flip": 0.002915623364970088,
+                  "silhouette_xor_fraction": 0.0012717013888888888
+                },
+                "msaa4": {
+                  "psnr_db": 43.7908632727389,
+                  "ssim": 0.9982379030924535,
+                  "flip": 0.0015799655811861157,
+                  "silhouette_xor_fraction": 0.00038194444444444446
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 35.634037391953115,
+                  "ssim": 0.9923706221132964,
+                  "flip": 0.002960584592074156,
+                  "silhouette_xor_fraction": 0.001267361111111111
+                },
+                "msaa4": {
+                  "psnr_db": 43.677397199399266,
+                  "ssim": 0.998220579171397,
+                  "flip": 0.0016088751144707203,
+                  "silhouette_xor_fraction": 0.0003862847222222222
+                }
+              }
+            }
+          },
+          {
+            "view": 0,
+            "distance": 5.2,
+            "eye": [
+              1.9375567787783543,
+              4.766666666666667,
+              0.7515068981046948
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 37.279976734185965,
+                  "ssim": 0.9954714820368085,
+                  "flip": 0.0017758967587724328,
+                  "silhouette_xor_fraction": 0.0008506944444444444
+                },
+                "msaa4": {
+                  "psnr_db": 45.8344161162043,
+                  "ssim": 0.9990612548522128,
+                  "flip": 0.0008230871753767133,
+                  "silhouette_xor_fraction": 0.00024305555555555555
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 37.26304632039534,
+                  "ssim": 0.995449562382671,
+                  "flip": 0.0017832957673817873,
+                  "silhouette_xor_fraction": 0.0008506944444444444
+                },
+                "msaa4": {
+                  "psnr_db": 45.600388705748365,
+                  "ssim": 0.9988900047175738,
+                  "flip": 0.0008830414153635502,
+                  "silhouette_xor_fraction": 0.00024305555555555555
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 37.086532562911415,
+                  "ssim": 0.9946918515598152,
+                  "flip": 0.00220865523442626,
+                  "silhouette_xor_fraction": 0.000859375
+                },
+                "msaa4": {
+                  "psnr_db": 44.85007057950186,
+                  "ssim": 0.9983068834302647,
+                  "flip": 0.0014055493520572782,
+                  "silhouette_xor_fraction": 0.00024739583333333335
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 37.25264279264903,
+                  "ssim": 0.9953522894052691,
+                  "flip": 0.0017914102645590901,
+                  "silhouette_xor_fraction": 0.0008506944444444444
+                },
+                "msaa4": {
+                  "psnr_db": 45.734474692090934,
+                  "ssim": 0.9989651231634644,
+                  "flip": 0.0008651203825138509,
+                  "silhouette_xor_fraction": 0.00024305555555555555
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 37.30343582402825,
+                  "ssim": 0.9953728713280354,
+                  "flip": 0.0017966452287510037,
+                  "silhouette_xor_fraction": 0.0008420138888888889
+                },
+                "msaa4": {
+                  "psnr_db": 45.654149658263776,
+                  "ssim": 0.998960520965307,
+                  "flip": 0.0009096433059312403,
+                  "silhouette_xor_fraction": 0.000234375
+                }
+              }
+            }
+          },
+          {
+            "view": 1,
+            "distance": 3.3,
+            "eye": [
+              -2.0337438666324794,
+              2.4749999999999996,
+              0.7926290966995666
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 34.64968404419784,
+                  "ssim": 0.9909828456177328,
+                  "flip": 0.003914768807590008,
+                  "silhouette_xor_fraction": 0.0015581597222222223
+                },
+                "msaa4": {
+                  "psnr_db": 43.13421289638957,
+                  "ssim": 0.9983183308169414,
+                  "flip": 0.0018287582788616419,
+                  "silhouette_xor_fraction": 0.0004427083333333333
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 34.59128641210653,
+                  "ssim": 0.990895218594477,
+                  "flip": 0.003923506010323763,
+                  "silhouette_xor_fraction": 0.0015581597222222223
+                },
+                "msaa4": {
+                  "psnr_db": 42.50431288931963,
+                  "ssim": 0.9978418765819532,
+                  "flip": 0.0021182869095355272,
+                  "silhouette_xor_fraction": 0.0004470486111111111
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 34.354482132909595,
+                  "ssim": 0.988675197888191,
+                  "flip": 0.005431708414107561,
+                  "silhouette_xor_fraction": 0.0015538194444444445
+                },
+                "msaa4": {
+                  "psnr_db": 40.98467930033774,
+                  "ssim": 0.9956328890208754,
+                  "flip": 0.003996438812464476,
+                  "silhouette_xor_fraction": 0.0004600694444444444
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 34.707125762642676,
+                  "ssim": 0.9911769114794239,
+                  "flip": 0.004055221099406481,
+                  "silhouette_xor_fraction": 0.0015538194444444445
+                },
+                "msaa4": {
+                  "psnr_db": 42.920302655926,
+                  "ssim": 0.9980534312314187,
+                  "flip": 0.002223478863015771,
+                  "silhouette_xor_fraction": 0.00043836805555555556
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 34.718742099735124,
+                  "ssim": 0.9912588396103474,
+                  "flip": 0.004040115512907505,
+                  "silhouette_xor_fraction": 0.0015451388888888889
+                },
+                "msaa4": {
+                  "psnr_db": 42.872754623277956,
+                  "ssim": 0.9980653251704175,
+                  "flip": 0.0022847994696348906,
+                  "silhouette_xor_fraction": 0.0004470486111111111
+                }
+              }
+            }
+          },
+          {
+            "view": 1,
+            "distance": 5.2,
+            "eye": [
+              -3.2046873049966345,
+              3.9000000000000004,
+              1.2489913038902263
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 36.610216997575016,
+                  "ssim": 0.994415640233866,
+                  "flip": 0.0022137316409498453,
+                  "silhouette_xor_fraction": 0.0009592013888888889
+                },
+                "msaa4": {
+                  "psnr_db": 44.68423734411932,
+                  "ssim": 0.9988170666359449,
+                  "flip": 0.0010644880821928382,
+                  "silhouette_xor_fraction": 0.00026475694444444447
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 36.65481296122706,
+                  "ssim": 0.9945262807326523,
+                  "flip": 0.0021993396803736687,
+                  "silhouette_xor_fraction": 0.0009592013888888889
+                },
+                "msaa4": {
+                  "psnr_db": 44.59003590244565,
+                  "ssim": 0.998765869408508,
+                  "flip": 0.0011154632084071636,
+                  "silhouette_xor_fraction": 0.00026475694444444447
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 36.51470607796222,
+                  "ssim": 0.9938384677252802,
+                  "flip": 0.00260076392441988,
+                  "silhouette_xor_fraction": 0.0009765625
+                },
+                "msaa4": {
+                  "psnr_db": 43.83083570621316,
+                  "ssim": 0.9980777124746316,
+                  "flip": 0.0016789224464446306,
+                  "silhouette_xor_fraction": 0.00028211805555555553
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 36.69844685757525,
+                  "ssim": 0.9946026529988059,
+                  "flip": 0.0022307266481220722,
+                  "silhouette_xor_fraction": 0.0009592013888888889
+                },
+                "msaa4": {
+                  "psnr_db": 44.660630370565556,
+                  "ssim": 0.998819178289567,
+                  "flip": 0.0011866064742207527,
+                  "silhouette_xor_fraction": 0.00026475694444444447
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 36.71006185216101,
+                  "ssim": 0.9946338189707187,
+                  "flip": 0.0022248581517487764,
+                  "silhouette_xor_fraction": 0.0009505208333333334
+                },
+                "msaa4": {
+                  "psnr_db": 44.76836078386866,
+                  "ssim": 0.9988343194127083,
+                  "flip": 0.0012015271931886673,
+                  "silhouette_xor_fraction": 0.0002690972222222222
+                }
+              }
+            }
+          },
+          {
+            "view": 2,
+            "distance": 3.3,
+            "eye": [
+              1.1840265334069995,
+              1.9249999999999996,
+              -2.4046738174206093
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 34.235141307519086,
+                  "ssim": 0.9905834995317622,
+                  "flip": 0.003802656661719084,
+                  "silhouette_xor_fraction": 0.0017795138888888889
+                },
+                "msaa4": {
+                  "psnr_db": 43.10954444520729,
+                  "ssim": 0.998189129134695,
+                  "flip": 0.0017966947052627802,
+                  "silhouette_xor_fraction": 0.0004296875
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 34.03304197337434,
+                  "ssim": 0.9901285294175418,
+                  "flip": 0.004083095584064722,
+                  "silhouette_xor_fraction": 0.0018229166666666667
+                },
+                "msaa4": {
+                  "psnr_db": 41.71101712910601,
+                  "ssim": 0.9976379736080732,
+                  "flip": 0.002217679051682353,
+                  "silhouette_xor_fraction": 0.0005034722222222222
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 33.434195598746456,
+                  "ssim": 0.9862607906666202,
+                  "flip": 0.005868491251021624,
+                  "silhouette_xor_fraction": 0.0018793402777777777
+                },
+                "msaa4": {
+                  "psnr_db": 40.07041751923258,
+                  "ssim": 0.9942822518074661,
+                  "flip": 0.004318072460591793,
+                  "silhouette_xor_fraction": 0.0005121527777777778
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 34.09083559345419,
+                  "ssim": 0.9903765631365398,
+                  "flip": 0.004014710895717144,
+                  "silhouette_xor_fraction": 0.001814236111111111
+                },
+                "msaa4": {
+                  "psnr_db": 42.71576395969909,
+                  "ssim": 0.9979691944500757,
+                  "flip": 0.002122314181178808,
+                  "silhouette_xor_fraction": 0.00046440972222222223
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 34.16902033255797,
+                  "ssim": 0.9904562165718905,
+                  "flip": 0.004006834700703621,
+                  "silhouette_xor_fraction": 0.001796875
+                },
+                "msaa4": {
+                  "psnr_db": 42.813381662884936,
+                  "ssim": 0.9979378935779843,
+                  "flip": 0.0021994663402438164,
+                  "silhouette_xor_fraction": 0.0004253472222222222
+                }
+              }
+            }
+          },
+          {
+            "view": 2,
+            "distance": 5.2,
+            "eye": [
+              1.8657387799140601,
+              3.033333333333333,
+              -3.789182985026415
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 36.61177651988161,
+                  "ssim": 0.9946606316308315,
+                  "flip": 0.0022841140162199736,
+                  "silhouette_xor_fraction": 0.0010069444444444444
+                },
+                "msaa4": {
+                  "psnr_db": 44.690054702712,
+                  "ssim": 0.9987488678293704,
+                  "flip": 0.0011057672090828419,
+                  "silhouette_xor_fraction": 0.0003125
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 36.60461852053787,
+                  "ssim": 0.9946217072813555,
+                  "flip": 0.0023684706538915634,
+                  "silhouette_xor_fraction": 0.0010069444444444444
+                },
+                "msaa4": {
+                  "psnr_db": 44.002480682006066,
+                  "ssim": 0.9986804024892059,
+                  "flip": 0.0012337848311290145,
+                  "silhouette_xor_fraction": 0.00033420138888888887
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 36.421943596204926,
+                  "ssim": 0.9934764423057555,
+                  "flip": 0.0028855805285274982,
+                  "silhouette_xor_fraction": 0.0009895833333333334
+                },
+                "msaa4": {
+                  "psnr_db": 42.852083066287165,
+                  "ssim": 0.997378066451388,
+                  "flip": 0.0019476512679830194,
+                  "silhouette_xor_fraction": 0.0003298611111111111
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 36.56558397668008,
+                  "ssim": 0.9946405633336562,
+                  "flip": 0.0023074185010045767,
+                  "silhouette_xor_fraction": 0.001015625
+                },
+                "msaa4": {
+                  "psnr_db": 44.335946303749836,
+                  "ssim": 0.9987240472249433,
+                  "flip": 0.0011942146811634302,
+                  "silhouette_xor_fraction": 0.0003255208333333333
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 36.60818012830771,
+                  "ssim": 0.9946616467773374,
+                  "flip": 0.002322391839697957,
+                  "silhouette_xor_fraction": 0.0009982638888888888
+                },
+                "msaa4": {
+                  "psnr_db": 44.452950570124074,
+                  "ssim": 0.9987227502813956,
+                  "flip": 0.0012205390958115458,
+                  "silhouette_xor_fraction": 0.0003125
+                }
+              }
+            }
+          },
+          {
+            "view": 3,
+            "distance": 3.3,
+            "eye": [
+              0.8408285322459195,
+              1.3749999999999998,
+              2.879649697334933
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 34.26373887130673,
+                  "ssim": 0.9893834565909507,
+                  "flip": 0.004183230921626091,
+                  "silhouette_xor_fraction": 0.0018229166666666667
+                },
+                "msaa4": {
+                  "psnr_db": 42.76221181803464,
+                  "ssim": 0.9980180485699993,
+                  "flip": 0.0019384461920708418,
+                  "silhouette_xor_fraction": 0.00047743055555555554
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 34.121730873121166,
+                  "ssim": 0.988588520812877,
+                  "flip": 0.0044602337293326855,
+                  "silhouette_xor_fraction": 0.0018272569444444445
+                },
+                "msaa4": {
+                  "psnr_db": 41.784579072585984,
+                  "ssim": 0.9972817899153616,
+                  "flip": 0.0023967039305716753,
+                  "silhouette_xor_fraction": 0.0005208333333333333
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 33.659550996860304,
+                  "ssim": 0.9845028275012159,
+                  "flip": 0.007071278523653746,
+                  "silhouette_xor_fraction": 0.0018923611111111112
+                },
+                "msaa4": {
+                  "psnr_db": 39.743449229111064,
+                  "ssim": 0.9929314940984016,
+                  "flip": 0.005588667467236519,
+                  "silhouette_xor_fraction": 0.0005772569444444445
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 34.17536758464651,
+                  "ssim": 0.9884646182846016,
+                  "flip": 0.004748762585222721,
+                  "silhouette_xor_fraction": 0.0018402777777777777
+                },
+                "msaa4": {
+                  "psnr_db": 42.05601125346263,
+                  "ssim": 0.997004030176166,
+                  "flip": 0.002767783822491765,
+                  "silhouette_xor_fraction": 0.0005164930555555555
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 34.17688112679968,
+                  "ssim": 0.9884661416098509,
+                  "flip": 0.004788420628756285,
+                  "silhouette_xor_fraction": 0.0018272569444444445
+                },
+                "msaa4": {
+                  "psnr_db": 42.254370917595104,
+                  "ssim": 0.9970602451695336,
+                  "flip": 0.0027803839184343815,
+                  "silhouette_xor_fraction": 0.00048177083333333335
+                }
+              }
+            }
+          },
+          {
+            "view": 3,
+            "distance": 5.2,
+            "eye": [
+              1.3249419295996308,
+              2.1666666666666665,
+              4.537629826103531
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 36.43687723085452,
+                  "ssim": 0.9937294336049532,
+                  "flip": 0.002453422639518976,
+                  "silhouette_xor_fraction": 0.0011197916666666667
+                },
+                "msaa4": {
+                  "psnr_db": 44.73315862917375,
+                  "ssim": 0.9987826946129064,
+                  "flip": 0.001054714317433536,
+                  "silhouette_xor_fraction": 0.0003385416666666667
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 36.42810348141647,
+                  "ssim": 0.993882947225149,
+                  "flip": 0.002451030071824789,
+                  "silhouette_xor_fraction": 0.0011197916666666667
+                },
+                "msaa4": {
+                  "psnr_db": 44.490711581510155,
+                  "ssim": 0.9986522205740956,
+                  "flip": 0.0011735791340470314,
+                  "silhouette_xor_fraction": 0.00034288194444444443
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 36.18619602610528,
+                  "ssim": 0.9924829797091939,
+                  "flip": 0.0030662694480270147,
+                  "silhouette_xor_fraction": 0.0011371527777777777
+                },
+                "msaa4": {
+                  "psnr_db": 43.03874908490977,
+                  "ssim": 0.9972012249698985,
+                  "flip": 0.002143468940630555,
+                  "silhouette_xor_fraction": 0.000390625
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 36.342329899817834,
+                  "ssim": 0.9934938572183623,
+                  "flip": 0.0025340307038277388,
+                  "silhouette_xor_fraction": 0.0011328125
+                },
+                "msaa4": {
+                  "psnr_db": 44.47142478178427,
+                  "ssim": 0.9985497451224565,
+                  "flip": 0.0012803577119484544,
+                  "silhouette_xor_fraction": 0.0003515625
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 36.39039221120339,
+                  "ssim": 0.9935687048170302,
+                  "flip": 0.002545073628425598,
+                  "silhouette_xor_fraction": 0.0011241319444444445
+                },
+                "msaa4": {
+                  "psnr_db": 44.62031116850666,
+                  "ssim": 0.9985771710165774,
+                  "flip": 0.0012860221322625875,
+                  "silhouette_xor_fraction": 0.0003298611111111111
+                }
+              }
+            }
+          },
+          {
+            "view": 4,
+            "distance": 3.3,
+            "eye": [
+              -2.7321881762719613,
+              0.825,
+              -1.6566601249018142
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 35.39825696229891,
+                  "ssim": 0.9905473097966236,
+                  "flip": 0.003409747267141938,
+                  "silhouette_xor_fraction": 0.0018359375
+                },
+                "msaa4": {
+                  "psnr_db": 43.22671281181841,
+                  "ssim": 0.9976530359907756,
+                  "flip": 0.0016615913482382894,
+                  "silhouette_xor_fraction": 0.0004861111111111111
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 35.351364313776024,
+                  "ssim": 0.9904281911052375,
+                  "flip": 0.0034725198056548834,
+                  "silhouette_xor_fraction": 0.0018532986111111111
+                },
+                "msaa4": {
+                  "psnr_db": 42.89891241842127,
+                  "ssim": 0.9972434891385286,
+                  "flip": 0.00181141821667552,
+                  "silhouette_xor_fraction": 0.0005121527777777778
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 34.997836399218635,
+                  "ssim": 0.9890138146838515,
+                  "flip": 0.004375093150883913,
+                  "silhouette_xor_fraction": 0.0018532986111111111
+                },
+                "msaa4": {
+                  "psnr_db": 40.663268951521935,
+                  "ssim": 0.9952866123819433,
+                  "flip": 0.0030921599827706814,
+                  "silhouette_xor_fraction": 0.0006206597222222222
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 35.52312586890727,
+                  "ssim": 0.9913473730461498,
+                  "flip": 0.003422725712880492,
+                  "silhouette_xor_fraction": 0.0018359375
+                },
+                "msaa4": {
+                  "psnr_db": 43.229041344697194,
+                  "ssim": 0.9976548280528073,
+                  "flip": 0.001879227813333273,
+                  "silhouette_xor_fraction": 0.0004861111111111111
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 35.53097919739176,
+                  "ssim": 0.9913664436775371,
+                  "flip": 0.003441957291215658,
+                  "silhouette_xor_fraction": 0.0018185763888888889
+                },
+                "msaa4": {
+                  "psnr_db": 43.379371305158294,
+                  "ssim": 0.9976405971027286,
+                  "flip": 0.0019637998193502426,
+                  "silhouette_xor_fraction": 0.0004730902777777778
+                }
+              }
+            }
+          },
+          {
+            "view": 4,
+            "distance": 5.2,
+            "eye": [
+              -4.305266217155818,
+              1.3,
+              -2.610494742269526
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 37.570821977308775,
+                  "ssim": 0.9943486427157915,
+                  "flip": 0.0018673969898372889,
+                  "silhouette_xor_fraction": 0.0012413194444444444
+                },
+                "msaa4": {
+                  "psnr_db": 44.77386549557188,
+                  "ssim": 0.9980621403192176,
+                  "flip": 0.0009802355198189616,
+                  "silhouette_xor_fraction": 0.0003993055555555556
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 37.583069017285105,
+                  "ssim": 0.9944520461497123,
+                  "flip": 0.001877747243270278,
+                  "silhouette_xor_fraction": 0.0012456597222222222
+                },
+                "msaa4": {
+                  "psnr_db": 44.745123113805356,
+                  "ssim": 0.9980460020023949,
+                  "flip": 0.001035389956086874,
+                  "silhouette_xor_fraction": 0.0004253472222222222
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 37.3290230238526,
+                  "ssim": 0.9937027339757992,
+                  "flip": 0.002183567499741912,
+                  "silhouette_xor_fraction": 0.0012413194444444444
+                },
+                "msaa4": {
+                  "psnr_db": 43.62399626997974,
+                  "ssim": 0.9974714947510468,
+                  "flip": 0.0014209862565621734,
+                  "silhouette_xor_fraction": 0.0004166666666666667
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 37.64289157373324,
+                  "ssim": 0.9945579633116722,
+                  "flip": 0.001863489975221455,
+                  "silhouette_xor_fraction": 0.0012413194444444444
+                },
+                "msaa4": {
+                  "psnr_db": 44.82448170500783,
+                  "ssim": 0.9982064421025534,
+                  "flip": 0.0010250065242871642,
+                  "silhouette_xor_fraction": 0.0004123263888888889
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 37.64759936516302,
+                  "ssim": 0.9945777431827824,
+                  "flip": 0.001873145578429103,
+                  "silhouette_xor_fraction": 0.0012369791666666666
+                },
+                "msaa4": {
+                  "psnr_db": 44.93396962880596,
+                  "ssim": 0.9982100103744844,
+                  "flip": 0.0010249606566503644,
+                  "silhouette_xor_fraction": 0.0003993055555555556
+                }
+              }
+            }
+          },
+          {
+            "view": 5,
+            "distance": 3.3,
+            "eye": [
+              3.225202142851199,
+              0.27500000000000013,
+              -0.6422196958580699
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 34.973196658640035,
+                  "ssim": 0.991379999896634,
+                  "flip": 0.003948240540921688,
+                  "silhouette_xor_fraction": 0.0017447916666666666
+                },
+                "msaa4": {
+                  "psnr_db": 43.07878529585034,
+                  "ssim": 0.9984711623164801,
+                  "flip": 0.0017251097597181797,
+                  "silhouette_xor_fraction": 0.0004861111111111111
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 34.70819105678729,
+                  "ssim": 0.9898672351579091,
+                  "flip": 0.0046091447584331036,
+                  "silhouette_xor_fraction": 0.0017578125
+                },
+                "msaa4": {
+                  "psnr_db": 41.78416792691208,
+                  "ssim": 0.996845674369687,
+                  "flip": 0.002589482581242919,
+                  "silhouette_xor_fraction": 0.0004947916666666667
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 34.420423158858455,
+                  "ssim": 0.9861867700488457,
+                  "flip": 0.006381520535796881,
+                  "silhouette_xor_fraction": 0.0017447916666666666
+                },
+                "msaa4": {
+                  "psnr_db": 40.26461065254259,
+                  "ssim": 0.9928435719987703,
+                  "flip": 0.004965708125382662,
+                  "silhouette_xor_fraction": 0.0005381944444444444
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 34.906772552070365,
+                  "ssim": 0.9909672141564406,
+                  "flip": 0.004232298582792282,
+                  "silhouette_xor_fraction": 0.0017578125
+                },
+                "msaa4": {
+                  "psnr_db": 42.73359155208003,
+                  "ssim": 0.9979263800415052,
+                  "flip": 0.0022750357165932655,
+                  "silhouette_xor_fraction": 0.0004991319444444444
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 34.980656352725894,
+                  "ssim": 0.9910476077849092,
+                  "flip": 0.0042226361110806465,
+                  "silhouette_xor_fraction": 0.0017274305555555556
+                },
+                "msaa4": {
+                  "psnr_db": 43.02079461982846,
+                  "ssim": 0.9980110221798458,
+                  "flip": 0.0023202814627438784,
+                  "silhouette_xor_fraction": 0.0004427083333333333
+                }
+              }
+            }
+          },
+          {
+            "view": 5,
+            "distance": 5.2,
+            "eye": [
+              5.082136709947345,
+              0.4333333333333335,
+              -1.0119825510490799
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 36.91993062752562,
+                  "ssim": 0.9949263651717006,
+                  "flip": 0.0023569476325064898,
+                  "silhouette_xor_fraction": 0.0011371527777777777
+                },
+                "msaa4": {
+                  "psnr_db": 45.83223924533858,
+                  "ssim": 0.999141940838085,
+                  "flip": 0.0009974363492801785,
+                  "silhouette_xor_fraction": 0.00026041666666666666
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 36.6716266274942,
+                  "ssim": 0.9943046035746945,
+                  "flip": 0.0025921028573065996,
+                  "silhouette_xor_fraction": 0.001154513888888889
+                },
+                "msaa4": {
+                  "psnr_db": 45.0398826881614,
+                  "ssim": 0.9985915890456972,
+                  "flip": 0.001233213464729488,
+                  "silhouette_xor_fraction": 0.00026475694444444447
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 36.518463861677986,
+                  "ssim": 0.993314560802852,
+                  "flip": 0.0028939072508364916,
+                  "silhouette_xor_fraction": 0.0011588541666666668
+                },
+                "msaa4": {
+                  "psnr_db": 44.09807854684597,
+                  "ssim": 0.9976167145657971,
+                  "flip": 0.001859047682955861,
+                  "silhouette_xor_fraction": 0.0002777777777777778
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 36.878380449306846,
+                  "ssim": 0.9948255307379764,
+                  "flip": 0.0023364091757684946,
+                  "silhouette_xor_fraction": 0.0011414930555555555
+                },
+                "msaa4": {
+                  "psnr_db": 45.75345972767315,
+                  "ssim": 0.9990335243870071,
+                  "flip": 0.0010896656895056367,
+                  "silhouette_xor_fraction": 0.0002690972222222222
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 36.94392604556491,
+                  "ssim": 0.9948471378398861,
+                  "flip": 0.002338770078495145,
+                  "silhouette_xor_fraction": 0.0011241319444444445
+                },
+                "msaa4": {
+                  "psnr_db": 45.90889045714492,
+                  "ssim": 0.999049219477474,
+                  "flip": 0.0010935261379927397,
+                  "silhouette_xor_fraction": 0.00024739583333333335
+                }
+              }
+            }
+          },
+          {
+            "view": 6,
+            "distance": 3.3,
+            "eye": [
+              -1.9443505143142688,
+              -0.27499999999999974,
+              2.652145561142118
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 34.62035979093176,
+                  "ssim": 0.9906078096102425,
+                  "flip": 0.004317482002079487,
+                  "silhouette_xor_fraction": 0.0017447916666666666
+                },
+                "msaa4": {
+                  "psnr_db": 43.10904025525855,
+                  "ssim": 0.998026955625773,
+                  "flip": 0.0018033547094091773,
+                  "silhouette_xor_fraction": 0.00043836805555555556
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 34.52121668858835,
+                  "ssim": 0.9901743235946242,
+                  "flip": 0.004372045863419771,
+                  "silhouette_xor_fraction": 0.0017708333333333332
+                },
+                "msaa4": {
+                  "psnr_db": 42.644062717778944,
+                  "ssim": 0.9977220154551962,
+                  "flip": 0.002042521256953478,
+                  "silhouette_xor_fraction": 0.00046875
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 34.14650892138851,
+                  "ssim": 0.9855316058796347,
+                  "flip": 0.006980742793530226,
+                  "silhouette_xor_fraction": 0.0017534722222222222
+                },
+                "msaa4": {
+                  "psnr_db": 40.37437348798307,
+                  "ssim": 0.9927755468136329,
+                  "flip": 0.005412098485976458,
+                  "silhouette_xor_fraction": 0.0005295138888888889
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 34.492746808308326,
+                  "ssim": 0.9893973658627528,
+                  "flip": 0.004785726312547922,
+                  "silhouette_xor_fraction": 0.001775173611111111
+                },
+                "msaa4": {
+                  "psnr_db": 42.55724587612627,
+                  "ssim": 0.9971394693450052,
+                  "flip": 0.00263161095790565,
+                  "silhouette_xor_fraction": 0.00046440972222222223
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 34.63488003995212,
+                  "ssim": 0.9897063626323969,
+                  "flip": 0.004771917127072811,
+                  "silhouette_xor_fraction": 0.001736111111111111
+                },
+                "msaa4": {
+                  "psnr_db": 42.60794036014357,
+                  "ssim": 0.997153953566708,
+                  "flip": 0.0027202763594686985,
+                  "silhouette_xor_fraction": 0.0004557291666666667
+                }
+              }
+            }
+          },
+          {
+            "view": 6,
+            "distance": 5.2,
+            "eye": [
+              -3.063825052858848,
+              -0.43333333333333296,
+              4.17913845998152
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 36.33560584818327,
+                  "ssim": 0.9943463021995935,
+                  "flip": 0.0024623386561870575,
+                  "silhouette_xor_fraction": 0.0012630208333333332
+                },
+                "msaa4": {
+                  "psnr_db": 45.62598917624615,
+                  "ssim": 0.9989075194025526,
+                  "flip": 0.0010114554315805435,
+                  "silhouette_xor_fraction": 0.0002951388888888889
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 36.29434281182908,
+                  "ssim": 0.9942127829290031,
+                  "flip": 0.0024825637228786945,
+                  "silhouette_xor_fraction": 0.0012760416666666666
+                },
+                "msaa4": {
+                  "psnr_db": 45.399292977103194,
+                  "ssim": 0.9988619022893798,
+                  "flip": 0.0010727468179538846,
+                  "silhouette_xor_fraction": 0.00029947916666666664
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 36.105049944349005,
+                  "ssim": 0.9928074147543129,
+                  "flip": 0.0031584424432367086,
+                  "silhouette_xor_fraction": 0.0012760416666666666
+                },
+                "msaa4": {
+                  "psnr_db": 43.98074369572971,
+                  "ssim": 0.997487233586187,
+                  "flip": 0.0021127955988049507,
+                  "silhouette_xor_fraction": 0.0003255208333333333
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 36.27816402693199,
+                  "ssim": 0.9939831883545095,
+                  "flip": 0.0025703618302941322,
+                  "silhouette_xor_fraction": 0.0012717013888888888
+                },
+                "msaa4": {
+                  "psnr_db": 45.419085607043066,
+                  "ssim": 0.9987608326297769,
+                  "flip": 0.0012135528959333897,
+                  "silhouette_xor_fraction": 0.00030381944444444445
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 36.26213722353355,
+                  "ssim": 0.9939659554300124,
+                  "flip": 0.0025808566715568304,
+                  "silhouette_xor_fraction": 0.0012717013888888888
+                },
+                "msaa4": {
+                  "psnr_db": 45.57002237181521,
+                  "ssim": 0.9987949170390494,
+                  "flip": 0.001241157529875636,
+                  "silhouette_xor_fraction": 0.0002734375
+                }
+              }
+            }
+          },
+          {
+            "view": 7,
+            "distance": 3.3,
+            "eye": [
+              -0.3476427421937533,
+              -0.825,
+              -3.176242988784077
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 37.22559749904911,
+                  "ssim": 0.9950141192023175,
+                  "flip": 0.0026321716140955687,
+                  "silhouette_xor_fraction": 0.0014756944444444444
+                },
+                "msaa4": {
+                  "psnr_db": 46.17948539967277,
+                  "ssim": 0.9990993422321182,
+                  "flip": 0.0010920665226876736,
+                  "silhouette_xor_fraction": 0.0004123263888888889
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 37.23417726513154,
+                  "ssim": 0.994845518501032,
+                  "flip": 0.002672238042578101,
+                  "silhouette_xor_fraction": 0.0014670138888888888
+                },
+                "msaa4": {
+                  "psnr_db": 45.97850457472656,
+                  "ssim": 0.9989092761724173,
+                  "flip": 0.0011671989923343062,
+                  "silhouette_xor_fraction": 0.0004296875
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 36.408021916302566,
+                  "ssim": 0.9923713381796602,
+                  "flip": 0.003650044556707144,
+                  "silhouette_xor_fraction": 0.0015364583333333333
+                },
+                "msaa4": {
+                  "psnr_db": 42.47326236958246,
+                  "ssim": 0.9966523494174421,
+                  "flip": 0.0023358033504337072,
+                  "silhouette_xor_fraction": 0.0004427083333333333
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 37.096117283122666,
+                  "ssim": 0.9947691515740894,
+                  "flip": 0.0026703979820013046,
+                  "silhouette_xor_fraction": 0.0014973958333333334
+                },
+                "msaa4": {
+                  "psnr_db": 45.28401929485382,
+                  "ssim": 0.9989781322506279,
+                  "flip": 0.0011838906211778522,
+                  "silhouette_xor_fraction": 0.00046875
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 37.2797596587571,
+                  "ssim": 0.9950872495539335,
+                  "flip": 0.002642204752191901,
+                  "silhouette_xor_fraction": 0.0014453125
+                },
+                "msaa4": {
+                  "psnr_db": 45.49025358273636,
+                  "ssim": 0.9989055026481751,
+                  "flip": 0.0011813713936135173,
+                  "silhouette_xor_fraction": 0.0004470486111111111
+                }
+              }
+            }
+          },
+          {
+            "view": 7,
+            "distance": 5.2,
+            "eye": [
+              -0.5478006846689446,
+              -1.3,
+              -5.004988952023395
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 39.08254236047016,
+                  "ssim": 0.9960416729597548,
+                  "flip": 0.0015475729014724493,
+                  "silhouette_xor_fraction": 0.0012413194444444444
+                },
+                "msaa4": {
+                  "psnr_db": 47.95112760937303,
+                  "ssim": 0.9992806793839213,
+                  "flip": 0.0006237732595764101,
+                  "silhouette_xor_fraction": 0.00029947916666666664
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 39.06822470107002,
+                  "ssim": 0.9960419419159154,
+                  "flip": 0.0015475134132429957,
+                  "silhouette_xor_fraction": 0.0012413194444444444
+                },
+                "msaa4": {
+                  "psnr_db": 47.8912626151842,
+                  "ssim": 0.9992630330612059,
+                  "flip": 0.0006262740353122354,
+                  "silhouette_xor_fraction": 0.00031684027777777776
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 38.61097258710261,
+                  "ssim": 0.9949164843976481,
+                  "flip": 0.0018848248291760683,
+                  "silhouette_xor_fraction": 0.0012456597222222222
+                },
+                "msaa4": {
+                  "psnr_db": 45.33284294891358,
+                  "ssim": 0.9982746159250335,
+                  "flip": 0.0010481879580765963,
+                  "silhouette_xor_fraction": 0.0003689236111111111
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 39.058299667240334,
+                  "ssim": 0.9960179937507561,
+                  "flip": 0.001555533497594297,
+                  "silhouette_xor_fraction": 0.0012456597222222222
+                },
+                "msaa4": {
+                  "psnr_db": 47.47204433214826,
+                  "ssim": 0.9992133634862176,
+                  "flip": 0.0006429910426959395,
+                  "silhouette_xor_fraction": 0.0003385416666666667
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 39.1493006037321,
+                  "ssim": 0.996087313988717,
+                  "flip": 0.001544338185340166,
+                  "silhouette_xor_fraction": 0.0012196180555555556
+                },
+                "msaa4": {
+                  "psnr_db": 47.8972603413003,
+                  "ssim": 0.999292093831125,
+                  "flip": 0.0006391885690391064,
+                  "silhouette_xor_fraction": 0.00029947916666666664
+                }
+              }
+            }
+          },
+          {
+            "view": 8,
+            "distance": 3.3,
+            "eye": [
+              2.255042300408388,
+              -1.3750000000000002,
+              1.9784234186262675
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 35.887895632608085,
+                  "ssim": 0.9909760284426531,
+                  "flip": 0.0037570474669337273,
+                  "silhouette_xor_fraction": 0.0016883680555555556
+                },
+                "msaa4": {
+                  "psnr_db": 44.574116921119625,
+                  "ssim": 0.9984487039791483,
+                  "flip": 0.001650997088290751,
+                  "silhouette_xor_fraction": 0.0004296875
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 35.593610863510996,
+                  "ssim": 0.9895424858118141,
+                  "flip": 0.004225868731737137,
+                  "silhouette_xor_fraction": 0.0016970486111111112
+                },
+                "msaa4": {
+                  "psnr_db": 43.1552682028968,
+                  "ssim": 0.997008629818863,
+                  "flip": 0.0022580281365662813,
+                  "silhouette_xor_fraction": 0.0004470486111111111
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 35.38438885547467,
+                  "ssim": 0.9869827691763302,
+                  "flip": 0.005954135674983263,
+                  "silhouette_xor_fraction": 0.001640625
+                },
+                "msaa4": {
+                  "psnr_db": 41.157896945633766,
+                  "ssim": 0.994274829339481,
+                  "flip": 0.004517646506428719,
+                  "silhouette_xor_fraction": 0.0005078125
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 35.84010730229309,
+                  "ssim": 0.9904385856719785,
+                  "flip": 0.0040817465633153915,
+                  "silhouette_xor_fraction": 0.0016753472222222222
+                },
+                "msaa4": {
+                  "psnr_db": 43.8024670520192,
+                  "ssim": 0.9978462194251636,
+                  "flip": 0.002189238788560033,
+                  "silhouette_xor_fraction": 0.0004470486111111111
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 35.95680821721657,
+                  "ssim": 0.9905506762406723,
+                  "flip": 0.004077624063938856,
+                  "silhouette_xor_fraction": 0.0016362847222222221
+                },
+                "msaa4": {
+                  "psnr_db": 43.94618642563383,
+                  "ssim": 0.9979078326255015,
+                  "flip": 0.002244917443022132,
+                  "silhouette_xor_fraction": 0.0004166666666666667
+                }
+              }
+            }
+          },
+          {
+            "view": 8,
+            "distance": 5.2,
+            "eye": [
+              3.553399988522308,
+              -2.166666666666667,
+              3.117515689956543
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 37.85098444284677,
+                  "ssim": 0.9945513405655922,
+                  "flip": 0.0020783336367458105,
+                  "silhouette_xor_fraction": 0.0010850694444444445
+                },
+                "msaa4": {
+                  "psnr_db": 46.369049005461996,
+                  "ssim": 0.9989115337603757,
+                  "flip": 0.0008877228247001767,
+                  "silhouette_xor_fraction": 0.00031684027777777776
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 37.71204169898166,
+                  "ssim": 0.9940025897413168,
+                  "flip": 0.0022503116633743048,
+                  "silhouette_xor_fraction": 0.0010894097222222223
+                },
+                "msaa4": {
+                  "psnr_db": 45.583674037518534,
+                  "ssim": 0.9984417911741984,
+                  "flip": 0.001089746248908341,
+                  "silhouette_xor_fraction": 0.0003255208333333333
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 37.69523806733939,
+                  "ssim": 0.9935890987945252,
+                  "flip": 0.002634708769619465,
+                  "silhouette_xor_fraction": 0.0010850694444444445
+                },
+                "msaa4": {
+                  "psnr_db": 44.556037538703734,
+                  "ssim": 0.9977881862617134,
+                  "flip": 0.001723677502013743,
+                  "silhouette_xor_fraction": 0.00032118055555555556
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 37.73807396771217,
+                  "ssim": 0.9944004478459996,
+                  "flip": 0.00219563371501863,
+                  "silhouette_xor_fraction": 0.0011024305555555555
+                },
+                "msaa4": {
+                  "psnr_db": 46.210785083771384,
+                  "ssim": 0.9988367078182648,
+                  "flip": 0.0010433690622448921,
+                  "silhouette_xor_fraction": 0.00031684027777777776
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 37.81243714303647,
+                  "ssim": 0.9944837063594876,
+                  "flip": 0.002177270594984293,
+                  "silhouette_xor_fraction": 0.0010980902777777777
+                },
+                "msaa4": {
+                  "psnr_db": 46.36474171538821,
+                  "ssim": 0.9988861379801821,
+                  "flip": 0.001045641372911632,
+                  "silhouette_xor_fraction": 0.0002907986111111111
+                }
+              }
+            }
+          },
+          {
+            "view": 9,
+            "distance": 3.3,
+            "eye": [
+              -2.679750148811414,
+              -1.9249999999999996,
+              0.05756856733673144
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 38.50174009803277,
+                  "ssim": 0.9951184421944645,
+                  "flip": 0.0018175267614424229,
+                  "silhouette_xor_fraction": 0.0015885416666666667
+                },
+                "msaa4": {
+                  "psnr_db": 46.97207019826312,
+                  "ssim": 0.9990965823737943,
+                  "flip": 0.0008468830492347479,
+                  "silhouette_xor_fraction": 0.0004470486111111111
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 38.46737523149187,
+                  "ssim": 0.994940087619282,
+                  "flip": 0.0018414582591503859,
+                  "silhouette_xor_fraction": 0.0015972222222222223
+                },
+                "msaa4": {
+                  "psnr_db": 46.82908562367451,
+                  "ssim": 0.9989282977716182,
+                  "flip": 0.0008792492444626987,
+                  "silhouette_xor_fraction": 0.0004470486111111111
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 37.956015450558255,
+                  "ssim": 0.9937891441633642,
+                  "flip": 0.0025233826600015163,
+                  "silhouette_xor_fraction": 0.0015581597222222223
+                },
+                "msaa4": {
+                  "psnr_db": 44.57748388877391,
+                  "ssim": 0.9977059475544021,
+                  "flip": 0.0017278250306844711,
+                  "silhouette_xor_fraction": 0.0004296875
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 38.4748711938287,
+                  "ssim": 0.9948439012421232,
+                  "flip": 0.001883982913568616,
+                  "silhouette_xor_fraction": 0.0015885416666666667
+                },
+                "msaa4": {
+                  "psnr_db": 46.706870635453306,
+                  "ssim": 0.9988230150759626,
+                  "flip": 0.000954241375438869,
+                  "silhouette_xor_fraction": 0.00046875
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 38.58382746366265,
+                  "ssim": 0.9950789408632417,
+                  "flip": 0.0018795522628352046,
+                  "silhouette_xor_fraction": 0.0015625
+                },
+                "msaa4": {
+                  "psnr_db": 46.86321716582818,
+                  "ssim": 0.9988550781373805,
+                  "flip": 0.0009656130569055676,
+                  "silhouette_xor_fraction": 0.00043402777777777775
+                }
+              }
+            }
+          },
+          {
+            "view": 9,
+            "distance": 5.2,
+            "eye": [
+              -4.222636598127077,
+              -3.033333333333333,
+              0.09071410610636471
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 40.046035548732696,
+                  "ssim": 0.9966623934834115,
+                  "flip": 0.0010716865072026849,
+                  "silhouette_xor_fraction": 0.0010894097222222223
+                },
+                "msaa4": {
+                  "psnr_db": 48.754414349630544,
+                  "ssim": 0.9994181965584117,
+                  "flip": 0.0005248214583843946,
+                  "silhouette_xor_fraction": 0.0002560763888888889
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 39.9712258988113,
+                  "ssim": 0.9965615296401337,
+                  "flip": 0.0010894427541643381,
+                  "silhouette_xor_fraction": 0.00109375
+                },
+                "msaa4": {
+                  "psnr_db": 48.7154646604894,
+                  "ssim": 0.9994310301109777,
+                  "flip": 0.0005224734777584672,
+                  "silhouette_xor_fraction": 0.0002560763888888889
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 39.87048858693746,
+                  "ssim": 0.9962687282874808,
+                  "flip": 0.0012739859521389008,
+                  "silhouette_xor_fraction": 0.0010763888888888889
+                },
+                "msaa4": {
+                  "psnr_db": 47.517649819943614,
+                  "ssim": 0.9990197047349952,
+                  "flip": 0.0008121122955344617,
+                  "silhouette_xor_fraction": 0.00024305555555555555
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 39.95043264168254,
+                  "ssim": 0.9966035066385861,
+                  "flip": 0.0010958313941955566,
+                  "silhouette_xor_fraction": 0.0011024305555555555
+                },
+                "msaa4": {
+                  "psnr_db": 48.63849195094691,
+                  "ssim": 0.9993122172201572,
+                  "flip": 0.0005613015382550657,
+                  "silhouette_xor_fraction": 0.0002560763888888889
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 40.04539106151,
+                  "ssim": 0.9967775383824123,
+                  "flip": 0.0010625298600643873,
+                  "silhouette_xor_fraction": 0.0010980902777777777
+                },
+                "msaa4": {
+                  "psnr_db": 48.74645738995538,
+                  "ssim": 0.9993401618506633,
+                  "flip": 0.000565870082937181,
+                  "silhouette_xor_fraction": 0.0002517361111111111
+                }
+              }
+            }
+          },
+          {
+            "view": 10,
+            "distance": 3.3,
+            "eye": [
+              1.5774493940548284,
+              -2.4749999999999996,
+              -1.5086511887099863
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 38.12113859500461,
+                  "ssim": 0.9949115288915817,
+                  "flip": 0.0019403204787522554,
+                  "silhouette_xor_fraction": 0.0016102430555555555
+                },
+                "msaa4": {
+                  "psnr_db": 45.825260853462694,
+                  "ssim": 0.9988629531298094,
+                  "flip": 0.000991634326055646,
+                  "silhouette_xor_fraction": 0.0005034722222222222
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 37.935468438498845,
+                  "ssim": 0.9945688044946079,
+                  "flip": 0.0021020262502133846,
+                  "silhouette_xor_fraction": 0.001623263888888889
+                },
+                "msaa4": {
+                  "psnr_db": 45.045770500220186,
+                  "ssim": 0.9985060825378311,
+                  "flip": 0.0012368864845484495,
+                  "silhouette_xor_fraction": 0.0005164930555555555
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 37.47161684569664,
+                  "ssim": 0.9929843830115114,
+                  "flip": 0.0026281853206455708,
+                  "silhouette_xor_fraction": 0.0016536458333333334
+                },
+                "msaa4": {
+                  "psnr_db": 43.323767511797904,
+                  "ssim": 0.9970477766236481,
+                  "flip": 0.001886896206997335,
+                  "silhouette_xor_fraction": 0.000546875
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 38.0688402612478,
+                  "ssim": 0.9948332710475608,
+                  "flip": 0.002021757187321782,
+                  "silhouette_xor_fraction": 0.0016189236111111111
+                },
+                "msaa4": {
+                  "psnr_db": 45.634170893289145,
+                  "ssim": 0.9987780214648128,
+                  "flip": 0.0011190843069925904,
+                  "silhouette_xor_fraction": 0.0005078125
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 38.148717174156644,
+                  "ssim": 0.9948839027459929,
+                  "flip": 0.0020220852456986904,
+                  "silhouette_xor_fraction": 0.0016145833333333333
+                },
+                "msaa4": {
+                  "psnr_db": 45.69874286462215,
+                  "ssim": 0.9988458928031986,
+                  "flip": 0.0011369050480425358,
+                  "silhouette_xor_fraction": 0.0005034722222222222
+                }
+              }
+            }
+          },
+          {
+            "view": 10,
+            "distance": 5.2,
+            "eye": [
+              2.485677833056094,
+              -3.9000000000000004,
+              -2.377268539785433
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 39.91965872880484,
+                  "ssim": 0.9966399625796579,
+                  "flip": 0.0011269181268289685,
+                  "silhouette_xor_fraction": 0.0010503472222222223
+                },
+                "msaa4": {
+                  "psnr_db": 48.13929389910565,
+                  "ssim": 0.9994042972126245,
+                  "flip": 0.0005759820924140513,
+                  "silhouette_xor_fraction": 0.0002777777777777778
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 39.84400301390478,
+                  "ssim": 0.9965344524333537,
+                  "flip": 0.001206683344207704,
+                  "silhouette_xor_fraction": 0.0010460069444444445
+                },
+                "msaa4": {
+                  "psnr_db": 47.69549200423967,
+                  "ssim": 0.9992764931460357,
+                  "flip": 0.0006545105134136975,
+                  "silhouette_xor_fraction": 0.00028211805555555553
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 39.645111830916704,
+                  "ssim": 0.9960444854423319,
+                  "flip": 0.0013067102991044521,
+                  "silhouette_xor_fraction": 0.0010503472222222223
+                },
+                "msaa4": {
+                  "psnr_db": 46.97781913627142,
+                  "ssim": 0.9987897132502155,
+                  "flip": 0.0008285795338451862,
+                  "silhouette_xor_fraction": 0.00028645833333333333
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 39.94612443508856,
+                  "ssim": 0.9965994906793105,
+                  "flip": 0.0011429504957050085,
+                  "silhouette_xor_fraction": 0.0010460069444444445
+                },
+                "msaa4": {
+                  "psnr_db": 48.09468728974878,
+                  "ssim": 0.9993812042639639,
+                  "flip": 0.0006050047813914716,
+                  "silhouette_xor_fraction": 0.0002777777777777778
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 39.99189930060225,
+                  "ssim": 0.9966075940349746,
+                  "flip": 0.0011537636164575815,
+                  "silhouette_xor_fraction": 0.0010416666666666667
+                },
+                "msaa4": {
+                  "psnr_db": 48.01148096901458,
+                  "ssim": 0.9993744130656292,
+                  "flip": 0.0006153433350846171,
+                  "silhouette_xor_fraction": 0.00028211805555555553
+                }
+              }
+            }
+          },
+          {
+            "view": 11,
+            "distance": 3.3,
+            "eye": [
+              -0.08705745103924314,
+              -3.025,
+              1.315977203533005
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 37.65394523802627,
+                  "ssim": 0.9951241892409297,
+                  "flip": 0.001792673021554947,
+                  "silhouette_xor_fraction": 0.0015277777777777779
+                },
+                "msaa4": {
+                  "psnr_db": 46.55203757582857,
+                  "ssim": 0.999245953934263,
+                  "flip": 0.000853411911521107,
+                  "silhouette_xor_fraction": 0.0003862847222222222
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 37.62843613259223,
+                  "ssim": 0.9950830343993478,
+                  "flip": 0.0018022014992311597,
+                  "silhouette_xor_fraction": 0.0015277777777777779
+                },
+                "msaa4": {
+                  "psnr_db": 46.40790668041334,
+                  "ssim": 0.9992191209330851,
+                  "flip": 0.0008826482808217406,
+                  "silhouette_xor_fraction": 0.0003862847222222222
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 37.46394236042261,
+                  "ssim": 0.9944888571293311,
+                  "flip": 0.002040708903223276,
+                  "silhouette_xor_fraction": 0.0015364583333333333
+                },
+                "msaa4": {
+                  "psnr_db": 45.56989696265914,
+                  "ssim": 0.9986036410445259,
+                  "flip": 0.0012441989965736866,
+                  "silhouette_xor_fraction": 0.0003949652777777778
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 37.609928772142624,
+                  "ssim": 0.9950014377666169,
+                  "flip": 0.0018495882395654917,
+                  "silhouette_xor_fraction": 0.0015321180555555557
+                },
+                "msaa4": {
+                  "psnr_db": 46.32508476680826,
+                  "ssim": 0.9991441389489877,
+                  "flip": 0.0009675186011008918,
+                  "silhouette_xor_fraction": 0.000390625
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 37.59947016256246,
+                  "ssim": 0.9949390027875803,
+                  "flip": 0.0018576134461909533,
+                  "silhouette_xor_fraction": 0.0015625
+                },
+                "msaa4": {
+                  "psnr_db": 46.18558771972401,
+                  "ssim": 0.9991174766082072,
+                  "flip": 0.0009772334014996886,
+                  "silhouette_xor_fraction": 0.0004123263888888889
+                }
+              }
+            }
+          },
+          {
+            "view": 11,
+            "distance": 5.2,
+            "eye": [
+              -0.13718143800123164,
+              -4.7666666666666675,
+              2.073661047991402
+            ],
+            "quality": {
+              "reference": {
+                "native": {
+                  "psnr_db": 40.202659555799364,
+                  "ssim": 0.9970278752900306,
+                  "flip": 0.0010892756981775165,
+                  "silhouette_xor_fraction": 0.0008680555555555555
+                },
+                "msaa4": {
+                  "psnr_db": 48.30065575277999,
+                  "ssim": 0.9994479805155406,
+                  "flip": 0.0005643808981403708,
+                  "silhouette_xor_fraction": 0.00023871527777777777
+                }
+              },
+              "manymesh": {
+                "native": {
+                  "psnr_db": 40.15476521020818,
+                  "ssim": 0.9970107644746363,
+                  "flip": 0.0011016355128958821,
+                  "silhouette_xor_fraction": 0.0008680555555555555
+                },
+                "msaa4": {
+                  "psnr_db": 48.22693687340194,
+                  "ssim": 0.9994552353771906,
+                  "flip": 0.000586841837503016,
+                  "silhouette_xor_fraction": 0.00023871527777777777
+                }
+              },
+              "qem_preserve_border": {
+                "native": {
+                  "psnr_db": 40.049763795835666,
+                  "ssim": 0.9968360153609663,
+                  "flip": 0.001144461682997644,
+                  "silhouette_xor_fraction": 0.0008723958333333333
+                },
+                "msaa4": {
+                  "psnr_db": 47.46722056842266,
+                  "ssim": 0.9991807758978435,
+                  "flip": 0.0007131771417334676,
+                  "silhouette_xor_fraction": 0.0002517361111111111
+                }
+              },
+              "meshoptimizer_lock_border": {
+                "native": {
+                  "psnr_db": 40.10309285163438,
+                  "ssim": 0.9969578681027943,
+                  "flip": 0.0011085731675848365,
+                  "silhouette_xor_fraction": 0.0008723958333333333
+                },
+                "msaa4": {
+                  "psnr_db": 48.402794672644156,
+                  "ssim": 0.9994246796574993,
+                  "flip": 0.0005960877751931548,
+                  "silhouette_xor_fraction": 0.00023871527777777777
+                }
+              },
+              "fitted": {
+                "native": {
+                  "psnr_db": 40.16097589124506,
+                  "ssim": 0.9969864978934903,
+                  "flip": 0.0010968804126605392,
+                  "silhouette_xor_fraction": 0.0008767361111111111
+                },
+                "msaa4": {
+                  "psnr_db": 48.08229261977758,
+                  "ssim": 0.9993698468202906,
+                  "flip": 0.0006125265499576926,
+                  "silhouette_xor_fraction": 0.00026475694444444447
+                }
+              }
+            }
+          }
+        ],
+        "scorer_script_sha256": {
+          "bench_appearance_controls.py": "456b2434c4910cc82a1c37f878bac98a223b70e9cdbdfb9f0cb9b2bf8d60252c",
+          "bench_component_gpu.py": "1815a0a9f60a339adf869879006c7492a2d484797a22efcc7543f9c84bcbce47",
+          "bench_contour_priority_aa.py": "6266a4b16e428bbb291a0ce7f162b05c8b07bc1cc13db4e0cabef8c8b2da8bbe",
+          "bench_bevy_smaa.py": "6e5b7fbccd135ac29cf87cd601fa24d891a9ae3981ddef575cd7280b8d8143a6",
+          "cluster_decoder_surface_quality.py": "08d80488efa4e4d3d2b45166f11d76ca230e3127c94f2a4580181f18bda6ea2c"
+        }
+      },
+      "raw_receipt_sha256": {
+        "protocol": "31a10431f3636a03deca4b7e9db71e6e353274bdd97967c3bc81f08aefcbf0b1",
+        "training": "ca07b169283fdbb73fc28f2d6aaa1a1a035bbbe0cc158563dd3b29b8d43a548b",
+        "training_diagnostics": "0c53c398e8b63206df9895b97fc73e08898e702516cd29b1a59c2ccc4cb044a2",
+        "quality": "cc43e1ce077da28c579b0e641c6b6b82f5551b38bdb667f51f32b26d25202f62"
+      },
+      "preparation_protocol_sha256": "05578fe166abcc5dac5b2703f8c4244857c3f756cfbe667871c2f867729834ed"
+    }
+  }
+}

@@ -102,13 +102,15 @@ def main():
     parser.add_argument("--fitted", type=Path, help="Optional placement-only fit from meshoptimizer")
     parser.add_argument("--adapter", default="Iris(R) Xe")
     parser.add_argument("--backend", default="D3D12")
+    parser.add_argument("--allow-software", action="store_true",
+                        help="Allow timestamp-capable CPU adapters for quality-only scoring")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
 
     manifest = json.loads(args.manifest.read_bytes())
     receipt = manifest["assets"][args.asset]["frozen_exports"]
     geometries = load_inputs(args.geometry_dir, receipt, args.fitted)
-    adapter = select_adapter(args.adapter, args.backend)
+    adapter = select_adapter(args.adapter, args.backend, args.allow_software)
     device = adapter.request_device_sync(required_features=["timestamp-query"])
     raster = Offscreen(device, WIDTH, HEIGHT, 1, False)
     high = Offscreen(device, WIDTH * 2, HEIGHT * 2, 1, False)
