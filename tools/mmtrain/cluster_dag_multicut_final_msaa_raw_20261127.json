@@ -1,0 +1,2719 @@
+{
+  "status": "hardware_capture_complete",
+  "scope": "post-hoc one-asset D3D12 hardware raster sensitivity check",
+  "source_sha256": "b23ac1e5f6a8b513dd87bb2d50584676a0098c9e669fb342eaff5c1e2091cc7c",
+  "geometry_sha256": "3403b80d4868eb483b6c97e0bcef4d30b97332833653be55faead9af3888ecbe",
+  "prior_receipt_sha256": "95ab6f518c57e1e7a34aa9c72ba0c16f763b0bb9716b2df6c59446ebecd8e200",
+  "protocol_sha256": "46789acdcaf12e74d26ac04bcb1a4a3c22afa5fdeac668f69244de1ce3e822ac",
+  "script_sha256": {
+    "bench_cluster_dag_multicut_final_msaa.py": "22c6293b901d427e72e9f00f360ab2a82dc6a03e3568b14ceba6492577c3bcd5",
+    "bench_component_gpu.py": "1815a0a9f60a339adf869879006c7492a2d484797a22efcc7543f9c84bcbce47",
+    "bench_contour_priority_aa.py": "6266a4b16e428bbb291a0ce7f162b05c8b07bc1cc13db4e0cabef8c8b2da8bbe"
+  },
+  "adapter": {
+    "vendor": "31.0.101.4502",
+    "architecture": "",
+    "device": "Intel(R) Iris(R) Xe Graphics",
+    "description": "",
+    "stackgroup_min_size": 4,
+    "stackgroup_max_size": 128,
+    "vendor_id": 32902,
+    "device_id": 42912,
+    "adapter_type": "IntegratedGPU",
+    "backend_type": "D3D12"
+  },
+  "wgpu_version": "0.33.0",
+  "resolution": [
+    640,
+    640
+  ],
+  "reference_resolution": [
+    1280,
+    1280
+  ],
+  "reference": "original source, hardware 4x MSAA at 2x linear resolution, then 2x2 linear box resolve",
+  "metric_plan": "sRGB PSNR pooled over pixels and views; gaussian SSIM; LDR-FLIP at 67 ppd; coverage-mask XOR",
+  "camera_views_reused_from_prior_receipt": 24,
+  "correlated_views_are_not_independent_samples": true,
+  "budgets": [
+    {
+      "face_count": 2286,
+      "control": "meshoptimizer",
+      "views": [
+        {
+          "view": 0,
+          "screen_scale": 1.0,
+          "reference_capture": "b02286_v00_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v00_joint_fit_native",
+                "image_sha256": "eb9bf2a4069e9e78d74ea20800133b96c34115086a2799a7241d2a7357648cdd",
+                "silhouette_xor_fraction": 0.0025146484375
+              },
+              "msaa4": {
+                "capture": "b02286_v00_joint_fit_msaa4",
+                "image_sha256": "82ceac4e67c4741f0c8e49cf892ba0867bffc0bd0576223b66e832854416de39",
+                "silhouette_xor_fraction": 0.00114501953125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v00_fitted_control_native",
+                "image_sha256": "cb5a43303526ee5867c3f37e82c4eda4fe72dfe5e10f2f152aca01c5ced79c3f",
+                "silhouette_xor_fraction": 0.00208251953125
+              },
+              "msaa4": {
+                "capture": "b02286_v00_fitted_control_msaa4",
+                "image_sha256": "da499ad6616f186b65ec14d89070d0551f49b36e3d52c5310f2b4bde7443513b",
+                "silhouette_xor_fraction": 0.0006787109375
+              }
+            }
+          }
+        },
+        {
+          "view": 1,
+          "screen_scale": 0.9999999865388263,
+          "reference_capture": "b02286_v01_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v01_joint_fit_native",
+                "image_sha256": "1648e279784fe17966878df949ef1ecb0d257a6f998b35aec1200214816dce90",
+                "silhouette_xor_fraction": 0.001953125
+              },
+              "msaa4": {
+                "capture": "b02286_v01_joint_fit_msaa4",
+                "image_sha256": "26622cc7df8311951b306c00f96bdc0194a9d69577d4117c3219f07bb57dab6c",
+                "silhouette_xor_fraction": 0.00072509765625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v01_fitted_control_native",
+                "image_sha256": "e087c0c05449981e0d30c04ae0766d6b1150567812a3d7b69dd1fc60d30f5f32",
+                "silhouette_xor_fraction": 0.001845703125
+              },
+              "msaa4": {
+                "capture": "b02286_v01_fitted_control_msaa4",
+                "image_sha256": "a901a98511c9c37edc3acd7398853e8d47653c03c89c18215eee1efe6d742133",
+                "silhouette_xor_fraction": 0.000595703125
+              }
+            }
+          }
+        },
+        {
+          "view": 2,
+          "screen_scale": 0.9999999865388264,
+          "reference_capture": "b02286_v02_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v02_joint_fit_native",
+                "image_sha256": "b385ec9965de55a92adbe0f039ff5c28437a33feb5883ac9c16b420b9317abe9",
+                "silhouette_xor_fraction": 0.00143798828125
+              },
+              "msaa4": {
+                "capture": "b02286_v02_joint_fit_msaa4",
+                "image_sha256": "f18357caf3f618312814f2f435090c122c52319aa5c3ba82699e9787a11f1d0b",
+                "silhouette_xor_fraction": 0.0004052734375
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v02_fitted_control_native",
+                "image_sha256": "4ed41e5e9d330f55b28d2fe3a8e3c32a42be592ad326a3089783d7efbfc0d6ec",
+                "silhouette_xor_fraction": 0.00145263671875
+              },
+              "msaa4": {
+                "capture": "b02286_v02_fitted_control_msaa4",
+                "image_sha256": "d142b4bc543738a30642b8f8869007451e9710fd7bdbbc695281d2aacdf30566",
+                "silhouette_xor_fraction": 0.00039306640625
+              }
+            }
+          }
+        },
+        {
+          "view": 3,
+          "screen_scale": 1.0,
+          "reference_capture": "b02286_v03_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v03_joint_fit_native",
+                "image_sha256": "e1e2b326a534de6ecbd22976e6e5a10d8cec33b28f85a73b20fa7b5c64be8092",
+                "silhouette_xor_fraction": 0.001474609375
+              },
+              "msaa4": {
+                "capture": "b02286_v03_joint_fit_msaa4",
+                "image_sha256": "b51942b9460df3a8d974a5ff0ac77a93e1dc2cd510831ce28860bf54d5f2c056",
+                "silhouette_xor_fraction": 0.00061279296875
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v03_fitted_control_native",
+                "image_sha256": "7436a88798fee9f0cad5f55d5f7d4a3359fe058350931093ce37d8d08ad88f72",
+                "silhouette_xor_fraction": 0.00125244140625
+              },
+              "msaa4": {
+                "capture": "b02286_v03_fitted_control_msaa4",
+                "image_sha256": "f370012cc87fed4e28fc271ed2de66c0477344d720d2f08803054cd8e77c361a",
+                "silhouette_xor_fraction": 0.000380859375
+              }
+            }
+          }
+        },
+        {
+          "view": 4,
+          "screen_scale": 0.9999999865388264,
+          "reference_capture": "b02286_v04_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v04_joint_fit_native",
+                "image_sha256": "dd0ea0b7ea98d7cce3c0c59aee05fba024e6a1fee3353459d1e7e7d8666114cd",
+                "silhouette_xor_fraction": 0.00232421875
+              },
+              "msaa4": {
+                "capture": "b02286_v04_joint_fit_msaa4",
+                "image_sha256": "6deb7180f9a21daccefcf090544521634e76869973d4007b392c8b8dee901aba",
+                "silhouette_xor_fraction": 0.0012451171875
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v04_fitted_control_native",
+                "image_sha256": "6cc2beb9b2c84193bda7e9cb486d98caf05b26a763bf5a3892ee1f00c640efc0",
+                "silhouette_xor_fraction": 0.00167724609375
+              },
+              "msaa4": {
+                "capture": "b02286_v04_fitted_control_msaa4",
+                "image_sha256": "c4e08d6c1f7a541dda0f13e121d4e7c8157248285d8e7d666636a39d6a8fd801",
+                "silhouette_xor_fraction": 0.0005517578125
+              }
+            }
+          }
+        },
+        {
+          "view": 5,
+          "screen_scale": 0.9999999865388264,
+          "reference_capture": "b02286_v05_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v05_joint_fit_native",
+                "image_sha256": "d996ffc85abe18f2ad5cc54dfa4e6105797c483fc7b22004843bdabad4c8641b",
+                "silhouette_xor_fraction": 0.00212158203125
+              },
+              "msaa4": {
+                "capture": "b02286_v05_joint_fit_msaa4",
+                "image_sha256": "a32592de5ee2433da872cbe4c2afb51587e970cd1b62ed9a5d81a1df4314c5f5",
+                "silhouette_xor_fraction": 0.0008984375
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v05_fitted_control_native",
+                "image_sha256": "e3468b9a911a5ab27d947609ba7b40028b0c554d2a8c76246a8ad8415fd5c2c8",
+                "silhouette_xor_fraction": 0.001884765625
+              },
+              "msaa4": {
+                "capture": "b02286_v05_fitted_control_msaa4",
+                "image_sha256": "564f48bae3c6239f0b4b1cdc54ccb56dae7a3129c524aabd33ebb571c28accee",
+                "silhouette_xor_fraction": 0.0006103515625
+              }
+            }
+          }
+        },
+        {
+          "view": 6,
+          "screen_scale": 1.0,
+          "reference_capture": "b02286_v06_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v06_joint_fit_native",
+                "image_sha256": "ec1e82fe97b1cfa7db8d94d4468e0dd6a894229adabfc690daa89fedc7ea7b50",
+                "silhouette_xor_fraction": 0.00213134765625
+              },
+              "msaa4": {
+                "capture": "b02286_v06_joint_fit_msaa4",
+                "image_sha256": "fdeac48d2ee32020260f358f9eb30676b68c99601d0d49856d4b54f569c148d2",
+                "silhouette_xor_fraction": 0.00085693359375
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v06_fitted_control_native",
+                "image_sha256": "045115b3701f64a77645d7c7cf7f7868f81b5010c30c80b00d173231769a7dcb",
+                "silhouette_xor_fraction": 0.00190185546875
+              },
+              "msaa4": {
+                "capture": "b02286_v06_fitted_control_msaa4",
+                "image_sha256": "a59c447cfb1b1b8f07d2b0e0e064b3872b2da9cc6717f9eecf329431a31b870d",
+                "silhouette_xor_fraction": 0.00062255859375
+              }
+            }
+          }
+        },
+        {
+          "view": 7,
+          "screen_scale": 0.9999999865388263,
+          "reference_capture": "b02286_v07_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v07_joint_fit_native",
+                "image_sha256": "e661b237679363d6ce45e2804c80f649f35c26edad73de77c7bfd4ee46fd8ccd",
+                "silhouette_xor_fraction": 0.00178955078125
+              },
+              "msaa4": {
+                "capture": "b02286_v07_joint_fit_msaa4",
+                "image_sha256": "f10fbf8fe6090b87cddeb973150e0c6a352d151fe54c7de9797759e672fd2b75",
+                "silhouette_xor_fraction": 0.00071533203125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v07_fitted_control_native",
+                "image_sha256": "963d1e9118469eeec01b3877b0ba2ec2ad09abba3d86d8dd369422e4368c81c2",
+                "silhouette_xor_fraction": 0.00170166015625
+              },
+              "msaa4": {
+                "capture": "b02286_v07_fitted_control_msaa4",
+                "image_sha256": "52e573fd183e85bf9eaa35ec757d37b8081377ee681c762fe483e64e476f546d",
+                "silhouette_xor_fraction": 0.000537109375
+              }
+            }
+          }
+        },
+        {
+          "view": 8,
+          "screen_scale": 0.9999999865388264,
+          "reference_capture": "b02286_v08_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v08_joint_fit_native",
+                "image_sha256": "904d929d40632e81e59b14b518777ee3d5293b14c60e21392d493d360dfc52b1",
+                "silhouette_xor_fraction": 0.0014306640625
+              },
+              "msaa4": {
+                "capture": "b02286_v08_joint_fit_msaa4",
+                "image_sha256": "84679719941448a76bcdc3567d64ad8dc10eabc4028f2d192e498f33515ced11",
+                "silhouette_xor_fraction": 0.00043212890625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v08_fitted_control_native",
+                "image_sha256": "e4c39c7953bd5e2a7a36bb1f0c2c994374ccf0145539f9f28b27f442d207e253",
+                "silhouette_xor_fraction": 0.0014111328125
+              },
+              "msaa4": {
+                "capture": "b02286_v08_fitted_control_msaa4",
+                "image_sha256": "3e845c27dc348d60b3ac52dc85414aef733e9e50d7454a63e05b20d16392e3bd",
+                "silhouette_xor_fraction": 0.00038330078125
+              }
+            }
+          }
+        },
+        {
+          "view": 9,
+          "screen_scale": 1.0,
+          "reference_capture": "b02286_v09_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v09_joint_fit_native",
+                "image_sha256": "e01b809d2822019afdce4ddb51f4eebfbe2f73d911571e5bfa58d748d1bc632c",
+                "silhouette_xor_fraction": 0.0013134765625
+              },
+              "msaa4": {
+                "capture": "b02286_v09_joint_fit_msaa4",
+                "image_sha256": "f662c3a7bf434aef9a5f7c8322d993bd7d79d5aa7871222e222b1faea4402891",
+                "silhouette_xor_fraction": 0.0003857421875
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v09_fitted_control_native",
+                "image_sha256": "0d06117ac17bb715aab88e49319977864d588738747be9a2663221c0f8d56cec",
+                "silhouette_xor_fraction": 0.0012890625
+              },
+              "msaa4": {
+                "capture": "b02286_v09_fitted_control_msaa4",
+                "image_sha256": "fd52959d2e0132718596c8b4ccde37b4e13ebd95fa553e8732f25232f9786cf7",
+                "silhouette_xor_fraction": 0.0003173828125
+              }
+            }
+          }
+        },
+        {
+          "view": 10,
+          "screen_scale": 0.9999999865388264,
+          "reference_capture": "b02286_v10_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v10_joint_fit_native",
+                "image_sha256": "22f722168b5acef4b26ecc7e85863f633ca1cc6b070b3db9626d3ac92c1f0bc4",
+                "silhouette_xor_fraction": 0.0020556640625
+              },
+              "msaa4": {
+                "capture": "b02286_v10_joint_fit_msaa4",
+                "image_sha256": "6670a817f55dcdedb3b7982fde8d814959b37fd4005a1c17bb244cda934e2b0a",
+                "silhouette_xor_fraction": 0.00092529296875
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v10_fitted_control_native",
+                "image_sha256": "68443002a55fb0e2d2fa7bda67428b38a2b48a5331382c1c47ae3a22f5f65919",
+                "silhouette_xor_fraction": 0.00167236328125
+              },
+              "msaa4": {
+                "capture": "b02286_v10_fitted_control_msaa4",
+                "image_sha256": "951fa91c2df9e16eba2947ae3ee2c07da7cec1cc6dfb430003a994103debbcdd",
+                "silhouette_xor_fraction": 0.000576171875
+              }
+            }
+          }
+        },
+        {
+          "view": 11,
+          "screen_scale": 0.9999999865388264,
+          "reference_capture": "b02286_v11_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v11_joint_fit_native",
+                "image_sha256": "1bb06b4c8ba11d5a49c61b203de35e0848b16e6ee0870e1ad503d9d40ebdee08",
+                "silhouette_xor_fraction": 0.002333984375
+              },
+              "msaa4": {
+                "capture": "b02286_v11_joint_fit_msaa4",
+                "image_sha256": "a1ef1e58ae263fd0c96ac84f6ffe5966c2426ffb23d4f778bac25d2bf2f0ab78",
+                "silhouette_xor_fraction": 0.00106201171875
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v11_fitted_control_native",
+                "image_sha256": "8e088160712e876c7378aa34c00343fcb71e000fc0fa2c0ccec016522b30447d",
+                "silhouette_xor_fraction": 0.00183349609375
+              },
+              "msaa4": {
+                "capture": "b02286_v11_fitted_control_msaa4",
+                "image_sha256": "64511f996c0b0fd9dd9244dde0ec559ff69a7dc30d6f0df25c55df12ecda0f29",
+                "silhouette_xor_fraction": 0.0005615234375
+              }
+            }
+          }
+        },
+        {
+          "view": 12,
+          "screen_scale": 0.55,
+          "reference_capture": "b02286_v12_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v12_joint_fit_native",
+                "image_sha256": "b6bd623ebf9ac0afd5e7577a81a08be260b2ef1e1b6feb77e735eef953137685",
+                "silhouette_xor_fraction": 0.00112548828125
+              },
+              "msaa4": {
+                "capture": "b02286_v12_joint_fit_msaa4",
+                "image_sha256": "81436e6ee55f0e8e392a6feb17bf07c8538fb6a6278ae5d339f9588e312e30f3",
+                "silhouette_xor_fraction": 0.00038818359375
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v12_fitted_control_native",
+                "image_sha256": "ce7e6f09734411dbecc21b2818c4e3338d4551f5b101e93c94326497da923d2f",
+                "silhouette_xor_fraction": 0.00109375
+              },
+              "msaa4": {
+                "capture": "b02286_v12_fitted_control_msaa4",
+                "image_sha256": "45ce902da176ebc67c4ef54e151af3bd7589e322860086c2a210c46b5e03287b",
+                "silhouette_xor_fraction": 0.00034423828125
+              }
+            }
+          }
+        },
+        {
+          "view": 13,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b02286_v13_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v13_joint_fit_native",
+                "image_sha256": "5791bf06445c1b2670221ab78d697d22181d921a5ee25921f515156fbe6956b4",
+                "silhouette_xor_fraction": 0.0009619140625
+              },
+              "msaa4": {
+                "capture": "b02286_v13_joint_fit_msaa4",
+                "image_sha256": "a465eebeb64dbec8dd4b74cc93ecc6a4a4c16571ca0a0326b996648663c6471e",
+                "silhouette_xor_fraction": 0.0003369140625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v13_fitted_control_native",
+                "image_sha256": "6250279ef77d90a78c408c805eebfac197e5fa890b14fdae4ef1ff41383dc23a",
+                "silhouette_xor_fraction": 0.0009521484375
+              },
+              "msaa4": {
+                "capture": "b02286_v13_fitted_control_msaa4",
+                "image_sha256": "7ce6854e06dc8df8bc1f37b2d4aa34e1516f01dcb173b6b4d5de965947126910",
+                "silhouette_xor_fraction": 0.0002880859375
+              }
+            }
+          }
+        },
+        {
+          "view": 14,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b02286_v14_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v14_joint_fit_native",
+                "image_sha256": "2282704eb0fa1f05aab200e7b7ba045dc4de68d0b4f9bc1c633964373f4443dd",
+                "silhouette_xor_fraction": 0.00075439453125
+              },
+              "msaa4": {
+                "capture": "b02286_v14_joint_fit_msaa4",
+                "image_sha256": "1f6a673ce0e8336fcfc69668fa982015e843fab4cd398c746116b5f77d28251a",
+                "silhouette_xor_fraction": 0.0001904296875
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v14_fitted_control_native",
+                "image_sha256": "f5fecbe638adb562c1c2f0ff0ca34db27b5cbf77797c9bd7cce368f23538fb6e",
+                "silhouette_xor_fraction": 0.000751953125
+              },
+              "msaa4": {
+                "capture": "b02286_v14_fitted_control_msaa4",
+                "image_sha256": "91aedf76e9966306fba66b580ee25579db08ed7192a79f73e6ce6c6a3633a147",
+                "silhouette_xor_fraction": 0.00019287109375
+              }
+            }
+          }
+        },
+        {
+          "view": 15,
+          "screen_scale": 0.55,
+          "reference_capture": "b02286_v15_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v15_joint_fit_native",
+                "image_sha256": "76ea3a1a1191fd530be75f765c88254a6e39e0a477a6bcc98d016ffae82a9aeb",
+                "silhouette_xor_fraction": 0.00061767578125
+              },
+              "msaa4": {
+                "capture": "b02286_v15_joint_fit_msaa4",
+                "image_sha256": "0196b5bdd95b5abf149212f55c3609d25a4389cc876224b251c6d4dd3a691b5c",
+                "silhouette_xor_fraction": 0.000185546875
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v15_fitted_control_native",
+                "image_sha256": "33ccc9d1a613a2624f1c295d1d2cf4e6d6ee0ee68b47b585acc7ff5f2cee8482",
+                "silhouette_xor_fraction": 0.0005712890625
+              },
+              "msaa4": {
+                "capture": "b02286_v15_fitted_control_msaa4",
+                "image_sha256": "fa3e72865f33ba12511fd37ab5858768d276020fe9ae98c655e98216b23f5934",
+                "silhouette_xor_fraction": 0.00014892578125
+              }
+            }
+          }
+        },
+        {
+          "view": 16,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b02286_v16_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v16_joint_fit_native",
+                "image_sha256": "f3bbf8a515dab5cd1c7306fad7859c0eda9664ab035140c999d13344de02284f",
+                "silhouette_xor_fraction": 0.001005859375
+              },
+              "msaa4": {
+                "capture": "b02286_v16_joint_fit_msaa4",
+                "image_sha256": "221e73c1d7a9be524a794710ba4a20abb0eeedbe8baf795c110e6a2132597d82",
+                "silhouette_xor_fraction": 0.000390625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v16_fitted_control_native",
+                "image_sha256": "ced42507a003589532639676704793a9225d702fc43c67063c59ff1d8d2893b6",
+                "silhouette_xor_fraction": 0.00086669921875
+              },
+              "msaa4": {
+                "capture": "b02286_v16_fitted_control_msaa4",
+                "image_sha256": "9bd0d57c47f057f5937f8c82cc9fca396be781347f44155b0143a3cdaf95cadd",
+                "silhouette_xor_fraction": 0.00025146484375
+              }
+            }
+          }
+        },
+        {
+          "view": 17,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b02286_v17_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v17_joint_fit_native",
+                "image_sha256": "bb8cbe427403487f2635b1ff75e882b9cef4941748a4e9919d13553fc2ca01d6",
+                "silhouette_xor_fraction": 0.00113037109375
+              },
+              "msaa4": {
+                "capture": "b02286_v17_joint_fit_msaa4",
+                "image_sha256": "c154789740dc35333757511174eac0730b9a6e54cc73983dbf84569cccdb376c",
+                "silhouette_xor_fraction": 0.00044189453125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v17_fitted_control_native",
+                "image_sha256": "c93eec89f38cd332a4e3fd214f7b146ce5cb3db0b0ee099ffc4026ce87906e0f",
+                "silhouette_xor_fraction": 0.00101806640625
+              },
+              "msaa4": {
+                "capture": "b02286_v17_fitted_control_msaa4",
+                "image_sha256": "5234af870bf60f17883c96e2b56e7a4722137e17af3486c259b5c3a484ced50f",
+                "silhouette_xor_fraction": 0.00029541015625
+              }
+            }
+          }
+        },
+        {
+          "view": 18,
+          "screen_scale": 0.55,
+          "reference_capture": "b02286_v18_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v18_joint_fit_native",
+                "image_sha256": "0fef30247c34e70805fbfee51920a736ec2a3421fd539ec27815aebcfbabb1ae",
+                "silhouette_xor_fraction": 0.00113525390625
+              },
+              "msaa4": {
+                "capture": "b02286_v18_joint_fit_msaa4",
+                "image_sha256": "4938db90d2ee010e9313757ff2f5dd62fdcfb5c3ef6a431fba78c6d537dca3e7",
+                "silhouette_xor_fraction": 0.000419921875
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v18_fitted_control_native",
+                "image_sha256": "9b6ddaef930d645418c5ccad684ae2b260958be002caa6eacde8393b1774953f",
+                "silhouette_xor_fraction": 0.00106689453125
+              },
+              "msaa4": {
+                "capture": "b02286_v18_fitted_control_msaa4",
+                "image_sha256": "df1530f8e1ac5041d2bccd8a6987ee46457e8dd8be82eef333ceaf98e3ee6adc",
+                "silhouette_xor_fraction": 0.00033935546875
+              }
+            }
+          }
+        },
+        {
+          "view": 19,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b02286_v19_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v19_joint_fit_native",
+                "image_sha256": "b84daa40664f0741e870f391d27c39afe3468e4ffa20f24896c3e14f0035a8a7",
+                "silhouette_xor_fraction": 0.00093505859375
+              },
+              "msaa4": {
+                "capture": "b02286_v19_joint_fit_msaa4",
+                "image_sha256": "3a2be3a7ca16d1a7854db79447c0f10f4d59f3552ba4e8769328b8ce4c1aeeec",
+                "silhouette_xor_fraction": 0.00032470703125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v19_fitted_control_native",
+                "image_sha256": "8c531a18843eb546ca56ee367977808495866f89534be1baf3e62fad4dbc25b8",
+                "silhouette_xor_fraction": 0.00093017578125
+              },
+              "msaa4": {
+                "capture": "b02286_v19_fitted_control_msaa4",
+                "image_sha256": "89024c775b42ddb2768d79b3aceb706403056c29bb800f20651de1fcaecd1ed2",
+                "silhouette_xor_fraction": 0.0002783203125
+              }
+            }
+          }
+        },
+        {
+          "view": 20,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b02286_v20_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v20_joint_fit_native",
+                "image_sha256": "ce7971aa22fda9073c41a6a732a8de3ef226928bc76f9103cca9f3613cc43e51",
+                "silhouette_xor_fraction": 0.00072998046875
+              },
+              "msaa4": {
+                "capture": "b02286_v20_joint_fit_msaa4",
+                "image_sha256": "35f20329330a74d87cea7121bcf9bdd0055323ed37c73181354cd3f3d901ef95",
+                "silhouette_xor_fraction": 0.0001953125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v20_fitted_control_native",
+                "image_sha256": "c9f09b023bfd247da55c5cefe5d90d3a858b5fc7ede43df89e414b33168c8888",
+                "silhouette_xor_fraction": 0.0007421875
+              },
+              "msaa4": {
+                "capture": "b02286_v20_fitted_control_msaa4",
+                "image_sha256": "26f315f411fecd05334c543e088fe82b6ee416bd759f86f8faece861c4ea59b3",
+                "silhouette_xor_fraction": 0.00019775390625
+              }
+            }
+          }
+        },
+        {
+          "view": 21,
+          "screen_scale": 0.55,
+          "reference_capture": "b02286_v21_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v21_joint_fit_native",
+                "image_sha256": "465d2c0a60d9f0e6853253087ac4ed0e41dd2a9c1e0cfd14b55d9001a0cb5f0f",
+                "silhouette_xor_fraction": 0.000673828125
+              },
+              "msaa4": {
+                "capture": "b02286_v21_joint_fit_msaa4",
+                "image_sha256": "6201c3beb14b3bf1337cc15272d12dbb37a2e5e730f9be1032a02e98e6276444",
+                "silhouette_xor_fraction": 0.00017578125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v21_fitted_control_native",
+                "image_sha256": "1504b2431e3588216ae62e4b5409a37689f49d6c21e0fa1a0b1665c1fbf1e843",
+                "silhouette_xor_fraction": 0.000654296875
+              },
+              "msaa4": {
+                "capture": "b02286_v21_fitted_control_msaa4",
+                "image_sha256": "2dcb8327397210f3480a50dc28e792658d4b812091df5161b0ead8698ce00b64",
+                "silhouette_xor_fraction": 0.00015625
+              }
+            }
+          }
+        },
+        {
+          "view": 22,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b02286_v22_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v22_joint_fit_native",
+                "image_sha256": "5d4cd89a69633b10a8d96cb9c0edf7316cfa7f4f9798b28a7c682af11647019f",
+                "silhouette_xor_fraction": 0.0009619140625
+              },
+              "msaa4": {
+                "capture": "b02286_v22_joint_fit_msaa4",
+                "image_sha256": "b03bf258ac57f1845c16f2e68c93ca0bb570968ced2a25b6d437e5c2000569f5",
+                "silhouette_xor_fraction": 0.00040283203125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v22_fitted_control_native",
+                "image_sha256": "7eab592f5448b49fe8d12ed5af6e5dea47fc88bd0e23b632a7b23b6060adc18e",
+                "silhouette_xor_fraction": 0.00085205078125
+              },
+              "msaa4": {
+                "capture": "b02286_v22_fitted_control_msaa4",
+                "image_sha256": "ea12448bcc2c5337ad6e29ef93aa9590eaba9d2f3c256bb44bd60722acba289a",
+                "silhouette_xor_fraction": 0.00030029296875
+              }
+            }
+          }
+        },
+        {
+          "view": 23,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b02286_v23_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b02286_v23_joint_fit_native",
+                "image_sha256": "ec204ad638cb4d8967e66952011c519f025c72d9619e095c511fe02d5098f5b6",
+                "silhouette_xor_fraction": 0.0010791015625
+              },
+              "msaa4": {
+                "capture": "b02286_v23_joint_fit_msaa4",
+                "image_sha256": "d63c0df7aa1c526fe4e2a6e268139ec39f9bda677d755d17cd77a5a68b221c06",
+                "silhouette_xor_fraction": 0.000400390625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b02286_v23_fitted_control_native",
+                "image_sha256": "6a090e45ff4ffaa049d5314d01cd27655a31370bdf6554bc8f8cca187254fc5a",
+                "silhouette_xor_fraction": 0.0009521484375
+              },
+              "msaa4": {
+                "capture": "b02286_v23_fitted_control_msaa4",
+                "image_sha256": "ce09bdbd8cb71c5fc6a594bff47787065e2d31a3ed0a7e5be7ababe5aff87a21",
+                "silhouette_xor_fraction": 0.00030029296875
+              }
+            }
+          }
+        }
+      ],
+      "image_sha256": {
+        "reference": [
+          "3d894fcbec593e338f74e87e69703001757f46956e783b6d8a16c04b7835a53a",
+          "13c9932fa5620725945472e899d5368e0f93140842f10fdeca6e35d886a86997",
+          "785dc056bc9abb983acb7f5a3ef19d08a587afa70d93d75d4a1dc23feed98622",
+          "14a1181be559558b0dc058b26242eafb51cfe130a307ccd9b4b20fb17ad0f7d7",
+          "f6f6e12419f162e248474b989a3042db4c37d107e4c3cd48b5325d58e8873a2b",
+          "52dd79f14db1abd788fc4706908eb7f829da266e5e8fce1d61da6c70ec5f5fce",
+          "f893bd408fc69e1203822c52ddd99919ca09944f73fd64b1bc24518897d614de",
+          "14905a7374bfcbf0b923182e8f15cb4141d82bae4ae40887f5527b8c2ba6b40a",
+          "6d68e00ef6d68aa4f1e613f5021781424187a65e9a9660aca03582421c69b50d",
+          "e27c59c1142b98ce6ed143c911e850482381d2e566c7ba76e9f8e59a7d3d07f8",
+          "7fcb2191585ab32f918a4313d463a3c7460cec7026fe47e2623b4ea96ce25492",
+          "91720f07ea4f54ffcb04032d6d4af39f38530e8cd13add476a1c879cf8ffc44e",
+          "02651a22eec48baa3302ba4ae46d1d2a648671eaca616d757c5f7ada6dd72449",
+          "2cf83415f751b5550a0369dfca46af2e2d38a138937e19f2dcdc841fd5737e12",
+          "ecba8e11f89200ad9e516a87a4bf218a40c687ea8cafa6b96a581edff9efc9fd",
+          "626baa33d36573399a2e10b9c298e2e7056e4d98c237e74d3615e9e4f3e2581c",
+          "2277d0c1b8218b1f461eb0623293914dc3a7330920ce744b10641a6368be4602",
+          "e3ef8b2be5b8f7ba9960f4dc1af8247828a41ea5e385694e9509dbe486374aeb",
+          "e058d31c18440962ca9f01d5a47f04cddd1f9c45c003224a4d7b02b5c839d007",
+          "c7453e1bbdec0aa8642dc186d5fe29b6e513c28d9db7699acd7f3e6c3f3faeec",
+          "eebf5b1fcb03334fdc4d9059e027d4c4d3963d86a4f3b9946d06a0dd3808c767",
+          "cb4507178d7f5355e428df006296e43546a52f2a4d3e963081faab1388be79f9",
+          "2b9066ba589be37402fa773bd37859cb7b55c95bfd4ec8fe011f0e798ce09082",
+          "9584bddec43bd4ca27c9a764e3e7910e96b2fb563a98cb84e2ff4898b504910b"
+        ],
+        "joint_fit": {
+          "native": [
+            "eb9bf2a4069e9e78d74ea20800133b96c34115086a2799a7241d2a7357648cdd",
+            "1648e279784fe17966878df949ef1ecb0d257a6f998b35aec1200214816dce90",
+            "b385ec9965de55a92adbe0f039ff5c28437a33feb5883ac9c16b420b9317abe9",
+            "e1e2b326a534de6ecbd22976e6e5a10d8cec33b28f85a73b20fa7b5c64be8092",
+            "dd0ea0b7ea98d7cce3c0c59aee05fba024e6a1fee3353459d1e7e7d8666114cd",
+            "d996ffc85abe18f2ad5cc54dfa4e6105797c483fc7b22004843bdabad4c8641b",
+            "ec1e82fe97b1cfa7db8d94d4468e0dd6a894229adabfc690daa89fedc7ea7b50",
+            "e661b237679363d6ce45e2804c80f649f35c26edad73de77c7bfd4ee46fd8ccd",
+            "904d929d40632e81e59b14b518777ee3d5293b14c60e21392d493d360dfc52b1",
+            "e01b809d2822019afdce4ddb51f4eebfbe2f73d911571e5bfa58d748d1bc632c",
+            "22f722168b5acef4b26ecc7e85863f633ca1cc6b070b3db9626d3ac92c1f0bc4",
+            "1bb06b4c8ba11d5a49c61b203de35e0848b16e6ee0870e1ad503d9d40ebdee08",
+            "b6bd623ebf9ac0afd5e7577a81a08be260b2ef1e1b6feb77e735eef953137685",
+            "5791bf06445c1b2670221ab78d697d22181d921a5ee25921f515156fbe6956b4",
+            "2282704eb0fa1f05aab200e7b7ba045dc4de68d0b4f9bc1c633964373f4443dd",
+            "76ea3a1a1191fd530be75f765c88254a6e39e0a477a6bcc98d016ffae82a9aeb",
+            "f3bbf8a515dab5cd1c7306fad7859c0eda9664ab035140c999d13344de02284f",
+            "bb8cbe427403487f2635b1ff75e882b9cef4941748a4e9919d13553fc2ca01d6",
+            "0fef30247c34e70805fbfee51920a736ec2a3421fd539ec27815aebcfbabb1ae",
+            "b84daa40664f0741e870f391d27c39afe3468e4ffa20f24896c3e14f0035a8a7",
+            "ce7971aa22fda9073c41a6a732a8de3ef226928bc76f9103cca9f3613cc43e51",
+            "465d2c0a60d9f0e6853253087ac4ed0e41dd2a9c1e0cfd14b55d9001a0cb5f0f",
+            "5d4cd89a69633b10a8d96cb9c0edf7316cfa7f4f9798b28a7c682af11647019f",
+            "ec204ad638cb4d8967e66952011c519f025c72d9619e095c511fe02d5098f5b6"
+          ],
+          "msaa4": [
+            "82ceac4e67c4741f0c8e49cf892ba0867bffc0bd0576223b66e832854416de39",
+            "26622cc7df8311951b306c00f96bdc0194a9d69577d4117c3219f07bb57dab6c",
+            "f18357caf3f618312814f2f435090c122c52319aa5c3ba82699e9787a11f1d0b",
+            "b51942b9460df3a8d974a5ff0ac77a93e1dc2cd510831ce28860bf54d5f2c056",
+            "6deb7180f9a21daccefcf090544521634e76869973d4007b392c8b8dee901aba",
+            "a32592de5ee2433da872cbe4c2afb51587e970cd1b62ed9a5d81a1df4314c5f5",
+            "fdeac48d2ee32020260f358f9eb30676b68c99601d0d49856d4b54f569c148d2",
+            "f10fbf8fe6090b87cddeb973150e0c6a352d151fe54c7de9797759e672fd2b75",
+            "84679719941448a76bcdc3567d64ad8dc10eabc4028f2d192e498f33515ced11",
+            "f662c3a7bf434aef9a5f7c8322d993bd7d79d5aa7871222e222b1faea4402891",
+            "6670a817f55dcdedb3b7982fde8d814959b37fd4005a1c17bb244cda934e2b0a",
+            "a1ef1e58ae263fd0c96ac84f6ffe5966c2426ffb23d4f778bac25d2bf2f0ab78",
+            "81436e6ee55f0e8e392a6feb17bf07c8538fb6a6278ae5d339f9588e312e30f3",
+            "a465eebeb64dbec8dd4b74cc93ecc6a4a4c16571ca0a0326b996648663c6471e",
+            "1f6a673ce0e8336fcfc69668fa982015e843fab4cd398c746116b5f77d28251a",
+            "0196b5bdd95b5abf149212f55c3609d25a4389cc876224b251c6d4dd3a691b5c",
+            "221e73c1d7a9be524a794710ba4a20abb0eeedbe8baf795c110e6a2132597d82",
+            "c154789740dc35333757511174eac0730b9a6e54cc73983dbf84569cccdb376c",
+            "4938db90d2ee010e9313757ff2f5dd62fdcfb5c3ef6a431fba78c6d537dca3e7",
+            "3a2be3a7ca16d1a7854db79447c0f10f4d59f3552ba4e8769328b8ce4c1aeeec",
+            "35f20329330a74d87cea7121bcf9bdd0055323ed37c73181354cd3f3d901ef95",
+            "6201c3beb14b3bf1337cc15272d12dbb37a2e5e730f9be1032a02e98e6276444",
+            "b03bf258ac57f1845c16f2e68c93ca0bb570968ced2a25b6d437e5c2000569f5",
+            "d63c0df7aa1c526fe4e2a6e268139ec39f9bda677d755d17cd77a5a68b221c06"
+          ]
+        },
+        "fitted_control": {
+          "native": [
+            "cb5a43303526ee5867c3f37e82c4eda4fe72dfe5e10f2f152aca01c5ced79c3f",
+            "e087c0c05449981e0d30c04ae0766d6b1150567812a3d7b69dd1fc60d30f5f32",
+            "4ed41e5e9d330f55b28d2fe3a8e3c32a42be592ad326a3089783d7efbfc0d6ec",
+            "7436a88798fee9f0cad5f55d5f7d4a3359fe058350931093ce37d8d08ad88f72",
+            "6cc2beb9b2c84193bda7e9cb486d98caf05b26a763bf5a3892ee1f00c640efc0",
+            "e3468b9a911a5ab27d947609ba7b40028b0c554d2a8c76246a8ad8415fd5c2c8",
+            "045115b3701f64a77645d7c7cf7f7868f81b5010c30c80b00d173231769a7dcb",
+            "963d1e9118469eeec01b3877b0ba2ec2ad09abba3d86d8dd369422e4368c81c2",
+            "e4c39c7953bd5e2a7a36bb1f0c2c994374ccf0145539f9f28b27f442d207e253",
+            "0d06117ac17bb715aab88e49319977864d588738747be9a2663221c0f8d56cec",
+            "68443002a55fb0e2d2fa7bda67428b38a2b48a5331382c1c47ae3a22f5f65919",
+            "8e088160712e876c7378aa34c00343fcb71e000fc0fa2c0ccec016522b30447d",
+            "ce7e6f09734411dbecc21b2818c4e3338d4551f5b101e93c94326497da923d2f",
+            "6250279ef77d90a78c408c805eebfac197e5fa890b14fdae4ef1ff41383dc23a",
+            "f5fecbe638adb562c1c2f0ff0ca34db27b5cbf77797c9bd7cce368f23538fb6e",
+            "33ccc9d1a613a2624f1c295d1d2cf4e6d6ee0ee68b47b585acc7ff5f2cee8482",
+            "ced42507a003589532639676704793a9225d702fc43c67063c59ff1d8d2893b6",
+            "c93eec89f38cd332a4e3fd214f7b146ce5cb3db0b0ee099ffc4026ce87906e0f",
+            "9b6ddaef930d645418c5ccad684ae2b260958be002caa6eacde8393b1774953f",
+            "8c531a18843eb546ca56ee367977808495866f89534be1baf3e62fad4dbc25b8",
+            "c9f09b023bfd247da55c5cefe5d90d3a858b5fc7ede43df89e414b33168c8888",
+            "1504b2431e3588216ae62e4b5409a37689f49d6c21e0fa1a0b1665c1fbf1e843",
+            "7eab592f5448b49fe8d12ed5af6e5dea47fc88bd0e23b632a7b23b6060adc18e",
+            "6a090e45ff4ffaa049d5314d01cd27655a31370bdf6554bc8f8cca187254fc5a"
+          ],
+          "msaa4": [
+            "da499ad6616f186b65ec14d89070d0551f49b36e3d52c5310f2b4bde7443513b",
+            "a901a98511c9c37edc3acd7398853e8d47653c03c89c18215eee1efe6d742133",
+            "d142b4bc543738a30642b8f8869007451e9710fd7bdbbc695281d2aacdf30566",
+            "f370012cc87fed4e28fc271ed2de66c0477344d720d2f08803054cd8e77c361a",
+            "c4e08d6c1f7a541dda0f13e121d4e7c8157248285d8e7d666636a39d6a8fd801",
+            "564f48bae3c6239f0b4b1cdc54ccb56dae7a3129c524aabd33ebb571c28accee",
+            "a59c447cfb1b1b8f07d2b0e0e064b3872b2da9cc6717f9eecf329431a31b870d",
+            "52e573fd183e85bf9eaa35ec757d37b8081377ee681c762fe483e64e476f546d",
+            "3e845c27dc348d60b3ac52dc85414aef733e9e50d7454a63e05b20d16392e3bd",
+            "fd52959d2e0132718596c8b4ccde37b4e13ebd95fa553e8732f25232f9786cf7",
+            "951fa91c2df9e16eba2947ae3ee2c07da7cec1cc6dfb430003a994103debbcdd",
+            "64511f996c0b0fd9dd9244dde0ec559ff69a7dc30d6f0df25c55df12ecda0f29",
+            "45ce902da176ebc67c4ef54e151af3bd7589e322860086c2a210c46b5e03287b",
+            "7ce6854e06dc8df8bc1f37b2d4aa34e1516f01dcb173b6b4d5de965947126910",
+            "91aedf76e9966306fba66b580ee25579db08ed7192a79f73e6ce6c6a3633a147",
+            "fa3e72865f33ba12511fd37ab5858768d276020fe9ae98c655e98216b23f5934",
+            "9bd0d57c47f057f5937f8c82cc9fca396be781347f44155b0143a3cdaf95cadd",
+            "5234af870bf60f17883c96e2b56e7a4722137e17af3486c259b5c3a484ced50f",
+            "df1530f8e1ac5041d2bccd8a6987ee46457e8dd8be82eef333ceaf98e3ee6adc",
+            "89024c775b42ddb2768d79b3aceb706403056c29bb800f20651de1fcaecd1ed2",
+            "26f315f411fecd05334c543e088fe82b6ee416bd759f86f8faece861c4ea59b3",
+            "2dcb8327397210f3480a50dc28e792658d4b812091df5161b0ead8698ce00b64",
+            "ea12448bcc2c5337ad6e29ef93aa9590eaba9d2f3c256bb44bd60722acba289a",
+            "ce09bdbd8cb71c5fc6a594bff47787065e2d31a3ed0a7e5be7ababe5aff87a21"
+          ]
+        }
+      },
+      "geometry_bytes": {
+        "joint_fit": 41148,
+        "fitted_control": 41148
+      }
+    },
+    {
+      "face_count": 5290,
+      "control": "meshoptimizer",
+      "views": [
+        {
+          "view": 0,
+          "screen_scale": 1.0,
+          "reference_capture": "b05290_v00_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v00_joint_fit_native",
+                "image_sha256": "fe88f32e8f2c9a6a47a0aece604f5368304432993db40dd9d47ebf107f8430bd",
+                "silhouette_xor_fraction": 0.00204345703125
+              },
+              "msaa4": {
+                "capture": "b05290_v00_joint_fit_msaa4",
+                "image_sha256": "03ff0dd19aeda7a3af9dac83a4062770ae5b3f6df84387247fc7d5daf6e9bc41",
+                "silhouette_xor_fraction": 0.00064208984375
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v00_fitted_control_native",
+                "image_sha256": "d32dfc91d2c78d6d41a1ac805a50954e44fe9f8c688445f5cdc1921145f4a22a",
+                "silhouette_xor_fraction": 0.00192626953125
+              },
+              "msaa4": {
+                "capture": "b05290_v00_fitted_control_msaa4",
+                "image_sha256": "36a707bd8a13e9002ad5f4dde89905a3a296cc623d5e00fb1154eb9e570e561a",
+                "silhouette_xor_fraction": 0.00048828125
+              }
+            }
+          }
+        },
+        {
+          "view": 1,
+          "screen_scale": 0.9999999865388263,
+          "reference_capture": "b05290_v01_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v01_joint_fit_native",
+                "image_sha256": "55dcf1d9eb376374d219eaeb030f0db0c8a558582d104ea1db03bbcf40a9676a",
+                "silhouette_xor_fraction": 0.001865234375
+              },
+              "msaa4": {
+                "capture": "b05290_v01_joint_fit_msaa4",
+                "image_sha256": "d63127fa040168fe7c8b63d162dcee38adfe90c1f350c1b0e9176a516e54d01a",
+                "silhouette_xor_fraction": 0.00061767578125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v01_fitted_control_native",
+                "image_sha256": "b6b3e61e01d644f37e13d0068d5809848eaad66a10a1f90fc0f80f1feddf62d3",
+                "silhouette_xor_fraction": 0.0017529296875
+              },
+              "msaa4": {
+                "capture": "b05290_v01_fitted_control_msaa4",
+                "image_sha256": "37268a6015d475e346490a30d8ee2c709345b6f3c6b6aaa8ec0d91af04d9f428",
+                "silhouette_xor_fraction": 0.00047119140625
+              }
+            }
+          }
+        },
+        {
+          "view": 2,
+          "screen_scale": 0.9999999865388264,
+          "reference_capture": "b05290_v02_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v02_joint_fit_native",
+                "image_sha256": "7b8ba5d70f6626eb893744ab9c09ea8f045db805aa2211bc84b3a6ada224fde6",
+                "silhouette_xor_fraction": 0.00141357421875
+              },
+              "msaa4": {
+                "capture": "b05290_v02_joint_fit_msaa4",
+                "image_sha256": "f5f6d0ad6fd2aefab039aa09fa0381fade92209fdc42a146b44a04b77b3a154d",
+                "silhouette_xor_fraction": 0.00037109375
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v02_fitted_control_native",
+                "image_sha256": "c5c03325e2e574b167c505c2765ecab53592387ff23fac4a2937ced6d99f9509",
+                "silhouette_xor_fraction": 0.0013818359375
+              },
+              "msaa4": {
+                "capture": "b05290_v02_fitted_control_msaa4",
+                "image_sha256": "43ceb0fddb40cc1ca7f666e9f5d9eafdc22ba0822c42b4972d30a6a9a849aad3",
+                "silhouette_xor_fraction": 0.00034912109375
+              }
+            }
+          }
+        },
+        {
+          "view": 3,
+          "screen_scale": 1.0,
+          "reference_capture": "b05290_v03_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v03_joint_fit_native",
+                "image_sha256": "2855c759253f71f57ba6e71e9ecfa060498ceb965aab337a0d051be2b618f5a8",
+                "silhouette_xor_fraction": 0.001171875
+              },
+              "msaa4": {
+                "capture": "b05290_v03_joint_fit_msaa4",
+                "image_sha256": "8c24997c028d17f85b1dd80f362c93dc781f4eeaa350c979aa805bee7a20b5da",
+                "silhouette_xor_fraction": 0.0003466796875
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v03_fitted_control_native",
+                "image_sha256": "d247f245b8802490dafd052e8f240acbbeee7b6647434f95d34679ddffb8c4a1",
+                "silhouette_xor_fraction": 0.00117919921875
+              },
+              "msaa4": {
+                "capture": "b05290_v03_fitted_control_msaa4",
+                "image_sha256": "5db75b6b50c4013779b55ddf463eec0d59dbd8d47e110984261926fce1a9e3e0",
+                "silhouette_xor_fraction": 0.00031494140625
+              }
+            }
+          }
+        },
+        {
+          "view": 4,
+          "screen_scale": 0.9999999865388264,
+          "reference_capture": "b05290_v04_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v04_joint_fit_native",
+                "image_sha256": "494b3c6964e763e4b2dc800e53b74f63e30a1be0d5a943b6a46fc04dd8dfb0b7",
+                "silhouette_xor_fraction": 0.00165771484375
+              },
+              "msaa4": {
+                "capture": "b05290_v04_joint_fit_msaa4",
+                "image_sha256": "7afea076b4b6ae97721fa704d74c1cec821aa5c8f2df5e08405f98c8335ca66f",
+                "silhouette_xor_fraction": 0.0006005859375
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v04_fitted_control_native",
+                "image_sha256": "54fdbb1bf6f2f4b9966de1dbb45ee9ade10830df955520aedb741882ef6c0231",
+                "silhouette_xor_fraction": 0.00155029296875
+              },
+              "msaa4": {
+                "capture": "b05290_v04_fitted_control_msaa4",
+                "image_sha256": "9b3dab2bc46390f7becd5bb4c17efa6817f4600189466f99e5e155212d571f75",
+                "silhouette_xor_fraction": 0.00043701171875
+              }
+            }
+          }
+        },
+        {
+          "view": 5,
+          "screen_scale": 0.9999999865388264,
+          "reference_capture": "b05290_v05_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v05_joint_fit_native",
+                "image_sha256": "5cf4abb7822fdcae788260a6f0d4504e7282d9213c826a7ba568808171b94faf",
+                "silhouette_xor_fraction": 0.00187744140625
+              },
+              "msaa4": {
+                "capture": "b05290_v05_joint_fit_msaa4",
+                "image_sha256": "2b5de832617fae517cf0398dd785e94cd5b68efdee9364d0f5c19dc4afa24732",
+                "silhouette_xor_fraction": 0.00064697265625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v05_fitted_control_native",
+                "image_sha256": "6443585d90c6c26541cda2b05762af4179a46ef04c1403a2672faabe4417f86b",
+                "silhouette_xor_fraction": 0.00176025390625
+              },
+              "msaa4": {
+                "capture": "b05290_v05_fitted_control_msaa4",
+                "image_sha256": "aedb35bede7710601fa768f38ae2997f4cee338149a1e9fbf61fe0e39b16668e",
+                "silhouette_xor_fraction": 0.00047607421875
+              }
+            }
+          }
+        },
+        {
+          "view": 6,
+          "screen_scale": 1.0,
+          "reference_capture": "b05290_v06_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v06_joint_fit_native",
+                "image_sha256": "d432888c10dfa4accdd8ddfffb5ac6a227ae43fc072ab9a4a0e696c7a970fdfe",
+                "silhouette_xor_fraction": 0.00197021484375
+              },
+              "msaa4": {
+                "capture": "b05290_v06_joint_fit_msaa4",
+                "image_sha256": "b65c146c3e72d692f4c91981dbab99ee4b6098f784a768e14adfd5f8ba704ec5",
+                "silhouette_xor_fraction": 0.000712890625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v06_fitted_control_native",
+                "image_sha256": "e36e30c9231ee4d70fa29638a89949e935b461999a62c1ed94d2b795cdd6180a",
+                "silhouette_xor_fraction": 0.00176513671875
+              },
+              "msaa4": {
+                "capture": "b05290_v06_fitted_control_msaa4",
+                "image_sha256": "22753742a6ce57eabdbd6f8926228e5ca47ac1c8768b8e04c41306b2d8690df5",
+                "silhouette_xor_fraction": 0.0005078125
+              }
+            }
+          }
+        },
+        {
+          "view": 7,
+          "screen_scale": 0.9999999865388263,
+          "reference_capture": "b05290_v07_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v07_joint_fit_native",
+                "image_sha256": "08819c7b0f9f27782bece0ce1db3c4c61eeedb9954b3465299e46db4346e0297",
+                "silhouette_xor_fraction": 0.00173583984375
+              },
+              "msaa4": {
+                "capture": "b05290_v07_joint_fit_msaa4",
+                "image_sha256": "927c250003bf5b6c12cfd46cfd306b067cbe032030e5adc1dff39d09ec64d59b",
+                "silhouette_xor_fraction": 0.00062255859375
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v07_fitted_control_native",
+                "image_sha256": "40e64eec643adf32f54e5c95a1709e6706e54f96dbe702aabbe231613af84136",
+                "silhouette_xor_fraction": 0.00160888671875
+              },
+              "msaa4": {
+                "capture": "b05290_v07_fitted_control_msaa4",
+                "image_sha256": "d74ef097998cf3b13f691c57cb17f767f302dccc360c4adecae141ee559fcdef",
+                "silhouette_xor_fraction": 0.0004443359375
+              }
+            }
+          }
+        },
+        {
+          "view": 8,
+          "screen_scale": 0.9999999865388264,
+          "reference_capture": "b05290_v08_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v08_joint_fit_native",
+                "image_sha256": "d43aad296d4aec7fe6951a3ff82e8bc00e601b3bef28cad37c2162c93e330bfc",
+                "silhouette_xor_fraction": 0.001396484375
+              },
+              "msaa4": {
+                "capture": "b05290_v08_joint_fit_msaa4",
+                "image_sha256": "d81d2e94e24a722000589794bc4f0df2da65e024062a2563499ab395165659a7",
+                "silhouette_xor_fraction": 0.00038330078125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v08_fitted_control_native",
+                "image_sha256": "23edc5d182571df1589d8ca32683e818b835029700d5f1a520d964e22dae760e",
+                "silhouette_xor_fraction": 0.00139404296875
+              },
+              "msaa4": {
+                "capture": "b05290_v08_fitted_control_msaa4",
+                "image_sha256": "b0227a902f08c8d92ad33f1847f1ae41693ad109e922c75ee539607d7178fc0f",
+                "silhouette_xor_fraction": 0.0003515625
+              }
+            }
+          }
+        },
+        {
+          "view": 9,
+          "screen_scale": 1.0,
+          "reference_capture": "b05290_v09_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v09_joint_fit_native",
+                "image_sha256": "1ee60e0792f0e593dde273edd157c9e5413f45b1ee8b5938b3cd9be78ffd0221",
+                "silhouette_xor_fraction": 0.00123779296875
+              },
+              "msaa4": {
+                "capture": "b05290_v09_joint_fit_msaa4",
+                "image_sha256": "7b7631d151450b8bfbe9e7b755c3cdc45bc5d52920e9caaa33099cee61f14e14",
+                "silhouette_xor_fraction": 0.0002978515625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v09_fitted_control_native",
+                "image_sha256": "c2e35a721cd3d4365506d4c0e1a2ce5aa729791809b90e59e83dce98390f8db3",
+                "silhouette_xor_fraction": 0.001279296875
+              },
+              "msaa4": {
+                "capture": "b05290_v09_fitted_control_msaa4",
+                "image_sha256": "54a7b44ebfb67f09f080f836d994935e702fbb8a420e712d02385eb9743fa35d",
+                "silhouette_xor_fraction": 0.00029541015625
+              }
+            }
+          }
+        },
+        {
+          "view": 10,
+          "screen_scale": 0.9999999865388264,
+          "reference_capture": "b05290_v10_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v10_joint_fit_native",
+                "image_sha256": "1999f1246e950fdc72c6f02c5ed0b30617dd8048ee165e555beec7ddc86c9e8d",
+                "silhouette_xor_fraction": 0.00180908203125
+              },
+              "msaa4": {
+                "capture": "b05290_v10_joint_fit_msaa4",
+                "image_sha256": "5afafef04bb943d972e55a7f3ec95b0850583e511541d0fb86ea8047e4d52c46",
+                "silhouette_xor_fraction": 0.0006884765625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v10_fitted_control_native",
+                "image_sha256": "4184a0c224b971d958f016a149dd9b532a8bdbf090473ee66b27e0236e56a2a0",
+                "silhouette_xor_fraction": 0.00156005859375
+              },
+              "msaa4": {
+                "capture": "b05290_v10_fitted_control_msaa4",
+                "image_sha256": "331dec892817167c318b09e311088f1eff95e591dd3379ed8b9084cf362b321a",
+                "silhouette_xor_fraction": 0.0004541015625
+              }
+            }
+          }
+        },
+        {
+          "view": 11,
+          "screen_scale": 0.9999999865388264,
+          "reference_capture": "b05290_v11_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v11_joint_fit_native",
+                "image_sha256": "e42bc8971567de1dda9f33c739913a8294b27ff1519ffb15bafbb7c78c88d67f",
+                "silhouette_xor_fraction": 0.00197998046875
+              },
+              "msaa4": {
+                "capture": "b05290_v11_joint_fit_msaa4",
+                "image_sha256": "c55a81f1955fc7abb6a3216bdcf31e31c75f8304105ce677f3668f0963477488",
+                "silhouette_xor_fraction": 0.0007275390625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v11_fitted_control_native",
+                "image_sha256": "238941f828e519ec7ef0681bb3f2bbf53562610d9de36dc5de6d6addf9827258",
+                "silhouette_xor_fraction": 0.0017626953125
+              },
+              "msaa4": {
+                "capture": "b05290_v11_fitted_control_msaa4",
+                "image_sha256": "066372707cc9c2240c723610da3c6ad91efdf0f7ae1bc9cf276bdbaf1219a5f6",
+                "silhouette_xor_fraction": 0.00048095703125
+              }
+            }
+          }
+        },
+        {
+          "view": 12,
+          "screen_scale": 0.55,
+          "reference_capture": "b05290_v12_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v12_joint_fit_native",
+                "image_sha256": "7a1b332c236769eae4b72b54be2fd6036c556c34fdebd51d481f9bba0368792a",
+                "silhouette_xor_fraction": 0.00110595703125
+              },
+              "msaa4": {
+                "capture": "b05290_v12_joint_fit_msaa4",
+                "image_sha256": "f20f3d23b65e3ac4ea0a4f8a76b7dac6b9a9ecf24baaa238410437dab2fb4093",
+                "silhouette_xor_fraction": 0.00034912109375
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v12_fitted_control_native",
+                "image_sha256": "8b2b599091e0164c96388d8b658d3f048d1c6f27271a0c85ca978024ce3910a1",
+                "silhouette_xor_fraction": 0.001064453125
+              },
+              "msaa4": {
+                "capture": "b05290_v12_fitted_control_msaa4",
+                "image_sha256": "656a27a1104328796147612233557dca6b22484edfa17e07163f972472bcb600",
+                "silhouette_xor_fraction": 0.00030517578125
+              }
+            }
+          }
+        },
+        {
+          "view": 13,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b05290_v13_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v13_joint_fit_native",
+                "image_sha256": "2517555940a0bda4adb78a1092b975fa747a2aa7e722f7f8e4beac2744679c9f",
+                "silhouette_xor_fraction": 0.000927734375
+              },
+              "msaa4": {
+                "capture": "b05290_v13_joint_fit_msaa4",
+                "image_sha256": "3e97159897467c9009bf4bc99221738211d87f6366aaf961c8a5c101194d7825",
+                "silhouette_xor_fraction": 0.00031494140625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v13_fitted_control_native",
+                "image_sha256": "233205321211d43b395008d3e564a213a673e47774c59fd529fe7e7242c96bcf",
+                "silhouette_xor_fraction": 0.000908203125
+              },
+              "msaa4": {
+                "capture": "b05290_v13_fitted_control_msaa4",
+                "image_sha256": "9a53182c566f24c3db03f7a86e12436f3989e466062e33531f44cebb3becec3b",
+                "silhouette_xor_fraction": 0.0002587890625
+              }
+            }
+          }
+        },
+        {
+          "view": 14,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b05290_v14_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v14_joint_fit_native",
+                "image_sha256": "72f09f2262b7401bd0bd1a7735064eccb1ebd7a9f645e20042e5d52c90b9c384",
+                "silhouette_xor_fraction": 0.00074951171875
+              },
+              "msaa4": {
+                "capture": "b05290_v14_joint_fit_msaa4",
+                "image_sha256": "4dbaf70b701f28604f3c0334dd0f571c965452887ea37e20fe8944d54e90b0f7",
+                "silhouette_xor_fraction": 0.0001806640625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v14_fitted_control_native",
+                "image_sha256": "f4863dcfe19b8a30439dbb6e04c13da9d6823531372016ba88804c3b43769d0f",
+                "silhouette_xor_fraction": 0.00073486328125
+              },
+              "msaa4": {
+                "capture": "b05290_v14_fitted_control_msaa4",
+                "image_sha256": "5594dc8d6b90bc5ee7b5b428794ec71a78cb56b889dc0ac2c94e565110774289",
+                "silhouette_xor_fraction": 0.00017333984375
+              }
+            }
+          }
+        },
+        {
+          "view": 15,
+          "screen_scale": 0.55,
+          "reference_capture": "b05290_v15_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v15_joint_fit_native",
+                "image_sha256": "10d2eabd7cb0cf9e5ac263af500cc1d898a2b75b99a38f73cb38d50f5bd38494",
+                "silhouette_xor_fraction": 0.000556640625
+              },
+              "msaa4": {
+                "capture": "b05290_v15_joint_fit_msaa4",
+                "image_sha256": "061da513c0f9188ece76c26edae668c5e02cdc6be0a91e615ac08bbd6763cfd0",
+                "silhouette_xor_fraction": 0.000126953125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v15_fitted_control_native",
+                "image_sha256": "26d48ad79f0516623e0a2a4d63ffc706ef71526f8383044d81347de8e8a663bf",
+                "silhouette_xor_fraction": 0.00056396484375
+              },
+              "msaa4": {
+                "capture": "b05290_v15_fitted_control_msaa4",
+                "image_sha256": "caa3e91911bb50c6bd5f708ea0b4cbc0ac6654fc3b7a9300e330713a9c5de97e",
+                "silhouette_xor_fraction": 0.00012939453125
+              }
+            }
+          }
+        },
+        {
+          "view": 16,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b05290_v16_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v16_joint_fit_native",
+                "image_sha256": "58ff971f95bfc6ecfc11d1b49a2527c8ccd7a50a4e370254e308c222b4d20848",
+                "silhouette_xor_fraction": 0.0008447265625
+              },
+              "msaa4": {
+                "capture": "b05290_v16_joint_fit_msaa4",
+                "image_sha256": "d591962a234c54d35e0b60bf8e2bc696591092d27799e9b2def316d69e7db876",
+                "silhouette_xor_fraction": 0.00024658203125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v16_fitted_control_native",
+                "image_sha256": "b7b796b3a230c8cef3812b788723b5761daec9f35da3c5393b8a26bde42fcb6c",
+                "silhouette_xor_fraction": 0.00082275390625
+              },
+              "msaa4": {
+                "capture": "b05290_v16_fitted_control_msaa4",
+                "image_sha256": "e603939c2a097d64b17c3e441786e6b5961e4080af5f1528108cd3ceb0d56b82",
+                "silhouette_xor_fraction": 0.00021484375
+              }
+            }
+          }
+        },
+        {
+          "view": 17,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b05290_v17_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v17_joint_fit_native",
+                "image_sha256": "d2a3f9d1765e9d3d2fec1ef7151e698ccef6749e83820e5114b245bafcfbc215",
+                "silhouette_xor_fraction": 0.00099609375
+              },
+              "msaa4": {
+                "capture": "b05290_v17_joint_fit_msaa4",
+                "image_sha256": "c739969065f5df28b11edfbabc24c059d983afb930d57ff8a13c1ce0fa654508",
+                "silhouette_xor_fraction": 0.0003271484375
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v17_fitted_control_native",
+                "image_sha256": "6934de87e1c4346c8c257040ab4b69e1492a07bf5ad58ab5c90ded300280efb3",
+                "silhouette_xor_fraction": 0.000986328125
+              },
+              "msaa4": {
+                "capture": "b05290_v17_fitted_control_msaa4",
+                "image_sha256": "2f018c2b7dc1fba2ba5a7f9407c924e02e698dc3a5c800171d3d0737cc91a6e3",
+                "silhouette_xor_fraction": 0.00028076171875
+              }
+            }
+          }
+        },
+        {
+          "view": 18,
+          "screen_scale": 0.55,
+          "reference_capture": "b05290_v18_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v18_joint_fit_native",
+                "image_sha256": "a2eebce3934136ff11ba01e324ec935e64846bcd82f3013c4a591ce2f7def970",
+                "silhouette_xor_fraction": 0.00109619140625
+              },
+              "msaa4": {
+                "capture": "b05290_v18_joint_fit_msaa4",
+                "image_sha256": "b7d66ef9b867f55ea3fc01598f57fb0fbf0e8d88b81eb8c50901eae50b2df315",
+                "silhouette_xor_fraction": 0.0003759765625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v18_fitted_control_native",
+                "image_sha256": "01255472d06ed11b0e3d31e7769e65ec13e681471ffdca07237a5a93b8c321b2",
+                "silhouette_xor_fraction": 0.001025390625
+              },
+              "msaa4": {
+                "capture": "b05290_v18_fitted_control_msaa4",
+                "image_sha256": "4520096709eea4ed4e48616f1446c15e90afeb223171b27c548fa345561c472a",
+                "silhouette_xor_fraction": 0.00030029296875
+              }
+            }
+          }
+        },
+        {
+          "view": 19,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b05290_v19_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v19_joint_fit_native",
+                "image_sha256": "b34742ca98b63d595eae004c62849f5c2d2be6aa9f8f1b6b15263b0feb35e8a8",
+                "silhouette_xor_fraction": 0.00091552734375
+              },
+              "msaa4": {
+                "capture": "b05290_v19_joint_fit_msaa4",
+                "image_sha256": "ad4123123ee4d80d418dd3c57de768bbd825b776f71d11e8a1c691e1928dd564",
+                "silhouette_xor_fraction": 0.0002880859375
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v19_fitted_control_native",
+                "image_sha256": "66aca8d2dae69d0b2247b98aa10b4767bcf82e20f2760a8af3df2d68f851e917",
+                "silhouette_xor_fraction": 0.00089599609375
+              },
+              "msaa4": {
+                "capture": "b05290_v19_fitted_control_msaa4",
+                "image_sha256": "0a88ad868197e0422ff3a9255782d5fbe2790da5db03e20cd44f66009adad025",
+                "silhouette_xor_fraction": 0.00025634765625
+              }
+            }
+          }
+        },
+        {
+          "view": 20,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b05290_v20_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v20_joint_fit_native",
+                "image_sha256": "a08547572089edf6ce46feb6665b3b36d0379ecf3a6af08d60a39228c9351d45",
+                "silhouette_xor_fraction": 0.00072509765625
+              },
+              "msaa4": {
+                "capture": "b05290_v20_joint_fit_msaa4",
+                "image_sha256": "0947b4321f3a6031de684c44e759e8eee38b3793d4ad9337085650599694d265",
+                "silhouette_xor_fraction": 0.0001904296875
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v20_fitted_control_native",
+                "image_sha256": "2151b8275fec253d719f64f760988ebe14c824daa36ab094dea7adf8575ef0e6",
+                "silhouette_xor_fraction": 0.00074462890625
+              },
+              "msaa4": {
+                "capture": "b05290_v20_fitted_control_msaa4",
+                "image_sha256": "24789f9f24e4520eab8d15e7ca0a4387f8c6f55905b73b7894b330915c531e77",
+                "silhouette_xor_fraction": 0.00018310546875
+              }
+            }
+          }
+        },
+        {
+          "view": 21,
+          "screen_scale": 0.55,
+          "reference_capture": "b05290_v21_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v21_joint_fit_native",
+                "image_sha256": "25ed00206a9701a87dffa92bd453ea6843f8df633cdb6297a6ae4794d3549b17",
+                "silhouette_xor_fraction": 0.00065185546875
+              },
+              "msaa4": {
+                "capture": "b05290_v21_joint_fit_msaa4",
+                "image_sha256": "9220a3058b5783ad6fd8b6c62cd57901bf554204f29746df89c65be426d4d42a",
+                "silhouette_xor_fraction": 0.000146484375
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v21_fitted_control_native",
+                "image_sha256": "de3927fc6be89c16673a89a920e28f176a99a032fe4a956e3a6106dbf371f41c",
+                "silhouette_xor_fraction": 0.00064697265625
+              },
+              "msaa4": {
+                "capture": "b05290_v21_fitted_control_msaa4",
+                "image_sha256": "ee2af3ca190d3d5640c6467dcee62338e0bf4af2ad7c637bd5111d18f72952b6",
+                "silhouette_xor_fraction": 0.00014892578125
+              }
+            }
+          }
+        },
+        {
+          "view": 22,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b05290_v22_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v22_joint_fit_native",
+                "image_sha256": "47b624f34f466cf039960a07c5c5bf3be8a57da00ae4a86150f15b902b8d590d",
+                "silhouette_xor_fraction": 0.00090087890625
+              },
+              "msaa4": {
+                "capture": "b05290_v22_joint_fit_msaa4",
+                "image_sha256": "b151dafd37933c241c580f5a8d222aaee8ca7a8e4bd70dc7dff65f63466e3b46",
+                "silhouette_xor_fraction": 0.00031494140625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v22_fitted_control_native",
+                "image_sha256": "100eb2bb2ecd65a44169c331f921ed02f1b892d6b2899d395008f58dca4ebb2a",
+                "silhouette_xor_fraction": 0.00083251953125
+              },
+              "msaa4": {
+                "capture": "b05290_v22_fitted_control_msaa4",
+                "image_sha256": "246135ca1547d4b2199b353fe7032682e04c8a3486fab3462e66b0ecfb009a5a",
+                "silhouette_xor_fraction": 0.000263671875
+              }
+            }
+          }
+        },
+        {
+          "view": 23,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b05290_v23_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b05290_v23_joint_fit_native",
+                "image_sha256": "5cd14f0be7bfe98f4f16891a2906290a134c326ec5e6eef64dbdab5853aa5923",
+                "silhouette_xor_fraction": 0.0010009765625
+              },
+              "msaa4": {
+                "capture": "b05290_v23_joint_fit_msaa4",
+                "image_sha256": "da763743b9c3c903005006e15cc3af3b91ba1a974d7cc442d78ad8e9731ec6fd",
+                "silhouette_xor_fraction": 0.00030517578125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b05290_v23_fitted_control_native",
+                "image_sha256": "461462051bd9670b0bdba4ccfdb281801b50465aed31defb24c7d4316fec55dd",
+                "silhouette_xor_fraction": 0.00093994140625
+              },
+              "msaa4": {
+                "capture": "b05290_v23_fitted_control_msaa4",
+                "image_sha256": "4727e40880a2a91ff6c2f729a167cd5e038be40aa05e4589ddf08a6611ae0ae9",
+                "silhouette_xor_fraction": 0.0002685546875
+              }
+            }
+          }
+        }
+      ],
+      "image_sha256": {
+        "reference": [
+          "3d894fcbec593e338f74e87e69703001757f46956e783b6d8a16c04b7835a53a",
+          "13c9932fa5620725945472e899d5368e0f93140842f10fdeca6e35d886a86997",
+          "785dc056bc9abb983acb7f5a3ef19d08a587afa70d93d75d4a1dc23feed98622",
+          "14a1181be559558b0dc058b26242eafb51cfe130a307ccd9b4b20fb17ad0f7d7",
+          "f6f6e12419f162e248474b989a3042db4c37d107e4c3cd48b5325d58e8873a2b",
+          "52dd79f14db1abd788fc4706908eb7f829da266e5e8fce1d61da6c70ec5f5fce",
+          "f893bd408fc69e1203822c52ddd99919ca09944f73fd64b1bc24518897d614de",
+          "14905a7374bfcbf0b923182e8f15cb4141d82bae4ae40887f5527b8c2ba6b40a",
+          "6d68e00ef6d68aa4f1e613f5021781424187a65e9a9660aca03582421c69b50d",
+          "e27c59c1142b98ce6ed143c911e850482381d2e566c7ba76e9f8e59a7d3d07f8",
+          "7fcb2191585ab32f918a4313d463a3c7460cec7026fe47e2623b4ea96ce25492",
+          "91720f07ea4f54ffcb04032d6d4af39f38530e8cd13add476a1c879cf8ffc44e",
+          "02651a22eec48baa3302ba4ae46d1d2a648671eaca616d757c5f7ada6dd72449",
+          "2cf83415f751b5550a0369dfca46af2e2d38a138937e19f2dcdc841fd5737e12",
+          "ecba8e11f89200ad9e516a87a4bf218a40c687ea8cafa6b96a581edff9efc9fd",
+          "626baa33d36573399a2e10b9c298e2e7056e4d98c237e74d3615e9e4f3e2581c",
+          "2277d0c1b8218b1f461eb0623293914dc3a7330920ce744b10641a6368be4602",
+          "e3ef8b2be5b8f7ba9960f4dc1af8247828a41ea5e385694e9509dbe486374aeb",
+          "e058d31c18440962ca9f01d5a47f04cddd1f9c45c003224a4d7b02b5c839d007",
+          "c7453e1bbdec0aa8642dc186d5fe29b6e513c28d9db7699acd7f3e6c3f3faeec",
+          "eebf5b1fcb03334fdc4d9059e027d4c4d3963d86a4f3b9946d06a0dd3808c767",
+          "cb4507178d7f5355e428df006296e43546a52f2a4d3e963081faab1388be79f9",
+          "2b9066ba589be37402fa773bd37859cb7b55c95bfd4ec8fe011f0e798ce09082",
+          "9584bddec43bd4ca27c9a764e3e7910e96b2fb563a98cb84e2ff4898b504910b"
+        ],
+        "joint_fit": {
+          "native": [
+            "fe88f32e8f2c9a6a47a0aece604f5368304432993db40dd9d47ebf107f8430bd",
+            "55dcf1d9eb376374d219eaeb030f0db0c8a558582d104ea1db03bbcf40a9676a",
+            "7b8ba5d70f6626eb893744ab9c09ea8f045db805aa2211bc84b3a6ada224fde6",
+            "2855c759253f71f57ba6e71e9ecfa060498ceb965aab337a0d051be2b618f5a8",
+            "494b3c6964e763e4b2dc800e53b74f63e30a1be0d5a943b6a46fc04dd8dfb0b7",
+            "5cf4abb7822fdcae788260a6f0d4504e7282d9213c826a7ba568808171b94faf",
+            "d432888c10dfa4accdd8ddfffb5ac6a227ae43fc072ab9a4a0e696c7a970fdfe",
+            "08819c7b0f9f27782bece0ce1db3c4c61eeedb9954b3465299e46db4346e0297",
+            "d43aad296d4aec7fe6951a3ff82e8bc00e601b3bef28cad37c2162c93e330bfc",
+            "1ee60e0792f0e593dde273edd157c9e5413f45b1ee8b5938b3cd9be78ffd0221",
+            "1999f1246e950fdc72c6f02c5ed0b30617dd8048ee165e555beec7ddc86c9e8d",
+            "e42bc8971567de1dda9f33c739913a8294b27ff1519ffb15bafbb7c78c88d67f",
+            "7a1b332c236769eae4b72b54be2fd6036c556c34fdebd51d481f9bba0368792a",
+            "2517555940a0bda4adb78a1092b975fa747a2aa7e722f7f8e4beac2744679c9f",
+            "72f09f2262b7401bd0bd1a7735064eccb1ebd7a9f645e20042e5d52c90b9c384",
+            "10d2eabd7cb0cf9e5ac263af500cc1d898a2b75b99a38f73cb38d50f5bd38494",
+            "58ff971f95bfc6ecfc11d1b49a2527c8ccd7a50a4e370254e308c222b4d20848",
+            "d2a3f9d1765e9d3d2fec1ef7151e698ccef6749e83820e5114b245bafcfbc215",
+            "a2eebce3934136ff11ba01e324ec935e64846bcd82f3013c4a591ce2f7def970",
+            "b34742ca98b63d595eae004c62849f5c2d2be6aa9f8f1b6b15263b0feb35e8a8",
+            "a08547572089edf6ce46feb6665b3b36d0379ecf3a6af08d60a39228c9351d45",
+            "25ed00206a9701a87dffa92bd453ea6843f8df633cdb6297a6ae4794d3549b17",
+            "47b624f34f466cf039960a07c5c5bf3be8a57da00ae4a86150f15b902b8d590d",
+            "5cd14f0be7bfe98f4f16891a2906290a134c326ec5e6eef64dbdab5853aa5923"
+          ],
+          "msaa4": [
+            "03ff0dd19aeda7a3af9dac83a4062770ae5b3f6df84387247fc7d5daf6e9bc41",
+            "d63127fa040168fe7c8b63d162dcee38adfe90c1f350c1b0e9176a516e54d01a",
+            "f5f6d0ad6fd2aefab039aa09fa0381fade92209fdc42a146b44a04b77b3a154d",
+            "8c24997c028d17f85b1dd80f362c93dc781f4eeaa350c979aa805bee7a20b5da",
+            "7afea076b4b6ae97721fa704d74c1cec821aa5c8f2df5e08405f98c8335ca66f",
+            "2b5de832617fae517cf0398dd785e94cd5b68efdee9364d0f5c19dc4afa24732",
+            "b65c146c3e72d692f4c91981dbab99ee4b6098f784a768e14adfd5f8ba704ec5",
+            "927c250003bf5b6c12cfd46cfd306b067cbe032030e5adc1dff39d09ec64d59b",
+            "d81d2e94e24a722000589794bc4f0df2da65e024062a2563499ab395165659a7",
+            "7b7631d151450b8bfbe9e7b755c3cdc45bc5d52920e9caaa33099cee61f14e14",
+            "5afafef04bb943d972e55a7f3ec95b0850583e511541d0fb86ea8047e4d52c46",
+            "c55a81f1955fc7abb6a3216bdcf31e31c75f8304105ce677f3668f0963477488",
+            "f20f3d23b65e3ac4ea0a4f8a76b7dac6b9a9ecf24baaa238410437dab2fb4093",
+            "3e97159897467c9009bf4bc99221738211d87f6366aaf961c8a5c101194d7825",
+            "4dbaf70b701f28604f3c0334dd0f571c965452887ea37e20fe8944d54e90b0f7",
+            "061da513c0f9188ece76c26edae668c5e02cdc6be0a91e615ac08bbd6763cfd0",
+            "d591962a234c54d35e0b60bf8e2bc696591092d27799e9b2def316d69e7db876",
+            "c739969065f5df28b11edfbabc24c059d983afb930d57ff8a13c1ce0fa654508",
+            "b7d66ef9b867f55ea3fc01598f57fb0fbf0e8d88b81eb8c50901eae50b2df315",
+            "ad4123123ee4d80d418dd3c57de768bbd825b776f71d11e8a1c691e1928dd564",
+            "0947b4321f3a6031de684c44e759e8eee38b3793d4ad9337085650599694d265",
+            "9220a3058b5783ad6fd8b6c62cd57901bf554204f29746df89c65be426d4d42a",
+            "b151dafd37933c241c580f5a8d222aaee8ca7a8e4bd70dc7dff65f63466e3b46",
+            "da763743b9c3c903005006e15cc3af3b91ba1a974d7cc442d78ad8e9731ec6fd"
+          ]
+        },
+        "fitted_control": {
+          "native": [
+            "d32dfc91d2c78d6d41a1ac805a50954e44fe9f8c688445f5cdc1921145f4a22a",
+            "b6b3e61e01d644f37e13d0068d5809848eaad66a10a1f90fc0f80f1feddf62d3",
+            "c5c03325e2e574b167c505c2765ecab53592387ff23fac4a2937ced6d99f9509",
+            "d247f245b8802490dafd052e8f240acbbeee7b6647434f95d34679ddffb8c4a1",
+            "54fdbb1bf6f2f4b9966de1dbb45ee9ade10830df955520aedb741882ef6c0231",
+            "6443585d90c6c26541cda2b05762af4179a46ef04c1403a2672faabe4417f86b",
+            "e36e30c9231ee4d70fa29638a89949e935b461999a62c1ed94d2b795cdd6180a",
+            "40e64eec643adf32f54e5c95a1709e6706e54f96dbe702aabbe231613af84136",
+            "23edc5d182571df1589d8ca32683e818b835029700d5f1a520d964e22dae760e",
+            "c2e35a721cd3d4365506d4c0e1a2ce5aa729791809b90e59e83dce98390f8db3",
+            "4184a0c224b971d958f016a149dd9b532a8bdbf090473ee66b27e0236e56a2a0",
+            "238941f828e519ec7ef0681bb3f2bbf53562610d9de36dc5de6d6addf9827258",
+            "8b2b599091e0164c96388d8b658d3f048d1c6f27271a0c85ca978024ce3910a1",
+            "233205321211d43b395008d3e564a213a673e47774c59fd529fe7e7242c96bcf",
+            "f4863dcfe19b8a30439dbb6e04c13da9d6823531372016ba88804c3b43769d0f",
+            "26d48ad79f0516623e0a2a4d63ffc706ef71526f8383044d81347de8e8a663bf",
+            "b7b796b3a230c8cef3812b788723b5761daec9f35da3c5393b8a26bde42fcb6c",
+            "6934de87e1c4346c8c257040ab4b69e1492a07bf5ad58ab5c90ded300280efb3",
+            "01255472d06ed11b0e3d31e7769e65ec13e681471ffdca07237a5a93b8c321b2",
+            "66aca8d2dae69d0b2247b98aa10b4767bcf82e20f2760a8af3df2d68f851e917",
+            "2151b8275fec253d719f64f760988ebe14c824daa36ab094dea7adf8575ef0e6",
+            "de3927fc6be89c16673a89a920e28f176a99a032fe4a956e3a6106dbf371f41c",
+            "100eb2bb2ecd65a44169c331f921ed02f1b892d6b2899d395008f58dca4ebb2a",
+            "461462051bd9670b0bdba4ccfdb281801b50465aed31defb24c7d4316fec55dd"
+          ],
+          "msaa4": [
+            "36a707bd8a13e9002ad5f4dde89905a3a296cc623d5e00fb1154eb9e570e561a",
+            "37268a6015d475e346490a30d8ee2c709345b6f3c6b6aaa8ec0d91af04d9f428",
+            "43ceb0fddb40cc1ca7f666e9f5d9eafdc22ba0822c42b4972d30a6a9a849aad3",
+            "5db75b6b50c4013779b55ddf463eec0d59dbd8d47e110984261926fce1a9e3e0",
+            "9b3dab2bc46390f7becd5bb4c17efa6817f4600189466f99e5e155212d571f75",
+            "aedb35bede7710601fa768f38ae2997f4cee338149a1e9fbf61fe0e39b16668e",
+            "22753742a6ce57eabdbd6f8926228e5ca47ac1c8768b8e04c41306b2d8690df5",
+            "d74ef097998cf3b13f691c57cb17f767f302dccc360c4adecae141ee559fcdef",
+            "b0227a902f08c8d92ad33f1847f1ae41693ad109e922c75ee539607d7178fc0f",
+            "54a7b44ebfb67f09f080f836d994935e702fbb8a420e712d02385eb9743fa35d",
+            "331dec892817167c318b09e311088f1eff95e591dd3379ed8b9084cf362b321a",
+            "066372707cc9c2240c723610da3c6ad91efdf0f7ae1bc9cf276bdbaf1219a5f6",
+            "656a27a1104328796147612233557dca6b22484edfa17e07163f972472bcb600",
+            "9a53182c566f24c3db03f7a86e12436f3989e466062e33531f44cebb3becec3b",
+            "5594dc8d6b90bc5ee7b5b428794ec71a78cb56b889dc0ac2c94e565110774289",
+            "caa3e91911bb50c6bd5f708ea0b4cbc0ac6654fc3b7a9300e330713a9c5de97e",
+            "e603939c2a097d64b17c3e441786e6b5961e4080af5f1528108cd3ceb0d56b82",
+            "2f018c2b7dc1fba2ba5a7f9407c924e02e698dc3a5c800171d3d0737cc91a6e3",
+            "4520096709eea4ed4e48616f1446c15e90afeb223171b27c548fa345561c472a",
+            "0a88ad868197e0422ff3a9255782d5fbe2790da5db03e20cd44f66009adad025",
+            "24789f9f24e4520eab8d15e7ca0a4387f8c6f55905b73b7894b330915c531e77",
+            "ee2af3ca190d3d5640c6467dcee62338e0bf4af2ad7c637bd5111d18f72952b6",
+            "246135ca1547d4b2199b353fe7032682e04c8a3486fab3462e66b0ecfb009a5a",
+            "4727e40880a2a91ff6c2f729a167cd5e038be40aa05e4589ddf08a6611ae0ae9"
+          ]
+        }
+      },
+      "geometry_bytes": {
+        "joint_fit": 95220,
+        "fitted_control": 95220
+      }
+    },
+    {
+      "face_count": 7934,
+      "control": "qem",
+      "views": [
+        {
+          "view": 0,
+          "screen_scale": 1.0,
+          "reference_capture": "b07934_v00_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v00_joint_fit_native",
+                "image_sha256": "d7e65bdd398ade703f3c6e0c4c3273bfbebbc6dee3ab75f3366d4414346b43d1",
+                "silhouette_xor_fraction": 0.0019091796875
+              },
+              "msaa4": {
+                "capture": "b07934_v00_joint_fit_msaa4",
+                "image_sha256": "a2c95a53e17ae7a5b5a26165c869c0c3af4beb0dd323800c94380874d7d8ab34",
+                "silhouette_xor_fraction": 0.00053955078125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v00_fitted_control_native",
+                "image_sha256": "1c9681772a2434ea717557ef0c86927e23a873f5333107c2341a4d06da08b84b",
+                "silhouette_xor_fraction": 0.00189453125
+              },
+              "msaa4": {
+                "capture": "b07934_v00_fitted_control_msaa4",
+                "image_sha256": "b2aecbe75c91b55eea1b583c98a4e5b6ef49c57ecad485f5afd69729a1d54f40",
+                "silhouette_xor_fraction": 0.0004638671875
+              }
+            }
+          }
+        },
+        {
+          "view": 1,
+          "screen_scale": 0.9999999865388263,
+          "reference_capture": "b07934_v01_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v01_joint_fit_native",
+                "image_sha256": "03a8d9430a0e3fab426f0f8f373507ed11359f6a1230a196e91ac8574b53e40b",
+                "silhouette_xor_fraction": 0.00169677734375
+              },
+              "msaa4": {
+                "capture": "b07934_v01_joint_fit_msaa4",
+                "image_sha256": "2f6ee04a7823c8bff967ec32a93d8e3f3b2ff0ecbcbfe1580a2b5f8a98bc37ee",
+                "silhouette_xor_fraction": 0.000478515625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v01_fitted_control_native",
+                "image_sha256": "1f0faf5316c4b9106690f12831618a5653a898df300764f7316d577d112af2c3",
+                "silhouette_xor_fraction": 0.00172119140625
+              },
+              "msaa4": {
+                "capture": "b07934_v01_fitted_control_msaa4",
+                "image_sha256": "c00d1b5bb47fcbd4c7cfcbbc57ce4cfa21de81eca06cec7171dc307aa29fdbcc",
+                "silhouette_xor_fraction": 0.000419921875
+              }
+            }
+          }
+        },
+        {
+          "view": 2,
+          "screen_scale": 0.9999999865388264,
+          "reference_capture": "b07934_v02_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v02_joint_fit_native",
+                "image_sha256": "fdc5f5b63d51f995a58f9d933f4c9b2a4af914176cce3c0b6ab5a7651b34c11e",
+                "silhouette_xor_fraction": 0.00136474609375
+              },
+              "msaa4": {
+                "capture": "b07934_v02_joint_fit_msaa4",
+                "image_sha256": "7cbe8f0e73b1d504ade1868167308302032c347902add0f39c13c2eb90a2d394",
+                "silhouette_xor_fraction": 0.0003173828125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v02_fitted_control_native",
+                "image_sha256": "acb75918c895a9e3e37484734483eea695708d56e40331a580c2fec436e0a6b2",
+                "silhouette_xor_fraction": 0.0013671875
+              },
+              "msaa4": {
+                "capture": "b07934_v02_fitted_control_msaa4",
+                "image_sha256": "2f87db8554d34373114248b9f8f90e7625d340355de1c958e3f73cc0f3508ef3",
+                "silhouette_xor_fraction": 0.0003515625
+              }
+            }
+          }
+        },
+        {
+          "view": 3,
+          "screen_scale": 1.0,
+          "reference_capture": "b07934_v03_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v03_joint_fit_native",
+                "image_sha256": "d2f50786d2d437fd06204d6f502a65d78976daa476e10e549fbd364162cb193b",
+                "silhouette_xor_fraction": 0.00116455078125
+              },
+              "msaa4": {
+                "capture": "b07934_v03_joint_fit_msaa4",
+                "image_sha256": "6d60f24961eef1d6d773fac47c1dd48fd1a20aa2c848f39ad61781b9d02c02ba",
+                "silhouette_xor_fraction": 0.0003173828125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v03_fitted_control_native",
+                "image_sha256": "49f61017be9170ea00951458cbf63c9a0a94c9f95a73f6c147066d1b5e0ab8fd",
+                "silhouette_xor_fraction": 0.0011572265625
+              },
+              "msaa4": {
+                "capture": "b07934_v03_fitted_control_msaa4",
+                "image_sha256": "07e6361ff9bf079dcb8ddef248372c342fe4f781f5b1e77dd0aae0bb5006a094",
+                "silhouette_xor_fraction": 0.0003076171875
+              }
+            }
+          }
+        },
+        {
+          "view": 4,
+          "screen_scale": 0.9999999865388264,
+          "reference_capture": "b07934_v04_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v04_joint_fit_native",
+                "image_sha256": "f8606fcabe65e3a923ed7d5ee6d6be7f244f1e2a78b1a82a056770b5fe5bdb95",
+                "silhouette_xor_fraction": 0.00158935546875
+              },
+              "msaa4": {
+                "capture": "b07934_v04_joint_fit_msaa4",
+                "image_sha256": "3e83404c528426a7508132183eed7d19f78645838d27380d4e663dd1a4eec3ad",
+                "silhouette_xor_fraction": 0.00052490234375
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v04_fitted_control_native",
+                "image_sha256": "e18c3dea7c22abf2bb1fc548026ab95cc4953967c7aea8deba33514a272c3c0a",
+                "silhouette_xor_fraction": 0.001533203125
+              },
+              "msaa4": {
+                "capture": "b07934_v04_fitted_control_msaa4",
+                "image_sha256": "9ac3d6e2c92a24876a75b516f25a7dc9441fc2b0dd31a3447f48841102ec5a5b",
+                "silhouette_xor_fraction": 0.00042724609375
+              }
+            }
+          }
+        },
+        {
+          "view": 5,
+          "screen_scale": 0.9999999865388264,
+          "reference_capture": "b07934_v05_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v05_joint_fit_native",
+                "image_sha256": "b62d7bcefed1843c626330a44bc6084b394b0feb85ae9753761605cdc79f5869",
+                "silhouette_xor_fraction": 0.00177734375
+              },
+              "msaa4": {
+                "capture": "b07934_v05_joint_fit_msaa4",
+                "image_sha256": "42f07f30572eca59f522742c7085c4381241e6defd258431440b2ea34e4ad778",
+                "silhouette_xor_fraction": 0.00055908203125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v05_fitted_control_native",
+                "image_sha256": "4292dabd99d69842d6563a079515c02f19bf8f4430a66751dcf056d77647a45d",
+                "silhouette_xor_fraction": 0.00174560546875
+              },
+              "msaa4": {
+                "capture": "b07934_v05_fitted_control_msaa4",
+                "image_sha256": "02c528aa6fc25b8dc8b7a8c77a93a78c7e46d9c1e33d41041dc7cfd21fa947c4",
+                "silhouette_xor_fraction": 0.00047119140625
+              }
+            }
+          }
+        },
+        {
+          "view": 6,
+          "screen_scale": 1.0,
+          "reference_capture": "b07934_v06_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v06_joint_fit_native",
+                "image_sha256": "30e8ce6764f050a49ce49aa9928758f3656b56998808026a99e53b65b00edc0e",
+                "silhouette_xor_fraction": 0.00173828125
+              },
+              "msaa4": {
+                "capture": "b07934_v06_joint_fit_msaa4",
+                "image_sha256": "e43a5678b85f6503a6b9bfbd367764e99daa2f67e23c3484b69500459b7ceae8",
+                "silhouette_xor_fraction": 0.000458984375
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v06_fitted_control_native",
+                "image_sha256": "d422175a4ddbd33d5d9fbf687e491407f162496a7698ead0540ac4818eeb345c",
+                "silhouette_xor_fraction": 0.00171875
+              },
+              "msaa4": {
+                "capture": "b07934_v06_fitted_control_msaa4",
+                "image_sha256": "958c1b32925afec741035cb162c70fb568323822049c2111f3c307ec29d1cee1",
+                "silhouette_xor_fraction": 0.00045654296875
+              }
+            }
+          }
+        },
+        {
+          "view": 7,
+          "screen_scale": 0.9999999865388263,
+          "reference_capture": "b07934_v07_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v07_joint_fit_native",
+                "image_sha256": "ad9f0b60f07b606a303002ccd392d3ee0eb3b13e04dbbce795afeff61f6bdbba",
+                "silhouette_xor_fraction": 0.001572265625
+              },
+              "msaa4": {
+                "capture": "b07934_v07_joint_fit_msaa4",
+                "image_sha256": "7c4f46b9c3bc128707d38ef51703c6ce101f811041c67b0fe9b3196260db265a",
+                "silhouette_xor_fraction": 0.00046875
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v07_fitted_control_native",
+                "image_sha256": "4d6807352469aea89165cc3c98bcab76375e22f5078e0fee5f63e1b88a36338d",
+                "silhouette_xor_fraction": 0.00157958984375
+              },
+              "msaa4": {
+                "capture": "b07934_v07_fitted_control_msaa4",
+                "image_sha256": "6e3408cc1fc1bc406d9e0cf7eeac2229424faae2d9a136f28e6a7e0c54229e95",
+                "silhouette_xor_fraction": 0.00040283203125
+              }
+            }
+          }
+        },
+        {
+          "view": 8,
+          "screen_scale": 0.9999999865388264,
+          "reference_capture": "b07934_v08_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v08_joint_fit_native",
+                "image_sha256": "335d24a877f1e26bc6f0e9832f993d22b0b040ec46334a8d53621053b1fe9c1c",
+                "silhouette_xor_fraction": 0.001337890625
+              },
+              "msaa4": {
+                "capture": "b07934_v08_joint_fit_msaa4",
+                "image_sha256": "a125ce5d061d7a1d212fc3fecd9a7c5cb1be3224023b8bedf22739bce823272d",
+                "silhouette_xor_fraction": 0.00033203125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v08_fitted_control_native",
+                "image_sha256": "5c5f49b8f149236696385c41ef6464d48af5b7421880d2b3e862dddf2a451dfe",
+                "silhouette_xor_fraction": 0.00137939453125
+              },
+              "msaa4": {
+                "capture": "b07934_v08_fitted_control_msaa4",
+                "image_sha256": "b06146e30c5bf76b3d8ee421ea4ddc4e6997318dd934743257c75dc090865a62",
+                "silhouette_xor_fraction": 0.00032470703125
+              }
+            }
+          }
+        },
+        {
+          "view": 9,
+          "screen_scale": 1.0,
+          "reference_capture": "b07934_v09_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v09_joint_fit_native",
+                "image_sha256": "f45785c66e71de9fceba2a534053641efb61f8a832ae66ec54fd7c15abd84777",
+                "silhouette_xor_fraction": 0.00122314453125
+              },
+              "msaa4": {
+                "capture": "b07934_v09_joint_fit_msaa4",
+                "image_sha256": "e429d0c4f191972392916db658768684c46e3a561159f26f5b1f81a99ad55366",
+                "silhouette_xor_fraction": 0.0002685546875
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v09_fitted_control_native",
+                "image_sha256": "041b3a2218c60e08d15cb55a87f2b2ba9552fd3fed3b6177016d690dc69d9fd4",
+                "silhouette_xor_fraction": 0.00126220703125
+              },
+              "msaa4": {
+                "capture": "b07934_v09_fitted_control_msaa4",
+                "image_sha256": "60dd1a3abdc9e545e58e6b9382e8cf210ab1e83991b0452f81f71763a948a1fc",
+                "silhouette_xor_fraction": 0.00028564453125
+              }
+            }
+          }
+        },
+        {
+          "view": 10,
+          "screen_scale": 0.9999999865388264,
+          "reference_capture": "b07934_v10_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v10_joint_fit_native",
+                "image_sha256": "6d5b1b0231d0483aaa49e2055ad9ee609d2571ced6f157a4ffe9c31a06954a19",
+                "silhouette_xor_fraction": 0.00158203125
+              },
+              "msaa4": {
+                "capture": "b07934_v10_joint_fit_msaa4",
+                "image_sha256": "b5924deefae1a3fb687e8292786ae6b55f7da707c7f0ed7af88e501495e328b2",
+                "silhouette_xor_fraction": 0.00045166015625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v10_fitted_control_native",
+                "image_sha256": "c085885b9d0470cf2a10dec8c6d7d3ed8e586833c918d4dd7ec9a4e488e1e66b",
+                "silhouette_xor_fraction": 0.00153076171875
+              },
+              "msaa4": {
+                "capture": "b07934_v10_fitted_control_msaa4",
+                "image_sha256": "bc0648842dc0cc33515173021b32bb716ec96e3ed7efb28d480df33f492ea0f0",
+                "silhouette_xor_fraction": 0.00043212890625
+              }
+            }
+          }
+        },
+        {
+          "view": 11,
+          "screen_scale": 0.9999999865388264,
+          "reference_capture": "b07934_v11_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v11_joint_fit_native",
+                "image_sha256": "d1b991daaf1c0c52c9454c9c97245d8b0b719eeb0fb2e9e0d7ec194edda88363",
+                "silhouette_xor_fraction": 0.00173583984375
+              },
+              "msaa4": {
+                "capture": "b07934_v11_joint_fit_msaa4",
+                "image_sha256": "80f3522e503c2b599eef214d62559476989568317acc0032e8b6325286ecb34a",
+                "silhouette_xor_fraction": 0.00048828125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v11_fitted_control_native",
+                "image_sha256": "85cba081a2f3deae259c49e55536bcce886406ba55eef63923185088917a2c82",
+                "silhouette_xor_fraction": 0.00171875
+              },
+              "msaa4": {
+                "capture": "b07934_v11_fitted_control_msaa4",
+                "image_sha256": "c8be94bd2a654df132806966470930cd6b60dd65e6053df73590d83faf0e1445",
+                "silhouette_xor_fraction": 0.0004541015625
+              }
+            }
+          }
+        },
+        {
+          "view": 12,
+          "screen_scale": 0.55,
+          "reference_capture": "b07934_v12_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v12_joint_fit_native",
+                "image_sha256": "a0f42fe34cb0374b9674d67ba22317cfe78bf99d54f685087fb18aa075ea7cab",
+                "silhouette_xor_fraction": 0.0010693359375
+              },
+              "msaa4": {
+                "capture": "b07934_v12_joint_fit_msaa4",
+                "image_sha256": "e206e80d8956687559038d144a5d96a664d080d0946400c79c0da5472c8e5158",
+                "silhouette_xor_fraction": 0.00031982421875
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v12_fitted_control_native",
+                "image_sha256": "246a442fe0cfc4b90e29799f73dc1eeca059dbd5edbe940dc3449a535a476261",
+                "silhouette_xor_fraction": 0.0010595703125
+              },
+              "msaa4": {
+                "capture": "b07934_v12_fitted_control_msaa4",
+                "image_sha256": "162216b26f29a91cbf590098404e9e768a501e25732ee3cb0c1e86fb3e871d3c",
+                "silhouette_xor_fraction": 0.00030029296875
+              }
+            }
+          }
+        },
+        {
+          "view": 13,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b07934_v13_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v13_joint_fit_native",
+                "image_sha256": "96f26006405418b6e509e0f5cca33b8eb772780d239a76bf2884691cfbc1acbe",
+                "silhouette_xor_fraction": 0.0008837890625
+              },
+              "msaa4": {
+                "capture": "b07934_v13_joint_fit_msaa4",
+                "image_sha256": "f5e05ad91866525bf0b999c1414211b33703c0e67dd03b1f08c0a2c903aaa232",
+                "silhouette_xor_fraction": 0.0002587890625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v13_fitted_control_native",
+                "image_sha256": "e79f37aeda4f3de5aeeb299671f55ab8a6e0d7c8d2603b360aa1d1789a2ec593",
+                "silhouette_xor_fraction": 0.0008984375
+              },
+              "msaa4": {
+                "capture": "b07934_v13_fitted_control_msaa4",
+                "image_sha256": "755a990ec44280583313df30c6307b6aa5fdebb3858e6c5efad0d0f84da960ef",
+                "silhouette_xor_fraction": 0.00025634765625
+              }
+            }
+          }
+        },
+        {
+          "view": 14,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b07934_v14_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v14_joint_fit_native",
+                "image_sha256": "17e311c477221ca5c97f46cc80d440dbdc5a48ab5a61732c5dc8ba73cfe1425c",
+                "silhouette_xor_fraction": 0.00073486328125
+              },
+              "msaa4": {
+                "capture": "b07934_v14_joint_fit_msaa4",
+                "image_sha256": "fca8e0e8f86f81f090a5735a7097a3c5cea5ef4c5610a310c37ee58e3c1d9587",
+                "silhouette_xor_fraction": 0.0001611328125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v14_fitted_control_native",
+                "image_sha256": "50d672c40243325d19d1351bab39193d997962541960a7dee8329a867ae0a4b8",
+                "silhouette_xor_fraction": 0.0007373046875
+              },
+              "msaa4": {
+                "capture": "b07934_v14_fitted_control_msaa4",
+                "image_sha256": "18d1049c40791f02e3e74b02c040a50eb503155442ebda1c53fd6551f7737276",
+                "silhouette_xor_fraction": 0.000166015625
+              }
+            }
+          }
+        },
+        {
+          "view": 15,
+          "screen_scale": 0.55,
+          "reference_capture": "b07934_v15_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v15_joint_fit_native",
+                "image_sha256": "64c9bb50782c5abc176a694c0e624aa7e4c4aaad9a3c61f663f8e1414ea737ac",
+                "silhouette_xor_fraction": 0.0005517578125
+              },
+              "msaa4": {
+                "capture": "b07934_v15_joint_fit_msaa4",
+                "image_sha256": "3698d895cbc4398dee926ff4c0f7fb831b84dd6f36f8a822fc113cb3f7ab764b",
+                "silhouette_xor_fraction": 0.0001220703125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v15_fitted_control_native",
+                "image_sha256": "05cd990f85694f60c031ba549cba93db81f0add8d0841d08322ab7bff6e7fe39",
+                "silhouette_xor_fraction": 0.0005517578125
+              },
+              "msaa4": {
+                "capture": "b07934_v15_fitted_control_msaa4",
+                "image_sha256": "e958f8e29753d8d9e761fe5c8baa58eb694ebea25cc48104a5cd75bec68d2dde",
+                "silhouette_xor_fraction": 0.00012939453125
+              }
+            }
+          }
+        },
+        {
+          "view": 16,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b07934_v16_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v16_joint_fit_native",
+                "image_sha256": "4b6f2a8bc3c839a1906427208bec4e855ba962e38c6a18f5c60014c0f254470e",
+                "silhouette_xor_fraction": 0.00081298828125
+              },
+              "msaa4": {
+                "capture": "b07934_v16_joint_fit_msaa4",
+                "image_sha256": "4b9160a20219ca1ba6fa054df0c56112f382719b041bf4764101e6d8b598962e",
+                "silhouette_xor_fraction": 0.00022216796875
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v16_fitted_control_native",
+                "image_sha256": "e12b1c5a7345d2dfba8e59f3d735169197667eec4e3d01635a0433ac63132a0a",
+                "silhouette_xor_fraction": 0.0008203125
+              },
+              "msaa4": {
+                "capture": "b07934_v16_fitted_control_msaa4",
+                "image_sha256": "929cdc9110258679ee1674a208e06f31326e8f67bd8131ceafa2540c4a8ce26f",
+                "silhouette_xor_fraction": 0.000205078125
+              }
+            }
+          }
+        },
+        {
+          "view": 17,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b07934_v17_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v17_joint_fit_native",
+                "image_sha256": "491302046a1e922dc16f4bc9f61366704dd14be071a89103ba9e50de359ba018",
+                "silhouette_xor_fraction": 0.00097412109375
+              },
+              "msaa4": {
+                "capture": "b07934_v17_joint_fit_msaa4",
+                "image_sha256": "6536e25718ff7edbe0e2136ab2dea45fcfc373906adeb0db8c46e38b836b6f65",
+                "silhouette_xor_fraction": 0.00030517578125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v17_fitted_control_native",
+                "image_sha256": "3d8d46dea838d0a7672d74612e5c79ec15388ae6fb445c4832a25411467b7c56",
+                "silhouette_xor_fraction": 0.00096923828125
+              },
+              "msaa4": {
+                "capture": "b07934_v17_fitted_control_msaa4",
+                "image_sha256": "2c3a552f38a8376a04e0aa8434330cccd250d6bfad224641fa11bf22e171fe9c",
+                "silhouette_xor_fraction": 0.0002734375
+              }
+            }
+          }
+        },
+        {
+          "view": 18,
+          "screen_scale": 0.55,
+          "reference_capture": "b07934_v18_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v18_joint_fit_native",
+                "image_sha256": "d6077aa24206b0106e54af2528862b73fc879bf69f4299ce7042738db15e1c1b",
+                "silhouette_xor_fraction": 0.00101318359375
+              },
+              "msaa4": {
+                "capture": "b07934_v18_joint_fit_msaa4",
+                "image_sha256": "a3e83ffdfe30f896c53393d2bdf235c69f9f0272c5b857849340834f805fdd18",
+                "silhouette_xor_fraction": 0.00030517578125
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v18_fitted_control_native",
+                "image_sha256": "5811ad948e8d2456df3a3111051943a44534bc04e088e7f234608a92de68c29b",
+                "silhouette_xor_fraction": 0.00100341796875
+              },
+              "msaa4": {
+                "capture": "b07934_v18_fitted_control_msaa4",
+                "image_sha256": "4699e01dcac5c3041f069f5e5866ac80bca77517e1cd894af34888819691d5ca",
+                "silhouette_xor_fraction": 0.00029052734375
+              }
+            }
+          }
+        },
+        {
+          "view": 19,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b07934_v19_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v19_joint_fit_native",
+                "image_sha256": "5634ec64be6dc6f65a7ad5aae3606685a5c493a37e453b4fd10753142649f9e1",
+                "silhouette_xor_fraction": 0.000869140625
+              },
+              "msaa4": {
+                "capture": "b07934_v19_joint_fit_msaa4",
+                "image_sha256": "01d6b7eeed0ef8e2b57433b3d1c7e470375bb8a34632d460f7d8195580bb7e28",
+                "silhouette_xor_fraction": 0.00025390625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v19_fitted_control_native",
+                "image_sha256": "525786cd68aca8a9c435125b3d44c3aaaf923fb86419ae63bfb59e63729f1d10",
+                "silhouette_xor_fraction": 0.0008837890625
+              },
+              "msaa4": {
+                "capture": "b07934_v19_fitted_control_msaa4",
+                "image_sha256": "66f4ed4897ec7235cf2c2e66ee27f9c930c344142130db82496a3817f3ca039e",
+                "silhouette_xor_fraction": 0.0002490234375
+              }
+            }
+          }
+        },
+        {
+          "view": 20,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b07934_v20_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v20_joint_fit_native",
+                "image_sha256": "2dadb5ded65b2ca27016dcb0784eb0c2f7002dd0d0560997df31fc038f7f1f95",
+                "silhouette_xor_fraction": 0.00071533203125
+              },
+              "msaa4": {
+                "capture": "b07934_v20_joint_fit_msaa4",
+                "image_sha256": "11035d52ca5d474b217449f70b13249a102a0b1fad6f4d963292f7e04d9acdc2",
+                "silhouette_xor_fraction": 0.00018310546875
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v20_fitted_control_native",
+                "image_sha256": "917a17cb3b343a41d8ca9b2fe387f07c6e92e72e034809ad1ec3b3bb3e7bd3cc",
+                "silhouette_xor_fraction": 0.00073486328125
+              },
+              "msaa4": {
+                "capture": "b07934_v20_fitted_control_msaa4",
+                "image_sha256": "9d4be4d2de6bc58311c00a17c914cfdbe9378d8279cf8f3b2f9d0c77a03e2a4a",
+                "silhouette_xor_fraction": 0.000185546875
+              }
+            }
+          }
+        },
+        {
+          "view": 21,
+          "screen_scale": 0.55,
+          "reference_capture": "b07934_v21_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v21_joint_fit_native",
+                "image_sha256": "3bd4f41a8fdc1aeb203f437281657996df45287dd34de8ea60c209164846f1d6",
+                "silhouette_xor_fraction": 0.0006396484375
+              },
+              "msaa4": {
+                "capture": "b07934_v21_joint_fit_msaa4",
+                "image_sha256": "7967bd5f1162e59453f281efb34add803bf0be84d9bc74f4ec366492ade1c9cf",
+                "silhouette_xor_fraction": 0.00013671875
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v21_fitted_control_native",
+                "image_sha256": "2d9d775fe7d4ca4c1af976da184348621bd9720252fa05853e0c9a0c9fefda75",
+                "silhouette_xor_fraction": 0.00064208984375
+              },
+              "msaa4": {
+                "capture": "b07934_v21_fitted_control_msaa4",
+                "image_sha256": "d026b16b643bc7910dfe391d060c6956186cc03c5fdb33c372de3ee9575bc08f",
+                "silhouette_xor_fraction": 0.0001416015625
+              }
+            }
+          }
+        },
+        {
+          "view": 22,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b07934_v22_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v22_joint_fit_native",
+                "image_sha256": "ad2a2b4ebc7e865916012b940d6955bc1a048320a3d4cce201f6f58b691d763c",
+                "silhouette_xor_fraction": 0.00084716796875
+              },
+              "msaa4": {
+                "capture": "b07934_v22_joint_fit_msaa4",
+                "image_sha256": "33ea6fcaa94bcb042cf3f790a84d253ce3c47ecb913cf1ed3592ed2c9128b436",
+                "silhouette_xor_fraction": 0.00025634765625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v22_fitted_control_native",
+                "image_sha256": "7cd138c7d19c8306727380b55d6af33991e87976550dd2052f73c9046bb1dc91",
+                "silhouette_xor_fraction": 0.0008349609375
+              },
+              "msaa4": {
+                "capture": "b07934_v22_fitted_control_msaa4",
+                "image_sha256": "a16a8650b96b10b7c90545f4df3c58e25a371acbfd1949e226c5f1c97504f554",
+                "silhouette_xor_fraction": 0.00025390625
+              }
+            }
+          }
+        },
+        {
+          "view": 23,
+          "screen_scale": 0.5499999925963546,
+          "reference_capture": "b07934_v23_reference",
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "capture": "b07934_v23_joint_fit_native",
+                "image_sha256": "6376e02d17097982e9dc82d03d85569729e0143e18d954ff96040f138e2c3611",
+                "silhouette_xor_fraction": 0.0009423828125
+              },
+              "msaa4": {
+                "capture": "b07934_v23_joint_fit_msaa4",
+                "image_sha256": "cf15291318234e2c5080a8f56750990133fe6e40da29e1c5f7e0f6c2b8d15715",
+                "silhouette_xor_fraction": 0.0002587890625
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "capture": "b07934_v23_fitted_control_native",
+                "image_sha256": "15125440c5d588618870cb6ad2b529d6a0244f0410e191e0e1103941cdd44cbc",
+                "silhouette_xor_fraction": 0.00093505859375
+              },
+              "msaa4": {
+                "capture": "b07934_v23_fitted_control_msaa4",
+                "image_sha256": "35f875eec99ed2150b791cc09cd560c03c3d35fffac224cb82ab4e20d64c9143",
+                "silhouette_xor_fraction": 0.00025634765625
+              }
+            }
+          }
+        }
+      ],
+      "image_sha256": {
+        "reference": [
+          "3d894fcbec593e338f74e87e69703001757f46956e783b6d8a16c04b7835a53a",
+          "13c9932fa5620725945472e899d5368e0f93140842f10fdeca6e35d886a86997",
+          "785dc056bc9abb983acb7f5a3ef19d08a587afa70d93d75d4a1dc23feed98622",
+          "14a1181be559558b0dc058b26242eafb51cfe130a307ccd9b4b20fb17ad0f7d7",
+          "f6f6e12419f162e248474b989a3042db4c37d107e4c3cd48b5325d58e8873a2b",
+          "52dd79f14db1abd788fc4706908eb7f829da266e5e8fce1d61da6c70ec5f5fce",
+          "f893bd408fc69e1203822c52ddd99919ca09944f73fd64b1bc24518897d614de",
+          "14905a7374bfcbf0b923182e8f15cb4141d82bae4ae40887f5527b8c2ba6b40a",
+          "6d68e00ef6d68aa4f1e613f5021781424187a65e9a9660aca03582421c69b50d",
+          "e27c59c1142b98ce6ed143c911e850482381d2e566c7ba76e9f8e59a7d3d07f8",
+          "7fcb2191585ab32f918a4313d463a3c7460cec7026fe47e2623b4ea96ce25492",
+          "91720f07ea4f54ffcb04032d6d4af39f38530e8cd13add476a1c879cf8ffc44e",
+          "02651a22eec48baa3302ba4ae46d1d2a648671eaca616d757c5f7ada6dd72449",
+          "2cf83415f751b5550a0369dfca46af2e2d38a138937e19f2dcdc841fd5737e12",
+          "ecba8e11f89200ad9e516a87a4bf218a40c687ea8cafa6b96a581edff9efc9fd",
+          "626baa33d36573399a2e10b9c298e2e7056e4d98c237e74d3615e9e4f3e2581c",
+          "2277d0c1b8218b1f461eb0623293914dc3a7330920ce744b10641a6368be4602",
+          "e3ef8b2be5b8f7ba9960f4dc1af8247828a41ea5e385694e9509dbe486374aeb",
+          "e058d31c18440962ca9f01d5a47f04cddd1f9c45c003224a4d7b02b5c839d007",
+          "c7453e1bbdec0aa8642dc186d5fe29b6e513c28d9db7699acd7f3e6c3f3faeec",
+          "eebf5b1fcb03334fdc4d9059e027d4c4d3963d86a4f3b9946d06a0dd3808c767",
+          "cb4507178d7f5355e428df006296e43546a52f2a4d3e963081faab1388be79f9",
+          "2b9066ba589be37402fa773bd37859cb7b55c95bfd4ec8fe011f0e798ce09082",
+          "9584bddec43bd4ca27c9a764e3e7910e96b2fb563a98cb84e2ff4898b504910b"
+        ],
+        "joint_fit": {
+          "native": [
+            "d7e65bdd398ade703f3c6e0c4c3273bfbebbc6dee3ab75f3366d4414346b43d1",
+            "03a8d9430a0e3fab426f0f8f373507ed11359f6a1230a196e91ac8574b53e40b",
+            "fdc5f5b63d51f995a58f9d933f4c9b2a4af914176cce3c0b6ab5a7651b34c11e",
+            "d2f50786d2d437fd06204d6f502a65d78976daa476e10e549fbd364162cb193b",
+            "f8606fcabe65e3a923ed7d5ee6d6be7f244f1e2a78b1a82a056770b5fe5bdb95",
+            "b62d7bcefed1843c626330a44bc6084b394b0feb85ae9753761605cdc79f5869",
+            "30e8ce6764f050a49ce49aa9928758f3656b56998808026a99e53b65b00edc0e",
+            "ad9f0b60f07b606a303002ccd392d3ee0eb3b13e04dbbce795afeff61f6bdbba",
+            "335d24a877f1e26bc6f0e9832f993d22b0b040ec46334a8d53621053b1fe9c1c",
+            "f45785c66e71de9fceba2a534053641efb61f8a832ae66ec54fd7c15abd84777",
+            "6d5b1b0231d0483aaa49e2055ad9ee609d2571ced6f157a4ffe9c31a06954a19",
+            "d1b991daaf1c0c52c9454c9c97245d8b0b719eeb0fb2e9e0d7ec194edda88363",
+            "a0f42fe34cb0374b9674d67ba22317cfe78bf99d54f685087fb18aa075ea7cab",
+            "96f26006405418b6e509e0f5cca33b8eb772780d239a76bf2884691cfbc1acbe",
+            "17e311c477221ca5c97f46cc80d440dbdc5a48ab5a61732c5dc8ba73cfe1425c",
+            "64c9bb50782c5abc176a694c0e624aa7e4c4aaad9a3c61f663f8e1414ea737ac",
+            "4b6f2a8bc3c839a1906427208bec4e855ba962e38c6a18f5c60014c0f254470e",
+            "491302046a1e922dc16f4bc9f61366704dd14be071a89103ba9e50de359ba018",
+            "d6077aa24206b0106e54af2528862b73fc879bf69f4299ce7042738db15e1c1b",
+            "5634ec64be6dc6f65a7ad5aae3606685a5c493a37e453b4fd10753142649f9e1",
+            "2dadb5ded65b2ca27016dcb0784eb0c2f7002dd0d0560997df31fc038f7f1f95",
+            "3bd4f41a8fdc1aeb203f437281657996df45287dd34de8ea60c209164846f1d6",
+            "ad2a2b4ebc7e865916012b940d6955bc1a048320a3d4cce201f6f58b691d763c",
+            "6376e02d17097982e9dc82d03d85569729e0143e18d954ff96040f138e2c3611"
+          ],
+          "msaa4": [
+            "a2c95a53e17ae7a5b5a26165c869c0c3af4beb0dd323800c94380874d7d8ab34",
+            "2f6ee04a7823c8bff967ec32a93d8e3f3b2ff0ecbcbfe1580a2b5f8a98bc37ee",
+            "7cbe8f0e73b1d504ade1868167308302032c347902add0f39c13c2eb90a2d394",
+            "6d60f24961eef1d6d773fac47c1dd48fd1a20aa2c848f39ad61781b9d02c02ba",
+            "3e83404c528426a7508132183eed7d19f78645838d27380d4e663dd1a4eec3ad",
+            "42f07f30572eca59f522742c7085c4381241e6defd258431440b2ea34e4ad778",
+            "e43a5678b85f6503a6b9bfbd367764e99daa2f67e23c3484b69500459b7ceae8",
+            "7c4f46b9c3bc128707d38ef51703c6ce101f811041c67b0fe9b3196260db265a",
+            "a125ce5d061d7a1d212fc3fecd9a7c5cb1be3224023b8bedf22739bce823272d",
+            "e429d0c4f191972392916db658768684c46e3a561159f26f5b1f81a99ad55366",
+            "b5924deefae1a3fb687e8292786ae6b55f7da707c7f0ed7af88e501495e328b2",
+            "80f3522e503c2b599eef214d62559476989568317acc0032e8b6325286ecb34a",
+            "e206e80d8956687559038d144a5d96a664d080d0946400c79c0da5472c8e5158",
+            "f5e05ad91866525bf0b999c1414211b33703c0e67dd03b1f08c0a2c903aaa232",
+            "fca8e0e8f86f81f090a5735a7097a3c5cea5ef4c5610a310c37ee58e3c1d9587",
+            "3698d895cbc4398dee926ff4c0f7fb831b84dd6f36f8a822fc113cb3f7ab764b",
+            "4b9160a20219ca1ba6fa054df0c56112f382719b041bf4764101e6d8b598962e",
+            "6536e25718ff7edbe0e2136ab2dea45fcfc373906adeb0db8c46e38b836b6f65",
+            "a3e83ffdfe30f896c53393d2bdf235c69f9f0272c5b857849340834f805fdd18",
+            "01d6b7eeed0ef8e2b57433b3d1c7e470375bb8a34632d460f7d8195580bb7e28",
+            "11035d52ca5d474b217449f70b13249a102a0b1fad6f4d963292f7e04d9acdc2",
+            "7967bd5f1162e59453f281efb34add803bf0be84d9bc74f4ec366492ade1c9cf",
+            "33ea6fcaa94bcb042cf3f790a84d253ce3c47ecb913cf1ed3592ed2c9128b436",
+            "cf15291318234e2c5080a8f56750990133fe6e40da29e1c5f7e0f6c2b8d15715"
+          ]
+        },
+        "fitted_control": {
+          "native": [
+            "1c9681772a2434ea717557ef0c86927e23a873f5333107c2341a4d06da08b84b",
+            "1f0faf5316c4b9106690f12831618a5653a898df300764f7316d577d112af2c3",
+            "acb75918c895a9e3e37484734483eea695708d56e40331a580c2fec436e0a6b2",
+            "49f61017be9170ea00951458cbf63c9a0a94c9f95a73f6c147066d1b5e0ab8fd",
+            "e18c3dea7c22abf2bb1fc548026ab95cc4953967c7aea8deba33514a272c3c0a",
+            "4292dabd99d69842d6563a079515c02f19bf8f4430a66751dcf056d77647a45d",
+            "d422175a4ddbd33d5d9fbf687e491407f162496a7698ead0540ac4818eeb345c",
+            "4d6807352469aea89165cc3c98bcab76375e22f5078e0fee5f63e1b88a36338d",
+            "5c5f49b8f149236696385c41ef6464d48af5b7421880d2b3e862dddf2a451dfe",
+            "041b3a2218c60e08d15cb55a87f2b2ba9552fd3fed3b6177016d690dc69d9fd4",
+            "c085885b9d0470cf2a10dec8c6d7d3ed8e586833c918d4dd7ec9a4e488e1e66b",
+            "85cba081a2f3deae259c49e55536bcce886406ba55eef63923185088917a2c82",
+            "246a442fe0cfc4b90e29799f73dc1eeca059dbd5edbe940dc3449a535a476261",
+            "e79f37aeda4f3de5aeeb299671f55ab8a6e0d7c8d2603b360aa1d1789a2ec593",
+            "50d672c40243325d19d1351bab39193d997962541960a7dee8329a867ae0a4b8",
+            "05cd990f85694f60c031ba549cba93db81f0add8d0841d08322ab7bff6e7fe39",
+            "e12b1c5a7345d2dfba8e59f3d735169197667eec4e3d01635a0433ac63132a0a",
+            "3d8d46dea838d0a7672d74612e5c79ec15388ae6fb445c4832a25411467b7c56",
+            "5811ad948e8d2456df3a3111051943a44534bc04e088e7f234608a92de68c29b",
+            "525786cd68aca8a9c435125b3d44c3aaaf923fb86419ae63bfb59e63729f1d10",
+            "917a17cb3b343a41d8ca9b2fe387f07c6e92e72e034809ad1ec3b3bb3e7bd3cc",
+            "2d9d775fe7d4ca4c1af976da184348621bd9720252fa05853e0c9a0c9fefda75",
+            "7cd138c7d19c8306727380b55d6af33991e87976550dd2052f73c9046bb1dc91",
+            "15125440c5d588618870cb6ad2b529d6a0244f0410e191e0e1103941cdd44cbc"
+          ],
+          "msaa4": [
+            "b2aecbe75c91b55eea1b583c98a4e5b6ef49c57ecad485f5afd69729a1d54f40",
+            "c00d1b5bb47fcbd4c7cfcbbc57ce4cfa21de81eca06cec7171dc307aa29fdbcc",
+            "2f87db8554d34373114248b9f8f90e7625d340355de1c958e3f73cc0f3508ef3",
+            "07e6361ff9bf079dcb8ddef248372c342fe4f781f5b1e77dd0aae0bb5006a094",
+            "9ac3d6e2c92a24876a75b516f25a7dc9441fc2b0dd31a3447f48841102ec5a5b",
+            "02c528aa6fc25b8dc8b7a8c77a93a78c7e46d9c1e33d41041dc7cfd21fa947c4",
+            "958c1b32925afec741035cb162c70fb568323822049c2111f3c307ec29d1cee1",
+            "6e3408cc1fc1bc406d9e0cf7eeac2229424faae2d9a136f28e6a7e0c54229e95",
+            "b06146e30c5bf76b3d8ee421ea4ddc4e6997318dd934743257c75dc090865a62",
+            "60dd1a3abdc9e545e58e6b9382e8cf210ab1e83991b0452f81f71763a948a1fc",
+            "bc0648842dc0cc33515173021b32bb716ec96e3ed7efb28d480df33f492ea0f0",
+            "c8be94bd2a654df132806966470930cd6b60dd65e6053df73590d83faf0e1445",
+            "162216b26f29a91cbf590098404e9e768a501e25732ee3cb0c1e86fb3e871d3c",
+            "755a990ec44280583313df30c6307b6aa5fdebb3858e6c5efad0d0f84da960ef",
+            "18d1049c40791f02e3e74b02c040a50eb503155442ebda1c53fd6551f7737276",
+            "e958f8e29753d8d9e761fe5c8baa58eb694ebea25cc48104a5cd75bec68d2dde",
+            "929cdc9110258679ee1674a208e06f31326e8f67bd8131ceafa2540c4a8ce26f",
+            "2c3a552f38a8376a04e0aa8434330cccd250d6bfad224641fa11bf22e171fe9c",
+            "4699e01dcac5c3041f069f5e5866ac80bca77517e1cd894af34888819691d5ca",
+            "66f4ed4897ec7235cf2c2e66ee27f9c930c344142130db82496a3817f3ca039e",
+            "9d4be4d2de6bc58311c00a17c914cfdbe9378d8279cf8f3b2f9d0c77a03e2a4a",
+            "d026b16b643bc7910dfe391d060c6956186cc03c5fdb33c372de3ee9575bc08f",
+            "a16a8650b96b10b7c90545f4df3c58e25a371acbfd1949e226c5f1c97504f554",
+            "35f875eec99ed2150b791cc09cd560c03c3d35fffac224cb82ab4e20d64c9143"
+          ]
+        }
+      },
+      "geometry_bytes": {
+        "joint_fit": 142812,
+        "fitted_control": 142812
+      }
+    }
+  ],
+  "capture_archive": "out\\cluster-dag-multicut-final-msaa-20261127\\result.raw.captures.npz",
+  "limitations": [
+    "one reused train asset",
+    "fixed flat-neutral shader",
+    "no independent test set",
+    "no frame-time comparison",
+    "not mobile hardware evidence"
+  ],
+  "capture_archive_sha256": "457a99554d2b417126ec0046509d888edea82140793951c8c80d104f6bf3834d"
+}

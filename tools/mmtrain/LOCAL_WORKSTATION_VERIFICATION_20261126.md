@@ -3,8 +3,9 @@
 This report records build and test execution on the development laptop after
 Windows Smart App Control blocked the repository's unsigned test binaries.
 WSL2 was used without changing Smart App Control, Defender, or their
-exclusions. These are build/test results only; no image-quality, optimization,
-CUDA, mobile, or performance experiment ran.
+exclusions. It does not include the separately recorded Iris Xe image-quality
+recheck ([protocol and result](CLUSTER_DAG_MULTICUT_FINAL_MSAA_RECHECK_20261127.md));
+that recheck did not qualify Filament compute, mobile hardware, or performance.
 
 ## Source and environment
 

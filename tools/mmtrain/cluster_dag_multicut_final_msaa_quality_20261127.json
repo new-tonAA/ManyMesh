@@ -1,0 +1,3232 @@
+{
+  "status": "completed",
+  "decision": "prior_negative_ranking_not_reversed",
+  "budgets_reversed": 0,
+  "hardware_receipt_sha256": "9105a07fea2ec1720c3c17973144aedda0020529d2668bb96a77e6ff191f8eb8",
+  "capture_archive_sha256": "457a99554d2b417126ec0046509d888edea82140793951c8c80d104f6bf3834d",
+  "metric_script_sha256": "603e61e07f1f5f4d049750fdbbf777f76cfd5ce50bbceb9630147aa12d6d1af3",
+  "metric_backend": "WSL2 CPU; hardware image captures were produced on Iris Xe D3D12",
+  "flip_evaluator_version": "1.7",
+  "numpy_version": "2.3.4",
+  "scikit_image_version": "0.25.2",
+  "metrics": "sRGB PSNR pooled over pixels and views; gaussian SSIM; LDR-FLIP at 67 ppd; coverage-mask XOR",
+  "correlated_views_are_not_independent_samples": true,
+  "budgets": [
+    {
+      "face_count": 2286,
+      "control": "meshoptimizer",
+      "views": [
+        {
+          "view": 0,
+          "screen_scale": 1.0,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 30.585210973949106,
+                "ssim": 0.968941717301564,
+                "flip": 0.011896132491528988,
+                "mse": 0.0008739344918420799,
+                "silhouette_xor_fraction": 0.0025146484375,
+                "image_sha256": "eb9bf2a4069e9e78d74ea20800133b96c34115086a2799a7241d2a7357648cdd"
+              },
+              "msaa4": {
+                "psnr_db": 32.86217518670779,
+                "ssim": 0.9777236998126849,
+                "flip": 0.010772479698061943,
+                "mse": 0.0005173476322207805,
+                "silhouette_xor_fraction": 0.00114501953125,
+                "image_sha256": "82ceac4e67c4741f0c8e49cf892ba0867bffc0bd0576223b66e832854416de39"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 33.843043775601025,
+                "ssim": 0.9836969521875794,
+                "flip": 0.005124514922499657,
+                "mse": 0.0004127580888360246,
+                "silhouette_xor_fraction": 0.00208251953125,
+                "image_sha256": "cb5a43303526ee5867c3f37e82c4eda4fe72dfe5e10f2f152aca01c5ced79c3f"
+              },
+              "msaa4": {
+                "psnr_db": 40.766995994179595,
+                "ssim": 0.9940032649097852,
+                "flip": 0.0036537207197397947,
+                "mse": 8.381087652585544e-05,
+                "silhouette_xor_fraction": 0.0006787109375,
+                "image_sha256": "da499ad6616f186b65ec14d89070d0551f49b36e3d52c5310f2b4bde7443513b"
+              }
+            }
+          }
+        },
+        {
+          "view": 1,
+          "screen_scale": 0.9999999865388263,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 31.780317880035156,
+                "ssim": 0.9737545307881192,
+                "flip": 0.011019362136721611,
+                "mse": 0.0006636944774846212,
+                "silhouette_xor_fraction": 0.001953125,
+                "image_sha256": "1648e279784fe17966878df949ef1ecb0d257a6f998b35aec1200214816dce90"
+              },
+              "msaa4": {
+                "psnr_db": 35.36751372138742,
+                "ssim": 0.98159281520603,
+                "flip": 0.010166428983211517,
+                "mse": 0.0002905685688797578,
+                "silhouette_xor_fraction": 0.00072509765625,
+                "image_sha256": "26622cc7df8311951b306c00f96bdc0194a9d69577d4117c3219f07bb57dab6c"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 33.867266026772114,
+                "ssim": 0.9874678189064731,
+                "flip": 0.004800020717084408,
+                "mse": 0.00041046239727508647,
+                "silhouette_xor_fraction": 0.001845703125,
+                "image_sha256": "e087c0c05449981e0d30c04ae0766d6b1150567812a3d7b69dd1fc60d30f5f32"
+              },
+              "msaa4": {
+                "psnr_db": 40.971763158173374,
+                "ssim": 0.9951753453813112,
+                "flip": 0.003743221517652273,
+                "mse": 7.995095786476355e-05,
+                "silhouette_xor_fraction": 0.000595703125,
+                "image_sha256": "a901a98511c9c37edc3acd7398853e8d47653c03c89c18215eee1efe6d742133"
+              }
+            }
+          }
+        },
+        {
+          "view": 2,
+          "screen_scale": 0.9999999865388264,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 33.949974914020956,
+                "ssim": 0.9860953038574664,
+                "flip": 0.007668451871722937,
+                "mse": 0.0004027193567377932,
+                "silhouette_xor_fraction": 0.00143798828125,
+                "image_sha256": "b385ec9965de55a92adbe0f039ff5c28437a33feb5883ac9c16b420b9317abe9"
+              },
+              "msaa4": {
+                "psnr_db": 38.61118997168693,
+                "ssim": 0.9913873092407085,
+                "flip": 0.0068876296281814575,
+                "mse": 0.00013768322279892348,
+                "silhouette_xor_fraction": 0.0004052734375,
+                "image_sha256": "f18357caf3f618312814f2f435090c122c52319aa5c3ba82699e9787a11f1d0b"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 35.335748658212566,
+                "ssim": 0.992923709626018,
+                "flip": 0.004144234117120504,
+                "mse": 0.00029270161266099575,
+                "silhouette_xor_fraction": 0.00145263671875,
+                "image_sha256": "4ed41e5e9d330f55b28d2fe3a8e3c32a42be592ad326a3089783d7efbfc0d6ec"
+              },
+              "msaa4": {
+                "psnr_db": 43.67609939723281,
+                "ssim": 0.9977069316495423,
+                "flip": 0.003295084461569786,
+                "mse": 4.2893358323721644e-05,
+                "silhouette_xor_fraction": 0.00039306640625,
+                "image_sha256": "d142b4bc543738a30642b8f8869007451e9710fd7bdbbc695281d2aacdf30566"
+              }
+            }
+          }
+        },
+        {
+          "view": 3,
+          "screen_scale": 1.0,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 33.812266435729484,
+                "ssim": 0.9913294739695181,
+                "flip": 0.005215773358941078,
+                "mse": 0.00041569359591262975,
+                "silhouette_xor_fraction": 0.001474609375,
+                "image_sha256": "e1e2b326a534de6ecbd22976e6e5a10d8cec33b28f85a73b20fa7b5c64be8092"
+              },
+              "msaa4": {
+                "psnr_db": 35.74848327424397,
+                "ssim": 0.9943610060544059,
+                "flip": 0.004450266715139151,
+                "mse": 0.00026616543216551324,
+                "silhouette_xor_fraction": 0.00061279296875,
+                "image_sha256": "b51942b9460df3a8d974a5ff0ac77a93e1dc2cd510831ce28860bf54d5f2c056"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 38.05661497891326,
+                "ssim": 0.9947738026417783,
+                "flip": 0.003439728869125247,
+                "mse": 0.00015643663945357554,
+                "silhouette_xor_fraction": 0.00125244140625,
+                "image_sha256": "7436a88798fee9f0cad5f55d5f7d4a3359fe058350931093ce37d8d08ad88f72"
+              },
+              "msaa4": {
+                "psnr_db": 45.90693498112933,
+                "ssim": 0.9979960604643124,
+                "flip": 0.002642550738528371,
+                "mse": 2.5662943639465588e-05,
+                "silhouette_xor_fraction": 0.000380859375,
+                "image_sha256": "f370012cc87fed4e28fc271ed2de66c0477344d720d2f08803054cd8e77c361a"
+              }
+            }
+          }
+        },
+        {
+          "view": 4,
+          "screen_scale": 0.9999999865388264,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 30.371775883737023,
+                "ssim": 0.9839975623238906,
+                "flip": 0.007551387418061495,
+                "mse": 0.0009179571108467896,
+                "silhouette_xor_fraction": 0.00232421875,
+                "image_sha256": "dd0ea0b7ea98d7cce3c0c59aee05fba024e6a1fee3353459d1e7e7d8666114cd"
+              },
+              "msaa4": {
+                "psnr_db": 32.0590220707474,
+                "ssim": 0.9898543288227429,
+                "flip": 0.006726166233420372,
+                "mse": 0.0006224404000264322,
+                "silhouette_xor_fraction": 0.0012451171875,
+                "image_sha256": "6deb7180f9a21daccefcf090544521634e76869973d4007b392c8b8dee901aba"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 34.6615823258745,
+                "ssim": 0.9910316879920236,
+                "flip": 0.004542364273220301,
+                "mse": 0.0003418548454921184,
+                "silhouette_xor_fraction": 0.00167724609375,
+                "image_sha256": "6cc2beb9b2c84193bda7e9cb486d98caf05b26a763bf5a3892ee1f00c640efc0"
+              },
+              "msaa4": {
+                "psnr_db": 41.45678468360964,
+                "ssim": 0.9971302678200453,
+                "flip": 0.0034159848000854254,
+                "mse": 7.150254709727029e-05,
+                "silhouette_xor_fraction": 0.0005517578125,
+                "image_sha256": "c4e08d6c1f7a541dda0f13e121d4e7c8157248285d8e7d666636a39d6a8fd801"
+              }
+            }
+          }
+        },
+        {
+          "view": 5,
+          "screen_scale": 0.9999999865388264,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 31.18598258589621,
+                "ssim": 0.9830594925223528,
+                "flip": 0.008115931414067745,
+                "mse": 0.0007610298998582276,
+                "silhouette_xor_fraction": 0.00212158203125,
+                "image_sha256": "d996ffc85abe18f2ad5cc54dfa4e6105797c483fc7b22004843bdabad4c8641b"
+              },
+              "msaa4": {
+                "psnr_db": 34.057056637308804,
+                "ssim": 0.9899053557468689,
+                "flip": 0.006913092918694019,
+                "mse": 0.0003929111174187813,
+                "silhouette_xor_fraction": 0.0008984375,
+                "image_sha256": "a32592de5ee2433da872cbe4c2afb51587e970cd1b62ed9a5d81a1df4314c5f5"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 33.814235952738635,
+                "ssim": 0.9907726811505169,
+                "flip": 0.005031338427215815,
+                "mse": 0.0004155051167219339,
+                "silhouette_xor_fraction": 0.001884765625,
+                "image_sha256": "e3468b9a911a5ab27d947609ba7b40028b0c554d2a8c76246a8ad8415fd5c2c8"
+              },
+              "msaa4": {
+                "psnr_db": 41.35581434448427,
+                "ssim": 0.9978539865865128,
+                "flip": 0.003365420503541827,
+                "mse": 7.318440473615917e-05,
+                "silhouette_xor_fraction": 0.0006103515625,
+                "image_sha256": "564f48bae3c6239f0b4b1cdc54ccb56dae7a3129c524aabd33ebb571c28accee"
+              }
+            }
+          }
+        },
+        {
+          "view": 6,
+          "screen_scale": 1.0,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 37.070171623060354,
+                "ssim": 0.9916584514806902,
+                "flip": 0.0022491831332445145,
+                "mse": 0.00019632826016435987,
+                "silhouette_xor_fraction": 0.00213134765625,
+                "image_sha256": "ec1e82fe97b1cfa7db8d94d4468e0dd6a894229adabfc690daa89fedc7ea7b50"
+              },
+              "msaa4": {
+                "psnr_db": 41.54257121845626,
+                "ssim": 0.9959358974000588,
+                "flip": 0.0016799129080027342,
+                "mse": 7.010400897491351e-05,
+                "silhouette_xor_fraction": 0.00085693359375,
+                "image_sha256": "fdeac48d2ee32020260f358f9eb30676b68c99601d0d49856d4b54f569c148d2"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 38.405393138713336,
+                "ssim": 0.9938866152651523,
+                "flip": 0.001725753303617239,
+                "mse": 0.00014436458483515956,
+                "silhouette_xor_fraction": 0.00190185546875,
+                "image_sha256": "045115b3701f64a77645d7c7cf7f7868f81b5010c30c80b00d173231769a7dcb"
+              },
+              "msaa4": {
+                "psnr_db": 45.482792219010655,
+                "ssim": 0.9979397890333656,
+                "flip": 0.0011950646294280887,
+                "mse": 2.8295720095636293e-05,
+                "silhouette_xor_fraction": 0.00062255859375,
+                "image_sha256": "a59c447cfb1b1b8f07d2b0e0e064b3872b2da9cc6717f9eecf329431a31b870d"
+              }
+            }
+          }
+        },
+        {
+          "view": 7,
+          "screen_scale": 0.9999999865388263,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 32.94742056877776,
+                "ssim": 0.9846531812576307,
+                "flip": 0.006432647816836834,
+                "mse": 0.0005072918919405998,
+                "silhouette_xor_fraction": 0.00178955078125,
+                "image_sha256": "e661b237679363d6ce45e2804c80f649f35c26edad73de77c7bfd4ee46fd8ccd"
+              },
+              "msaa4": {
+                "psnr_db": 35.574491342730546,
+                "ssim": 0.9898806154535494,
+                "flip": 0.005530005320906639,
+                "mse": 0.00027704533712995,
+                "silhouette_xor_fraction": 0.00071533203125,
+                "image_sha256": "f10fbf8fe6090b87cddeb973150e0c6a352d151fe54c7de9797759e672fd2b75"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 35.190237227483,
+                "ssim": 0.991275349386852,
+                "flip": 0.00405724486336112,
+                "mse": 0.0003026747900446944,
+                "silhouette_xor_fraction": 0.00170166015625,
+                "image_sha256": "963d1e9118469eeec01b3877b0ba2ec2ad09abba3d86d8dd369422e4368c81c2"
+              },
+              "msaa4": {
+                "psnr_db": 41.96635341314487,
+                "ssim": 0.9971736012914111,
+                "flip": 0.002875410718843341,
+                "mse": 6.358645863369858e-05,
+                "silhouette_xor_fraction": 0.000537109375,
+                "image_sha256": "52e573fd183e85bf9eaa35ec757d37b8081377ee681c762fe483e64e476f546d"
+              }
+            }
+          }
+        },
+        {
+          "view": 8,
+          "screen_scale": 0.9999999865388264,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 34.144610471342574,
+                "ssim": 0.9885119548842896,
+                "flip": 0.007156875915825367,
+                "mse": 0.0003850693318074779,
+                "silhouette_xor_fraction": 0.0014306640625,
+                "image_sha256": "904d929d40632e81e59b14b518777ee3d5293b14c60e21392d493d360dfc52b1"
+              },
+              "msaa4": {
+                "psnr_db": 37.73776045858577,
+                "ssim": 0.9931827812491012,
+                "flip": 0.006449262611567974,
+                "mse": 0.00016835419369953862,
+                "silhouette_xor_fraction": 0.00043212890625,
+                "image_sha256": "84679719941448a76bcdc3567d64ad8dc10eabc4028f2d192e498f33515ced11"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 36.211336383507124,
+                "ssim": 0.9935457446777001,
+                "flip": 0.004115292802453041,
+                "mse": 0.00023925792513696656,
+                "silhouette_xor_fraction": 0.0014111328125,
+                "image_sha256": "e4c39c7953bd5e2a7a36bb1f0c2c994374ccf0145539f9f28b27f442d207e253"
+              },
+              "msaa4": {
+                "psnr_db": 44.3904435991991,
+                "ssim": 0.9979920324736502,
+                "flip": 0.0031701286789029837,
+                "mse": 3.638778504661669e-05,
+                "silhouette_xor_fraction": 0.00038330078125,
+                "image_sha256": "3e845c27dc348d60b3ac52dc85414aef733e9e50d7454a63e05b20d16392e3bd"
+              }
+            }
+          }
+        },
+        {
+          "view": 9,
+          "screen_scale": 1.0,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 35.633068170575704,
+                "ssim": 0.9906379281516703,
+                "flip": 0.0039952839724719524,
+                "mse": 0.0002733336862624952,
+                "silhouette_xor_fraction": 0.0013134765625,
+                "image_sha256": "e01b809d2822019afdce4ddb51f4eebfbe2f73d911571e5bfa58d748d1bc632c"
+              },
+              "msaa4": {
+                "psnr_db": 40.500258096971336,
+                "ssim": 0.9953198979672581,
+                "flip": 0.003058804664760828,
+                "mse": 8.911979467031912e-05,
+                "silhouette_xor_fraction": 0.0003857421875,
+                "image_sha256": "f662c3a7bf434aef9a5f7c8322d993bd7d79d5aa7871222e222b1faea4402891"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 36.92634375413418,
+                "ssim": 0.9933689249052557,
+                "flip": 0.0026778029277920723,
+                "mse": 0.00020293903636822374,
+                "silhouette_xor_fraction": 0.0012890625,
+                "image_sha256": "0d06117ac17bb715aab88e49319977864d588738747be9a2663221c0f8d56cec"
+              },
+              "msaa4": {
+                "psnr_db": 45.736904215764255,
+                "ssim": 0.9982553014912332,
+                "flip": 0.0014433781616389751,
+                "mse": 2.668760212418301e-05,
+                "silhouette_xor_fraction": 0.0003173828125,
+                "image_sha256": "fd52959d2e0132718596c8b4ccde37b4e13ebd95fa553e8732f25232f9786cf7"
+              }
+            }
+          }
+        },
+        {
+          "view": 10,
+          "screen_scale": 0.9999999865388264,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 31.594137930628257,
+                "ssim": 0.9780590715581495,
+                "flip": 0.009836372919380665,
+                "mse": 0.0006927654027297194,
+                "silhouette_xor_fraction": 0.0020556640625,
+                "image_sha256": "22f722168b5acef4b26ecc7e85863f633ca1cc6b070b3db9626d3ac92c1f0bc4"
+              },
+              "msaa4": {
+                "psnr_db": 34.22446927102363,
+                "ssim": 0.9849020712285598,
+                "flip": 0.008915478363633156,
+                "mse": 0.00037805332534361787,
+                "silhouette_xor_fraction": 0.00092529296875,
+                "image_sha256": "6670a817f55dcdedb3b7982fde8d814959b37fd4005a1c17bb244cda934e2b0a"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 34.65277001099572,
+                "ssim": 0.9885069948348478,
+                "flip": 0.004376987461000681,
+                "mse": 0.00034254921484525177,
+                "silhouette_xor_fraction": 0.00167236328125,
+                "image_sha256": "68443002a55fb0e2d2fa7bda67428b38a2b48a5331382c1c47ae3a22f5f65919"
+              },
+              "msaa4": {
+                "psnr_db": 41.784842707372064,
+                "ssim": 0.9955934702722333,
+                "flip": 0.0033310139551758766,
+                "mse": 6.630033370578624e-05,
+                "silhouette_xor_fraction": 0.000576171875,
+                "image_sha256": "951fa91c2df9e16eba2947ae3ee2c07da7cec1cc6dfb430003a994103debbcdd"
+              }
+            }
+          }
+        },
+        {
+          "view": 11,
+          "screen_scale": 0.9999999865388264,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 30.832028787992755,
+                "ssim": 0.9739417734041002,
+                "flip": 0.011572136543691158,
+                "mse": 0.0008256521304906766,
+                "silhouette_xor_fraction": 0.002333984375,
+                "image_sha256": "1bb06b4c8ba11d5a49c61b203de35e0848b16e6ee0870e1ad503d9d40ebdee08"
+              },
+              "msaa4": {
+                "psnr_db": 33.65231182266383,
+                "ssim": 0.9821671895260095,
+                "flip": 0.010359014384448528,
+                "mse": 0.00043128942293829307,
+                "silhouette_xor_fraction": 0.00106201171875,
+                "image_sha256": "a1ef1e58ae263fd0c96ac84f6ffe5966c2426ffb23d4f778bac25d2bf2f0ab78"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 33.894224290217934,
+                "ssim": 0.9869995032721869,
+                "flip": 0.005012894049286842,
+                "mse": 0.0004079223961336986,
+                "silhouette_xor_fraction": 0.00183349609375,
+                "image_sha256": "8e088160712e876c7378aa34c00343fcb71e000fc0fa2c0ccec016522b30447d"
+              },
+              "msaa4": {
+                "psnr_db": 41.506568638529714,
+                "ssim": 0.9958031384500847,
+                "flip": 0.003717498853802681,
+                "mse": 7.068758109861592e-05,
+                "silhouette_xor_fraction": 0.0005615234375,
+                "image_sha256": "64511f996c0b0fd9dd9244dde0ec559ff69a7dc30d6f0df25c55df12ecda0f29"
+              }
+            }
+          }
+        },
+        {
+          "view": 12,
+          "screen_scale": 0.55,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 36.0178618316523,
+                "ssim": 0.9875681797662227,
+                "flip": 0.003749346826225519,
+                "mse": 0.0002501576542075163,
+                "silhouette_xor_fraction": 0.00112548828125,
+                "image_sha256": "b6bd623ebf9ac0afd5e7577a81a08be260b2ef1e1b6feb77e735eef953137685"
+              },
+              "msaa4": {
+                "psnr_db": 41.20502792211624,
+                "ssim": 0.9928650682835143,
+                "flip": 0.0031076467130333185,
+                "mse": 7.576998630334488e-05,
+                "silhouette_xor_fraction": 0.00038818359375,
+                "image_sha256": "81436e6ee55f0e8e392a6feb17bf07c8538fb6a6278ae5d339f9588e312e30f3"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 37.14343514480739,
+                "ssim": 0.9917427333376215,
+                "flip": 0.002263070084154606,
+                "mse": 0.00019304406658496732,
+                "silhouette_xor_fraction": 0.00109375,
+                "image_sha256": "ce7e6f09734411dbecc21b2818c4e3338d4551f5b101e93c94326497da923d2f"
+              },
+              "msaa4": {
+                "psnr_db": 45.27262710360933,
+                "ssim": 0.9977958173919953,
+                "flip": 0.0013131482992321253,
+                "mse": 2.9698688605344098e-05,
+                "silhouette_xor_fraction": 0.00034423828125,
+                "image_sha256": "45ce902da176ebc67c4ef54e151af3bd7589e322860086c2a210c46b5e03287b"
+              }
+            }
+          }
+        },
+        {
+          "view": 13,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 35.89851937572948,
+                "ssim": 0.9896336826061306,
+                "flip": 0.0034665658604353666,
+                "mse": 0.0002571272166955017,
+                "silhouette_xor_fraction": 0.0009619140625,
+                "image_sha256": "5791bf06445c1b2670221ab78d697d22181d921a5ee25921f515156fbe6956b4"
+              },
+              "msaa4": {
+                "psnr_db": 40.79054865088455,
+                "ssim": 0.9936914256253876,
+                "flip": 0.0028769494965672493,
+                "mse": 8.335758782679739e-05,
+                "silhouette_xor_fraction": 0.0003369140625,
+                "image_sha256": "a465eebeb64dbec8dd4b74cc93ecc6a4a4c16571ca0a0326b996648663c6471e"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 37.00588008334897,
+                "ssim": 0.994311053884528,
+                "flip": 0.0018792685586959124,
+                "mse": 0.00019925625810986159,
+                "silhouette_xor_fraction": 0.0009521484375,
+                "image_sha256": "6250279ef77d90a78c408c805eebfac197e5fa890b14fdae4ef1ff41383dc23a"
+              },
+              "msaa4": {
+                "psnr_db": 45.03432506226102,
+                "ssim": 0.9983365946360877,
+                "flip": 0.0011783757945522666,
+                "mse": 3.137382557189542e-05,
+                "silhouette_xor_fraction": 0.0002880859375,
+                "image_sha256": "7ce6854e06dc8df8bc1f37b2d4aa34e1516f01dcb173b6b4d5de965947126910"
+              }
+            }
+          }
+        },
+        {
+          "view": 14,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 37.483501531022284,
+                "ssim": 0.994615143157538,
+                "flip": 0.0023958191741257906,
+                "mse": 0.00017850477430555553,
+                "silhouette_xor_fraction": 0.00075439453125,
+                "image_sha256": "2282704eb0fa1f05aab200e7b7ba045dc4de68d0b4f9bc1c633964373f4443dd"
+              },
+              "msaa4": {
+                "psnr_db": 44.266824420362944,
+                "ssim": 0.9972598300398289,
+                "flip": 0.0019670280162245035,
+                "mse": 3.743842512495194e-05,
+                "silhouette_xor_fraction": 0.0001904296875,
+                "image_sha256": "1f6a673ce0e8336fcfc69668fa982015e843fab4cd398c746116b5f77d28251a"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 38.26526950572393,
+                "ssim": 0.99683991534084,
+                "flip": 0.0014864333206787705,
+                "mse": 0.00014909841617406763,
+                "silhouette_xor_fraction": 0.000751953125,
+                "image_sha256": "f5fecbe638adb562c1c2f0ff0ca34db27b5cbf77797c9bd7cce368f23538fb6e"
+              },
+              "msaa4": {
+                "psnr_db": 47.43348493696885,
+                "ssim": 0.9992063397951527,
+                "flip": 0.0010057345498353243,
+                "mse": 1.8057245110053826e-05,
+                "silhouette_xor_fraction": 0.00019287109375,
+                "image_sha256": "91aedf76e9966306fba66b580ee25579db08ed7192a79f73e6ce6c6a3633a147"
+              }
+            }
+          }
+        },
+        {
+          "view": 15,
+          "screen_scale": 0.55,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 39.26710393675717,
+                "ssim": 0.9965461003270616,
+                "flip": 0.0015883548185229301,
+                "mse": 0.00011838306630863132,
+                "silhouette_xor_fraction": 0.00061767578125,
+                "image_sha256": "76ea3a1a1191fd530be75f765c88254a6e39e0a477a6bcc98d016ffae82a9aeb"
+              },
+              "msaa4": {
+                "psnr_db": 43.011904564552594,
+                "ssim": 0.998162057084626,
+                "flip": 0.0011903205886483192,
+                "mse": 4.9981527537485586e-05,
+                "silhouette_xor_fraction": 0.000185546875,
+                "image_sha256": "0196b5bdd95b5abf149212f55c3609d25a4389cc876224b251c6d4dd3a691b5c"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 41.68087913570376,
+                "ssim": 0.9978258090412385,
+                "flip": 0.0011515230871737003,
+                "mse": 6.790661194011918e-05,
+                "silhouette_xor_fraction": 0.0005712890625,
+                "image_sha256": "33ccc9d1a613a2624f1c295d1d2cf4e6d6ee0ee68b47b585acc7ff5f2cee8482"
+              },
+              "msaa4": {
+                "psnr_db": 50.23113540006634,
+                "ssim": 0.9993801062362084,
+                "flip": 0.0006610548007301986,
+                "mse": 9.481704752979622e-06,
+                "silhouette_xor_fraction": 0.00014892578125,
+                "image_sha256": "fa3e72865f33ba12511fd37ab5858768d276020fe9ae98c655e98216b23f5934"
+              }
+            }
+          }
+        },
+        {
+          "view": 16,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 35.20982581746256,
+                "ssim": 0.9927502487200773,
+                "flip": 0.002865252550691366,
+                "mse": 0.00030131267120818916,
+                "silhouette_xor_fraction": 0.001005859375,
+                "image_sha256": "f3bbf8a515dab5cd1c7306fad7859c0eda9664ab035140c999d13344de02284f"
+              },
+              "msaa4": {
+                "psnr_db": 38.42328381561065,
+                "ssim": 0.9963846454658419,
+                "flip": 0.002209222177043557,
+                "mse": 0.00014377110065840062,
+                "silhouette_xor_fraction": 0.000390625,
+                "image_sha256": "221e73c1d7a9be524a794710ba4a20abb0eeedbe8baf795c110e6a2132597d82"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 37.78728637824817,
+                "ssim": 0.9950918017101208,
+                "flip": 0.002006477676331997,
+                "mse": 0.00016644522239042678,
+                "silhouette_xor_fraction": 0.00086669921875,
+                "image_sha256": "ced42507a003589532639676704793a9225d702fc43c67063c59ff1d8d2893b6"
+              },
+              "msaa4": {
+                "psnr_db": 45.77887367217176,
+                "ssim": 0.9988889031154619,
+                "flip": 0.0011663436889648438,
+                "mse": 2.6430940023068052e-05,
+                "silhouette_xor_fraction": 0.00025146484375,
+                "image_sha256": "9bd0d57c47f057f5937f8c82cc9fca396be781347f44155b0143a3cdaf95cadd"
+              }
+            }
+          }
+        },
+        {
+          "view": 17,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 34.91925713179613,
+                "ssim": 0.9920766413083535,
+                "flip": 0.0032991115003824234,
+                "mse": 0.00032216196144511727,
+                "silhouette_xor_fraction": 0.00113037109375,
+                "image_sha256": "bb8cbe427403487f2635b1ff75e882b9cef4941748a4e9919d13553fc2ca01d6"
+              },
+              "msaa4": {
+                "psnr_db": 38.51401723863414,
+                "ssim": 0.9963159467530394,
+                "flip": 0.002545339521020651,
+                "mse": 0.00014079857356545558,
+                "silhouette_xor_fraction": 0.00044189453125,
+                "image_sha256": "c154789740dc35333757511174eac0730b9a6e54cc73983dbf84569cccdb376c"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 37.02661201834823,
+                "ssim": 0.9950918466370092,
+                "flip": 0.0021903091110289097,
+                "mse": 0.0001983073292123222,
+                "silhouette_xor_fraction": 0.00101806640625,
+                "image_sha256": "c93eec89f38cd332a4e3fd214f7b146ce5cb3db0b0ee099ffc4026ce87906e0f"
+              },
+              "msaa4": {
+                "psnr_db": 45.644109548455425,
+                "ssim": 0.9991181979626305,
+                "flip": 0.0012299001682549715,
+                "mse": 2.726396548202614e-05,
+                "silhouette_xor_fraction": 0.00029541015625,
+                "image_sha256": "5234af870bf60f17883c96e2b56e7a4722137e17af3486c259b5c3a484ced50f"
+              }
+            }
+          }
+        },
+        {
+          "view": 18,
+          "screen_scale": 0.55,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 40.64777780872495,
+                "ssim": 0.9962873717146752,
+                "flip": 0.0010086485417559743,
+                "mse": 8.614343792051134e-05,
+                "silhouette_xor_fraction": 0.00113525390625,
+                "image_sha256": "0fef30247c34e70805fbfee51920a736ec2a3421fd539ec27815aebcfbabb1ae"
+              },
+              "msaa4": {
+                "psnr_db": 46.566668151330475,
+                "ssim": 0.9988101431778469,
+                "flip": 0.000631378497928381,
+                "mse": 2.20461706435025e-05,
+                "silhouette_xor_fraction": 0.000419921875,
+                "image_sha256": "4938db90d2ee010e9313757ff2f5dd62fdcfb5c3ef6a431fba78c6d537dca3e7"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 41.3850039183136,
+                "ssim": 0.9972414981075801,
+                "flip": 0.0008473623311147094,
+                "mse": 7.269417111207227e-05,
+                "silhouette_xor_fraction": 0.00106689453125,
+                "image_sha256": "9b6ddaef930d645418c5ccad684ae2b260958be002caa6eacde8393b1774953f"
+              },
+              "msaa4": {
+                "psnr_db": 49.29312194094074,
+                "ssim": 0.9993899830789853,
+                "flip": 0.000458547001471743,
+                "mse": 1.176759689782776e-05,
+                "silhouette_xor_fraction": 0.00033935546875,
+                "image_sha256": "df1530f8e1ac5041d2bccd8a6987ee46457e8dd8be82eef333ceaf98e3ee6adc"
+              }
+            }
+          }
+        },
+        {
+          "view": 19,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 37.385584298826195,
+                "ssim": 0.993706782887747,
+                "flip": 0.0022689271718263626,
+                "mse": 0.00018257509882016535,
+                "silhouette_xor_fraction": 0.00093505859375,
+                "image_sha256": "b84daa40664f0741e870f391d27c39afe3468e4ffa20f24896c3e14f0035a8a7"
+              },
+              "msaa4": {
+                "psnr_db": 42.325796775349325,
+                "ssim": 0.9968770523297619,
+                "flip": 0.0016912001883611083,
+                "mse": 5.853562932525952e-05,
+                "silhouette_xor_fraction": 0.00032470703125,
+                "image_sha256": "3a2be3a7ca16d1a7854db79447c0f10f4d59f3552ba4e8769328b8ce4c1aeeec"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 38.21308225829205,
+                "ssim": 0.995591986008133,
+                "flip": 0.0017539790133014321,
+                "mse": 0.00015090087045847752,
+                "silhouette_xor_fraction": 0.00093017578125,
+                "image_sha256": "8c531a18843eb546ca56ee367977808495866f89534be1baf3e62fad4dbc25b8"
+              },
+              "msaa4": {
+                "psnr_db": 46.29224074799161,
+                "ssim": 0.998885545276723,
+                "flip": 0.0010058159241452813,
+                "mse": 2.3484206795463285e-05,
+                "silhouette_xor_fraction": 0.0002783203125,
+                "image_sha256": "89024c775b42ddb2768d79b3aceb706403056c29bb800f20651de1fcaecd1ed2"
+              }
+            }
+          }
+        },
+        {
+          "view": 20,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 38.29438853254702,
+                "ssim": 0.9954082049432702,
+                "flip": 0.0022137961350381374,
+                "mse": 0.00014810206711361013,
+                "silhouette_xor_fraction": 0.00072998046875,
+                "image_sha256": "ce7971aa22fda9073c41a6a732a8de3ef226928bc76f9103cca9f3613cc43e51"
+              },
+              "msaa4": {
+                "psnr_db": 44.24093028018522,
+                "ssim": 0.9979356211412047,
+                "flip": 0.001778133912011981,
+                "mse": 3.766230986880046e-05,
+                "silhouette_xor_fraction": 0.0001953125,
+                "image_sha256": "35f20329330a74d87cea7121bcf9bdd0055323ed37c73181354cd3f3d901ef95"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 39.0648989542865,
+                "ssim": 0.996975079828732,
+                "flip": 0.0014748593093827367,
+                "mse": 0.00012402523969146483,
+                "silhouette_xor_fraction": 0.0007421875,
+                "image_sha256": "c9f09b023bfd247da55c5cefe5d90d3a858b5fc7ede43df89e414b33168c8888"
+              },
+              "msaa4": {
+                "psnr_db": 48.044157225610995,
+                "ssim": 0.9993284318488561,
+                "flip": 0.0009225744870491326,
+                "mse": 1.568860234044598e-05,
+                "silhouette_xor_fraction": 0.00019775390625,
+                "image_sha256": "26f315f411fecd05334c543e088fe82b6ee416bd759f86f8faece861c4ea59b3"
+              }
+            }
+          }
+        },
+        {
+          "view": 21,
+          "screen_scale": 0.55,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 39.24354990453811,
+                "ssim": 0.9961710273709609,
+                "flip": 0.0014827308477833867,
+                "mse": 0.00011902686166378317,
+                "silhouette_xor_fraction": 0.000673828125,
+                "image_sha256": "465d2c0a60d9f0e6853253087ac4ed0e41dd2a9c1e0cfd14b55d9001a0cb5f0f"
+              },
+              "msaa4": {
+                "psnr_db": 45.37978847406369,
+                "ssim": 0.9984871087181993,
+                "flip": 0.0009551914990879595,
+                "mse": 2.8974845912629756e-05,
+                "silhouette_xor_fraction": 0.00017578125,
+                "image_sha256": "6201c3beb14b3bf1337cc15272d12dbb37a2e5e730f9be1032a02e98e6276444"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 40.11527401189923,
+                "ssim": 0.9970430355955129,
+                "flip": 0.001168555929325521,
+                "mse": 9.738062734284893e-05,
+                "silhouette_xor_fraction": 0.000654296875,
+                "image_sha256": "1504b2431e3588216ae62e4b5409a37689f49d6c21e0fa1a0b1665c1fbf1e843"
+              },
+              "msaa4": {
+                "psnr_db": 49.21351554577514,
+                "ssim": 0.9994103623346586,
+                "flip": 0.0005598707939498127,
+                "mse": 1.1985286608515956e-05,
+                "silhouette_xor_fraction": 0.00015625,
+                "image_sha256": "2dcb8327397210f3480a50dc28e792658d4b812091df5161b0ead8698ce00b64"
+              }
+            }
+          }
+        },
+        {
+          "view": 22,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 36.19048920432081,
+                "ssim": 0.9914183536559565,
+                "flip": 0.0030654079746454954,
+                "mse": 0.00024040918757208766,
+                "silhouette_xor_fraction": 0.0009619140625,
+                "image_sha256": "5d4cd89a69633b10a8d96cb9c0edf7316cfa7f4f9798b28a7c682af11647019f"
+              },
+              "msaa4": {
+                "psnr_db": 39.9897930001954,
+                "ssim": 0.9949539283865537,
+                "flip": 0.0025755197275429964,
+                "mse": 0.00010023529862312572,
+                "silhouette_xor_fraction": 0.00040283203125,
+                "image_sha256": "b03bf258ac57f1845c16f2e68c93ca0bb570968ced2a25b6d437e5c2000569f5"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 38.25669403454951,
+                "ssim": 0.9951259415803403,
+                "flip": 0.0016276725800707936,
+                "mse": 0.00014939311202422144,
+                "silhouette_xor_fraction": 0.00085205078125,
+                "image_sha256": "7eab592f5448b49fe8d12ed5af6e5dea47fc88bd0e23b632a7b23b6060adc18e"
+              },
+              "msaa4": {
+                "psnr_db": 45.78386749752507,
+                "ssim": 0.9985339916644453,
+                "flip": 0.0010819531744346023,
+                "mse": 2.640056558775471e-05,
+                "silhouette_xor_fraction": 0.00030029296875,
+                "image_sha256": "ea12448bcc2c5337ad6e29ef93aa9590eaba9d2f3c256bb44bd60722acba289a"
+              }
+            }
+          }
+        },
+        {
+          "view": 23,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 35.28178766469067,
+                "ssim": 0.9897506175322711,
+                "flip": 0.003687048563733697,
+                "mse": 0.00029636111261293734,
+                "silhouette_xor_fraction": 0.0010791015625,
+                "image_sha256": "ec204ad638cb4d8967e66952011c519f025c72d9619e095c511fe02d5098f5b6"
+              },
+              "msaa4": {
+                "psnr_db": 39.850328319584534,
+                "ssim": 0.9941047116462578,
+                "flip": 0.0030156122520565987,
+                "mse": 0.00010350638876874279,
+                "silhouette_xor_fraction": 0.000400390625,
+                "image_sha256": "d63c0df7aa1c526fe4e2a6e268139ec39f9bda677d755d17cd77a5a68b221c06"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 37.066354456427895,
+                "ssim": 0.9944980718451487,
+                "flip": 0.001989806769415736,
+                "mse": 0.00019650089508842756,
+                "silhouette_xor_fraction": 0.0009521484375,
+                "image_sha256": "6a090e45ff4ffaa049d5314d01cd27655a31370bdf6554bc8f8cca187254fc5a"
+              },
+              "msaa4": {
+                "psnr_db": 45.15700848878274,
+                "ssim": 0.9985594886939332,
+                "flip": 0.0012525011552497745,
+                "mse": 3.0499950439734718e-05,
+                "silhouette_xor_fraction": 0.00030029296875,
+                "image_sha256": "ce09bdbd8cb71c5fc6a594bff47787065e2d31a3ed0a7e5be7ababe5aff87a21"
+              }
+            }
+          }
+        }
+      ],
+      "summary": {
+        "native": {
+          "joint_fit": {
+            "pooled_mse": 0.00039232228108129487,
+            "pooled_psnr_db": 34.06357026369896,
+            "mean_flip": 0.0051583562065691995,
+            "worst_flip": 0.011896132491528988,
+            "mean_ssim": 0.9879405331454043,
+            "worst_ssim": 0.968941717301564,
+            "mean_silhouette_xor_fraction": 0.0014163208007812501,
+            "worst_silhouette_xor_fraction": 0.0025146484375
+          },
+          "fitted_control": {
+            "pooled_mse": 0.00022643247783054192,
+            "pooled_psnr_db": 36.45061280968815,
+            "mean_flip": 0.002870312271018823,
+            "worst_flip": 0.005124514922499657,
+            "mean_ssim": 0.9931511899067996,
+            "worst_ssim": 0.9836969521875794,
+            "mean_silhouette_xor_fraction": 0.0012690226236979167,
+            "worst_silhouette_xor_fraction": 0.00208251953125
+          },
+          "joint_minus_control": {
+            "pooled_psnr_db": -2.387042545989189,
+            "mean_flip": 0.0022880439355503763,
+            "mean_ssim": -0.005210656761395316,
+            "mean_silhouette_xor_fraction": 0.00014729817708333337
+          }
+        },
+        "msaa4": {
+          "joint_fit": {
+            "pooled_mse": 0.00018846501251772155,
+            "pooled_psnr_db": 37.24769262332584,
+            "mean_flip": 0.004435503542481456,
+            "worst_flip": 0.010772479698061943,
+            "mean_ssim": 0.9925858544316682,
+            "worst_ssim": 0.9777236998126849,
+            "mean_silhouette_xor_fraction": 0.0005525716145833333,
+            "worst_silhouette_xor_fraction": 0.0012451171875
+          },
+          "fitted_control": {
+            "pooled_mse": 3.8795131129453416e-05,
+            "pooled_psnr_db": 44.112227758566824,
+            "mean_flip": 0.0019868457323658126,
+            "worst_flip": 0.003743221517652273,
+            "mean_ssim": 0.997894039660776,
+            "worst_ssim": 0.9940032649097852,
+            "mean_silhouette_xor_fraction": 0.0003875732421874999,
+            "worst_silhouette_xor_fraction": 0.0006787109375
+          },
+          "joint_minus_control": {
+            "pooled_psnr_db": -6.864535135240985,
+            "mean_flip": 0.0024486578101156433,
+            "mean_ssim": -0.005308185229107809,
+            "mean_silhouette_xor_fraction": 0.00016499837239583338
+          }
+        }
+      }
+    },
+    {
+      "face_count": 5290,
+      "control": "meshoptimizer",
+      "views": [
+        {
+          "view": 0,
+          "screen_scale": 1.0,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 32.361577094643806,
+                "ssim": 0.9729280145014721,
+                "flip": 0.010631962679326534,
+                "mse": 0.0005805535280901577,
+                "silhouette_xor_fraction": 0.00204345703125,
+                "image_sha256": "fe88f32e8f2c9a6a47a0aece604f5368304432993db40dd9d47ebf107f8430bd"
+              },
+              "msaa4": {
+                "psnr_db": 36.12122640057828,
+                "ssim": 0.9821001248896961,
+                "flip": 0.009234628640115261,
+                "mse": 0.00024427406225970775,
+                "silhouette_xor_fraction": 0.00064208984375,
+                "image_sha256": "03ff0dd19aeda7a3af9dac83a4062770ae5b3f6df84387247fc7d5daf6e9bc41"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 34.65321549262864,
+                "ssim": 0.9884539313502112,
+                "flip": 0.004063319880515337,
+                "mse": 0.0003425140721116878,
+                "silhouette_xor_fraction": 0.00192626953125,
+                "image_sha256": "d32dfc91d2c78d6d41a1ac805a50954e44fe9f8c688445f5cdc1921145f4a22a"
+              },
+              "msaa4": {
+                "psnr_db": 43.42178531355155,
+                "ssim": 0.9975198599985998,
+                "flip": 0.002192104933783412,
+                "mse": 4.548010380622837e-05,
+                "silhouette_xor_fraction": 0.00048828125,
+                "image_sha256": "36a707bd8a13e9002ad5f4dde89905a3a296cc623d5e00fb1154eb9e570e561a"
+              }
+            }
+          }
+        },
+        {
+          "view": 1,
+          "screen_scale": 0.9999999865388263,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 32.58116373506379,
+                "ssim": 0.9790688353881192,
+                "flip": 0.008989867754280567,
+                "mse": 0.0005519295087826798,
+                "silhouette_xor_fraction": 0.001865234375,
+                "image_sha256": "55dcf1d9eb376374d219eaeb030f0db0c8a558582d104ea1db03bbcf40a9676a"
+              },
+              "msaa4": {
+                "psnr_db": 36.88093862137101,
+                "ssim": 0.986597489249346,
+                "flip": 0.007909980602562428,
+                "mse": 0.00020507189242118418,
+                "silhouette_xor_fraction": 0.00061767578125,
+                "image_sha256": "d63127fa040168fe7c8b63d162dcee38adfe90c1f350c1b0e9176a516e54d01a"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 34.373556572120755,
+                "ssim": 0.9917442601565135,
+                "flip": 0.003630530321970582,
+                "mse": 0.0003652954993271819,
+                "silhouette_xor_fraction": 0.0017529296875,
+                "image_sha256": "b6b3e61e01d644f37e13d0068d5809848eaad66a10a1f90fc0f80f1feddf62d3"
+              },
+              "msaa4": {
+                "psnr_db": 42.836701713846274,
+                "ssim": 0.9981144010787888,
+                "flip": 0.0022206800058484077,
+                "mse": 5.203910455113418e-05,
+                "silhouette_xor_fraction": 0.00047119140625,
+                "image_sha256": "37268a6015d475e346490a30d8ee2c709345b6f3c6b6aaa8ec0d91af04d9f428"
+              }
+            }
+          }
+        },
+        {
+          "view": 2,
+          "screen_scale": 0.9999999865388264,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 34.934692541731074,
+                "ssim": 0.990400089139354,
+                "flip": 0.005167356692254543,
+                "mse": 0.0003210189965998654,
+                "silhouette_xor_fraction": 0.00141357421875,
+                "image_sha256": "7b8ba5d70f6626eb893744ab9c09ea8f045db805aa2211bc84b3a6ada224fde6"
+              },
+              "msaa4": {
+                "psnr_db": 41.46468929501069,
+                "ssim": 0.9954766091350787,
+                "flip": 0.00426594028249383,
+                "mse": 7.137252649221452e-05,
+                "silhouette_xor_fraction": 0.00037109375,
+                "image_sha256": "f5f6d0ad6fd2aefab039aa09fa0381fade92209fdc42a146b44a04b77b3a154d"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 35.68194118884332,
+                "ssim": 0.9946096997489765,
+                "flip": 0.003046932630240917,
+                "mse": 0.0002702749918901384,
+                "silhouette_xor_fraction": 0.0013818359375,
+                "image_sha256": "c5c03325e2e574b167c505c2765ecab53592387ff23fac4a2937ced6d99f9509"
+              },
+              "msaa4": {
+                "psnr_db": 45.005188276107695,
+                "ssim": 0.9989141432671019,
+                "flip": 0.001957210246473551,
+                "mse": 3.1585019884179166e-05,
+                "silhouette_xor_fraction": 0.00034912109375,
+                "image_sha256": "43ceb0fddb40cc1ca7f666e9f5d9eafdc22ba0822c42b4972d30a6a9a849aad3"
+              }
+            }
+          }
+        },
+        {
+          "view": 3,
+          "screen_scale": 1.0,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 38.005791399916426,
+                "ssim": 0.9953282270287219,
+                "flip": 0.002679054159671068,
+                "mse": 0.00015827810367406765,
+                "silhouette_xor_fraction": 0.001171875,
+                "image_sha256": "2855c759253f71f57ba6e71e9ecfa060498ceb965aab337a0d051be2b618f5a8"
+              },
+              "msaa4": {
+                "psnr_db": 43.4637486946402,
+                "ssim": 0.9980740709997982,
+                "flip": 0.001863075653091073,
+                "mse": 4.504277201076509e-05,
+                "silhouette_xor_fraction": 0.0003466796875,
+                "image_sha256": "8c24997c028d17f85b1dd80f362c93dc781f4eeaa350c979aa805bee7a20b5da"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 38.630559323889855,
+                "ssim": 0.9963852192720919,
+                "flip": 0.002215731656178832,
+                "mse": 0.0001370705152465398,
+                "silhouette_xor_fraction": 0.00117919921875,
+                "image_sha256": "d247f245b8802490dafd052e8f240acbbeee7b6647434f95d34679ddffb8c4a1"
+              },
+              "msaa4": {
+                "psnr_db": 47.90157644678759,
+                "ssim": 0.9992879723893602,
+                "flip": 0.00118578365072608,
+                "mse": 1.621221405228758e-05,
+                "silhouette_xor_fraction": 0.00031494140625,
+                "image_sha256": "5db75b6b50c4013779b55ddf463eec0d59dbd8d47e110984261926fce1a9e3e0"
+              }
+            }
+          }
+        },
+        {
+          "view": 4,
+          "screen_scale": 0.9999999865388264,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 33.462275870504975,
+                "ssim": 0.9882487944181225,
+                "flip": 0.005105629097670317,
+                "mse": 0.00045058049337995,
+                "silhouette_xor_fraction": 0.00165771484375,
+                "image_sha256": "494b3c6964e763e4b2dc800e53b74f63e30a1be0d5a943b6a46fc04dd8dfb0b7"
+              },
+              "msaa4": {
+                "psnr_db": 37.46025288580122,
+                "ssim": 0.9941569249069232,
+                "flip": 0.003988621756434441,
+                "mse": 0.00017946290188869667,
+                "silhouette_xor_fraction": 0.0006005859375,
+                "image_sha256": "7afea076b4b6ae97721fa704d74c1cec821aa5c8f2df5e08405f98c8335ca66f"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 35.19918494220312,
+                "ssim": 0.9926396812968806,
+                "flip": 0.003592902794480324,
+                "mse": 0.0003020518325283545,
+                "silhouette_xor_fraction": 0.00155029296875,
+                "image_sha256": "54fdbb1bf6f2f4b9966de1dbb45ee9ade10830df955520aedb741882ef6c0231"
+              },
+              "msaa4": {
+                "psnr_db": 43.645355442646135,
+                "ssim": 0.9985448453374701,
+                "flip": 0.0020589425694197416,
+                "mse": 4.319807886389851e-05,
+                "silhouette_xor_fraction": 0.00043701171875,
+                "image_sha256": "9b3dab2bc46390f7becd5bb4c17efa6817f4600189466f99e5e155212d571f75"
+              }
+            }
+          }
+        },
+        {
+          "view": 5,
+          "screen_scale": 0.9999999865388264,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 32.416481754771816,
+                "ssim": 0.9857675995612588,
+                "flip": 0.006829354912042618,
+                "mse": 0.0005732602094146483,
+                "silhouette_xor_fraction": 0.00187744140625,
+                "image_sha256": "5cf4abb7822fdcae788260a6f0d4504e7282d9213c826a7ba568808171b94faf"
+              },
+              "msaa4": {
+                "psnr_db": 36.400083668825495,
+                "ssim": 0.9927926452630272,
+                "flip": 0.005232570227235556,
+                "mse": 0.00022908233912437526,
+                "silhouette_xor_fraction": 0.00064697265625,
+                "image_sha256": "2b5de832617fae517cf0398dd785e94cd5b68efdee9364d0f5c19dc4afa24732"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 34.411345774618745,
+                "ssim": 0.9919128533727007,
+                "flip": 0.004344012588262558,
+                "mse": 0.00036213073847798927,
+                "silhouette_xor_fraction": 0.00176025390625,
+                "image_sha256": "6443585d90c6c26541cda2b05762af4179a46ef04c1403a2672faabe4417f86b"
+              },
+              "msaa4": {
+                "psnr_db": 43.55120120015875,
+                "ssim": 0.9986949086459586,
+                "flip": 0.002237202599644661,
+                "mse": 4.4144830113417915e-05,
+                "silhouette_xor_fraction": 0.00047607421875,
+                "image_sha256": "aedb35bede7710601fa768f38ae2997f4cee338149a1e9fbf61fe0e39b16668e"
+              }
+            }
+          }
+        },
+        {
+          "view": 6,
+          "screen_scale": 1.0,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 37.72958874308995,
+                "ssim": 0.9935070425658202,
+                "flip": 0.001890139770694077,
+                "mse": 0.00016867126676038062,
+                "silhouette_xor_fraction": 0.00197021484375,
+                "image_sha256": "d432888c10dfa4accdd8ddfffb5ac6a227ae43fc072ab9a4a0e696c7a970fdfe"
+              },
+              "msaa4": {
+                "psnr_db": 42.537799319164655,
+                "ssim": 0.997052716588234,
+                "flip": 0.001269807922653854,
+                "mse": 5.57468131247597e-05,
+                "silhouette_xor_fraction": 0.000712890625,
+                "image_sha256": "b65c146c3e72d692f4c91981dbab99ee4b6098f784a768e14adfd5f8ba704ec5"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 39.11263106664969,
+                "ssim": 0.9951187070452182,
+                "flip": 0.0014933388447389007,
+                "mse": 0.00012266957870770857,
+                "silhouette_xor_fraction": 0.00176513671875,
+                "image_sha256": "e36e30c9231ee4d70fa29638a89949e935b461999a62c1ed94d2b795cdd6180a"
+              },
+              "msaa4": {
+                "psnr_db": 47.36846067036793,
+                "ssim": 0.9989522033442505,
+                "flip": 0.0007515112520195544,
+                "mse": 1.832963884083045e-05,
+                "silhouette_xor_fraction": 0.0005078125,
+                "image_sha256": "22753742a6ce57eabdbd6f8926228e5ca47ac1c8768b8e04c41306b2d8690df5"
+              }
+            }
+          }
+        },
+        {
+          "view": 7,
+          "screen_scale": 0.9999999865388263,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 33.39936287972746,
+                "ssim": 0.9867698428480858,
+                "flip": 0.005603486206382513,
+                "mse": 0.0004571552257545175,
+                "silhouette_xor_fraction": 0.00173583984375,
+                "image_sha256": "08819c7b0f9f27782bece0ce1db3c4c61eeedb9954b3465299e46db4346e0297"
+              },
+              "msaa4": {
+                "psnr_db": 36.557473253878015,
+                "ssim": 0.9924672892620753,
+                "flip": 0.004472291562706232,
+                "mse": 0.0002209289621179354,
+                "silhouette_xor_fraction": 0.00062255859375,
+                "image_sha256": "927c250003bf5b6c12cfd46cfd306b067cbe032030e5adc1dff39d09ec64d59b"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 35.70839077668528,
+                "ssim": 0.9924503919497811,
+                "flip": 0.003493149299174547,
+                "mse": 0.0002686339463787966,
+                "silhouette_xor_fraction": 0.00160888671875,
+                "image_sha256": "40e64eec643adf32f54e5c95a1709e6706e54f96dbe702aabbe231613af84136"
+              },
+              "msaa4": {
+                "psnr_db": 43.82914782067358,
+                "ssim": 0.9982301953704509,
+                "flip": 0.0020261756144464016,
+                "mse": 4.140808973712034e-05,
+                "silhouette_xor_fraction": 0.0004443359375,
+                "image_sha256": "d74ef097998cf3b13f691c57cb17f767f302dccc360c4adecae141ee559fcdef"
+              }
+            }
+          }
+        },
+        {
+          "view": 8,
+          "screen_scale": 0.9999999865388264,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 34.795276873876304,
+                "ssim": 0.9897918826017204,
+                "flip": 0.006110474932938814,
+                "mse": 0.00033149141856497505,
+                "silhouette_xor_fraction": 0.001396484375,
+                "image_sha256": "d43aad296d4aec7fe6951a3ff82e8bc00e601b3bef28cad37c2162c93e330bfc"
+              },
+              "msaa4": {
+                "psnr_db": 39.05939785399297,
+                "ssim": 0.9944788245921548,
+                "flip": 0.0052884225733578205,
+                "mse": 0.00012418244335111496,
+                "silhouette_xor_fraction": 0.00038330078125,
+                "image_sha256": "d81d2e94e24a722000589794bc4f0df2da65e024062a2563499ab395165659a7"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 36.31978183200254,
+                "ssim": 0.9938434115342812,
+                "flip": 0.0035589016042649746,
+                "mse": 0.00023335751273548637,
+                "silhouette_xor_fraction": 0.00139404296875,
+                "image_sha256": "23edc5d182571df1589d8ca32683e818b835029700d5f1a520d964e22dae760e"
+              },
+              "msaa4": {
+                "psnr_db": 44.85706940253468,
+                "ssim": 0.9982958992302763,
+                "flip": 0.0025058325845748186,
+                "mse": 3.26808273861015e-05,
+                "silhouette_xor_fraction": 0.0003515625,
+                "image_sha256": "b0227a902f08c8d92ad33f1847f1ae41693ad109e922c75ee539607d7178fc0f"
+              }
+            }
+          }
+        },
+        {
+          "view": 9,
+          "screen_scale": 1.0,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 36.27662625147678,
+                "ssim": 0.9916989054577936,
+                "flip": 0.003680861322209239,
+                "mse": 0.00023568793402777778,
+                "silhouette_xor_fraction": 0.00123779296875,
+                "image_sha256": "1ee60e0792f0e593dde273edd157c9e5413f45b1ee8b5938b3cd9be78ffd0221"
+              },
+              "msaa4": {
+                "psnr_db": 41.969100774653356,
+                "ssim": 0.9962195007063254,
+                "flip": 0.002622974803671241,
+                "mse": 6.354624723663975e-05,
+                "silhouette_xor_fraction": 0.0002978515625,
+                "image_sha256": "7b7631d151450b8bfbe9e7b755c3cdc45bc5d52920e9caaa33099cee61f14e14"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 37.06443376060431,
+                "ssim": 0.9946816524011748,
+                "flip": 0.002423878526315093,
+                "mse": 0.00019658781328094966,
+                "silhouette_xor_fraction": 0.001279296875,
+                "image_sha256": "c2e35a721cd3d4365506d4c0e1a2ce5aa729791809b90e59e83dce98390f8db3"
+              },
+              "msaa4": {
+                "psnr_db": 46.35252264513329,
+                "ssim": 0.9990271265377143,
+                "flip": 0.0010934986639767885,
+                "mse": 2.316048815359477e-05,
+                "silhouette_xor_fraction": 0.00029541015625,
+                "image_sha256": "54a7b44ebfb67f09f080f836d994935e702fbb8a420e712d02385eb9743fa35d"
+              }
+            }
+          }
+        },
+        {
+          "view": 10,
+          "screen_scale": 0.9999999865388264,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 32.61761624200469,
+                "ssim": 0.9801434353143944,
+                "flip": 0.00888012908399105,
+                "mse": 0.0005473162740892927,
+                "silhouette_xor_fraction": 0.00180908203125,
+                "image_sha256": "1999f1246e950fdc72c6f02c5ed0b30617dd8048ee165e555beec7ddc86c9e8d"
+              },
+              "msaa4": {
+                "psnr_db": 36.00534937930985,
+                "ssim": 0.9870141105108182,
+                "flip": 0.007822242565453053,
+                "mse": 0.0002508794318891773,
+                "silhouette_xor_fraction": 0.0006884765625,
+                "image_sha256": "5afafef04bb943d972e55a7f3ec95b0850583e511541d0fb86ea8047e4d52c46"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 35.300632156071224,
+                "ssim": 0.9920208906052499,
+                "flip": 0.0036857365630567074,
+                "mse": 0.00029507795228998464,
+                "silhouette_xor_fraction": 0.00156005859375,
+                "image_sha256": "4184a0c224b971d958f016a149dd9b532a8bdbf090473ee66b27e0236e56a2a0"
+              },
+              "msaa4": {
+                "psnr_db": 43.7026347719103,
+                "ssim": 0.9977250156659914,
+                "flip": 0.002305429195985198,
+                "mse": 4.263207810697809e-05,
+                "silhouette_xor_fraction": 0.0004541015625,
+                "image_sha256": "331dec892817167c318b09e311088f1eff95e591dd3379ed8b9084cf362b321a"
+              }
+            }
+          }
+        },
+        {
+          "view": 11,
+          "screen_scale": 0.9999999865388264,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 32.11973223295174,
+                "ssim": 0.9772940414853095,
+                "flip": 0.01027178205549717,
+                "mse": 0.0006137998305940024,
+                "silhouette_xor_fraction": 0.00197998046875,
+                "image_sha256": "e42bc8971567de1dda9f33c739913a8294b27ff1519ffb15bafbb7c78c88d67f"
+              },
+              "msaa4": {
+                "psnr_db": 35.907139234638045,
+                "ssim": 0.9854446758838488,
+                "flip": 0.008946320973336697,
+                "mse": 0.000256617384239235,
+                "silhouette_xor_fraction": 0.0007275390625,
+                "image_sha256": "c55a81f1955fc7abb6a3216bdcf31e31c75f8304105ce677f3668f0963477488"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 34.306555626795685,
+                "ssim": 0.9910661512007338,
+                "flip": 0.0041582933627069,
+                "mse": 0.0003709748053633218,
+                "silhouette_xor_fraction": 0.0017626953125,
+                "image_sha256": "238941f828e519ec7ef0681bb3f2bbf53562610d9de36dc5de6d6addf9827258"
+              },
+              "msaa4": {
+                "psnr_db": 42.93502594127874,
+                "ssim": 0.9977600118783686,
+                "flip": 0.0025152391754090786,
+                "mse": 5.0874175497404845e-05,
+                "silhouette_xor_fraction": 0.00048095703125,
+                "image_sha256": "066372707cc9c2240c723610da3c6ad91efdf0f7ae1bc9cf276bdbaf1219a5f6"
+              }
+            }
+          }
+        },
+        {
+          "view": 12,
+          "screen_scale": 0.55,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 36.27015684110757,
+                "ssim": 0.9884635716378101,
+                "flip": 0.0036120652221143246,
+                "mse": 0.00023603928627210686,
+                "silhouette_xor_fraction": 0.00110595703125,
+                "image_sha256": "7a1b332c236769eae4b72b54be2fd6036c556c34fdebd51d481f9bba0368792a"
+              },
+              "msaa4": {
+                "psnr_db": 41.94179758518018,
+                "ssim": 0.993959697017502,
+                "flip": 0.002829160774126649,
+                "mse": 6.394700956362938e-05,
+                "silhouette_xor_fraction": 0.00034912109375,
+                "image_sha256": "f20f3d23b65e3ac4ea0a4f8a76b7dac6b9a9ecf24baaa238410437dab2fb4093"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 37.40088596419109,
+                "ssim": 0.993104689360551,
+                "flip": 0.0020143974106758833,
+                "mse": 0.00018193295547385622,
+                "silhouette_xor_fraction": 0.001064453125,
+                "image_sha256": "8b2b599091e0164c96388d8b658d3f048d1c6f27271a0c85ca978024ce3910a1"
+              },
+              "msaa4": {
+                "psnr_db": 46.172056787755466,
+                "ssim": 0.9987099965642429,
+                "flip": 0.0009380084229633212,
+                "mse": 2.4143170595444058e-05,
+                "silhouette_xor_fraction": 0.00030517578125,
+                "image_sha256": "656a27a1104328796147612233557dca6b22484edfa17e07163f972472bcb600"
+              }
+            }
+          }
+        },
+        {
+          "view": 13,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 36.40150898713782,
+                "ssim": 0.9913174093778896,
+                "flip": 0.002974492497742176,
+                "mse": 0.00022900717272202997,
+                "silhouette_xor_fraction": 0.000927734375,
+                "image_sha256": "2517555940a0bda4adb78a1092b975fa747a2aa7e722f7f8e4beac2744679c9f"
+              },
+              "msaa4": {
+                "psnr_db": 41.81303022857851,
+                "ssim": 0.9955239761394559,
+                "flip": 0.002311989199370146,
+                "mse": 6.587141213715877e-05,
+                "silhouette_xor_fraction": 0.00031494140625,
+                "image_sha256": "3e97159897467c9009bf4bc99221738211d87f6366aaf961c8a5c101194d7825"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 37.363122010029485,
+                "ssim": 0.9956480603932614,
+                "flip": 0.0016521303914487362,
+                "mse": 0.00018352185006968475,
+                "silhouette_xor_fraction": 0.000908203125,
+                "image_sha256": "233205321211d43b395008d3e564a213a673e47774c59fd529fe7e7242c96bcf"
+              },
+              "msaa4": {
+                "psnr_db": 45.73370389219578,
+                "ssim": 0.9991187219530847,
+                "flip": 0.000840629858430475,
+                "mse": 2.670727604767397e-05,
+                "silhouette_xor_fraction": 0.0002587890625,
+                "image_sha256": "9a53182c566f24c3db03f7a86e12436f3989e466062e33531f44cebb3becec3b"
+              }
+            }
+          }
+        },
+        {
+          "view": 14,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 38.00284093092135,
+                "ssim": 0.9960774624873301,
+                "flip": 0.001837153104133904,
+                "mse": 0.0001583856719771242,
+                "silhouette_xor_fraction": 0.00074951171875,
+                "image_sha256": "72f09f2262b7401bd0bd1a7735064eccb1ebd7a9f645e20042e5d52c90b9c384"
+              },
+              "msaa4": {
+                "psnr_db": 46.33167010308317,
+                "ssim": 0.9986129297046885,
+                "flip": 0.0013638363452628255,
+                "mse": 2.3271961204825066e-05,
+                "silhouette_xor_fraction": 0.0001806640625,
+                "image_sha256": "4dbaf70b701f28604f3c0334dd0f571c965452887ea37e20fe8944d54e90b0f7"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 38.42284267604276,
+                "ssim": 0.9973010715180725,
+                "flip": 0.0012925992486998439,
+                "mse": 0.00014378570591839677,
+                "silhouette_xor_fraction": 0.00073486328125,
+                "image_sha256": "f4863dcfe19b8a30439dbb6e04c13da9d6823531372016ba88804c3b43769d0f"
+              },
+              "msaa4": {
+                "psnr_db": 48.07826708375154,
+                "ssim": 0.9995574839373745,
+                "flip": 0.0007560673402622342,
+                "mse": 1.5565865592560554e-05,
+                "silhouette_xor_fraction": 0.00017333984375,
+                "image_sha256": "5594dc8d6b90bc5ee7b5b428794ec71a78cb56b889dc0ac2c94e565110774289"
+              }
+            }
+          }
+        },
+        {
+          "view": 15,
+          "screen_scale": 0.55,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 41.57806103650061,
+                "ssim": 0.9978487699295369,
+                "flip": 0.0010708721820265055,
+                "mse": 6.953346519367552e-05,
+                "silhouette_xor_fraction": 0.000556640625,
+                "image_sha256": "10d2eabd7cb0cf9e5ac263af500cc1d898a2b75b99a38f73cb38d50f5bd38494"
+              },
+              "msaa4": {
+                "psnr_db": 49.34423347988863,
+                "ssim": 0.9993477060208621,
+                "flip": 0.0006082329782657325,
+                "mse": 1.1629916979046523e-05,
+                "silhouette_xor_fraction": 0.000126953125,
+                "image_sha256": "061da513c0f9188ece76c26edae668c5e02cdc6be0a91e615ac08bbd6763cfd0"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 41.84506832024326,
+                "ssim": 0.9982894176199683,
+                "flip": 0.0009586116066202521,
+                "mse": 6.538726090926567e-05,
+                "silhouette_xor_fraction": 0.00056396484375,
+                "image_sha256": "26d48ad79f0516623e0a2a4d63ffc706ef71526f8383044d81347de8e8a663bf"
+              },
+              "msaa4": {
+                "psnr_db": 51.26846980027703,
+                "ssim": 0.999719031325934,
+                "flip": 0.0004256974789313972,
+                "mse": 7.467117514898117e-06,
+                "silhouette_xor_fraction": 0.00012939453125,
+                "image_sha256": "caa3e91911bb50c6bd5f708ea0b4cbc0ac6654fc3b7a9300e330713a9c5de97e"
+              }
+            }
+          }
+        },
+        {
+          "view": 16,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 37.09514784475367,
+                "ssim": 0.9942168947323897,
+                "flip": 0.0022962703369557858,
+                "mse": 0.00019520241613802384,
+                "silhouette_xor_fraction": 0.0008447265625,
+                "image_sha256": "58ff971f95bfc6ecfc11d1b49a2527c8ccd7a50a4e370254e308c222b4d20848"
+              },
+              "msaa4": {
+                "psnr_db": 42.72183805868203,
+                "ssim": 0.9979113195024846,
+                "flip": 0.0015247470000758767,
+                "mse": 5.3433813016628225e-05,
+                "silhouette_xor_fraction": 0.00024658203125,
+                "image_sha256": "d591962a234c54d35e0b60bf8e2bc696591092d27799e9b2def316d69e7db876"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 37.99484684928639,
+                "ssim": 0.9956071157830058,
+                "flip": 0.0018510514637455344,
+                "mse": 0.00015867747681180315,
+                "silhouette_xor_fraction": 0.00082275390625,
+                "image_sha256": "b7b796b3a230c8cef3812b788723b5761daec9f35da3c5393b8a26bde42fcb6c"
+              },
+              "msaa4": {
+                "psnr_db": 46.70045700453342,
+                "ssim": 0.9992566007981675,
+                "flip": 0.0008973305812105536,
+                "mse": 2.1377369881776238e-05,
+                "silhouette_xor_fraction": 0.00021484375,
+                "image_sha256": "e603939c2a097d64b17c3e441786e6b5961e4080af5f1528108cd3ceb0d56b82"
+              }
+            }
+          }
+        },
+        {
+          "view": 17,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 36.33229347820273,
+                "ssim": 0.9931265933081694,
+                "flip": 0.002804331248626113,
+                "mse": 0.00023268619641484043,
+                "silhouette_xor_fraction": 0.00099609375,
+                "image_sha256": "d2a3f9d1765e9d3d2fec1ef7151e698ccef6749e83820e5114b245bafcfbc215"
+              },
+              "msaa4": {
+                "psnr_db": 42.11193731301826,
+                "ssim": 0.9974672584141832,
+                "flip": 0.0019435136346146464,
+                "mse": 6.149024714052289e-05,
+                "silhouette_xor_fraction": 0.0003271484375,
+                "image_sha256": "c739969065f5df28b11edfbabc24c059d983afb930d57ff8a13c1ce0fa654508"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 37.22907036589823,
+                "ssim": 0.9952854893862465,
+                "flip": 0.002070893533527851,
+                "mse": 0.00018927485822760478,
+                "silhouette_xor_fraction": 0.000986328125,
+                "image_sha256": "6934de87e1c4346c8c257040ab4b69e1492a07bf5ad58ab5c90ded300280efb3"
+              },
+              "msaa4": {
+                "psnr_db": 46.20243331438948,
+                "ssim": 0.9992477211290837,
+                "flip": 0.0010658178944140673,
+                "mse": 2.397489096741638e-05,
+                "silhouette_xor_fraction": 0.00028076171875,
+                "image_sha256": "2f018c2b7dc1fba2ba5a7f9407c924e02e698dc3a5c800171d3d0737cc91a6e3"
+              }
+            }
+          }
+        },
+        {
+          "view": 18,
+          "screen_scale": 0.55,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 40.94935405541204,
+                "ssim": 0.9966981874683974,
+                "flip": 0.0009432178921997547,
+                "mse": 8.036456080594002e-05,
+                "silhouette_xor_fraction": 0.00109619140625,
+                "image_sha256": "a2eebce3934136ff11ba01e324ec935e64846bcd82f3013c4a591ce2f7def970"
+              },
+              "msaa4": {
+                "psnr_db": 47.07041578037962,
+                "ssim": 0.9988759066480989,
+                "flip": 0.0005504661821760237,
+                "mse": 1.9631722174163785e-05,
+                "silhouette_xor_fraction": 0.0003759765625,
+                "image_sha256": "b7d66ef9b867f55ea3fc01598f57fb0fbf0e8d88b81eb8c50901eae50b2df315"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 41.68945760797973,
+                "ssim": 0.997469853185808,
+                "flip": 0.0008223594631999731,
+                "mse": 6.777261149557862e-05,
+                "silhouette_xor_fraction": 0.001025390625,
+                "image_sha256": "01255472d06ed11b0e3d31e7769e65ec13e681471ffdca07237a5a93b8c321b2"
+              },
+              "msaa4": {
+                "psnr_db": 49.94580268228773,
+                "ssim": 0.999397665058284,
+                "flip": 0.0003901634772773832,
+                "mse": 1.0125575199442522e-05,
+                "silhouette_xor_fraction": 0.00030029296875,
+                "image_sha256": "4520096709eea4ed4e48616f1446c15e90afeb223171b27c548fa345561c472a"
+              }
+            }
+          }
+        },
+        {
+          "view": 19,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 37.667717360826586,
+                "ssim": 0.9942393139740303,
+                "flip": 0.0021260036155581474,
+                "mse": 0.00017109142216935796,
+                "silhouette_xor_fraction": 0.00091552734375,
+                "image_sha256": "b34742ca98b63d595eae004c62849f5c2d2be6aa9f8f1b6b15263b0feb35e8a8"
+              },
+              "msaa4": {
+                "psnr_db": 43.09751898360594,
+                "ssim": 0.9974931960298342,
+                "flip": 0.0014750357950106263,
+                "mse": 4.9005866133218e-05,
+                "silhouette_xor_fraction": 0.0002880859375,
+                "image_sha256": "ad4123123ee4d80d418dd3c57de768bbd825b776f71d11e8a1c691e1928dd564"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 38.496612257948556,
+                "ssim": 0.9958771701356357,
+                "flip": 0.0016251582419499755,
+                "mse": 0.00014136397359188775,
+                "silhouette_xor_fraction": 0.00089599609375,
+                "image_sha256": "66aca8d2dae69d0b2247b98aa10b4767bcf82e20f2760a8af3df2d68f851e917"
+              },
+              "msaa4": {
+                "psnr_db": 47.33602302811694,
+                "ssim": 0.999227485248336,
+                "flip": 0.0008131218492053449,
+                "mse": 1.846705594002307e-05,
+                "silhouette_xor_fraction": 0.00025634765625,
+                "image_sha256": "0a88ad868197e0422ff3a9255782d5fbe2790da5db03e20cd44f66009adad025"
+              }
+            }
+          }
+        },
+        {
+          "view": 20,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 38.54995535883405,
+                "ssim": 0.9958273753313581,
+                "flip": 0.0019534521270543337,
+                "mse": 0.00013963826262735487,
+                "silhouette_xor_fraction": 0.00072509765625,
+                "image_sha256": "a08547572089edf6ce46feb6665b3b36d0379ecf3a6af08d60a39228c9351d45"
+              },
+              "msaa4": {
+                "psnr_db": 45.25655341475386,
+                "ssim": 0.9984177306072932,
+                "flip": 0.001469262526370585,
+                "mse": 2.9808810012975778e-05,
+                "silhouette_xor_fraction": 0.0001904296875,
+                "image_sha256": "0947b4321f3a6031de684c44e759e8eee38b3793d4ad9337085650599694d265"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 38.99481563237206,
+                "ssim": 0.9970276122321167,
+                "flip": 0.0013713380321860313,
+                "mse": 0.00012604290567329874,
+                "silhouette_xor_fraction": 0.00074462890625,
+                "image_sha256": "2151b8275fec253d719f64f760988ebe14c824daa36ab094dea7adf8575ef0e6"
+              },
+              "msaa4": {
+                "psnr_db": 48.40276336794187,
+                "ssim": 0.9994574490227847,
+                "flip": 0.0007885334780439734,
+                "mse": 1.444520286668589e-05,
+                "silhouette_xor_fraction": 0.00018310546875,
+                "image_sha256": "24789f9f24e4520eab8d15e7ca0a4387f8c6f55905b73b7894b330915c531e77"
+              }
+            }
+          }
+        },
+        {
+          "view": 21,
+          "screen_scale": 0.55,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 39.72831154137308,
+                "ssim": 0.9964482498860421,
+                "flip": 0.0014031444443389773,
+                "mse": 0.00010645567510092272,
+                "silhouette_xor_fraction": 0.00065185546875,
+                "image_sha256": "25ed00206a9701a87dffa92bd453ea6843f8df633cdb6297a6ae4794d3549b17"
+              },
+              "msaa4": {
+                "psnr_db": 47.18906849875108,
+                "ssim": 0.9987952308433727,
+                "flip": 0.0008285822696052492,
+                "mse": 1.9102628796616685e-05,
+                "silhouette_xor_fraction": 0.000146484375,
+                "image_sha256": "9220a3058b5783ad6fd8b6c62cd57901bf554204f29746df89c65be426d4d42a"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 40.21613100966049,
+                "ssim": 0.9974152654565966,
+                "flip": 0.001121078385040164,
+                "mse": 9.514519655901577e-05,
+                "silhouette_xor_fraction": 0.00064697265625,
+                "image_sha256": "de3927fc6be89c16673a89a920e28f176a99a032fe4a956e3a6106dbf371f41c"
+              },
+              "msaa4": {
+                "psnr_db": 49.60550016588003,
+                "ssim": 0.9996484185556646,
+                "flip": 0.00045714451698586345,
+                "mse": 1.0950903799019608e-05,
+                "silhouette_xor_fraction": 0.00014892578125,
+                "image_sha256": "ee2af3ca190d3d5640c6467dcee62338e0bf4af2ad7c637bd5111d18f72952b6"
+              }
+            }
+          }
+        },
+        {
+          "view": 22,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 36.90862624438884,
+                "ssim": 0.9921630897491506,
+                "flip": 0.002820362336933613,
+                "mse": 0.00020376864517252977,
+                "silhouette_xor_fraction": 0.00090087890625,
+                "image_sha256": "47b624f34f466cf039960a07c5c5bf3be8a57da00ae4a86150f15b902b8d590d"
+              },
+              "msaa4": {
+                "psnr_db": 41.99659498905598,
+                "ssim": 0.9957388073865219,
+                "flip": 0.0022506993263959885,
+                "mse": 6.314522209006152e-05,
+                "silhouette_xor_fraction": 0.00031494140625,
+                "image_sha256": "b151dafd37933c241c580f5a8d222aaee8ca7a8e4bd70dc7dff65f63466e3b46"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 38.4857521784159,
+                "ssim": 0.9962950348422686,
+                "flip": 0.0014776827301830053,
+                "mse": 0.00014171791648644752,
+                "silhouette_xor_fraction": 0.00083251953125,
+                "image_sha256": "100eb2bb2ecd65a44169c331f921ed02f1b892d6b2899d395008f58dca4ebb2a"
+              },
+              "msaa4": {
+                "psnr_db": 46.662901279627924,
+                "ssim": 0.9991500095961886,
+                "flip": 0.0008144194143824279,
+                "mse": 2.1563033148308348e-05,
+                "silhouette_xor_fraction": 0.000263671875,
+                "image_sha256": "246135ca1547d4b2199b353fe7032682e04c8a3486fab3462e66b0ecfb009a5a"
+              }
+            }
+          }
+        },
+        {
+          "view": 23,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 36.03907768861676,
+                "ssim": 0.9908220965492486,
+                "flip": 0.003360389731824398,
+                "mse": 0.00024893858431853137,
+                "silhouette_xor_fraction": 0.0010009765625,
+                "image_sha256": "5cd14f0be7bfe98f4f16891a2906290a134c326ec5e6eef64dbdab5853aa5923"
+              },
+              "msaa4": {
+                "psnr_db": 41.969963115439754,
+                "ssim": 0.9952523807691713,
+                "flip": 0.0026210511568933725,
+                "mse": 6.353363189638601e-05,
+                "silhouette_xor_fraction": 0.00030517578125,
+                "image_sha256": "da763743b9c3c903005006e15cc3af3b91ba1a974d7cc442d78ad8e9731ec6fd"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 37.235716815861686,
+                "ssim": 0.9956111833576697,
+                "flip": 0.0017814796883612871,
+                "mse": 0.0001889854187692234,
+                "silhouette_xor_fraction": 0.00093994140625,
+                "image_sha256": "461462051bd9670b0bdba4ccfdb281801b50465aed31defb24c7d4316fec55dd"
+              },
+              "msaa4": {
+                "psnr_db": 45.878707894340415,
+                "ssim": 0.9990524423778673,
+                "flip": 0.000942965445574373,
+                "mse": 2.5830284626105344e-05,
+                "silhouette_xor_fraction": 0.0002685546875,
+                "image_sha256": "4727e40880a2a91ff6c2f729a167cd5e038be40aa05e4589ddf08a6611ae0ae9"
+              }
+            }
+          }
+        }
+      ],
+      "summary": {
+        "native": {
+          "joint_fit": {
+            "pooled_mse": 0.00029420225619353137,
+            "pooled_psnr_db": 35.31354001055655,
+            "mean_flip": 0.004293410558602773,
+            "worst_flip": 0.010631962679326534,
+            "mean_ssim": 0.9899248218642303,
+            "worst_ssim": 0.9729280145014721,
+            "mean_silhouette_xor_fraction": 0.0012762451171875,
+            "worst_silhouette_xor_fraction": 0.00204345703125
+          },
+          "fitted_control": {
+            "pooled_mse": 0.00020626030784684176,
+            "pooled_psnr_db": 36.855843383943196,
+            "mean_flip": 0.0024060628444810086,
+            "worst_flip": 0.004344012588262558,
+            "mean_ssim": 0.9945774505502089,
+            "worst_ssim": 0.9884539313502112,
+            "mean_silhouette_xor_fraction": 0.0012119547526041668,
+            "worst_silhouette_xor_fraction": 0.00192626953125
+          },
+          "joint_minus_control": {
+            "pooled_psnr_db": -1.5423033733866447,
+            "mean_flip": 0.001887347714121764,
+            "mean_ssim": -0.004652628685978599,
+            "mean_silhouette_xor_fraction": 6.429036458333319e-05
+          }
+        },
+        "msaa4": {
+          "joint_fit": {
+            "pooled_mse": 0.00010292000072087659,
+            "pooled_psnr_db": 39.875002194197876,
+            "mean_flip": 0.0034455606146366335,
+            "worst_flip": 0.009234628640115261,
+            "mean_ssim": 0.9945529633779499,
+            "worst_ssim": 0.9821001248896961,
+            "mean_silhouette_xor_fraction": 0.0004093424479166667,
+            "worst_silhouette_xor_fraction": 0.0007275390625
+          },
+          "fitted_control": {
+            "pooled_mse": 2.759843313218874e-05,
+            "pooled_psnr_db": 45.591155737811846,
+            "mean_flip": 0.0013408129270828795,
+            "worst_flip": 0.0025152391754090786,
+            "mean_ssim": 0.9988587336796394,
+            "worst_ssim": 0.9975198599985998,
+            "mean_silhouette_xor_fraction": 0.0003272501627604167,
+            "worst_silhouette_xor_fraction": 0.0005078125
+          },
+          "joint_minus_control": {
+            "pooled_psnr_db": -5.71615354361397,
+            "mean_flip": 0.002104747687553754,
+            "mean_ssim": -0.004305770301689549,
+            "mean_silhouette_xor_fraction": 8.209228515624998e-05
+          }
+        }
+      }
+    },
+    {
+      "face_count": 7934,
+      "control": "qem",
+      "views": [
+        {
+          "view": 0,
+          "screen_scale": 1.0,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 34.00594849412675,
+                "ssim": 0.9826365805012172,
+                "flip": 0.00701142055913806,
+                "mse": 0.0003975622356785851,
+                "silhouette_xor_fraction": 0.0019091796875,
+                "image_sha256": "d7e65bdd398ade703f3c6e0c4c3273bfbebbc6dee3ab75f3366d4414346b43d1"
+              },
+              "msaa4": {
+                "psnr_db": 39.601127741793356,
+                "ssim": 0.992080016708126,
+                "flip": 0.00524601386860013,
+                "mse": 0.00010961934712610536,
+                "silhouette_xor_fraction": 0.00053955078125,
+                "image_sha256": "a2c95a53e17ae7a5b5a26165c869c0c3af4beb0dd323800c94380874d7d8ab34"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 34.83391377527085,
+                "ssim": 0.9896437227711716,
+                "flip": 0.0035802857019007206,
+                "mse": 0.0003285553858491926,
+                "silhouette_xor_fraction": 0.00189453125,
+                "image_sha256": "1c9681772a2434ea717557ef0c86927e23a873f5333107c2341a4d06da08b84b"
+              },
+              "msaa4": {
+                "psnr_db": 43.940354558236905,
+                "ssim": 0.9982315648512144,
+                "flip": 0.0016107935225591063,
+                "mse": 4.036124176999231e-05,
+                "silhouette_xor_fraction": 0.0004638671875,
+                "image_sha256": "b2aecbe75c91b55eea1b583c98a4e5b6ef49c57ecad485f5afd69729a1d54f40"
+              }
+            }
+          }
+        },
+        {
+          "view": 1,
+          "screen_scale": 0.9999999865388263,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 34.30044110987914,
+                "ssim": 0.9882757160658499,
+                "flip": 0.005467349197715521,
+                "mse": 0.00037149747843377544,
+                "silhouette_xor_fraction": 0.00169677734375,
+                "image_sha256": "03a8d9430a0e3fab426f0f8f373507ed11359f6a1230a196e91ac8574b53e40b"
+              },
+              "msaa4": {
+                "psnr_db": 41.38390727688972,
+                "ssim": 0.9952597410560525,
+                "flip": 0.004159875214099884,
+                "mse": 7.271253093762014e-05,
+                "silhouette_xor_fraction": 0.000478515625,
+                "image_sha256": "2f6ee04a7823c8bff967ec32a93d8e3f3b2ff0ecbcbfe1580a2b5f8a98bc37ee"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 34.50854222668174,
+                "ssim": 0.992479541329735,
+                "flip": 0.0030183803755789995,
+                "mse": 0.0003541161677599962,
+                "silhouette_xor_fraction": 0.00172119140625,
+                "image_sha256": "1f0faf5316c4b9106690f12831618a5653a898df300764f7316d577d112af2c3"
+              },
+              "msaa4": {
+                "psnr_db": 43.50209495862395,
+                "ssim": 0.9987449193165987,
+                "flip": 0.0014791603898629546,
+                "mse": 4.464681552768166e-05,
+                "silhouette_xor_fraction": 0.000419921875,
+                "image_sha256": "c00d1b5bb47fcbd4c7cfcbbc57ce4cfa21de81eca06cec7171dc307aa29fdbcc"
+              }
+            }
+          }
+        },
+        {
+          "view": 2,
+          "screen_scale": 0.9999999865388264,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 35.65031426769665,
+                "ssim": 0.9933660042339044,
+                "flip": 0.0034459808375686407,
+                "mse": 0.00027225041900951554,
+                "silhouette_xor_fraction": 0.00136474609375,
+                "image_sha256": "fdc5f5b63d51f995a58f9d933f4c9b2a4af914176cce3c0b6ab5a7651b34c11e"
+              },
+              "msaa4": {
+                "psnr_db": 44.6861851643931,
+                "ssim": 0.9981720200642046,
+                "flip": 0.002397154690697789,
+                "mse": 3.399237222462514e-05,
+                "silhouette_xor_fraction": 0.0003173828125,
+                "image_sha256": "7cbe8f0e73b1d504ade1868167308302032c347902add0f39c13c2eb90a2d394"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 35.77519656804616,
+                "ssim": 0.9951423121324622,
+                "flip": 0.002402021549642086,
+                "mse": 0.000264533284974529,
+                "silhouette_xor_fraction": 0.0013671875,
+                "image_sha256": "acb75918c895a9e3e37484734483eea695708d56e40331a580c2fec436e0a6b2"
+              },
+              "msaa4": {
+                "psnr_db": 45.28590125400308,
+                "ssim": 0.9992526858788229,
+                "flip": 0.0012287432327866554,
+                "mse": 2.9608053392925798e-05,
+                "silhouette_xor_fraction": 0.0003515625,
+                "image_sha256": "2f87db8554d34373114248b9f8f90e7625d340355de1c958e3f73cc0f3508ef3"
+              }
+            }
+          }
+        },
+        {
+          "view": 3,
+          "screen_scale": 1.0,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 38.29336367255473,
+                "ssim": 0.9961459598362513,
+                "flip": 0.0023528386373072863,
+                "mse": 0.0001481370221188966,
+                "silhouette_xor_fraction": 0.00116455078125,
+                "image_sha256": "d2f50786d2d437fd06204d6f502a65d78976daa476e10e549fbd364162cb193b"
+              },
+              "msaa4": {
+                "psnr_db": 45.30505903982886,
+                "ssim": 0.9989558377662243,
+                "flip": 0.0013969582505524158,
+                "mse": 2.9477732422625915e-05,
+                "silhouette_xor_fraction": 0.0003173828125,
+                "image_sha256": "6d60f24961eef1d6d773fac47c1dd48fd1a20aa2c848f39ad61781b9d02c02ba"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 38.81210590771859,
+                "ssim": 0.9967307124415853,
+                "flip": 0.0018566511571407318,
+                "mse": 0.0001314587162990196,
+                "silhouette_xor_fraction": 0.0011572265625,
+                "image_sha256": "49f61017be9170ea00951458cbf63c9a0a94c9f95a73f6c147066d1b5e0ab8fd"
+              },
+              "msaa4": {
+                "psnr_db": 48.34708759683633,
+                "ssim": 0.9995028829271231,
+                "flip": 0.0007533303578384221,
+                "mse": 1.4631579500672818e-05,
+                "silhouette_xor_fraction": 0.0003076171875,
+                "image_sha256": "07e6361ff9bf079dcb8ddef248372c342fe4f781f5b1e77dd0aae0bb5006a094"
+              }
+            }
+          }
+        },
+        {
+          "view": 4,
+          "screen_scale": 0.9999999865388264,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 34.348305424498655,
+                "ssim": 0.9911080440156196,
+                "flip": 0.004170030355453491,
+                "mse": 0.0003674256145472896,
+                "silhouette_xor_fraction": 0.00158935546875,
+                "image_sha256": "f8606fcabe65e3a923ed7d5ee6d6be7f244f1e2a78b1a82a056770b5fe5bdb95"
+              },
+              "msaa4": {
+                "psnr_db": 39.83903660031902,
+                "ssim": 0.9969815248675676,
+                "flip": 0.0027192237321287394,
+                "mse": 0.00010377585393838909,
+                "silhouette_xor_fraction": 0.00052490234375,
+                "image_sha256": "3e83404c528426a7508132183eed7d19f78645838d27380d4e663dd1a4eec3ad"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 35.27548786875891,
+                "ssim": 0.9928850195430357,
+                "flip": 0.0033145814668387175,
+                "mse": 0.00029679131073385236,
+                "silhouette_xor_fraction": 0.001533203125,
+                "image_sha256": "e18c3dea7c22abf2bb1fc548026ab95cc4953967c7aea8deba33514a272c3c0a"
+              },
+              "msaa4": {
+                "psnr_db": 44.060020297955504,
+                "ssim": 0.9988116252404312,
+                "flip": 0.0015951081877574325,
+                "mse": 3.9264307898404454e-05,
+                "silhouette_xor_fraction": 0.00042724609375,
+                "image_sha256": "9ac3d6e2c92a24876a75b516f25a7dc9441fc2b0dd31a3447f48841102ec5a5b"
+              }
+            }
+          }
+        },
+        {
+          "view": 5,
+          "screen_scale": 0.9999999865388264,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 33.5168704202863,
+                "ssim": 0.9898642493304617,
+                "flip": 0.005087061319500208,
+                "mse": 0.00044495176134179166,
+                "silhouette_xor_fraction": 0.00177734375,
+                "image_sha256": "b62d7bcefed1843c626330a44bc6084b394b0feb85ae9753761605cdc79f5869"
+              },
+              "msaa4": {
+                "psnr_db": 39.036865142043936,
+                "ssim": 0.9966537510728359,
+                "flip": 0.0031219914089888334,
+                "mse": 0.0001248284163542868,
+                "silhouette_xor_fraction": 0.00055908203125,
+                "image_sha256": "42f07f30572eca59f522742c7085c4381241e6defd258431440b2ea34e4ad778"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 34.50140430389296,
+                "ssim": 0.9921056794864941,
+                "flip": 0.0040302579291164875,
+                "mse": 0.0003546986510596886,
+                "silhouette_xor_fraction": 0.00174560546875,
+                "image_sha256": "4292dabd99d69842d6563a079515c02f19bf8f4430a66751dcf056d77647a45d"
+              },
+              "msaa4": {
+                "psnr_db": 43.96179902741288,
+                "ssim": 0.9988540447102172,
+                "flip": 0.0017813065787777305,
+                "mse": 4.016243752402922e-05,
+                "silhouette_xor_fraction": 0.00047119140625,
+                "image_sha256": "02c528aa6fc25b8dc8b7a8c77a93a78c7e46d9c1e33d41041dc7cfd21fa947c4"
+              }
+            }
+          }
+        },
+        {
+          "view": 6,
+          "screen_scale": 1.0,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 39.17954669752313,
+                "ssim": 0.9951257523262447,
+                "flip": 0.0015179739566519856,
+                "mse": 0.00012079398548635138,
+                "silhouette_xor_fraction": 0.00173828125,
+                "image_sha256": "30e8ce6764f050a49ce49aa9928758f3656b56998808026a99e53b65b00edc0e"
+              },
+              "msaa4": {
+                "psnr_db": 47.69063180759937,
+                "ssim": 0.998989047685478,
+                "flip": 0.000727510079741478,
+                "mse": 1.7019107735005766e-05,
+                "silhouette_xor_fraction": 0.000458984375,
+                "image_sha256": "e43a5678b85f6503a6b9bfbd367764e99daa2f67e23c3484b69500459b7ceae8"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 39.36478315708358,
+                "ssim": 0.9956653668710614,
+                "flip": 0.0014344173250719905,
+                "mse": 0.00011575017721549404,
+                "silhouette_xor_fraction": 0.00171875,
+                "image_sha256": "d422175a4ddbd33d5d9fbf687e491407f162496a7698ead0540ac4818eeb345c"
+              },
+              "msaa4": {
+                "psnr_db": 47.97120843712972,
+                "ssim": 0.9991861652381085,
+                "flip": 0.000641101913060993,
+                "mse": 1.595435049019608e-05,
+                "silhouette_xor_fraction": 0.00045654296875,
+                "image_sha256": "958c1b32925afec741035cb162c70fb568323822049c2111f3c307ec29d1cee1"
+              }
+            }
+          }
+        },
+        {
+          "view": 7,
+          "screen_scale": 0.9999999865388263,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 35.0338998553253,
+                "ssim": 0.991380535340245,
+                "flip": 0.0038594892248511314,
+                "mse": 0.0003137689680651672,
+                "silhouette_xor_fraction": 0.001572265625,
+                "image_sha256": "ad9f0b60f07b606a303002ccd392d3ee0eb3b13e04dbbce795afeff61f6bdbba"
+              },
+              "msaa4": {
+                "psnr_db": 39.66914083661727,
+                "ssim": 0.9965698466855661,
+                "flip": 0.0025274381041526794,
+                "mse": 0.00010791601337226068,
+                "silhouette_xor_fraction": 0.00046875,
+                "image_sha256": "7c4f46b9c3bc128707d38ef51703c6ce101f811041c67b0fe9b3196260db265a"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 35.88289763560901,
+                "ssim": 0.9932023712157317,
+                "flip": 0.003088251454755664,
+                "mse": 0.000258053768382353,
+                "silhouette_xor_fraction": 0.00157958984375,
+                "image_sha256": "4d6807352469aea89165cc3c98bcab76375e22f5078e0fee5f63e1b88a36338d"
+              },
+              "msaa4": {
+                "psnr_db": 44.52415932241682,
+                "ssim": 0.9987568266104468,
+                "flip": 0.0015312195755541325,
+                "mse": 3.528450595924645e-05,
+                "silhouette_xor_fraction": 0.00040283203125,
+                "image_sha256": "6e3408cc1fc1bc406d9e0cf7eeac2229424faae2d9a136f28e6a7e0c54229e95"
+              }
+            }
+          }
+        },
+        {
+          "view": 8,
+          "screen_scale": 0.9999999865388264,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 36.00605569960421,
+                "ssim": 0.9934548995386251,
+                "flip": 0.0036476519890129566,
+                "mse": 0.0002508386197616301,
+                "silhouette_xor_fraction": 0.001337890625,
+                "image_sha256": "335d24a877f1e26bc6f0e9832f993d22b0b040ec46334a8d53621053b1fe9c1c"
+              },
+              "msaa4": {
+                "psnr_db": 41.904489827754496,
+                "ssim": 0.997676001241441,
+                "flip": 0.002643945626914501,
+                "mse": 6.449870542579776e-05,
+                "silhouette_xor_fraction": 0.00033203125,
+                "image_sha256": "a125ce5d061d7a1d212fc3fecd9a7c5cb1be3224023b8bedf22739bce823272d"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 36.45191969164975,
+                "ssim": 0.9949267851594534,
+                "flip": 0.00254561728797853,
+                "mse": 0.00022636433403018072,
+                "silhouette_xor_fraction": 0.00137939453125,
+                "image_sha256": "5c5f49b8f149236696385c41ef6464d48af5b7421880d2b3e862dddf2a451dfe"
+              },
+              "msaa4": {
+                "psnr_db": 45.751623492172875,
+                "ssim": 0.9992352582680606,
+                "flip": 0.0013920159544795752,
+                "mse": 2.659730482266436e-05,
+                "silhouette_xor_fraction": 0.00032470703125,
+                "image_sha256": "b06146e30c5bf76b3d8ee421ea4ddc4e6997318dd934743257c75dc090865a62"
+              }
+            }
+          }
+        },
+        {
+          "view": 9,
+          "screen_scale": 1.0,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 37.050800897926074,
+                "ssim": 0.9942332394096346,
+                "flip": 0.0029288670048117638,
+                "mse": 0.00019720588986207231,
+                "silhouette_xor_fraction": 0.00122314453125,
+                "image_sha256": "f45785c66e71de9fceba2a534053641efb61f8a832ae66ec54fd7c15abd84777"
+              },
+              "msaa4": {
+                "psnr_db": 44.2100196763372,
+                "ssim": 0.9985186679477309,
+                "flip": 0.0017411670414730906,
+                "mse": 3.7931324490580544e-05,
+                "silhouette_xor_fraction": 0.0002685546875,
+                "image_sha256": "e429d0c4f191972392916db658768684c46e3a561159f26f5b1f81a99ad55366"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 37.19383568792408,
+                "ssim": 0.9953418082236102,
+                "flip": 0.0022555971518158913,
+                "mse": 0.00019081670811707036,
+                "silhouette_xor_fraction": 0.00126220703125,
+                "image_sha256": "041b3a2218c60e08d15cb55a87f2b2ba9552fd3fed3b6177016d690dc69d9fd4"
+              },
+              "msaa4": {
+                "psnr_db": 46.57760606750193,
+                "ssim": 0.9993817563213429,
+                "flip": 0.0009022249141708016,
+                "mse": 2.199071571030373e-05,
+                "silhouette_xor_fraction": 0.00028564453125,
+                "image_sha256": "60dd1a3abdc9e545e58e6b9382e8cf210ab1e83991b0452f81f71763a948a1fc"
+              }
+            }
+          }
+        },
+        {
+          "view": 10,
+          "screen_scale": 0.9999999865388264,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 34.94166395974726,
+                "ssim": 0.9886019994596498,
+                "flip": 0.005502896383404732,
+                "mse": 0.0003205040954801038,
+                "silhouette_xor_fraction": 0.00158203125,
+                "image_sha256": "6d5b1b0231d0483aaa49e2055ad9ee609d2571ced6f157a4ffe9c31a06954a19"
+              },
+              "msaa4": {
+                "psnr_db": 42.111682937367796,
+                "ssim": 0.9949754056529254,
+                "flip": 0.004237629938870668,
+                "mse": 6.149385152345253e-05,
+                "silhouette_xor_fraction": 0.00045166015625,
+                "image_sha256": "b5924deefae1a3fb687e8292786ae6b55f7da707c7f0ed7af88e501495e328b2"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 35.496342378413324,
+                "ssim": 0.9938328173438228,
+                "flip": 0.002835988299921155,
+                "mse": 0.00028207574160178775,
+                "silhouette_xor_fraction": 0.00153076171875,
+                "image_sha256": "c085885b9d0470cf2a10dec8c6d7d3ed8e586833c918d4dd7ec9a4e488e1e66b"
+              },
+              "msaa4": {
+                "psnr_db": 44.23507639203176,
+                "ssim": 0.9988359242635639,
+                "flip": 0.0014140552375465631,
+                "mse": 3.771310914071511e-05,
+                "silhouette_xor_fraction": 0.00043212890625,
+                "image_sha256": "bc0648842dc0cc33515173021b32bb716ec96e3ed7efb28d480df33f492ea0f0"
+              }
+            }
+          }
+        },
+        {
+          "view": 11,
+          "screen_scale": 0.9999999865388264,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 34.232641169164516,
+                "ssim": 0.9872778842325726,
+                "flip": 0.006234669126570225,
+                "mse": 0.00037734262363033446,
+                "silhouette_xor_fraction": 0.00173583984375,
+                "image_sha256": "d1b991daaf1c0c52c9454c9c97245d8b0b719eeb0fb2e9e0d7ec194edda88363"
+              },
+              "msaa4": {
+                "psnr_db": 41.55653087810595,
+                "ssim": 0.994496430812235,
+                "flip": 0.004661761689931154,
+                "mse": 6.987903540705497e-05,
+                "silhouette_xor_fraction": 0.00048828125,
+                "image_sha256": "80f3522e503c2b599eef214d62559476989568317acc0032e8b6325286ecb34a"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 34.54823943859936,
+                "ssim": 0.9925409985369911,
+                "flip": 0.0033354833722114563,
+                "mse": 0.0003508940746948289,
+                "silhouette_xor_fraction": 0.00171875,
+                "image_sha256": "85cba081a2f3deae259c49e55536bcce886406ba55eef63923185088917a2c82"
+              },
+              "msaa4": {
+                "psnr_db": 43.470305971338476,
+                "ssim": 0.9988441741711308,
+                "flip": 0.0015590426046401262,
+                "mse": 4.4974814374279126e-05,
+                "silhouette_xor_fraction": 0.0004541015625,
+                "image_sha256": "c8be94bd2a654df132806966470930cd6b60dd65e6053df73590d83faf0e1445"
+              }
+            }
+          }
+        },
+        {
+          "view": 12,
+          "screen_scale": 0.55,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 37.217418900895034,
+                "ssim": 0.9918323042702317,
+                "flip": 0.002725195838138461,
+                "mse": 0.00018978333904027297,
+                "silhouette_xor_fraction": 0.0010693359375,
+                "image_sha256": "a0f42fe34cb0374b9674d67ba22317cfe78bf99d54f685087fb18aa075ea7cab"
+              },
+              "msaa4": {
+                "psnr_db": 44.47610641580839,
+                "ssim": 0.997358357185687,
+                "flip": 0.0017328134272247553,
+                "mse": 3.5677083333333334e-05,
+                "silhouette_xor_fraction": 0.00031982421875,
+                "image_sha256": "e206e80d8956687559038d144a5d96a664d080d0946400c79c0da5472c8e5158"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 37.488296968764836,
+                "ssim": 0.9934067693996577,
+                "flip": 0.001893935608677566,
+                "mse": 0.00017830777225105732,
+                "silhouette_xor_fraction": 0.0010595703125,
+                "image_sha256": "246a442fe0cfc4b90e29799f73dc1eeca059dbd5edbe940dc3449a535a476261"
+              },
+              "msaa4": {
+                "psnr_db": 46.29871686925151,
+                "ssim": 0.9988647490313324,
+                "flip": 0.0008153037051670253,
+                "mse": 2.344921424452134e-05,
+                "silhouette_xor_fraction": 0.00030029296875,
+                "image_sha256": "162216b26f29a91cbf590098404e9e768a501e25732ee3cb0c1e86fb3e871d3c"
+              }
+            }
+          }
+        },
+        {
+          "view": 13,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 37.36061630068169,
+                "ssim": 0.9944179676859467,
+                "flip": 0.0021250590216368437,
+                "mse": 0.00018362776636389848,
+                "silhouette_xor_fraction": 0.0008837890625,
+                "image_sha256": "96f26006405418b6e509e0f5cca33b8eb772780d239a76bf2884691cfbc1acbe"
+              },
+              "msaa4": {
+                "psnr_db": 45.060677176138825,
+                "ssim": 0.9983907866902962,
+                "flip": 0.0013311435468494892,
+                "mse": 3.118403228325644e-05,
+                "silhouette_xor_fraction": 0.0002587890625,
+                "image_sha256": "f5e05ad91866525bf0b999c1414211b33703c0e67dd03b1f08c0a2c903aaa232"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 37.44476092405094,
+                "ssim": 0.9958583204563107,
+                "flip": 0.001507695415057242,
+                "mse": 0.00018010421923058442,
+                "silhouette_xor_fraction": 0.0008984375,
+                "image_sha256": "e79f37aeda4f3de5aeeb299671f55ab8a6e0d7c8d2603b360aa1d1789a2ec593"
+              },
+              "msaa4": {
+                "psnr_db": 45.91191304769153,
+                "ssim": 0.999286999410963,
+                "flip": 0.0006787221063859761,
+                "mse": 2.5633545391195696e-05,
+                "silhouette_xor_fraction": 0.00025634765625,
+                "image_sha256": "755a990ec44280583313df30c6307b6aa5fdebb3858e6c5efad0d0f84da960ef"
+              }
+            }
+          }
+        },
+        {
+          "view": 14,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 38.38146538951133,
+                "ssim": 0.9970111921478441,
+                "flip": 0.0013870771508663893,
+                "mse": 0.0001451621671953095,
+                "silhouette_xor_fraction": 0.00073486328125,
+                "image_sha256": "17e311c477221ca5c97f46cc80d440dbdc5a48ab5a61732c5dc8ba73cfe1425c"
+              },
+              "msaa4": {
+                "psnr_db": 48.093230798211195,
+                "ssim": 0.9994043795700246,
+                "flip": 0.0008654587436467409,
+                "mse": 1.5512325487793158e-05,
+                "silhouette_xor_fraction": 0.0001611328125,
+                "image_sha256": "fca8e0e8f86f81f090a5735a7097a3c5cea5ef4c5610a310c37ee58e3c1d9587"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 38.4126686525675,
+                "ssim": 0.9974642625725159,
+                "flip": 0.0011596239637583494,
+                "mse": 0.00014412294099625143,
+                "silhouette_xor_fraction": 0.0007373046875,
+                "image_sha256": "50d672c40243325d19d1351bab39193d997962541960a7dee8329a867ae0a4b8"
+              },
+              "msaa4": {
+                "psnr_db": 48.274567712545405,
+                "ssim": 0.9996316904726122,
+                "flip": 0.000627957284450531,
+                "mse": 1.4877954092176087e-05,
+                "silhouette_xor_fraction": 0.000166015625,
+                "image_sha256": "18d1049c40791f02e3e74b02c040a50eb503155442ebda1c53fd6551f7737276"
+              }
+            }
+          }
+        },
+        {
+          "view": 15,
+          "screen_scale": 0.55,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 41.718779200360466,
+                "ssim": 0.998200495415305,
+                "flip": 0.0010129520669579506,
+                "mse": 6.731658196366783e-05,
+                "silhouette_xor_fraction": 0.0005517578125,
+                "image_sha256": "64c9bb50782c5abc176a694c0e624aa7e4c4aaad9a3c61f663f8e1414ea737ac"
+              },
+              "msaa4": {
+                "psnr_db": 50.36699824971101,
+                "ssim": 0.9996296285300448,
+                "flip": 0.0004950703587383032,
+                "mse": 9.18967464436755e-06,
+                "silhouette_xor_fraction": 0.0001220703125,
+                "image_sha256": "3698d895cbc4398dee926ff4c0f7fb831b84dd6f36f8a822fc113cb3f7ab764b"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 41.92405573035363,
+                "ssim": 0.9983937589429613,
+                "flip": 0.0009073997498489916,
+                "mse": 6.420877787389466e-05,
+                "silhouette_xor_fraction": 0.0005517578125,
+                "image_sha256": "05cd990f85694f60c031ba549cba93db81f0add8d0841d08322ab7bff6e7fe39"
+              },
+              "msaa4": {
+                "psnr_db": 51.351941369872456,
+                "ssim": 0.9997645152335985,
+                "flip": 0.00034930362016893923,
+                "mse": 7.324969663110342e-06,
+                "silhouette_xor_fraction": 0.00012939453125,
+                "image_sha256": "e958f8e29753d8d9e761fe5c8baa58eb694ebea25cc48104a5cd75bec68d2dde"
+              }
+            }
+          }
+        },
+        {
+          "view": 16,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 37.7587830466969,
+                "ssim": 0.9951456472050688,
+                "flip": 0.0020280813332647085,
+                "mse": 0.0001675412176206267,
+                "silhouette_xor_fraction": 0.00081298828125,
+                "image_sha256": "4b6f2a8bc3c839a1906427208bec4e855ba962e38c6a18f5c60014c0f254470e"
+              },
+              "msaa4": {
+                "psnr_db": 44.62239618116719,
+                "ssim": 0.99867149919615,
+                "flip": 0.0011544398730620742,
+                "mse": 3.449533382593233e-05,
+                "silhouette_xor_fraction": 0.00022216796875,
+                "image_sha256": "4b9160a20219ca1ba6fa054df0c56112f382719b041bf4764101e6d8b598962e"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 38.026615234692656,
+                "ssim": 0.995733717454977,
+                "flip": 0.0017775844316929579,
+                "mse": 0.00015752099553056515,
+                "silhouette_xor_fraction": 0.0008203125,
+                "image_sha256": "e12b1c5a7345d2dfba8e59f3d735169197667eec4e3d01635a0433ac63132a0a"
+              },
+              "msaa4": {
+                "psnr_db": 46.92740209238301,
+                "ssim": 0.999324803280422,
+                "flip": 0.0008054650388658047,
+                "mse": 2.028895887399077e-05,
+                "silhouette_xor_fraction": 0.000205078125,
+                "image_sha256": "929cdc9110258679ee1674a208e06f31326e8f67bd8131ceafa2540c4a8ce26f"
+              }
+            }
+          }
+        },
+        {
+          "view": 17,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 36.974445494613505,
+                "ssim": 0.9945483556037366,
+                "flip": 0.002303494606167078,
+                "mse": 0.00020070371822135716,
+                "silhouette_xor_fraction": 0.00097412109375,
+                "image_sha256": "491302046a1e922dc16f4bc9f61366704dd14be071a89103ba9e50de359ba018"
+              },
+              "msaa4": {
+                "psnr_db": 43.85972226617366,
+                "ssim": 0.9986087432713571,
+                "flip": 0.001340505899861455,
+                "mse": 4.111759900038446e-05,
+                "silhouette_xor_fraction": 0.00030517578125,
+                "image_sha256": "6536e25718ff7edbe0e2136ab2dea45fcfc373906adeb0db8c46e38b836b6f65"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 37.3430951817913,
+                "ssim": 0.9953920826354925,
+                "flip": 0.002000846667215228,
+                "mse": 0.00018437008151912722,
+                "silhouette_xor_fraction": 0.00096923828125,
+                "image_sha256": "3d8d46dea838d0a7672d74612e5c79ec15388ae6fb445c4832a25411467b7c56"
+              },
+              "msaa4": {
+                "psnr_db": 46.31595437066242,
+                "ssim": 0.9992805777822402,
+                "flip": 0.0009703041869215667,
+                "mse": 2.3356326292772015e-05,
+                "silhouette_xor_fraction": 0.0002734375,
+                "image_sha256": "2c3a552f38a8376a04e0aa8434330cccd250d6bfad224641fa11bf22e171fe9c"
+              }
+            }
+          }
+        },
+        {
+          "view": 18,
+          "screen_scale": 0.55,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 41.74822948476424,
+                "ssim": 0.9973833437652733,
+                "flip": 0.0008451184839941561,
+                "mse": 6.686164125576702e-05,
+                "silhouette_xor_fraction": 0.00101318359375,
+                "image_sha256": "d6077aa24206b0106e54af2528862b73fc879bf69f4299ce7042738db15e1c1b"
+              },
+              "msaa4": {
+                "psnr_db": 49.74137515207617,
+                "ssim": 0.999379605621167,
+                "flip": 0.0004063403466716409,
+                "mse": 1.0613593629853902e-05,
+                "silhouette_xor_fraction": 0.00030517578125,
+                "image_sha256": "a3e83ffdfe30f896c53393d2bdf235c69f9f0272c5b857849340834f805fdd18"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 41.900772604085745,
+                "ssim": 0.9977087055221031,
+                "flip": 0.0007971429149620235,
+                "mse": 6.455393508506343e-05,
+                "silhouette_xor_fraction": 0.00100341796875,
+                "image_sha256": "5811ad948e8d2456df3a3111051943a44534bc04e088e7f234608a92de68c29b"
+              },
+              "msaa4": {
+                "psnr_db": 50.13844143203055,
+                "ssim": 0.9996143016623862,
+                "flip": 0.000356869597453624,
+                "mse": 9.686253484236832e-06,
+                "silhouette_xor_fraction": 0.00029052734375,
+                "image_sha256": "4699e01dcac5c3041f069f5e5866ac80bca77517e1cd894af34888819691d5ca"
+              }
+            }
+          }
+        },
+        {
+          "view": 19,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 38.462096180096914,
+                "ssim": 0.995789443051274,
+                "flip": 0.0016908110119402409,
+                "mse": 0.00014249195772058823,
+                "silhouette_xor_fraction": 0.000869140625,
+                "image_sha256": "5634ec64be6dc6f65a7ad5aae3606685a5c493a37e453b4fd10753142649f9e1"
+              },
+              "msaa4": {
+                "psnr_db": 45.4873700823519,
+                "ssim": 0.9987738830056891,
+                "flip": 0.0009859970305114985,
+                "mse": 2.8265908845155714e-05,
+                "silhouette_xor_fraction": 0.00025390625,
+                "image_sha256": "01d6b7eeed0ef8e2b57433b3d1c7e470375bb8a34632d460f7d8195580bb7e28"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 38.59639903851027,
+                "ssim": 0.9961153368211852,
+                "flip": 0.0015478730201721191,
+                "mse": 0.0001381529189494425,
+                "silhouette_xor_fraction": 0.0008837890625,
+                "image_sha256": "525786cd68aca8a9c435125b3d44c3aaaf923fb86419ae63bfb59e63729f1d10"
+              },
+              "msaa4": {
+                "psnr_db": 47.51205776522026,
+                "ssim": 0.9993120143486529,
+                "flip": 0.0007476222235709429,
+                "mse": 1.7733488922529796e-05,
+                "silhouette_xor_fraction": 0.0002490234375,
+                "image_sha256": "66f4ed4897ec7235cf2c2e66ee27f9c930c344142130db82496a3817f3ca039e"
+              }
+            }
+          }
+        },
+        {
+          "view": 20,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 39.14985354889036,
+                "ssim": 0.9969322489164855,
+                "flip": 0.0014267776859924197,
+                "mse": 0.00012162269319492501,
+                "silhouette_xor_fraction": 0.00071533203125,
+                "image_sha256": "2dadb5ded65b2ca27016dcb0784eb0c2f7002dd0d0560997df31fc038f7f1f95"
+              },
+              "msaa4": {
+                "psnr_db": 47.37541398393779,
+                "ssim": 0.9992658588221884,
+                "flip": 0.0008645951165817678,
+                "mse": 1.830031568387159e-05,
+                "silhouette_xor_fraction": 0.00018310546875,
+                "image_sha256": "11035d52ca5d474b217449f70b13249a102a0b1fad6f4d963292f7e04d9acdc2"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 39.09205114415763,
+                "ssim": 0.9972874341965188,
+                "flip": 0.001238525495864451,
+                "mse": 0.00012325224973567858,
+                "silhouette_xor_fraction": 0.00073486328125,
+                "image_sha256": "917a17cb3b343a41d8ca9b2fe387f07c6e92e72e034809ad1ec3b3bb3e7bd3cc"
+              },
+              "msaa4": {
+                "psnr_db": 48.55812433129871,
+                "ssim": 0.999605193402056,
+                "flip": 0.0006235531764104962,
+                "mse": 1.393758560409458e-05,
+                "silhouette_xor_fraction": 0.000185546875,
+                "image_sha256": "9d4be4d2de6bc58311c00a17c914cfdbe9378d8279cf8f3b2f9d0c77a03e2a4a"
+              }
+            }
+          }
+        },
+        {
+          "view": 21,
+          "screen_scale": 0.55,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 40.140371007969414,
+                "ssim": 0.9973101897374392,
+                "flip": 0.0012341105611994863,
+                "mse": 9.681950752114572e-05,
+                "silhouette_xor_fraction": 0.0006396484375,
+                "image_sha256": "3bd4f41a8fdc1aeb203f437281657996df45287dd34de8ea60c209164846f1d6"
+              },
+              "msaa4": {
+                "psnr_db": 48.68284514940971,
+                "ssim": 0.9995031103105081,
+                "flip": 0.0006098794401623309,
+                "mse": 1.3543018310265282e-05,
+                "silhouette_xor_fraction": 0.00013671875,
+                "image_sha256": "7967bd5f1162e59453f281efb34add803bf0be84d9bc74f4ec366492ade1c9cf"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 40.282832249442244,
+                "ssim": 0.9975910204967343,
+                "flip": 0.001086190459318459,
+                "mse": 9.369507070597846e-05,
+                "silhouette_xor_fraction": 0.00064208984375,
+                "image_sha256": "2d9d775fe7d4ca4c1af976da184348621bd9720252fa05853e0c9a0c9fefda75"
+              },
+              "msaa4": {
+                "psnr_db": 49.73706032824842,
+                "ssim": 0.999692568190454,
+                "flip": 0.0004299724823795259,
+                "mse": 1.062414395905421e-05,
+                "silhouette_xor_fraction": 0.0001416015625,
+                "image_sha256": "d026b16b643bc7910dfe391d060c6956186cc03c5fdb33c372de3ee9575bc08f"
+              }
+            }
+          }
+        },
+        {
+          "view": 22,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 38.22659855944652,
+                "ssim": 0.9951827073779026,
+                "flip": 0.001961691305041313,
+                "mse": 0.00015043196276672433,
+                "silhouette_xor_fraction": 0.00084716796875,
+                "image_sha256": "ad2a2b4ebc7e865916012b940d6955bc1a048320a3d4cce201f6f58b691d763c"
+              },
+              "msaa4": {
+                "psnr_db": 46.02607547398633,
+                "ssim": 0.9984338090556955,
+                "flip": 0.0013078079791739583,
+                "mse": 2.4968499195021144e-05,
+                "silhouette_xor_fraction": 0.00025634765625,
+                "image_sha256": "33ea6fcaa94bcb042cf3f790a84d253ce3c47ecb913cf1ed3592ed2c9128b436"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 38.4915918645143,
+                "ssim": 0.996646824605701,
+                "flip": 0.0013292625080794096,
+                "mse": 0.00014152748492166474,
+                "silhouette_xor_fraction": 0.0008349609375,
+                "image_sha256": "7cd138c7d19c8306727380b55d6af33991e87976550dd2052f73c9046bb1dc91"
+              },
+              "msaa4": {
+                "psnr_db": 46.874902778454064,
+                "ssim": 0.9994060484128264,
+                "flip": 0.0006791268824599683,
+                "mse": 2.0535708922049213e-05,
+                "silhouette_xor_fraction": 0.00025390625,
+                "image_sha256": "a16a8650b96b10b7c90545f4df3c58e25a371acbfd1949e226c5f1c97504f554"
+              }
+            }
+          }
+        },
+        {
+          "view": 23,
+          "screen_scale": 0.5499999925963546,
+          "arms": {
+            "joint_fit": {
+              "native": {
+                "psnr_db": 37.11605974472653,
+                "ssim": 0.9944005558811152,
+                "flip": 0.0023206996265798807,
+                "mse": 0.00019426475093713955,
+                "silhouette_xor_fraction": 0.0009423828125,
+                "image_sha256": "6376e02d17097982e9dc82d03d85569729e0143e18d954ff96040f138e2c3611"
+              },
+              "msaa4": {
+                "psnr_db": 45.269794965826435,
+                "ssim": 0.9982318304581617,
+                "flip": 0.0015036038821563125,
+                "mse": 2.9718062163590924e-05,
+                "silhouette_xor_fraction": 0.0002587890625,
+                "image_sha256": "cf15291318234e2c5080a8f56750990133fe6e40da29e1c5f7e0f6c2b8d15715"
+              }
+            },
+            "fitted_control": {
+              "native": {
+                "psnr_db": 37.29388098705285,
+                "ssim": 0.9961187772504266,
+                "flip": 0.001613785163499415,
+                "mse": 0.00018647124903883123,
+                "silhouette_xor_fraction": 0.00093505859375,
+                "image_sha256": "15125440c5d588618870cb6ad2b529d6a0244f0410e191e0e1103941cdd44cbc"
+              },
+              "msaa4": {
+                "psnr_db": 46.13496154795277,
+                "ssim": 0.999311514929609,
+                "flip": 0.0007611669134348631,
+                "mse": 2.4350272431276434e-05,
+                "silhouette_xor_fraction": 0.00025634765625,
+                "image_sha256": "35f875eec99ed2150b791cc09cd560c03c3d35fffac224cb82ab4e20d64c9143"
+              }
+            }
+          }
+        }
+      ],
+      "summary": {
+        "native": {
+          "joint_fit": {
+            "pooled_mse": 0.000221204417384039,
+            "pooled_psnr_db": 36.5520620455379,
+            "mean_flip": 0.003011970720156872,
+            "worst_flip": 0.00701142055913806,
+            "mean_ssim": 0.9933177214728292,
+            "worst_ssim": 0.9826365805012172,
+            "mean_silhouette_xor_fraction": 0.0011977132161458334,
+            "worst_silhouette_xor_fraction": 0.0019091796875
+          },
+          "fitted_control": {
+            "pooled_mse": 0.00020043316735650555,
+            "pooled_psnr_db": 36.98030410509205,
+            "mean_flip": 0.0021065582695882767,
+            "worst_flip": 0.0040302579291164875,
+            "mean_ssim": 0.9950922560587391,
+            "worst_ssim": 0.9896437227711716,
+            "mean_silhouette_xor_fraction": 0.0011949666341145833,
+            "worst_silhouette_xor_fraction": 0.00189453125
+          },
+          "joint_minus_control": {
+            "pooled_psnr_db": -0.42824205955415096,
+            "mean_flip": 0.0009054124505685954,
+            "mean_ssim": -0.001774534585909926,
+            "mean_silhouette_xor_fraction": 2.746582031250104e-06
+          }
+        },
+        "msaa4": {
+          "joint_fit": {
+            "pooled_mse": 4.690540572335961e-05,
+            "pooled_psnr_db": 43.287771031156446,
+            "mean_flip": 0.002007430220449654,
+            "worst_flip": 0.00524601386860013,
+            "mean_ssim": 0.9977074909698899,
+            "worst_ssim": 0.992080016708126,
+            "mean_silhouette_xor_fraction": 0.0003328450520833333,
+            "worst_silhouette_xor_fraction": 0.00055908203125
+          },
+          "fitted_control": {
+            "pooled_mse": 2.51244857496716e-05,
+            "pooled_psnr_db": 45.99902818660631,
+            "mean_flip": 0.0009888945702793233,
+            "worst_flip": 0.0017813065787777305,
+            "mean_ssim": 0.9991972001647588,
+            "worst_ssim": 0.9982315648512144,
+            "mean_silhouette_xor_fraction": 0.00031270345052083337,
+            "worst_silhouette_xor_fraction": 0.00047119140625
+          },
+          "joint_minus_control": {
+            "pooled_psnr_db": -2.7112571554498643,
+            "mean_flip": 0.0010185356501703307,
+            "mean_ssim": -0.0014897091948689045,
+            "mean_silhouette_xor_fraction": 2.014160156249995e-05
+          }
+        }
+      }
+    }
+  ]
+}

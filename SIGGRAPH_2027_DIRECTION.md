@@ -3,8 +3,11 @@
 Updated 2026-11-27. This is a research plan, not a paper draft or novelty claim.
 The final-AA/upscaler candidate remains untested. A single-cut CPU preflight and
 a shared-position three-cut CPU fit both failed against the strongest eligible
-fitted controls on one reused train asset. The cited work is a bounded map for
-verification, and a search that finds no paper is not evidence that none exists.
+fitted controls on one reused train asset. A post-hoc local Iris Xe D3D12 4x
+MSAA recheck of the three-cut fit preserved that negative ranking; it did not
+score geometry optimized through the final AA operator. The cited work is a
+bounded map for verification, and a search that finds no paper is not evidence
+that none exists.
 
 ## SIGGRAPH 2027 submission constraints
 
@@ -99,6 +102,17 @@ not a final-AA/upscaler result or evidence against every hierarchy objective.
 See the [protocol](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_PROTOCOL_20261127.md),
 [report](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_20261127.md), and
 [raw receipt](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_20261127.json).
+
+A post-hoc hardware recheck rendered those same fitted meshes on the local Iris
+Xe D3D12 backend at 4x MSAA. The joint fit still lost to its fitted control at
+all three budgets: pooled PSNR by 6.86, 5.72, and 2.71 dB, and mean FLIP by
+0.002449, 0.002105, and 0.001019. This single-asset renderer sensitivity
+check does not show that AA-aware optimization is ineffective; those meshes
+were not optimized through the hardware MSAA operator. It does close any claim
+that the existing CPU fit already beats its control after hardware MSAA. See
+the [frozen protocol](tools/mmtrain/CLUSTER_DAG_MULTICUT_FINAL_MSAA_RECHECK_PROTOCOL_20261127.md),
+[result](tools/mmtrain/CLUSTER_DAG_MULTICUT_FINAL_MSAA_RECHECK_20261127.md), and
+[per-view metrics](tools/mmtrain/cluster_dag_multicut_final_msaa_quality_20261127.json).
 
 The unoptimized 50%-retention ManyMesh cut has now been screened on 21 unique
 Poly Haven meshes across six classes, at exact face counts against

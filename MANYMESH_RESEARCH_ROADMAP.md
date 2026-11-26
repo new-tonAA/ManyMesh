@@ -61,10 +61,16 @@ budgets, but lost to the fitted exact-face meshoptimizer control at both; at
 was the eligible fallback, which the joint fit lost by 7.513 dB PSNR and
 0.001694 LDR-FLIP. All three cuts passed candidate topology/boundary checks,
 but the fit did not meet its frozen quality gate. This remains one reused train
-asset, not confirmation data; it uses a CPU sampling proxy rather than final
-hardware AA. See the [protocol](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_PROTOCOL_20261127.md),
+asset, not confirmation data. A post-hoc D3D12 Iris Xe 4x MSAA recheck of the
+already-fitted meshes preserved the negative ranking at all three budgets;
+candidate PSNR was lower by 6.86, 5.72, and 2.71 dB, and FLIP was worse by
+0.002449, 0.002105, and 0.001019. This does not test geometry optimized
+through the final AA operator. See the CPU [protocol](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_PROTOCOL_20261127.md),
 [report](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_20261127.md), and
-[per-view receipt](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_20261127.json).
+[per-view receipt](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_20261127.json),
+plus the hardware [MSAA protocol](tools/mmtrain/CLUSTER_DAG_MULTICUT_FINAL_MSAA_RECHECK_PROTOCOL_20261127.md),
+[result](tools/mmtrain/CLUSTER_DAG_MULTICUT_FINAL_MSAA_RECHECK_20261127.md), and
+[per-view metrics](tools/mmtrain/cluster_dag_multicut_final_msaa_quality_20261127.json).
 
 The older cone-weighted selector is closed: silhouette-profile and guide screens
 missed their quality/cost gates, and the later cone-risk screen produced no
