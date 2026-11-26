@@ -2,8 +2,29 @@
 
 Updated 2026-11-27. **No SIGGRAPH-ready contribution is established.** The 21-model matched-face screen found ManyMesh worse than QEM and meshoptimizer. No optimization has established an asset-held-out win.
 
+## Image quality evidence
+
+There is no single image-quality score that should decide this result. Our
+static-render protocol combines graphics-oriented LDR-FLIP with PSNR and SSIM,
+plus task-specific silhouette XOR and sampled surface/normal errors; LPIPS is
+reported as a complementary learned metric. The existing screen covers 21
+licensed meshes from six classes and 16 source groups, with native and 4x-MSAA
+renders. ManyMesh loses to both matched-face controls on all four original
+image metrics in both modes; the post-hoc LPIPS supplement has the same
+direction. These are fixed-view desktop results, not human-preference or
+mobile-performance evidence. See the [protocol and per-model results](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md),
+[LPIPS supplement](tools/mmtrain/POLYHAVEN_LPIPS_SUPPLEMENT_RESULTS_20261125.md),
+and [multiplicity audit](tools/mmtrain/POLYHAVEN_MULTIPLICITY_AUDIT_20261125.md).
+
+For a moving-camera or temporal-upscaling claim, retain the frame metrics and
+add a graphics-video metric such as [CGVQM](https://doi.org/10.1111/cgf.70221)
+and a switch-local temporal diagnostic. That metric has not yet been run on
+ManyMesh sequences. Metric scores remain proxies; preference claims require a
+user study.
+
 ## Evidence
 
+- A local D3D12 feasibility probe rejected 4x-MSAA `r32uint` IDs but successfully rendered and compute-read 5,201 per-sample IDs from a float attachment on Iris Xe. This is GPU plumbing only: there are no vertex gradients or image-quality results yet. It shows a non-CUDA route worth prototyping: [protocols](tools/mmtrain/MSAA_ID_BUFFER_FEASIBILITY_PROTOCOL_20261127.md) · [report and receipts](tools/mmtrain/MSAA_ID_BUFFER_FEASIBILITY_20261127.md).
 - A frozen progressive-LOD byte/quality pilot on one licensed train asset found the current raw `.mmb` page layout dominated by an exact-face-count static control: at 5,290 faces, the page candidate used 298,612 bytes and mean LDR-FLIP 0.003739, while Draco 1.5.7 encoded from an exact-face meshoptimizer cut used 11,386 bytes and FLIP 0.001009. This closes the tested raw-page representation only; it is not a network or general streaming result: [protocol](tools/mmtrain/STREAM_RATE_DISTORTION_PILOT_PROTOCOL_20261127.md), [report](tools/mmtrain/STREAM_RATE_DISTORTION_PILOT_20261127.md), [per-view and codec receipt](tools/mmtrain/STREAM_RATE_DISTORTION_PILOT_20261127.json).
 
 - Matched-quality protocol and results, post-hoc LPIPS, and multiplicity audit: [screen](tools/mmtrain/POLYHAVEN_QUALITY_SCREEN_20261124.md) · [LPIPS](tools/mmtrain/POLYHAVEN_LPIPS_SUPPLEMENT_RESULTS_20261125.md) · [audit](tools/mmtrain/POLYHAVEN_MULTIPLICITY_AUDIT_20261125.md).
@@ -18,7 +39,7 @@ Updated 2026-11-27. **No SIGGRAPH-ready contribution is established.** The 21-mo
 
 ## Next gate
 
-The separate frozen nvdiffmodeling placement control still requires CUDA and has not run. The local CPU PyTorch3D alternative, the single-cut boundary fit and the shared-position three-cut fit all failed their strongest eligible baseline gates. The D3D12 4x MSAA recheck used actual desktop hardware, but only rescored already-fitted geometry on one reused asset; it did not test an optimizer trained through the final AA operator or asset-held-out generalization. Full [DiffSimp](https://arxiv.org/abs/2611.31018) review closes differentiable optimization through QEM collapses as a standalone contribution; broader constrained-hierarchy objectives remain unresolved, not established as novel. The 30-model confirmation pool remains unscored because tested CPU fit variants fail development gates. Its frozen camera samples are not region-held-out, so a superseding view manifest is required before any new Gate 2 run: [experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md); [confirmation protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md).
+The separate frozen nvdiffmodeling placement control still requires CUDA and has not run. A new local D3D12 probe shows that float-encoded per-sample IDs can be read in compute at 4x MSAA, so a Deliot-style stochastic-gradient control may be testable without CUDA; no gradient fit has run. The local CPU PyTorch3D alternative, the single-cut boundary fit and the shared-position three-cut fit all failed their strongest eligible baseline gates. The D3D12 4x MSAA recheck used actual desktop hardware, but only rescored already-fitted geometry on one reused asset; it did not test an optimizer trained through the final AA operator or asset-held-out generalization. Full [DiffSimp](https://arxiv.org/abs/2611.31018) review closes differentiable optimization through QEM collapses as a standalone contribution; broader constrained-hierarchy objectives remain unresolved, not established as novel. The 30-model confirmation pool remains unscored because tested CPU fit variants fail development gates. Its frozen camera samples are not region-held-out, so a superseding view manifest is required before any new Gate 2 run: [experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md); [confirmation protocol](tools/mmtrain/POLYHAVEN_CONFIRMATION_PROTOCOL_20261125.md).
 
 On this laptop, the D-drive WSL2 Clang build ran `test_manymesh` (94 passed, 1 skipped) and Vulkan `compute_test` (7/7 passed on CPU llvmpipe). Software OpenGL aborted in 3 tests; the Iris Xe D3D12 OpenGL route skipped all 7 compute tests because it exposes only Filament feature level 1. This does not qualify the hardware GPU compute path. Native Windows execution remains blocked by Smart App Control. [Local verification report](tools/mmtrain/LOCAL_WORKSTATION_VERIFICATION_20261126.md) · [hosted Windows/MSVC CI](https://github.com/new-tonAA/ManyMesh/actions/runs/45622515351).
 

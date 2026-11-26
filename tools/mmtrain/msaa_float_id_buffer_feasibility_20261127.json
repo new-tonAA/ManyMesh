@@ -1,0 +1,30 @@
+{
+  "experiment": "D3D12 four-sample float-encoded primitive-ID feasibility",
+  "status": "pass",
+  "adapter": {
+    "vendor": "31.0.101.4502",
+    "architecture": "",
+    "device": "Intel(R) Iris(R) Xe Graphics",
+    "description": "",
+    "stackgroup_min_size": 4,
+    "stackgroup_max_size": 128,
+    "vendor_id": 32902,
+    "device_id": 42912,
+    "adapter_type": "IntegratedGPU",
+    "backend_type": "D3D12"
+  },
+  "backend": "D3D12",
+  "resolution": [
+    64,
+    64
+  ],
+  "sample_count": 4,
+  "id_format": "r32float",
+  "primitive_id_exact_float": 17.0,
+  "wgpu_version": "0.33.0",
+  "script_sha256": "e42f46e01cd470ab948aaa2e2f935d72eda4dc9ec9331458055b4a438651dfd3",
+  "pixel_sample_count": 16384,
+  "covered_sample_count": 5201,
+  "id_17_sample_count": 5201,
+  "unexpected_nonzero_values": []
+}

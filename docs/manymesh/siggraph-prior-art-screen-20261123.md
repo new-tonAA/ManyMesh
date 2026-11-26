@@ -1,6 +1,6 @@
 # SIGGRAPH 2027 prior-art screen
 
-Updated 2026-11-26. This is a bounded lead list, not a systematic review,
+Updated 2026-11-27. This is a bounded lead list, not a systematic review,
 novelty opinion, or legal assessment. Sources were checked at their publisher,
 author, project, or explicitly identified preview pages; only entries marked
 **paper text inspected** were checked beyond an abstract or summary. Read the full closest papers,
@@ -60,6 +60,26 @@ a paper is not evidence that none exists.
 | Upscaler-facing LOD practice | Epic's [Nanite course](https://advances.realtimerendering.com/s2021/Karis_Nanite_SIGGRAPH_Advances_2021_final.pdf) says Nanite selects clusters below one pixel of error and relies on temporal AA to blend subpixel LOD changes. Current [TSR thin-geometry documentation](https://dev.epicgames.com/documentation/en-us/unreal-engine/thin-geometry-detection-with-temporal-super-resolution) describes temporal coverage accumulation and history-rejection relaxation for subpixel geometry, with additional GPU passes. | **Full Nanite course PDF and current Epic documentation inspected.** Engines already couple mesh LOD behavior and temporal reconstruction in practice, and TSR explicitly treats geometry-induced temporal instability. These sources do not optimize mesh geometry offline against TSR, so they are implementation baselines and scope limits, not evidence that the narrow optimization question is answered. |
 | Cross-topology temporal sample reuse | Wang et al., [Real-Time Level-of-Detail Rendering with ReSTIR](https://doi.org/10.1145/3799902.3811100), SIGGRAPH 2026, maps surface points between differently tessellated LoDs using UV-space correspondences and Jacobian correction, preserving ReSTIR path reuse through topology changes. The implementation uses one LoD per object per frame and evaluates path-traced rendering. | **Full eight-page paper inspected** (Sections 4–5). It establishes temporal ReSTIR reuse across changing mesh topology and narrows broad claims about temporal LOD reconstruction. It does not optimize triangle geometry against raster MSAA or an image upscaler; that distinction remains a test question, not a novelty claim. See the [existing ManyMesh ReSTIR prior-art correction](../../tools/mmgeo/RESTIR_MIXED_CUT_PRIOR_ART_CORRECTION_20261117.md). |
 
+### In-engine stochastic rasterizer gradients
+
+Deliot, Heitz, and Belcour's [Transforming a Non-Differentiable Rasterizer
+into a Differentiable One with Stochastic Gradient Estimation](https://arxiv.org/abs/2404.09758)
+(PACMCGIT 2024) adds ID/UV buffers and two compute shaders to a conventional
+rasterizer, then estimates per-pixel geometry and material gradients with
+stochastic perturbations. The paper explicitly targets optimization for the
+asset's final in-engine rendering and reports scenes with more than one million
+parameters.
+
+**Full arXiv v2 text inspected**, including method, mesh applications, results,
+and limitations. This closes generic claims to in-engine image-driven geometry
+optimization, per-pixel stochastic gradients, or avoiding a vendor-specific
+differentiable renderer. The paper does not present simplification as its
+contribution, a cluster-DAG constraint, or optimization through MSAA or a
+temporal upscaler; the terms `MSAA` and `anti-alias` do not occur in its text.
+It is a required fixed-topology optimizer baseline if the target rasterizer
+can expose the needed per-pixel contributor IDs. These differences are test
+dimensions, not proof of novelty.
+
 ## Candidate gap and required test
 
 The remaining experiment question is narrowly phrased as **whether offline
@@ -69,10 +89,11 @@ over applying the same operator to unoptimized geometry**. This is not an
 established gap or novelty claim. Differentiable image-space geometry fitting,
 image-guided adaptive per-triangle LOD, and changing mesh topology under
 multi-view image losses with antialiasing-derived visibility gradients are
-also established. HLOD, parent-child vertex relations, view-dependent
+also established. In-engine per-pixel stochastic rasterizer gradients are
+established too. HLOD, parent-child vertex relations, view-dependent
 selection, crack-free cuts, and crack-/popping-free transitions are
-established mechanisms too. See Hasselgren et al., Dou et al., DMesh++,
-Quick-VDR, Li (2022, 2023), and HLOD ASAP.
+established mechanisms too. See Deliot et al., Hasselgren et al., Dou et al.,
+DMesh++, Quick-VDR, Li (2022, 2023), and HLOD ASAP.
 “LOD for upscalers,” “silhouette aware,” “differentiable LOD,” “cluster
 hierarchy optimization,” and “temporal stability” are not novelty claims by
 themselves.

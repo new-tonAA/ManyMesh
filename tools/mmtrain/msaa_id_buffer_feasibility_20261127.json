@@ -1,0 +1,28 @@
+{
+  "experiment": "D3D12 four-sample primitive-ID attachment feasibility",
+  "status": "failed",
+  "adapter": {
+    "vendor": "31.0.101.4502",
+    "architecture": "",
+    "device": "Intel(R) Iris(R) Xe Graphics",
+    "description": "",
+    "stackgroup_min_size": 4,
+    "stackgroup_max_size": 128,
+    "vendor_id": 32902,
+    "device_id": 42912,
+    "adapter_type": "IntegratedGPU",
+    "backend_type": "D3D12"
+  },
+  "backend": "D3D12",
+  "resolution": [
+    64,
+    64
+  ],
+  "sample_count": 4,
+  "id_format": "r32uint",
+  "primitive_id": 17,
+  "wgpu_version": "0.33.0",
+  "script_sha256": "085f7c950e44204f7b7bccfb27b47f1e897b742f9ff4548c49aa1e16984d8d36",
+  "exception_type": "GPUValidationError",
+  "exception": "Validation Error\n\nCaused by:\n  In wgpuDeviceCreateTexture\n    Format R32Uint does not support multisampling"
+}

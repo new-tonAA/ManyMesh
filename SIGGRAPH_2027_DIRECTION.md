@@ -139,6 +139,15 @@ operator used as a baseline, while preserving legal DAG cuts and boundaries.
 This remains untested and may not be novel.
 ([EGSR 2021 full paper](https://users.aalto.fi/~laines9/publications/hasselgren2021egsr_paper.pdf),
 [NVIDIA project page](https://research.nvidia.com/labs/rtr/publication/hasselgren2021diffmodeling/)).
+Additionally, Deliot et al. show how to optimize assets for the final output of
+an existing rasterizer using per-pixel stochastic gradients and ID/UV buffers,
+without a vendor-specific differentiable-rendering stack. The paper is a
+direct in-engine geometry-optimization precedent, though it does not present
+simplification, cluster-DAG constraints, MSAA, or temporal upscaling as its
+contribution. A DAG method must beat this style of fixed-topology control under
+the same renderer and budget, or document why the control cannot be applied.
+The [full paper](https://arxiv.org/abs/2404.09758) and its method/results have
+been inspected; see the [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
 An even closer recent lead is Oh's [DiffSimp (arXiv:2611.31018, posted
 2026-11-23)](https://arxiv.org/abs/2611.31018). Its QEM parallel-collapse
 layer propagates gradients through a fixed collapse history and has been

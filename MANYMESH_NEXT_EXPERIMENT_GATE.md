@@ -182,9 +182,55 @@ fitting in general.
 
 ## Gate 2: test the cluster-DAG distinction
 
-Only after Gate 1 passes, optimize geometry across topology-distinct DAG levels
-for post-reconstruction image quality. First isolate vertex placement with
-fixed topology, then compare boundary treatments that allow simplification
+### Image-quality and model-count protocol
+
+Do not treat any single metric as an industry-standard verdict. For static
+renders, use LDR-FLIP as the perceptual-difference measure, with PSNR and SSIM
+as conventional full-reference checks; report silhouette XOR and sampled
+surface/normal distance as task-specific geometry diagnostics, and LPIPS as a
+complementary learned feature metric. Pin each implementation, color space,
+resolution, viewing condition, and reference. FLIP was designed and evaluated
+for rendered-image differences ([paper](https://research.nvidia.com/sites/default/files/node/3260/FLIP_Paper.pdf));
+LPIPS is a learned perceptual metric calibrated against human patch judgments
+([CVPR 2018 paper](https://openaccess.thecvf.com/content_cvpr_2018/html/Zhang_The_Unreasonable_Effectiveness_CVPR_2018_paper.html)).
+Neither metric alone proves human preference. For moving-camera sequences,
+add the graphics-specific full-reference video metric [CGVQM](https://doi.org/10.1111/cgf.70221)
+and report switch-local flicker/popping diagnostics; CGVQM has not yet been
+measured for ManyMesh.
+
+The existing 21-model, six-class screen already supplies a broad negative
+control result, but it has been examined and cannot serve as an untouched
+confirmation set. Any frozen method that clears development gates must be
+evaluated on at least 20 independently licensed, category-balanced assets,
+with all views of an asset kept together and uncertainty resampled by asset
+or source family. Report per-model results as well as the grouped aggregate;
+do not count camera views as independent models. The current 30-model pool
+meets the asset-count target but its camera samples are not region-held-out,
+so freeze a replacement view manifest before fitting or scoring it.
+
+The closest optimizer control is not only nvdiffmodeling or an LTM-inspired
+offline fit. Deliot et al. demonstrate per-pixel stochastic gradients in a
+conventional in-engine rasterizer using ID/UV buffers and compute shaders
+([full paper](https://arxiv.org/abs/2404.09758)). Include an equivalent
+fixed-topology, same-renderer control when the required contributor IDs can be
+obtained; otherwise document the precise implementation or API limitation
+before results are scored. The cited paper does not evaluate MSAA or temporal
+upscaling, so those remain conditions to test, not assumed novelty.
+
+The frozen nvdiffmodeling Gate 1 still requires CUDA and remains unrun. A
+separate non-CUDA feasibility probe on Iris Xe/D3D12 succeeded with a 4x
+multisampled `r32float` ID attachment and compute-side per-sample reads; the
+same backend rejected `r32uint` multisampling. This clears only the renderer
+plumbing prerequisite for a local stochastic-gradient control. It does not
+clear Gate 1 or Gate 2: the next method step must freeze a fixed-topology
+per-pixel gradient optimizer and first compare it on development assets
+against same-budget, same-renderer fitted controls. A pass can serve as an
+alternative Gate 1 for this non-CUDA route; it is not a pass today. See the
+[probe report and receipts](tools/mmtrain/MSAA_ID_BUFFER_FEASIBILITY_20261127.md).
+
+Only after a Gate-1 path passes, optimize geometry across topology-distinct DAG
+levels for post-reconstruction image quality. First isolate vertex placement
+with fixed topology, then compare boundary treatments that allow simplification
 without cracks. Check parent/child consistency, legal mixed cuts, manifoldness,
 UV/material seams, transition stability, and displacement bounds.
 
