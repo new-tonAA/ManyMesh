@@ -37,7 +37,7 @@ and [instance-scale report](tools/mmtrain/INSTANCE_SCALE_BARRAMUNDIFISH_SCREEN_2
 
 | Works in measured scope | Does not work in tested scope | Not measured |
 |---|---|---|
-| CPU quality and topology evaluation; fixed-view desktop comparisons; one raster-only 10,000-instance diagnostic. | Current ManyMesh cuts lose to matched-face QEM and meshoptimizer. Tested decoders, contour controls, and CPU projective-silhouette fitting have no repeatable matched-control win. | Physical-phone performance, power, equal-complete-frame-time MSAA/SMAA/upscaler comparison, an asset-held-out optimization win, user preference, and a validated temporal-quality gain. |
+| CPU quality and topology evaluation; fixed-view desktop comparisons; one raster-only 10,000-instance diagnostic; a narrow CPU projective-RGB fitting feasibility pass on two reused assets. | Current ManyMesh cuts lose to matched-face QEM and meshoptimizer. Tested decoders and contour controls did not beat their controls. The two-asset RGB result is not asset-generalization evidence. | Physical-phone performance, power, equal-complete-frame-time MSAA/SMAA/upscaler comparison, an asset-held-out optimization win, user preference, and a validated temporal-quality gain. |
 
 ## Local verification
 
@@ -47,10 +47,16 @@ device. Software OpenGL aborted in three tests, and the Iris Xe route skipped
 all seven because it exposed only Filament feature level 1. Hardware GPU compute
 therefore remains unverified. See the [local verification receipt](tools/mmtrain/LOCAL_WORKSTATION_VERIFICATION_20261126.md).
 
-The full RGB fitting workflow produced artifacts for two reused assets, but
-its metrics have not been independently audited. The separate frozen CUDA
-placement control has not run. Neither result is a quality-gate pass; see the
-[experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md) and [RGB fitting protocol](tools/mmtrain/PROJECTIVE_RGB_CPU_PROTOCOL_20261125.md).
+The frozen CPU projective-RGB screen passed its pre-set per-asset feasibility
+gate on both the hosted workflow and a serial D-drive WSL2 rerun. It used two
+previously seen development assets and held-out views, so it advances only to a
+separately frozen multi-asset study. Surface-distance measures changed slightly
+for the worse, and the run did not test MSAA, an upscaler, mobile hardware, or
+asset generalization. See the [dated local report](tools/mmtrain/PROJECTIVE_RGB_CPU_LOCAL_RERUN_20261126.md),
+[protocol and CI audit](tools/mmtrain/PROJECTIVE_RGB_CPU_PROTOCOL_20261125.md),
+and [artifact-producing workflow](https://github.com/new-tonAA/ManyMesh/actions/runs/45639236184).
+The separate frozen CUDA placement control has not run; this CPU screen does
+not clear that gate.
 
 ## Research index
 

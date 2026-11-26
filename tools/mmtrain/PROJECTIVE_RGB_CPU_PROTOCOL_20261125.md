@@ -101,22 +101,53 @@ frozen camera bases locally.
 Corrected run [`45639236184`](https://github.com/new-tonAA/ManyMesh/actions/runs/45639236184)
 completed the fit-and-score and artifact-upload steps for both assets. It
 published `projective-rgb-cpu-GlassHurricaneCandleHolder` (2,786,338 bytes) and
-`projective-rgb-cpu-MaterialsVariantsShoe` (8,356,930 bytes). The JSON metrics
-and geometry archives have not yet been inspected; the per-asset pass/fail
-criteria and algorithmic decision therefore remain **unverified**.
+`projective-rgb-cpu-MaterialsVariantsShoe` (8,356,930 bytes). Both artifact
+directories passed `verify_projective_rgb_cpu.py`, which recomputed the held-out
+image metrics and checked source/geometry hashes, view records, face counts,
+fixed indices, locked boundaries, displacement, normals, and the frozen gate.
+The per-asset decisions were both `advance to a separately frozen multi-asset
+study`. The verifier does not test geometric self-intersections or rerender
+the stored images independently.
 
-On 2026-11-26, a local rerun was preflighted in the D-drive WSL2 Ubuntu 26.04
-distro before attempting the fit. The exact pinned OBJ files are already
-present at `out/khronos-curated-screen-20261123/{GlassHurricaneCandleHolder,
-MaterialsVariantsShoe}/geometry.obj`; their SHA-256 hashes match the frozen
-protocol. However, this distro has Python 3.14 without `pip` and none of the
-pinned renderer/metric packages. Both the WSL `curl` request and a Windows
-read-only `curl -I` request to the pinned Khronos raw asset endpoint failed
-with a connection reset, so the Linux dependencies cannot currently be
-installed from the configured environment. The existing Windows CPython 3.12
-Mitsuba package is not a safe fallback: the earlier backend preflight recorded
-Windows Code Integrity blocking its unsigned Mitsuba extension (see
-[`MITSUBA_CPU_BACKEND_PREFLIGHT_20261125.md`](MITSUBA_CPU_BACKEND_PREFLIGHT_20261125.md)).
-No fitting, render, or score was run in this local attempt. This is an
-environment/dependency blocker, not a method result; the CI artifacts remain
-unreviewed.
+### Local D-drive WSL2 rerun, 2026-11-26
+
+The initial preflight failure was a proxy-routing problem, not a GitHub or PyPI
+outage. Windows `curl` inherited `HTTPS_PROXY`/`ALL_PROXY` pointing at
+`127.0.0.1:9`, while Git used its separate repository proxy at
+`127.0.0.1:7890`. WSL had `autoProxy=false`, so its Linux processes needed the
+current WSL host-gateway address on port 7890 explicitly. Using that proxy per
+command reached PyPI and the official Node.js release endpoint; no system or
+global proxy settings were changed.
+
+The D-drive distro had Python 3.14 but the pinned scientific packages require
+Python 3.12 wheels. A local `uv` installation provided CPython 3.12.3 and a
+virtual environment with the workflow's exact versions: Mitsuba 3.9.0, Dr.Jit
+1.4.0, NumPy 2.3.4, SciPy 1.15.3, scikit-image 0.25.2,
+fast-simplification 0.2.0, flip-evaluator 1.7, Numba 0.62.1, trimesh 4.5.3,
+and Pillow 12.1.1. The first fit invocation then exposed a separate missing
+`node` runtime for the repository's meshoptimizer JS helper. Node.js 22.16.0
+Linux x64 was downloaded into the D-drive build directory and verified against
+the official `SHASUMS256.txt` entry (`f4cb75bb...9467e84e`). It was not
+installed system-wide.
+
+The rerun used source commit `1121a1f15b1893a0ffb674d04e1b5a0095035a25`,
+matching fit-script SHA-256
+`0cc8096e9e88360e916ec5e1b32da923fa23ac10dfdcc50bd5833987b84ba2ba`, and the
+two source OBJ hashes frozen above. Runs were serial on WSL2 Ubuntu 26.04,
+Linux kernel `6.18.58.1-microsoft-standard-WSL2`, Intel Core i7-13700H, using
+Mitsuba's CPU `llvm_ad_rgb` variant. Local raw outputs remain under
+`/root/ManyMesh-build/projective-rgb-local-20261126/`; the dated report records
+their SHA-256 hashes and per-asset summary measurements:
+[`PROJECTIVE_RGB_CPU_LOCAL_RERUN_20261126.md`](PROJECTIVE_RGB_CPU_LOCAL_RERUN_20261126.md)
+and its [machine-readable receipt](PROJECTIVE_RGB_CPU_LOCAL_RERUN_20261126.json).
+
+Both local assets passed the frozen criteria: accepted optimization steps,
+strict topology and source-boundary checks, improved held-out mean LDR-FLIP,
+and PSNR/SSIM within the specified limits. The local and CI metrics are not
+identical (Glass accepted 8 local steps versus 6 in CI), so their values are
+reported separately, not averaged. Both runs authorize only a separately
+frozen multi-asset study. The screen still uses two reused development models,
+has no asset-held-out evidence, and does not test MSAA, SMAA, upscaling, temporal
+quality, GPU performance, mobile behavior, user preference, or
+self-intersections. Some sampled surface-distance measures worsened after
+fitting; this is an image/geometry tradeoff, not a general geometric win.

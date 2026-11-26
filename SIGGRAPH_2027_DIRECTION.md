@@ -58,6 +58,14 @@ result on two reused assets can accept or reject this configuration only; it
 cannot establish asset generalization or falsify differentiable fitting more
 broadly.
 
+A separate Mitsuba CPU projective-RGB screen has since passed its frozen
+two-asset feasibility gate locally and in CI. That run uses a different
+renderer and optimizer implementation; it is not the nvdiffmodeling placement
+control and does not clear the CUDA gate below. Its two models were reused
+development assets, and some sampled surface-distance measures worsened. See
+the [dated local rerun report](tools/mmtrain/PROJECTIVE_RGB_CPU_LOCAL_RERUN_20261126.md)
+and [protocol and artifact audit](tools/mmtrain/PROJECTIVE_RGB_CPU_PROTOCOL_20261125.md).
+
 The unoptimized 50%-retention ManyMesh cut has now been screened on 21 unique
 Poly Haven meshes across six classes, at exact face counts against
 border-preserving QEM and meshoptimizer LockBorder. It loses on LDR-FLIP, PSNR,

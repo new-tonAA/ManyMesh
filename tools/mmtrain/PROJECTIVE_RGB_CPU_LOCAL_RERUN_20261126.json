@@ -1,0 +1,125 @@
+{
+  "date": "2026-11-26",
+  "decision": "advance to a separately frozen multi-asset study",
+  "scope": "Two reused development assets; held-out views only; not asset-generalization evidence.",
+  "source_commit": "1121a1f15b1893a0ffb674d04e1b5a0095035a25",
+  "fit_script_sha256": "0cc8096e9e88360e916ec5e1b32da923fa23ac10dfdcc50bd5833987b84ba2ba",
+  "verifier_sha256": "89fab5f195aef4ebfaa50ece7dbf9b6a585b22881406d902f2019d8fef42237d",
+  "environment": {
+    "machine": "Intel Core i7-13700H",
+    "os": "WSL2 Ubuntu 26.04",
+    "kernel": "6.18.58.1-microsoft-standard-WSL2",
+    "python": "3.12.3",
+    "renderer_variant": "Mitsuba llvm_ad_rgb CPU",
+    "packages": {
+      "mitsuba": "3.9.0",
+      "drjit": "1.4.0",
+      "numpy": "2.3.4",
+      "scipy": "1.15.3",
+      "scikit-image": "0.25.2",
+      "flip-evaluator": "1.7",
+      "fast-simplification": "0.2.0",
+      "numba": "0.62.1",
+      "trimesh": "4.5.3",
+      "Pillow": "12.1.1"
+    },
+    "node": "22.16.0 Linux x64",
+    "node_archive_sha256": "f4cb75bb036f0d0eddf6b79d9596df1aaab9ddccd6a20bf489be5abe9467e84e"
+  },
+  "protocol": {
+    "source_reference": "Original source mesh",
+    "baseline": "meshoptimizer LockBorder initialization",
+    "training_view_scale_pairs": 16,
+    "reserved_view_scale_pairs": 24,
+    "resolution": [96, 96],
+    "training_spp": 4,
+    "score_spp": 16,
+    "topology": "Fixed triangle indices and locked source boundary vertices",
+    "fit_gate": {
+      "accepted_steps_minimum": 1,
+      "mean_ldr_flip": "strictly lower than meshoptimizer",
+      "pooled_psnr_db": "no worse than meshoptimizer by more than 0.10 dB",
+      "mean_ssim": "no worse than meshoptimizer by more than 0.001",
+      "topology_boundary": "must pass"
+    }
+  },
+  "resource_measurement_scope": {
+    "fit_seconds": "Optimizer training wall time from the run receipt; excludes baseline construction and evaluation.",
+    "peak_rss_bytes": "Python process only; excludes the Node.js meshoptimizer helper subprocess."
+  },
+  "assets": [
+    {
+      "name": "GlassHurricaneCandleHolder",
+      "source_sha256": "e6f986bd960e31bbc7a0b1d957f0fdf1be25b22de547fd2a3761615d521eb041",
+      "source_faces": 4126,
+      "target_faces": 2062,
+      "accepted_steps": 8,
+      "fit_seconds": 8.393151319999987,
+      "meshoptimizer_build_seconds": 0.137550834,
+      "peak_rss_bytes": 318459904,
+      "max_displacement": 0.011999999999999985,
+      "boundary_edges": 4,
+      "boundary_preserved": true,
+      "topology_passed": true,
+      "meshoptimizer": {
+        "pooled_mse": 9.952990310436876e-05,
+        "pooled_psnr_db": 40.0204641873034,
+        "mean_ssim": 0.9962114493052164,
+        "mean_ldr_flip": 0.009972572515835054,
+        "surface_chamfer_l1_mean": 0.011485056831640056,
+        "surface_normal_consistency_absdot": 0.9873026139037516
+      },
+      "fitted": {
+        "pooled_mse": 7.730614872154106e-05,
+        "pooled_psnr_db": 41.11785962101898,
+        "mean_ssim": 0.9968176732460657,
+        "mean_ldr_flip": 0.0088284670006639,
+        "surface_chamfer_l1_mean": 0.011533578939675666,
+        "surface_normal_consistency_absdot": 0.9873311019084577
+      },
+      "result_json_sha256": "66c7ef177bf075889d7d69b9a54aa6490e2496f09aa3da8b1c4729d43cbf7c7e",
+      "geometry_archive_sha256": "27a9fcdb65758c8cf23bb6a1c3a6cfa848bfeb629d9fbfaab4bd1fca5b54ec1d",
+      "verifier_audit": "passed"
+    },
+    {
+      "name": "MaterialsVariantsShoe",
+      "source_sha256": "8bd3e8f5ae3dfffe0e7ccbc89f3941aa7c1122a7e8756ddac4c7293df7608c09",
+      "source_faces": 22700,
+      "target_faces": 11350,
+      "accepted_steps": 4,
+      "fit_seconds": 8.237507715999982,
+      "meshoptimizer_build_seconds": 0.189187919,
+      "peak_rss_bytes": 343072768,
+      "max_displacement": 0.0022823885367169237,
+      "boundary_edges": 1156,
+      "boundary_preserved": true,
+      "topology_passed": true,
+      "meshoptimizer": {
+        "pooled_mse": 8.659440517274078e-06,
+        "pooled_psnr_db": 50.62510166655845,
+        "mean_ssim": 0.9993844702839851,
+        "mean_ldr_flip": 0.0021250847457849886,
+        "surface_chamfer_l1_mean": 0.008424396370733406,
+        "surface_normal_consistency_absdot": 0.9591203933842927
+      },
+      "fitted": {
+        "pooled_mse": 7.902192791450007e-06,
+        "pooled_psnr_db": 51.022523789520264,
+        "mean_ssim": 0.9994658927122752,
+        "mean_ldr_flip": 0.001935560646719144,
+        "surface_chamfer_l1_mean": 0.008453418482655985,
+        "surface_normal_consistency_absdot": 0.9587604320529759
+      },
+      "result_json_sha256": "738aca522afe893e1de796d17fcd546d3b3d33919967eca5ddf4939a0cbc6c9a",
+      "geometry_archive_sha256": "eb3b35024d53868178247fb6a2874688fa91af4848ff323e181f9411ca9b747e",
+      "verifier_audit": "passed"
+    }
+  ],
+  "limitations": [
+    "The two models were used during development; views are held out but assets are not.",
+    "The local and hosted runs differ slightly; retain run-specific results rather than averaging.",
+    "Some sampled surface-distance measures worsened after fitting.",
+    "The topology verifier does not detect geometric self-intersections.",
+    "MSAA, SMAA, upscaling, temporal quality, GPU cost, mobile hardware, complete frame time, and user preference were not measured."
+  ]
+}
