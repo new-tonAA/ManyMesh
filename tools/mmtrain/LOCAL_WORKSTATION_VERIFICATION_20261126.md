@@ -192,3 +192,13 @@ The binaries are unchanged from the hashes above and came from WSL checkout
 `78f0ae55866282a22008de90d331f74096b3d940`; the intervening commits contain no
 C++, C, header, or shader changes. The Vulkan result remains software-only and
 does not qualify Intel Iris Xe hardware behavior.
+
+A subsequent WSL registration check clarified the launch error: the installed
+D-drive distribution is named `ManyMesh-Ubuntu-D`; there is no distribution
+registered as plain `Ubuntu`. `wsl -d Ubuntu` therefore returns
+`WSL_E_DISTRO_NOT_FOUND`, while an ordinary restricted-tool invocation can
+still return `Wsl/Service/E_ACCESSDENIED` before distro resolution. Using the
+actual registered name through the permitted host WSL execution path launched
+the existing environment and passed the multi-cut artifact verifier. The D:
+drive distro was already installed, so no installation or package changes were
+needed.

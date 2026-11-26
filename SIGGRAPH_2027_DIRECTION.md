@@ -1,10 +1,10 @@
 # SIGGRAPH 2027 research direction
 
 Updated 2026-11-27. This is a research plan, not a paper draft or novelty claim.
-The final-AA/upscaler, multi-level candidate remains untested; a single-cut CPU
-fit preflight failed against its same-optimizer meshoptimizer control. The cited
-work is a bounded map for verification, and a search that finds no paper is not
-evidence that none exists.
+The final-AA/upscaler candidate remains untested. A single-cut CPU preflight and
+a shared-position three-cut CPU fit both failed against the strongest eligible
+fitted controls on one reused train asset. The cited work is a bounded map for
+verification, and a search that finds no paper is not evidence that none exists.
 
 ## SIGGRAPH 2027 submission constraints
 
@@ -87,6 +87,18 @@ upscaling. It does not advance to the confirmation pool. See the
 [protocol](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_PROTOCOL_20261127.md),
 [report](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_20261127.md), and
 [raw receipt](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_20261127.json).
+
+A follow-up jointly fit one shared position field across the 21.6%, 50% and
+74.99% cuts of the same MMLG v7 DAG. It improved the raw candidate at the first
+two budgets, but lost to fitted meshoptimizer on both; at 7,934 faces the
+meshoptimizer control failed topology eligibility and the fitted QEM fallback
+was better by 7.513 dB PSNR and 0.001694 mean LDR-FLIP. All three candidates
+passed topology and source-boundary checks, and the shared lock mask was
+preserved. The frozen gate failed. This is a one-asset CPU feasibility screen,
+not a final-AA/upscaler result or evidence against every hierarchy objective.
+See the [protocol](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_PROTOCOL_20261127.md),
+[report](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_20261127.md), and
+[raw receipt](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_20261127.json).
 
 The unoptimized 50%-retention ManyMesh cut has now been screened on 21 unique
 Poly Haven meshes across six classes, at exact face counts against

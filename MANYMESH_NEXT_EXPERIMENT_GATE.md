@@ -30,6 +30,16 @@ upscaler operator, and it does not replace Gate 1 or advance the confirmation
 pool. See its [protocol](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_PROTOCOL_20261127.md)
 and [report](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_20261127.md).
 
+A shared-position follow-up fit three selected cuts of the same DAG jointly.
+It failed against fitted exact-face controls at 2,286, 5,290 and 7,934 faces;
+the 7,934-face meshoptimizer geometry was ineligible and fitted QEM was the
+predeclared fallback. This closes that one-asset, three-cut CPU configuration.
+It does not fit every legal cut or transition and uses a sampling proxy rather
+than the final AA/upscaler. It is not a Gate 1 pass or confirmation result. See
+the [frozen protocol](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_PROTOCOL_20261127.md),
+[report](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_20261127.md), and
+[raw receipt](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_20261127.json).
+
 Close prior art includes Hasselgren et al.'s differentiable mesh and shading
 optimization for simplification and LOD. Their full paper uses MSAA during
 optimization for its shape-and-appearance prefiltering application to improve
@@ -40,8 +50,9 @@ scale-specific appearance fitting, and MSAA-assisted silhouette gradients are
 already established. The remaining experiment question is whether fitting a
 hierarchy for a specified final reconstruction operator improves quality over
 applying that same operator to unoptimized geometry, while retaining legal
-cluster-DAG cuts and boundaries. This is an untested question, not a novelty
-claim. [Full paper](https://users.aalto.fi/~laines9/publications/hasselgren2021egsr_paper.pdf) |
+cluster-DAG cuts and boundaries. The local three-cut CPU screen did not test
+that operator or establish a gain, so this remains untested and is not a
+novelty claim. [Full paper](https://users.aalto.fi/~laines9/publications/hasselgren2021egsr_paper.pdf) |
 [Luebke and Erikson](https://dl.acm.org/doi/10.1145/258734.258847) |
 [Luebke's detailed dissertation treatment](https://www.luebke.us/publications/pdf/dissertation.pdf) |
 [Sander et al.](https://hhoppe.com/silclip.pdf)

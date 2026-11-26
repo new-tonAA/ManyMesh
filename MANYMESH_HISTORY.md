@@ -2402,7 +2402,25 @@ See the [protocol](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_PROTOCOL_2
 [report](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_20261127.md), and
 [per-view receipt](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_20261127.json).
 
-## 14. References
+## 14. 2026-11-27: shared-position multi-cut DAG fit
+
+A follow-up fit one shared MMLG position field across three selected cuts of
+the same Thingi10K train asset: 2,286 faces (21.61% actual retention), 5,290
+faces (50%), and 7,934 faces (74.99%). The joint CPU projective-RGB fit
+improved raw ManyMesh on the two lower budgets, but lost to the fitted eligible
+control at all three. Meshoptimizer failed topology eligibility at 7,934 faces
+before image scoring; the exact-face QEM fallback passed and was used there.
+The joint candidate was 0.888, 1.763, and 7.513 dB below its fitted controls,
+with mean LDR-FLIP worse by 0.000538, 0.000768, and 0.001694 respectively.
+All cuts passed candidate topology/source-boundary checks; 1,697 shared locked
+vertices remained unchanged. The frozen gate failed. This is one reused asset,
+not held-out generalization, and uses an offline CPU sampling proxy rather than
+final hardware MSAA/upscaling. See the [protocol](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_PROTOCOL_20261127.md),
+[report](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_20261127.md),
+[raw receipt](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_20261127.json),
+and [independent verifier](tools/mmtrain/verify_cluster_dag_multicut_projective_cpu.py).
+
+## 15. References
 
 - [Google Filament](https://github.com/google/filament).
 - Upstream build documentation: [BUILDING.md](BUILDING.md).

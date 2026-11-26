@@ -54,6 +54,18 @@ pool. See the [protocol](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_PROT
 [report](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_20261127.md), and
 [raw receipt](tools/mmtrain/CLUSTER_DAG_PROJECTIVE_FIT_PREFLIGHT_20261127.json).
 
+A follow-up jointly optimized one shared MMLG position field across the 21.6%,
+50% and 75.0% cuts of the same DAG. It improved raw ManyMesh at the two lower
+budgets, but lost to the fitted exact-face meshoptimizer control at both; at
+75%, meshoptimizer failed topology eligibility before scoring and fitted QEM
+was the eligible fallback, which the joint fit lost by 7.513 dB PSNR and
+0.001694 LDR-FLIP. All three cuts passed candidate topology/boundary checks,
+but the fit did not meet its frozen quality gate. This remains one reused train
+asset, not confirmation data; it uses a CPU sampling proxy rather than final
+hardware AA. See the [protocol](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_PROTOCOL_20261127.md),
+[report](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_20261127.md), and
+[per-view receipt](tools/mmtrain/CLUSTER_DAG_MULTICUT_PROJECTIVE_FIT_20261127.json).
+
 The older cone-weighted selector is closed: silhouette-profile and guide screens
 missed their quality/cost gates, and the later cone-risk screen produced no
 eligible equal-face, geometry-distinct candidates.
@@ -215,6 +227,13 @@ The links below preserve the detailed reports referenced by the earlier roadmap.
 - Slack-aware cut scheduler probe (`tools/mmgeo/probe_slack_aware_cut_scheduler.py`)
 
 ## Next gate
+
+The shared-position CPU fit across three selected cuts also failed its frozen
+quality gate against fitted exact-face controls. This does not make the broader
+final-AA/upscaler hierarchy question a result: the screen used one reused train
+asset, a CPU sampling proxy, and did not fit every legal cut or transition. The
+confirmation set remains unscored, and all three CPU fitting configurations
+tested so far have failed development gates.
 
 Do not continue the tested rank-8/16/30 polynomial decoder configurations. The default current-source audit produced no legal exact-face stock pair. A follow-up 48-build parameter sweep recovered two exact-face, topology-valid pairs across two reused validation assets; both lost to stock cluster LOD on all reported image metrics. This is a small negative quality screen, not evidence that every parameterization loses. The saved-graph oracle found legal under-cap cuts on 5/8 assets, yet all scored legal cuts lost to stock; rendered reranking of 44 legal cuts improved geometric selection on two assets but both selected and pool-best cuts lost on all five feasible assets. A legality fix alone is insufficient. See the parameter sweep (`tools/mmtrain/CURRENT_SOURCE_CLUSTERLOD_PARAMETER_SWEEP_20261123.md`), fixed-default audit (`tools/mmtrain/CURRENT_SOURCE_CLUSTERLOD_AUDIT_20261123.md`), historical cut audit (`tools/mmgeo/HISTORICAL_CUT_TOPOLOGY_AUDIT_20261122.md`), and reranking report (`tools/mmgeo/SAVED_CUT_VIEW_RERANK_20261122.md`). The current cone-risk selector screen also failed to produce equal-face, geometry-distinct outputs; it is closed as a contribution candidate. The independent nvdiffmodeling placement baseline is the next research falsification only after suitable CUDA compute and cleared assets are available.
 A separate same-face whole-mesh meshoptimizer control screen has three eligible under-cap pairs across two reused assets: two neighboring levels improve on one asset, while the second asset regresses on all image metrics. The only eligible QEM pair also regresses. This is mixed pilot evidence, not held-out generalization or a comparison with stock cluster cuts; see the matched-face report (`tools/mmtrain/CURRENT_SOURCE_MATCHED_FACE_CONTROLS_20261123.md`).
