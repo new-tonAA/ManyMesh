@@ -47,8 +47,14 @@ control on one reused train asset. That configuration is closed; the failure
 does not clear the CUDA gate or advance to the confirmation cohort. See the
 [fit result](tools/mmtrain/DELIOT_MSAA_PER_PIXEL_FIT_DEV_20261127.md),
 [rejection diagnostic](tools/mmtrain/DELIOT_FIT_REJECTION_DIAGNOSTIC_20261127.md),
+[active-normal projection control](tools/mmtrain/DELIOT_ACTIVE_NORMAL_PROJECTION_DEV_20261127.md),
 [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md), and
 [next experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md).
+
+The projected control converged on all updates but accepted only one ManyMesh
+step and no meshoptimizer steps. The single step worsened mean LDR-FLIP; the
+candidate still lost to meshoptimizer by 6.343 dB. Close this numerical control
+as well; its established projection mechanism is not a contribution claim.
 
 A local CPU selected-cut preflight rebuilt node ownership from MMLG v7 and
 locked the 1,109 shared vertices across the 29 nodes of a 5,290-face ManyMesh

@@ -24,11 +24,24 @@ diagnostic views, ManyMesh was behind meshoptimizer by 6.686 dB pooled PSNR and
 0.001732 mean LDR-FLIP.
 This closes this exact optimizer configuration and does not advance the
 confirmation pool. The raw trace, quality gate, and execution hashes are in the
-[result report](tools/mmtrain/DELIOT_MSAA_PER_PIXEL_FIT_DEV_20261127.md) and
-[machine-readable receipts](tools/mmtrain/deliot_msaa_per_pixel_fit_dev_raw_20261127.json)
+[result report](tools/mmtrain/DELIOT_MSAA_PER_PIXEL_FIT_DEV_20261127.md),
+[machine-readable receipts](tools/mmtrain/deliot_msaa_per_pixel_fit_dev_raw_20261127.json),
 and the [instrumented rejection replay](tools/mmtrain/DELIOT_FIT_REJECTION_DIAGNOSTIC_20261127.md).
 The numerical-mesh-quality constraint and projected-line-search family is
 established prior art; see the updated [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
+
+## Active-normal projection follow-up: gate failed
+
+The frozen Hildreth-projected update converged to the `1e-6` linearized
+feasibility tolerance on all eight updates, but accepted only 1/4 ManyMesh
+updates and 0/4 meshoptimizer updates. The one ManyMesh update improved
+training MSE but worsened mean LDR-FLIP by 0.000980 on the 24 reused views.
+It remained behind projected meshoptimizer by 6.343 dB PSNR and 0.002712
+mean FLIP; all structural geometry checks passed. This is an established
+numerical control, not a novelty candidate, and this frozen configuration is
+closed. See the [protocol](tools/mmtrain/DELIOT_ACTIVE_NORMAL_PROJECTION_DEV_PROTOCOL_20261127.md),
+[report](tools/mmtrain/DELIOT_ACTIVE_NORMAL_PROJECTION_DEV_20261127.md), and
+[raw/quality receipts](tools/mmtrain/deliot_active_normal_projection_raw_20261127.json).
 
 ## Candidate question
 
@@ -238,10 +251,11 @@ upscaling, so those remain conditions to test, not assumed novelty.
 The frozen nvdiffmodeling Gate 1 still requires CUDA and remains unrun. A
 separate non-CUDA feasibility probe on Iris Xe/D3D12 succeeded with a 4x
 multisampled `r32float` ID attachment and compute-side per-sample reads; the
-same backend rejected `r32uint` multisampling. The subsequent frozen
-Deliot-style optimizer route failed, so there is no active Gate-1 pass. Any
-replacement must change the update mechanism or add direct rejection-reason
-instrumentation under a new frozen protocol before another fit is scored. See
+same backend rejected `r32uint` multisampling. Both the plain Deliot-style
+optimizer and the active-normal projection control failed, so there is no
+active Gate-1 pass. Do not retune these closed configurations on the reused
+views; any replacement needs a distinct optimization mechanism under a new
+frozen protocol. See
 the [probe report and receipts](tools/mmtrain/MSAA_ID_BUFFER_FEASIBILITY_20261127.md),
 [fit result](tools/mmtrain/DELIOT_MSAA_PER_PIXEL_FIT_DEV_20261127.md), and
 [protocol](tools/mmtrain/DELIOT_MSAA_PER_PIXEL_FIT_DEV_PROTOCOL_20261127.md).

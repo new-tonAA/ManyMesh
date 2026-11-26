@@ -7,9 +7,11 @@ fitted controls on one reused train asset. A post-hoc local Iris Xe D3D12 4x
 MSAA recheck of the three-cut fit preserved that negative ranking; it did not
 score geometry optimized through the final AA operator. A separate frozen
 Deliot-style D3D12 fit also failed: neither arm accepted an update, and
-ManyMesh lost to exact-face meshoptimizer on the reused asset. The cited work
-is a bounded map for verification, and a search that finds no paper is not
-evidence that none exists.
+ManyMesh lost to exact-face meshoptimizer on the reused asset. Its active-normal
+projection follow-up accepted one of four ManyMesh updates, worsened FLIP, and
+still lost to meshoptimizer by 6.343 dB. This established numerical control is
+closed. The cited work is a bounded map for verification, and a search that
+finds no paper is not evidence that none exists.
 
 ## SIGGRAPH 2027 submission constraints
 
@@ -131,6 +133,19 @@ See the [frozen protocol](tools/mmtrain/DELIOT_MSAA_PER_PIXEL_FIT_DEV_PROTOCOL_2
 [fit receipts](tools/mmtrain/deliot_msaa_per_pixel_fit_dev_raw_20261127.json),
 [rejection diagnostic](tools/mmtrain/DELIOT_FIT_REJECTION_DIAGNOSTIC_20261127.md),
 and [updated prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
+
+A follow-up projected each Adam proposal onto linearized signed face-normal
+constraints with Hildreth cyclic projections, followed by the same exact
+normal and loss checks. All eight projections converged, but only one of four
+ManyMesh updates was accepted and no meshoptimizer update was accepted. The
+single ManyMesh step improved training MSE but worsened mean FLIP by 0.000980;
+the fitted candidate remained 6.343 dB below meshoptimizer and 0.002712 worse
+in mean FLIP on the same reused views. This is a failed feasibility control,
+not a novel method; active mesh-quality projection and feasible line search
+are established prior art. See the [frozen protocol](tools/mmtrain/DELIOT_ACTIVE_NORMAL_PROJECTION_DEV_PROTOCOL_20261127.md),
+[report](tools/mmtrain/DELIOT_ACTIVE_NORMAL_PROJECTION_DEV_20261127.md),
+[receipts](tools/mmtrain/deliot_active_normal_projection_raw_20261127.json),
+and [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
 
 The unoptimized 50%-retention ManyMesh cut has now been screened on 21 unique
 Poly Haven meshes across six classes, at exact face counts against
@@ -281,7 +296,7 @@ review; it is not an exhaustive literature search.
 
 | Priority | Direction | Current disposition |
 |---|---|---|
-| 1 | **A+B: reconstruction-conditioned hierarchy optimization** | Weak, untested hypothesis. The local Deliot-style fixed-topology fit failed and is closed. The frozen nvdiffmodeling control remains unrun behind CUDA; do not advance to asset-held-out scoring without a development gate pass. This is not a reproduction of Hasselgren et al.'s MSAA-assisted protocol. |
+| 1 | **A+B: reconstruction-conditioned hierarchy optimization** | Weak, untested hypothesis. Both the local Deliot-style fixed-topology fit and its active-normal projection control failed their development gates and are closed. The frozen nvdiffmodeling control remains unrun behind CUDA; do not advance to asset-held-out scoring without a development gate pass. This is not a reproduction of Hasselgren et al.'s MSAA-assisted protocol. |
 | 2 | **C: tile-GPU cost model and selection** | Systems-analysis fallback if a physical tile-based device and profiling counters are available. A screen-tile count alone is only a proxy. |
 | 3 | **D: rate-aware DAG construction** | Parked. Meshlet compression is crowded; reopen only with full-stream byte and decode comparisons against meshoptimizer, Draco, Kuth et al., and AMD DGF. |
 
