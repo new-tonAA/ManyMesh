@@ -124,10 +124,13 @@ ManyMesh lost to exact-face meshoptimizer by 6.686 dB pooled PSNR and 0.001732
 mean LDR-FLIP on 24 previously examined views. Structural checks pass only
 because neither arm moved; the optimization and quality gates fail. This
 closes this exact local optimizer configuration and does not advance to the
-confirmation pool. Rejection-reason counts were not logged, so the apparent
-normal-guard cause is an inference. See the [frozen protocol](tools/mmtrain/DELIOT_MSAA_PER_PIXEL_FIT_DEV_PROTOCOL_20261127.md),
+confirmation pool. An exact replay confirms all 40 candidate trials
+had negative minimum signed normal ratios and failed before loss evaluation.
+See the [frozen protocol](tools/mmtrain/DELIOT_MSAA_PER_PIXEL_FIT_DEV_PROTOCOL_20261127.md),
 [report](tools/mmtrain/DELIOT_MSAA_PER_PIXEL_FIT_DEV_20261127.md), and
-[raw and quality receipts](tools/mmtrain/deliot_msaa_per_pixel_fit_dev_raw_20261127.json).
+[fit receipts](tools/mmtrain/deliot_msaa_per_pixel_fit_dev_raw_20261127.json),
+[rejection diagnostic](tools/mmtrain/DELIOT_FIT_REJECTION_DIAGNOSTIC_20261127.md),
+and [updated prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
 
 The unoptimized 50%-retention ManyMesh cut has now been screened on 21 unique
 Poly Haven meshes across six classes, at exact face counts against

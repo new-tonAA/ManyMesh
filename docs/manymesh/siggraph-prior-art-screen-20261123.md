@@ -80,6 +80,23 @@ It is a required fixed-topology optimizer baseline if the target rasterizer
 can expose the needed per-pixel contributor IDs. These differences are test
 dimensions, not proof of novelty.
 
+### Mesh-quality constraints for vertex fitting
+
+Blauth and Leithäuser, [Enforcing Mesh Quality Constraints in Shape
+Optimization with a Gradient Projection Method](https://arxiv.org/abs/2412.00006),
+published in *Computer Methods in Applied Mechanics and Engineering* (2025),
+project a search direction onto active mesh-quality constraints, correct active
+constraints after a step, and modify line search to prevent new violations.
+They formulate minimum and maximum angle bounds for 2D triangular meshes and
+solid-angle bounds for 3D tetrahedral cells, including treatment of fixed
+boundaries. Their application is PDE-constrained shape optimization, not
+stochastic raster image fitting or an authored surface-mesh cluster DAG.
+Nevertheless, generic constraint-aware mesh fitting and feasible line search
+are established; such an optimizer is a required numerical control, not a
+novelty claim. Their discussion also identifies the practical failure mode
+seen in the local Deliot-style replay: quality constraints can force small
+steps and stall an unconstrained optimizer.
+
 ## Candidate gap and required test
 
 The remaining experiment question is narrowly phrased as **whether offline

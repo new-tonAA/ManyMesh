@@ -41,10 +41,12 @@ The frozen two-asset, nvdiffmodeling-based fixed-topology placement control
 remains gated on a CUDA-capable host; it is not a faithful Hasselgren
 reproduction or an asset-generalization test. A local Deliot-style D3D12
 fixed-topology fit used the non-CUDA ID path, but all updates were rejected
-and the candidate lost to the exact-face meshoptimizer control on one reused
-train asset. That configuration is closed; the failure does not clear the
-CUDA gate or advance to the confirmation cohort. See the
+and the instrumented replay directly attributed all 40 candidate trials to
+the normal-floor guard. The candidate lost to the exact-face meshoptimizer
+control on one reused train asset. That configuration is closed; the failure
+does not clear the CUDA gate or advance to the confirmation cohort. See the
 [fit result](tools/mmtrain/DELIOT_MSAA_PER_PIXEL_FIT_DEV_20261127.md),
+[rejection diagnostic](tools/mmtrain/DELIOT_FIT_REJECTION_DIAGNOSTIC_20261127.md),
 [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md), and
 [next experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md).
 

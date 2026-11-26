@@ -1,0 +1,371 @@
+{
+  "status": "diagnostic_complete",
+  "scope": "instrumented deterministic replay; no quality scoring",
+  "protocol_sha256": "c2236c6aaf33808197cb476c5856f30412ecadbddea89e1d7ae4db19610c9e5f",
+  "diagnostic_script_sha256": "9537fc7d868ba61e10e68633685dc4feeb20d774ab95aa5ed3b96c04797df64e",
+  "fit_script_sha256": "71f0e3e9afd3cfe477168bf027380352b61eb5107894769eb045441928947486",
+  "source_sha256": "b23ac1e5f6a8b513dd87bb2d50584676a0098c9e669fb342eaff5c1e2091cc7c",
+  "geometry_sha256": "3403b80d4868eb483b6c97e0bcef4d30b97332833653be55faead9af3888ecbe",
+  "prior_receipt_sha256": "95ab6f518c57e1e7a34aa9c72ba0c16f763b0bb9716b2df6c59446ebecd8e200",
+  "fit_receipt_sha256": "e11a1f18f79ead03f975e3cbda3e77354828f8f60be1a7d328f4912e8eb0e91a",
+  "adapter": {
+    "vendor": "31.0.101.4502",
+    "architecture": "",
+    "device": "Intel(R) Iris(R) Xe Graphics",
+    "description": "",
+    "stackgroup_min_size": 4,
+    "stackgroup_max_size": 128,
+    "vendor_id": 32902,
+    "device_id": 42912,
+    "adapter_type": "IntegratedGPU",
+    "backend_type": "D3D12"
+  },
+  "wgpu_version": "0.33.0",
+  "camera_count": 16,
+  "renders": {
+    "reference": 16,
+    "fit": 2304
+  },
+  "elapsed_seconds": 32.28546349995304,
+  "rejection_counts": {
+    "normal_floor": 40
+  },
+  "arms": {
+    "manymesh": {
+      "initial_positions_sha256": "8db83bba816cec33bc414b1df1729047932a918e0682335125c0bdc0e0eff56d",
+      "replayed_positions_sha256": "8db83bba816cec33bc414b1df1729047932a918e0682335125c0bdc0e0eff56d",
+      "positions_unchanged": true,
+      "face_count": 5290,
+      "updates_accepted": 0,
+      "trace": [
+        {
+          "iteration": 0,
+          "training_mse_before": 9.763095748416514e-05,
+          "gradient_l2": 0.005153728857581556,
+          "maximum_vertex_step": 0.006013964726147022,
+          "attempts": [
+            {
+              "halving": 0,
+              "minimum_face_normal_dot_ratio": -27.350579001984332,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 1,
+              "minimum_face_normal_dot_ratio": -12.436347940121172,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 2,
+              "minimum_face_normal_dot_ratio": -5.533438654221299,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 3,
+              "minimum_face_normal_dot_ratio": -2.220535572529276,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 4,
+              "minimum_face_normal_dot_ratio": -0.5987219219977449,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            }
+          ],
+          "update_accepted": false
+        },
+        {
+          "iteration": 1,
+          "training_mse_before": 9.763095748416514e-05,
+          "gradient_l2": 0.004367181402385448,
+          "maximum_vertex_step": 0.006008156145721355,
+          "attempts": [
+            {
+              "halving": 0,
+              "minimum_face_normal_dot_ratio": -21.81033871921248,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 1,
+              "minimum_face_normal_dot_ratio": -10.063452383461392,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 2,
+              "minimum_face_normal_dot_ratio": -4.446297022072989,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 3,
+              "minimum_face_normal_dot_ratio": -1.701791293000497,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 4,
+              "minimum_face_normal_dot_ratio": -0.3455564163697001,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            }
+          ],
+          "update_accepted": false
+        },
+        {
+          "iteration": 2,
+          "training_mse_before": 9.763095748416514e-05,
+          "gradient_l2": 0.005103187162847057,
+          "maximum_vertex_step": 0.00600486686628405,
+          "attempts": [
+            {
+              "halving": 0,
+              "minimum_face_normal_dot_ratio": -21.901370954077912,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 1,
+              "minimum_face_normal_dot_ratio": -10.364659396760153,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 2,
+              "minimum_face_normal_dot_ratio": -4.660823252688823,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 3,
+              "minimum_face_normal_dot_ratio": -1.825035089300053,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 4,
+              "minimum_face_normal_dot_ratio": -0.41117348476739746,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            }
+          ],
+          "update_accepted": false
+        },
+        {
+          "iteration": 3,
+          "training_mse_before": 9.763095748416514e-05,
+          "gradient_l2": 0.0044849859391481225,
+          "maximum_vertex_step": 0.006012105796526631,
+          "attempts": [
+            {
+              "halving": 0,
+              "minimum_face_normal_dot_ratio": -22.550310290477203,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 1,
+              "minimum_face_normal_dot_ratio": -10.47095879041414,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 2,
+              "minimum_face_normal_dot_ratio": -4.659430380879406,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 3,
+              "minimum_face_normal_dot_ratio": -1.8107030112361988,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 4,
+              "minimum_face_normal_dot_ratio": -0.4005985351957235,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            }
+          ],
+          "update_accepted": false
+        }
+      ]
+    },
+    "meshoptimizer": {
+      "initial_positions_sha256": "509f4ed6d158515838304ded5cfd5b3a4cc8aeb9d1ceb0cbc38f5d27cff5ddaa",
+      "replayed_positions_sha256": "509f4ed6d158515838304ded5cfd5b3a4cc8aeb9d1ceb0cbc38f5d27cff5ddaa",
+      "positions_unchanged": true,
+      "face_count": 5290,
+      "updates_accepted": 0,
+      "trace": [
+        {
+          "iteration": 0,
+          "training_mse_before": 1.2774489328440314e-05,
+          "gradient_l2": 0.005188292288498798,
+          "maximum_vertex_step": 0.006013986084803047,
+          "attempts": [
+            {
+              "halving": 0,
+              "minimum_face_normal_dot_ratio": -81.32384721333277,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 1,
+              "minimum_face_normal_dot_ratio": -41.532975333464485,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 2,
+              "minimum_face_normal_dot_ratio": -20.609250620601696,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 3,
+              "minimum_face_normal_dot_ratio": -9.890316070939159,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 4,
+              "minimum_face_normal_dot_ratio": -4.466580747799691,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            }
+          ],
+          "update_accepted": false
+        },
+        {
+          "iteration": 1,
+          "training_mse_before": 1.2774489328440314e-05,
+          "gradient_l2": 0.005067737278415335,
+          "maximum_vertex_step": 0.0060105465757263644,
+          "attempts": [
+            {
+              "halving": 0,
+              "minimum_face_normal_dot_ratio": -59.593688918610724,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 1,
+              "minimum_face_normal_dot_ratio": -29.376639145789962,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 2,
+              "minimum_face_normal_dot_ratio": -14.208268266686131,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 3,
+              "minimum_face_normal_dot_ratio": -6.609121328962804,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 4,
+              "minimum_face_normal_dot_ratio": -2.8058074855557464,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            }
+          ],
+          "update_accepted": false
+        },
+        {
+          "iteration": 2,
+          "training_mse_before": 1.2774489328440314e-05,
+          "gradient_l2": 0.004830854794215364,
+          "maximum_vertex_step": 0.00599787956373166,
+          "attempts": [
+            {
+              "halving": 0,
+              "minimum_face_normal_dot_ratio": -24.084017180130964,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 1,
+              "minimum_face_normal_dot_ratio": -11.536632394247706,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 2,
+              "minimum_face_normal_dot_ratio": -5.266972141103266,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 3,
+              "minimum_face_normal_dot_ratio": -2.1331500494801316,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 4,
+              "minimum_face_normal_dot_ratio": -0.5664910124057664,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            }
+          ],
+          "update_accepted": false
+        },
+        {
+          "iteration": 3,
+          "training_mse_before": 1.2774489328440314e-05,
+          "gradient_l2": 0.005031168316896765,
+          "maximum_vertex_step": 0.005914024977594864,
+          "attempts": [
+            {
+              "halving": 0,
+              "minimum_face_normal_dot_ratio": -19.13573079225554,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 1,
+              "minimum_face_normal_dot_ratio": -9.076121110305715,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 2,
+              "minimum_face_normal_dot_ratio": -4.040124476630894,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 3,
+              "minimum_face_normal_dot_ratio": -1.5205782116185098,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            },
+            {
+              "halving": 4,
+              "minimum_face_normal_dot_ratio": -0.26041809206906236,
+              "degenerate_faces": 0,
+              "rejection": "normal_floor"
+            }
+          ],
+          "update_accepted": false
+        }
+      ]
+    }
+  },
+  "quality_scored": false,
+  "limitations": [
+    "single reused train asset",
+    "replay is diagnostic only and does not establish image-quality gain",
+    "does not evaluate the previously scored diagnostic views"
+  ]
+}

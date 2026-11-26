@@ -17,15 +17,18 @@ does not relax the evidence gate.
 The non-CUDA fixed-topology route has now been run on Iris Xe/D3D12 at an exact
 5,290-face budget. On reused train asset 84736, all four optimizer updates
 were rejected in both the ManyMesh and exact-face meshoptimizer arms; their
-geometry did not change. On 24 previously scored diagnostic views, ManyMesh
-was behind meshoptimizer by 6.686 dB pooled PSNR and 0.001732 mean LDR-FLIP.
+geometry did not change. An exact deterministic replay confirms all 40
+line-search trials failed the normal-floor guard before loss evaluation, with
+negative minimum signed normal ratios in every trial. On 24 previously scored
+diagnostic views, ManyMesh was behind meshoptimizer by 6.686 dB pooled PSNR and
+0.001732 mean LDR-FLIP.
 This closes this exact optimizer configuration and does not advance the
 confirmation pool. The raw trace, quality gate, and execution hashes are in the
 [result report](tools/mmtrain/DELIOT_MSAA_PER_PIXEL_FIT_DEV_20261127.md) and
-[machine-readable receipts](tools/mmtrain/deliot_msaa_per_pixel_fit_dev_raw_20261127.json).
-The runner did not log rejection reasons; the render count suggests trials
-were rejected by the normal guard before training-loss evaluation, but this is
-an inference, not a direct rejection counter.
+[machine-readable receipts](tools/mmtrain/deliot_msaa_per_pixel_fit_dev_raw_20261127.json)
+and the [instrumented rejection replay](tools/mmtrain/DELIOT_FIT_REJECTION_DIAGNOSTIC_20261127.md).
+The numerical-mesh-quality constraint and projected-line-search family is
+established prior art; see the updated [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
 
 ## Candidate question
 
