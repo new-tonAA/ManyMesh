@@ -51,6 +51,18 @@ does not clear the CUDA gate or advance to the confirmation cohort. See the
 [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md), and
 [next experiment gate](MANYMESH_NEXT_EXPERIMENT_GATE.md).
 
+A subsequent exact fraction-to-boundary control applied the same frozen
+stochastic Adam directions with a quadratic step limit for face-normal and
+displacement constraints. It accepted 3/4 ManyMesh updates and 2/4 exact-face
+meshoptimizer updates, failing the predeclared 3/4-per-arm feasibility gate.
+Both arms passed the checked geometric constraints, but the training-MSE
+reductions were not evaluated as image-quality results. The tested local
+fixed-topology stochastic fitting route is now closed; do not tune this
+fraction limiter further or score the reused diagnostic views. See the
+[protocol](tools/mmtrain/DELIOT_EXACT_FRACTION_TO_BOUNDARY_DEV_PROTOCOL_20261127.md),
+[result](tools/mmtrain/DELIOT_EXACT_FRACTION_TO_BOUNDARY_DEV_20261127.md), and
+[raw receipt](tools/mmtrain/deliot_fraction_to_boundary_raw_20261127.json).
+
 The projected control converged on all updates but accepted only one ManyMesh
 step and no meshoptimizer steps. The single step worsened mean LDR-FLIP; the
 candidate still lost to meshoptimizer by 6.343 dB. Close this numerical control

@@ -9,8 +9,12 @@ score geometry optimized through the final AA operator. A separate frozen
 Deliot-style D3D12 fit also failed: neither arm accepted an update, and
 ManyMesh lost to exact-face meshoptimizer on the reused asset. Its active-normal
 projection follow-up accepted one of four ManyMesh updates, worsened FLIP, and
-still lost to meshoptimizer by 6.343 dB. This established numerical control is
-closed. The cited work is a bounded map for verification, and a search that
+still lost to meshoptimizer by 6.343 dB. A further exact fraction-to-boundary
+control accepted 3/4 ManyMesh updates but only 2/4 meshoptimizer updates,
+missing its frozen 3/4-per-arm training-feasibility gate; no image-quality
+views were scored. These controls close the tested local fixed-topology
+stochastic raster-fit route. They do not test every constrained hierarchy
+objective. The cited work is a bounded map for verification, and a search that
 finds no paper is not evidence that none exists.
 
 ## SIGGRAPH 2027 submission constraints
@@ -146,6 +150,18 @@ are established prior art. See the [frozen protocol](tools/mmtrain/DELIOT_ACTIVE
 [report](tools/mmtrain/DELIOT_ACTIVE_NORMAL_PROJECTION_DEV_20261127.md),
 [receipts](tools/mmtrain/deliot_active_normal_projection_raw_20261127.json),
 and [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
+
+A third D3D12 feasibility control bounded each stochastic Adam direction by
+the first exact quadratic crossing of the signed face-normal floor and the
+cumulative displacement ball. It accepted 3/4 ManyMesh updates but only 2/4
+meshoptimizer updates, so the frozen 3/4-per-arm gate failed. Both arms passed
+the checked geometric constraints, but the small training-MSE reductions are
+not image-quality evidence; no diagnostic views were scored. Close this step-
+limiting configuration rather than tune it further. Fraction-to-boundary is an
+established constrained-optimization pattern, not a novelty claim. See the
+[protocol](tools/mmtrain/DELIOT_EXACT_FRACTION_TO_BOUNDARY_DEV_PROTOCOL_20261127.md),
+[result](tools/mmtrain/DELIOT_EXACT_FRACTION_TO_BOUNDARY_DEV_20261127.md), and
+[raw receipt](tools/mmtrain/deliot_fraction_to_boundary_raw_20261127.json).
 
 The unoptimized 50%-retention ManyMesh cut has now been screened on 21 unique
 Poly Haven meshes across six classes, at exact face counts against
@@ -296,7 +312,7 @@ review; it is not an exhaustive literature search.
 
 | Priority | Direction | Current disposition |
 |---|---|---|
-| 1 | **A+B: reconstruction-conditioned hierarchy optimization** | Weak, untested hypothesis. Both the local Deliot-style fixed-topology fit and its active-normal projection control failed their development gates and are closed. The frozen nvdiffmodeling control remains unrun behind CUDA; do not advance to asset-held-out scoring without a development gate pass. This is not a reproduction of Hasselgren et al.'s MSAA-assisted protocol. |
+| 1 | **A+B: reconstruction-conditioned hierarchy optimization** | Weak, untested hypothesis. Three local Deliot-style fixed-topology controls (normal rejection, active-normal projection, and exact fraction-to-boundary) failed their feasibility gates and are closed. The frozen nvdiffmodeling control remains unrun behind CUDA; do not advance to asset-held-out scoring without a development gate pass. This is not a reproduction of Hasselgren et al.'s MSAA-assisted protocol. |
 | 2 | **C: tile-GPU cost model and selection** | Systems-analysis fallback if a physical tile-based device and profiling counters are available. A screen-tile count alone is only a proxy. |
 | 3 | **D: rate-aware DAG construction** | Parked. Meshlet compression is crowded; reopen only with full-stream byte and decode comparisons against meshoptimizer, Draco, Kuth et al., and AMD DGF. |
 
