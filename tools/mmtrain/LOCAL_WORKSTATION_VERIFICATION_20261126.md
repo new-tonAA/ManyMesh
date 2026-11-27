@@ -203,3 +203,47 @@ actual registered name through the permitted host WSL execution path launched
 the existing environment and passed the multi-cut artifact verifier. The D:
 drive distro was already installed, so no installation or package changes were
 needed.
+
+## D3D12 image metrics with a split Windows/WSL path
+
+On this laptop, the frozen one-asset community-port screen rendered on the
+Iris Xe/D3D12 adapter. Windows Smart App Control blocked the unsigned
+`flip_evaluator.nbflip` extension at import, before any metric was produced.
+The scorer saved lossless uint8 frames from the exact D3D12 render, and the
+FLIP 1.7 package was built and run under the D-drive WSL distro. The call
+parameters match the existing scorer (`inputsRGB=True`, `applyMagma=False`,
+`ppd=67`). This is metric post-processing on identical pixels, not a
+substitute renderer. No SAC/Defender setting or exclusion was changed. See
+the [experiment report](STMW_COMMUNITY_PORT_BARRAMUNDIFISH_20261127.md) for
+the quality result and runtime hashes.
+
+The first WSL package build attempt failed because Python development headers
+were missing; installing `python3-pip`, `python3-venv`, and `python3-dev` in
+the user-authorized D-drive distro resolved it. Ubuntu APT and the WSL pip
+client reached their configured package indexes. In contrast, the managed
+Windows shell still exports `HTTP_PROXY`, `HTTPS_PROXY`, `ALL_PROXY`,
+`GIT_HTTP_PROXY`, and `GIT_HTTPS_PROXY` as `http://127.0.0.1:9`, where no
+listener exists; it also exports `PIP_NO_INDEX=1` and
+`NPM_CONFIG_OFFLINE=true`. The host WinHTTP setting is direct, and the local
+proxy at port 7890 responds. Git's repository-specific proxy setting fetched
+the remote HEAD. Thus direct Windows HTTP and package-index failures come from
+the Codex process environment, not a machine-wide outage. No persistent
+proxy, npm, pip, Git, or Windows security setting was changed.
+
+## Recheck after the 2026-11-27 research screen
+
+The current repository HEAD is `9dd9d737db103793ff4f9e38bf2b512467334fe9`.
+No C/C++ source, header, or shader files changed between the verified WSL
+checkout `21cef5a92739edd6d1d751417a2c20efe4ec2a2d` and this HEAD, so the
+existing test binaries still cover the current native-code source. Re-running
+those binaries through the permitted D-drive WSL command path produced:
+
+- `test_manymesh`: 95 tests, 94 passed, 1 skipped, exit code 0; runtime
+  32.779 seconds.
+- Vulkan `compute_test`: 7/7 passed, exit code 0, on CPU llvmpipe software
+  rendering only.
+
+The current invocation logs are in the local ignored
+`out/research-baselines/current-test-manymesh.log` and
+`out/research-baselines/current-compute-vulkan.log`. No hardware Iris Xe
+compute result is established.

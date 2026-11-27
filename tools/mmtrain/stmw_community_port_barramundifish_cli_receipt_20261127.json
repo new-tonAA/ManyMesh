@@ -1,0 +1,38 @@
+{
+  "scope": "Deterministic single-asset feasibility replay; not a timing comparison",
+  "repository": "https://github.com/illusioneering/textured-mesh-simplification",
+  "commit": "3b9195cb75cf32014bf7a0ff0b1e42f94ecc5fe9",
+  "license": "MIT",
+  "asset": "Khronos BarramundiFish, CC0 geometry-only",
+  "source_obj_sha256": "6cbce9b89fd5315929c19582afe1949502f3ea4e5705c569c6acc884b410c949",
+  "source_obj_adapter_script_sha256": "7b81e447cc0893ae7129f3c306e161c0a837c90d7cd2d2319ba13e6aa8edf46a",
+  "input_glb_sha256": "5ae54a20bfc4f56a65560ee54f0fc253a499d0b16e42c1ce2484f6b2ef9cd843",
+  "command": "cd /root/stmw-audit && npm run simplify -- --input /mnt/e/ManyMesh/out/research-baselines/BarramundiFish-source.glb --output /root/stmw-audit/BarramundiFish-1932-repro.glb --target-faces 1932 --primitive-grouping none",
+  "runtime": {
+    "node": "v22.22.1",
+    "npm": "9.2.0",
+    "elapsed_seconds_single_replay": 0.7452140989999999
+  },
+  "options": {
+    "target_faces": 1932,
+    "primitive_grouping": "none",
+    "virtual_edge_mode": "auto-local-radius (default)",
+    "weld_vertices": true,
+    "recompute_normals": true,
+    "texture_transfer": false
+  },
+  "counts": {
+    "input_vertices_after_weld": 1938,
+    "input_faces": 3864,
+    "output_vertices": 971,
+    "output_faces": 1932,
+    "physical_edges": 5796,
+    "virtual_edges": 433,
+    "collapses": 967,
+    "stop_reason": "target-reached"
+  },
+  "output_glb_sha256": "40ab501c5840774dfd9e49a996ccda7b8929a164bba9c6e03233ea06922e0e7e",
+  "output_obj_adapter_script_sha256": "8f53937b1db4bc7a3bb0e97e57032b69e1a7b1f51bbcfeffbb782d29a524736f",
+  "scored_obj_sha256": "adc381322d6cd76bbcb435be66338e525397f76bbc0bfa9905d518b91a99a86e",
+  "hash_verified_replay": true
+}

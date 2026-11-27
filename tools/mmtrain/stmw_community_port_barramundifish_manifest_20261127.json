@@ -1,0 +1,1227 @@
+{
+  "scope": "exact-face geometry feasibility and OBJ interoperability; no image scores",
+  "source_manifest_sha256": "3e9677f29404475a5b40704ad0471195b063576f9df71419a67f72ce594e88a1",
+  "checked_out_revision": "02847e2f32ffeead75640f46775f92710f52ead9",
+  "requested_ratios": [
+    0.29,
+    0.295,
+    0.3,
+    0.305,
+    0.31,
+    0.49,
+    0.495,
+    0.5,
+    0.505,
+    0.51
+  ],
+  "selection": {
+    "operating_point": 0.5,
+    "first_two_assets": [
+      "BarramundiFish",
+      "Corset"
+    ],
+    "rationale": "Distinct object classes, one closed and one open source, and highest face counts within each boundary class.",
+    "other_eligible_development_assets": [
+      "Avocado",
+      "WaterBottle"
+    ]
+  },
+  "assets": {
+    "Avocado": {
+      "ratio_sweep": {
+        "source_sha256": "806d70a5dc14d9fc0955db7c375708917cf29d35181d8d2548e543ff04c2ba98",
+        "source_faces": 682,
+        "protocol": [
+          0.29,
+          0.295,
+          0.3,
+          0.305,
+          0.31,
+          0.49,
+          0.495,
+          0.5,
+          0.505,
+          0.51
+        ],
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "windows": [
+          0.29,
+          0.31,
+          0.49,
+          0.51
+        ],
+        "rows": [
+          {
+            "requested_ratio": 0.29,
+            "actual_ratio": 0.4574780058651026,
+            "in_band": false,
+            "manymesh": {
+              "faces": 312,
+              "topology_error": null,
+              "boundary_edges": 38,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "fc5d27d9da8d4a4cf7e557d16b60cf92f7465edacbbc7465c8aeb589b475c2fe",
+            "eligible": false
+          },
+          {
+            "requested_ratio": 0.295,
+            "actual_ratio": 0.4574780058651026,
+            "in_band": false,
+            "manymesh": {
+              "faces": 312,
+              "topology_error": null,
+              "boundary_edges": 38,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "fc5d27d9da8d4a4cf7e557d16b60cf92f7465edacbbc7465c8aeb589b475c2fe",
+            "eligible": false
+          },
+          {
+            "requested_ratio": 0.3,
+            "actual_ratio": 0.4574780058651026,
+            "in_band": false,
+            "manymesh": {
+              "faces": 312,
+              "topology_error": null,
+              "boundary_edges": 38,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "fc5d27d9da8d4a4cf7e557d16b60cf92f7465edacbbc7465c8aeb589b475c2fe",
+            "eligible": false
+          },
+          {
+            "requested_ratio": 0.305,
+            "actual_ratio": 0.4574780058651026,
+            "in_band": false,
+            "manymesh": {
+              "faces": 312,
+              "topology_error": null,
+              "boundary_edges": 38,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "fc5d27d9da8d4a4cf7e557d16b60cf92f7465edacbbc7465c8aeb589b475c2fe",
+            "eligible": false
+          },
+          {
+            "requested_ratio": 0.31,
+            "actual_ratio": 0.4574780058651026,
+            "in_band": false,
+            "manymesh": {
+              "faces": 312,
+              "topology_error": null,
+              "boundary_edges": 38,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "fc5d27d9da8d4a4cf7e557d16b60cf92f7465edacbbc7465c8aeb589b475c2fe",
+            "eligible": false
+          },
+          {
+            "requested_ratio": 0.49,
+            "actual_ratio": 0.4574780058651026,
+            "in_band": false,
+            "manymesh": {
+              "faces": 312,
+              "topology_error": null,
+              "boundary_edges": 38,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "fc5d27d9da8d4a4cf7e557d16b60cf92f7465edacbbc7465c8aeb589b475c2fe",
+            "eligible": false
+          },
+          {
+            "requested_ratio": 0.495,
+            "actual_ratio": 0.49560117302052786,
+            "in_band": true,
+            "manymesh": {
+              "faces": 338,
+              "topology_error": null,
+              "boundary_edges": 38,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "1ec2fd69f6226b8ad4596a5d7e664d1ed3fea41e0c8007a09a6746c4a1a55196",
+            "eligible": true,
+            "controls": {
+              "qem": {
+                "faces": 338,
+                "topology_error": null,
+                "boundary_edges": 38,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 338,
+                "topology_error": null,
+                "boundary_edges": 38,
+                "boundary_preserved": true
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.5,
+            "actual_ratio": 0.49560117302052786,
+            "in_band": true,
+            "manymesh": {
+              "faces": 338,
+              "topology_error": null,
+              "boundary_edges": 38,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "1ec2fd69f6226b8ad4596a5d7e664d1ed3fea41e0c8007a09a6746c4a1a55196",
+            "eligible": true,
+            "controls": {
+              "qem": {
+                "faces": 338,
+                "topology_error": null,
+                "boundary_edges": 38,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 338,
+                "topology_error": null,
+                "boundary_edges": 38,
+                "boundary_preserved": true
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.505,
+            "actual_ratio": 0.501466275659824,
+            "in_band": true,
+            "manymesh": {
+              "faces": 342,
+              "topology_error": null,
+              "boundary_edges": 38,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "077fb5e4d24f2733be90838248d2a679998ed56ce8c9d2ba489dc6e1bd346e25",
+            "eligible": true,
+            "controls": {
+              "qem": {
+                "faces": 342,
+                "topology_error": null,
+                "boundary_edges": 38,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 342,
+                "topology_error": null,
+                "boundary_edges": 38,
+                "boundary_preserved": true
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.51,
+            "actual_ratio": 0.5073313782991202,
+            "in_band": true,
+            "manymesh": {
+              "faces": 346,
+              "topology_error": null,
+              "boundary_edges": 38,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "fb404093ef90683fa809dccce1d54c8d027062cb02e54a9ea38940e0a4a8016d",
+            "eligible": true,
+            "controls": {
+              "qem": {
+                "faces": 346,
+                "topology_error": null,
+                "boundary_edges": 38,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 346,
+                "topology_error": null,
+                "boundary_edges": 38,
+                "boundary_preserved": true
+              }
+            }
+          }
+        ]
+      },
+      "frozen_exports": {
+        "source_sha256": "806d70a5dc14d9fc0955db7c375708917cf29d35181d8d2548e543ff04c2ba98",
+        "source_faces": 682,
+        "source_boundary_edges": 38,
+        "candidate_sha256": "1ec2fd69f6226b8ad4596a5d7e664d1ed3fea41e0c8007a09a6746c4a1a55196",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "1c319914f6a035b06ca789b95cb6cf740388fc78c6724dc745adb50285eaf156",
+        "source_revision": "02847e2f32ffeead75640f46775f92710f52ead9",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.5,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.49560117302052786,
+        "candidate_in_band": true,
+        "manymesh": {
+          "faces": 338,
+          "topology_error": null,
+          "boundary_edges": 38,
+          "boundary_preserved": true
+        },
+        "control_target_faces": 338,
+        "control_indexing": "original",
+        "control_input_vertices": 406,
+        "controls": {
+          "qem_preserve_border": {
+            "faces": 338,
+            "topology_error": null,
+            "boundary_edges": 38,
+            "boundary_preserved": true,
+            "eligible": true
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 338,
+            "topology_error": null,
+            "boundary_edges": 38,
+            "boundary_preserved": true,
+            "eligible": true
+          }
+        },
+        "matched_inputs_ready": true,
+        "source_frame": {
+          "center": [
+            0.0,
+            0.031400161374449995,
+            -4.999999997368221e-10
+          ],
+          "radius": 0.03316844679998133
+        },
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "38f975a7b1a3639eb27af552aceb46d6da43020d547034fe0c4e7ace0a5d8452",
+          "manymesh.obj": "8f01daba6cebb913bb1d08a8f58d334da5a09a2bed41b9b7c6f6209a17789b4a",
+          "qem_preserve_border.obj": "60c22a7053d70c2dbdb965434df2eee792e8d4ea1b024f606a0ddce9f5755393",
+          "meshoptimizer_lock_border.obj": "dd72cf18ef29e7282ec3aa89c1224a4f1fb6a83b6b17df433065468b8dd32b3c"
+        }
+      }
+    },
+    "BarramundiFish": {
+      "ratio_sweep": {
+        "source_sha256": "6cbce9b89fd5315929c19582afe1949502f3ea4e5705c569c6acc884b410c949",
+        "source_faces": 3864,
+        "protocol": [
+          0.29,
+          0.295,
+          0.3,
+          0.305,
+          0.31,
+          0.49,
+          0.495,
+          0.5,
+          0.505,
+          0.51
+        ],
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "windows": [
+          0.29,
+          0.31,
+          0.49,
+          0.51
+        ],
+        "rows": [
+          {
+            "requested_ratio": 0.29,
+            "actual_ratio": 0.2898550724637681,
+            "in_band": false,
+            "manymesh": {
+              "faces": 1120,
+              "topology_error": null,
+              "boundary_edges": 0,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "3072594a44fb693030079abe8b8a4830a63037217f82e8f7b484dfcf7d8a0562",
+            "eligible": false
+          },
+          {
+            "requested_ratio": 0.295,
+            "actual_ratio": 0.2898550724637681,
+            "in_band": false,
+            "manymesh": {
+              "faces": 1120,
+              "topology_error": null,
+              "boundary_edges": 0,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "3072594a44fb693030079abe8b8a4830a63037217f82e8f7b484dfcf7d8a0562",
+            "eligible": false
+          },
+          {
+            "requested_ratio": 0.3,
+            "actual_ratio": 0.296583850931677,
+            "in_band": true,
+            "manymesh": {
+              "faces": 1146,
+              "topology_error": null,
+              "boundary_edges": 0,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "5339b9e7c88f8cae0d1e533006795eeeeeabdb5c1ec6a61e812e0cc8fe6a0ee3",
+            "eligible": false,
+            "controls": {
+              "qem": {
+                "faces": 1146,
+                "topology_error": null,
+                "boundary_edges": 0,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 1146,
+                "topology_error": "Duplicate geometric triangle",
+                "boundary_preserved": false
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.305,
+            "actual_ratio": 0.3033126293995859,
+            "in_band": true,
+            "manymesh": {
+              "faces": 1172,
+              "topology_error": null,
+              "boundary_edges": 0,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "c2c21c4be1dd9f5c2d0e4eb75161bafbb1488ebb30a52f061dfbe6fd1e817490",
+            "eligible": false,
+            "controls": {
+              "qem": {
+                "faces": 1172,
+                "topology_error": null,
+                "boundary_edges": 0,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 1172,
+                "topology_error": "Duplicate geometric triangle",
+                "boundary_preserved": false
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.31,
+            "actual_ratio": 0.3033126293995859,
+            "in_band": true,
+            "manymesh": {
+              "faces": 1172,
+              "topology_error": null,
+              "boundary_edges": 0,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "c2c21c4be1dd9f5c2d0e4eb75161bafbb1488ebb30a52f061dfbe6fd1e817490",
+            "eligible": false,
+            "controls": {
+              "qem": {
+                "faces": 1172,
+                "topology_error": null,
+                "boundary_edges": 0,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 1172,
+                "topology_error": "Duplicate geometric triangle",
+                "boundary_preserved": false
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.49,
+            "actual_ratio": 0.4901656314699793,
+            "in_band": true,
+            "manymesh": {
+              "faces": 1894,
+              "topology_error": null,
+              "boundary_edges": 0,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "519917d6b68541dab2ebb8a00d26ba91944f75cf32fb2e9f9d3215ce18a40f56",
+            "eligible": true,
+            "controls": {
+              "qem": {
+                "faces": 1894,
+                "topology_error": null,
+                "boundary_edges": 0,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 1894,
+                "topology_error": null,
+                "boundary_edges": 0,
+                "boundary_preserved": true
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.495,
+            "actual_ratio": 0.4943064182194617,
+            "in_band": true,
+            "manymesh": {
+              "faces": 1910,
+              "topology_error": null,
+              "boundary_edges": 0,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "1ee4089b41d016a93198e0242f307636f818a0564964b5708d630239affd1353",
+            "eligible": true,
+            "controls": {
+              "qem": {
+                "faces": 1910,
+                "topology_error": null,
+                "boundary_edges": 0,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 1910,
+                "topology_error": null,
+                "boundary_edges": 0,
+                "boundary_preserved": true
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.5,
+            "actual_ratio": 0.5,
+            "in_band": true,
+            "manymesh": {
+              "faces": 1932,
+              "topology_error": null,
+              "boundary_edges": 0,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "72b1c406e55dcb0688cb9bc00c09504cefe25cfa7a0ec8494c4f7ee73768bf09",
+            "eligible": true,
+            "controls": {
+              "qem": {
+                "faces": 1932,
+                "topology_error": null,
+                "boundary_edges": 0,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 1932,
+                "topology_error": null,
+                "boundary_edges": 0,
+                "boundary_preserved": true
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.505,
+            "actual_ratio": 0.505175983436853,
+            "in_band": true,
+            "manymesh": {
+              "faces": 1952,
+              "topology_error": null,
+              "boundary_edges": 0,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "d17edef84fb86d10862dfde7d61cbc2ce090b6eed74f926f3381d56d608114d9",
+            "eligible": true,
+            "controls": {
+              "qem": {
+                "faces": 1952,
+                "topology_error": null,
+                "boundary_edges": 0,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 1952,
+                "topology_error": null,
+                "boundary_edges": 0,
+                "boundary_preserved": true
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.51,
+            "actual_ratio": 0.5098343685300207,
+            "in_band": true,
+            "manymesh": {
+              "faces": 1970,
+              "topology_error": null,
+              "boundary_edges": 0,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "2d4b181d5a06ccc23b7af4832c1cfdfc5d3ecf7d5808eb541a2a1a65853b2801",
+            "eligible": true,
+            "controls": {
+              "qem": {
+                "faces": 1970,
+                "topology_error": null,
+                "boundary_edges": 0,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 1970,
+                "topology_error": null,
+                "boundary_edges": 0,
+                "boundary_preserved": true
+              }
+            }
+          }
+        ]
+      },
+      "frozen_exports": {
+        "source_sha256": "6cbce9b89fd5315929c19582afe1949502f3ea4e5705c569c6acc884b410c949",
+        "source_faces": 3864,
+        "source_boundary_edges": 0,
+        "candidate_sha256": "72b1c406e55dcb0688cb9bc00c09504cefe25cfa7a0ec8494c4f7ee73768bf09",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "1c319914f6a035b06ca789b95cb6cf740388fc78c6724dc745adb50285eaf156",
+        "source_revision": "02847e2f32ffeead75640f46775f92710f52ead9",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.5,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.5,
+        "candidate_in_band": true,
+        "manymesh": {
+          "faces": 1932,
+          "topology_error": null,
+          "boundary_edges": 0,
+          "boundary_preserved": true
+        },
+        "control_target_faces": 1932,
+        "control_indexing": "original",
+        "control_input_vertices": 2188,
+        "controls": {
+          "qem_preserve_border": {
+            "faces": 1932,
+            "topology_error": null,
+            "boundary_edges": 0,
+            "boundary_preserved": true,
+            "eligible": true
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 1932,
+            "topology_error": null,
+            "boundary_edges": 0,
+            "boundary_preserved": true,
+            "eligible": true
+          }
+        },
+        "matched_inputs_ready": true,
+        "source_frame": {
+          "center": [
+            0.002389829599999997,
+            0.1428749263725,
+            -0.003817290499999987
+          ],
+          "radius": 0.32310507513975756
+        },
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "eab625eba33b0abca1a5b46fd9b0789f3c80e56d16c84e53fae3b191450244fe",
+          "manymesh.obj": "0308f4b26d7a02076e1107a73264a8a25f6d777da8c59f1440423fcb415f3d57",
+          "qem_preserve_border.obj": "b2a6c7e3da0f4e8525e484505fc0a23e54ff9d6e82c571008fc22ed2b9883b7e",
+          "meshoptimizer_lock_border.obj": "86b28e1d16202b6a45edc6a2bfef83b58fb6e15f1bbf2f31c433f8292e9b8664",
+          "stmw_port.obj": "adc381322d6cd76bbcb435be66338e525397f76bbc0bfa9905d518b91a99a86e"
+        }
+      }
+    },
+    "Corset": {
+      "ratio_sweep": {
+        "source_sha256": "590ae9c4c434b357535ee0dc176d00c3c44788d811d0625abd90dd1a7c675de5",
+        "source_faces": 18324,
+        "protocol": [
+          0.29,
+          0.295,
+          0.3,
+          0.305,
+          0.31,
+          0.49,
+          0.495,
+          0.5,
+          0.505,
+          0.51
+        ],
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "windows": [
+          0.29,
+          0.31,
+          0.49,
+          0.51
+        ],
+        "rows": [
+          {
+            "requested_ratio": 0.29,
+            "actual_ratio": 0.29000218292949137,
+            "in_band": true,
+            "manymesh": {
+              "faces": 5314,
+              "topology_error": null,
+              "boundary_edges": 1144,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "d689db39a02843fd2b4ab0577cb820d74224dc23439e0110b5ec7f7ed2fe43d4",
+            "eligible": false,
+            "controls": {
+              "qem": {
+                "error": "Duplicate geometric triangle"
+              },
+              "meshoptimizer": {
+                "faces": 5314,
+                "topology_error": "Duplicate geometric triangle",
+                "boundary_preserved": false
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.295,
+            "actual_ratio": 0.29502292075965947,
+            "in_band": true,
+            "manymesh": {
+              "faces": 5406,
+              "topology_error": null,
+              "boundary_edges": 1144,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "10dbb9216effc4794d6bb9a74c19e57b60e8ae6ecfd5595c27ddc384e5e67307",
+            "eligible": false,
+            "controls": {
+              "qem": {
+                "error": "Duplicate geometric triangle"
+              },
+              "meshoptimizer": {
+                "faces": 5406,
+                "topology_error": "Duplicate geometric triangle",
+                "boundary_preserved": false
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.3,
+            "actual_ratio": 0.30004365858982757,
+            "in_band": true,
+            "manymesh": {
+              "faces": 5498,
+              "topology_error": null,
+              "boundary_edges": 1144,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "33809b1f31ce3f82592b4e91f395af7f3e58221d79ee0c366aa3a44fa5daf808",
+            "eligible": false,
+            "controls": {
+              "qem": {
+                "error": "Duplicate geometric triangle"
+              },
+              "meshoptimizer": {
+                "faces": 5498,
+                "topology_error": "Duplicate geometric triangle",
+                "boundary_preserved": false
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.305,
+            "actual_ratio": 0.3049552499454268,
+            "in_band": true,
+            "manymesh": {
+              "faces": 5588,
+              "topology_error": null,
+              "boundary_edges": 1144,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "1d73c08fa261f706458fe9a0788b55f986b066a7ffd35b301fa92d534cba08a5",
+            "eligible": false,
+            "controls": {
+              "qem": {
+                "error": "Duplicate geometric triangle"
+              },
+              "meshoptimizer": {
+                "faces": 5588,
+                "topology_error": "Duplicate geometric triangle",
+                "boundary_preserved": false
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.31,
+            "actual_ratio": 0.3099759877755949,
+            "in_band": true,
+            "manymesh": {
+              "faces": 5680,
+              "topology_error": null,
+              "boundary_edges": 1144,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "768635e2c9b4dbc04a7134daefed4f746ffc08034a3afefe5a9f7e222fae3a84",
+            "eligible": false,
+            "controls": {
+              "qem": {
+                "error": "Duplicate geometric triangle"
+              },
+              "meshoptimizer": {
+                "faces": 5680,
+                "topology_error": "Duplicate geometric triangle",
+                "boundary_preserved": false
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.49,
+            "actual_ratio": 0.4899585243396638,
+            "in_band": false,
+            "manymesh": {
+              "faces": 8978,
+              "topology_error": null,
+              "boundary_edges": 1144,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "de09fc6930303e1322b9f5f5f86dfc25e8319e768a899fbfc4739e5da3158af8",
+            "eligible": false
+          },
+          {
+            "requested_ratio": 0.495,
+            "actual_ratio": 0.4949792621698319,
+            "in_band": true,
+            "manymesh": {
+              "faces": 9070,
+              "topology_error": null,
+              "boundary_edges": 1144,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "5952a6de5c0fe8e3f76417aab860e34b10e6d2e6e78252ec00696c13402580f0",
+            "eligible": true,
+            "controls": {
+              "qem": {
+                "faces": 9070,
+                "topology_error": null,
+                "boundary_edges": 1144,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 9070,
+                "topology_error": null,
+                "boundary_edges": 1144,
+                "boundary_preserved": true
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.5,
+            "actual_ratio": 0.5,
+            "in_band": true,
+            "manymesh": {
+              "faces": 9162,
+              "topology_error": null,
+              "boundary_edges": 1144,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "76a64add0933b4d26c4ac506e97d287d633ac656d63703ae9bba724216c2c8cc",
+            "eligible": true,
+            "controls": {
+              "qem": {
+                "faces": 9162,
+                "topology_error": null,
+                "boundary_edges": 1144,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 9162,
+                "topology_error": null,
+                "boundary_edges": 1144,
+                "boundary_preserved": true
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.505,
+            "actual_ratio": 0.5050207378301681,
+            "in_band": true,
+            "manymesh": {
+              "faces": 9254,
+              "topology_error": null,
+              "boundary_edges": 1144,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "f572d279ab3ec3f992472a980919b9e5ec720aa46f484c3834c2859f68091906",
+            "eligible": true,
+            "controls": {
+              "qem": {
+                "faces": 9254,
+                "topology_error": null,
+                "boundary_edges": 1144,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 9254,
+                "topology_error": null,
+                "boundary_edges": 1144,
+                "boundary_preserved": true
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.51,
+            "actual_ratio": 0.5100414756603362,
+            "in_band": false,
+            "manymesh": {
+              "faces": 9346,
+              "topology_error": null,
+              "boundary_edges": 1144,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "76d4f5cb575f33054408310a5e689797afee55ee4dbd98320f8a0104fea19c80",
+            "eligible": false
+          }
+        ]
+      },
+      "frozen_exports": {
+        "source_sha256": "590ae9c4c434b357535ee0dc176d00c3c44788d811d0625abd90dd1a7c675de5",
+        "source_faces": 18324,
+        "source_boundary_edges": 1144,
+        "candidate_sha256": "76a64add0933b4d26c4ac506e97d287d633ac656d63703ae9bba724216c2c8cc",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "1c319914f6a035b06ca789b95cb6cf740388fc78c6724dc745adb50285eaf156",
+        "source_revision": "02847e2f32ffeead75640f46775f92710f52ead9",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.5,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.5,
+        "candidate_in_band": true,
+        "manymesh": {
+          "faces": 9162,
+          "topology_error": null,
+          "boundary_edges": 1144,
+          "boundary_preserved": true
+        },
+        "control_target_faces": 9162,
+        "control_indexing": "original",
+        "control_input_vertices": 11505,
+        "controls": {
+          "qem_preserve_border": {
+            "faces": 9162,
+            "topology_error": null,
+            "boundary_edges": 1144,
+            "boundary_preserved": true,
+            "eligible": true
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 9162,
+            "topology_error": null,
+            "boundary_edges": 1144,
+            "boundary_preserved": true,
+            "eligible": true
+          }
+        },
+        "matched_inputs_ready": true,
+        "source_frame": {
+          "center": [
+            5.599999998440186e-09,
+            0.0289207641,
+            1.849999998679297e-09
+          ],
+          "radius": 0.034775152973078954
+        },
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "1e0cd2ea26af6a015a7b39d3c4bbf2e7de9e4cd22722204e14bc937119c2bac4",
+          "manymesh.obj": "adde70e0e047edee3015c0ea92922340cc37cfc9cb13e202683ec25997e8753e",
+          "qem_preserve_border.obj": "3329f09fe1983d4b1b97c4bef673af159a0fe594736f87d70fcc9ff527284227",
+          "meshoptimizer_lock_border.obj": "64d4e13db46809cc110fd0a201c4b89b4b6d02caca23cba2dce59adf90bec728"
+        }
+      }
+    },
+    "WaterBottle": {
+      "ratio_sweep": {
+        "source_sha256": "86218f506b2ac0b21a66b0c6012c17317ca5ee40c3edd88122be0aff7a1a3bce",
+        "source_faces": 4510,
+        "protocol": [
+          0.29,
+          0.295,
+          0.3,
+          0.305,
+          0.31,
+          0.49,
+          0.495,
+          0.5,
+          0.505,
+          0.51
+        ],
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "windows": [
+          0.29,
+          0.31,
+          0.49,
+          0.51
+        ],
+        "rows": [
+          {
+            "requested_ratio": 0.29,
+            "actual_ratio": 0.2847006651884701,
+            "in_band": false,
+            "manymesh": {
+              "faces": 1284,
+              "topology_error": null,
+              "boundary_edges": 264,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "890d82e8cca6f4c1cd9a69abac745b0bd50c876dca9785b9b82f920f448c8b3d",
+            "eligible": false
+          },
+          {
+            "requested_ratio": 0.295,
+            "actual_ratio": 0.2847006651884701,
+            "in_band": false,
+            "manymesh": {
+              "faces": 1284,
+              "topology_error": null,
+              "boundary_edges": 264,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "890d82e8cca6f4c1cd9a69abac745b0bd50c876dca9785b9b82f920f448c8b3d",
+            "eligible": false
+          },
+          {
+            "requested_ratio": 0.3,
+            "actual_ratio": 0.2847006651884701,
+            "in_band": false,
+            "manymesh": {
+              "faces": 1284,
+              "topology_error": null,
+              "boundary_edges": 264,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "890d82e8cca6f4c1cd9a69abac745b0bd50c876dca9785b9b82f920f448c8b3d",
+            "eligible": false
+          },
+          {
+            "requested_ratio": 0.305,
+            "actual_ratio": 0.2847006651884701,
+            "in_band": false,
+            "manymesh": {
+              "faces": 1284,
+              "topology_error": null,
+              "boundary_edges": 264,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "890d82e8cca6f4c1cd9a69abac745b0bd50c876dca9785b9b82f920f448c8b3d",
+            "eligible": false
+          },
+          {
+            "requested_ratio": 0.31,
+            "actual_ratio": 0.2847006651884701,
+            "in_band": false,
+            "manymesh": {
+              "faces": 1284,
+              "topology_error": null,
+              "boundary_edges": 264,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "890d82e8cca6f4c1cd9a69abac745b0bd50c876dca9785b9b82f920f448c8b3d",
+            "eligible": false
+          },
+          {
+            "requested_ratio": 0.49,
+            "actual_ratio": 0.49002217294900224,
+            "in_band": true,
+            "manymesh": {
+              "faces": 2210,
+              "topology_error": null,
+              "boundary_edges": 264,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "4922ce0d41b44afec1fa8450cf82f2c044d8ca2064ef865361ee64c510dfbbec",
+            "eligible": true,
+            "controls": {
+              "qem": {
+                "faces": 2210,
+                "topology_error": null,
+                "boundary_edges": 264,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 2210,
+                "topology_error": null,
+                "boundary_edges": 264,
+                "boundary_preserved": true
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.495,
+            "actual_ratio": 0.49490022172949,
+            "in_band": true,
+            "manymesh": {
+              "faces": 2232,
+              "topology_error": null,
+              "boundary_edges": 264,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "d16b5465508bb8717ed27a5cbce763655e7dd0049c7ba6144176d3660add4547",
+            "eligible": true,
+            "controls": {
+              "qem": {
+                "faces": 2232,
+                "topology_error": null,
+                "boundary_edges": 264,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 2232,
+                "topology_error": null,
+                "boundary_edges": 264,
+                "boundary_preserved": true
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.5,
+            "actual_ratio": 0.4997782705099778,
+            "in_band": true,
+            "manymesh": {
+              "faces": 2254,
+              "topology_error": null,
+              "boundary_edges": 264,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "2c26b248a0161bfcbf2d2350bd26ce9e416034539f290f949e5863ce8134e1c3",
+            "eligible": true,
+            "controls": {
+              "qem": {
+                "faces": 2254,
+                "topology_error": null,
+                "boundary_edges": 264,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 2254,
+                "topology_error": null,
+                "boundary_edges": 264,
+                "boundary_preserved": true
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.505,
+            "actual_ratio": 0.50509977827051,
+            "in_band": true,
+            "manymesh": {
+              "faces": 2278,
+              "topology_error": null,
+              "boundary_edges": 264,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "08d20b0c27394cffb9f4cc9524a868b3bc3ec5cefb69a32e125d3d151c31012b",
+            "eligible": true,
+            "controls": {
+              "qem": {
+                "faces": 2278,
+                "topology_error": null,
+                "boundary_edges": 264,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 2278,
+                "topology_error": null,
+                "boundary_edges": 264,
+                "boundary_preserved": true
+              }
+            }
+          },
+          {
+            "requested_ratio": 0.51,
+            "actual_ratio": 0.5099778270509978,
+            "in_band": true,
+            "manymesh": {
+              "faces": 2300,
+              "topology_error": null,
+              "boundary_edges": 264,
+              "boundary_preserved": true
+            },
+            "candidate_sha256": "59442b23704ab673936f46d449af57e62fde9fbf9f9e58724de75f2e8db75e78",
+            "eligible": true,
+            "controls": {
+              "qem": {
+                "faces": 2300,
+                "topology_error": null,
+                "boundary_edges": 264,
+                "boundary_preserved": true
+              },
+              "meshoptimizer": {
+                "faces": 2300,
+                "topology_error": null,
+                "boundary_edges": 264,
+                "boundary_preserved": true
+              }
+            }
+          }
+        ]
+      },
+      "frozen_exports": {
+        "source_sha256": "86218f506b2ac0b21a66b0c6012c17317ca5ee40c3edd88122be0aff7a1a3bce",
+        "source_faces": 4510,
+        "source_boundary_edges": 264,
+        "candidate_sha256": "2c26b248a0161bfcbf2d2350bd26ce9e416034539f290f949e5863ce8134e1c3",
+        "mmgeo_sha256": "8820629cbd6ffb1d490c4a1b3e54926ba5a194ebbe7b8cbecc1ae17130122e4e",
+        "script_sha256": "1c319914f6a035b06ca789b95cb6cf740388fc78c6724dc745adb50285eaf156",
+        "source_revision": "02847e2f32ffeead75640f46775f92710f52ead9",
+        "meshoptimizer_helper_sha256": "074f04627ad00372403c98a20ac306626a162f474cc27e5a97806cbc76e03136",
+        "meshoptimizer_module_sha256": "5f63c97b83c248d5056c8e67b2464d248cf02b018a3410c5f6cd091938b5428c",
+        "numpy_version": "2.3.4",
+        "scipy_version": "1.15.3",
+        "fast_simplification_version": "0.2.0",
+        "target_ratio": 0.5,
+        "ratio_tolerance": 0.01,
+        "normalized_boundary_tolerance": 1.1920928955078125e-07,
+        "candidate_ratio": 0.4997782705099778,
+        "candidate_in_band": true,
+        "manymesh": {
+          "faces": 2254,
+          "topology_error": null,
+          "boundary_edges": 264,
+          "boundary_preserved": true
+        },
+        "control_target_faces": 2254,
+        "control_indexing": "original",
+        "control_input_vertices": 2549,
+        "controls": {
+          "qem_preserve_border": {
+            "faces": 2254,
+            "topology_error": null,
+            "boundary_edges": 264,
+            "boundary_preserved": true,
+            "eligible": true
+          },
+          "meshoptimizer_lock_border": {
+            "faces": 2254,
+            "topology_error": null,
+            "boundary_edges": 264,
+            "boundary_preserved": true,
+            "eligible": true
+          }
+        },
+        "matched_inputs_ready": true,
+        "source_frame": {
+          "center": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "radius": 0.13983509820769385
+        },
+        "obj_exports_sha256": {
+          "neutral.mtl": "f167f0f8f9b885c570a12ab9e73d1c7e0dcf69ffa611b2526cd640ab638986e0",
+          "reference.obj": "35b8b5434ab8ba465a8fc758a799c99f83bc1a45c4ebab8b1da3a6b7adf981ad",
+          "manymesh.obj": "769111181fb21c030a61c52e0e321387dad4eb7c669ce9146496a686f8a65d68",
+          "qem_preserve_border.obj": "d7bda4abca140270991e7cbe6da3fac909daa74cc081ea5af74057802977e01c",
+          "meshoptimizer_lock_border.obj": "a3ab63202db510d0df873e71964c9876eb01c394c3335efbd79e0bcd2a85d314"
+        }
+      }
+    }
+  }
+}

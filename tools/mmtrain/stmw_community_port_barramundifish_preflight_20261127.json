@@ -1,0 +1,11 @@
+{
+  "manifest_sha256": "f862049bbec52233cd332dca7eba297f5ffccba3d645e79ac8e3758aee993444",
+  "stmw_port_sha256": "adc381322d6cd76bbcb435be66338e525397f76bbc0bfa9905d518b91a99a86e",
+  "candidate_faces": 1932,
+  "boundary_audit": {
+    "faces": 1932,
+    "topology_error": null,
+    "boundary_edges": 0,
+    "boundary_preserved": true
+  }
+}

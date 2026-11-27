@@ -44,6 +44,13 @@ The frozen nvdiffmodeling placement control still requires CUDA and has not run.
 
 On this laptop, the D-drive WSL2 Clang build ran `test_manymesh` (94 passed, 1 skipped) and Vulkan `compute_test` (7/7 passed on CPU llvmpipe). Software OpenGL aborted in 3 tests; the Iris Xe D3D12 OpenGL route skipped all 7 compute tests because it exposes only Filament feature level 1. This does not qualify the hardware GPU compute path. Native Windows execution remains blocked by Smart App Control. [Local verification report](tools/mmtrain/LOCAL_WORKSTATION_VERIFICATION_20261126.md) · [hosted Windows/MSVC CI](https://github.com/new-tonAA/ManyMesh/actions/runs/45622515351).
 
+An additional one-asset screen of a third-party Liu et al. (2025) implementation
+preserved BarramundiFish's source boundary at matched face count but fell far
+behind QEM and meshoptimizer on 24 views. It is geometry-only and is not a
+reproduction or rejection of the paper. See the [frozen protocol](tools/mmtrain/STMW_COMMUNITY_PORT_BARRAMUNDIFISH_PROTOCOL_20261127.md),
+[result](tools/mmtrain/STMW_COMMUNITY_PORT_BARRAMUNDIFISH_20261127.md), and
+[raw receipt](tools/mmtrain/stmw_community_port_barramundifish_raw_20261127.json).
+
 ## Claims not established
 
 No asset-held-out optimization win, equal-frame-time quality win, on-device result, temporal-quality gain, compression gain, or user study. Desktop results do not establish mobile performance.

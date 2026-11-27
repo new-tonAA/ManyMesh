@@ -17,7 +17,6 @@ from scipy.spatial import cKDTree
 
 from cluster_decoder import Mesh, Model, decode
 from fit_cluster_decoder import load_pair
-from cluster_decoder_quality import validation_variants
 
 METRICS = ("chamfer_l1_mean", "chamfer_l2_squared_mean",
            "bidirectional_distance_p95", "bidirectional_distance_max_sampled",
@@ -118,6 +117,10 @@ def surface_metrics(reference, candidate, sample_count=20000, seed=0):
 
 
 def main():
+    # Keep the standalone surface metric importable by callers that only need
+    # surface_metrics; the training pipeline dependency is needed only here.
+    from cluster_decoder_quality import validation_variants
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pairs", type=Path, action="append", required=True)
     parser.add_argument("--fit", type=Path, required=True)

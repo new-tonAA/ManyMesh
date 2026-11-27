@@ -52,6 +52,41 @@ frame time. The frozen first experiment is a placement control adapted from
 nvdiffmodeling; it is not a custom DAG optimizer or a faithful reproduction of
 Hasselgren et al.'s training protocol.
 
+## Recent baseline coverage gap
+
+The 21-model quality screen compares against QEM and meshoptimizer, but does
+not include two recent published simplifiers. Liu et al. (TOG / SIGGRAPH Asia
+2025) evaluate their in-the-wild textured-mesh method on Poly Haven and
+Thingi10K, with geometric/texture metrics and a user study. The authors' page
+links no implementation; a third-party TypeScript port is not a verified
+reproduction. I audited the MIT port at commit
+`3b9195cb75cf32014bf7a0ff0b1e42f94ecc5fe9` in the ignored `out/` directory:
+type checking passes in Windows and WSL. Its Windows Vitest runner cannot start
+because Vite's safe-path setup receives `spawn EPERM`; in the D-drive WSL the
+suite ran with 457/458 passing, with the one failure in a texture-worker
+progress assertion (`batchId === -1`). Neither run validates fidelity to the
+paper.
+Bhosikar et al. (CVPR 2026 workshop) describe FA-QEM for generated and
+real-world meshes, but their project page still marks code as coming soon. See
+the expanded [prior-art screen](docs/manymesh/siggraph-prior-art-screen-20261123.md).
+
+This does not invalidate the existing frozen negative results. It does mean
+that a broad simplification-quality claim or a new candidate comparison must
+include a verified Liu et al. implementation when one is available, or state
+the reproduction gap, and must check FA-QEM availability before freezing the
+baseline set. Neither paper alone evaluates a cluster DAG after a specified
+final AA/upscaler.
+
+The community port has now passed a one-asset geometry-only feasibility screen
+on BarramundiFish at exactly 1,932 faces. Its source-boundary audit passed, but
+it was far worse than the same-face QEM and meshoptimizer controls on the 24
+fixed views, both with native sampling and 4x MSAA. The port is not an author
+release, textures were not transferred, and this one reused asset does not
+reproduce or reject the published method. It does not advance to a multi-asset
+study. See the [frozen protocol](tools/mmtrain/STMW_COMMUNITY_PORT_BARRAMUNDIFISH_PROTOCOL_20261127.md),
+[result](tools/mmtrain/STMW_COMMUNITY_PORT_BARRAMUNDIFISH_20261127.md), and
+[raw per-view receipt](tools/mmtrain/stmw_community_port_barramundifish_raw_20261127.json).
+
 A separate single-cut CPU feasibility preflight has now tested MMLG node-label
 reconstruction and projective RGB fitting with shared cluster-boundary
 vertices locked. On reused train asset 84736, the fitted ManyMesh cut did not
